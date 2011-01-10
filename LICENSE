@@ -1,20 +1,9 @@
-Copyright (c) 2011:
-Oliver Drobnik, Cocoanetics, http://www.cocoanetics.com
+Copyright (c) 2011, Oliver Drobnik
 All rights reserved.
 
- LICENSE
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-You are permitted to modify this code and use it in your own commercial or
-free apps under these conditions:
+- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
-- additions or fix bugs have to provide them to the original author
-  for possible inclusion in the master.
-
-- you have to give credit to the original author in any form of your choosing. 
-  Such forms can be a blog post, a tweet, an info page in your app or any other
-   visible form.
-
-The above copyright notice and this permission notice shall be included in all copies
-or substantial portions of the Software if it is distributed in source form.
-
-Follow @cocoanetics on Twitter
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
