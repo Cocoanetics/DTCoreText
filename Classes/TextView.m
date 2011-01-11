@@ -15,6 +15,39 @@
 @implementation TextView
 
 
+// TO DO: this should be configured as a Unit Test, but I don't know how
+- (void)testParagraphs
+{
+	NSString *html = @"Prefix<p>One\ntwo\n<br>three</p><p>New Paragraph</p>Suffix";
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<50726566 69780a4f 6e652074 776f20e2 80a87468 7265650a 4e657720 50617261 67726170 680a5375 66666978>";
+	
+	NSAssert([resultOnIOS isEqualToString:resultOnMac], @"Output on Paragraph Test differs");
+}
+
+
+- (void)testHeaderParagraphs
+{
+	NSString *html = @"Prefix<h1>One</h1><h2>One</h2><h3>One</h3><h4>One</h4><h5>One</h5><p>New Paragraph</p>Suffix";
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<50726566 69780a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4e 65772050 61726167 72617068 0a537566 666978>";
+	
+	NSAssert([resultOnIOS isEqualToString:resultOnMac], @"Output on Paragraph Test differs");
+	
+	
+}
+
+
 - (id)initWithFrame:(CGRect)frame {
     
     self = [super initWithFrame:frame];
@@ -33,6 +66,13 @@
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
+	
+	[self testParagraphs];
+	[self testHeaderParagraphs];
+	
+	
+	NSString *readmePath = [[NSBundle mainBundle] pathForResource:@"README" ofType:@"html"];
+	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
 
     // Drawing code.
 	
@@ -40,10 +80,33 @@
 	
 	//NSString *html = @"<b>bold</b>,<i>italic</i>,<em>emphasized</em>,<strong>strong</strong> string.\n\tand a tab \t and a tab";
 	
-	NSString *html = @"<font face=\"Helvetica\" color=\"red\">red <b>bold</b></font><br>Standard<br/><font face=\"Courier\" color=\"blue\">blue<em> italic</font></em><br/></font>Standard";
+	//NSString *html = @"<font face=\"Helvetica\" color=\"red\">red <b>bold</b></font><br>Standard<br/><font face=\"Courier\" color=\"blue\">blue<em> italic</font></em><br/></font>Standard";
+	//NSString *html = @"Prefix<h1>One</h1><h2>One</h2><h3>One</h3><h4>One</h4><h5>One</h5><p>New Paragraph</p>Suffix";
+
+	//NSString *html = @"<h3>Header</h3>\n<p>Paragraph</p>";	
+	
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	/*
+	
+	NSLog(@"%@", [string string]);
+	
+	
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	
+	for (int i=0; i<[dump length]; i++)
+	{
+		char *bytes = (char *)[dump bytes];
+		
+		char b = bytes[i];
+		
+		NSLog(@"%x %c", b, b);
+	}
+	
+	
+	NSLog(@"%@", dump);
+	
 	
 	NSDictionary *attributes;
 	
@@ -59,6 +122,7 @@
 			break;
 		}
 	}
+	 */
 	
 	// now for the actual drawing
 	CGContextRef context = UIGraphicsGetCurrentContext();

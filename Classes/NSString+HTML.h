@@ -14,4 +14,6 @@
 - (NSDictionary *)dictionaryOfAttributesFromTag;
 - (NSUInteger)integerValueFromHex;
 
+- (void)dump;
+
 @end

@@ -79,4 +79,9 @@
     return result;
 }
 
+- (void)dump
+{
+	
+}
+
 @end

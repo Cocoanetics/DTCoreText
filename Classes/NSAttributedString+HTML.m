@@ -15,6 +15,46 @@
 NSString *NSBaseURLDocumentOption = @"BaseURL";
 NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 
+
+CTParagraphStyleRef createDefaultParagraphStyle()
+{
+	CTTextAlignment alignment = kCTNaturalTextAlignment;
+	CGFloat firstLineIndent = 0.0;
+	CGFloat defaultTabInterval = 36.0;
+	CFArrayRef tabStops = NULL;
+	
+	CTParagraphStyleSetting settings[] = {
+		{kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
+		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
+		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
+		{kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops}
+		
+	};	
+	
+	return CTParagraphStyleCreate(settings, 4);
+}
+
+CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacing)
+{
+	CTTextAlignment alignment = kCTNaturalTextAlignment;
+	CGFloat firstLineIndent = 0.0;
+	CGFloat defaultTabInterval = 36.0;
+	CFArrayRef tabStops = NULL;
+	
+	
+	CTParagraphStyleSetting settings[] = {
+		{kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
+		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
+		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
+		{kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops},
+		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing}
+	};	
+	
+	return CTParagraphStyleCreate(settings, 5);
+}
+
+
+
 @implementation NSAttributedString (HTML)
 
 
@@ -56,49 +96,8 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 	
 	
 	CGFloat currentFontSize = 12.0;
-	
-	/*
-	 kCTParagraphStyleSpecifierAlignment = 0,
-	 kCTParagraphStyleSpecifierFirstLineHeadIndent = 1,
-	 kCTParagraphStyleSpecifierHeadIndent = 2,
-	 kCTParagraphStyleSpecifierTailIndent = 3,
-	 kCTParagraphStyleSpecifierTabStops = 4,
-	 kCTParagraphStyleSpecifierDefaultTabInterval = 5,
-	 kCTParagraphStyleSpecifierLineBreakMode = 6,
-	 kCTParagraphStyleSpecifierLineHeightMultiple = 7,
-	 kCTParagraphStyleSpecifierMaximumLineHeight = 8,
-	 kCTParagraphStyleSpecifierMinimumLineHeight = 9,
-	 kCTParagraphStyleSpecifierLineSpacing = 10,
-	 kCTParagraphStyleSpecifierParagraphSpacing = 11,
-	 kCTParagraphStyleSpecifierParagraphSpacingBefore = 12,
-	 kCTParagraphStyleSpecifierBaseWritingDirection = 13,
-	 kCTParagraphStyleSpecifierCount = 14
-	 };
-	 */
-	
-	
-	// same defaults as OSX:
-	/*  NSParagraphStyle = "Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, 
-	 TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode 0, Tabs (\n), 
-	 DefaultTabInterval 36, Blocks (null), Lists (null), BaseWritingDirection 0, HyphenationFactor 0, TighteningFactor 0.05, HeaderLevel 0";
-	 */
-	
-	CTTextAlignment alignment = kCTNaturalTextAlignment;
-	CGFloat firstLineIndent = 0.0;
-	CGFloat defaultTabInterval = 36.0;
-	CFArrayRef tabStops = NULL;
-	
-	CTParagraphStyleSetting settings[] = {
-		{kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
-		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
-		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
-		{kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops},
+	BOOL seenPreviousParagraph = NO;
 		
-	};	
-	
-	
-	CTParagraphStyleRef defaultParagraphStyle = CTParagraphStyleCreate(settings, 4);
-	
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = [NSCharacterSet newlineCharacterSet];
 	
@@ -146,11 +145,102 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 				{
 					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
 				}
+				else if ([lowercaseTag hasPrefix:@"h"])
+				{
+					if (tagOpen)
+					{
+						NSInteger headerLevel = 0;
+						NSScanner *scanner = [NSScanner scannerWithString:lowercaseTag];
+						
+						// skip h
+						[scanner scanString:@"h" intoString:NULL];
+						
+						if ([scanner scanInteger:&headerLevel])
+						{
+							[currentTag setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"HeaderLevel"];	
+							[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];
+							
+							switch (headerLevel) 
+							{
+								case 1:
+								{
+									[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
+									[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
+									break;
+								}
+								case 2:
+								{
+									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
+									[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+									break;
+								}
+								case 3:
+								{
+									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
+									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
+
+									break;
+								}
+								case 4:
+								{
+									[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
+									[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+									break;
+								}
+								case 5:
+								{
+									[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
+									[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+									break;
+								}
+								default:
+									break;
+							}
+							
+						}
+						
+						if (![[tmpString string] hasSuffix:@"\n"])
+						{
+							// add newline
+							NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
+							[tmpString appendAttributedString:newLine];
+						}
+						
+						// first paragraph after a header needs a newline to not stick to header
+						seenPreviousParagraph = NO;
+					}
+				}
+				else if ([lowercaseTag isEqualToString:@"p"])
+				{
+					if (tagOpen)
+					{
+						[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
+						
+						if (!seenPreviousParagraph)
+						{
+							if (![[tmpString string] hasSuffix:@"\n"])
+							{
+								// add newline
+								NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
+								[tmpString appendAttributedString:newLine];
+							}
+						}
+					}
+					else 
+					{
+						// add newline
+						NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
+						[tmpString appendAttributedString:newLine];
+					}
+
+					seenPreviousParagraph = YES;
+				}
 				else if ([lowercaseTag isEqualToString:@"br"])
 				{
-					NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
+					// add newline
+					NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\u2028"] autorelease];
 					[tmpString appendAttributedString:newLine];
-
+					
 					immediatelyClosed = YES; 
 				}
 			}
@@ -192,13 +282,10 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 			
 			if (tagOpen&&!immediatelyClosed)
 			{
-				NSLog(@"push %@ %@", tagName, currentTag);
 				[tagStack addObject:currentTag];
 			}
 			else if (!tagOpen)
 			{
-				NSLog(@"pop %@ %@", tagName, [tagStack lastObject]);
-				
 				if ([tagStack count])
 				{
 					[tagStack removeLastObject];
@@ -215,7 +302,6 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 			else if (immediatelyClosed)
 			{
 				// if it's immediately closed it's not relevant for following body
-				NSLog(@"Immediately closed: %@ %@", tagName, currentTag);
 				currentTag = [tagStack lastObject];
 			}
 		}
@@ -243,10 +329,14 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 					symbolicStyle |= kCTFontBoldTrait;
 				}
 				
-				
-				NSLog(@"text: %@ %@", tagContents, currentTagAttributes);
-				
+					
 				NSString *fontFace = [currentTagAttributes objectForKey:@"face"];
+				CGFloat fontSize = [[currentTag objectForKey:@"FontSize"] floatValue];
+				
+				if (fontSize==0)
+				{
+					fontSize = currentFontSize;
+				}
 				
 				
 				[fontStyleAttributes setObject:[NSNumber numberWithInt:symbolicStyle] forKey:(NSString *)kCTFontSymbolicTrait];
@@ -264,13 +354,15 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 
 				
 				CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
-				CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, currentFontSize, NULL);
+				CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, fontSize, NULL);
 				
+				CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
+				CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacing);
 				
 				NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 				
 				[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-				[attributes setObject:(id)defaultParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+				[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
 				
 				NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
 				
@@ -284,19 +376,21 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 					}
 				}
 				
+				// HTML ignores newlines
+				tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+				
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 				
 				[tmpString appendAttributedString:tagString];
 				
 				CFRelease(font);
 				CFRelease(fontDesc);
+				CFRelease(paragraphStyle);
 			}
 			
 		}
 		
 	}
-	
-	CFRelease(defaultParagraphStyle);
 	
 	return [self initWithAttributedString:tmpString];
 }
