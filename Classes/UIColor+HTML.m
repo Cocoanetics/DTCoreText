@@ -6,6 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "UIColor+HTML.h"
 #import "NSString+HTML.h"
 

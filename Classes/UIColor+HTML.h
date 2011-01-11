@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class UIColor;
 
 @interface UIColor (HTML)
 
