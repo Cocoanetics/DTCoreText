@@ -28,12 +28,14 @@
 		A734320512DC501400044B3C /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = A734320412DC501400044B3C /* README.html */; };
 		A73BC3EF12D9F5AD00F064C6 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
-		A73BC48E12DA078100F064C6 /* TextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* TextView.m */; };
+		A73BC48E12DA078100F064C6 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */; };
 		A73BC5EA12DA1B5200F064C6 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC5E912DA1B5200F064C6 /* NSString+HTML.m */; };
 		A73BC61112DA1D1D00F064C6 /* UIColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC61012DA1D1D00F064C6 /* UIColor+HTML.m */; };
 		A76E5A3112DD862000711782 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5A3012DD862000711782 /* NSScanner+HTML.m */; };
 		A76E5A3212DD862000711782 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5A3012DD862000711782 /* NSScanner+HTML.m */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
+		A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
+		A76E5BDA12DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,8 +64,8 @@
 		A73BC3ED12D9F5AD00F064C6 /* NSAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+HTML.h"; sourceTree = "<group>"; };
 		A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+HTML.m"; sourceTree = "<group>"; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		A73BC48C12DA078100F064C6 /* TextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextView.h; sourceTree = "<group>"; };
-		A73BC48D12DA078100F064C6 /* TextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextView.m; sourceTree = "<group>"; };
+		A73BC48C12DA078100F064C6 /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
+		A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextContentView.m; sourceTree = "<group>"; };
 		A73BC5E812DA1B5200F064C6 /* NSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
 		A73BC5E912DA1B5200F064C6 /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
 		A73BC60F12DA1D1D00F064C6 /* UIColor+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HTML.h"; sourceTree = "<group>"; };
@@ -71,6 +73,8 @@
 		A76E5A2F12DD862000711782 /* NSScanner+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+HTML.h"; sourceTree = "<group>"; };
 		A76E5A3012DD862000711782 /* NSScanner+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+HTML.m"; sourceTree = "<group>"; };
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextView.h; sourceTree = "<group>"; };
+		A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,7 @@
 			children = (
 				A7342FF512DC343B00044B3C /* Demo */,
 				A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */,
+				A76E5CBA12DDAA6300711782 /* UI */,
 				6A5A32BA12DD106D0019AAF1 /* UnitTest */,
 			);
 			path = Classes;
@@ -198,11 +203,20 @@
 				1D3623250D0F684500981E51 /* CoreTextExtensionsAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* CoreTextExtensionsViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* CoreTextExtensionsViewController.m */,
-				A73BC48C12DA078100F064C6 /* TextView.h */,
-				A73BC48D12DA078100F064C6 /* TextView.m */,
 				A734320412DC501400044B3C /* README.html */,
 			);
 			name = Demo;
+			sourceTree = "<group>";
+		};
+		A76E5CBA12DDAA6300711782 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */,
+				A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */,
+				A73BC48C12DA078100F064C6 /* DTAttributedTextContentView.h */,
+				A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */,
+			);
+			name = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,7 +263,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				ORGANIZATIONNAME = "Infinite Loop";
+				ORGANIZATIONNAME = Drobnik.com;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CoreTextExtensions" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -316,10 +330,11 @@
 				1D3623260D0F684500981E51 /* CoreTextExtensionsAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* CoreTextExtensionsViewController.m in Sources */,
 				A73BC3EF12D9F5AD00F064C6 /* NSAttributedString+HTML.m in Sources */,
-				A73BC48E12DA078100F064C6 /* TextView.m in Sources */,
+				A73BC48E12DA078100F064C6 /* DTAttributedTextContentView.m in Sources */,
 				A73BC5EA12DA1B5200F064C6 /* NSString+HTML.m in Sources */,
 				A73BC61112DA1D1D00F064C6 /* UIColor+HTML.m in Sources */,
 				A76E5A3112DD862000711782 /* NSScanner+HTML.m in Sources */,
+				A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +349,7 @@
 				6A5A32D012DD11960019AAF1 /* NSStringHTMLTest.m in Sources */,
 				6A5A32D912DD12260019AAF1 /* NSAttributedString+HTML.m in Sources */,
 				A76E5A3212DD862000711782 /* NSScanner+HTML.m in Sources */,
+				A76E5BDA12DD9FEB00711782 /* DTAttributedTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

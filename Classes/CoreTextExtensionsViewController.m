@@ -7,6 +7,8 @@
 //
 
 #import "CoreTextExtensionsViewController.h"
+#import "DTAttributedTextContentView.h"
+#import "NSAttributedString+HTML.h"
 
 @implementation CoreTextExtensionsViewController
 
@@ -30,12 +32,19 @@
 */
 
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+	
+	NSString *readmePath = [[NSBundle mainBundle] pathForResource:@"README" ofType:@"html"];
+	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	
+	[(DTAttributedTextContentView *)self.view setString:string];
 }
-*/
+
 
 
 /*

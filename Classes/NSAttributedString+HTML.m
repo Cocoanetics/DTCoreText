@@ -246,8 +246,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 								}
 								case 6:
 								{
-									[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
-									[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+									[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
+									[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
 									break;
 								}
 								default:
