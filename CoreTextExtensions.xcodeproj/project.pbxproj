@@ -33,6 +33,16 @@
 		A73BC61112DA1D1D00F064C6 /* UIColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC61012DA1D1D00F064C6 /* UIColor+HTML.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A76E589312DD68FD00711782 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
+			remoteInfo = UnitTest;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* CoreTextExtensionsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextExtensionsAppDelegate.h; sourceTree = "<group>"; };
@@ -209,6 +219,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A76E589412DD68FD00711782 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -326,6 +337,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A76E589412DD68FD00711782 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
+			targetProxy = A76E589312DD68FD00711782 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
