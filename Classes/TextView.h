@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 @interface TextView : UIView {
-
+	//CATextLayer *textLayer;
 }
 
 @end

@@ -42,4 +42,20 @@
 }
 
 
+- (void)testListParagraphs
+{
+	NSString *html = @"<p>Before</p><ul><li>One</li><li>Two</li></ul><p>After</p>";	
+	
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<4265666f 72650a09 e280a209 4f6e650a 09e280a2 0954776f 0a416674 65720a>";
+	
+	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+}
+
+
 @end

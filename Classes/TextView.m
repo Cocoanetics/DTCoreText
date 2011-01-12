@@ -19,14 +19,37 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code.
+		
+		
+
     }
     return self;
 }
 
+/*
+ // Example: Using CATextLayer. But it ignores paragraph spacing!
+ 
++ (Class)layerClass
+{
+	return [CATextLayer class];
+}
+
 - (void)awakeFromNib
 {
-	//self.backgroundColor = [UIColor colorWithHTMLName:@"purple"];
+	NSString *readmePath = [[NSBundle mainBundle] pathForResource:@"README" ofType:@"html"];
+	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	
+	CATextLayer *textLayer = (CATextLayer *)self.layer;
+	
+	textLayer.frame = CGRectInset(self.bounds, 10, 10);
+	textLayer.string = string;
+	textLayer.wrapped = YES;
 }
+ 
+ */
 
 
 // Only override drawRect: if you perform custom drawing.
@@ -34,6 +57,7 @@
 - (void)drawRect:(CGRect)rect {
 	NSString *readmePath = [[NSBundle mainBundle] pathForResource:@"README" ofType:@"html"];
 	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
+	//NSString *html = @"<p>At <em>present</em> the following tags are <b>supported</b>:</p><ul><li>H1-H6</li><li>P</li><li>B, I, STRONG, EM</li><li>FONT (face and color, not size)</li></ul><p>Currently";
 
     // Drawing code.
 	
@@ -45,11 +69,11 @@
 	//NSString *html = @"Prefix<h1>One</h1><h2>One</h2><h3>One</h3><h4>One</h4><h5>One</h5><p>New Paragraph</p>Suffix";
 
 	//NSString *html = @"<h3>Header</h3>\n<p>Paragraph</p>";	
+	//html = @"<p>Before</p><ul><li>One</li><li>Two</li></ul><p>After</p>";
 	
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
-	/*
 	
 	NSLog(@"%@", [string string]);
 	
@@ -83,7 +107,7 @@
 			break;
 		}
 	}
-	 */
+	 
 	
 	// now for the actual drawing
 	CGContextRef context = UIGraphicsGetCurrentContext();
@@ -101,9 +125,7 @@
 	// left column form
 	CGMutablePathRef leftColumnPath = CGPathCreateMutable();
 	CGPathAddRect(leftColumnPath, NULL, 
-				  CGRectMake(0, 0, 
-							 self.bounds.size.width,
-							 self.bounds.size.height));
+				CGRectInset(self.bounds, 10, 10));
 	
 	// left column frame
 	CTFrameRef leftFrame = CTFramesetterCreateFrame(framesetter, 

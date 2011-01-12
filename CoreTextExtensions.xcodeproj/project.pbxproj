@@ -31,17 +31,10 @@
 		A73BC48E12DA078100F064C6 /* TextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* TextView.m */; };
 		A73BC5EA12DA1B5200F064C6 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC5E912DA1B5200F064C6 /* NSString+HTML.m */; };
 		A73BC61112DA1D1D00F064C6 /* UIColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC61012DA1D1D00F064C6 /* UIColor+HTML.m */; };
+		A76E5A3112DD862000711782 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5A3012DD862000711782 /* NSScanner+HTML.m */; };
+		A76E5A3212DD862000711782 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5A3012DD862000711782 /* NSScanner+HTML.m */; };
+		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		A76E589312DD68FD00711782 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
-			remoteInfo = UnitTest;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -75,6 +68,9 @@
 		A73BC5E912DA1B5200F064C6 /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
 		A73BC60F12DA1D1D00F064C6 /* UIColor+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HTML.h"; sourceTree = "<group>"; };
 		A73BC61012DA1D1D00F064C6 /* UIColor+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HTML.m"; sourceTree = "<group>"; };
+		A76E5A2F12DD862000711782 /* NSScanner+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+HTML.h"; sourceTree = "<group>"; };
+		A76E5A3012DD862000711782 /* NSScanner+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+HTML.m"; sourceTree = "<group>"; };
+		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +82,7 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
 				A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */,
+				A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,6 +158,7 @@
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 				A73BC42812DA014300F064C6 /* CoreText.framework */,
+				A76E5B4812DD9AF500711782 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,6 +185,8 @@
 				A73BC5E912DA1B5200F064C6 /* NSString+HTML.m */,
 				A73BC60F12DA1D1D00F064C6 /* UIColor+HTML.h */,
 				A73BC61012DA1D1D00F064C6 /* UIColor+HTML.m */,
+				A76E5A2F12DD862000711782 /* NSScanner+HTML.h */,
+				A76E5A3012DD862000711782 /* NSScanner+HTML.m */,
 			);
 			name = "NSAttributedString HTML Additions";
 			sourceTree = "<group>";
@@ -219,7 +219,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				A76E589412DD68FD00711782 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -266,8 +265,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* CoreTextExtensions */,
 				6A5A32BF12DD108D0019AAF1 /* UnitTest */,
+				1D6058900D05DD3D006BFB54 /* CoreTextExtensions */,
 			);
 		};
 /* End PBXProject section */
@@ -320,6 +319,7 @@
 				A73BC48E12DA078100F064C6 /* TextView.m in Sources */,
 				A73BC5EA12DA1B5200F064C6 /* NSString+HTML.m in Sources */,
 				A73BC61112DA1D1D00F064C6 /* UIColor+HTML.m in Sources */,
+				A76E5A3112DD862000711782 /* NSScanner+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,18 +333,11 @@
 				6A5A32CD12DD11740019AAF1 /* NSAttributedStringHTMLTest.m in Sources */,
 				6A5A32D012DD11960019AAF1 /* NSStringHTMLTest.m in Sources */,
 				6A5A32D912DD12260019AAF1 /* NSAttributedString+HTML.m in Sources */,
+				A76E5A3212DD862000711782 /* NSScanner+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A76E589412DD68FD00711782 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
-			targetProxy = A76E589312DD68FD00711782 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

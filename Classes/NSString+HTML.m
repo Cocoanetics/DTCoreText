@@ -79,9 +79,17 @@
     return result;
 }
 
-- (void)dump
+- (BOOL)isInlineTag
 {
+	NSString *tag = [self lowercaseString];
 	
+	BOOL inlineTag = ([tag isEqualToString:@"font"] || 
+					  [tag isEqualToString:@"b"] ||
+					  [tag isEqualToString:@"strong"] ||
+					  [tag isEqualToString:@"em"] ||
+					  [tag isEqualToString:@"i"]);
+	
+	return inlineTag;
 }
 
 @end
