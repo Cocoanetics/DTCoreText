@@ -20,6 +20,24 @@
 @end
 
 
+/* Callbacks */
+void MyDeallocationCallback( void* refCon ){
+    NSLog(@"Deallocation being set %@", refCon);
+}
+CGFloat MyGetAscentCallback( void *refCon ){
+    NSLog(@"Ascent being set");
+    return 20;
+}
+CGFloat MyGetDescentCallback( void *refCon ){
+    NSLog(@"Descent being set");
+    return 10;
+}
+
+CGFloat MyGetWidthCallback( void* refCon ){
+    NSLog(@"Width being set");
+    return 10;
+}
+
 @implementation DTAttributedTextContentView
 
 - (id)initWithFrame:(CGRect)frame {
@@ -132,6 +150,29 @@
 	if (string != _string)
 	{
 		[_string release];
+		
+		/*
+		
+		NSMutableAttributedString *tmpStr =[string mutableCopy];
+		// create the delegate
+		CTRunDelegateCallbacks callbacks;
+		callbacks.version = kCTRunDelegateCurrentVersion;
+		callbacks.dealloc = MyDeallocationCallback;
+		callbacks.getAscent = MyGetAscentCallback;
+		callbacks.getDescent = MyGetDescentCallback;
+		callbacks.getWidth = MyGetWidthCallback;
+		CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, NULL);
+		
+		// set the delegate as an attribute
+		NSDictionary *dict = [NSDictionary dictionaryWithObject:(id)delegate forKey:(id)kCTRunDelegateAttributeName] ;
+		[tmpStr setAttributes:dict range:NSMakeRange(0, [tmpStr	length])];
+		//CFAttributedStringSetAttribute((CFMutableAttributedStringRef)tmpStr, CFRangeMake(0, [tmp), , delegate);
+		
+		 CFRelease(delegate);
+		
+		_string = [tmpStr copy];
+		[tmpStr release];
+		 */
 		
 		_string = [string retain];
 		

@@ -87,7 +87,10 @@
 					  [tag isEqualToString:@"b"] ||
 					  [tag isEqualToString:@"strong"] ||
 					  [tag isEqualToString:@"em"] ||
-					  [tag isEqualToString:@"i"]);
+					  [tag isEqualToString:@"i"] ||
+					  [tag isEqualToString:@"sub"] ||
+					  [tag isEqualToString:@"sup"] ||
+					  [tag isEqualToString:@"u"]);
 	
 	return inlineTag;
 }

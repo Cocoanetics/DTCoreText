@@ -1,11 +1,33 @@
 <h2>NSAttributedString HTML Additions</h2>
 <h3>Introduction</h3>
-<p>This project aims to duplicate the methods present on Mac OSX which allow creation of <font face="Courier" color="blue">NSAttributedString</font> from HTML code.
+<p>This project aims to duplicate the methods <u>present on Mac OSX</u> which allow creation of <font face="Courier" color="blue">NSAttributedString</font> from HTML code.
 This is useful for drawing simple rich text - like this document - without having to use a UIWebView.</p>
 <h3>Features</h3>
 <p>At <em>present</em> the following tags are <b>supported</b>:</p>
-<ul><li>H1-H6</li><li>P</li><li>B, I, STRONG, EM</li><li>FONT (face and color, not size). It would be great if we could support many more styles</li></ul>
+<ul><li>Headers <b>H1</b> - <b>H6</b></li><li>Paragraphs: <b>P</b></li><li>Bold: <b>B</b>, <b>STRONG</b></li><li>Italic: <b>I</b>, <b>EM</b></li>
+<li>Underline <b>U</b></li>
+<li>Superscript <b>SUP</b> and Subscript <b>SUB</b>, e.g. e = mc<sup>2</sup> (Drawing missing)</li>
+<li><b>FONT</b> (face and color, not size). It would be great if we could support many more styles</li>
+<li>Unordered Lists <b>LI</b></li>
+<li>Ordered Lists <b>OL</b></li></ul>
 <p>Currently attributes are inherited by enclosed tags via 'brute force'. I don't know if this is accurate.</p>
 <h3>To Do</h3>
-<p>There is still quite a few more things to do on the project. OL, UL, DEL, possibly CSS styles as they related to fonts and text formatting.</p>
+<h4>NSAttributedString+HTML</h4>
+<ol>
+<li>Decode HTML Entities</li>
+<li>A HREF tags, to format links</li>
+<li>More styles, as far as supported by CoreText</li>
+</ol>
+<h4>DTAttributedTextView</h4>
+<ol>
+<li>Run Delegate: make room for IMG and draw the IMG</li>
+<li>Run Delegate: Characters with super/subscript need baseline adjusted when drawn</li>
+<li>Caret Positioning</li>
+<li>Hit Detection on strings attributed with HREF</li>
+<li>Text Insertion</li>
+<li>Editing!</li>
+</ol>
+<p>There is still quite a few more things to do on the project. DEL, possibly CSS styles as they related to fonts and text formatting.</p>
+
+<h3>Please Help!</h3>
 <p>If you find brief test cases where the created <font face="Courier" color="blue">NSAttributedString</font> differs from the version on OSX please send them to us!</p><p>Follow <font color="red">@cocoanetics</font> on Twitter</p>

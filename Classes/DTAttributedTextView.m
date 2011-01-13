@@ -52,11 +52,6 @@
 {
 	self.contentView.string = string;
 	self.contentSize = contentView.bounds.size;
-	
-	CGSize size1 = contentView.bounds.size;
-	CGSize size2 = self.contentSize;
-	
-	NSLog(@"%@ %@", NSStringFromCGSize(size1), NSStringFromCGSize(size2));
 }
 
 @synthesize string;
