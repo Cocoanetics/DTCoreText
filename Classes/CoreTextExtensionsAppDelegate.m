@@ -16,12 +16,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
+	// Create window
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
+	// Create view controller and set it as the window's root view controller
 	CoreTextExtensionsViewController *viewController = [[CoreTextExtensionsViewController alloc] init];
 	window.rootViewController = viewController;
 	[viewController release];
 	
+	// Display the window
     [window makeKeyAndVisible];
 
     return YES;
