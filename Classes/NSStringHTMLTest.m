@@ -8,10 +8,6 @@
 
 #import "NSStringHTMLTest.h"
 
-
 @implementation NSStringHTMLTest
-
-
-
 
 @end

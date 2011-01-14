@@ -6,8 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 @class DTAttributedTextContentView;
 
 @interface DTAttributedTextView : UIScrollView 

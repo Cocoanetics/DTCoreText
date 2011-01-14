@@ -8,7 +8,6 @@
 
 #import "NSString+HTML.h"
 
-
 @implementation NSString (HTML)
 
 - (NSDictionary *)dictionaryOfAttributesFromTag
@@ -19,9 +18,9 @@
 	
 	NSScanner *attributeScanner = [NSScanner scannerWithString:stringToScan];
 	
-	//NSMutableArray *attributeArray = [NSMutableArray array];
+//	NSMutableArray *attributeArray = [NSMutableArray array];
 	
-	// skip leading <tagname
+	// Skip leading <tagname
 	
 	NSString *temp = nil;
 	
@@ -34,7 +33,6 @@
 	
 	while (![attributeScanner isAtEnd])
 	{
-		
 		NSString *attrName = nil;
 		NSString *attrValue = nil;
 		
@@ -70,6 +68,7 @@
 	}
 }
 
+
 - (NSUInteger)integerValueFromHex
 {
     NSScanner *scanner = [NSScanner scannerWithString:self];
@@ -78,6 +77,7 @@
 	
     return result;
 }
+
 
 - (BOOL)isInlineTag
 {

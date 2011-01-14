@@ -6,14 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-#import <UIKit/UIKit.h>
-//#import "application_headers" as required
-
-
 @interface NSStringHTMLTest : SenTestCase {
 
 }
-
 
 @end

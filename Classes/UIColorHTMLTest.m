@@ -11,7 +11,6 @@
 
 @implementation UIColorHTMLTest
 
-
 - (void) testValidColorWithHexString
 {
     UIColor *htmlColor;
@@ -47,6 +46,5 @@
 	STAssertNotNil(htmlColor, @"Failed to create purple color");
 	STAssertEqualObjects(namedColor, htmlColor, @"Hmmm... purple is not purple");
 }
-
 
 @end

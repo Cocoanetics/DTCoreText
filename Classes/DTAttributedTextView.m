@@ -7,33 +7,22 @@
 //
 
 #import "DTAttributedTextView.h"
-
 #import "DTAttributedTextContentView.h"
 
 @implementation DTAttributedTextView
 
-
-- (id)initWithFrame:(CGRect)frame {
-    
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code.
-    }
-    return self;
-}
-
-
 - (void)layoutSubviews
 {
-	self.contentView; // trigger adding if not happened
+	self.contentView; // Trigger adding if not happened
 }
+
 
 - (void)dealloc 
 {
 	[contentView release];
-	
     [super dealloc];
 }
+
 
 #pragma mark Properties
 - (DTAttributedTextContentView *)contentView

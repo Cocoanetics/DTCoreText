@@ -34,6 +34,7 @@
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 		A76E5BDA12DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
+		B2B440C712E030DF00497B74 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextView.h; sourceTree = "<group>"; };
 		A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
+		B2B4410412E0316C00497B74 /* CoreTextExtensionsUnitTest_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextExtensionsUnitTest_Prefix.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* CoreTextExtensions_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				B2B4410412E0316C00497B74 /* CoreTextExtensionsUnitTest_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				6A5A32D912DD12260019AAF1 /* NSAttributedString+HTML.m in Sources */,
 				A76E5A3212DD862000711782 /* NSScanner+HTML.m in Sources */,
 				A76E5BDA12DD9FEB00711782 /* DTAttributedTextView.m in Sources */,
+				B2B440C712E030DF00497B74 /* DTAttributedTextContentView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,7 +393,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CoreTextExtensionsUnitTest_Prefix.pch;
 				INFOPLIST_FILE = "UnitTest-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -418,6 +425,8 @@
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CoreTextExtensionsUnitTest_Prefix.pch;
 				INFOPLIST_FILE = "UnitTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",

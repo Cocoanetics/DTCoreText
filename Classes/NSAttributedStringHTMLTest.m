@@ -11,7 +11,6 @@
 
 @implementation NSAttributedStringHTMLTest
 
-
 - (void)testParagraphs
 {
 	NSString *html = @"Prefix<p>One\ntwo\n<br>three</p><p>New Paragraph</p>Suffix";
@@ -56,6 +55,5 @@
 	
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
-
 
 @end

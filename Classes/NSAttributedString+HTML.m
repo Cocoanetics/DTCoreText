@@ -7,12 +7,12 @@
 //
 
 #import "NSAttributedString+HTML.h"
-
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import "NSScanner+HTML.h"
+#import <CoreText/CoreText.h>
 
-// allows variations to cater for different behavior on iOS than OSX to have similar visual output
+// Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
 
 /* Known Differences:
@@ -22,7 +22,6 @@
 
 NSString *NSBaseURLDocumentOption = @"BaseURL";
 NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
-
 
 CTParagraphStyleRef createDefaultParagraphStyle()
 {
@@ -42,6 +41,7 @@ CTParagraphStyleRef createDefaultParagraphStyle()
 	return CTParagraphStyleCreate(settings, 4);
 }
 
+
 CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops)
 {
 	CTTextAlignment alignment = kCTNaturalTextAlignment;
@@ -55,7 +55,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	{
 		textTabs = [NSMutableArray array];
 		
-		// convert from NSNumber to CTTextTab
+		// Convert from NSNumber to CTTextTab
 		for (NSNumber *num in tabStops)
 		{
 			CTTextTabRef tab = CTTextTabCreate(kCTLeftTextAlignment, [num floatValue], NULL);
@@ -78,9 +78,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 }
 
 
-
 @implementation NSAttributedString (HTML)
-
 
 - (id)initWithHTML:(NSData *)data documentAttributes:(NSDictionary **)dict
 {
@@ -91,15 +89,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 - (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict
 {
 	NSDictionary *optionsDict = [NSDictionary dictionaryWithObject:base forKey:NSBaseURLDocumentOption];
-	
 	return [self initWithHTML:data options:optionsDict documentAttributes:dict];
 }
 
 
-
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
-	// specify the appropriate text encoding for the passed data, default is UTF8 
+	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
 	
@@ -109,7 +105,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
 	
-	// make it a string
+	// Make it a string
 	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
 	
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
@@ -120,7 +116,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 	CGFloat currentFontSize = 12.0;
 	BOOL seenPreviousParagraph = NO;
-	NSInteger listCounter = 0;  // unordered, set to 1 to get ordered list
+	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
 	
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
@@ -132,17 +128,17 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	{
 		if ([scanner scanString:@"<" intoString:NULL])
 		{
-			// tag
+			// Tag
 			BOOL tagOpen = YES;
 			BOOL immediatelyClosed = NO;
 			
 			if ([scanner scanString:@"/" intoString:NULL])
 			{
-				// close of tag
+				// Close of tag
 				tagOpen = NO;
 			}
 			
-			// read the tag name
+			// Read the tag name
 			NSString *tagName = nil;
 			if ([scanner scanCharactersFromSet:tagCharacters intoString:&tagName])
 			{
@@ -256,7 +252,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						NSInteger headerLevel = 0;
 						NSScanner *scanner = [NSScanner scannerWithString:lowercaseTag];
 						
-						// skip h
+						// Skip h
 						[scanner scanString:@"h" intoString:NULL];
 						
 						if ([scanner scanInteger:&headerLevel])
@@ -306,19 +302,18 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 								default:
 									break;
 							}
-							
 						}
 						
 						/*
 						 if (![[tmpString string] hasSuffix:@"\n"])
 						 {
-						 // add newline
+						 // Add newline
 						 NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
 						 [tmpString appendAttributedString:newLine];
 						 }
 						 */
 						
-						// first paragraph after a header needs a newline to not stick to header
+						// First paragraph after a header needs a newline to not stick to header
 						seenPreviousParagraph = NO;
 					}
 				}
@@ -351,15 +346,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 #endif
 			
-			
-			// read until end of tag
-			
+			// Read until end of tag
 			
 			NSString *attributesStr = nil;
 			NSDictionary *tagAttributesDict = nil;
 			if ([scanner scanUpToString:@">" intoString:&attributesStr])
 			{
-				// do something with the attributes
+				// Do something with the attributes
 				tagAttributesDict = [[[attributesStr dictionaryOfAttributesFromTag] mutableCopy] autorelease];
 				
 				NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
@@ -378,12 +371,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				if ([attributesStr hasSuffix:@"/"])
 				{
-					// tag is immediately terminated like <br/>
+					// Tag is immediately terminated like <br/>
 					immediatelyClosed = YES;
 				}
 			}
 			
-			// skip ending of tag
+			// Skip ending of tag
 			[scanner scanString:@">" intoString:NULL];
 			
 			if (tagOpen&&!immediatelyClosed)
@@ -401,19 +394,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					currentTag = nil;
 				}
-				
-				
-				;
 			}
 			else if (immediatelyClosed)
 			{
-				// if it's immediately closed it's not relevant for following body
+				// If it's immediately closed it's not relevant for following body
 				currentTag = [tagStack lastObject];
 			}
 		}
 		else 
 		{
-			// must be contents of tag
+			// Must be contents of tag
 			NSString *tagContents = nil;
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
@@ -435,15 +425,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					symbolicStyle |= kCTFontBoldTrait;
 				}
 				
-				
 				NSString *fontFace = [currentTagAttributes objectForKey:@"face"];
 				CGFloat fontSize = [[currentTag objectForKey:@"FontSize"] floatValue];
 				
 				if (fontSize==0)
 				{
 					fontSize = currentFontSize;
-				}
-				
+				}				
 				
 				[fontStyleAttributes setObject:[NSNumber numberWithInt:symbolicStyle] forKey:(NSString *)kCTFontSymbolicTrait];
 				
@@ -460,7 +448,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 
 				NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 				
-				// FIXME: characters with super/subscript need baseline adjusted when drawn
+				// FIXME: Characters with super/subscript need baseline adjusted when drawn
 				NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
 				if ([superscriptStyle intValue])
 				{
@@ -479,10 +467,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops);
 				
-				
 				[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 				[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-			
 				
 				NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
 				
@@ -502,8 +488,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
 				}
 
-
-				
 				// HTML ignores newlines
 				tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 				
@@ -517,7 +501,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
 					else
 					{
-						// ul li prefixes bullet
+						// Ul li prefixes bullet
 						tagContents = [@"\x09\u2022\x09" stringByAppendingString:tagContents];
 					}
 					
@@ -525,14 +509,14 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 				}
 				
-				// add newline after block contents if a new block follows
+				// Add newline after block contents if a new block follows
 				
 				
 				NSString *nextTag = [scanner peekNextTag];
 				
 				if ([nextTag isEqualToString:@"br"])
 				{
-					// add linefeed
+					// Add linefeed
 					tagContents = [tagContents stringByAppendingString:@"\u2028"];
 				}
 				
@@ -544,8 +528,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 				[tmpString appendAttributedString:tagString];
 				[tagString release];
-				
-				
 				
 				CFRelease(font);
 				CFRelease(fontDesc);

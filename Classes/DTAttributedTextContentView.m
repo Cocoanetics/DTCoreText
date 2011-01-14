@@ -10,7 +10,7 @@
 #import "NSAttributedString+HTML.h"
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
-
+#import <QuartzCore/QuartzCore.h>
 
 @interface DTAttributedTextContentView ()
 
@@ -41,14 +41,10 @@ CGFloat MyGetWidthCallback( void* refCon ){
 @implementation DTAttributedTextContentView
 
 - (id)initWithFrame:(CGRect)frame {
-    
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code.
-		
+    if ((self = [super initWithFrame:frame])) {
 		self.contentMode = UIViewContentModeRedraw;
 		self.backgroundColor = [UIColor whiteColor];
-		
+		self.opaque = YES;
     }
     return self;
 }
@@ -83,12 +79,12 @@ CGFloat MyGetWidthCallback( void* refCon ){
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
-	// flip the coordinate system
+	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextTranslateCTM(context, 0, self.bounds.size.height);
 	CGContextScaleCTM(context, 1.0, -1.0);
 	
-	// draw
+	// Draw
 	CTFrameDraw(self.textFrame, context);
 }
 
@@ -110,6 +106,7 @@ CGFloat MyGetWidthCallback( void* refCon ){
     [super dealloc];
 }
 
+
 - (CGSize)sizeThatFits:(CGSize)size
 {
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
@@ -118,6 +115,7 @@ CGFloat MyGetWidthCallback( void* refCon ){
 	
 	return CGSizeMake(self.bounds.size.width, ceilf(neededSize.height+20));
 }
+
 
 #pragma mark Properties
 - (CTFramesetterRef) framesetter
@@ -129,6 +127,7 @@ CGFloat MyGetWidthCallback( void* refCon ){
 	
 	return framesetter;
 }
+
 
 - (CTFrameRef)textFrame
 {
@@ -144,6 +143,7 @@ CGFloat MyGetWidthCallback( void* refCon ){
 	
 	return textFrame;
 }
+
 
 - (void)setString:(NSAttributedString *)string
 {
@@ -195,10 +195,8 @@ CGFloat MyGetWidthCallback( void* refCon ){
 	}
 }
 
-
 @synthesize framesetter;
 @synthesize textFrame;
 @synthesize string = _string;
-
 
 @end
