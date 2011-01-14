@@ -1,4 +1,0 @@
-This project aims to duplicate the methods present on Mac OSX which allow creation of NSAttributedString
- from HTML code on iOS.
-
-This is useful for drawing simple rich text like any HTML document without having to use a UIWebView.
