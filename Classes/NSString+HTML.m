@@ -8,6 +8,8 @@
 
 #import "NSString+HTML.h"
 
+static NSSet *inlineTags = nil;
+
 @implementation NSString (HTML)
 
 - (NSDictionary *)dictionaryOfAttributesFromTag
@@ -81,18 +83,13 @@
 
 - (BOOL)isInlineTag
 {
-	NSString *tag = [self lowercaseString];
+	if (!inlineTags)
+	{
+		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
+					  @"u", @"a", nil];
+	}
 	
-	BOOL inlineTag = ([tag isEqualToString:@"font"] || 
-					  [tag isEqualToString:@"b"] ||
-					  [tag isEqualToString:@"strong"] ||
-					  [tag isEqualToString:@"em"] ||
-					  [tag isEqualToString:@"i"] ||
-					  [tag isEqualToString:@"sub"] ||
-					  [tag isEqualToString:@"sup"] ||
-					  [tag isEqualToString:@"u"]);
-	
-	return inlineTag;
+	return [inlineTags containsObject:[self lowercaseString]];
 }
 
 @end
