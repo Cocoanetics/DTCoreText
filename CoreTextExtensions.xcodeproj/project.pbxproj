@@ -363,6 +363,7 @@
 				GCC_PREFIX_HEADER = CoreTextExtensions_Prefix.pch;
 				INFOPLIST_FILE = "CoreTextExtensions-Info.plist";
 				PRODUCT_NAME = CoreTextExtensions;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -375,6 +376,7 @@
 				GCC_PREFIX_HEADER = CoreTextExtensions_Prefix.pch;
 				INFOPLIST_FILE = "CoreTextExtensions-Info.plist";
 				PRODUCT_NAME = CoreTextExtensions;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
