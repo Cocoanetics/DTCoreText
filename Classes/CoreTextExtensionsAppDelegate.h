@@ -8,9 +8,11 @@
 
 @class CoreTextExtensionsViewController;
 
-@interface CoreTextExtensionsAppDelegate : NSObject <UIApplicationDelegate> {
-	
+@interface CoreTextExtensionsAppDelegate : NSObject <UIApplicationDelegate> 
+{
     UIWindow *window;
+	
+	CoreTextExtensionsViewController *viewController;
 }
 
 @property (nonatomic, retain) UIWindow *window;

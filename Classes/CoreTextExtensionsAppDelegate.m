@@ -20,19 +20,20 @@
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	// Create view controller and set it as the window's root view controller
-	CoreTextExtensionsViewController *viewController = [[CoreTextExtensionsViewController alloc] init];
-	window.rootViewController = viewController;
-	[viewController release];
+	viewController = [[CoreTextExtensionsViewController alloc] init];
 	
 	// Display the window
+	[window addSubview:viewController.view];
     [window makeKeyAndVisible];
 
     return YES;
 }
 
 
-- (void)dealloc {
+- (void)dealloc 
+{
     [window release];
+	[viewController release];
     [super dealloc];
 }
 
