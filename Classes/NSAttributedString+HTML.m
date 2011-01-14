@@ -6,11 +6,13 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <CoreText/CoreText.h>
+
 #import "NSAttributedString+HTML.h"
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import "NSScanner+HTML.h"
-#import <CoreText/CoreText.h>
+#import "NSAttributedStringRunDelegates.h"
 
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
@@ -40,7 +42,6 @@ CTParagraphStyleRef createDefaultParagraphStyle()
 	
 	return CTParagraphStyleCreate(settings, 4);
 }
-
 
 CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops)
 {
@@ -149,6 +150,40 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				[currentTag setDictionary:[tagStack lastObject]];
 				
 				[currentTag setObject:lowercaseTag forKey:@"_tag"];
+				
+				
+				// Read attributes of tag
+				
+				NSString *attributesStr = nil;
+				NSDictionary *tagAttributesDict = nil;
+				if ([scanner scanUpToString:@">" intoString:&attributesStr])
+				{
+					tagAttributesDict = [[[attributesStr dictionaryOfAttributesFromTag] mutableCopy] autorelease];
+					
+					NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
+					
+					if (tagAttributesDict)
+					{
+						if (existingDict)
+						{
+							[existingDict setDictionary:tagAttributesDict];
+						}
+						else 
+						{
+							[currentTag setObject:tagAttributesDict forKey:@"Attributes"];
+						}
+					}
+					
+					if ([attributesStr hasSuffix:@"/"])
+					{
+						// Tag is immediately terminated like <br/>
+						immediatelyClosed = YES;
+					}
+				}
+				
+				// Skip ending of tag
+				[scanner scanString:@">" intoString:NULL];
+				
 				
 				
 				if ([lowercaseTag isEqualToString:@"b"])
@@ -304,15 +339,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 							}
 						}
 						
-						/*
-						 if (![[tmpString string] hasSuffix:@"\n"])
-						 {
-						 // Add newline
-						 NSAttributedString *newLine = [[[NSAttributedString alloc] initWithString:@"\n"] autorelease];
-						 [tmpString appendAttributedString:newLine];
-						 }
-						 */
-						
 						// First paragraph after a header needs a newline to not stick to header
 						seenPreviousParagraph = NO;
 					}
@@ -340,44 +366,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					[currentTag setObject:[NSNumber numberWithFloat:nextParagraphAdditionalSpaceBefore] forKey:@"ParagraphSpacingBefore"];	
 					nextParagraphAdditionalSpaceBefore = 0;
-					
-					NSLog(@"Added extra to %@", tagName);
 				}
 			}
 #endif
-			
-			// Read until end of tag
-			
-			NSString *attributesStr = nil;
-			NSDictionary *tagAttributesDict = nil;
-			if ([scanner scanUpToString:@">" intoString:&attributesStr])
-			{
-				// Do something with the attributes
-				tagAttributesDict = [[[attributesStr dictionaryOfAttributesFromTag] mutableCopy] autorelease];
-				
-				NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
-				
-				if (tagAttributesDict)
-				{
-					if (existingDict)
-					{
-						[existingDict setDictionary:tagAttributesDict];
-					}
-					else 
-					{
-						[currentTag setObject:tagAttributesDict forKey:@"Attributes"];
-					}
-				}
-				
-				if ([attributesStr hasSuffix:@"/"])
-				{
-					// Tag is immediately terminated like <br/>
-					immediatelyClosed = YES;
-				}
-			}
-			
-			// Skip ending of tag
-			[scanner scanString:@">" intoString:NULL];
 			
 			if (tagOpen&&!immediatelyClosed)
 			{
@@ -448,12 +439,18 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 
 				NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 				
-				// FIXME: Characters with super/subscript need baseline adjusted when drawn
 				NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
 				if ([superscriptStyle intValue])
 				{
 					fontSize = fontSize / 1.2;
 					[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
+					
+				}
+
+				id runDelegate = [currentTag objectForKey:@"RunDelegate"];
+				if (runDelegate)
+				{
+					[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
 				}
 				
 				CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);

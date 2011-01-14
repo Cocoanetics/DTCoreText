@@ -19,25 +19,6 @@
 
 @end
 
-
-/* Callbacks */
-void MyDeallocationCallback( void* refCon ){
-    NSLog(@"Deallocation being set %@", refCon);
-}
-CGFloat MyGetAscentCallback( void *refCon ){
-    NSLog(@"Ascent being set");
-    return 20;
-}
-CGFloat MyGetDescentCallback( void *refCon ){
-    NSLog(@"Descent being set");
-    return 10;
-}
-
-CGFloat MyGetWidthCallback( void* refCon ){
-    NSLog(@"Width being set");
-    return 10;
-}
-
 @implementation DTAttributedTextContentView
 
 - (id)initWithFrame:(CGRect)frame {
