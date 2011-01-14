@@ -7,28 +7,39 @@
 //
 
 #import "NSAttributedStringRunDelegates.h"
-
+#import "DTTextAttachment.h"
 
 void embeddedObjectDeallocCallback(void *context)
 {
-    NSLog(@"Deallocation being set %@", context);
 }
 
 CGFloat embeddedObjectGetAscentCallback(void *context)
 {
-    NSLog(@"Ascent being set");
-    return 0;
+	if ([(id)context isKindOfClass:[DTTextAttachment class]])
+	{
+		return [(DTTextAttachment *)context size].height;
+	}
+    
+	return 0;
 }
 CGFloat embeddedObjectGetDescentCallback(void *context)
 {
-    NSLog(@"Descent being set");
-    return 100;
+	if ([(id)context isKindOfClass:[DTTextAttachment class]])
+	{
+		return 0;
+	}
+
+    return 0;
 }
 
-CGFloat embeddedObjectGetWidthCallback(void *context)
+CGFloat embeddedObjectGetWidthCallback(void * context)
 {
-    NSLog(@"Width being set");
-    return 10;
+	if ([(id)context isKindOfClass:[DTTextAttachment class]])
+	{
+		return [(DTTextAttachment *)context size].width;
+	}
+	
+	return 0;
 }
 
 CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context)

@@ -13,6 +13,7 @@
 #import "UIColor+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSAttributedStringRunDelegates.h"
+#import "DTTextAttachment.h"
 
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
@@ -21,6 +22,10 @@
  - OSX has an entire attributes block for an UL block
  - OSX does not add extra space after UL block
  */
+
+// TODO: Decode HTML Entities
+// TODO: make attributes case independent (currently lowercase)
+
 
 NSString *NSBaseURLDocumentOption = @"BaseURL";
 NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
@@ -185,7 +190,42 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				[scanner scanString:@">" intoString:NULL];
 				
 				
-				
+				if ([lowercaseTag isEqualToString:@"image"])
+				{
+					NSString *src = [tagAttributesDict objectForKey:@"src"];
+					CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
+					CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
+					
+					// assume it's a relative file URL
+					NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+					UIImage *image = [UIImage imageWithContentsOfFile:path];
+					
+					if (image)
+					{
+						if (!width)
+						{
+							width = image.size.width;
+						}
+						
+						if (!height)
+						{
+							height = image.size.height;
+						}
+					}
+					
+					DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+					attachment.contents = image;
+					attachment.size = CGSizeMake(width, height);
+					
+					CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+					NSDictionary *localAttributes = [NSDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
+													 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, nil];
+					CFRelease(embeddedObjectRunDelegate);
+					
+					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\ufffc" attributes:localAttributes] autorelease];
+					
+					[tmpString appendAttributedString:string];
+				}
 				if ([lowercaseTag isEqualToString:@"b"])
 				{
 					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
@@ -228,6 +268,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						}
 					}
 					
+				}
+				else if ([lowercaseTag isEqualToString:@"del"]) 
+				{
+					if (tagOpen)
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];
+					}
 				}
 				else if ([lowercaseTag isEqualToString:@"ol"]) 
 				{
@@ -348,7 +395,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					if (tagOpen)
 					{
 						[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"ParagraphSpacing"];
-					
+						
 						seenPreviousParagraph = YES;
 					}
 					
@@ -358,7 +405,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					immediatelyClosed = YES; 
 				}
 			}
-
+			
 #if ALLOW_IPHONE_SPECIAL_CASES				
 			if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
 			{
@@ -436,7 +483,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					[fontAttributes setObject:@"Times New Roman" forKey:(id)kCTFontFamilyNameAttribute];
 				}
-
+				
 				NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 				
 				NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
@@ -446,8 +493,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
 					
 				}
-
-				id runDelegate = [currentTag objectForKey:@"RunDelegate"];
+				
+				id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
 				if (runDelegate)
 				{
 					[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
@@ -484,7 +531,14 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
 				}
-
+				
+				NSNumber *strikeOut = [currentTag objectForKey:@"_StrikeOut"];
+				
+				if (strikeOut)
+				{
+					[attributes setObject:strikeOut forKey:@"_StrikeOut"];
+				}
+				
 				// HTML ignores newlines
 				tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 				
