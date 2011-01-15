@@ -7,6 +7,7 @@
 //
 
 #import "NSScanner+HTML.h"
+#import "NSCharacterSet+HTML.h"
 
 @implementation NSScanner (HTML)
 
@@ -37,85 +38,120 @@
 		
 		[scanner scanString:@"<" intoString:NULL];
 	} while (skipClosingTags&&[scanner scanString:@"/" intoString:NULL]);
-
+	
 	NSString *nextTag = nil;
 	
-	NSCharacterSet *tagCharacters = [NSCharacterSet alphanumericCharacterSet];
-	[scanner scanCharactersFromSet:tagCharacters intoString:&nextTag];
+	[scanner scanCharactersFromSet:[NSCharacterSet tagNameCharacterSet] intoString:&nextTag];
 	
 	return [nextTag lowercaseString];
 }
 
-- (NSString *)peekNextTag1 // SkippedAlpha:(BOOL *)didSkipAlpha
+- (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
 {
-	NSScanner *scanner = [[self copy] autorelease];
-	
-		NSString *textUpToNextTag = nil;
-		
-	
-		if ([scanner scanUpToString:@"<" intoString:&textUpToNextTag])
-		{
-			// Check if there are alpha chars after the end tag
-			NSScanner *subScanner = [NSScanner scannerWithString:textUpToNextTag];
-			[subScanner scanUpToString:@">" intoString:NULL];
-			[subScanner scanString:@">" intoString:NULL];
-			
-			// Rest might be alpha
-			NSString *rest = [[textUpToNextTag substringFromIndex:subScanner.scanLocation] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			
-			// We don't want a newline in this case so we send back any inline character
-			if ([rest length])
-			{
-				return @"b";
-			}
-		}
-		
-		[scanner scanString:@"<" intoString:NULL];
+	if (![self scanString:@"<" intoString:NULL])
+	{
+		return NO;
+	}
 	
 	BOOL tagOpen = YES;
+	BOOL immediatelyClosed = NO;
 	
-	if ([scanner scanString:@"/" intoString:NULL])
+	NSCharacterSet *tagCharacterSet = [NSCharacterSet tagNameCharacterSet];
+	NSCharacterSet *quoteCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"'\""];
+	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	
+	NSString *scannedTagName = nil;
+	NSMutableDictionary *tmpAttributes = [NSMutableDictionary dictionary];
+	
+	if ([self scanString:@"/" intoString:NULL])
 	{
 		// Close of tag
 		tagOpen = NO;
 	}
 	
-	NSString *nextTag = nil;
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+
+	// Read the tag name
+	if (![self scanCharactersFromSet:tagCharacterSet intoString:&scannedTagName])
+	{
+		return NO;
+	}
+
+	// make tags lowercase
+	scannedTagName = [scannedTagName lowercaseString];
 	
-	NSCharacterSet *tagCharacters = [NSCharacterSet alphanumericCharacterSet];
-	[scanner scanCharactersFromSet:tagCharacters intoString:&nextTag];
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	
-	return [nextTag lowercaseString];
+	// Read attributes of tag
+	while (![self isAtEnd])
+	{
+		if ([self scanString:@"/" intoString:NULL])
+		{
+			
+			immediatelyClosed = YES;
+			break;
+		}
+		
+		if ([self scanString:@">" intoString:NULL])
+		{
+			break;
+		}
+		
+		NSString *attrName = nil;
+		NSString *attrValue = nil;
+		
+		if (![self scanCharactersFromSet:tagCharacterSet intoString:&attrName])
+		{
+			return NO;
+		}
+		
+		attrName = [attrName lowercaseString];
+		
+		if (![self scanString:@"=" intoString:nil])
+		{
+			// solo attribute
+			[tmpAttributes setObject:attrName forKey:attrName];
+		}
+		else 
+		{
+			// attribute = value
+			NSString *quote = nil;
+			
+			if ([self scanCharactersFromSet:quoteCharacterSet intoString:&quote])
+			{
+				[self scanUpToString:quote intoString:&attrValue];	
+				[self scanString:quote intoString:NULL];
+				
+				[tmpAttributes setObject:attrValue forKey:attrName];
+			}
+		}
+		
+		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	}
+	
+	// Success 
+	if (isClosed)
+	{
+		*isClosed = immediatelyClosed;
+	}
+	
+	if (isOpen)
+	{
+		*isOpen = tagOpen;
+	}
+	
+	if (attributes)
+	{
+		*attributes = [NSDictionary dictionaryWithDictionary:tmpAttributes];
+	}
+	
+	if (tagName)
+	{
+		*tagName = scannedTagName;
+	}
+	
+	return YES;
 }
 
-//- (BOOL)hasTextBeforeEndOfTag(NSString *)currentTag
-//{
-//	BOOL b = NO;
-//	
-//	NSScanner *scanner = [[self copy] autorelease];
-//
-//	do
-//	{
-//		// Skip until end of current tag
-//		[scanner scanUpToString:@">" intoString:NULL];
-//		[scanner scanString:@">" intoString:NULL];
-//
-//		// see if there a alpha right after it
-//		if ([scanner scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:NULL])
-//		{
-//			b = YES;
-//		}
-//
-//		[scanner scanUpToString:@"<" intoString:NULL];
-//		[scanner scanString:@"<" intoString:NULL];
-//	} while ([scanner scanString:@"/" intoString:NULL]);
-//	
-//	NSString *nextTag = nil;
-//	
-//	NSCharacterSet *tagCharacters = [NSCharacterSet alphanumericCharacterSet];
-//	[scanner scanCharactersFromSet:tagCharacters intoString:&nextTag];
-//	
-//	return [nextTag lowercaseString];
-//}
 
 @end

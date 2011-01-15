@@ -41,6 +41,12 @@ static NSDictionary *colorLookup = nil;
 // From http://www.w3schools.com/html/html_colornames.asp
 + (UIColor *)colorWithHTMLName:(NSString *)name
 {
+	if ([name hasPrefix:@"#"])
+	{
+		return [UIColor colorWithHexString:[name substringFromIndex:1]];
+	}
+	
+	
 	if (!colorLookup)
 	{
 		colorLookup = [[NSDictionary alloc] initWithObjectsAndKeys:

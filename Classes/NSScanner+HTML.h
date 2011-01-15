@@ -9,5 +9,6 @@
 @interface NSScanner (HTML)
 
 - (NSString *)peekNextTagSkippingClosingTags:(BOOL)skipClosingTags;
+- (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed;
 
 @end

@@ -120,7 +120,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	htmlString = [htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
-	NSCharacterSet *tagCharacters = [NSCharacterSet alphanumericCharacterSet];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
 	
@@ -139,336 +138,326 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	
 	while (![scanner isAtEnd]) 
 	{
-		if ([scanner scanString:@"<" intoString:NULL])
+		NSString *tagName = nil;
+		NSDictionary *tagAttributesDict = nil;
+		BOOL tagOpen = YES;
+		BOOL immediatelyClosed = NO;
+		
+		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed])
 		{
-			// Tag
-			BOOL tagOpen = YES;
-			BOOL immediatelyClosed = NO;
-			
-			if ([scanner scanString:@"/" intoString:NULL])
+			if (![tagName isInlineTag])
 			{
-				// Close of tag
-				tagOpen = NO;
+				// next text needs a NL
+				needsNewLineBefore = YES;
 			}
 			
-			// Read the tag name
-			NSString *tagName = nil;
-			if ([scanner scanCharactersFromSet:tagCharacters intoString:&tagName])
+			currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
+			[currentTag setDictionary:[tagStack lastObject]];
+			[currentTag setObject:tagName forKey:@"_tag"];
+			
+			
+			// make mutable, we might want to add attributes
+			tagAttributesDict = [NSMutableDictionary dictionaryWithDictionary:tagAttributesDict];
+			
+			NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
+			if (tagAttributesDict)
 			{
-				NSString *lowercaseTag = [tagName lowercaseString];
-				
-				
-				if (![lowercaseTag isInlineTag])
+				if (existingDict)
 				{
-					// next text needs a NL
-					needsNewLineBefore = YES;
+					[existingDict setDictionary:tagAttributesDict];
 				}
-				
-				currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
-				
-				[currentTag setDictionary:[tagStack lastObject]];
-				
-				[currentTag setObject:lowercaseTag forKey:@"_tag"];
-				
-				
-				// Read attributes of tag
-				
-				NSString *attributesStr = nil;
-				NSDictionary *tagAttributesDict = nil;
-				if ([scanner scanUpToString:@">" intoString:&attributesStr])
+				else 
 				{
-					tagAttributesDict = [[[attributesStr dictionaryOfAttributesFromTag] mutableCopy] autorelease];
-					
-					NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
-					
-					if (tagAttributesDict)
+					[currentTag setObject:tagAttributesDict forKey:@"Attributes"];
+				}
+			}
+			
+			
+			// ---------- Processing
+			
+			if ([tagName isEqualToString:@"image"] && tagOpen)
+			{
+				immediatelyClosed = YES;
+				
+				NSString *src = [tagAttributesDict objectForKey:@"src"];
+				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
+				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
+				
+				// assume it's a relative file URL
+				NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+				UIImage *image = [UIImage imageWithContentsOfFile:path];
+				
+				if (image)
+				{
+					if (!width)
 					{
-						if (existingDict)
-						{
-							[existingDict setDictionary:tagAttributesDict];
-						}
-						else 
-						{
-							[currentTag setObject:tagAttributesDict forKey:@"Attributes"];
-						}
+						width = image.size.width;
 					}
 					
-					if ([attributesStr hasSuffix:@"/"])
+					if (!height)
 					{
-						// Tag is immediately terminated like <br/>
-						immediatelyClosed = YES;
+						height = image.size.height;
 					}
 				}
 				
-				// Skip ending of tag
-				[scanner scanString:@">" intoString:NULL];
+				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+				attachment.contents = image;
+				attachment.size = CGSizeMake(width, height);
 				
+				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+				NSDictionary *localAttributes = [NSDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
+												 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, nil];
+				CFRelease(embeddedObjectRunDelegate);
 				
-				if ([lowercaseTag isEqualToString:@"image"] && tagOpen)
+				if (needsNewLineBefore)
 				{
-					immediatelyClosed = YES;
-					
-					NSString *src = [tagAttributesDict objectForKey:@"src"];
-					CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
-					CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
-					
-					// assume it's a relative file URL
-					NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-					UIImage *image = [UIImage imageWithContentsOfFile:path];
-					
-					if (image)
+					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-						if (!width)
-						{
-							width = image.size.width;
-						}
+						//NSDictionary *previousAttributes = [tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:NULL];
 						
-						if (!height)
-						{
-							height = image.size.height;
-						}
+						NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+						[tmpString appendAttributedString:string];
 					}
 					
-					DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
-					attachment.contents = image;
-					attachment.size = CGSizeMake(width, height);
+					needsNewLineBefore = NO;
+				}
+				
+				NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
+				[tmpString appendAttributedString:string];
+			}
+			else if ([tagName isEqualToString:@"a"])
+			{
+				if (tagOpen)
+				{
+					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
+					NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
+					[currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
 					
-					CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
-					NSDictionary *localAttributes = [NSDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
-													 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, nil];
-					CFRelease(embeddedObjectRunDelegate);
+					NSURL *link = [NSURL URLWithString:[tagAttributesDict objectForKey:@"href"]];
 					
-					if (needsNewLineBefore)
+					if (link)
 					{
-						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
-						{
-							//NSDictionary *previousAttributes = [tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:NULL];
-							
-							NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
-							[tmpString appendAttributedString:string];
-						}
-						
-						needsNewLineBefore = NO;
+						[currentTag setObject:link forKey:@"DTLink"];
 					}
 					
-					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
-					[tmpString appendAttributedString:string];
+					NSLog(@"%@", currentTag);
 				}
-				if ([lowercaseTag isEqualToString:@"b"])
+			}
+			else if ([tagName isEqualToString:@"b"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
+			}
+			else if ([tagName isEqualToString:@"i"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
+			}
+			else if ([tagName isEqualToString:@"strong"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
+			}
+			else if ([tagName isEqualToString:@"li"]) 
+			{
+				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
-				}
-				else if ([lowercaseTag isEqualToString:@"i"])
-				{
-					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
-				}
-				else if ([lowercaseTag isEqualToString:@"strong"])
-				{
-					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
-				}
-				else if ([lowercaseTag isEqualToString:@"li"]) 
-				{
-					if (tagOpen)
-					{
-						needsListItemStart = YES;
-						[currentTag setObject:[NSNumber numberWithFloat:0.0] forKey:@"ParagraphSpacing"];
-						
-						
-						
+					needsListItemStart = YES;
+					[currentTag setObject:[NSNumber numberWithFloat:0.0] forKey:@"ParagraphSpacing"];
+					
+					
+					
 #if ALLOW_IPHONE_SPECIAL_CASES						
-						[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
-						[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-											   [NSNumber numberWithFloat:25.0], nil] forKey:@"TabStops"];
+					[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
+					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
+										   [NSNumber numberWithFloat:25.0], nil] forKey:@"TabStops"];
 #else
-						[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
-						[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-											   [NSNumber numberWithFloat:36.0], nil] forKey:@"TabStops"];
-						
-#endif
-					}
-					else 
-					{
-						needsListItemStart = NO;
-						
-						if (listCounter)
-						{
-							listCounter++;
-						}
-					}
+					[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
+					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
+										   [NSNumber numberWithFloat:36.0], nil] forKey:@"TabStops"];
 					
+#endif
 				}
-				else if ([lowercaseTag isEqualToString:@"del"]) 
+				else 
 				{
-					if (tagOpen)
+					needsListItemStart = NO;
+					
+					if (listCounter)
 					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];
+						listCounter++;
 					}
 				}
-				else if ([lowercaseTag isEqualToString:@"ol"]) 
+				
+			}
+			else if ([tagName isEqualToString:@"del"]) 
+			{
+				if (tagOpen)
 				{
-					if (tagOpen)
-					{
-						listCounter = 1;
-					} 
-					else 
-					{
+					[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];
+				}
+			}
+			else if ([tagName isEqualToString:@"ol"]) 
+			{
+				if (tagOpen)
+				{
+					listCounter = 1;
+				} 
+				else 
+				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
-						nextParagraphAdditionalSpaceBefore = 12.0;
+					nextParagraphAdditionalSpaceBefore = 12.0;
 #endif
-					}
 				}
-				else if ([lowercaseTag isEqualToString:@"ul"]) 
+			}
+			else if ([tagName isEqualToString:@"ul"]) 
+			{
+				if (tagOpen)
 				{
-					if (tagOpen)
-					{
-						listCounter = 0;
-					}
-					else 
-					{
+					listCounter = 0;
+				}
+				else 
+				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
-						nextParagraphAdditionalSpaceBefore = 12.0;
+					nextParagraphAdditionalSpaceBefore = 12.0;
 #endif
-					}
 				}
-				else if ([lowercaseTag isEqualToString:@"em"])
+			}
+			else if ([tagName isEqualToString:@"em"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
+			}
+			else if ([tagName isEqualToString:@"u"])
+			{
+				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
+					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
 				}
-				else if ([lowercaseTag isEqualToString:@"u"])
+			}
+			else if ([tagName isEqualToString:@"sup"])
+			{
+				if (tagOpen)
 				{
-					if (tagOpen)
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-					}
+					[currentTag setObject:[NSNumber numberWithInt:1] forKey:@"Superscript"];
 				}
-				else if ([lowercaseTag isEqualToString:@"sup"])
+			}
+			else if ([tagName isEqualToString:@"sub"])
+			{
+				if (tagOpen)
 				{
-					if (tagOpen)
-					{
-						[currentTag setObject:[NSNumber numberWithInt:1] forKey:@"Superscript"];
-					}
+					[currentTag setObject:[NSNumber numberWithInt:-1] forKey:@"Superscript"];
 				}
-				else if ([lowercaseTag isEqualToString:@"sub"])
+			}
+			else if ([tagName hasPrefix:@"h"])
+			{
+				if (tagOpen)
 				{
-					if (tagOpen)
-					{
-						[currentTag setObject:[NSNumber numberWithInt:-1] forKey:@"Superscript"];
-					}
-				}
-				else if ([lowercaseTag hasPrefix:@"h"])
-				{
-					if (tagOpen)
-					{
-						NSInteger headerLevel = 0;
-						NSScanner *scanner = [NSScanner scannerWithString:lowercaseTag];
-						
-						// Skip h
-						[scanner scanString:@"h" intoString:NULL];
-						
-						if ([scanner scanInteger:&headerLevel])
-						{
-							[currentTag setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"HeaderLevel"];	
-							[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];
-							
-							switch (headerLevel) 
-							{
-								case 1:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
-									[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
-									break;
-								}
-								case 2:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
-									[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
-									break;
-								}
-								case 3:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
-									[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
-									
-									break;
-								}
-								case 4:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
-									[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
-									break;
-								}
-								case 5:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
-									[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
-									break;
-								}
-								case 6:
-								{
-									[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
-									[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
-									break;
-								}
-								default:
-									break;
-							}
-						}
-						
-						// First paragraph after a header needs a newline to not stick to header
-						seenPreviousParagraph = NO;
-					}
+					NSInteger headerLevel = 0;
+					NSScanner *scanner = [NSScanner scannerWithString:tagName];
 					
+					// Skip h
+					[scanner scanString:@"h" intoString:NULL];
 					
-					
-				}
-				else if ([lowercaseTag isEqualToString:@"font"])
-				{
-					if (tagOpen)
+					if ([scanner scanInteger:&headerLevel])
 					{
-						NSInteger size = [[tagAttributesDict objectForKey:@"size"] intValue];
+						[currentTag setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"HeaderLevel"];	
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];
 						
-						switch (size) 
+						switch (headerLevel) 
 						{
 							case 1:
-								[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
-								break;
-							case 2:
-								[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
-								break;
-							case 4:
-								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
-								break;
-							case 5:
-								[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
-								break;
-							case 6:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
 								[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
 								break;
-							case 7:
-								[currentTag setObject:[NSNumber numberWithFloat:37.0] forKey:@"FontSize"];
-								break;	
+							}
+							case 2:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
+								[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+								break;
+							}
 							case 3:
-							default:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
+								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
+								
+								break;
+							}
+							case 4:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
 								[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+								break;
+							}
+							case 5:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
+								[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+								break;
+							}
+							case 6:
+							{
+								[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
+								[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
+								break;
+							}
+							default:
 								break;
 						}
 					}
-				}
-				else if ([lowercaseTag isEqualToString:@"p"])
-				{
-					if (tagOpen)
-					{
-						[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"ParagraphSpacing"];
-						
-						seenPreviousParagraph = YES;
-					}
 					
+					// First paragraph after a header needs a newline to not stick to header
+					seenPreviousParagraph = NO;
 				}
-				else if ([lowercaseTag isEqualToString:@"br"])
+				
+				
+				
+			}
+			else if ([tagName isEqualToString:@"font"])
+			{
+				if (tagOpen)
 				{
-					immediatelyClosed = YES; 
+					NSInteger size = [[tagAttributesDict objectForKey:@"size"] intValue];
+					
+					switch (size) 
+					{
+						case 1:
+							[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
+							break;
+						case 2:
+							[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+							break;
+						case 4:
+							[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
+							break;
+						case 5:
+							[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+							break;
+						case 6:
+							[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
+							break;
+						case 7:
+							[currentTag setObject:[NSNumber numberWithFloat:37.0] forKey:@"FontSize"];
+							break;	
+						case 3:
+						default:
+							[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+							break;
+					}
 				}
 			}
+			else if ([tagName isEqualToString:@"p"])
+			{
+				if (tagOpen)
+				{
+					[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"ParagraphSpacing"];
+					
+					seenPreviousParagraph = YES;
+				}
+				
+			}
+			else if ([tagName isEqualToString:@"br"])
+			{
+				immediatelyClosed = YES; 
+			}
+			
 			
 #if ALLOW_IPHONE_SPECIAL_CASES				
 			if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
@@ -515,11 +504,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			
 			
-			
 		}
 		else 
 		{
-			// Must be contents of tag
+			//----------------------------------------- TAG CONTENTS -----------------------------------------
 			NSString *tagContents = nil;
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])

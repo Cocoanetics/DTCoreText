@@ -8,9 +8,7 @@
 
 @interface NSString (HTML)
 
-- (NSDictionary *)dictionaryOfAttributesFromTag;
 - (NSUInteger)integerValueFromHex;
-
 - (BOOL)isInlineTag;
 
 @end
