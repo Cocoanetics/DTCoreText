@@ -13,7 +13,7 @@
 #import "UIColor+HTML.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define DRAW_DEBUG_FRAMES 1
+#define DRAW_DEBUG_FRAMES 0
 
 @interface DTAttributedTextContentView ()
 
