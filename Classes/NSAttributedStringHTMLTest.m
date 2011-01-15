@@ -56,5 +56,21 @@
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
+- (void)testImageParagraphs
+{
+	NSString *html = @"<p>Before</p><image src=\"Oliver.jpg\"><h1>Header</h2><p>after</p><p>Some inline <image src=\"Oliver.jpg\"> text.</p>";	
+	
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<4265666f 72650aef bfbc0a48 65616465 720a6166 7465720a 536f6d65 20696e6c 696e6520 efbfbc20 74657874 2e0a>";
+	
+	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+}
+
+
 
 @end

@@ -32,6 +32,8 @@
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 		A76E5BDA12DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
+		A78A322112E1D8B1007CE622 /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */; };
+		A78A322212E1D8B7007CE622 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
 		A7EA579F12E05FBF0045411B /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */; };
 		A7EA57F012E0C5590045411B /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A7EA57EF12E0C5590045411B /* Oliver.jpg */; };
 		A7EA581412E0C9010045411B /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA581312E0C9010045411B /* DTTextAttachment.m */; };
@@ -50,6 +52,16 @@
 		B235598C12E055BC005EA62F /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = B235598B12E055BC005EA62F /* LoremIpsum.html */; };
 		B2B440C712E030DF00497B74 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A78A33A012E1F59E007CE622 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
+			remoteInfo = UnitTest;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -266,6 +278,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A78A33A112E1F59E007CE622 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -396,10 +409,20 @@
 				B23558EB12E04C3C005EA62F /* main.m in Sources */,
 				B235590312E04D1F005EA62F /* DemoSnippetsViewController.m in Sources */,
 				A7EA581512E0C9010045411B /* DTTextAttachment.m in Sources */,
+				A78A322112E1D8B1007CE622 /* NSAttributedStringRunDelegates.m in Sources */,
+				A78A322212E1D8B7007CE622 /* DemoTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A78A33A112E1F59E007CE622 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A5A32BF12DD108D0019AAF1 /* UnitTest */;
+			targetProxy = A78A33A012E1F59E007CE622 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

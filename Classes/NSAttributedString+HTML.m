@@ -26,7 +26,7 @@
 // TODO: Decode HTML Entities
 // TODO: make attributes case independent (currently lowercase)
 
-#define UNICODE_OBJECT_PLACEHOLDER
+#define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
 
 
 NSString *NSBaseURLDocumentOption = @"BaseURL";
@@ -135,6 +135,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	scanner.charactersToBeSkipped = [NSCharacterSet newlineCharacterSet];
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
+	NSDictionary *previousAttributes = NULL;
 	
 	while (![scanner isAtEnd]) 
 	{
@@ -155,6 +156,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			if ([scanner scanCharactersFromSet:tagCharacters intoString:&tagName])
 			{
 				NSString *lowercaseTag = [tagName lowercaseString];
+				
+				
+				if (![lowercaseTag isInlineTag])
+				{
+					// next text needs a NL
+					needsNewLineBefore = YES;
+				}
 				
 				currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
 				
@@ -191,13 +199,15 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						immediatelyClosed = YES;
 					}
 				}
-								
+				
 				// Skip ending of tag
 				[scanner scanString:@">" intoString:NULL];
 				
 				
-				if ([lowercaseTag isEqualToString:@"image"])
+				if ([lowercaseTag isEqualToString:@"image"] && tagOpen)
 				{
+					immediatelyClosed = YES;
+					
 					NSString *src = [tagAttributesDict objectForKey:@"src"];
 					CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
 					CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
@@ -228,8 +238,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 													 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, nil];
 					CFRelease(embeddedObjectRunDelegate);
 					
-					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\ufffc" attributes:localAttributes] autorelease];
+					if (needsNewLineBefore)
+					{
+						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+						{
+							//NSDictionary *previousAttributes = [tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:NULL];
+							
+							NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+							[tmpString appendAttributedString:string];
+						}
+						
+						needsNewLineBefore = NO;
+					}
 					
+					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
 					[tmpString appendAttributedString:string];
 				}
 				if ([lowercaseTag isEqualToString:@"b"])
@@ -395,6 +417,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						// First paragraph after a header needs a newline to not stick to header
 						seenPreviousParagraph = NO;
 					}
+					
+					
+					
 				}
 				else if ([lowercaseTag isEqualToString:@"p"])
 				{
@@ -430,6 +455,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			else if (!tagOpen)
 			{
+				// block items have to have a NL at the end.
+				if (![tagName isInlineTag] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
+				{
+					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+					[tmpString appendAttributedString:string];
+				}
+				
+				needsNewLineBefore = NO;
+				
+				
 				if ([tagStack count])
 				{
 					[tagStack removeLastObject];
@@ -445,6 +480,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// If it's immediately closed it's not relevant for following body
 				currentTag = [tagStack lastObject];
 			}
+			
+			
+			
 		}
 		else 
 		{
@@ -566,34 +604,45 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					needsListItemStart = NO;
 					
 				}
-
+				
 				// Add newline after block contents if a new block follows
-				NSString *nextTag = [scanner peekNextTag];
+				NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
 				
 				if ([nextTag isEqualToString:@"br"])
 				{
 					// Add linefeed
 					tagContents = [tagContents stringByAppendingString:@"\u2028"];
 				}
-
-				// add paragraph break if this is the end of paragraph
-				if (nextTag && ![nextTag isInlineTag] || !nextTag)
+				else
 				{
-					if ([tagContents length])
+					
+					// add paragraph break if this is the end of paragraph
+					if (nextTag && ![nextTag isInlineTag])
 					{
-						tagContents = [tagContents stringByAppendingString:@"\n"];
+						if ([tagContents length])
+						{
+							tagContents = [tagContents stringByAppendingString:@"\n"];
+						}
 					}
 				}
 				
 				if (needsNewLineBefore)
 				{
-					tagContents = [@"\n" stringByAppendingString:tagContents];
+					if ([tmpString length])
+					{
+						if (![[tmpString string] hasSuffix:@"\n"])
+						{
+							tagContents = [@"\n" stringByAppendingString:tagContents];
+						}
+					}
 					needsNewLineBefore = NO;
 				}
 				
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 				[tmpString appendAttributedString:tagString];
 				[tagString release];
+				
+				previousAttributes = attributes;
 				
 				CFRelease(font);
 				CFRelease(fontDesc);

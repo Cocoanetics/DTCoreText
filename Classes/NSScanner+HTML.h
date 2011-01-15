@@ -8,6 +8,6 @@
 
 @interface NSScanner (HTML)
 
-- (NSString *)peekNextTag;
+- (NSString *)peekNextTagSkippingClosingTags:(BOOL)skipClosingTags;
 
 @end

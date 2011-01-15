@@ -143,7 +143,7 @@
 				{
 					UIImage *image = (id)attachment.contents;
 					
-					CGRect imageBounds = CGRectMake(floorf(runBounds.origin.x), floorf(runBounds.origin.y + lineDescent), 
+					CGRect imageBounds = CGRectMake(floorf(runBounds.origin.x), floorf(lineOrigin.y), 
 													attachment.size.width, attachment.size.height);
 					CGContextDrawImage(context, imageBounds, image.CGImage); 
 				}
