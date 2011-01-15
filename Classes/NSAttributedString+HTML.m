@@ -26,6 +26,8 @@
 // TODO: Decode HTML Entities
 // TODO: make attributes case independent (currently lowercase)
 
+#define UNICODE_OBJECT_PLACEHOLDER
+
 
 NSString *NSBaseURLDocumentOption = @"BaseURL";
 NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
@@ -124,6 +126,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	BOOL seenPreviousParagraph = NO;
 	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
+	BOOL needsNewLineBefore = NO;
 	
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = [NSCharacterSet newlineCharacterSet];
@@ -185,7 +188,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						immediatelyClosed = YES;
 					}
 				}
-				
+								
 				// Skip ending of tag
 				[scanner scanString:@">" intoString:NULL];
 				
@@ -417,6 +420,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 #endif
 			
+			
 			if (tagOpen&&!immediatelyClosed)
 			{
 				[tagStack addObject:currentTag];
@@ -446,6 +450,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
 			{
+				// remove whitespace
+				tagContents = [tagContents stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
 				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
 				
@@ -559,10 +566,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					needsListItemStart = NO;
 					
 				}
-				
+
 				// Add newline after block contents if a new block follows
-				
-				
 				NSString *nextTag = [scanner peekNextTag];
 				
 				if ([nextTag isEqualToString:@"br"])
@@ -570,10 +575,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					// Add linefeed
 					tagContents = [tagContents stringByAppendingString:@"\u2028"];
 				}
-				
-				if (![nextTag isInlineTag])
+
+				// add paragraph break if this is the end of paragraph
+				if (nextTag && ![nextTag isInlineTag] || !nextTag)
 				{
-					tagContents = [tagContents stringByAppendingString:@"\n"];
+					if ([tagContents length])
+					{
+						tagContents = [tagContents stringByAppendingString:@"\n"];
+					}
+				}
+				
+				if (needsNewLineBefore)
+				{
+					tagContents = [@"\n" stringByAppendingString:tagContents];
+					needsNewLineBefore = NO;
 				}
 				
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
