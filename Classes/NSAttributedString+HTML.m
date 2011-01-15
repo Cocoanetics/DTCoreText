@@ -116,6 +116,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// Make it a string
 	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
 	
+	// trim whitespace
+	htmlString = [htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
 	NSCharacterSet *tagCharacters = [NSCharacterSet alphanumericCharacterSet];
 	
@@ -450,9 +453,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
 			{
-				// remove whitespace
-				tagContents = [tagContents stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
 				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
 				
