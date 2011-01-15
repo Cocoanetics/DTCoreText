@@ -421,6 +421,39 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					
 				}
+				else if ([lowercaseTag isEqualToString:@"font"])
+				{
+					if (tagOpen)
+					{
+						NSInteger size = [[tagAttributesDict objectForKey:@"size"] intValue];
+						
+						switch (size) 
+						{
+							case 1:
+								[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
+								break;
+							case 2:
+								[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+								break;
+							case 4:
+								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
+								break;
+							case 5:
+								[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+								break;
+							case 6:
+								[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
+								break;
+							case 7:
+								[currentTag setObject:[NSNumber numberWithFloat:37.0] forKey:@"FontSize"];
+								break;	
+							case 3:
+							default:
+								[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+								break;
+						}
+					}
+				}
 				else if ([lowercaseTag isEqualToString:@"p"])
 				{
 					if (tagOpen)
