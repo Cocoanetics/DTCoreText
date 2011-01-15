@@ -13,7 +13,7 @@
 #import "UIColor+HTML.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define DRAW_DEBUG_FRAMES 0
+#define DRAW_DEBUG_FRAMES 1
 
 @interface DTAttributedTextContentView ()
 
@@ -63,26 +63,10 @@
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
-	UIGraphicsPushContext(context);
-	
-	//CGContext(context);
-	
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextTranslateCTM(context, 0, self.bounds.size.height);
 	CGContextScaleCTM(context, 1.0, -1.0);
-	
-	// Draw
-	CTFrameDraw(self.textFrame, context);
-
-	//UIGraphicsPopContext();
-
-	
-	//CGContextRestoreGState(context);
-//	CGContextSetTextPosition(context, 0, 0);
-//	CGContextScaleCTM(context, 1.0, -1.0);
-//	CGContextTranslateCTM(context, 0, -self.bounds.size.height);
-	
 	
 #if DRAW_DEBUG_FRAMES
 	CGFloat dashes[] = {1.0, 3.0};
@@ -92,12 +76,11 @@
 	
 	
 	// get lines
-	CFArrayRef lines = CTFrameGetLines(textFrame);
+	CFArrayRef lines = CTFrameGetLines(self.textFrame);
 	CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
 	CTFrameGetLineOrigins(textFrame, CFRangeMake(0, 0), origins);
 	NSInteger lineIndex = 0;
 	
-	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextSetTextPosition(context, 0, 0);
 	
 	for (id oneLine in (NSArray *)lines)
@@ -112,8 +95,7 @@
 		CGFloat lineLeading;
 		CGFloat lineWidth = CTLineGetTypographicBounds((CTLineRef)oneLine, &lineAscent, &lineDescent, &lineLeading);
 		CGRect lineBounds = CTLineGetImageBounds((CTLineRef)oneLine, context);
-		//Bounds((CTLineRef)oneLine, context);
-				
+		
 		lineBounds.origin.x += lineOrigin.x;
 		lineBounds.origin.y += lineOrigin.y;
 		lineBounds.size.height = lineAscent + lineDescent + 1;
@@ -139,36 +121,20 @@
 			CGFloat runLeading = 0;
 			
 			CGFloat runWidth = CTRunGetTypographicBounds((CTRunRef) oneRun,
-													  CFRangeMake(0, 0),
-													  &runAscent,
-													  &runDescent, &runLeading);
+														 CFRangeMake(0, 0),
+														 &runAscent,
+														 &runDescent, &runLeading);
 			
-			CGRect runBounds = CTRunGetImageBounds((CTRunRef)oneRun, 
-													 context, CFRangeMake(0, 0));
+			CGRect runImageBounds = CTRunGetImageBounds((CTRunRef)oneRun, 
+														context, CFRangeMake(0, 0));
 			
-			
+			CGRect runBounds;
 			runBounds.origin.x = offset;
 			runBounds.origin.y = lineBounds.origin.y;
 			runBounds.size.width = runWidth;
 			runBounds.size.height = runAscent + runDescent + 1;
-	
-#if DRAW_DEBUG_FRAMES			
-			if (runIndex%2)
-			{
-				CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
-			}
-			else 
-			{
-				CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
-			}
-
-			CGContextFillRect(context, runBounds);
-			runIndex ++;
-#endif
-			
 			
 			NSDictionary *attributes = (NSDictionary *)CTRunGetAttributes((CTRunRef) oneRun);
-			
 			DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
 			
 			if (attachment)
@@ -176,60 +142,73 @@
 				if ([attachment.contents isKindOfClass:[UIImage class]])
 				{
 					UIImage *image = (id)attachment.contents;
-
-					//[[UIColor whiteColor] set];
-					//CGContextFillRect(context, runBounds);
 					
 					CGRect imageBounds = CGRectMake(floorf(runBounds.origin.x), floorf(runBounds.origin.y + lineDescent), 
 													attachment.size.width, attachment.size.height);
 					CGContextDrawImage(context, imageBounds, image.CGImage); 
-					//[image drawInRect:runBounds]; 
 				}
 			}
 			
 			BOOL strikeOut = [[attributes objectForKey:@"_StrikeOut"] boolValue];
 			
-			if (strikeOut)
+			// image bounds is 0 wide on trailing newline, don't want to stroke that.
+			if (runImageBounds.size.width>0)
 			{
-				CGRect runStrokeBounds = runBounds;
-
-				// don't draw too far to the right
-				if (runStrokeBounds.origin.x + runStrokeBounds.size.width > CGRectGetMaxX(lineBounds))
+				if (strikeOut)
 				{
-					runStrokeBounds.size.width = CGRectGetMaxX(lineBounds) - runStrokeBounds.origin.x ;
+					CGRect runStrokeBounds = runBounds;
+					
+					runStrokeBounds.origin.y += roundf(runBounds.size.height/2.0);
+					
+					// get text color or use black
+					id color = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
+					
+					if (color)
+					{
+						CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+					}
+					else
+					{
+						CGContextSetGrayStrokeColor(context, 0, 1.0);
+					}
+					
+					CGContextSetLineDash(context, 0, NULL, 0);
+					CGContextSetLineWidth(context, 1);
+					
+					//CGFloat y = roundf(runStrokeBounds.origin.y + (runStrokeBounds.size.height+ runDescent)/2.0  );
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+					
+					CGContextStrokePath(context);
 				}
 				
-				runStrokeBounds.origin.y += roundf(runBounds.size.height/2.0);
 				
-				// get text color or use black
-				id color = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
-				
-				if (color)
+#if DRAW_DEBUG_FRAMES			
+				if (runIndex%2)
 				{
-					CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
 				}
-				else
+				else 
 				{
-					CGContextSetGrayStrokeColor(context, 0, 1.0);
+					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
 				}
 				
-				CGContextSetLineDash(context, 0, NULL, 0);
-				CGContextSetLineWidth(context, 1);
-				
-				//CGFloat y = roundf(runStrokeBounds.origin.y + (runStrokeBounds.size.height+ runDescent)/2.0  );
-				CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-				
-				CGContextStrokePath(context);
+				CGContextFillRect(context, runBounds);
+				runIndex ++;
+#endif
 			}
-			
 			offset += runWidth;
-			
 		}
+		
+
 	}
 	
 	// cleanup
 	free(origins);
+	
+	
+	// Draw
+	CTFrameDraw(self.textFrame, context);
 }
 
 
@@ -296,26 +275,26 @@
 		[_string release];
 		
 		/*
-		
-		NSMutableAttributedString *tmpStr =[string mutableCopy];
-		// create the delegate
-		CTRunDelegateCallbacks callbacks;
-		callbacks.version = kCTRunDelegateCurrentVersion;
-		callbacks.dealloc = MyDeallocationCallback;
-		callbacks.getAscent = MyGetAscentCallback;
-		callbacks.getDescent = MyGetDescentCallback;
-		callbacks.getWidth = MyGetWidthCallback;
-		CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, NULL);
-		
-		// set the delegate as an attribute
-		NSDictionary *dict = [NSDictionary dictionaryWithObject:(id)delegate forKey:(id)kCTRunDelegateAttributeName] ;
-		[tmpStr setAttributes:dict range:NSMakeRange(0, [tmpStr	length])];
-		//CFAttributedStringSetAttribute((CFMutableAttributedStringRef)tmpStr, CFRangeMake(0, [tmp), , delegate);
-		
+		 
+		 NSMutableAttributedString *tmpStr =[string mutableCopy];
+		 // create the delegate
+		 CTRunDelegateCallbacks callbacks;
+		 callbacks.version = kCTRunDelegateCurrentVersion;
+		 callbacks.dealloc = MyDeallocationCallback;
+		 callbacks.getAscent = MyGetAscentCallback;
+		 callbacks.getDescent = MyGetDescentCallback;
+		 callbacks.getWidth = MyGetWidthCallback;
+		 CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, NULL);
+		 
+		 // set the delegate as an attribute
+		 NSDictionary *dict = [NSDictionary dictionaryWithObject:(id)delegate forKey:(id)kCTRunDelegateAttributeName] ;
+		 [tmpStr setAttributes:dict range:NSMakeRange(0, [tmpStr	length])];
+		 //CFAttributedStringSetAttribute((CFMutableAttributedStringRef)tmpStr, CFRangeMake(0, [tmp), , delegate);
+		 
 		 CFRelease(delegate);
-		
-		_string = [tmpStr copy];
-		[tmpStr release];
+		 
+		 _string = [tmpStr copy];
+		 [tmpStr release];
 		 */
 		
 		_string = [string retain];
