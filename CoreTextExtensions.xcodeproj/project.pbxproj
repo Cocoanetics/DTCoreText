@@ -36,6 +36,10 @@
 		A78A322212E1D8B7007CE622 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
 		A78A367412E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */; };
 		A78A367512E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */; };
+		A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
+		A78A38D512E2FEAC007CE622 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
+		A78A38F812E30153007CE622 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
+		A78A38F912E30153007CE622 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
 		A7EA579F12E05FBF0045411B /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */; };
 		A7EA57F012E0C5590045411B /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A7EA57EF12E0C5590045411B /* Oliver.jpg */; };
 		A7EA581412E0C9010045411B /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA581312E0C9010045411B /* DTTextAttachment.m */; };
@@ -97,6 +101,10 @@
 		A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
 		A78A367212E23C56007CE622 /* NSCharacterSet+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+HTML.h"; sourceTree = "<group>"; };
 		A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+HTML.m"; sourceTree = "<group>"; };
+		A78A38D212E2FEAC007CE622 /* DTLinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLinkButton.h; sourceTree = "<group>"; };
+		A78A38D312E2FEAC007CE622 /* DTLinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLinkButton.m; sourceTree = "<group>"; };
+		A78A38F612E30153007CE622 /* CGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtils.h; sourceTree = "<group>"; };
+		A78A38F712E30153007CE622 /* CGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGUtils.m; sourceTree = "<group>"; };
 		A7EA579D12E05FBF0045411B /* NSAttributedStringRunDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringRunDelegates.h; sourceTree = "<group>"; };
 		A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringRunDelegates.m; sourceTree = "<group>"; };
 		A7EA57EF12E0C5590045411B /* Oliver.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Oliver.jpg; sourceTree = "<group>"; };
@@ -241,6 +249,10 @@
 				A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */,
 				A73BC48C12DA078100F064C6 /* DTAttributedTextContentView.h */,
 				A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */,
+				A78A38D212E2FEAC007CE622 /* DTLinkButton.h */,
+				A78A38D312E2FEAC007CE622 /* DTLinkButton.m */,
+				A78A38F612E30153007CE622 /* CGUtils.h */,
+				A78A38F712E30153007CE622 /* CGUtils.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -397,6 +409,8 @@
 				A7EA579F12E05FBF0045411B /* NSAttributedStringRunDelegates.m in Sources */,
 				A7EA581412E0C9010045411B /* DTTextAttachment.m in Sources */,
 				A78A367412E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */,
+				A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */,
+				A78A38F812E30153007CE622 /* CGUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +433,8 @@
 				A78A322112E1D8B1007CE622 /* NSAttributedStringRunDelegates.m in Sources */,
 				A78A322212E1D8B7007CE622 /* DemoTextViewController.m in Sources */,
 				A78A367512E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */,
+				A78A38D512E2FEAC007CE622 /* DTLinkButton.m in Sources */,
+				A78A38F912E30153007CE622 /* CGUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

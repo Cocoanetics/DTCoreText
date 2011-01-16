@@ -10,6 +10,8 @@
 #import "DTAttributedTextView.h"
 #import "NSAttributedString+HTML.h"
 
+#import "DTLinkButton.h"
+
 @interface DemoTextViewController (PrivateMethods)
 - (void)_segmentedControlChanged:(id)sender;
 @end
@@ -71,6 +73,7 @@
 	
 	// Create text view
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
+	_textView.textDelegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_textView.backgroundColor = [UIColor lightGrayColor];
 	[self.view addSubview:_textView];
@@ -152,5 +155,32 @@
 	[self.view bringSubviewToFront:selectedView];
 	[selectedView flashScrollIndicators];
 }
+
+
+#pragma mark Custom Views on Text
+- (UIView *)attributedTextView:(DTAttributedTextView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
+{
+	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
+	
+	NSURL *link = [attributes objectForKey:@"DTLink"];
+	
+	if (link)
+	{
+		DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
+		button.url = link;
+		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
+		button.alpha = 0.4;
+		return button;
+	}
+	
+	
+	return nil;
+}
+
+- (void)linkPushed:(DTLinkButton *)button
+{
+	[[UIApplication sharedApplication] openURL:button.url];
+}
+
 
 @end

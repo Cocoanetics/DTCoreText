@@ -27,6 +27,7 @@
 // TODO: make attributes case independent (currently lowercase)
 
 #define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
+#define UNICODE_LINE_FEED @"\u2028"
 
 
 NSString *NSBaseURLDocumentOption = @"BaseURL";
@@ -213,8 +214,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-						//NSDictionary *previousAttributes = [tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:NULL];
-						
 						NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
 						[tmpString appendAttributedString:string];
 					}
@@ -239,8 +238,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						[currentTag setObject:link forKey:@"DTLink"];
 					}
-					
-					NSLog(@"%@", currentTag);
 				}
 			}
 			else if ([tagName isEqualToString:@"b"])
@@ -406,9 +403,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					// First paragraph after a header needs a newline to not stick to header
 					seenPreviousParagraph = NO;
 				}
-				
-				
-				
 			}
 			else if ([tagName isEqualToString:@"font"])
 			{
@@ -502,8 +496,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// If it's immediately closed it's not relevant for following body
 				currentTag = [tagStack lastObject];
 			}
-			
-			
 		}
 		else 
 		{
@@ -564,6 +556,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if (runDelegate)
 				{
 					[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
+				}
+				
+				id link = [currentTag objectForKey:@"DTLink"];
+				if (link)
+				{
+					[attributes setObject:link forKey:@"DTLink"];
 				}
 				
 				CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
@@ -632,7 +630,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if ([nextTag isEqualToString:@"br"])
 				{
 					// Add linefeed
-					tagContents = [tagContents stringByAppendingString:@"\u2028"];
+					tagContents = [tagContents stringByAppendingString:UNICODE_LINE_FEED];
 				}
 				else
 				{

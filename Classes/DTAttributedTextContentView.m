@@ -7,6 +7,8 @@
 //
 
 #import "DTAttributedTextContentView.h"
+#import "DTAttributedTextView.h"
+
 #import "DTTextAttachment.h"
 #import "NSAttributedString+HTML.h"
 #import "NSString+HTML.h"
@@ -14,6 +16,8 @@
 #import <QuartzCore/QuartzCore.h>
 
 #define DRAW_DEBUG_FRAMES 0
+
+#define TAG_BASE 9999
 
 @interface DTAttributedTextContentView ()
 
@@ -29,6 +33,9 @@
 		self.contentMode = UIViewContentModeRedraw;
 		self.backgroundColor = [UIColor whiteColor];
 		self.opaque = YES;
+		self.userInteractionEnabled = YES;
+		
+		edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     }
     return self;
 }
@@ -71,7 +78,7 @@
 #if DRAW_DEBUG_FRAMES
 	CGFloat dashes[] = {1.0, 3.0};
 	CGContextSetLineDash(context, 0, dashes, 2);
-	CGContextStrokeRect(context, CGRectInset(self.bounds, 10, 10));
+	CGContextStrokeRect(context, UIEdgeInsetsInsetRect(self.bounds, edgeInsets));
 #endif
 	
 	
@@ -86,8 +93,8 @@
 	for (id oneLine in (NSArray *)lines)
 	{
 		CGPoint lineOrigin = origins[lineIndex];
-		lineOrigin.x += 10.0; // add inset 
-		lineOrigin.y += 10.0; // add inset
+		lineOrigin.x += edgeInsets.left; // add inset 
+		lineOrigin.y += edgeInsets.top; // add inset
 		
 		CFArrayRef runs = CTLineGetGlyphRuns((CTLineRef)oneLine);
 		CGFloat lineAscent;
@@ -112,7 +119,7 @@
 #endif		
 		
 		lineIndex++;
-		CGFloat offset = 10;
+		CGFloat offset = edgeInsets.left;
 		
 		for (id oneRun in (NSArray *)runs)
 		{
@@ -149,12 +156,16 @@
 				}
 			}
 			
-			BOOL strikeOut = [[attributes objectForKey:@"_StrikeOut"] boolValue];
 			
 			// image bounds is 0 wide on trailing newline, don't want to stroke that.
 			if (runImageBounds.size.width>0)
 			{
-				if (strikeOut)
+				
+				
+				
+				
+				
+				if ([[attributes objectForKey:@"_StrikeOut"] boolValue])
 				{
 					CGRect runStrokeBounds = runBounds;
 					
@@ -196,11 +207,47 @@
 				CGContextFillRect(context, runBounds);
 				runIndex ++;
 #endif
+				
+				
+				//FIXME: Is there a better place to get the views? Problem: need context for coordinate calcs
+				
+				// add custom views if necessary
+				if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
+				{
+					CFRange range = CTRunGetStringRange((CTRunRef)oneRun);
+					NSRange stringRange = {range.location, range.length};
+					
+					NSInteger tag = (TAG_BASE + stringRange.location);
+					
+					// only add if there is no view yet with this tag
+					if (![self viewWithTag:tag])
+					{
+						NSAttributedString *string = [_string attributedSubstringFromRange:stringRange]; 
+					
+						
+						// need to flip
+						CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
+						
+						runFrame.origin.x = floorf(runFrame.origin.x);
+						runFrame.origin.y = floorf(runFrame.origin.y);
+						runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
+						runFrame.size.height = ceilf(runFrame.size.height);
+						
+						UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
+					
+						if (view)
+						{
+							view.frame = runFrame;
+							view.tag = tag;
+							
+							[self addSubview:view];
+						}
+					}
+				}
+				
 			}
 			offset += runWidth;
 		}
-		
-
 	}
 	
 	// cleanup
@@ -226,17 +273,17 @@
 	
 	[_string release];
 	
-    [super dealloc];
+	[super dealloc];
 }
 
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
-																	 CGSizeMake(self.bounds.size.width-23.0, CGFLOAT_MAX),
+																	 CGSizeMake(self.bounds.size.width-3.0-edgeInsets.left-edgeInsets.right, CGFLOAT_MAX),
 																	 NULL);
 	
-	return CGSizeMake(self.bounds.size.width, ceilf(neededSize.height+20));
+	return CGSizeMake(self.bounds.size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom));
 }
 
 
@@ -257,7 +304,7 @@
 	if (!textFrame)
 	{
 		CGMutablePathRef path = CGPathCreateMutable();
-		CGPathAddRect(path, NULL, CGRectInset(self.bounds, 10, 10));
+		CGPathAddRect(path, NULL, UIEdgeInsetsInsetRect(self.bounds, edgeInsets));
 		
 		textFrame = CTFramesetterCreateFrame(self.framesetter, CFRangeMake(0, 0), path, NULL);
 		
@@ -273,29 +320,6 @@
 	if (string != _string)
 	{
 		[_string release];
-		
-		/*
-		 
-		 NSMutableAttributedString *tmpStr =[string mutableCopy];
-		 // create the delegate
-		 CTRunDelegateCallbacks callbacks;
-		 callbacks.version = kCTRunDelegateCurrentVersion;
-		 callbacks.dealloc = MyDeallocationCallback;
-		 callbacks.getAscent = MyGetAscentCallback;
-		 callbacks.getDescent = MyGetDescentCallback;
-		 callbacks.getWidth = MyGetWidthCallback;
-		 CTRunDelegateRef delegate = CTRunDelegateCreate(&callbacks, NULL);
-		 
-		 // set the delegate as an attribute
-		 NSDictionary *dict = [NSDictionary dictionaryWithObject:(id)delegate forKey:(id)kCTRunDelegateAttributeName] ;
-		 [tmpStr setAttributes:dict range:NSMakeRange(0, [tmpStr	length])];
-		 //CFAttributedStringSetAttribute((CFMutableAttributedStringRef)tmpStr, CFRangeMake(0, [tmp), , delegate);
-		 
-		 CFRelease(delegate);
-		 
-		 _string = [tmpStr copy];
-		 [tmpStr release];
-		 */
 		
 		_string = [string retain];
 		
@@ -313,7 +337,9 @@
 		
 		CGSize neededSize = [self sizeThatFits:CGSizeZero];
 		self.frame = CGRectMake(0, 0, neededSize.width, neededSize.height);
-		
+
+		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+			
 		[self setNeedsDisplay];
 	}
 }
@@ -321,5 +347,6 @@
 @synthesize framesetter;
 @synthesize textFrame;
 @synthesize string = _string;
+@synthesize parentView;
 
 @end
