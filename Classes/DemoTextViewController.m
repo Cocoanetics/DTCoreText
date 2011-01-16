@@ -162,14 +162,21 @@
 {
 	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
 	
+	NSLog(@"%@", attributes);
 	NSURL *link = [attributes objectForKey:@"DTLink"];
 	
 	if (link)
 	{
 		DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
 		button.url = link;
-		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
 		button.alpha = 0.4;
+
+		// use normal push action for opening URL
+		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
+
+		// demonstrate combination with long press
+		UILongPressGestureRecognizer *longPress = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)] autorelease];
+		[button addGestureRecognizer:longPress];
 		return button;
 	}
 	
@@ -181,6 +188,19 @@
 {
 	[[UIApplication sharedApplication] openURL:button.url];
 }
+
+- (void)linkLongPressed:(UILongPressGestureRecognizer *)gesture
+{
+	if (gesture.state == UIGestureRecognizerStateBegan)
+	{
+		DTLinkButton *button = (id)[gesture view];
+		button.highlighted = NO;
+	
+		UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[button.url description] delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Some Action", nil] autorelease];
+		[action showFromRect:button.frame inView:button.superview animated:YES];
+	}
+}
+
 
 
 @end

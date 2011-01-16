@@ -58,7 +58,7 @@
 
 - (void)testImageParagraphs
 {
-	NSString *html = @"<p>Before</p><image src=\"Oliver.jpg\"><h1>Header</h2><p>after</p><p>Some inline <image src=\"Oliver.jpg\"> text.</p>";	
+	NSString *html = @"<p>Before</p><img src=\"Oliver.jpg\"><h1>Header</h2><p>after</p><p>Some inline <img src=\"Oliver.jpg\"> text.</p>";	
 	
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	

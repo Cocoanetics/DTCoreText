@@ -48,8 +48,11 @@
 
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
 {
+	NSInteger initialScanLocation = [self scanLocation];
+	
 	if (![self scanString:@"<" intoString:NULL])
 	{
+		[self setScanLocation:initialScanLocation];
 		return NO;
 	}
 	
@@ -74,6 +77,7 @@
 	// Read the tag name
 	if (![self scanCharactersFromSet:tagCharacterSet intoString:&scannedTagName])
 	{
+		[self setScanLocation:initialScanLocation];
 		return NO;
 	}
 
@@ -102,6 +106,7 @@
 		
 		if (![self scanCharactersFromSet:tagCharacterSet intoString:&attrName])
 		{
+			[self setScanLocation:initialScanLocation];
 			return NO;
 		}
 		

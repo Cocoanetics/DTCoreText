@@ -32,7 +32,6 @@
     if ((self = [super initWithFrame:frame])) {
 		self.contentMode = UIViewContentModeRedraw;
 		self.backgroundColor = [UIColor whiteColor];
-		self.opaque = YES;
 		self.userInteractionEnabled = YES;
 		
 		edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
@@ -160,11 +159,6 @@
 			// image bounds is 0 wide on trailing newline, don't want to stroke that.
 			if (runImageBounds.size.width>0)
 			{
-				
-				
-				
-				
-				
 				if ([[attributes objectForKey:@"_StrikeOut"] boolValue])
 				{
 					CGRect runStrokeBounds = runBounds;
@@ -207,44 +201,42 @@
 				CGContextFillRect(context, runBounds);
 				runIndex ++;
 #endif
+			}	
+			
+			//FIXME: Is there a better place to get the views? Problem: need context for coordinate calcs
+			
+			// add custom views if necessary
+			if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
+			{
+				CFRange range = CTRunGetStringRange((CTRunRef)oneRun);
+				NSRange stringRange = {range.location, range.length};
 				
+				NSInteger tag = (TAG_BASE + stringRange.location);
 				
-				//FIXME: Is there a better place to get the views? Problem: need context for coordinate calcs
-				
-				// add custom views if necessary
-				if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
+				// only add if there is no view yet with this tag
+				if (![self viewWithTag:tag])
 				{
-					CFRange range = CTRunGetStringRange((CTRunRef)oneRun);
-					NSRange stringRange = {range.location, range.length};
+					NSAttributedString *string = [_string attributedSubstringFromRange:stringRange]; 
 					
-					NSInteger tag = (TAG_BASE + stringRange.location);
 					
-					// only add if there is no view yet with this tag
-					if (![self viewWithTag:tag])
+					// need to flip
+					CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
+					
+					runFrame.origin.x = floorf(runFrame.origin.x);
+					runFrame.origin.y = floorf(runFrame.origin.y);
+					runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
+					runFrame.size.height = ceilf(runFrame.size.height);
+					
+					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
+					
+					if (view)
 					{
-						NSAttributedString *string = [_string attributedSubstringFromRange:stringRange]; 
-					
+						view.frame = runFrame;
+						view.tag = tag;
 						
-						// need to flip
-						CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
-						
-						runFrame.origin.x = floorf(runFrame.origin.x);
-						runFrame.origin.y = floorf(runFrame.origin.y);
-						runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
-						runFrame.size.height = ceilf(runFrame.size.height);
-						
-						UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
-					
-						if (view)
-						{
-							view.frame = runFrame;
-							view.tag = tag;
-							
-							[self addSubview:view];
-						}
+						[self addSubview:view];
 					}
 				}
-				
 			}
 			offset += runWidth;
 		}
@@ -315,6 +307,38 @@
 }
 
 
+- (void)relayoutText
+{
+	if (framesetter)
+	{
+		CFRelease(framesetter);
+		framesetter = nil;
+	}
+	
+	if (textFrame)
+	{
+		CFRelease(textFrame);
+		textFrame = nil;
+	}
+	
+	CGSize neededSize = [self sizeThatFits:CGSizeZero];
+	self.frame = CGRectMake(0, 0, neededSize.width, neededSize.height);
+	
+	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+	
+	[self setNeedsDisplay];
+}
+
+- (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
+{
+	if (!UIEdgeInsetsEqualToEdgeInsets(newEdgeInsets, edgeInsets))
+	{
+		edgeInsets = newEdgeInsets;
+		
+		[self relayoutText];
+	}
+}
+
 - (void)setString:(NSAttributedString *)string
 {
 	if (string != _string)
@@ -322,25 +346,7 @@
 		[_string release];
 		
 		_string = [string retain];
-		
-		if (framesetter)
-		{
-			CFRelease(framesetter);
-			framesetter = nil;
-		}
-		
-		if (textFrame)
-		{
-			CFRelease(textFrame);
-			textFrame = nil;
-		}
-		
-		CGSize neededSize = [self sizeThatFits:CGSizeZero];
-		self.frame = CGRectMake(0, 0, neededSize.width, neededSize.height);
-
-		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-			
-		[self setNeedsDisplay];
+		[self relayoutText];
 	}
 }
 
@@ -348,5 +354,6 @@
 @synthesize textFrame;
 @synthesize string = _string;
 @synthesize parentView;
+@synthesize edgeInsets;
 
 @end

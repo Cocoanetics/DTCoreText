@@ -26,7 +26,7 @@ static NSSet *inlineTags = nil;
 	if (!inlineTags)
 	{
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-					  @"u", @"a", @"image", @"del", @"br", nil];
+					  @"u", @"a", @"img", @"del", @"br", nil];
 	}
 	
 	return [inlineTags containsObject:[self lowercaseString]];

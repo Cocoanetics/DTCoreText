@@ -152,31 +152,31 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				needsNewLineBefore = YES;
 			}
 			
+			NSDictionary *previousTag = currentTag;
+			
 			currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
 			[currentTag setDictionary:[tagStack lastObject]];
 			[currentTag setObject:tagName forKey:@"_tag"];
 			
-			
-			// make mutable, we might want to add attributes
-			tagAttributesDict = [NSMutableDictionary dictionaryWithDictionary:tagAttributesDict];
-			
-			NSMutableDictionary *existingDict = [currentTag objectForKey:@"Attributes"];
-			if (tagAttributesDict)
+			if (tagOpen)
 			{
-				if (existingDict)
+				NSDictionary *previousAttributes = [previousTag objectForKey:@"Attributes"];
+				
+				NSMutableDictionary *mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:previousAttributes];
+				
+				for (NSString *oneKey in [tagAttributesDict allKeys])
 				{
-					[existingDict setDictionary:tagAttributesDict];
+					[mutableAttributes setObject:[tagAttributesDict objectForKey:oneKey] forKey:oneKey];
 				}
-				else 
-				{
-					[currentTag setObject:tagAttributesDict forKey:@"Attributes"];
-				}
+				
+				tagAttributesDict = mutableAttributes;
+				
+				[currentTag setObject:mutableAttributes forKey:@"Attributes"];
 			}
-			
 			
 			// ---------- Processing
 			
-			if ([tagName isEqualToString:@"image"] && tagOpen)
+			if ([tagName isEqualToString:@"img"] && tagOpen)
 			{
 				immediatelyClosed = YES;
 				
@@ -206,9 +206,25 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				attachment.size = CGSizeMake(width, height);
 				
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
-				NSDictionary *localAttributes = [NSDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
-												 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, nil];
+				
+				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
+				
+			//	[localAttributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+				
+			//	NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
+				
+	//					[attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
+				
+				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
+												 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
+												 (id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
+				
+				id link = [currentTag objectForKey:@"DTLink"];
+				if (link)
+				{
+					[localAttributes setObject:link forKey:@"DTLink"];
+				}
 				
 				if (needsNewLineBefore)
 				{
@@ -452,19 +468,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				immediatelyClosed = YES; 
 			}
 			
-			
-#if ALLOW_IPHONE_SPECIAL_CASES				
-			if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
-			{
-				if (nextParagraphAdditionalSpaceBefore>0)
-				{
-					[currentTag setObject:[NSNumber numberWithFloat:nextParagraphAdditionalSpaceBefore] forKey:@"ParagraphSpacingBefore"];	
-					nextParagraphAdditionalSpaceBefore = 0;
-				}
-			}
-#endif
-			
-			
 			if (tagOpen&&!immediatelyClosed)
 			{
 				[tagStack addObject:currentTag];
@@ -474,6 +477,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// block items have to have a NL at the end.
 				if (![tagName isInlineTag] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
+					// remove extra space
+					previousAttributes = nil;
+					
 					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
 					[tmpString appendAttributedString:string];
 				}
@@ -569,6 +575,23 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 				CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
+				
+#if ALLOW_IPHONE_SPECIAL_CASES				
+				if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
+				{
+					if (nextParagraphAdditionalSpaceBefore>0)
+					{
+						// FIXME: add extra space properly
+						// this also works, but breaks UnitTest for lists
+						//tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
+						
+						//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
+						nextParagraphAdditionalSpaceBefore = 0;
+					}
+				}
+#endif
+				
+				
 				CGFloat headIndent = [[currentTag objectForKey:@"HeadIndent"] floatValue];
 				
 				NSArray *tabStops = [currentTag objectForKey:@"TabStops"];

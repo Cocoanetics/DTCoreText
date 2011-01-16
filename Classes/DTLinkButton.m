@@ -8,6 +8,7 @@
 
 #import "DTLinkButton.h"
 #import "CGUtils.h"
+#import "UIColor+HTML.h"
 
 @implementation DTLinkButton
 
@@ -22,8 +23,8 @@
 		UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, 0);
 		CGContextRef ctx = UIGraphicsGetCurrentContext();
 		
-		CGPathRef roundedRectPath = newPathForRoundedRect(self.bounds, 5.0, YES, YES);
-		[[UIColor lightGrayColor] set];
+		CGPathRef roundedRectPath = newPathForRoundedRect(self.bounds, 3.0, YES, YES);
+		[[UIColor colorWithHTMLName:@"#BBBBBB"] set];
 		CGContextAddPath(ctx, roundedRectPath);
 		CGContextFillPath(ctx);
 		UIImage *background = UIGraphicsGetImageFromCurrentImageContext();

@@ -21,6 +21,7 @@
 @interface DTAttributedTextView : UIScrollView 
 {
 	DTAttributedTextContentView *contentView;
+	UIView *backgroundView;
 	
 	id <DTAttributedTextViewDelegate> textDelegate;
 }
@@ -28,6 +29,7 @@
 @property (nonatomic, retain) NSAttributedString *string;
 
 @property (nonatomic, readonly) DTAttributedTextContentView *contentView;
+@property (nonatomic, retain) UIView *backgroundView;
 
 @property (nonatomic, assign) id <DTAttributedTextViewDelegate> textDelegate;
 
