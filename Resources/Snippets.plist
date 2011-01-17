@@ -2,9 +2,37 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <array>
-	<string>README</string>
-	<string>LoremIpsum</string>
-	<string>Image</string>
-	<string>CurrentTest</string>
+	<dict>
+		<key>Title</key>
+		<string>READ ME</string>
+		<key>File</key>
+		<string>README.html</string>
+		<key>Description</key>
+		<string>This is the &lt;b&gt;introduction&lt;/b&gt; to the &lt;font color=&quot;blue&quot; face=&quot;Courier&quot;&gt;NSAttributedString&lt;/font&gt; HTML Additions for iOS. Even this very table view here demonstrates that you can easily add HTML formatted text to table views.</string>
+	</dict>
+	<dict>
+		<key>Title</key>
+		<string>Lorem Ipsum</string>
+		<key>File</key>
+		<string>LoremIpsum.html</string>
+		<key>Description</key>
+		<string>Demonstrates really long text. Definitely longer than this meager description.</string>
+	</dict>
+	<dict>
+		<key>Title</key>
+		<string>Image Handling</string>
+		<key>File</key>
+		<string>Image.html</string>
+		<key>Description</key>
+		<string>Shows the current level of image support.</string>
+	</dict>
+	<dict>
+		<key>Title</key>
+		<string>Never mind this file ...</string>
+		<key>File</key>
+		<string>CurrentTest.html</string>
+		<key>Description</key>
+		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
+	</dict>
 </array>
 </plist>

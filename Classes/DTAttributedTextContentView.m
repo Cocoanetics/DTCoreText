@@ -10,7 +10,6 @@
 #import "DTAttributedTextView.h"
 
 #import "DTTextAttachment.h"
-#import "NSAttributedString+HTML.h"
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import <QuartzCore/QuartzCore.h>
@@ -35,6 +34,8 @@
 		self.userInteractionEnabled = YES;
 		
 		edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+		
+		self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     return self;
 }
@@ -346,6 +347,16 @@
 		[_string release];
 		
 		_string = [string retain];
+		[self relayoutText];
+	}
+}
+
+- (void)setFrame:(CGRect)newFrame
+{
+	if (!CGRectEqualToRect(newFrame, self.frame))
+	{
+		[super setFrame:newFrame];
+			
 		[self relayoutText];
 	}
 }

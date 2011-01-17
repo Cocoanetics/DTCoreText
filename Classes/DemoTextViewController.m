@@ -84,7 +84,7 @@
     [super viewDidLoad];
 	
 	// Load HTML data
-	NSString *readmePath = [[NSBundle mainBundle] pathForResource:_fileName ofType:@"html"];
+	NSString *readmePath = [[NSBundle mainBundle] pathForResource:_fileName ofType:nil];
 	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
@@ -162,7 +162,6 @@
 {
 	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
 	
-	NSLog(@"%@", attributes);
 	NSURL *link = [attributes objectForKey:@"DTLink"];
 	
 	if (link)

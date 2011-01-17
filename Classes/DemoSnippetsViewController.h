@@ -9,6 +9,8 @@
 @interface DemoSnippetsViewController : UITableViewController {
 
 	NSArray *_snippets;
+	
+	NSMutableDictionary *contentViewCache;
 }
 
 @end

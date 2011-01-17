@@ -8,6 +8,8 @@
 
 #import <CoreText/CoreText.h>
 
+#import "NSAttributedString+HTML.h"
+
 @class DTAttributedTextView;
 
 
