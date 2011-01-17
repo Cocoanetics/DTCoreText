@@ -133,6 +133,11 @@
 		
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	}
+
+	// skip ending bracket
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	[self scanString:@">" intoString:NULL];
+	
 	
 	// Success 
 	if (isClosed)
