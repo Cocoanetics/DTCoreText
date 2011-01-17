@@ -644,8 +644,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
 					
 					needsListItemStart = NO;
-					
 				}
+				
+				
+				// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
+				if (![tagContents hasPrefix:@" "])
+				{
+					
+					
+					if ([[tmpString string] length] && ![[tmpString string] hasSuffix:@" "] && ![[tmpString string] hasSuffix:@"\n"])
+					{
+						tagContents = [@" " stringByAppendingString:tagContents];
+					}
+				}
+				
 				
 				// Add newline after block contents if a new block follows
 				NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
