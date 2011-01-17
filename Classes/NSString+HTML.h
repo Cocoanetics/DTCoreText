@@ -10,5 +10,7 @@
 
 - (NSUInteger)integerValueFromHex;
 - (BOOL)isInlineTag;
+- (NSString *)stringByNormalizingWhitespace;
+- (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet;
 
 @end

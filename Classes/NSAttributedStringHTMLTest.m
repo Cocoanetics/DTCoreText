@@ -71,6 +71,24 @@
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
+- (void)testSpaceNormalization
+{
+	NSString *html = @"<p>Now there is some <b>bold</b>\ntext and  spaces\n    should be normalized.</p>";	
+	
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<4e6f7720 74686572 65206973 20736f6d 6520626f 6c642074 65787420 616e6420 73706163 65732073 686f756c 64206265 206e6f72 6d616c69 7a65642e 0a>";
+	
+	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+}
+
+
+
+
 
 
 @end

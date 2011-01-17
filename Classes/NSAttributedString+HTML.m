@@ -209,12 +209,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
 				
-			//	[localAttributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-				
-			//	NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
-				
-	//					[attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
-				
 				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
 												 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
 												 (id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
@@ -510,6 +504,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
 			{
+				tagContents = [tagContents  stringByNormalizingWhitespace];
+				
+				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
 				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
 				
@@ -647,18 +644,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				}
 				
 				
-				// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
-				if (![tagContents hasPrefix:@" "])
-				{
-					
-					
-					if ([[tmpString string] length] && ![[tmpString string] hasSuffix:@" "] && ![[tmpString string] hasSuffix:@"\n"])
-					{
-						tagContents = [@" " stringByAppendingString:tagContents];
-					}
-				}
-				
-				
 				// Add newline after block contents if a new block follows
 				NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
 				
@@ -690,6 +675,23 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						}
 					}
 					needsNewLineBefore = NO;
+				}
+				else // might be a continuation of a paragraph, then we might need space before it
+				{
+				// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
+				if (![tagContents hasPrefix:@" "])
+				{
+					NSString *stringSoFar = [tmpString string];
+					
+					if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
+					{
+						// add space prefix unless punctuation character
+						if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
+						{
+							tagContents = [@" " stringByAppendingString:tagContents];
+						}
+					}
+				}
 				}
 				
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];

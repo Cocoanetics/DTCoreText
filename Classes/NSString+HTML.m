@@ -32,4 +32,59 @@ static NSSet *inlineTags = nil;
 	return [inlineTags containsObject:[self lowercaseString]];
 }
 
+
+- (NSString *)stringByNormalizingWhitespace
+{
+	NSCharacterSet *whiteSpaceCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	[scanner setCharactersToBeSkipped:nil];
+	
+	NSMutableArray *tokens = [NSMutableArray array];
+	
+	NSString *prefix = @"";
+	if ([scanner scanCharactersFromSet:whiteSpaceCharacterSet intoString:NULL])
+	{
+		prefix = @" ";
+	}
+
+	NSString *suffix = @"";
+	
+	while (![scanner isAtEnd])
+	{
+		NSString *string = nil;
+		
+		if ([scanner scanUpToCharactersFromSet:whiteSpaceCharacterSet intoString:&string])
+		{
+			[tokens addObject:string];
+		}
+		
+		if ([scanner scanCharactersFromSet:whiteSpaceCharacterSet intoString:NULL])
+		{
+			suffix = @" ";
+		}
+		else 
+		{
+			suffix = @"";
+		}
+	}
+	
+	NSString *retStr = [NSString stringWithFormat:@"%@%@%@", prefix, [tokens componentsJoinedByString:@" "], suffix];
+	
+	return retStr;
+}
+
+
+- (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet
+{
+	if (![self length])
+	{
+		return NO;
+	}
+	
+	unichar firstChar = [self characterAtIndex:0];
+	
+	return [characterSet characterIsMember:firstChar];
+}
+
 @end
