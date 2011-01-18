@@ -38,7 +38,7 @@ static NSDictionary *colorLookup = nil;
 }
 
 
-// From http://www.w3schools.com/html/html_colornames.asp
+// Source: http://www.w3schools.com/html/html_colornames.asp
 + (UIColor *)colorWithHTMLName:(NSString *)name
 {
 	if ([name hasPrefix:@"#"])

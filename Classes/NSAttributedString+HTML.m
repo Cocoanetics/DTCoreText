@@ -505,6 +505,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
 			{
 				tagContents = [tagContents  stringByNormalizingWhitespace];
+            tagContents = [tagContents stringByReplacingHTMLEntities];
 				
 				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
