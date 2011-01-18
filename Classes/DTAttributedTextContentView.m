@@ -323,8 +323,11 @@
 	}
 	
 	CGSize neededSize = [self sizeThatFits:CGSizeZero];
-	self.frame = CGRectMake(0, 0, neededSize.width, neededSize.height);
 	
+	// set frame to fit text preserving origin
+	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+	
+	// TODO: have smarter handling of custom views, maybe we should move them instead of removing and readding
 	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	
 	[self setNeedsDisplay];
