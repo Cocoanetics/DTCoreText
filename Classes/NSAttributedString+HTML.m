@@ -234,6 +234,45 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
 				[tmpString appendAttributedString:string];
 			}
+			else if ([tagName isEqualToString:@"video"] && tagOpen)
+			{
+				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
+				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
+				
+				if (width==0 || height==0)
+				{
+					width = 300;
+					height = 225;
+				}
+				
+				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+				attachment.contents = currentTag;
+				attachment.size = CGSizeMake(width, height);
+				
+				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+				
+				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
+				
+				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
+														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
+														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
+				CFRelease(embeddedObjectRunDelegate);
+				
+				if (needsNewLineBefore)
+				{
+					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+					{
+						NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+						[tmpString appendAttributedString:string];
+					}
+					
+					needsNewLineBefore = NO;
+				}
+				
+				NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
+				[tmpString appendAttributedString:string];
+				
+			}
 			else if ([tagName isEqualToString:@"a"])
 			{
 				if (tagOpen)

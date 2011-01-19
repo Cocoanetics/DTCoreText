@@ -9,11 +9,17 @@
 #import "DemoTextViewController.h"
 #import "DTAttributedTextView.h"
 #import "NSAttributedString+HTML.h"
+#import "DTTextAttachment.h"
 
 #import "DTLinkButton.h"
 
-@interface DemoTextViewController (PrivateMethods)
+#import <MediaPlayer/MediaPlayer.h>
+
+@interface DemoTextViewController ()
 - (void)_segmentedControlChanged:(id)sender;
+
+@property (nonatomic, retain) NSMutableSet *mediaPlayers;
+
 @end
 
 
@@ -46,10 +52,18 @@
 	[_dataView release];
 	
 	[lastActionLink release];
+	[mediaPlayers release];
 
 	[super dealloc];
 }
 
+
+// FIXME: needs handling of navigation bar to support landscape
+/*
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return YES;
+}
+ */
 
 #pragma mark UIViewController
 
@@ -182,6 +196,39 @@
 	}
 	
 	
+	DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+	
+	if (attachment)
+	{
+		if ([attachment.contents isKindOfClass:[NSDictionary class]])
+		{
+			if ([[attachment.contents objectForKey:@"_tag"] isEqualToString:@"video"])
+			{
+				NSDictionary *attributes = [attachment.contents objectForKey:@"Attributes"];
+				
+				NSURL *url = [NSURL URLWithString:[attributes objectForKey:@"src"]];
+				
+				// we could customize the view that shows before playback starts
+				UIView *grayView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+				grayView.backgroundColor = [UIColor blackColor];
+				
+				MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+				player.controlStyle = MPMovieControlStyleEmbedded;
+				
+				[player prepareToPlay];
+				[player setShouldAutoplay:NO];
+				[self.mediaPlayers addObject:player];
+				
+				player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+				[grayView addSubview:player.view];
+
+				// will get resized and added to view by caller
+				return grayView;
+			}
+		}
+	}
+	
+	
 	return nil;
 }
 
@@ -214,9 +261,21 @@
 	}
 }
 
+#pragma mark Properties
+
+- (NSMutableSet *)mediaPlayers
+{
+	if (!mediaPlayers)
+	{
+		mediaPlayers = [[NSMutableSet alloc] init];
+	}
+	
+	return mediaPlayers;
+}
+
 @synthesize fileName = _fileName;
 @synthesize lastActionLink;
-
+@synthesize mediaPlayers;
 
 
 @end

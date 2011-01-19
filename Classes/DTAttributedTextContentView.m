@@ -212,21 +212,31 @@
 				CFRange range = CTRunGetStringRange((CTRunRef)oneRun);
 				NSRange stringRange = {range.location, range.length};
 				
+				// need to flip
+				CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
+				runFrame.origin.x = floorf(runFrame.origin.x);
+				runFrame.origin.y = floorf(runFrame.origin.y);
+				runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
+				runFrame.size.height = ceilf(runFrame.size.height);
+				
+				
 				NSInteger tag = (TAG_BASE + stringRange.location);
+
+				
+				UIView *existingView = [self viewWithTag:tag];
+				
+				NSLog(@"%@", existingView);
+				
+				
 				
 				// only add if there is no view yet with this tag
-				if (![self viewWithTag:tag])
+				if (existingView)
+				{
+					existingView.frame = runFrame;
+				}
+				else 
 				{
 					NSAttributedString *string = [_string attributedSubstringFromRange:stringRange]; 
-					
-					
-					// need to flip
-					CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
-					
-					runFrame.origin.x = floorf(runFrame.origin.x);
-					runFrame.origin.y = floorf(runFrame.origin.y);
-					runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
-					runFrame.size.height = ceilf(runFrame.size.height);
 					
 					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
 					
@@ -327,9 +337,6 @@
 	// set frame to fit text preserving origin
 	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
 	
-	// TODO: have smarter handling of custom views, maybe we should move them instead of removing and readding
-	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	
 	[self setNeedsDisplay];
 }
 
@@ -350,6 +357,10 @@
 		[_string release];
 		
 		_string = [string retain];
+		
+		// remove custom views
+		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
 		[self relayoutText];
 	}
 }

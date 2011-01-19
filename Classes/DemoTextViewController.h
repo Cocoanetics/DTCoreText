@@ -18,8 +18,10 @@
 	UITextView *_rangeView;
 	UITextView *_charsView;
 	UITextView *_dataView;
-	
+
+	// private
 	NSURL *lastActionLink;
+	NSMutableSet *mediaPlayers;
 }
 
 @property (nonatomic, retain) NSString *fileName;

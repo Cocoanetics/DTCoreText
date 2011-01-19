@@ -7,3 +7,4 @@
 //
 
 CGPathRef newPathForRoundedRect(CGRect rect, CGFloat cornerRadius, BOOL roundTopCorners, BOOL roundBottomCorners);
+CGSize sizeThatFitsKeepingAspectRatio(CGSize originalSize, CGSize sizeToFit);
