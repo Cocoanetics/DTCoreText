@@ -91,7 +91,6 @@
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	_textView.textDelegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	_textView.backgroundColor = [UIColor lightGrayColor];
 	[self.view addSubview:_textView];
 }
 
