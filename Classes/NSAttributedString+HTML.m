@@ -281,7 +281,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
 					[currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
 					
-					NSURL *link = [NSURL URLWithString:[tagAttributesDict objectForKey:@"href"]];
+					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+					NSURL *link = [NSURL URLWithString:cleanString];
 					
 					if (link)
 					{

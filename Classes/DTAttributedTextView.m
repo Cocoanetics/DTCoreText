@@ -14,6 +14,8 @@
 - (void)layoutSubviews
 {
 	self.backgroundColor = [UIColor whiteColor];
+	self.clipsToBounds = YES;
+	
 	self.contentView; // Trigger adding if not happened
 }
 
