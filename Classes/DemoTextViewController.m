@@ -19,8 +19,6 @@
 
 @implementation DemoTextViewController
 
-@synthesize fileName = _fileName;
-
 #pragma mark NSObject
 
 - (id)init {
@@ -38,13 +36,17 @@
 }
 
 
-- (void)dealloc {
+- (void)dealloc 
+{
 	[_fileName release];
 	[_segmentedControl release];
 	[_textView release];
 	[_rangeView release];
 	[_charsView release];
 	[_dataView release];
+	
+	[lastActionLink release];
+
 	[super dealloc];
 }
 
@@ -188,17 +190,32 @@
 	[[UIApplication sharedApplication] openURL:button.url];
 }
 
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	if (buttonIndex != actionSheet.cancelButtonIndex)
+	{
+		[[UIApplication sharedApplication] openURL:self.lastActionLink];
+	}
+}
+
 - (void)linkLongPressed:(UILongPressGestureRecognizer *)gesture
 {
 	if (gesture.state == UIGestureRecognizerStateBegan)
 	{
 		DTLinkButton *button = (id)[gesture view];
 		button.highlighted = NO;
-	
-		UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[button.url description] delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Some Action", nil] autorelease];
-		[action showFromRect:button.frame inView:button.superview animated:YES];
+		self.lastActionLink = button.url;
+		
+		if ([[UIApplication sharedApplication] canOpenURL:button.url])
+		{
+			UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[button.url description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil] autorelease];
+			[action showFromRect:button.frame inView:button.superview animated:YES];
+		}
 	}
 }
+
+@synthesize fileName = _fileName;
+@synthesize lastActionLink;
 
 
 

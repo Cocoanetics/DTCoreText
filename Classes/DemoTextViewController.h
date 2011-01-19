@@ -8,7 +8,8 @@
 
 @class DTAttributedTextView;
 
-@interface DemoTextViewController : UIViewController {
+@interface DemoTextViewController : UIViewController <UIActionSheetDelegate>
+{
 
 	NSString *_fileName;
 	
@@ -17,8 +18,12 @@
 	UITextView *_rangeView;
 	UITextView *_charsView;
 	UITextView *_dataView;
+	
+	NSURL *lastActionLink;
 }
 
 @property (nonatomic, retain) NSString *fileName;
+
+@property (nonatomic, retain) NSURL *lastActionLink;
 
 @end

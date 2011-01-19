@@ -28,6 +28,14 @@
 	</dict>
 	<dict>
 		<key>Title</key>
+		<string>Video</string>
+		<key>File</key>
+		<string>Video.html</string>
+		<key>Description</key>
+		<string>Demonstrating support for the HTML5 Video tag when somebody gets around to implement it.</string>
+	</dict>
+	<dict>
+		<key>Title</key>
 		<string>Never mind this file ...</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>
