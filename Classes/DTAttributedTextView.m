@@ -166,14 +166,14 @@
 	[super setFrame:newFrame];
 }
 
-
+/*
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
 	UIView *hitView = [super hitTest:point withEvent:event];
 	NSLog(@"%@", hitView);
 	return hitView;
 }
-
+*/
 
 @synthesize string;
 @synthesize contentView;

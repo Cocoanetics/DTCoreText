@@ -137,6 +137,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	NSMutableDictionary *currentTag = [tagStack lastObject];
 	NSDictionary *previousAttributes = NULL;
 	
+	// skip initial whitespace
+	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
+	
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -544,9 +547,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents])
 			{
+
 				tagContents = [tagContents  stringByNormalizingWhitespace];
-            tagContents = [tagContents stringByReplacingHTMLEntities];
-				
+				tagContents = [tagContents stringByReplacingHTMLEntities];
 				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
 				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
@@ -729,7 +732,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						// add space prefix unless punctuation character
 						if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
 						{
-							tagContents = [@" " stringByAppendingString:tagContents];
+							//FIXME: What are the situations where a whitespace needs adding?
+							// NOT: </font>text
+							//tagContents = [@" " stringByAppendingString:tagContents];
 						}
 					}
 				}

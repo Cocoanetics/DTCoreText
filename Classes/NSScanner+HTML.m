@@ -48,6 +48,7 @@
 
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
 {
+	
 	NSInteger initialScanLocation = [self scanLocation];
 	
 	if (![self scanString:@"<" intoString:NULL])
@@ -84,7 +85,7 @@
 	// make tags lowercase
 	scannedTagName = [scannedTagName lowercaseString];
 	
-	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	//[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	
 	// Read attributes of tag
 	while (![self isAtEnd])
@@ -101,6 +102,8 @@
 			break;
 		}
 		
+		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+		
 		NSString *attrName = nil;
 		NSString *attrValue = nil;
 		
@@ -112,6 +115,8 @@
 		
 		attrName = [attrName lowercaseString];
 		
+		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+		
 		if (![self scanString:@"=" intoString:nil])
 		{
 			// solo attribute
@@ -121,6 +126,8 @@
 		{
 			// attribute = value
 			NSString *quote = nil;
+			
+			[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 			
 			if ([self scanCharactersFromSet:quoteCharacterSet intoString:&quote])
 			{
@@ -135,8 +142,8 @@
 	}
 
 	// skip ending bracket
-	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-	[self scanString:@">" intoString:NULL];
+	//[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	//[self scanString:@">" intoString:NULL];
 	
 	
 	// Success 

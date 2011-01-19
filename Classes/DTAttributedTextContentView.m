@@ -61,9 +61,6 @@
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-	
-	
-	NSLog(@"layout ATCV");
 }
 
 /*
@@ -250,10 +247,6 @@
 
 				
 				UIView *existingView = [self viewWithTag:tag];
-				
-				NSLog(@"%@", existingView);
-				
-				
 				
 				// only add if there is no view yet with this tag
 				if (existingView)
