@@ -9,16 +9,27 @@
 #import "DTAttributedTextView.h"
 #import "DTAttributedTextContentView.h"
 
+#import "UIColor+HTML.h"
+
+@interface DTAttributedTextView ()
+
+- (void)setup;
+
+@end
+
+
+
 @implementation DTAttributedTextView
 
-- (void)layoutSubviews
+- (id)initWithFrame:(CGRect)frame
 {
-	self.backgroundColor = [UIColor whiteColor];
-	self.clipsToBounds = YES;
-	
-	self.contentView; // Trigger adding if not happened
+	if (self = [super initWithFrame:frame])
+	{
+		[self setup];
+	}
+		
+	return self;
 }
-
 
 - (void)dealloc 
 {
@@ -26,6 +37,43 @@
     [super dealloc];
 }
 
+- (void)layoutSubviews
+{
+	[super layoutSubviews];
+	
+	self.contentView; // Trigger adding if not happened
+}
+
+- (void)awakeFromNib
+{
+	[self setup];
+}
+
+// default
+- (void)setup
+{
+	if (!self.backgroundColor)
+	{
+		self.backgroundColor = [UIColor whiteColor];
+		self.opaque = YES;
+		return;
+	}
+	
+	CGFloat alpha = [self.backgroundColor alpha];
+	
+	if (alpha < 1.0)
+	{
+		self.opaque = NO;
+		self.contentView.opaque = NO;
+	}
+	else 
+	{
+		self.opaque = YES;
+		self.contentView.opaque = YES;
+	}
+	
+	self.autoresizesSubviews = YES;
+}
 
 #pragma mark Properties
 - (DTAttributedTextContentView *)contentView
@@ -39,6 +87,26 @@
 	}		
 	
 	return contentView;
+}
+
+- (void)setBackgroundColor:(UIColor *)newColor
+{
+	if ([newColor alpha]<1.0)
+	{
+		super.backgroundColor = newColor;
+		contentView.backgroundColor = [UIColor clearColor];
+		contentView.opaque = NO;
+		self.opaque = NO;
+	}
+	else 
+	{
+		super.backgroundColor = newColor;
+		
+		if (contentView.opaque)
+		{
+			contentView.backgroundColor = newColor;
+		}
+	}
 }
 
 - (UIView *)backgroundView
@@ -87,6 +155,15 @@
 {
 	self.contentView.string = string;
 	self.contentSize = contentView.bounds.size;
+}
+
+- (void)setFrame:(CGRect)newFrame
+{
+	// TODO: Is there a way to animate content?
+	// if this is not here then the content jumps 
+	[self setContentOffset:CGPointZero];
+
+	[super setFrame:newFrame];
 }
 
 

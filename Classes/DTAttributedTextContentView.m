@@ -12,6 +12,7 @@
 #import "DTTextAttachment.h"
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 #define DRAW_DEBUG_FRAMES 0
@@ -20,6 +21,7 @@
 
 @interface DTAttributedTextContentView ()
 
+- (void)setup;
 @property (nonatomic) CTFramesetterRef framesetter;
 @property (nonatomic) CTFrameRef textFrame;
 
@@ -27,17 +29,41 @@
 
 @implementation DTAttributedTextContentView
 
+
+
+
 - (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
-		self.contentMode = UIViewContentModeRedraw;
-		self.backgroundColor = [UIColor whiteColor];
-		self.userInteractionEnabled = YES;
-		
-		edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-		
-		self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if ((self = [super initWithFrame:frame])) 
+	{
+		[self setup];
     }
     return self;
+}
+
+- (void)awakeFromNib
+{
+	[self setup];
+}
+
+- (void)setup
+{
+	self.contentMode = UIViewContentModeRedraw;
+	self.userInteractionEnabled = YES;
+	
+	edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+	
+	self.opaque = NO;
+	self.contentMode = UIViewContentModeTopLeft;
+	
+	self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+}
+
+- (void)layoutSubviews
+{
+	[super layoutSubviews];
+	
+	
+	NSLog(@"layout ATCV");
 }
 
 /*
@@ -337,7 +363,7 @@
 	// set frame to fit text preserving origin
 	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
 	
-	[self setNeedsDisplay];
+	//[self setNeedsDisplay];
 }
 
 - (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets

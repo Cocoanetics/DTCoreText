@@ -11,4 +11,6 @@
 + (UIColor *)colorWithHexString:(NSString *)hex;
 + (UIColor *)colorWithHTMLName:(NSString *)name;
 
+- (CGFloat)alpha;
+
 @end

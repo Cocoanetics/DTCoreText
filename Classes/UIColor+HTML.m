@@ -205,4 +205,13 @@ static NSDictionary *colorLookup = nil;
 	return [UIColor colorWithHexString:hexString];
 }
 
+- (CGFloat)alpha
+{
+	CGColorRef color = self.CGColor;
+	size_t count = CGColorGetNumberOfComponents(color);
+	const CGFloat *components = CGColorGetComponents(color);
+	
+	return components[count-1];
+}
+
 @end
