@@ -59,11 +59,11 @@
 
 
 // FIXME: needs handling of navigation bar to support landscape
-/*
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
 }
- */
+
 
 #pragma mark UIViewController
 
@@ -74,17 +74,20 @@
 	
 	// Create data view
 	_dataView = [[UITextView alloc] initWithFrame:frame];
+	_dataView.editable = NO;
 	_dataView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_dataView];
 	
 	// Create chars view
 	_charsView = [[UITextView alloc] initWithFrame:frame];
+	_charsView.editable = NO;
 	_charsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_charsView];
 	
 	// Create range view
 	_rangeView = [[UITextView alloc] initWithFrame:frame];
 	_rangeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_rangeView.editable = NO;
 	[self.view addSubview:_rangeView];
 	
 	// Create text view
@@ -92,6 +95,8 @@
 	_textView.textDelegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_textView];
+	
+	self.wantsFullScreenLayout = NO;
 }
 
 

@@ -41,10 +41,6 @@
 	_snippets = [[NSArray alloc] initWithContentsOfFile:plistPath];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
-
 
 #pragma mark UITableViewDataSource
 
@@ -69,7 +65,9 @@
 	
 	if (!contentView)
 	{
-		contentView = [[[DTAttributedTextContentView alloc] initWithFrame:CGRectMake(0, 0, 290, 10000)] autorelease];
+		// set width, height is calculated later from text
+		contentView = [[[DTAttributedTextContentView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width-30.0, 0)] autorelease];
+		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[contentViewCache setObject:contentView forKey:indexPath];
 	}
 	
@@ -81,11 +79,11 @@
 	NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+
 	contentView.string = string;
 	
 	return contentView;
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -93,8 +91,6 @@
 	
 	return contentView.bounds.size.height;
 }
-
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     

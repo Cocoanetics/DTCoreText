@@ -15,7 +15,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#define DRAW_DEBUG_FRAMES 0
+#define DRAW_DEBUG_FRAMES 1
 
 #define TAG_BASE 9999
 
@@ -53,9 +53,7 @@
 	edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	
 	self.opaque = NO;
-	self.contentMode = UIViewContentModeTopLeft;
-	
-	self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 }
 
 - (void)layoutSubviews
@@ -301,11 +299,21 @@
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
-																	 CGSizeMake(self.bounds.size.width-3.0-edgeInsets.left-edgeInsets.right, CGFLOAT_MAX),
-																	 NULL);
+	if (size.width==0)
+	{
+		size.width = self.bounds.size.width;
+	}
 	
-	return CGSizeMake(self.bounds.size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom));
+	
+	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
+																	 CGSizeMake(size.width-edgeInsets.left-edgeInsets.right, CGFLOAT_MAX),
+																	 NULL);
+	// possibly because of floating point inaccuracy we need to constrain 3 px more and add 1 px to returned size
+	// otherwise sometimes the calculated frame does not fit
+	CGSize retSize = CGSizeMake(size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom)+1);
+	
+	
+	return retSize;
 }
 
 
@@ -339,12 +347,6 @@
 
 - (void)relayoutText
 {
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-		framesetter = nil;
-	}
-	
 	if (textFrame)
 	{
 		CFRelease(textFrame);
@@ -355,8 +357,6 @@
 	
 	// set frame to fit text preserving origin
 	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
-	
-	//[self setNeedsDisplay];
 }
 
 - (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
@@ -377,20 +377,36 @@
 		
 		_string = [string retain];
 		
+		[self sizeToFit];
+		
 		// remove custom views
 		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-		[self relayoutText];
+		[self setNeedsDisplay];
 	}
 }
 
 - (void)setFrame:(CGRect)newFrame
 {
-	if (!CGRectEqualToRect(newFrame, self.frame))
+
+	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
 	{
 		[super setFrame:newFrame];
+		
 			
-		[self relayoutText];
+		// next redraw will do new layout
+		if (textFrame)
+		{
+			CFRelease(textFrame);
+			textFrame = nil;
+		}
+		
+		// contentMode = topLeft, no automatic redraw on bounds change
+		[self setNeedsDisplay];
+	}
+	else 
+	{
+	 //NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
 	}
 }
 

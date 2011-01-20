@@ -27,7 +27,7 @@
 	{
 		[self setup];
 	}
-		
+	
 	return self;
 }
 
@@ -135,7 +135,7 @@
 		backgroundView = newBackgroundView;
 		
 		[self insertSubview:backgroundView belowSubview:self.contentView];
-
+		
 		if (backgroundView)
 		{
 			// make content transparent so that we see the background
@@ -154,26 +154,45 @@
 - (void)setString:(NSAttributedString *)string
 {
 	self.contentView.string = string;
+	
+	[self.contentView sizeToFit];
+	
 	self.contentSize = contentView.bounds.size;
 }
 
 - (void)setFrame:(CGRect)newFrame
 {
-	// TODO: Is there a way to animate content?
-	// if this is not here then the content jumps 
-	[self setContentOffset:CGPointZero];
-
-	[super setFrame:newFrame];
+	if (!CGRectEqualToRect(self.frame, newFrame))
+	{
+		// TODO: Is there a way to animate content?
+		// if this is not here then the content jumps 
+		[self setContentOffset:CGPointZero];
+		
+		CGFloat previousWidth = self.bounds.size.width;
+		
+		[super setFrame:newFrame];
+		
+		if (previousWidth!=newFrame.size.width)
+		{
+			CGSize size = [contentView sizeThatFits:CGSizeMake(newFrame.size.width, 0)];
+			
+			contentView.frame = CGRectMake(0,0,size.width, size.height);
+		}
+		else 
+		{
+			self.contentSize = contentView.bounds.size;
+		}
+	}
 }
 
 /*
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-	UIView *hitView = [super hitTest:point withEvent:event];
-	NSLog(@"%@", hitView);
-	return hitView;
-}
-*/
+ - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+ {
+ UIView *hitView = [super hitTest:point withEvent:event];
+ NSLog(@"%@", hitView);
+ return hitView;
+ }
+ */
 
 @synthesize string;
 @synthesize contentView;
