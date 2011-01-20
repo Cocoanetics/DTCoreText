@@ -15,7 +15,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#define DRAW_DEBUG_FRAMES 1
+#define DRAW_DEBUG_FRAMES 0
 
 #define TAG_BASE 9999
 
