@@ -50,6 +50,7 @@
 	[_rangeView release];
 	[_charsView release];
 	[_dataView release];
+	[baseURL release];
 	
 	[lastActionLink release];
 	[mediaPlayers release];
@@ -109,7 +110,7 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	// Create attributed string from HTML
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data baseURL:baseURL documentAttributes:NULL];
 	
 	// Display string
 	_textView.string = string;
@@ -237,14 +238,14 @@
 
 - (void)linkPushed:(DTLinkButton *)button
 {
-	[[UIApplication sharedApplication] openURL:button.url];
+	[[UIApplication sharedApplication] openURL:[button.url absoluteURL]];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
 	if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
-		[[UIApplication sharedApplication] openURL:self.lastActionLink];
+		[[UIApplication sharedApplication] openURL:[self.lastActionLink absoluteURL]];
 	}
 }
 
@@ -256,9 +257,9 @@
 		button.highlighted = NO;
 		self.lastActionLink = button.url;
 		
-		if ([[UIApplication sharedApplication] canOpenURL:button.url])
+		if ([[UIApplication sharedApplication] canOpenURL:[button.url absoluteURL]])
 		{
-			UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[button.url description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil] autorelease];
+			UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[[button.url absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil] autorelease];
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
 	}
@@ -279,6 +280,7 @@
 @synthesize fileName = _fileName;
 @synthesize lastActionLink;
 @synthesize mediaPlayers;
+@synthesize baseURL;
 
 
 @end

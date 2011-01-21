@@ -36,6 +36,16 @@
 	</dict>
 	<dict>
 		<key>Title</key>
+		<string>Space and Newline Handling.</string>
+		<key>File</key>
+		<string>APOD.html</string>
+		<key>Description</key>
+		<string>HTML handles newlines as spaces, but not always.</string>
+		<key>BaseURL</key>
+		<string>http://apod.nasa.gov/apod/</string>
+	</dict>
+	<dict>
+		<key>Title</key>
 		<string>Never mind this file ...</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>

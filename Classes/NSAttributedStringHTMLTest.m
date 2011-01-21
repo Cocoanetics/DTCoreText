@@ -86,6 +86,21 @@
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
+- (void)testSpaceAndNewlines
+{
+	NSString *html = @"<a>bla</a>\nfollows\n<font color=\"blue\">NSString</font> <font color=\"purple\">*</font>str <font color=\"#000000\">=</font> @<font color=\"#E40000\">\"The Quick Brown Fox Brown\"</font>;";
+	
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<626c6120 666f6c6c 6f777320 4e535374 72696e67 202a7374 72203d20 40225468 65205175 69636b20 42726f77 6e20466f 78204272 6f776e22 3b>";
+	
+	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+}
+
 
 
 

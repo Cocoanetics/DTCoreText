@@ -170,5 +170,10 @@
 	return YES;
 }
 
+// for debugging scanner
+- (void)logPosition
+{
+	NSLog(@"%@", [[self string] substringFromIndex:[self scanLocation]]);
+}
 
 @end

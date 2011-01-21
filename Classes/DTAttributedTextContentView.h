@@ -27,7 +27,7 @@
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 @property (nonatomic, readonly) CTFrameRef textFrame;
 
-@property (nonatomic, retain) NSAttributedString *string;
+@property (retain) NSAttributedString *string;
 @property (nonatomic) UIEdgeInsets edgeInsets;
 
 @property (nonatomic, assign) DTAttributedTextView *parentView;

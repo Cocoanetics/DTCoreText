@@ -7,6 +7,7 @@
 //
 
 #import <CoreText/CoreText.h>
+#import <UIKit/UIKit.h>
 
 #import "NSAttributedString+HTML.h"
 #import "NSString+HTML.h"
@@ -97,7 +98,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 
 - (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict
 {
-	NSDictionary *optionsDict = [NSDictionary dictionaryWithObject:base forKey:NSBaseURLDocumentOption];
+	NSDictionary *optionsDict = nil;
+	
+	if (base)
+	{
+		optionsDict = [NSDictionary dictionaryWithObject:base forKey:NSBaseURLDocumentOption];
+	}
+	
 	return [self initWithHTML:data options:optionsDict documentAttributes:dict];
 }
 
@@ -113,6 +120,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
+	
+	// use baseURL from options if present
+	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
+	
 	
 	// Make it a string
 	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
@@ -131,8 +142,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
 	
+	
+	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
-	scanner.charactersToBeSkipped = [NSCharacterSet newlineCharacterSet];
+	scanner.charactersToBeSkipped = nil;
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
 	NSDictionary *previousAttributes = NULL;
@@ -239,6 +252,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{
+				// hide contents of recognized tag
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_tagContentsInvisible"];
+				
+				
 				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
 				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
 				
@@ -286,6 +303,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 					NSURL *link = [NSURL URLWithString:cleanString];
+					
+					// deal with relative URL
+					if (![link scheme])
+					{
+						link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+					}
+					
 					
 					if (link)
 					{
@@ -545,11 +569,11 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			//----------------------------------------- TAG CONTENTS -----------------------------------------
 			NSString *tagContents = nil;
 			
-			if ([scanner scanUpToString:@"<" intoString:&tagContents])
+			if ([scanner scanUpToString:@"<" intoString:&tagContents] && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
 			{
-
-				tagContents = [tagContents  stringByNormalizingWhitespace];
+				tagContents = [tagContents stringByNormalizingWhitespace];
 				tagContents = [tagContents stringByReplacingHTMLEntities];
+				
 				
 				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
 				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];

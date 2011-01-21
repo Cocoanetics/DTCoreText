@@ -117,9 +117,14 @@
 
 #pragma mark UITableViewDelegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+	NSDictionary *rowSnippet = [_snippets objectAtIndex:indexPath.row];
+	
 	DemoTextViewController *viewController = [[DemoTextViewController alloc] init];
-	viewController.fileName = [[_snippets objectAtIndex:indexPath.row] objectForKey:@"File"];
+	viewController.fileName = [rowSnippet objectForKey:@"File"];
+	viewController.baseURL = [NSURL URLWithString:[rowSnippet  objectForKey:@"BaseURL"]];
+	
 	[self.navigationController pushViewController:viewController animated:YES];
 	[viewController release];
 }
