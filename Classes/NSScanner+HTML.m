@@ -63,6 +63,8 @@
 	NSCharacterSet *tagCharacterSet = [NSCharacterSet tagNameCharacterSet];
 	NSCharacterSet *quoteCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"'\""];
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	NSMutableCharacterSet *nonquoteAttributedEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"/>"];
+	[nonquoteAttributedEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
 	
 	NSString *scannedTagName = nil;
 	NSMutableDictionary *tmpAttributes = [NSMutableDictionary dictionary];
@@ -135,6 +137,14 @@
 				[self scanString:quote intoString:NULL];
 				
 				[tmpAttributes setObject:attrValue forKey:attrName];
+			}
+			else 
+			{
+				// non-quoted attribute, ends at /, > or whitespace
+				if ([self scanUpToCharactersFromSet:nonquoteAttributedEndCharacterSet intoString:&attrValue])
+				{
+					[tmpAttributes setObject:attrValue forKey:attrName];
+				}
 			}
 		}
 		
