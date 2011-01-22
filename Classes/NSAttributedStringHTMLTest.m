@@ -101,7 +101,21 @@
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
-
+- (void)testMissingClosingTagAndSpacing
+{
+	NSString *html = @" image \n <a href=\"http://sv.wikipedia.org/wiki/Fil:V%C3%A4dersoltavlan_cropped.JPG\"\n late</a> last";
+	
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *resultOnIOS = [dump description];
+	
+	NSString *resultOnMac = @"<696d6167 65206c61 7374>";
+	
+	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
+	
+}
 
 
 

@@ -75,6 +75,16 @@
 		B235598C12E055BC005EA62F /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = B235598B12E055BC005EA62F /* LoremIpsum.html */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A7DBFFB412EB35AC00F25897 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A7DBFBEA12E965DE00F25897 /* UnitTest */;
+			remoteInfo = UnitTest;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* DemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoAppDelegate.h; sourceTree = "<group>"; };
@@ -317,6 +327,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A7DBFFB512EB35AC00F25897 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -470,6 +481,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A7DBFFB512EB35AC00F25897 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
+			targetProxy = A7DBFFB412EB35AC00F25897 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

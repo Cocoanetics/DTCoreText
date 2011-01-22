@@ -160,9 +160,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		NSDictionary *tagAttributesDict = nil;
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
-
+		
 		[scanner logPosition];
-
+		
 		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
@@ -230,8 +230,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
 				
 				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
-												 (id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
-												 (id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
+														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
+														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
 				
 				id link = [currentTag objectForKey:@"DTLink"];
@@ -750,23 +750,31 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				}
 				else // might be a continuation of a paragraph, then we might need space before it
 				{
-				// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
-				if (![tagContents hasPrefix:@" "])
-				{
 					NSString *stringSoFar = [tmpString string];
 					
-					if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
+//					// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
+//					if (![tagContents hasPrefix:@" "])
+//					{
+//						
+//						if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
+//						{
+//							// add space prefix unless punctuation character
+//							if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
+//							{
+//								//FIXME: What are the situations where a whitespace needs adding?
+//								// NOT: </font>text
+//								//tagContents = [@" " stringByAppendingString:tagContents];
+//							}
+//						}
+//					}
+					
+					// prevent double spacing
+					if ([stringSoFar hasSuffix:@" "] && [tagContents hasPrefix:@" "])
 					{
-						// add space prefix unless punctuation character
-						if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
-						{
-							//FIXME: What are the situations where a whitespace needs adding?
-							// NOT: </font>text
-							//tagContents = [@" " stringByAppendingString:tagContents];
-						}
+						tagContents = [tagContents substringFromIndex:1];
 					}
 				}
-				}
+				
 				
 				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 				[tmpString appendAttributedString:tagString];
