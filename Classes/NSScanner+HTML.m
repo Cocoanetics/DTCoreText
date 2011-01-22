@@ -111,8 +111,8 @@
 		
 		if (![self scanCharactersFromSet:tagCharacterSet intoString:&attrName])
 		{
-			[self setScanLocation:initialScanLocation];
-			return NO;
+			NSLog(@"hier");
+			break;
 		}
 		
 		attrName = [attrName lowercaseString];

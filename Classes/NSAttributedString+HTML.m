@@ -153,14 +153,18 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
 	
+	
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
 		NSDictionary *tagAttributesDict = nil;
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
+
+		[scanner logPosition];
+
 		
-		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed])
+		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
 			if (![tagName isInlineTag])
 			{
