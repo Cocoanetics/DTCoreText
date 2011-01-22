@@ -89,6 +89,8 @@
 
 - (void)drawRect:(CGRect)rect 
 {
+	NSLog(@"%@", [_string string]);
+	
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// Flip the coordinate system
@@ -242,7 +244,7 @@
 				
 				
 				NSInteger tag = (TAG_BASE + stringRange.location);
-
+				
 				
 				UIView *existingView = [self viewWithTag:tag];
 				
@@ -381,19 +383,33 @@
 		
 		// remove custom views
 		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
+		
+		// framesetter needs to go
+		if (framesetter)
+		{
+			CFRelease(framesetter);
+			framesetter = NULL;
+		}
+		
+		if (textFrame)
+		{
+			CFRelease(textFrame);
+			textFrame = NULL;
+		}
+		
+		
 		[self setNeedsDisplay];
 	}
 }
 
 - (void)setFrame:(CGRect)newFrame
 {
-
+	
 	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
 	{
 		[super setFrame:newFrame];
 		
-			
+		
 		// next redraw will do new layout
 		if (textFrame)
 		{
@@ -406,7 +422,7 @@
 	}
 	else 
 	{
-	 //NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
+		//NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
 	}
 }
 
