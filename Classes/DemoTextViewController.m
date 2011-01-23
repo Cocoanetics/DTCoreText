@@ -113,7 +113,7 @@
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data baseURL:baseURL documentAttributes:NULL];
 	
 	// Display string
-	_textView.string = string;
+	_textView.attributedString = string;
 	
 	// Create range view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];

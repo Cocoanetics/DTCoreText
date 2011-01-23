@@ -111,7 +111,7 @@
 		
 		if (![self scanCharactersFromSet:tagCharacterSet intoString:&attrName])
 		{
-			NSLog(@"hier");
+			immediatelyClosed = YES;
 			break;
 		}
 		

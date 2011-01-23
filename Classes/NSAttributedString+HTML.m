@@ -161,9 +161,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
 		
-		[scanner logPosition];
-		
-		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
 			if (![tagName isInlineTag])
@@ -554,8 +551,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				if ([tagStack count])
 				{
-					[tagStack removeLastObject];
-					currentTag = [tagStack lastObject];
+					// check if this tag is indeed closing the currently open one
+					NSDictionary *topStackTag = [tagStack lastObject];
+					NSString *topTagName = [topStackTag objectForKey:@"_tag"];
+					
+					if ([tagName isEqualToString:topTagName])
+					{
+						[tagStack removeLastObject];
+						currentTag = [tagStack lastObject];
+					}
+					else 
+					{
+						NSLog(@"Ignoring non-open tag %@", topTagName);
+					}
+					
 				}
 				else 
 				{
@@ -575,218 +584,224 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents] && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
 			{
-				tagContents = [tagContents stringByNormalizingWhitespace];
-				tagContents = [tagContents stringByReplacingHTMLEntities];
+				//NSLog(@"tag: -%@-", tagContents);
 				
-				
-				NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
-				NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
-				
-				NSDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
-				
-				NSInteger symbolicStyle = 0;
-				
-				if ([[currentTag objectForKey:@"Italic"] boolValue])
+				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
-					symbolicStyle |= kCTFontItalicTrait;
-				}
-				
-				if ([[currentTag objectForKey:@"Bold"] boolValue])
-				{
-					symbolicStyle |= kCTFontBoldTrait;
-				}
-				
-				NSString *fontFace = [currentTagAttributes objectForKey:@"face"];
-				CGFloat fontSize = [[currentTag objectForKey:@"FontSize"] floatValue];
-				
-				if (fontSize==0)
-				{
-					fontSize = currentFontSize;
-				}				
-				
-				[fontStyleAttributes setObject:[NSNumber numberWithInt:symbolicStyle] forKey:(NSString *)kCTFontSymbolicTrait];
-				
-				[fontAttributes setObject:fontStyleAttributes forKey:(id)kCTFontTraitsAttribute];
-				
-				if (fontFace)
-				{
-					[fontAttributes setObject:fontFace forKey:(id)kCTFontFamilyNameAttribute];
-				}
-				else 
-				{
-					[fontAttributes setObject:@"Times New Roman" forKey:(id)kCTFontFamilyNameAttribute];
-				}
-				
-				NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-				
-				NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
-				if ([superscriptStyle intValue])
-				{
-					fontSize = fontSize / 1.2;
-					[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
+					tagContents = [tagContents stringByNormalizingWhitespace];
+					tagContents = [tagContents stringByReplacingHTMLEntities];
 					
-				}
-				
-				id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
-				if (runDelegate)
-				{
-					[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
-				}
-				
-				id link = [currentTag objectForKey:@"DTLink"];
-				if (link)
-				{
-					[attributes setObject:link forKey:@"DTLink"];
-				}
-				
-				CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
-				CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, fontSize, NULL);
-				
-				CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
-				CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
-				
+					
+					
+					NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
+					NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
+					
+					NSDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
+					
+					NSInteger symbolicStyle = 0;
+					
+					if ([[currentTag objectForKey:@"Italic"] boolValue])
+					{
+						symbolicStyle |= kCTFontItalicTrait;
+					}
+					
+					if ([[currentTag objectForKey:@"Bold"] boolValue])
+					{
+						symbolicStyle |= kCTFontBoldTrait;
+					}
+					
+					NSString *fontFace = [currentTagAttributes objectForKey:@"face"];
+					CGFloat fontSize = [[currentTag objectForKey:@"FontSize"] floatValue];
+					
+					if (fontSize==0)
+					{
+						fontSize = currentFontSize;
+					}				
+					
+					[fontStyleAttributes setObject:[NSNumber numberWithInt:symbolicStyle] forKey:(NSString *)kCTFontSymbolicTrait];
+					
+					[fontAttributes setObject:fontStyleAttributes forKey:(id)kCTFontTraitsAttribute];
+					
+					if (fontFace)
+					{
+						[fontAttributes setObject:fontFace forKey:(id)kCTFontFamilyNameAttribute];
+					}
+					else 
+					{
+						[fontAttributes setObject:@"Times New Roman" forKey:(id)kCTFontFamilyNameAttribute];
+					}
+					
+					NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+					
+					NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
+					if ([superscriptStyle intValue])
+					{
+						fontSize = fontSize / 1.2;
+						[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
+						
+					}
+					
+					id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
+					if (runDelegate)
+					{
+						[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
+					}
+					
+					id link = [currentTag objectForKey:@"DTLink"];
+					if (link)
+					{
+						[attributes setObject:link forKey:@"DTLink"];
+					}
+					
+					CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
+					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, fontSize, NULL);
+					
+					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
+					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
+					
 #if ALLOW_IPHONE_SPECIAL_CASES				
-				if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
-				{
-					if (nextParagraphAdditionalSpaceBefore>0)
+					if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
 					{
-						// FIXME: add extra space properly
-						// this also works, but breaks UnitTest for lists
-						//tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
-						
-						//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
-						nextParagraphAdditionalSpaceBefore = 0;
+						if (nextParagraphAdditionalSpaceBefore>0)
+						{
+							// FIXME: add extra space properly
+							// this also works, but breaks UnitTest for lists
+							//tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
+							
+							//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
+							nextParagraphAdditionalSpaceBefore = 0;
+						}
 					}
-				}
 #endif
-				
-				
-				CGFloat headIndent = [[currentTag objectForKey:@"HeadIndent"] floatValue];
-				
-				NSArray *tabStops = [currentTag objectForKey:@"TabStops"];
-				
-				CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops);
-				
-				[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-				[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-				
-				NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
-				
-				if (fontColor)
-				{
-					UIColor *color = [UIColor colorWithHTMLName:fontColor];
 					
-					if (color)
+					
+					CGFloat headIndent = [[currentTag objectForKey:@"HeadIndent"] floatValue];
+					
+					NSArray *tabStops = [currentTag objectForKey:@"TabStops"];
+					
+					CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops);
+					
+					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
+					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+					
+					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
+					
+					if (fontColor)
 					{
-						[attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
-					}
-				}
-				
-				NSNumber *underlineStyle = [currentTag objectForKey:@"UnderlineStyle"];
-				if (underlineStyle)
-				{
-					[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
-				}
-				
-				NSNumber *strikeOut = [currentTag objectForKey:@"_StrikeOut"];
-				
-				if (strikeOut)
-				{
-					[attributes setObject:strikeOut forKey:@"_StrikeOut"];
-				}
-				
-				// HTML ignores newlines
-				tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-				
-				if (needsListItemStart)
-				{
-					if (listCounter)
-					{
-						NSString *prefix = [NSString stringWithFormat:@"\x09%d.\x09", listCounter];
+						UIColor *color = [UIColor colorWithHTMLName:fontColor];
 						
-						tagContents = [prefix stringByAppendingString:tagContents];
+						if (color)
+						{
+							[attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
+						}
+					}
+					
+					NSNumber *underlineStyle = [currentTag objectForKey:@"UnderlineStyle"];
+					if (underlineStyle)
+					{
+						[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
+					}
+					
+					NSNumber *strikeOut = [currentTag objectForKey:@"_StrikeOut"];
+					
+					if (strikeOut)
+					{
+						[attributes setObject:strikeOut forKey:@"_StrikeOut"];
+					}
+					
+					// HTML ignores newlines
+					tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+					
+					if (needsListItemStart)
+					{
+						if (listCounter)
+						{
+							NSString *prefix = [NSString stringWithFormat:@"\x09%d.\x09", listCounter];
+							
+							tagContents = [prefix stringByAppendingString:tagContents];
+						}
+						else
+						{
+							// Ul li prefixes bullet
+							tagContents = [@"\x09\u2022\x09" stringByAppendingString:tagContents];
+						}
+						
+						needsListItemStart = NO;
+					}
+					
+					
+					// Add newline after block contents if a new block follows
+					NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
+					
+					if ([nextTag isEqualToString:@"br"])
+					{
+						// Add linefeed
+						tagContents = [tagContents stringByAppendingString:UNICODE_LINE_FEED];
 					}
 					else
 					{
-						// Ul li prefixes bullet
-						tagContents = [@"\x09\u2022\x09" stringByAppendingString:tagContents];
-					}
-					
-					needsListItemStart = NO;
-				}
-				
-				
-				// Add newline after block contents if a new block follows
-				NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
-				
-				if ([nextTag isEqualToString:@"br"])
-				{
-					// Add linefeed
-					tagContents = [tagContents stringByAppendingString:UNICODE_LINE_FEED];
-				}
-				else
-				{
-					
-					// add paragraph break if this is the end of paragraph
-					if (nextTag && ![nextTag isInlineTag])
-					{
-						if ([tagContents length])
+						
+						// add paragraph break if this is the end of paragraph
+						if (nextTag && ![nextTag isInlineTag])
 						{
-							tagContents = [tagContents stringByAppendingString:@"\n"];
+							if ([tagContents length])
+							{
+								tagContents = [tagContents stringByAppendingString:@"\n"];
+							}
 						}
 					}
-				}
-				
-				if (needsNewLineBefore)
-				{
-					if ([tmpString length])
+					
+					if (needsNewLineBefore)
 					{
-						if (![[tmpString string] hasSuffix:@"\n"])
+						if ([tmpString length])
 						{
-							tagContents = [@"\n" stringByAppendingString:tagContents];
+							if (![[tmpString string] hasSuffix:@"\n"])
+							{
+								tagContents = [@"\n" stringByAppendingString:tagContents];
+							}
+						}
+						needsNewLineBefore = NO;
+					}
+					else // might be a continuation of a paragraph, then we might need space before it
+					{
+						NSString *stringSoFar = [tmpString string];
+						
+						//					// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
+						//					if (![tagContents hasPrefix:@" "])
+						//					{
+						//						
+						//						if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
+						//						{
+						//							// add space prefix unless punctuation character
+						//							if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
+						//							{
+						//								//FIXME: What are the situations where a whitespace needs adding?
+						//								// NOT: </font>text
+						//								//tagContents = [@" " stringByAppendingString:tagContents];
+						//							}
+						//						}
+						//					}
+						
+						// prevent double spacing
+						if ([stringSoFar hasSuffix:@" "] && [tagContents hasPrefix:@" "])
+						{
+							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
-					needsNewLineBefore = NO;
-				}
-				else // might be a continuation of a paragraph, then we might need space before it
-				{
-					NSString *stringSoFar = [tmpString string];
 					
-//					// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
-//					if (![tagContents hasPrefix:@" "])
-//					{
-//						
-//						if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
-//						{
-//							// add space prefix unless punctuation character
-//							if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
-//							{
-//								//FIXME: What are the situations where a whitespace needs adding?
-//								// NOT: </font>text
-//								//tagContents = [@" " stringByAppendingString:tagContents];
-//							}
-//						}
-//					}
 					
-					// prevent double spacing
-					if ([stringSoFar hasSuffix:@" "] && [tagContents hasPrefix:@" "])
-					{
-						tagContents = [tagContents substringFromIndex:1];
-					}
+					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
+					[tmpString appendAttributedString:tagString];
+					[tagString release];
+					
+					previousAttributes = attributes;
+					
+					CFRelease(font);
+					CFRelease(fontDesc);
+					CFRelease(paragraphStyle);
 				}
 				
-				
-				NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
-				[tmpString appendAttributedString:tagString];
-				[tagString release];
-				
-				previousAttributes = attributes;
-				
-				CFRelease(font);
-				CFRelease(fontDesc);
-				CFRelease(paragraphStyle);
 			}
-			
 		}
 		
 	}

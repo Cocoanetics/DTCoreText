@@ -151,14 +151,20 @@
 	}
 }
 
-- (void)setString:(NSAttributedString *)string
+- (void)setAttributedString:(NSAttributedString *)string
 {
-	self.contentView.string = string;
+	self.contentView.attributedString = string;
 	
 	[self.contentView sizeToFit];
 	
 	self.contentSize = contentView.bounds.size;
 }
+
+- (NSAttributedString *)attributedString
+{
+	return self.contentView.attributedString;
+}
+
 
 - (void)setFrame:(CGRect)newFrame
 {
@@ -194,7 +200,7 @@
  }
  */
 
-@synthesize string;
+@synthesize attributedString;
 @synthesize contentView;
 
 

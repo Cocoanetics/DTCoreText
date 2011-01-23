@@ -26,7 +26,7 @@
 	id <DTAttributedTextViewDelegate> textDelegate;
 }
 
-@property (nonatomic, retain) NSAttributedString *string;
+@property (nonatomic, retain) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) DTAttributedTextContentView *contentView;
 @property (nonatomic, retain) UIView *backgroundView;

@@ -89,8 +89,6 @@
 
 - (void)drawRect:(CGRect)rect 
 {
-	NSLog(@"%@", [_string string]);
-	
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// Flip the coordinate system
@@ -255,7 +253,7 @@
 				}
 				else 
 				{
-					NSAttributedString *string = [_string attributedSubstringFromRange:stringRange]; 
+					NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
 					
 					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
 					
@@ -293,7 +291,7 @@
 		CFRelease(textFrame);
 	}
 	
-	[_string release];
+	[_attributedString release];
 	
 	[super dealloc];
 }
@@ -324,7 +322,7 @@
 {
 	if (!framesetter)
 	{
-		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_string);
+		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedString);
 	}
 	
 	return framesetter;
@@ -349,6 +347,16 @@
 
 - (void)relayoutText
 {
+	// remove custom views
+	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+	
+	// framesetter needs to go
+	if (framesetter)
+	{
+		CFRelease(framesetter);
+		framesetter = NULL;
+	}
+	
 	if (textFrame)
 	{
 		CFRelease(textFrame);
@@ -359,6 +367,9 @@
 	
 	// set frame to fit text preserving origin
 	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+	
+	[self setNeedsDisplay];
+	
 }
 
 - (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
@@ -371,13 +382,13 @@
 	}
 }
 
-- (void)setString:(NSAttributedString *)string
+- (void)setAttributedString:(NSAttributedString *)string
 {
-	if (string != _string)
+	if (string != _attributedString)
 	{
-		[_string release];
+		[_attributedString release];
 		
-		_string = [string retain];
+		_attributedString = [string retain];
 		
 		[self sizeToFit];
 		
@@ -428,7 +439,7 @@
 
 @synthesize framesetter;
 @synthesize textFrame;
-@synthesize string = _string;
+@synthesize attributedString = _attributedString;
 @synthesize parentView;
 @synthesize edgeInsets;
 

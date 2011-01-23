@@ -17,17 +17,20 @@
 	CTFramesetterRef framesetter;
 	CTFrameRef textFrame;
 	
-	NSAttributedString *_string;
+	NSAttributedString *_attributedString;
 	
 	DTAttributedTextView *parentView;
 	
 	UIEdgeInsets edgeInsets;
 }
 
+
+- (void)relayoutText;
+
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 @property (nonatomic, readonly) CTFrameRef textFrame;
 
-@property (retain) NSAttributedString *string;
+@property (retain) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
 
 @property (nonatomic, assign) DTAttributedTextView *parentView;

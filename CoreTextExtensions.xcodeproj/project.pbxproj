@@ -76,7 +76,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A7DBFFB412EB35AC00F25897 /* PBXContainerItemProxy */ = {
+		A76FEFC912ECD1580065A4E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -327,7 +327,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A7DBFFB512EB35AC00F25897 /* PBXTargetDependency */,
+				A76FEFCA12ECD1580065A4E7 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -483,10 +483,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A7DBFFB512EB35AC00F25897 /* PBXTargetDependency */ = {
+		A76FEFCA12ECD1580065A4E7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
-			targetProxy = A7DBFFB412EB35AC00F25897 /* PBXContainerItemProxy */;
+			targetProxy = A76FEFC912ECD1580065A4E7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

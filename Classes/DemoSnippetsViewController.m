@@ -80,7 +80,7 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
 
-	contentView.string = string;
+	contentView.attributedString = string;
 	
 	return contentView;
 }
