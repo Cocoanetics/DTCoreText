@@ -15,6 +15,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+// set to 1 if you want to see the glyph runs marked 
 #define DRAW_DEBUG_FRAMES 0
 
 #define TAG_BASE 9999
@@ -384,33 +385,30 @@
 
 - (void)setAttributedString:(NSAttributedString *)string
 {
-	if (string != _attributedString)
+	[_attributedString autorelease];
+	
+	_attributedString = [string copy];
+	
+	[self sizeToFit];
+	
+	// remove custom views
+	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+	
+	// framesetter needs to go
+	if (framesetter)
 	{
-		[_attributedString release];
-		
-		_attributedString = [string retain];
-		
-		[self sizeToFit];
-		
-		// remove custom views
-		[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-		
-		// framesetter needs to go
-		if (framesetter)
-		{
-			CFRelease(framesetter);
-			framesetter = NULL;
-		}
-		
-		if (textFrame)
-		{
-			CFRelease(textFrame);
-			textFrame = NULL;
-		}
-		
-		
-		[self setNeedsDisplay];
+		CFRelease(framesetter);
+		framesetter = NULL;
 	}
+	
+	if (textFrame)
+	{
+		CFRelease(textFrame);
+		textFrame = NULL;
+	}
+	
+	
+	[self setNeedsDisplay];
 }
 
 - (void)setFrame:(CGRect)newFrame

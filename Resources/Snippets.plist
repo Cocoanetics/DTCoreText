@@ -12,6 +12,14 @@
 	</dict>
 	<dict>
 		<key>Title</key>
+		<string>CSS Styles</string>
+		<key>File</key>
+		<string>styles.html</string>
+		<key>Description</key>
+		<string>Demonstrates CSS styles that are supported so far.</string>
+	</dict>
+	<dict>
+		<key>Title</key>
 		<string>Lorem Ipsum</string>
 		<key>File</key>
 		<string>LoremIpsum.html</string>

@@ -7,6 +7,7 @@
 //
 
 #import "NSString+HTML.h"
+#import "NSScanner+HTML.h"
 
 static NSSet *inlineTags = nil;
 static NSDictionary *entityLookup = nil;
@@ -27,7 +28,7 @@ static NSDictionary *entityLookup = nil;
 	if (!inlineTags)
 	{
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-                    @"u", @"a", @"img", @"del", @"br", nil];
+                    @"u", @"a", @"img", @"del", @"br", @"span", nil];
 	}
 	
 	return [inlineTags containsObject:[self lowercaseString]];
@@ -386,6 +387,34 @@ static NSDictionary *entityLookup = nil;
    
    
    return [NSString stringWithString:output];
+}
+
+- (NSDictionary *)dictionaryOfCSSStyles
+{
+	// font-size:14px;
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	
+	NSString *name = nil;
+	NSString *value = nil;
+	
+	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
+	
+	while ([scanner scanCSSAttribute:&name value:&value]) 
+	{
+		[tmpDict setObject:value forKey:name];
+	}
+	
+	return [NSDictionary dictionaryWithDictionary:tmpDict];
+}
+
+- (CGFloat)CSSpixelSize
+{
+	if ([self hasSuffix:@"px"])
+	{
+		return [self floatValue];
+	}
+	
+	return [self floatValue];
 }
 
 @end

@@ -1,0 +1,20 @@
+<h1>CSS Styles Support</h1>
+<p>Currently CSS styling is supported inline in tags</p>
+<p>For example:</p>
+<p style="font-family:courier;">&lt;p style=&quot;color:red; font-size: 30px;text-decoration:underline;&quot;&gt;Some fancy text&lt;/p&gt;</p>
+<p style="color:red; font-size: 30px;text-decoration:underline;">Some fancy text</p>
+<p>This way you can affect the way hyperlinks are decorated: <a href="http://twitter.com/cocoanetics">@cocoanetics</a> versus <a style="color:gray; text-decoration:none;" href="http://twitter.com/cocoanetics">@cocoanetics</a></p>
+<h2>Supported Attributes</h2>
+<ul>
+<li>color - names (red) or hex (#FF0000)</li>
+<li>decoration - <span style="text-decoration:underline;">underline</span>, <span style="text-decoration:line-through;">line-through</span></li>
+<li>font-size - specified in pixels (12px)</li>
+<li>font-family - to specify the postscript name of a family like <span style="font-family:courier;">Courier</span></li>
+<li>font-style - normal, inherit, <span style="font-style:italic;">italic</span>, <span style="font-style:oblique;">oblique</span></li>
+<li>font-weight - normal, <span style="font-weight:bold;">bold</span></li>
+</ul>
+<h2>To Do</h2>
+<ul>
+<li>More robust mapping of font family to available fonts, support for fallback</li>
+<li>text-decoration - blink, overline</li>
+<li>font-variant - to support smallcaps</li></ul>

@@ -14,4 +14,8 @@
 - (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet;
 - (NSString *)stringByReplacingHTMLEntities;
 
+// CSS
+- (NSDictionary *)dictionaryOfCSSStyles;
+- (CGFloat)CSSpixelSize;
+
 @end

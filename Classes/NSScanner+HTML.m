@@ -180,6 +180,69 @@
 	return YES;
 }
 
+#pragma mark CSS
+
+
+// scan a single element from a style list
+- (BOOL)scanCSSAttribute:(NSString **)name value:(NSString **)value
+{
+	NSString *attrName = nil;
+	NSString *attrValue = nil;
+
+	NSInteger initialScanLocation = [self scanLocation];
+	
+	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	
+	NSMutableCharacterSet *attributeEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@";"];
+	[attributeEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
+	
+	NSMutableCharacterSet *attributeNameCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"-"];
+	[attributeNameCharacterSet formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+	
+	
+	if (![self scanCharactersFromSet:attributeNameCharacterSet intoString:&attrName])
+	{
+		return NO;
+	}
+	
+	// skip whitespace
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	
+	// expect :
+	if (![self scanString:@":" intoString:NULL])
+	{
+		[self setScanLocation:initialScanLocation];
+		return NO;
+	}
+
+	// skip whitespace
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+
+	if (![self scanUpToCharactersFromSet:attributeEndCharacterSet intoString:&attrValue])
+	{
+		[self setScanLocation:initialScanLocation];
+		return NO;
+	}
+	
+	// skip ending characters
+	[self scanCharactersFromSet:attributeEndCharacterSet intoString:NULL];
+	
+	
+	// Success 
+	if (name)
+	{
+		*name = [attrName lowercaseString];
+	}
+	
+	if (value)
+	{
+		*value = [attrValue lowercaseString];
+	}
+	
+	return YES;
+}
+
+
 // for debugging scanner
 - (void)logPosition
 {

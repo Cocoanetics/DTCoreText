@@ -191,6 +191,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				[currentTag setObject:mutableAttributes forKey:@"Attributes"];
 			}
 			
+			NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
+
+			
 			// ---------- Processing
 			
 			if ([tagName isEqualToString:@"img"] && tagOpen)
@@ -299,7 +302,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if (tagOpen)
 				{
 					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-					NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
 					[currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
 					
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -530,6 +532,140 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				immediatelyClosed = YES; 
 			}
 			
+			// --------------------- remap styles
+			
+			NSString *styleString = [[currentTag objectForKey:@"Attributes"] objectForKey:@"style"];
+			
+			if (styleString)
+			{
+				NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+				
+				
+				NSString *fontSize = [styles objectForKey:@"font-size"];
+				if (fontSize)
+				{
+					CGFloat pixelSize = [fontSize CSSpixelSize];
+					[currentTag setObject:[NSNumber numberWithFloat:pixelSize] forKey:@"FontSize"];
+				}
+				
+				NSString *color = [styles objectForKey:@"color"];
+				if (color)
+				{
+					[currentTagAttributes setObject:color forKey:@"color"];
+
+				}
+				
+				// TODO: better mapping from font families to available families
+				NSString *fontFamily = [styles objectForKey:@"font-family"];
+				if (fontFamily)
+				{
+					if ([fontFamily rangeOfString:@"courier"].length)
+					{
+						fontFamily = @"Courier New";
+					}
+					
+					[currentTagAttributes setObject:fontFamily forKey:@"face"];
+				}
+				
+				NSString *fontStyle = [styles objectForKey:@"font-style"];
+				if (fontStyle)
+				{
+					if ([fontStyle isEqualToString:@"normal"])
+					{
+						[currentTag removeObjectForKey:@"Italic"];
+					}
+					else if ([fontStyle isEqualToString:@"italic"])
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
+					}
+					else if ([fontStyle isEqualToString:@"oblique"]) // same as italic
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
+					}
+					else if ([fontStyle isEqualToString:@"inherit"])
+					{
+						// nothing to do
+					}
+				}
+				
+				NSString *fontWeight = [styles objectForKey:@"font-weight"];
+				if (fontWeight)
+				{
+					if ([fontWeight isEqualToString:@"normal"])
+					{
+						[currentTag removeObjectForKey:@"Bold"];
+					}
+					else if ([fontWeight isEqualToString:@"bold"])
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+					}
+					else if ([fontWeight isEqualToString:@"bolder"])
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+					}
+					else if ([fontWeight isEqualToString:@"lighter"])
+					{
+						[currentTag removeObjectForKey:@"Bold"];
+					}
+					else 
+					{
+						// can be 100 - 900
+						
+						NSInteger value = [fontWeight intValue];
+						
+						if (value<=600)
+						{
+							[currentTag removeObjectForKey:@"Bold"];
+						}
+						else 
+						{
+							[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+						}
+					}
+				}
+				
+				
+				NSString *decoration = [styles objectForKey:@"text-decoration"];
+				if (decoration)
+				{
+					if ([decoration isEqualToString:@"underline"])
+					{
+						[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
+					}
+					else if ([decoration isEqualToString:@"line-through"])
+					{
+						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];	
+					}
+					else if ([decoration isEqualToString:@"none"])
+					{
+						// remove all
+						[currentTag removeObjectForKey:@"UnderlineStyle"];
+						[currentTag removeObjectForKey:@"_StrikeOut"];
+					}
+					else if ([decoration isEqualToString:@"overline"])
+					{
+						//TODO: add support for overline decoration
+					}
+					else if ([decoration isEqualToString:@"blink"])
+					{
+						//TODO: add support for blink decoration
+					}
+					else if ([decoration isEqualToString:@"inherit"])
+					{
+						// nothing to do
+					}
+					
+					NSLog(@"%@", decoration);
+				}
+				
+				NSLog(@"%@", styles);
+			}
+			
+			
+			
+			
+			
+			// --------------------- push tag on stack if it's opening
 			if (tagOpen&&!immediatelyClosed)
 			{
 				[tagStack addObject:currentTag];

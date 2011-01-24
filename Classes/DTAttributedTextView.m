@@ -73,6 +73,7 @@
 	}
 	
 	self.autoresizesSubviews = YES;
+	self.clipsToBounds = YES;
 }
 
 #pragma mark Properties
