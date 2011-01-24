@@ -41,7 +41,6 @@
 		A7DBFBFB12E9660A00F25897 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A7EA57EF12E0C5590045411B /* Oliver.jpg */; };
 		A7DBFBFC12E9660D00F25897 /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = B23558E712E04C3C005EA62F /* README.html */; };
 		A7DBFBFE12E9660E00F25897 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		A7DBFBFF12E9660F00F25897 /* CoreTextExtensions.app in Resources */ = {isa = PBXBuildFile; fileRef = 1D6058910D05DD3D006BFB54 /* CoreTextExtensions.app */; };
 		A7DBFC0012E9660F00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBFC0212E9661000F25897 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 		A7DBFC0312E9661200F25897 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
@@ -77,7 +76,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A76FEFC912ECD1580065A4E7 /* PBXContainerItemProxy */ = {
+		A76FF1FE12ED932E0065A4E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -330,7 +329,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A76FEFCA12ECD1580065A4E7 /* PBXTargetDependency */,
+				A76FF1FF12ED932E0065A4E7 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -377,8 +376,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* CoreTextExtensions */,
 				A7DBFBEA12E965DE00F25897 /* UnitTest */,
+				1D6058900D05DD3D006BFB54 /* CoreTextExtensions */,
 			);
 		};
 /* End PBXProject section */
@@ -408,7 +407,6 @@
 				A7DBFBF612E9660800F25897 /* APOD.html in Resources */,
 				A7DBFBFB12E9660A00F25897 /* Oliver.jpg in Resources */,
 				A7DBFBFC12E9660D00F25897 /* README.html in Resources */,
-				A7DBFBFF12E9660F00F25897 /* CoreTextExtensions.app in Resources */,
 				A7DBFC0712E9661500F25897 /* Image.html in Resources */,
 				A7DBFC0A12E9661700F25897 /* LoremIpsum.html in Resources */,
 				A7DBFC0B12E9661800F25897 /* icon_smile.gif in Resources */,
@@ -487,10 +485,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A76FEFCA12ECD1580065A4E7 /* PBXTargetDependency */ = {
+		A76FF1FF12ED932E0065A4E7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
-			targetProxy = A76FEFC912ECD1580065A4E7 /* PBXContainerItemProxy */;
+			targetProxy = A76FF1FE12ED932E0065A4E7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
