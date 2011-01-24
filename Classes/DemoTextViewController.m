@@ -96,8 +96,6 @@
 	_textView.textDelegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_textView];
-	
-	self.wantsFullScreenLayout = NO;
 }
 
 
