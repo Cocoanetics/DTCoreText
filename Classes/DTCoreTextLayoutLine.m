@@ -112,7 +112,6 @@
 	return CTLineGetImageBounds(_line, context);
 }
 
-
 #pragma mark Properties
 - (NSArray *)glyphRuns
 {

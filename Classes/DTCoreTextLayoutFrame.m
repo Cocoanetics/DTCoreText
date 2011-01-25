@@ -93,6 +93,36 @@
 	CTFrameDraw(_textFrame, context);
 }
 
+- (NSRange)visibleStringRange
+{
+	CFRange range = CTFrameGetVisibleStringRange(_textFrame);
+	
+	return NSMakeRange(range.location, range.length);
+}
+
+
+#pragma mark Calculations
+- (NSInteger)lineIndexForGlyphIndex:(NSInteger)index
+{
+	NSInteger retIndex = 0;
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+		NSInteger count = [oneLine numberOfGlyphs];
+		if (index >= count)
+		{
+			index -= count;
+		}
+		else 
+		{
+			return retIndex;
+		}
+		
+		retIndex++;
+	}
+	
+	return NSIntegerMax;
+}
+
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
 {
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
@@ -111,8 +141,8 @@
 	return CGRectZero;
 }
 
+#pragma mark Properties
 @synthesize frame = _frame;
-
 @synthesize layouter = _layouter;
 @synthesize lines = _lines;
 

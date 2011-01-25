@@ -25,8 +25,11 @@
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter;
 
 - (CGPathRef)path;
+- (NSRange)visibleStringRange;
+
 - (void)drawInContext:(CGContextRef)context;
 
+- (NSInteger)lineIndexForGlyphIndex:(NSInteger)index;
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 
 @property (nonatomic, assign, readonly) CGRect frame;

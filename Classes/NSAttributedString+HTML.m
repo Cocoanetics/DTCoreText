@@ -892,8 +892,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					if (needsNewLineBefore)
 					{
-						NSLog(@"-%@-", tagContents);
-						
 						if ([tagContents hasPrefix:@" "])
 						{
 							tagContents = [tagContents substringFromIndex:1];
