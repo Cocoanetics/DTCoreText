@@ -10,29 +10,37 @@
 
 #import "NSAttributedString+HTML.h"
 
+#import "DTCoreTextLayouter.h"
+
 @class DTAttributedTextView;
 
 
-@interface DTAttributedTextContentView : UIView {
-	CTFramesetterRef framesetter;
-	CTFrameRef textFrame;
-	
+@interface DTAttributedTextContentView : UIView 
+{
 	NSAttributedString *_attributedString;
 	
 	DTAttributedTextView *parentView;
 	
 	UIEdgeInsets edgeInsets;
+	
+	DTCoreTextLayouter *layouter;
+	
+	BOOL drawDebugFrames;
+	
+	NSMutableSet *customViews;
 }
-
 
 - (void)relayoutText;
 
-@property (nonatomic, readonly) CTFramesetterRef framesetter;
-@property (nonatomic, readonly) CTFrameRef textFrame;
+@property (nonatomic, readonly, retain) DTCoreTextLayouter *layouter;
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
+@property (nonatomic) BOOL drawDebugFrames;
+
 
 @property (nonatomic, assign) DTAttributedTextView *parentView;
+
+
 
 @end

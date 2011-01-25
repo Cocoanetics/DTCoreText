@@ -8,6 +8,7 @@
 
 #import "DemoTextViewController.h"
 #import "DTAttributedTextView.h"
+#import "DTAttributedTextContentView.h"
 #import "NSAttributedString+HTML.h"
 #import "DTTextAttachment.h"
 
@@ -36,7 +37,13 @@
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
-		self.navigationItem.titleView = _segmentedControl;		
+		self.navigationItem.titleView = _segmentedControl;	
+		
+		// toolbar
+		UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
+		NSArray *toolbarItems = [NSArray arrayWithObjects:spacer, debug, nil];
+		[self setToolbarItems:toolbarItems];
 	}
 	return self;
 }
@@ -58,8 +65,6 @@
 	[super dealloc];
 }
 
-
-// FIXME: needs handling of navigation bar to support landscape
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
@@ -94,7 +99,7 @@
 	// Create text view
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	_textView.textDelegate = (id)self;
-	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
 }
 
@@ -149,8 +154,33 @@
 }
 
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated 
+{
+	[super viewWillAppear:animated];
+	
+	CGRect bounds = self.view.bounds;
+	//bounds.size.height += 44;
+	_textView.frame = bounds;
+	
 	[self _segmentedControlChanged:nil];
+	[_textView setContentInset:UIEdgeInsetsMake(0, 0, 44, 0)];
+	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
+	[self.navigationController setToolbarHidden:NO animated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+
+	// now the bar is up so we can autoresize again
+	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+}
+
+- (void)viewWillDisappear:(BOOL)animated;
+{
+	[self.navigationController setToolbarHidden:YES animated:YES];
+	
+	[super viewWillDisappear:animated];
 }
 
 
@@ -261,6 +291,11 @@
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
 	}
+}
+
+- (void)debugButton:(UIBarButtonItem *)sender
+{
+	_textView.contentView.drawDebugFrames = !_textView.contentView.drawDebugFrames;
 }
 
 #pragma mark Properties

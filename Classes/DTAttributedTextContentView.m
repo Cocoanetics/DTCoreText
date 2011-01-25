@@ -15,30 +15,39 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-// set to 1 if you want to see the glyph runs marked 
-#define DRAW_DEBUG_FRAMES 0
+
 
 #define TAG_BASE 9999
 
 @interface DTAttributedTextContentView ()
 
 - (void)setup;
-@property (nonatomic) CTFramesetterRef framesetter;
-@property (nonatomic) CTFrameRef textFrame;
 
+
+@property (nonatomic, retain) DTCoreTextLayouter *layouter;
+@property (nonatomic, retain) NSMutableSet *customViews;
 @end
+
+
 
 @implementation DTAttributedTextContentView
 
-
-
-
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame 
+{
     if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
     }
     return self;
+}
+
+- (void)dealloc 
+{
+	[_attributedString release];
+	[layouter release];
+	[customViews release];
+	
+	[super dealloc];
 }
 
 - (void)awakeFromNib
@@ -51,120 +60,114 @@
 	self.contentMode = UIViewContentModeRedraw;
 	self.userInteractionEnabled = YES;
 	
-	edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+	edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 	
 	self.opaque = NO;
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
+	
+	drawDebugFrames = NO;
 }
 
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
+	
+	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
+	
+	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
+	{
+		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+		{
+			// add custom views if necessary
+			if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
+			{
+				NSRange stringRange = [oneRun stringRange];
+				
+				NSInteger tag = (TAG_BASE + stringRange.location);
+				
+				UIView *existingView = [self viewWithTag:tag];
+				
+				// only add if there is no view yet with this tag
+				if (existingView)
+				{
+					existingView.frame = oneRun.frame;
+				}
+				else 
+				{
+					NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
+					
+					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:oneRun.frame];
+					
+					if (view)
+					{
+						view.frame = oneRun.frame;
+						view.tag = tag;
+						
+						[self addSubview:view];
+						
+						[self.customViews addObject:view];
+					}
+				}
+			}
+		}
+	}
 }
-
-/*
- // Example: Using CATextLayer. But it ignores paragraph spacing!
- 
- + (Class)layerClass
- {
- return [CATextLayer class];
- }
- 
- - (void)awakeFromNib
- {
- NSString *readmePath = [[NSBundle mainBundle] pathForResource:@"README" ofType:@"html"];
- NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
- NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
- 
- NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
- 
- CATextLayer *textLayer = (CATextLayer *)self.layer;
- 
- textLayer.frame = CGRectInset(self.bounds, 10, 10);
- textLayer.string = string;
- textLayer.wrapped = YES;
- }
- 
- */
-
 
 - (void)drawRect:(CGRect)rect 
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
-	// Flip the coordinate system
-	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-	CGContextTranslateCTM(context, 0, self.bounds.size.height);
-	CGContextScaleCTM(context, 1.0, -1.0);
+	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
 	
-#if DRAW_DEBUG_FRAMES
-	CGFloat dashes[] = {1.0, 3.0};
-	CGContextSetLineDash(context, 0, dashes, 2);
-	CGContextStrokeRect(context, UIEdgeInsetsInsetRect(self.bounds, edgeInsets));
-#endif
-	
-	
-	// get lines
-	CFArrayRef lines = CTFrameGetLines(self.textFrame);
-	CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
-	CTFrameGetLineOrigins(textFrame, CFRangeMake(0, 0), origins);
-	NSInteger lineIndex = 0;
-	
-	CGContextSetTextPosition(context, 0, 0);
-	
-	for (id oneLine in (NSArray *)lines)
+	if (drawDebugFrames)
 	{
-		CGPoint lineOrigin = origins[lineIndex];
-		lineOrigin.x += edgeInsets.left; // add inset 
-		lineOrigin.y += edgeInsets.top; // add inset
+		CGFloat dashes[] = {10.0, 2.0};
+		CGContextSetLineDash(context, 0, dashes, 2);
 		
-		CFArrayRef runs = CTLineGetGlyphRuns((CTLineRef)oneLine);
-		CGFloat lineAscent;
-		CGFloat lineDescent;
-		CGFloat lineLeading;
-		CGFloat lineWidth = CTLineGetTypographicBounds((CTLineRef)oneLine, &lineAscent, &lineDescent, &lineLeading);
-		CGRect lineBounds = CTLineGetImageBounds((CTLineRef)oneLine, context);
-		
-		lineBounds.origin.x += lineOrigin.x;
-		lineBounds.origin.y += lineOrigin.y;
-		lineBounds.size.height = lineAscent + lineDescent + 1;
-		lineBounds.size.width = lineWidth;
-		
-#if DRAW_DEBUG_FRAMES
-		[[UIColor blueColor] set];
-		CGContextFillRect(context, CGRectMake(lineOrigin.x, lineOrigin.y, -5, 1));
-		
-		CGContextSetRGBFillColor(context, 0, 1, 0, 0.1);
-		CGContextFillRect(context, lineBounds);
-		
-		int runIndex = 0;
-#endif		
-		
-		lineIndex++;
-		CGFloat offset = edgeInsets.left;
-		
-		for (id oneRun in (NSArray *)runs)
+		CGPathRef framePath = [layoutFrame path];
+		CGContextAddPath(context, framePath);
+		CGContextStrokePath(context);
+	}
+	
+	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
+	{
+		if (drawDebugFrames)
 		{
-			CGFloat runAscent = 0;
-			CGFloat runDescent = 0;
-			CGFloat runLeading = 0;
+			[[UIColor blueColor] set];
 			
-			CGFloat runWidth = CTRunGetTypographicBounds((CTRunRef) oneRun,
-														 CFRangeMake(0, 0),
-														 &runAscent,
-														 &runDescent, &runLeading);
+			CGContextSetLineDash(context, 0, NULL, 0);
+			CGContextStrokeRect(context, oneLine.frame);
 			
-			CGRect runImageBounds = CTRunGetImageBounds((CTRunRef)oneRun, 
-														context, CFRangeMake(0, 0));
+			CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
+			CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
+			CGContextStrokePath(context);
 			
-			CGRect runBounds;
-			runBounds.origin.x = offset;
-			runBounds.origin.y = lineBounds.origin.y;
-			runBounds.size.width = runWidth;
-			runBounds.size.height = runAscent + runDescent + 1;
+			CGContextSetRGBFillColor(context, 0, 0, 1, 0.1);
 			
-			NSDictionary *attributes = (NSDictionary *)CTRunGetAttributes((CTRunRef) oneRun);
-			DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+		}
+		
+		NSInteger runIndex = 0;
+		
+		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+		{
+			if (drawDebugFrames)
+			{
+				if (runIndex%2)
+				{
+					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
+				}
+				else 
+				{
+					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
+				}
+				
+				CGContextFillRect(context, oneRun.frame);
+				runIndex ++;
+			}
+			
+			
+			// -------------- Draw Embedded Images
+			DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
 			
 			if (attachment)
 			{
@@ -172,24 +175,30 @@
 				{
 					UIImage *image = (id)attachment.contents;
 					
-					CGRect imageBounds = CGRectMake(floorf(runBounds.origin.x), floorf(lineOrigin.y), 
+					CGRect imageBounds = CGRectMake(roundf(oneRun.frame.origin.x), roundf(oneRun.baselineOrigin.y - attachment.size.height), 
 													attachment.size.width, attachment.size.height);
-					CGContextDrawImage(context, imageBounds, image.CGImage); 
+					
+					
+					[image drawInRect:imageBounds];
 				}
 			}
 			
 			
-			// image bounds is 0 wide on trailing newline, don't want to stroke that.
+			// -------------- Line-Out
+			
+			CGRect runImageBounds = [oneRun imageBoundsInContext:context];
+			
+			// whitespace glyph at EOL has zero width, we don't want to stroke that
 			if (runImageBounds.size.width>0)
 			{
-				if ([[attributes objectForKey:@"_StrikeOut"] boolValue])
+				if ([[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue])
 				{
-					CGRect runStrokeBounds = runBounds;
+					CGRect runStrokeBounds = oneRun.frame;
 					
-					runStrokeBounds.origin.y += roundf(runBounds.size.height/2.0);
+					runStrokeBounds.origin.y += roundf(oneRun.frame.size.height/2.0);
 					
 					// get text color or use black
-					id color = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
+					id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
 					
 					if (color)
 					{
@@ -203,100 +212,23 @@
 					CGContextSetLineDash(context, 0, NULL, 0);
 					CGContextSetLineWidth(context, 1);
 					
-					//CGFloat y = roundf(runStrokeBounds.origin.y + (runStrokeBounds.size.height+ runDescent)/2.0  );
 					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
 					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
 					
 					CGContextStrokePath(context);
 				}
-				
-				
-#if DRAW_DEBUG_FRAMES			
-				if (runIndex%2)
-				{
-					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
-				}
-				else 
-				{
-					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
-				}
-				
-				CGContextFillRect(context, runBounds);
-				runIndex ++;
-#endif
-			}	
-			
-			//FIXME: Is there a better place to get the views? Problem: need context for coordinate calcs
-			
-			// add custom views if necessary
-			if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
-			{
-				CFRange range = CTRunGetStringRange((CTRunRef)oneRun);
-				NSRange stringRange = {range.location, range.length};
-				
-				// need to flip
-				CGRect runFrame = CGRectMake(runBounds.origin.x, self.bounds.size.height - lineOrigin.y - runAscent, runBounds.size.width, runAscent + runDescent + 1.0);
-				runFrame.origin.x = floorf(runFrame.origin.x);
-				runFrame.origin.y = floorf(runFrame.origin.y);
-				runFrame.size.width = ceilf(runFrame.size.width) + 1.0;
-				runFrame.size.height = ceilf(runFrame.size.height);
-				
-				
-				NSInteger tag = (TAG_BASE + stringRange.location);
-				
-				
-				UIView *existingView = [self viewWithTag:tag];
-				
-				// only add if there is no view yet with this tag
-				if (existingView)
-				{
-					existingView.frame = runFrame;
-				}
-				else 
-				{
-					NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
-					
-					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:runFrame];
-					
-					if (view)
-					{
-						view.frame = runFrame;
-						view.tag = tag;
-						
-						[self addSubview:view];
-					}
-				}
 			}
-			offset += runWidth;
 		}
 	}
 	
-	// cleanup
-	free(origins);
+	// Flip the coordinate system
+	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+	CGContextScaleCTM(context, 1.0, -1.0);
+	CGContextTranslateCTM(context, 0, -self.frame.size.height);
+	CGContextTranslateCTM(context, 0, -edgeInsets.top+edgeInsets.bottom);
 	
-	
-	// Draw
-	CTFrameDraw(self.textFrame, context);
+	[layoutFrame drawInContext:context];
 }
-
-
-- (void)dealloc 
-{
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-	}
-	
-	if (textFrame)
-	{
-		CFRelease(textFrame);
-	}
-	
-	[_attributedString release];
-	
-	[super dealloc];
-}
-
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
@@ -305,74 +237,32 @@
 		size.width = self.bounds.size.width;
 	}
 	
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
 	
-	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
-																	 CGSizeMake(size.width-edgeInsets.left-edgeInsets.right, CGFLOAT_MAX),
-																	 NULL);
-	// possibly because of floating point inaccuracy we need to constrain 3 px more and add 1 px to returned size
-	// otherwise sometimes the calculated frame does not fit
-	CGSize retSize = CGSizeMake(size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom)+1);
-	
-	
-	return retSize;
-}
-
-
-#pragma mark Properties
-- (CTFramesetterRef) framesetter
-{
-	if (!framesetter)
-	{
-		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedString);
-	}
-	
-	return framesetter;
-}
-
-
-- (CTFrameRef)textFrame
-{
-	if (!textFrame)
-	{
-		CGMutablePathRef path = CGPathCreateMutable();
-		CGPathAddRect(path, NULL, UIEdgeInsetsInsetRect(self.bounds, edgeInsets));
-		
-		textFrame = CTFramesetterCreateFrame(self.framesetter, CFRangeMake(0, 0), path, NULL);
-		
-		CGPathRelease(path);
-	}
-	
-	return textFrame;
+	// increase by edge insets
+	return CGSizeMake(size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom));
 }
 
 
 - (void)relayoutText
 {
 	// remove custom views
-	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	
-	// framesetter needs to go
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-		framesetter = NULL;
-	}
-	
-	if (textFrame)
-	{
-		CFRelease(textFrame);
-		textFrame = nil;
-	}
+	[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+	self.customViews = nil;
 	
 	CGSize neededSize = [self sizeThatFits:CGSizeZero];
 	
 	// set frame to fit text preserving origin
 	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
 	
-	[self setNeedsDisplay];
+	// need new layouter
+	self.layouter = nil;
 	
+	[self setNeedsDisplay];
 }
 
+
+#pragma mark Properties
 - (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
 {
 	if (!UIEdgeInsetsEqualToEdgeInsets(newEdgeInsets, edgeInsets))
@@ -389,42 +279,27 @@
 	
 	_attributedString = [string copy];
 	
+	// need new layouter
+	self.layouter = nil;
+	
 	[self sizeToFit];
 	
 	// remove custom views
-	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	
-	// framesetter needs to go
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-		framesetter = NULL;
-	}
-	
-	if (textFrame)
-	{
-		CFRelease(textFrame);
-		textFrame = NULL;
-	}
-	
+	[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+	self.customViews = nil;
 	
 	[self setNeedsDisplay];
 }
 
 - (void)setFrame:(CGRect)newFrame
 {
-	
 	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
 	{
 		[super setFrame:newFrame];
 		
 		
 		// next redraw will do new layout
-		if (textFrame)
-		{
-			CFRelease(textFrame);
-			textFrame = nil;
-		}
+		self.layouter = nil;
 		
 		// contentMode = topLeft, no automatic redraw on bounds change
 		[self setNeedsDisplay];
@@ -435,10 +310,46 @@
 	}
 }
 
-@synthesize framesetter;
-@synthesize textFrame;
+- (void)setDrawDebugFrames:(BOOL)newSetting
+{
+	if (drawDebugFrames != newSetting)
+	{
+		drawDebugFrames = newSetting;
+		
+		[self setNeedsDisplay];
+	}
+}
+
+- (DTCoreTextLayouter *)layouter
+{
+	if (!layouter)
+	{
+		layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+	}
+	
+	if (![layouter numberOfFrames])
+	{
+		[layouter addTextFrameWithFrame:UIEdgeInsetsInsetRect(self.bounds, edgeInsets)];
+	}
+	
+	return layouter;
+}
+
+- (NSMutableSet *)customViews
+{
+	if (!customViews)
+	{
+		customViews = [[NSMutableSet alloc] init];
+	}
+	
+	return customViews;
+}
+
+@synthesize layouter;
 @synthesize attributedString = _attributedString;
 @synthesize parentView;
 @synthesize edgeInsets;
+@synthesize drawDebugFrames;
+@synthesize customViews;
 
 @end

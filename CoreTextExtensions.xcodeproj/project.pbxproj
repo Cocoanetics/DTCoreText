@@ -21,6 +21,10 @@
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 		A76FF0E712ED652F0065A4E7 /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A76FF0E612ED652F0065A4E7 /* styles.html */; };
+		A76FF74E12EDF63C0065A4E7 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */; };
+		A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
+		A76FF79312EE00700065A4E7 /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */; };
+		A76FF95612EEA80D0065A4E7 /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */; };
 		A78A367412E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */; };
 		A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
 		A78A38F812E30153007CE622 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
@@ -75,16 +79,6 @@
 		B235598C12E055BC005EA62F /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = B235598B12E055BC005EA62F /* LoremIpsum.html */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		A76FF1FE12ED932E0065A4E7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A7DBFBEA12E965DE00F25897 /* UnitTest */;
-			remoteInfo = UnitTest;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* DemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoAppDelegate.h; sourceTree = "<group>"; };
@@ -115,6 +109,14 @@
 		A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextView.h; sourceTree = "<group>"; };
 		A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
 		A76FF0E612ED652F0065A4E7 /* styles.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = styles.html; sourceTree = "<group>"; };
+		A76FF74C12EDF63C0065A4E7 /* DTCoreTextLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayouter.h; sourceTree = "<group>"; };
+		A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayouter.m; sourceTree = "<group>"; };
+		A76FF76A12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayoutFrame.h; sourceTree = "<group>"; };
+		A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutFrame.m; sourceTree = "<group>"; };
+		A76FF79112EE00700065A4E7 /* DTCoreTextLayoutLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayoutLine.h; sourceTree = "<group>"; };
+		A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutLine.m; sourceTree = "<group>"; };
+		A76FF95412EEA80D0065A4E7 /* DTCoreTextGlyphRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextGlyphRun.h; sourceTree = "<group>"; };
+		A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextGlyphRun.m; sourceTree = "<group>"; };
 		A78A367212E23C56007CE622 /* NSCharacterSet+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+HTML.h"; sourceTree = "<group>"; };
 		A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+HTML.m"; sourceTree = "<group>"; };
 		A78A38D212E2FEAC007CE622 /* DTLinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLinkButton.h; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 		A76E5CBA12DDAA6300711782 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A76FF75912EDF8A80065A4E7 /* CoreText Layout */,
 				A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */,
 				A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */,
 				A73BC48C12DA078100F064C6 /* DTAttributedTextContentView.h */,
@@ -285,6 +288,21 @@
 				A78A38F712E30153007CE622 /* CGUtils.m */,
 			);
 			name = UI;
+			sourceTree = "<group>";
+		};
+		A76FF75912EDF8A80065A4E7 /* CoreText Layout */ = {
+			isa = PBXGroup;
+			children = (
+				A76FF74C12EDF63C0065A4E7 /* DTCoreTextLayouter.h */,
+				A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */,
+				A76FF76A12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.h */,
+				A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */,
+				A76FF79112EE00700065A4E7 /* DTCoreTextLayoutLine.h */,
+				A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */,
+				A76FF95412EEA80D0065A4E7 /* DTCoreTextGlyphRun.h */,
+				A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */,
+			);
+			name = "CoreText Layout";
 			sourceTree = "<group>";
 		};
 		B23558DF12E04C3C005EA62F /* Other Sources */ = {
@@ -329,7 +347,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				A76FF1FF12ED932E0065A4E7 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -454,6 +471,10 @@
 				A78A367412E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */,
 				A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */,
 				A78A38F812E30153007CE622 /* CGUtils.m in Sources */,
+				A76FF74E12EDF63C0065A4E7 /* DTCoreTextLayouter.m in Sources */,
+				A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */,
+				A76FF79312EE00700065A4E7 /* DTCoreTextLayoutLine.m in Sources */,
+				A76FF95612EEA80D0065A4E7 /* DTCoreTextGlyphRun.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,14 +504,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A76FF1FF12ED932E0065A4E7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
-			targetProxy = A76FF1FE12ED932E0065A4E7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

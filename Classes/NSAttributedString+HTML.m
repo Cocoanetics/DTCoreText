@@ -304,7 +304,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
 					[currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
 					
+					// remove line breaks and whitespace in links
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+					cleanString = [cleanString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+					
 					NSURL *link = [NSURL URLWithString:cleanString];
 					
 					// deal with relative URL
