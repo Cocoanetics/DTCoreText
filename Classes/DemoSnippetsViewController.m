@@ -65,22 +65,21 @@
 	
 	if (!contentView)
 	{
+		NSDictionary *snippet = [_snippets objectAtIndex:indexPath.row];
+		
+		NSString *title = [snippet objectForKey:@"Title"];
+		NSString *description = [snippet objectForKey:@"Description"];
+
+		NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
+		NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+		NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+		
 		// set width, height is calculated later from text
-		contentView = [[[DTAttributedTextContentView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width-30.0, 0)] autorelease];
+		CGFloat width = self.view.frame.size.width;
+		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 30.0] autorelease];
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[contentViewCache setObject:contentView forKey:indexPath];
 	}
-	
-	NSDictionary *snippet = [_snippets objectAtIndex:indexPath.row];
-	
-	NSString *title = [snippet objectForKey:@"Title"];
-	NSString *description = [snippet objectForKey:@"Description"];
-	
-	NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
-
-	contentView.attributedString = string;
 	
 	return contentView;
 }

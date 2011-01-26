@@ -41,6 +41,20 @@
     return self;
 }
 
+- (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width
+{
+	if (self = [super initWithFrame:CGRectMake(0, 0, width, 0)])
+	{
+		[self setup];
+		
+		// causes appropriate sizing
+		self.attributedString = attributedString;
+		[self sizeToFit];
+	}
+	
+	return self;
+}
+
 - (void)dealloc 
 {
 	[_attributedString release];
@@ -281,8 +295,6 @@
 	
 	// need new layouter
 	self.layouter = nil;
-	
-	[self sizeToFit];
 	
 	// remove custom views
 	[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];

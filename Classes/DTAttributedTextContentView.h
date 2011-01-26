@@ -30,6 +30,7 @@
 	NSMutableSet *customViews;
 }
 
+- (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 - (void)relayoutText;
 
 @property (nonatomic, readonly, retain) DTCoreTextLayouter *layouter;
