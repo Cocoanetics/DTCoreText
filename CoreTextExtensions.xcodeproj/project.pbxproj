@@ -23,6 +23,10 @@
 		A76F058D12EF500C0065A4E7 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A76F058B12EF500C0065A4E7 /* Icon.png */; };
 		A76F058E12EF500C0065A4E7 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A76F058C12EF500C0065A4E7 /* Icon@2x.png */; };
 		A76F065212F0032A0065A4E7 /* Alignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A76F065112F0032A0065A4E7 /* Alignment.html */; };
+		A76F070912F01B6E0065A4E7 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */; };
+		A76F070D12F01B830065A4E7 /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */; };
+		A76F070E12F01B830065A4E7 /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */; };
+		A76F070F12F01B840065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
 		A76FF0E712ED652F0065A4E7 /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A76FF0E612ED652F0065A4E7 /* styles.html */; };
 		A76FF74E12EDF63C0065A4E7 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */; };
 		A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
@@ -81,6 +85,16 @@
 		B235594412E05090005EA62F /* Snippets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B235590512E04DF9005EA62F /* Snippets.plist */; };
 		B235598C12E055BC005EA62F /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = B235598B12E055BC005EA62F /* LoremIpsum.html */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A76F072C12F01BC50065A4E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A7DBFBEA12E965DE00F25897 /* UnitTest */;
+			remoteInfo = UnitTest;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -356,6 +370,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A76F072D12F01BC50065A4E7 /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -512,10 +527,22 @@
 				A7DBFC1412E9661E00F25897 /* DemoAppDelegate.m in Sources */,
 				A7DBFC1612E9661F00F25897 /* DemoTextViewController.m in Sources */,
 				A7DBFC1712E9662000F25897 /* CGUtils.m in Sources */,
+				A76F070912F01B6E0065A4E7 /* DTCoreTextLayouter.m in Sources */,
+				A76F070D12F01B830065A4E7 /* DTCoreTextLayoutLine.m in Sources */,
+				A76F070E12F01B830065A4E7 /* DTCoreTextGlyphRun.m in Sources */,
+				A76F070F12F01B840065A4E7 /* DTCoreTextLayoutFrame.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A76F072D12F01BC50065A4E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
+			targetProxy = A76F072C12F01BC50065A4E7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {

@@ -36,8 +36,6 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 
-- (CGRect)firstRectForRange:(NSRange)range;
-
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, retain, readonly) NSArray *glyphRuns;
 
