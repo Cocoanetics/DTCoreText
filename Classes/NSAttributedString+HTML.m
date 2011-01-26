@@ -366,6 +366,21 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				}
 				
 			}
+			else if ([tagName isEqualToString:@"left"])
+			{
+			
+			
+			}
+			else if ([tagName isEqualToString:@"center"])
+			{
+				
+				
+			}
+			else if ([tagName isEqualToString:@"right"])
+			{
+				
+				
+			}
 			else if ([tagName isEqualToString:@"del"]) 
 			{
 				if (tagOpen)
@@ -723,7 +738,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents] && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
 			{
-				//NSLog(@"tag: -%@-", tagContents);
+//				NSLog(@"tag: -%@-", tagContents);
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
@@ -927,7 +942,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						//					}
 						
 						// prevent double spacing
-						if ([stringSoFar hasSuffix:@" "] && [tagContents hasPrefix:@" "])
+						if ([stringSoFar hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] && [tagContents hasPrefix:@" "])
 						{
 							tagContents = [tagContents substringFromIndex:1];
 						}

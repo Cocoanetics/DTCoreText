@@ -12,6 +12,7 @@
 - (BOOL)isInlineTag;
 - (NSString *)stringByNormalizingWhitespace;
 - (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet;
+- (BOOL)hasSuffixCharacterFromSet:(NSCharacterSet *)characterSet;
 - (NSString *)stringByReplacingHTMLEntities;
 
 // CSS

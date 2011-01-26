@@ -89,6 +89,18 @@ static NSDictionary *entityLookup = nil;
 	return [characterSet characterIsMember:firstChar];
 }
 
+- (BOOL)hasSuffixCharacterFromSet:(NSCharacterSet *)characterSet
+{
+	if (![self length])
+	{
+		return NO;
+	}
+	
+	unichar lastChar = [self characterAtIndex:[self length]-1];
+	
+	return [characterSet characterIsMember:lastChar];
+}
+
 - (NSString *)stringByReplacingHTMLEntities
 {
    if (!entityLookup)
