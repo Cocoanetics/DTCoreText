@@ -52,9 +52,8 @@ CTParagraphStyleRef createDefaultParagraphStyle()
 	return CTParagraphStyleCreate(settings, 4);
 }
 
-CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops)
+CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops, CTTextAlignment alignment)
 {
-	CTTextAlignment alignment = kCTNaturalTextAlignment;
 	CGFloat firstLineIndent = 0.0;
 	CGFloat defaultTabInterval = 36.0;
 	
@@ -227,7 +226,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 				
-				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
+				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
 				
 				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
@@ -275,7 +274,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 				
-				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0);
+				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
 				
 				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
@@ -368,18 +367,30 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			else if ([tagName isEqualToString:@"left"])
 			{
-			
-			
+				if (tagOpen)
+				{
+				[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
+				}
+#if ALLOW_IPHONE_SPECIAL_CASES
+				else 
+				{
+					nextParagraphAdditionalSpaceBefore = 12.0;
+				}
+#endif
 			}
-			else if ([tagName isEqualToString:@"center"])
+			else if ([tagName isEqualToString:@"center"] && tagOpen)
 			{
-				
-				
+				[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
+#if ALLOW_IPHONE_SPECIAL_CASES						
+				nextParagraphAdditionalSpaceBefore = 12.0;
+#endif
 			}
-			else if ([tagName isEqualToString:@"right"])
+			else if ([tagName isEqualToString:@"right"] && tagOpen)
 			{
-				
-				
+				[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
+#if ALLOW_IPHONE_SPECIAL_CASES						
+				nextParagraphAdditionalSpaceBefore = 12.0;
+#endif
 			}
 			else if ([tagName isEqualToString:@"del"]) 
 			{
@@ -672,11 +683,34 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						// nothing to do
 					}
-					
-					NSLog(@"%@", decoration);
 				}
 				
-				NSLog(@"%@", styles);
+				NSString *alignment = [styles objectForKey:@"text-align"];
+				if (alignment)
+				{
+					if ([alignment isEqualToString:@"left"])
+					{
+						[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
+					}
+					else if ([alignment isEqualToString:@"right"])
+					{
+						[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
+					}
+					else if ([alignment isEqualToString:@"center"])
+					{
+						[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
+					}
+					else if ([alignment isEqualToString:@"justify"])
+					{
+						[currentTag setObject:[NSNumber numberWithInt:kCTJustifiedTextAlignment] forKey:@"TextAlignment"];
+					}
+					else if ([alignment isEqualToString:@"inherit"])
+					{
+						// nothing to do
+					}
+				}
+				
+				
 			}
 			
 			
@@ -822,7 +856,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 							// this also works, but breaks UnitTest for lists
 							//tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
 							
-							//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
+							paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
 							nextParagraphAdditionalSpaceBefore = 0;
 						}
 					}
@@ -833,7 +867,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					NSArray *tabStops = [currentTag objectForKey:@"TabStops"];
 					
-					CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops);
+					
+					NSNumber *textAlignmentNum = [currentTag objectForKey:@"TextAlignment"];
+					CTTextAlignment textAlignment = kCTNaturalTextAlignment;
+					
+					if (textAlignmentNum)
+					{
+						textAlignment = [textAlignmentNum intValue];
+					}
+					
+					CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops, textAlignment);
 					
 					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];

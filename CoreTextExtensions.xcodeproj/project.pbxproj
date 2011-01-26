@@ -22,6 +22,7 @@
 		A76E5BD912DD9FEB00711782 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */; };
 		A76F058D12EF500C0065A4E7 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A76F058B12EF500C0065A4E7 /* Icon.png */; };
 		A76F058E12EF500C0065A4E7 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A76F058C12EF500C0065A4E7 /* Icon@2x.png */; };
+		A76F065212F0032A0065A4E7 /* Alignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A76F065112F0032A0065A4E7 /* Alignment.html */; };
 		A76FF0E712ED652F0065A4E7 /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A76FF0E612ED652F0065A4E7 /* styles.html */; };
 		A76FF74E12EDF63C0065A4E7 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */; };
 		A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
@@ -112,6 +113,7 @@
 		A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
 		A76F058B12EF500C0065A4E7 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		A76F058C12EF500C0065A4E7 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		A76F065112F0032A0065A4E7 /* Alignment.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Alignment.html; sourceTree = "<group>"; };
 		A76FF0E612ED652F0065A4E7 /* styles.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = styles.html; sourceTree = "<group>"; };
 		A76FF74C12EDF63C0065A4E7 /* DTCoreTextLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayouter.h; sourceTree = "<group>"; };
 		A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayouter.m; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				A7DBFB9312E960AF00F25897 /* APOD.html */,
 				A76FF0E612ED652F0065A4E7 /* styles.html */,
 				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
+				A76F065112F0032A0065A4E7 /* Alignment.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -422,6 +425,7 @@
 				A76FF0E712ED652F0065A4E7 /* styles.html in Resources */,
 				A76F058D12EF500C0065A4E7 /* Icon.png in Resources */,
 				A76F058E12EF500C0065A4E7 /* Icon@2x.png in Resources */,
+				A76F065212F0032A0065A4E7 /* Alignment.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,6 +26,14 @@
 		<key>Description</key>
 		<string>Demonstrates really long text. Definitely longer than this meager description.</string>
 	</dict>
+		<dict>
+		<key>Title</key>
+		<string>Text Alignment</string>
+		<key>File</key>
+		<string>Alignment.html</string>
+		<key>Description</key>
+		<string>Demonstrates text alignment via tags and style attributes.</string>
+	</dict>
 	<dict>
 		<key>Title</key>
 		<string>Image Handling</string>
