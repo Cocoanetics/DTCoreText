@@ -108,6 +108,164 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 }
 
 
+- (void)remapCSSStylesOnTagDictionary:(NSMutableDictionary *)currentTag
+{
+	NSMutableDictionary *currentTagAttributes  = [currentTag objectForKey:@"Attributes"];
+	
+	NSString *styleString = [currentTagAttributes objectForKey:@"style"];
+	
+	if (styleString)
+	{
+		NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+		
+		
+		NSString *fontSize = [styles objectForKey:@"font-size"];
+		if (fontSize)
+		{
+			CGFloat pixelSize = [fontSize CSSpixelSize];
+			[currentTag setObject:[NSNumber numberWithFloat:pixelSize] forKey:@"FontSize"];
+		}
+		
+		NSString *color = [styles objectForKey:@"color"];
+		if (color)
+		{
+			[currentTagAttributes setObject:color forKey:@"color"];
+			
+		}
+		
+		// TODO: better mapping from font families to available families
+		NSString *fontFamily = [styles objectForKey:@"font-family"];
+		if (fontFamily)
+		{
+			if ([fontFamily rangeOfString:@"courier"].length)
+			{
+				fontFamily = @"Courier New";
+			}
+			
+			if ([fontFamily rangeOfString:@"helvetica"].length)
+			{
+				fontFamily = @"Helvetica";
+			}
+			
+			[currentTagAttributes setObject:fontFamily forKey:@"face"];
+		}
+		
+		NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
+		if (fontStyle)
+		{
+			if ([fontStyle isEqualToString:@"normal"])
+			{
+				[currentTag removeObjectForKey:@"Italic"];
+			}
+			else if ([fontStyle isEqualToString:@"italic"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
+			}
+			else if ([fontStyle isEqualToString:@"oblique"]) // same as italic
+			{
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
+			}
+			else if ([fontStyle isEqualToString:@"inherit"])
+			{
+				// nothing to do
+			}
+		}
+		
+		NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
+		if (fontWeight)
+		{
+			if ([fontWeight isEqualToString:@"normal"])
+			{
+				[currentTag removeObjectForKey:@"bold"];
+			}
+			else if ([fontWeight isEqualToString:@"bold"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+			}
+			else if ([fontWeight isEqualToString:@"bolder"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+			}
+			else if ([fontWeight isEqualToString:@"lighter"])
+			{
+				[currentTag removeObjectForKey:@"bold"];
+			}
+			else 
+			{
+				// can be 100 - 900
+				
+				NSInteger value = [fontWeight intValue];
+				
+				if (value<=600)
+				{
+					[currentTag removeObjectForKey:@"bold"];
+				}
+				else 
+				{
+					[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+				}
+			}
+		}
+		
+		
+		NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
+		if (decoration)
+		{
+			if ([decoration isEqualToString:@"underline"])
+			{
+				[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
+			}
+			else if ([decoration isEqualToString:@"line-through"])
+			{
+				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];	
+			}
+			else if ([decoration isEqualToString:@"none"])
+			{
+				// remove all
+				[currentTag removeObjectForKey:@"UnderlineStyle"];
+				[currentTag removeObjectForKey:@"_StrikeOut"];
+			}
+			else if ([decoration isEqualToString:@"overline"])
+			{
+				//TODO: add support for overline decoration
+			}
+			else if ([decoration isEqualToString:@"blink"])
+			{
+				//TODO: add support for blink decoration
+			}
+			else if ([decoration isEqualToString:@"inherit"])
+			{
+				// nothing to do
+			}
+		}
+		
+		NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
+		if (alignment)
+		{
+			if ([alignment isEqualToString:@"left"])
+			{
+				[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
+			}
+			else if ([alignment isEqualToString:@"right"])
+			{
+				[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
+			}
+			else if ([alignment isEqualToString:@"center"])
+			{
+				[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
+			}
+			else if ([alignment isEqualToString:@"justify"])
+			{
+				[currentTag setObject:[NSNumber numberWithInt:kCTJustifiedTextAlignment] forKey:@"TextAlignment"];
+			}
+			else if ([alignment isEqualToString:@"inherit"])
+			{
+				// nothing to do
+			}
+		}
+	}
+	
+}
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
 	// Specify the appropriate text encoding for the passed data, default is UTF8 
@@ -191,7 +349,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			
 			NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
-
+			
 			
 			// ---------- Processing
 			
@@ -369,7 +527,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-				[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
+					[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
 				}
 #if ALLOW_IPHONE_SPECIAL_CASES
 				else 
@@ -561,160 +719,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				immediatelyClosed = YES; 
 			}
 			
-			// --------------------- remap styles
 			
-			NSString *styleString = [[currentTag objectForKey:@"Attributes"] objectForKey:@"style"];
-			
-			if (styleString)
-			{
-				NSDictionary *styles = [styleString dictionaryOfCSSStyles];
-				
-				
-				NSString *fontSize = [styles objectForKey:@"font-size"];
-				if (fontSize)
-				{
-					CGFloat pixelSize = [fontSize CSSpixelSize];
-					[currentTag setObject:[NSNumber numberWithFloat:pixelSize] forKey:@"FontSize"];
-				}
-				
-				NSString *color = [styles objectForKey:@"color"];
-				if (color)
-				{
-					[currentTagAttributes setObject:color forKey:@"color"];
-
-				}
-				
-				// TODO: better mapping from font families to available families
-				NSString *fontFamily = [styles objectForKey:@"font-family"];
-				if (fontFamily)
-				{
-					if ([fontFamily rangeOfString:@"courier"].length)
-					{
-						fontFamily = @"Courier New";
-					}
-					
-					[currentTagAttributes setObject:fontFamily forKey:@"face"];
-				}
-				
-				NSString *fontStyle = [styles objectForKey:@"font-style"];
-				if (fontStyle)
-				{
-					if ([fontStyle isEqualToString:@"normal"])
-					{
-						[currentTag removeObjectForKey:@"Italic"];
-					}
-					else if ([fontStyle isEqualToString:@"italic"])
-					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
-					}
-					else if ([fontStyle isEqualToString:@"oblique"]) // same as italic
-					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
-					}
-					else if ([fontStyle isEqualToString:@"inherit"])
-					{
-						// nothing to do
-					}
-				}
-				
-				NSString *fontWeight = [styles objectForKey:@"font-weight"];
-				if (fontWeight)
-				{
-					if ([fontWeight isEqualToString:@"normal"])
-					{
-						[currentTag removeObjectForKey:@"Bold"];
-					}
-					else if ([fontWeight isEqualToString:@"bold"])
-					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
-					}
-					else if ([fontWeight isEqualToString:@"bolder"])
-					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
-					}
-					else if ([fontWeight isEqualToString:@"lighter"])
-					{
-						[currentTag removeObjectForKey:@"Bold"];
-					}
-					else 
-					{
-						// can be 100 - 900
-						
-						NSInteger value = [fontWeight intValue];
-						
-						if (value<=600)
-						{
-							[currentTag removeObjectForKey:@"Bold"];
-						}
-						else 
-						{
-							[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
-						}
-					}
-				}
-				
-				
-				NSString *decoration = [styles objectForKey:@"text-decoration"];
-				if (decoration)
-				{
-					if ([decoration isEqualToString:@"underline"])
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-					}
-					else if ([decoration isEqualToString:@"line-through"])
-					{
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];	
-					}
-					else if ([decoration isEqualToString:@"none"])
-					{
-						// remove all
-						[currentTag removeObjectForKey:@"UnderlineStyle"];
-						[currentTag removeObjectForKey:@"_StrikeOut"];
-					}
-					else if ([decoration isEqualToString:@"overline"])
-					{
-						//TODO: add support for overline decoration
-					}
-					else if ([decoration isEqualToString:@"blink"])
-					{
-						//TODO: add support for blink decoration
-					}
-					else if ([decoration isEqualToString:@"inherit"])
-					{
-						// nothing to do
-					}
-				}
-				
-				NSString *alignment = [styles objectForKey:@"text-align"];
-				if (alignment)
-				{
-					if ([alignment isEqualToString:@"left"])
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
-					}
-					else if ([alignment isEqualToString:@"right"])
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
-					}
-					else if ([alignment isEqualToString:@"center"])
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
-					}
-					else if ([alignment isEqualToString:@"justify"])
-					{
-						[currentTag setObject:[NSNumber numberWithInt:kCTJustifiedTextAlignment] forKey:@"TextAlignment"];
-					}
-					else if ([alignment isEqualToString:@"inherit"])
-					{
-						// nothing to do
-					}
-				}
-				
-				
-			}
-			
-			
-			
+			// convert CSS Styles into our own style
+			[self remapCSSStylesOnTagDictionary:currentTag];
 			
 			
 			// --------------------- push tag on stack if it's opening
@@ -772,7 +779,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			if ([scanner scanUpToString:@"<" intoString:&tagContents] && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
 			{
-//				NSLog(@"tag: -%@-", tagContents);
+				//				NSLog(@"tag: -%@-", tagContents);
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
@@ -968,29 +975,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						NSString *stringSoFar = [tmpString string];
 						
-						//					// TODO: Needs better handling of whitespace compression and adding space between tags if there are newlines
-						//					if (![tagContents hasPrefix:@" "])
-						//					{
-						//						
-						//						if ([stringSoFar length] && ![stringSoFar hasSuffix:@" "] && ![stringSoFar hasSuffix:@"\n"]  && ![stringSoFar hasSuffix:UNICODE_LINE_FEED])
-						//						{
-						//							// add space prefix unless punctuation character
-						//							if (![tagContents hasPrefixCharacterFromSet:[NSCharacterSet punctuationCharacterSet]])
-						//							{
-						//								//FIXME: What are the situations where a whitespace needs adding?
-						//								// NOT: </font>text
-						//								//tagContents = [@" " stringByAppendingString:tagContents];
-						//							}
-						//						}
-						//					}
-						
 						// prevent double spacing
 						if ([stringSoFar hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] && [tagContents hasPrefix:@" "])
 						{
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
-					
 					
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];

@@ -236,7 +236,7 @@
 	
 	if (value)
 	{
-		*value = [attrValue lowercaseString];
+		*value = attrValue;
 	}
 	
 	return YES;
