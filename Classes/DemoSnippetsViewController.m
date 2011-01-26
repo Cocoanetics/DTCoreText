@@ -76,7 +76,8 @@
 		
 		// set width, height is calculated later from text
 		CGFloat width = self.view.frame.size.width;
-		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 30.0] autorelease];
+		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
+		
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[contentViewCache setObject:contentView forKey:indexPath];
 	}
@@ -88,7 +89,7 @@
 {
 	DTAttributedTextContentView *contentView = [self contentViewForIndexPath:indexPath];
 	
-	return contentView.bounds.size.height;
+	return contentView.bounds.size.height+1; // for unknown reason 1 needs to be added
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

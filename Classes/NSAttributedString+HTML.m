@@ -16,6 +16,8 @@
 #import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
+#import "DTCoreTextFontDescriptor.h"
+
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
 
@@ -112,6 +114,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 {
 	NSMutableDictionary *currentTagAttributes  = [currentTag objectForKey:@"Attributes"];
 	
+	DTCoreTextFontDescriptor *fontDescriptor = [currentTag objectForKey:@"FontDescriptor"];
+	
 	NSString *styleString = [currentTagAttributes objectForKey:@"style"];
 	
 	if (styleString)
@@ -122,8 +126,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		NSString *fontSize = [styles objectForKey:@"font-size"];
 		if (fontSize)
 		{
-			CGFloat pixelSize = [fontSize CSSpixelSize];
-			[currentTag setObject:[NSNumber numberWithFloat:pixelSize] forKey:@"FontSize"];
+			fontDescriptor.pointSize = [fontSize CSSpixelSize];
 		}
 		
 		NSString *color = [styles objectForKey:@"color"];
@@ -134,20 +137,35 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		}
 		
 		// TODO: better mapping from font families to available families
-		NSString *fontFamily = [styles objectForKey:@"font-family"];
+		NSString *fontFamily = [[styles objectForKey:@"font-family"] lowercaseString];
 		if (fontFamily)
 		{
-			if ([fontFamily rangeOfString:@"courier"].length)
+			if ([fontFamily rangeOfString:@"helvetica"].length || [fontFamily rangeOfString:@"sans-serif"].length || [fontFamily rangeOfString:@"arial"].length || [fontFamily rangeOfString:@"geneva"].length)
 			{
-				fontFamily = @"Courier New";
+				fontDescriptor.fontFamily = @"Helvetica";
 			}
-			
-			if ([fontFamily rangeOfString:@"helvetica"].length)
+			else if ([fontFamily rangeOfString:@"courier"].length || [fontFamily rangeOfString:@"monospace"].length)
 			{
-				fontFamily = @"Helvetica";
+				fontDescriptor.monospaceTrait = YES;
+				fontDescriptor.fontFamily = @"Courier";
 			}
-			
-			[currentTagAttributes setObject:fontFamily forKey:@"face"];
+			else if ([fontFamily rangeOfString:@"cursive"].length)
+			{
+				fontDescriptor.fontFamily = @"Zapfino";
+			}
+			else if ([fontFamily rangeOfString:@"serif"].length)
+			{
+				fontDescriptor.fontFamily = @"Times New Roman";
+			}
+			else if ([fontFamily rangeOfString:@"fantasy"].length)
+			{
+				fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
+			}
+			else 
+			{
+				// probably something special
+				fontDescriptor.fontFamily = [styles objectForKey:@"font-family"];
+			}
 		}
 		
 		NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
@@ -155,15 +173,11 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		{
 			if ([fontStyle isEqualToString:@"normal"])
 			{
-				[currentTag removeObjectForKey:@"Italic"];
+				fontDescriptor.italicTrait = NO;
 			}
-			else if ([fontStyle isEqualToString:@"italic"])
+			else if ([fontStyle isEqualToString:@"italic"] || [fontStyle isEqualToString:@"oblique"])
 			{
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
-			}
-			else if ([fontStyle isEqualToString:@"oblique"]) // same as italic
-			{
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Italic"];	
+				fontDescriptor.italicTrait = YES;
 			}
 			else if ([fontStyle isEqualToString:@"inherit"])
 			{
@@ -176,19 +190,19 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		{
 			if ([fontWeight isEqualToString:@"normal"])
 			{
-				[currentTag removeObjectForKey:@"bold"];
+				fontDescriptor.boldTrait = NO;
 			}
 			else if ([fontWeight isEqualToString:@"bold"])
 			{
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+				fontDescriptor.boldTrait = YES;
 			}
 			else if ([fontWeight isEqualToString:@"bolder"])
 			{
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+				fontDescriptor.boldTrait = YES;
 			}
 			else if ([fontWeight isEqualToString:@"lighter"])
 			{
-				[currentTag removeObjectForKey:@"bold"];
+				fontDescriptor.boldTrait = NO;
 			}
 			else 
 			{
@@ -198,11 +212,11 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				
 				if (value<=600)
 				{
-					[currentTag removeObjectForKey:@"bold"];
+					fontDescriptor.boldTrait = NO;
 				}
 				else 
 				{
-					[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];	
+					fontDescriptor.boldTrait = YES;
 				}
 			}
 		}
@@ -293,7 +307,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	NSMutableArray *tagStack = [NSMutableArray array];
 	
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
-	CGFloat currentFontSize = 12.0;
 	BOOL seenPreviousParagraph = NO;
 	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
@@ -303,12 +316,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
+
+	// base tag with font defaults
+	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
+	defaultFontDescriptor.pointSize = 12;
+	defaultFontDescriptor.fontFamily = @"Times New Roman";
+	NSDictionary *bodyTag = [NSDictionary dictionaryWithObject:defaultFontDescriptor forKey:@"FontDescriptor"];
+	[tagStack addObject:bodyTag];
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
 	NSDictionary *previousAttributes = NULL;
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
+
 	
 	
 	while (![scanner isAtEnd]) 
@@ -317,7 +338,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		NSDictionary *tagAttributesDict = nil;
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
-		
+
+		// default font
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
 			if (![tagName isInlineTag])
@@ -327,6 +349,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			
 			NSDictionary *previousTag = currentTag;
+			DTCoreTextFontDescriptor *currentFontDescriptor = nil;
 			
 			currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
 			[currentTag setDictionary:[tagStack lastObject]];
@@ -346,6 +369,23 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				tagAttributesDict = mutableAttributes;
 				
 				[currentTag setObject:mutableAttributes forKey:@"Attributes"];
+				
+				DTCoreTextFontDescriptor *parentFontDescriptor = [previousTag objectForKey:@"FontDescriptor"];
+				
+				if (parentFontDescriptor)
+				{
+					currentFontDescriptor = [[parentFontDescriptor copy] autorelease];  // inherit
+				}
+				else 
+				{
+					currentFontDescriptor = [DTCoreTextFontDescriptor fontDescriptorWithFontAttributes:nil];
+					
+					// set default
+					currentFontDescriptor.pointSize = 12;
+					currentFontDescriptor.fontFamily = @"Times New Roman";
+				}
+				
+				[currentTag setObject:currentFontDescriptor forKey:@"FontDescriptor"];
 			}
 			
 			NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
@@ -480,17 +520,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
 				}
 			}
-			else if ([tagName isEqualToString:@"b"])
+			else if ([tagName isEqualToString:@"b"] || [tagName isEqualToString:@"strong"])
 			{
-				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
+				currentFontDescriptor.boldTrait = YES;
 			}
-			else if ([tagName isEqualToString:@"i"])
+			else if ([tagName isEqualToString:@"i"] || [tagName isEqualToString:@"em"])
 			{
-				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
-			}
-			else if ([tagName isEqualToString:@"strong"])
-			{
-				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Bold"];
+				currentFontDescriptor.italicTrait = YES;
 			}
 			else if ([tagName isEqualToString:@"li"]) 
 			{
@@ -583,10 +619,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 #endif
 				}
 			}
-			else if ([tagName isEqualToString:@"em"])
-			{
-				[currentTag setObject:[NSNumber numberWithBool:tagOpen] forKey:@"Italic"];
-			}
+
 			else if ([tagName isEqualToString:@"u"])
 			{
 				if (tagOpen)
@@ -621,45 +654,44 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					if ([scanner scanInteger:&headerLevel])
 					{
 						[currentTag setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"HeaderLevel"];	
-						[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"Bold"];
+						currentFontDescriptor.boldTrait = YES;
 						
 						switch (headerLevel) 
 						{
 							case 1:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
-								[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
+								currentFontDescriptor.pointSize = 24.0;
 								break;
 							}
 							case 2:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
-								[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+								currentFontDescriptor.pointSize = 18.0;
 								break;
 							}
 							case 3:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
-								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
-								
+								currentFontDescriptor.pointSize = 14.0;
 								break;
 							}
 							case 4:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
-								[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+								currentFontDescriptor.pointSize = 12.0;
 								break;
 							}
 							case 5:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
-								[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+								currentFontDescriptor.pointSize = 10.0;
 								break;
 							}
 							case 6:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
-								[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
+								currentFontDescriptor.pointSize = 9.0;
 								break;
 							}
 							default:
@@ -680,28 +712,31 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					switch (size) 
 					{
 						case 1:
-							[currentTag setObject:[NSNumber numberWithFloat:9.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 9.0;
 							break;
 						case 2:
-							[currentTag setObject:[NSNumber numberWithFloat:10.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 10.0;
 							break;
 						case 4:
-							[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 14.0;
 							break;
 						case 5:
-							[currentTag setObject:[NSNumber numberWithFloat:18.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 18.0;
 							break;
 						case 6:
-							[currentTag setObject:[NSNumber numberWithFloat:24.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 24.0;
 							break;
 						case 7:
-							[currentTag setObject:[NSNumber numberWithFloat:37.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 37.0;
 							break;	
 						case 3:
 						default:
-							[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"FontSize"];
+							currentFontDescriptor.pointSize = 12.0;
 							break;
 					}
+					
+					
+					currentFontDescriptor.fontFamily = [tagAttributesDict objectForKey:@"face"];
 				}
 			}
 			else if ([tagName isEqualToString:@"p"])
@@ -786,54 +821,15 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					tagContents = [tagContents stringByNormalizingWhitespace];
 					tagContents = [tagContents stringByReplacingHTMLEntities];
 					
-					
-					
-					NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
-					NSMutableDictionary *fontStyleAttributes = [NSMutableDictionary dictionary];
-					
 					NSDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
-					
-					NSInteger symbolicStyle = 0;
-					
-					if ([[currentTag objectForKey:@"Italic"] boolValue])
-					{
-						symbolicStyle |= kCTFontItalicTrait;
-					}
-					
-					if ([[currentTag objectForKey:@"Bold"] boolValue])
-					{
-						symbolicStyle |= kCTFontBoldTrait;
-					}
-					
-					NSString *fontFace = [currentTagAttributes objectForKey:@"face"];
-					CGFloat fontSize = [[currentTag objectForKey:@"FontSize"] floatValue];
-					
-					if (fontSize==0)
-					{
-						fontSize = currentFontSize;
-					}				
-					
-					[fontStyleAttributes setObject:[NSNumber numberWithInt:symbolicStyle] forKey:(NSString *)kCTFontSymbolicTrait];
-					
-					[fontAttributes setObject:fontStyleAttributes forKey:(id)kCTFontTraitsAttribute];
-					
-					if (fontFace)
-					{
-						[fontAttributes setObject:fontFace forKey:(id)kCTFontFamilyNameAttribute];
-					}
-					else 
-					{
-						[fontAttributes setObject:@"Times New Roman" forKey:(id)kCTFontFamilyNameAttribute];
-					}
+					DTCoreTextFontDescriptor *currentFontDescriptor = [currentTag objectForKey:@"FontDescriptor"];
 					
 					NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 					
 					NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
 					if ([superscriptStyle intValue])
 					{
-						fontSize = fontSize / 1.2;
 						[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
-						
 					}
 					
 					id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
@@ -847,9 +843,15 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						[attributes setObject:link forKey:@"DTLink"];
 					}
+
 					
+					NSDictionary *fontAttributes = [currentFontDescriptor fontAttributes];
+					
+					//NSLog(@"%@", fontAttributes);
 					CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
-					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, fontSize, NULL);
+					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, currentFontDescriptor.pointSize, NULL);
+					
+					//NSLog(@"%@", (id)font);
 					
 					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];

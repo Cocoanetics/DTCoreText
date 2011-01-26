@@ -55,7 +55,10 @@
 																	 CGSizeMake(width, CGFLOAT_MAX),
 																	 NULL);
 	
-	neededSize.height = ceilf(neededSize.height)+1;
+	// for unknown reasons suddenly 1 needs to be added to fit
+	neededSize.height = ceilf(neededSize.height)+1.0;
+	neededSize.width = width;
+	
 	return neededSize;
 }
 

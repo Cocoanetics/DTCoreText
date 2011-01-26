@@ -27,6 +27,8 @@
 		A76F070D12F01B830065A4E7 /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */; };
 		A76F070E12F01B830065A4E7 /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */; };
 		A76F070F12F01B840065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
+		A76F0DE912F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */; };
+		A76F0DEA12F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */; };
 		A76FF0E712ED652F0065A4E7 /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A76FF0E612ED652F0065A4E7 /* styles.html */; };
 		A76FF74E12EDF63C0065A4E7 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */; };
 		A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
@@ -128,6 +130,8 @@
 		A76F058B12EF500C0065A4E7 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		A76F058C12EF500C0065A4E7 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		A76F065112F0032A0065A4E7 /* Alignment.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Alignment.html; sourceTree = "<group>"; };
+		A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontDescriptor.m; sourceTree = "<group>"; };
+		A76F0DE812F0D72D0065A4E7 /* DTCoreTextFontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontDescriptor.h; sourceTree = "<group>"; };
 		A76FF0E612ED652F0065A4E7 /* styles.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = styles.html; sourceTree = "<group>"; };
 		A76FF74C12EDF63C0065A4E7 /* DTCoreTextLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayouter.h; sourceTree = "<group>"; };
 		A76FF74D12EDF63C0065A4E7 /* DTCoreTextLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayouter.m; sourceTree = "<group>"; };
@@ -321,6 +325,8 @@
 				A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */,
 				A76FF95412EEA80D0065A4E7 /* DTCoreTextGlyphRun.h */,
 				A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */,
+				A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */,
+				A76F0DE812F0D72D0065A4E7 /* DTCoreTextFontDescriptor.h */,
 			);
 			name = "CoreText Layout";
 			sourceTree = "<group>";
@@ -502,6 +508,7 @@
 				A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */,
 				A76FF79312EE00700065A4E7 /* DTCoreTextLayoutLine.m in Sources */,
 				A76FF95612EEA80D0065A4E7 /* DTCoreTextGlyphRun.m in Sources */,
+				A76F0DE912F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,6 +538,7 @@
 				A76F070D12F01B830065A4E7 /* DTCoreTextLayoutLine.m in Sources */,
 				A76F070E12F01B830065A4E7 /* DTCoreTextGlyphRun.m in Sources */,
 				A76F070F12F01B840065A4E7 /* DTCoreTextLayoutFrame.m in Sources */,
+				A76F0DEA12F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
