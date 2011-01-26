@@ -39,7 +39,10 @@
 
 - (void)dealloc
 {
-	CFRelease(_textFrame);
+	if (_textFrame)
+	{
+		CFRelease(_textFrame);
+	}
 	[super dealloc];
 }
 
@@ -54,6 +57,12 @@
 	{
 		// get lines
 		CFArrayRef lines = CTFrameGetLines(_textFrame);
+		
+		if (!lines)
+		{
+			// probably no string set
+			return nil;
+		}
 		
 		CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
 		CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);

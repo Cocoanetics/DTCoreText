@@ -44,7 +44,10 @@
 
 - (void)dealloc
 {
-	CFRelease(_line);
+	if (_line)
+	{
+		CFRelease(_line);
+	}
 	[_glyphRuns release];
 	
 	[super dealloc];
