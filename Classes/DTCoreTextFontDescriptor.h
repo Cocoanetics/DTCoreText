@@ -7,13 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import <CoreText/CoreText.h>
+
 
 @interface DTCoreTextFontDescriptor : NSObject <NSCopying>
 {
-	
 	NSString *fontFamily;
+	NSString *fontName;
 	
 	CGFloat pointSize;
 	
@@ -25,16 +25,22 @@
 	BOOL monospaceTrait;
 	BOOL verticalTrait;
 	BOOL UIoptimizedTrait;
+	
+	CTFontStylisticClass stylisticClass;
 }
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes;
 
 - (id)initWithFontAttributes:(NSDictionary *)attributes;
+- (void)setFontAttributes:(NSDictionary *)newAttributes;
+
+- (void)normalize;
 
 - (CTFontSymbolicTraits)symbolicTraits;
 - (NSDictionary *)fontAttributes;
 
 @property (nonatomic, copy) NSString *fontFamily;
+@property (nonatomic, copy) NSString *fontName;
 
 @property (nonatomic, assign) CGFloat pointSize;
 
@@ -45,5 +51,8 @@
 @property (nonatomic) BOOL monospaceTrait;
 @property (nonatomic) BOOL verticalTrait;
 @property (nonatomic) BOOL UIoptimizedTrait;
+
+@property (nonatomic) CTFontStylisticClass stylisticClass;
+
 
 @end

@@ -140,31 +140,47 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		NSString *fontFamily = [[styles objectForKey:@"font-family"] lowercaseString];
 		if (fontFamily)
 		{
-			if ([fontFamily rangeOfString:@"helvetica"].length || [fontFamily rangeOfString:@"sans-serif"].length || [fontFamily rangeOfString:@"arial"].length || [fontFamily rangeOfString:@"geneva"].length)
+			if ([fontFamily rangeOfString:@"helvetica"].length || [fontFamily rangeOfString:@"arial"].length || [fontFamily rangeOfString:@"geneva"].length)
 			{
 				fontDescriptor.fontFamily = @"Helvetica";
 			}
-			else if ([fontFamily rangeOfString:@"courier"].length || [fontFamily rangeOfString:@"monospace"].length)
+			else if ([fontFamily rangeOfString:@"courier"].length)
 			{
-				fontDescriptor.monospaceTrait = YES;
 				fontDescriptor.fontFamily = @"Courier";
 			}
 			else if ([fontFamily rangeOfString:@"cursive"].length)
 			{
-				fontDescriptor.fontFamily = @"Zapfino";
+				fontDescriptor.stylisticClass = kCTFontScriptsClass;
+				fontDescriptor.fontFamily = nil;
+			}
+			else if ([fontFamily rangeOfString:@"sans-serif"].length)
+			{
+				// too many matches (24)
+				// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
+				fontDescriptor.fontFamily = @"Helvetica";
 			}
 			else if ([fontFamily rangeOfString:@"serif"].length)
 			{
+				// kCTFontTransitionalSerifsClass = Baskerville
+				// kCTFontClarendonSerifsClass = American Typewriter
+				// kCTFontSlabSerifsClass = Courier New
+				// 
+				// strangely none of the classes yields Times
 				fontDescriptor.fontFamily = @"Times New Roman";
 			}
 			else if ([fontFamily rangeOfString:@"fantasy"].length)
 			{
 				fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
 			}
-			else 
+			else if ([fontFamily rangeOfString:@"monospace"].length) 
 			{
-				// probably something special
-				fontDescriptor.fontFamily = [styles objectForKey:@"font-family"];
+				fontDescriptor.monospaceTrait = YES;
+				fontDescriptor.fontFamily = nil;
+			}
+			else
+			{
+				// probably something special or custom-font?
+				fontDescriptor.fontName = [styles objectForKey:@"font-family"];
 			}
 		}
 		
@@ -375,6 +391,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if (parentFontDescriptor)
 				{
 					currentFontDescriptor = [[parentFontDescriptor copy] autorelease];  // inherit
+
+					// never inherit font name
+					currentFontDescriptor.fontName = nil;
 				}
 				else 
 				{
@@ -735,8 +754,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 							break;
 					}
 					
+					NSString *face = [tagAttributesDict objectForKey:@"face"];
 					
-					currentFontDescriptor.fontFamily = [tagAttributesDict objectForKey:@"face"];
+					if (face)
+					{
+						currentFontDescriptor.fontFamily = face;
+					}
 				}
 			}
 			else if ([tagName isEqualToString:@"p"])
@@ -844,14 +867,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						[attributes setObject:link forKey:@"DTLink"];
 					}
 
-					
+					// if we don't know a font name yet, find it
+					if (!currentFontDescriptor.fontName)
+					{
+						[currentFontDescriptor normalize];
+					}
+
+					// create font
 					NSDictionary *fontAttributes = [currentFontDescriptor fontAttributes];
-					
-					//NSLog(@"%@", fontAttributes);
 					CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
 					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, currentFontDescriptor.pointSize, NULL);
-					
-					//NSLog(@"%@", (id)font);
 					
 					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
@@ -863,9 +888,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						{
 							// FIXME: add extra space properly
 							// this also works, but breaks UnitTest for lists
-							//tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
+							tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
 							
-							paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
+							// this causes problems on the paragraph after a List
+							//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
 							nextParagraphAdditionalSpaceBefore = 0;
 						}
 					}
