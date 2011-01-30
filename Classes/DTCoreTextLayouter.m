@@ -23,6 +23,11 @@
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
 {
+	if (!attributedString)
+	{
+		return nil;
+	}
+	
 	if (self = [super init])
 	{
 		self.attributedString = attributedString;
@@ -51,7 +56,7 @@
 
 - (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
 {
-	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), NULL, 
+	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
 																	 CGSizeMake(width, CGFLOAT_MAX),
 																	 NULL);
 	

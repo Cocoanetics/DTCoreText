@@ -185,10 +185,10 @@
 			
 			contentView.frame = CGRectMake(0,0,size.width, size.height);
 		}
-		else 
-		{
-			self.contentSize = contentView.bounds.size;
-		}
+	
+		// always set the content size
+		self.contentSize = contentView.bounds.size;
+
 	}
 }
 

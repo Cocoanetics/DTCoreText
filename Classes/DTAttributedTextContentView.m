@@ -289,18 +289,21 @@
 
 - (void)setAttributedString:(NSAttributedString *)string
 {
-	[_attributedString autorelease];
-	
-	_attributedString = [string copy];
-	
-	// need new layouter
-	self.layouter = nil;
-	
-	// remove custom views
-	[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	self.customViews = nil;
-	
-	[self setNeedsDisplay];
+	if (_attributedString != string)
+	{
+		[_attributedString release];
+		
+		_attributedString = [string copy];
+		
+		// need new layouter
+		self.layouter = nil;
+		
+		// remove custom views
+		[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+		self.customViews = nil;
+		
+		[self setNeedsDisplay];
+	}
 }
 
 - (void)setFrame:(CGRect)newFrame

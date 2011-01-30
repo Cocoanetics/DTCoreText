@@ -99,6 +99,11 @@
 
 - (void)drawInContext:(CGContextRef)context
 {
+	if (!_textFrame && !context)
+	{
+		return;
+	}
+	
 	CTFrameDraw(_textFrame, context);
 }
 
