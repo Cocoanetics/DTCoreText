@@ -89,11 +89,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A76F072C12F01BC50065A4E7 /* PBXContainerItemProxy */ = {
+		A76157E612F15BCC007C43FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A7DBFBEA12E965DE00F25897;
+			remoteGlobalIDString = A7DBFBEA12E965DE00F25897 /* UnitTest */;
 			remoteInfo = UnitTest;
 		};
 /* End PBXContainerItemProxy section */
@@ -325,8 +325,8 @@
 				A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */,
 				A76FF95412EEA80D0065A4E7 /* DTCoreTextGlyphRun.h */,
 				A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */,
-				A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */,
 				A76F0DE812F0D72D0065A4E7 /* DTCoreTextFontDescriptor.h */,
+				A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */,
 			);
 			name = "CoreText Layout";
 			sourceTree = "<group>";
@@ -376,7 +376,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A76F072D12F01BC50065A4E7 /* PBXTargetDependency */,
+				A76157E712F15BCC007C43FD /* PBXTargetDependency */,
 			);
 			name = CoreTextExtensions;
 			productName = CoreTextExtensions;
@@ -545,10 +545,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A76F072D12F01BC50065A4E7 /* PBXTargetDependency */ = {
+		A76157E712F15BCC007C43FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A7DBFBEA12E965DE00F25897 /* UnitTest */;
-			targetProxy = A76F072C12F01BC50065A4E7 /* PBXContainerItemProxy */;
+			targetProxy = A76157E612F15BCC007C43FD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
