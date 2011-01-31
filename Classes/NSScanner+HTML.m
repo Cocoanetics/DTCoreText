@@ -194,7 +194,7 @@
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	
 	NSMutableCharacterSet *attributeEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@";"];
-	[attributeEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
+	//[attributeEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
 	
 	NSMutableCharacterSet *attributeNameCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"-"];
 	[attributeNameCharacterSet formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];

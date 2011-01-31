@@ -17,6 +17,8 @@
 
 // CSS
 - (NSDictionary *)dictionaryOfCSSStyles;
+- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize;
+- (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(UIColor *)color;
 - (CGFloat)CSSpixelSize;
 
 @end

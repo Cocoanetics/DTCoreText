@@ -122,7 +122,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	{
 		NSDictionary *styles = [styleString dictionaryOfCSSStyles];
 		
-		
 		NSString *fontSize = [styles objectForKey:@"font-size"];
 		if (fontSize)
 		{
@@ -293,6 +292,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// nothing to do
 			}
 		}
+		
+		NSString *shadow = [styles objectForKey:@"text-shadow"];
+		if (shadow)
+		{
+			NSString *currentColorString = [currentTag objectForKey:@"color"];
+			UIColor *color = [UIColor colorWithHTMLName:currentColorString];
+			NSArray *shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:fontDescriptor.pointSize currentColor:color];
+			[currentTag setObject:shadows forKey:@"_Shadows"];
+		}
+		
 	}
 	
 }
@@ -337,7 +346,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
 	defaultFontDescriptor.pointSize = 12;
 	defaultFontDescriptor.fontFamily = @"Times New Roman";
-	NSDictionary *bodyTag = [NSDictionary dictionaryWithObject:defaultFontDescriptor forKey:@"FontDescriptor"];
+	NSDictionary *bodyTag = [NSDictionary dictionaryWithObjectsAndKeys:defaultFontDescriptor, @"FontDescriptor", @"black", @"color", nil];
 	[tagStack addObject:bodyTag];
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
@@ -405,6 +414,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				}
 				
 				[currentTag setObject:currentFontDescriptor forKey:@"FontDescriptor"];
+				
+				// copy color from parent
+				NSString *color = [previousTag objectForKey:@"color"];
+				if (color)
+				{
+					[currentTag setObject:color forKey:@"color"];
+				}
 			}
 			
 			NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
@@ -854,6 +870,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
 					}
+					
+					NSArray *shadows = [currentTag objectForKey:@"_Shadows"];
+					if (shadows)
+					{
+						[attributes setObject:shadows forKey:@"_Shadows"];
+					}
+					
 					
 					id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
 					if (runDelegate)

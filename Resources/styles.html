@@ -4,6 +4,7 @@
 <p style="font-family:courier;">&lt;p style=&quot;color:red; font-size: 30px;text-decoration:underline;&quot;&gt;Some fancy text&lt;/p&gt;</p>
 <p style="color:red; font-size: 30px;text-decoration:underline;">Some fancy text</p>
 <p>This way you can affect the way hyperlinks are decorated: <a href="http://twitter.com/cocoanetics">@cocoanetics</a> versus <a style="color:gray; text-decoration:none;" href="http://twitter.com/cocoanetics">@cocoanetics</a></p>
+
 <h2>Supported Attributes</h2>
 <ul>
 <li>color - names (red) or hex (#FF0000)</li>
@@ -13,6 +14,7 @@
 <li>font-style - normal, inherit, <span style="font-style:italic;">italic</span>, <span style="font-style:oblique;">oblique</span></li>
 <li>font-weight - normal, <span style="font-weight:bold;">bold</span></li>
 </ul>
+
 <h2>Font Families</h2>
 <div style="font-size:30px">
 <p style="font-family:serif">serif</p>
@@ -21,6 +23,17 @@
 <p style="font-family:cursive">cursive</p>
 <p style="font-family:fantasy">fantasy</p>
 </div>
+<h2>Text Shadows</h2>
+<p>The text-shadow property is supported.<p>
+<p style="color:blue;font-size:30px; text-shadow: 0.15em 0.15em #AAA">Text with Shadow</p>
+<p style="font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE">Embossed</p>
+<p style="font-size:30px;color:red; text-shadow: 0px 0px 3px red;">Glowing</p>
+<p style="font-size:30px; font-weight:bold; text-shadow:0.2em 0.5em 0.1em #600,
+      -0.3em 0.1em 0.1em #060,
+      0.4em -0.3em 0.1em #006">Multiple Shadows</p>
+<p style="font-size:30px; text-shadow: blue 0.1em 0.1em 0.2em">Text with Shadow</p>
+<p style="font-family:Helvetica;font-size:20px; color:yellow; font-weight:bold; text-shadow:  -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black">OUTLINE</p>
+
 <h2>To Do</h2>
 <ul>
 <li>More robust mapping of font family to available fonts, support for fallback</li>

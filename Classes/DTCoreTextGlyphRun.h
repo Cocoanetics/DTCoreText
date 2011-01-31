@@ -38,6 +38,8 @@
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 - (NSRange)stringRange;
 
+- (void)drawInContext:(CGContextRef)context;
+
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) NSInteger numberOfGlyphs;
 @property (nonatomic, assign, readonly) NSDictionary *attributes;

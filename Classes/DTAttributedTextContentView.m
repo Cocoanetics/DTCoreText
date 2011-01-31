@@ -131,6 +131,21 @@
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
+	// TODO: do all these settings make sense?
+	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+	CGContextSetAllowsAntialiasing(context, YES);
+	CGContextSetShouldAntialias(context, YES);
+	
+	CGContextSetAllowsFontSubpixelQuantization(context, YES);
+	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
+	
+	CGContextSetShouldSmoothFonts(context, YES);
+	CGContextSetAllowsFontSmoothing(context, YES);
+	
+	CGContextSetShouldSubpixelPositionFonts(context,YES);
+	CGContextSetAllowsFontSubpixelPositioning(context, YES);
+	
+	
 	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
 	
 	if (drawDebugFrames)
@@ -239,9 +254,70 @@
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
 	CGContextTranslateCTM(context, 0, -self.frame.size.height);
-	CGContextTranslateCTM(context, 0, -edgeInsets.top+edgeInsets.bottom);
+
 	
-	[layoutFrame drawInContext:context];
+	//CGContextTranslateCTM(context, 0, -edgeInsets.top+edgeInsets.bottom);
+	//[layoutFrame drawInContext:context];
+	
+	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
+
+	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
+	{
+		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+		{
+			CGContextSaveGState(context);
+			
+			CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
+			
+			
+			NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
+			
+			if (shadows)
+			{
+				for (NSDictionary *shadowDict in shadows)
+				{
+					UIColor *color = [shadowDict objectForKey:@"Color"];
+					CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
+					CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
+					
+					CGFloat scaleFactor = 1.0;
+					if ([self respondsToSelector:@selector(contentScaleFactor)])
+					{
+						scaleFactor = [self contentScaleFactor];
+					}
+					
+					
+					// workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
+					if (scaleFactor==1.0)
+					{
+						if (fabs(offset.width)==1.0)
+						{
+							offset.width *= 1.50;
+						}
+						
+						if (fabs(offset.height)==1.0)
+						{
+							offset.height *= 1.50;
+						}
+					}
+					
+					CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+					
+					// draw once per shadow
+					[oneRun drawInContext:context];
+					
+				}
+			}
+			else
+			{
+				[oneRun drawInContext:context];
+			}
+			
+			CGContextRestoreGState(context);
+			
+		}
+	}
+	
 }
 
 - (CGSize)sizeThatFits:(CGSize)size

@@ -91,6 +91,16 @@
 	return NSMakeRange(range.location, range.length);
 }
 
+- (void)drawInContext:(CGContextRef)context
+{
+	if (!_run || !context)
+	{
+		return;
+	}
+	
+	CTRunDraw(_run, context, CFRangeMake(0, 0));
+}
+
 #pragma mark Properites
 - (NSInteger)numberOfGlyphs
 {

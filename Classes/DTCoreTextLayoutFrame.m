@@ -99,7 +99,7 @@
 
 - (void)drawInContext:(CGContextRef)context
 {
-	if (!_textFrame && !context)
+	if (!_textFrame || !context)
 	{
 		return;
 	}
