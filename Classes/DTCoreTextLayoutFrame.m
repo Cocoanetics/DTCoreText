@@ -43,6 +43,7 @@
 	{
 		CFRelease(_textFrame);
 	}
+  [_lines release];
 	[super dealloc];
 }
 
@@ -67,7 +68,7 @@
 		CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
 		CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
 		
-		NSMutableArray *tmpLines = [NSMutableArray arrayWithCapacity:CFArrayGetCount(lines)];;
+		NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
 		
 		NSInteger lineIndex = 0;
 		
@@ -84,7 +85,7 @@
 			lineIndex++;
 		}
 		
-		self.lines = [NSArray arrayWithArray:tmpLines];
+		_lines = tmpLines;
 		
 		free(origins);
 	}

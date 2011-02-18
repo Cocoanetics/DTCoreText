@@ -72,7 +72,7 @@
 
 		NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
 		NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-		NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+		NSAttributedString *string = [[[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL] autorelease];
 		
 		// set width, height is calculated later from text
 		CGFloat width = self.view.frame.size.width;

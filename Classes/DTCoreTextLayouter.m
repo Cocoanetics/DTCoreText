@@ -40,6 +40,12 @@
 {
 	[_attributedString release];
 	[frames release];
+  
+	if (framesetter)
+	{
+		CFRelease(framesetter);
+		framesetter = NULL;
+	}
 	
 	[super dealloc];
 }
@@ -69,8 +75,9 @@
 
 - (void)addTextFrameWithFrame:(CGRect)frame
 {
-	DTCoreTextLayoutFrame *newFrame = [[[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self] autorelease];
+	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self];
 	[self.frames addObject:newFrame];
+  [newFrame release];
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index

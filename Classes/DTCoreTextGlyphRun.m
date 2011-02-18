@@ -28,6 +28,7 @@
 	
 	if (self = [super init])
 	{
+    attributes = nil;
 		_run = run;
 		CFRetain(_run);
 		
@@ -45,9 +46,8 @@
 
 - (void)dealloc
 {
-	CFRelease(_run);
 	
-	[attributes release];
+	CFRelease(_run);
 	
 	[super dealloc];
 }
