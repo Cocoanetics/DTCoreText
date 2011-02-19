@@ -117,6 +117,7 @@
 	
 	// Display string
 	_textView.attributedString = string;
+
 	
 	// Create range view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
@@ -151,6 +152,9 @@
 	
 	// Data view
 	_dataView.text = [data description];
+  
+  [string release];
+
 }
 
 

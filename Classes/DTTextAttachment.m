@@ -14,4 +14,11 @@
 @synthesize size;
 @synthesize contents;
 
+- (void) dealloc
+{
+  [contents release];
+  [super dealloc];
+}
+
+
 @end

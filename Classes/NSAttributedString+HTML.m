@@ -322,11 +322,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	
 	
 	// Make it a string
-	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
+	NSString *_htmlString = [[NSString alloc] initWithData:data encoding:encoding];
 	
 	// trim whitespace
-	htmlString = [htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	NSString *htmlString = [_htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
+  [_htmlString release];
+  
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
@@ -456,7 +458,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = image;
 				attachment.size = CGSizeMake(width, height);
-				
+				        
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 				
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
@@ -465,6 +467,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
 														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
+        CFRelease(paragraphStyle);
 				
 				id link = [currentTag objectForKey:@"DTLink"];
 				if (link)
@@ -513,6 +516,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
 														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
+        CFRelease(paragraphStyle);
 				
 				if (needsNewLineBefore)
 				{
@@ -938,6 +942,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+          CFRelease(paragraphStyle);
 					
 					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
 					
@@ -1041,7 +1046,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					CFRelease(font);
 					CFRelease(fontDesc);
-					CFRelease(paragraphStyle);
+					//CFRelease(paragraphStyle);
 				}
 				
 			}

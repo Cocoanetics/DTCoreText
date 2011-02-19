@@ -22,8 +22,6 @@
 	NSAttributedString *_attributedString;
 	
 	NSMutableArray *frames;
-	NSMutableArray *lines;
-	NSMutableArray *glyphRuns;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString;

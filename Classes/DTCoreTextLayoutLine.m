@@ -124,7 +124,7 @@
 
 		CGFloat offset = 0;
 		
-		NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:CFArrayGetCount(runs)];
+		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(runs)];
 		
 		for (id oneRun in (NSArray *)runs)
 		{
@@ -137,7 +137,7 @@
 			offset += glyphRun.frame.size.width;
 		}
 		
-		self.glyphRuns = [NSArray arrayWithArray:tmpArray];
+		_glyphRuns = tmpArray;//[NSArray arrayWithArray:tmpArray];
 	}
 	
 	return _glyphRuns;
