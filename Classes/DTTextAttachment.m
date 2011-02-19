@@ -16,8 +16,8 @@
 
 - (void) dealloc
 {
-  [contents release];
-  [super dealloc];
+	[contents release];
+	[super dealloc];
 }
 
 

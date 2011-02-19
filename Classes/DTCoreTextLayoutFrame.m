@@ -43,7 +43,8 @@
 	{
 		CFRelease(_textFrame);
 	}
-  [_lines release];
+	[_lines release];
+	
 	[super dealloc];
 }
 

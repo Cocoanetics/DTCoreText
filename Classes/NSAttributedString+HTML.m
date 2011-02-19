@@ -327,7 +327,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// trim whitespace
 	NSString *htmlString = [_htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
-  [_htmlString release];
+	[_htmlString release];
   
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
 	
@@ -458,7 +458,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = image;
 				attachment.size = CGSizeMake(width, height);
-				        
+
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 				
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
@@ -904,6 +904,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					NSDictionary *fontAttributes = [currentFontDescriptor fontAttributes];
 					CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
 					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, currentFontDescriptor.pointSize, NULL);
+					CFRelease(fontDesc);
 					
 					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
@@ -942,7 +943,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-          CFRelease(paragraphStyle);
+
+					CFRelease(font);
+					CFRelease(paragraphStyle);
 					
 					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
 					
@@ -1043,10 +1046,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					[tagString release];
 					
 					previousAttributes = attributes;
-					
-					CFRelease(font);
-					CFRelease(fontDesc);
-					//CFRelease(paragraphStyle);
 				}
 				
 			}
