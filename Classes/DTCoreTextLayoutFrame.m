@@ -134,7 +134,7 @@
 		retIndex++;
 	}
 	
-	return NSIntegerMax;
+	return retIndex; //NSIntegerMax;
 }
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index

@@ -132,18 +132,18 @@
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// TODO: do all these settings make sense?
-	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-	CGContextSetAllowsAntialiasing(context, YES);
-	CGContextSetShouldAntialias(context, YES);
-	
-	CGContextSetAllowsFontSubpixelQuantization(context, YES);
-	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
-	
-	CGContextSetShouldSmoothFonts(context, YES);
-	CGContextSetAllowsFontSmoothing(context, YES);
-	
-	CGContextSetShouldSubpixelPositionFonts(context,YES);
-	CGContextSetAllowsFontSubpixelPositioning(context, YES);
+//	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+//	CGContextSetAllowsAntialiasing(context, YES);
+//	CGContextSetShouldAntialias(context, YES);
+//	
+//	CGContextSetAllowsFontSubpixelQuantization(context, YES);
+//	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
+//	
+//	CGContextSetShouldSmoothFonts(context, YES);
+//	CGContextSetAllowsFontSmoothing(context, YES);
+//	
+//	CGContextSetShouldSubpixelPositionFonts(context,YES);
+//	CGContextSetAllowsFontSubpixelPositioning(context, YES);
 	
 	
 	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
