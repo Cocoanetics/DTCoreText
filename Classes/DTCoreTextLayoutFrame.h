@@ -23,6 +23,7 @@
 }
 
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter;
+- (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range;
 
 - (CGPathRef)path;
 - (NSRange)visibleStringRange;

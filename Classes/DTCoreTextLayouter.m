@@ -28,7 +28,7 @@
 		return nil;
 	}
 	
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		self.attributedString = attributedString;
 	}
@@ -73,11 +73,19 @@
 	return neededSize;
 }
 
+
+// a temporary frame
+- (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
+{
+	DTCoreTextLayoutFrame *newFrame = [[[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range] autorelease];
+	return newFrame;
+}
+
+// reusable frame
 - (void)addTextFrameWithFrame:(CGRect)frame
 {
-	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self];
+	DTCoreTextLayoutFrame *newFrame = [self layoutFrameWithRect:frame range:NSMakeRange(0, 0)];
 	[self.frames addObject:newFrame];
-  [newFrame release];
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index

@@ -361,7 +361,7 @@ static NSDictionary *entityLookup = nil;
 		if ([scanner scanString:@"&" intoString:NULL])
 		{
 			NSString *afterAmpersand = nil;
-			if ([scanner scanUpToString:@";" intoString:&afterAmpersand]); 
+			if ([scanner scanUpToString:@";" intoString:&afterAmpersand]) 
 			{
 				if ([scanner scanString:@";" intoString:NULL])
 				{

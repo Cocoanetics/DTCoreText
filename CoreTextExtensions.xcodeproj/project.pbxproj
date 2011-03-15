@@ -209,6 +209,7 @@
 			children = (
 				A7342FF512DC343B00044B3C /* Demo */,
 				A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */,
+				A76FF75912EDF8A80065A4E7 /* CoreText Layout */,
 				A76E5CBA12DDAA6300711782 /* UI */,
 				6A5A32BA12DD106D0019AAF1 /* UnitTest */,
 			);
@@ -301,7 +302,6 @@
 		A76E5CBA12DDAA6300711782 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				A76FF75912EDF8A80065A4E7 /* CoreText Layout */,
 				A76E5BD712DD9FEB00711782 /* DTAttributedTextView.h */,
 				A76E5BD812DD9FEB00711782 /* DTAttributedTextView.m */,
 				A73BC48C12DA078100F064C6 /* DTAttributedTextContentView.h */,

@@ -20,7 +20,8 @@
 
 @implementation DTCoreTextLayoutFrame
 
-- (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter
+// makes a frame for a specific part of the attributed string of the layouter
+- (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
 	if (self = [super init])
 	{
@@ -28,13 +29,21 @@
 		
 		CGMutablePathRef path = CGPathCreateMutable();
 		CGPathAddRect(path, NULL, frame);
-		_textFrame = CTFramesetterCreateFrame(layouter.framesetter, CFRangeMake(0, 0), path, NULL);
+		
+		CFRange cfRange = CFRangeMake(range.location, range.length);
+		_textFrame = CTFramesetterCreateFrame(layouter.framesetter, cfRange, path, NULL);
 		CGPathRelease(path);
 		
 		_layouter = layouter;
 	}
 	
 	return self;
+}
+
+// makes a frame for the entire attributed string of the layouter
+- (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter
+{
+	return [self initWithFrame:frame layouter:layouter range:NSMakeRange(0, 0)];
 }
 
 - (void)dealloc
