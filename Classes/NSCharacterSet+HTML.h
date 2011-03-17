@@ -12,5 +12,6 @@
 @interface NSCharacterSet (HTML)
 
 + (NSCharacterSet *)tagNameCharacterSet;
++ (NSCharacterSet *)tagAttributeNameCharacterSet;
 
 @end

@@ -99,7 +99,7 @@
 {
 	if (!framesetter)
 	{
-		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedString);
+		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
 	}
 	
 	return framesetter;
@@ -117,13 +117,16 @@
 }
 
 
-- (void)setAttributedString:(NSAttributedString *)string
+- (void)setAttributedString:(NSAttributedString *)attributedString
 {
-	[_attributedString autorelease];
-	
-	_attributedString = [string copy];
-	
-	[self relayoutText];
+    if (_attributedString != attributedString)
+    {
+        [_attributedString release];
+        
+        _attributedString = [attributedString mutableCopy];
+        
+        [self relayoutText];
+    }
 }
 
 - (NSMutableArray *)frames

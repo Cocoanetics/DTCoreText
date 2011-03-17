@@ -17,6 +17,7 @@
 #import "DTTextAttachment.h"
 
 #import "DTCoreTextFontDescriptor.h"
+#import "CGUtils.h"
 
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
@@ -32,9 +33,12 @@
 #define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
 #define UNICODE_LINE_FEED @"\u2028"
 
-
+// standard options
 NSString *NSBaseURLDocumentOption = @"BaseURL";
 NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
+
+// custom options
+NSString *DTMaxImageSize = @"DTMaxImageSize";
 
 CTParagraphStyleRef createDefaultParagraphStyle()
 {
@@ -316,6 +320,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
+    
+    // custom option to limit image size
+    NSValue *maxImageSizeValue = [options objectForKey:DTMaxImageSize];
+    
 	
 	// use baseURL from options if present
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
@@ -454,6 +462,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						height = image.size.height;
 					}
 				}
+                
+                // option DTMaxImageSize
+                if (maxImageSizeValue)
+                {
+                    CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
+                    
+                    if (maxImageSize.width < width || maxImageSize.height < height)
+                    {
+                        CGSize adjustedSize = sizeThatFitsKeepingAspectRatio(image.size,maxImageSize);
+                        
+                        width = adjustedSize.width;
+                        height = adjustedSize.height;
+                    }
+                }
 				
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = image;
@@ -467,7 +489,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
 														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
-        CFRelease(paragraphStyle);
+                CFRelease(paragraphStyle);
 				
 				id link = [currentTag objectForKey:@"DTLink"];
 				if (link)
@@ -516,7 +538,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
 														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
 				CFRelease(embeddedObjectRunDelegate);
-        CFRelease(paragraphStyle);
+                CFRelease(paragraphStyle);
 				
 				if (needsNewLineBefore)
 				{
@@ -1056,5 +1078,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	return [self initWithAttributedString:tmpString];
 }
 
+#pragma mark Convenience Methods
+
++ (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options
+{
+	NSAttributedString *attrString = [[[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL] autorelease];
+	
+	return attrString;
+}
 
 @end

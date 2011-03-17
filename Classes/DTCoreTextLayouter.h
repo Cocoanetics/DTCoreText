@@ -31,6 +31,8 @@
 - (NSInteger)numberOfFrames;
 - (void)addTextFrameWithFrame:(CGRect)frame;
 
+- (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range;
+
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index;
 
 

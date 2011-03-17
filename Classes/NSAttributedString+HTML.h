@@ -17,4 +17,7 @@ extern NSString *NSTextEncodingNameDocumentOption;
 - (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict;
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict;
 
+// convenience methods
++ (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options;
+
 @end

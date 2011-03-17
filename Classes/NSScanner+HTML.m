@@ -61,6 +61,7 @@
 	BOOL immediatelyClosed = NO;
 	
 	NSCharacterSet *tagCharacterSet = [NSCharacterSet tagNameCharacterSet];
+    NSCharacterSet *tagAttributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
 	NSCharacterSet *quoteCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"'\""];
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	NSMutableCharacterSet *nonquoteAttributedEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"/>"];
@@ -109,7 +110,7 @@
 		NSString *attrName = nil;
 		NSString *attrValue = nil;
 		
-		if (![self scanCharactersFromSet:tagCharacterSet intoString:&attrName])
+		if (![self scanCharactersFromSet:tagAttributeNameCharacterSet intoString:&attrName])
 		{
 			immediatelyClosed = YES;
 			break;

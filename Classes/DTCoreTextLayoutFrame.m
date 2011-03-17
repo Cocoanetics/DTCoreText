@@ -23,7 +23,9 @@
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
-	if (self = [super init])
+    self = [super init];
+    
+	if (self)
 	{
 		_frame = frame;
 		
