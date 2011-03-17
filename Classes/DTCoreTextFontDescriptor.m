@@ -17,15 +17,39 @@
 	return [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:attributes] autorelease];
 }
 
++ (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont
+{
+	return [[[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont] autorelease];
+}
+
 - (id)initWithFontAttributes:(NSDictionary *)attributes
 {
-	if (self = [super init])
+    self = [super init];
+	if (self)
 	{
 		[self setFontAttributes:attributes];
 	}
 	
 	return self;
 }
+
+- (id)initWithCTFont:(CTFontRef)ctFont
+{
+    self = [super init];
+    if (self)
+    {
+        CTFontDescriptorRef fd = CTFontCopyFontDescriptor(ctFont);
+        CFDictionaryRef dict = CTFontDescriptorCopyAttributes(fd);
+        
+        [self setFontAttributes:(id)dict];
+        
+        CFRelease(dict);
+        CFRelease(fd);
+    }
+    
+    return self;
+}
+
 
 - (void)dealloc
 {
@@ -179,6 +203,17 @@
 	}
 	
 	
+}
+
+
+- (CTFontRef)newMatchingFont
+{
+    NSDictionary *fontAttributes = [self fontAttributes];
+    CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
+    CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, self.pointSize, NULL);
+    CFRelease(fontDesc);
+    
+    return font;
 }
 
 #pragma mark Copying

@@ -30,14 +30,19 @@
 }
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes;
++ (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont;
 
 - (id)initWithFontAttributes:(NSDictionary *)attributes;
+- (id)initWithCTFont:(CTFontRef)ctFont;
+
 - (void)setFontAttributes:(NSDictionary *)newAttributes;
 
 - (void)normalize;
 
 - (CTFontSymbolicTraits)symbolicTraits;
 - (NSDictionary *)fontAttributes;
+
+- (CTFontRef)newMatchingFont;
 
 @property (nonatomic, copy) NSString *fontFamily;
 @property (nonatomic, copy) NSString *fontName;
