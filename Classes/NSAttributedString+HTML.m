@@ -923,10 +923,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
 
 					// create font
-					NSDictionary *fontAttributes = [currentFontDescriptor fontAttributes];
-					CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
-					CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, currentFontDescriptor.pointSize, NULL);
-					CFRelease(fontDesc);
+                    CTFontRef font = [currentFontDescriptor newMatchingFont];
 					
 					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];

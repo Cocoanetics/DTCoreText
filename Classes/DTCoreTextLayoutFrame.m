@@ -29,14 +29,25 @@
 	{
 		_frame = frame;
 		
+		_layouter = [layouter retain];
+		
 		CGMutablePathRef path = CGPathCreateMutable();
 		CGPathAddRect(path, NULL, frame);
 		
 		CFRange cfRange = CFRangeMake(range.location, range.length);
-		_textFrame = CTFramesetterCreateFrame(layouter.framesetter, cfRange, path, NULL);
+        _framesetter = layouter.framesetter;
+        CFRetain(_framesetter);
+        
+        if (_framesetter)
+        {
+            _textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
+        }
+        else
+        {
+            NSLog(@"Strange, should have gotten a valid framesetter");
+        }
+            
 		CGPathRelease(path);
-		
-		_layouter = layouter;
 	}
 	
 	return self;
@@ -55,6 +66,12 @@
 		CFRelease(_textFrame);
 	}
 	[_lines release];
+    [_layouter release];
+    
+    if (_framesetter)
+    {
+        CFRelease(_framesetter);
+    }
 	
 	[super dealloc];
 }

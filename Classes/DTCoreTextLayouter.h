@@ -35,6 +35,8 @@
 
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index;
 
+- (void)relayoutText;
+
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 

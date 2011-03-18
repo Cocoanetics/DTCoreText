@@ -17,6 +17,8 @@
 {
 	CGRect _frame;
 	CTFrameRef _textFrame;
+    CTFramesetterRef _framesetter;
+    
 	DTCoreTextLayouter *_layouter;
 	
 	NSArray *_lines;
