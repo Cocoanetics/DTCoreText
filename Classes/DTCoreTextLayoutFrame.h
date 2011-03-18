@@ -22,6 +22,7 @@
 	DTCoreTextLayouter *_layouter;
 	
 	NSArray *_lines;
+    NSInteger tag;
 }
 
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter;
@@ -39,6 +40,7 @@
 @property (nonatomic, assign, readonly) DTCoreTextLayouter *layouter;
 
 @property (nonatomic, retain, readonly) NSArray *lines;
+@property (nonatomic, assign) NSInteger tag;
 
 
 @end

@@ -189,5 +189,6 @@
 @synthesize frame = _frame;
 @synthesize layouter = _layouter;
 @synthesize lines = _lines;
+@synthesize tag;
 
 @end
