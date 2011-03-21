@@ -124,7 +124,7 @@
 	NSDictionary *attributes = nil;
 	NSRange effectiveRange = NSMakeRange(0, 0);
 	
-	while (attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange])
+	while ((attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
 	{
 		[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
 		effectiveRange.location += effectiveRange.length;
@@ -215,6 +215,8 @@
 {
 	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
 	
+    NSLog(@"%@", attributes);
+    
 	NSURL *link = [attributes objectForKey:@"DTLink"];
 	
 	if (link)
@@ -222,6 +224,7 @@
 		DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
 		button.url = link;
 		button.alpha = 0.4;
+        button.guid = [attributes objectForKey:@"DTGUID"];
 
 		// use normal push action for opening URL
 		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];

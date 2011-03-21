@@ -21,4 +21,7 @@
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(UIColor *)color;
 - (CGFloat)CSSpixelSize;
 
+// Utility
++ (NSString *)guid;
+
 @end

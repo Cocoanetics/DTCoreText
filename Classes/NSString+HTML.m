@@ -557,4 +557,14 @@ static NSDictionary *entityLookup = nil;
 	return [self floatValue];
 }
 
+#pragma Utility
++ (NSString *)guid
+{
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    
+    NSString *ret = (NSString *)CFUUIDCreateString(NULL, uuid);
+    
+    return [ret autorelease];
+}
+
 @end

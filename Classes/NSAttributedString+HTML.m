@@ -496,7 +496,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					[localAttributes setObject:link forKey:@"DTLink"];
 				}
-				
+                
 				if (needsNewLineBefore)
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
@@ -579,6 +579,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						[currentTag setObject:link forKey:@"DTLink"];
 					}
+                    
+                    // add a guid to have all parts of a link highlight in sync
+                    [currentTag setObject:[NSString guid] forKey:@"DTGUID"];
 				}
 			}
 			else if ([tagName isEqualToString:@"b"] || [tagName isEqualToString:@"strong"])
@@ -1060,6 +1063,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						}
 					}
 					
+                    id guid = [currentTag objectForKey:@"DTGUID"];
+                    if (guid)
+                    {
+                        [attributes setObject:guid forKey:@"DTGUID"];
+                    }
+                    
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];
 					[tagString release];

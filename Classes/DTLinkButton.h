@@ -12,8 +12,10 @@
 @interface DTLinkButton : UIButton 
 {
 	NSURL *_url;
+    NSString *_guid;
 }
 
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, copy) NSURL *url;
+@property (nonatomic, copy) NSString *guid;
 
 @end

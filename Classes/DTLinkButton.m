@@ -35,19 +35,63 @@
 		[self setBackgroundImage:background forState:UIControlStateHighlighted]; 
 		
 		UIGraphicsEndImageContext();
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:@"DTLinkButtonDidHighlight" object:nil];
 	}
 	
 	
 	return self;
 }
 
+- (void)setHighlighted:(BOOL)highlighted
+{
+    [super setHighlighted:highlighted];
+    
+    
+    // notify other parts of the same link
+    if (_guid)
+    {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:highlighted], @"Highlighted", _guid, @"GUID", nil];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DTLinkButtonDidHighlight" object:self userInfo:userInfo];
+    }
+}
+
+
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
 	[_url release];
+    [_guid release];
 	
 	[super dealloc];
 }
 
+#pragma Notifications
+- (void)highlightNotification:(NSNotification *)notification
+{
+    if ([notification object] == self)
+    {
+        // that was me
+        return;
+    }
+    
+    NSDictionary *userInfo = [notification userInfo];
+    
+    NSString *guid = [userInfo objectForKey:@"GUID"];
+    
+    if ([guid isEqualToString:_guid])
+    {
+        BOOL highlighted = [[userInfo objectForKey:@"Highlighted"] boolValue];
+        [super setHighlighted:highlighted];
+    }
+}
+
+
+#pragma Properties
+
 @synthesize url = _url;
+@synthesize guid = _guid;
 
 @end
