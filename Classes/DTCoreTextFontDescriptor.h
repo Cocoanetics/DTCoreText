@@ -57,6 +57,8 @@
 @property (nonatomic) BOOL verticalTrait;
 @property (nonatomic) BOOL UIoptimizedTrait;
 
+@property (nonatomic, assign) CTFontSymbolicTraits symbolicTraits;
+
 @property (nonatomic) CTFontStylisticClass stylisticClass;
 
 

@@ -260,43 +260,7 @@
 	
 	CTFontSymbolicTraits traitsValue = [[traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
 	
-	if (traitsValue & kCTFontBoldTrait)
-	{
-		boldTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontItalicTrait)
-	{
-		italicTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontExpandedTrait)
-	{
-		expandedTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontCondensedTrait)
-	{
-		condensedTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontMonoSpaceTrait)
-	{
-		monospaceTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontVerticalTrait)
-	{
-		verticalTrait = YES;
-	}
-	
-	if (traitsValue & kCTFontUIOptimizedTrait)
-	{
-		UIoptimizedTrait = YES;
-	}
-	
-	// stylistic class is bundled in the traits
-	stylisticClass = traitsValue & kCTFontClassMaskTrait;
+    self.symbolicTraits = traitsValue;
 	
 	
 	NSNumber *pointNum = [attributes objectForKey:(id)kCTFontSizeAttribute];
@@ -321,6 +285,46 @@
 	
 }
 
+- (void)setSymbolicTraits:(CTFontSymbolicTraits)symbolicTraits
+{
+    if (symbolicTraits & kCTFontBoldTrait)
+	{
+		boldTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontItalicTrait)
+	{
+		italicTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontExpandedTrait)
+	{
+		expandedTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontCondensedTrait)
+	{
+		condensedTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontMonoSpaceTrait)
+	{
+		monospaceTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontVerticalTrait)
+	{
+		verticalTrait = YES;
+	}
+	
+	if (symbolicTraits & kCTFontUIOptimizedTrait)
+	{
+		UIoptimizedTrait = YES;
+	}
+	
+	// stylistic class is bundled in the traits
+	stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
+}
 
 @synthesize fontFamily;
 @synthesize fontName;
@@ -333,6 +337,8 @@
 @synthesize monospaceTrait;
 @synthesize verticalTrait;
 @synthesize UIoptimizedTrait;
+
+@synthesize symbolicTraits;
 
 @synthesize stylisticClass;
 

@@ -22,6 +22,12 @@
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
 #define ALLOW_IPHONE_SPECIAL_CASES 1
 
+// adds the path of tags to attributes dict
+//#define ADD_TAG_PATH 1
+
+// adds the original font descriptors to the attributes dicts
+//#define ADD_FONT_DESCRIPTORS 1
+
 /* Known Differences:
  - OSX has an entire attributes block for an UL block
  - OSX does not add extra space after UL block
@@ -927,6 +933,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 
 					// create font
                     CTFontRef font = [currentFontDescriptor newMatchingFont];
+                    
+#if ADD_FONT_DESCRIPTORS
+                    // adds the font description of this string to the attribute dictionary
+                    // e.g. for overriding later
+
+                    [attributes setObject:currentFontDescriptor forKey:@"FontDescriptor"];
+#endif
 					
 					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
 					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
@@ -1069,10 +1082,27 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
                         [attributes setObject:guid forKey:@"DTGUID"];
                     }
                     
+#if ADD_TAG_PATH 
+                    // adds the path of the tag containing this string to the attribute dictionary
+                    NSMutableArray *tagPath = [[NSMutableArray alloc] init];
+                    for (NSDictionary *oneTag in tagStack)
+                    {
+                        NSString *tag = [oneTag objectForKey:@"_tag"];
+                        if (!tag)
+                        {
+                            tag = @"";
+                        }
+                        [tagPath addObject:tag];  
+                    }
+                    
+                    [attributes setObject:[tagPath componentsJoinedByString:@"/"] forKey:@"Path"];
+                    [tagPath release];
+                    
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];
 					[tagString release];
-					
+#endif
+                    
 					previousAttributes = attributes;
 				}
 				
