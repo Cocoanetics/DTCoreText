@@ -23,7 +23,9 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-	if (self = [super initWithFrame:frame])
+    self = [super initWithFrame:frame];
+    
+	if (self)
 	{
 		[self setup];
 	}
@@ -41,7 +43,7 @@
 {
 	[super layoutSubviews];
 	
-	self.contentView; // Trigger adding if not happened
+    [self addSubview:self.contentView];
 }
 
 - (void)awakeFromNib
@@ -82,9 +84,9 @@
 	if (!contentView)
 	{
 		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
-		contentView.parentView = self;
+		contentView.delegate = self;
 		contentView.userInteractionEnabled = YES;
-		[self addSubview:contentView];
+        [self addSubview:contentView];
 	}		
 	
 	return contentView;
@@ -192,19 +194,12 @@
 	}
 }
 
-/*
- - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
- {
- UIView *hitView = [super hitTest:point withEvent:event];
- NSLog(@"%@", hitView);
- return hitView;
- }
- */
+- (void)setTextDelegate:(id)textDelegate
+{
+    contentView.delegate = textDelegate;
+}
 
 @synthesize attributedString;
 @synthesize contentView;
-
-
-@synthesize textDelegate;
 
 @end

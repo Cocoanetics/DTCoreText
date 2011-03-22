@@ -98,7 +98,7 @@
 	
 	// Create text view
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
-	_textView.textDelegate = (id)self;
+	_textView.contentView.delegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
 }
@@ -211,12 +211,10 @@
 
 
 #pragma mark Custom Views on Text
-- (UIView *)attributedTextView:(DTAttributedTextView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
+- (UIView *)attributedTextContentView:(DTAttributedTextView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
 {
 	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
 	
-    NSLog(@"%@", attributes);
-    
 	NSURL *link = [attributes objectForKey:@"DTLink"];
 	
 	if (link)

@@ -1094,11 +1094,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
                     
                     [attributes setObject:[tagPath componentsJoinedByString:@"/"] forKey:@"Path"];
                     [tagPath release];
+#endif
                     
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];
 					[tagString release];
-#endif
+
                     
 					previousAttributes = attributes;
 				}

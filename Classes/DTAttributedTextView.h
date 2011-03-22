@@ -6,31 +6,19 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@class DTAttributedTextContentView, DTAttributedTextView;
+#import "DTAttributedTextContentView.h"
 
+@class DTAttributedTextView;
 
-@protocol DTAttributedTextViewDelegate <NSObject>
-
-@optional
-
-- (UIView *)attributedTextView:(DTAttributedTextView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
-
-@end
-
-
-@interface DTAttributedTextView : UIScrollView 
+@interface DTAttributedTextView : UIScrollView <DTAttributedTextContentViewDelegate>
 {
 	DTAttributedTextContentView *contentView;
 	UIView *backgroundView;
-	
-	id <DTAttributedTextViewDelegate> textDelegate;
 }
 
 @property (nonatomic, retain) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) DTAttributedTextContentView *contentView;
 @property (nonatomic, retain) UIView *backgroundView;
-
-@property (nonatomic, assign) id <DTAttributedTextViewDelegate> textDelegate;
 
 @end

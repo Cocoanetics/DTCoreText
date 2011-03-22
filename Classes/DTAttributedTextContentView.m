@@ -95,7 +95,7 @@
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
 			// add custom views if necessary
-			if ([parentView.textDelegate respondsToSelector:@selector(attributedTextView:viewForAttributedString:frame:)])
+			if ([delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)])
 			{
 				NSRange stringRange = [oneRun stringRange];
 				
@@ -112,7 +112,7 @@
 				{
 					NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
 					
-					UIView *view = [parentView.textDelegate attributedTextView:parentView viewForAttributedString:string frame:oneRun.frame];
+					UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:oneRun.frame];
 					
 					if (view)
 					{
@@ -370,7 +370,7 @@
 	if (_attributedString != string)
 	{
 		[_attributedString release];
-		
+        
 		_attributedString = [string copy];
 		
 		// need new layouter
@@ -440,7 +440,7 @@
 
 @synthesize layouter;
 @synthesize attributedString = _attributedString;
-@synthesize parentView;
+@synthesize delegate;
 @synthesize edgeInsets;
 @synthesize drawDebugFrames;
 @synthesize customViews;
