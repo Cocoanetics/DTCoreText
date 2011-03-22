@@ -43,7 +43,10 @@
 {
 	[super layoutSubviews];
 	
-    [self addSubview:self.contentView];
+    if (!contentView)
+    {
+        [self addSubview:self.contentView];
+    }
 }
 
 - (void)awakeFromNib
