@@ -15,7 +15,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-
+#define USE_TILING 1
 
 #define TAG_BASE 9999
 
@@ -31,6 +31,14 @@
 
 
 @implementation DTAttributedTextContentView
+
+#if USE_TILING
++ (Class) layerClass
+{
+    return [CATiledLayer class];
+}
+#endif
+
 
 - (id)initWithFrame:(CGRect)frame 
 {
@@ -80,6 +88,18 @@
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	
 	drawDebugFrames = NO;
+    
+#if USE_TILING
+    CATiledLayer *layer = (id)self.layer;
+    
+    layer.levelsOfDetail = 1;
+    layer.levelsOfDetailBias = 0;
+    CGSize tileSize = CGSizeMake(512, 512);
+    tileSize.width *= [UIScreen mainScreen].scale;
+    tileSize.height *= [UIScreen mainScreen].scale;
+    
+    layer.tileSize = tileSize;
+#endif
 }
 
 - (void)layoutSubviews
@@ -127,9 +147,13 @@
 	}
 }
 
-- (void)drawRect:(CGRect)rect 
+-(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
 {
-	CGContextRef context = UIGraphicsGetCurrentContext();
+    UIGraphicsPushContext(context);
+    
+    CGRect rect = CGContextGetClipBoundingBox(context);
+    NSLog(@"draw %@", NSStringFromCGRect(rect));
+	//CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// TODO: do all these settings make sense?
 //	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
@@ -265,6 +289,9 @@
 	{
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
+          //  NSLog(@"run %@", NSStringFromCGRect(oneRun.frame));
+            
+            
 			CGContextSaveGState(context);
 			
 			CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
@@ -318,6 +345,7 @@
 		}
 	}
 	
+    UIGraphicsPopContext();
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -388,7 +416,16 @@
 	{
 		[super setFrame:newFrame];
 		
-		
+#if USE_TILING
+//        CATiledLayer *layer = (id)self.layer;
+//        CGSize tileSize = self.bounds.size;
+//        tileSize.width *= [UIScreen mainScreen].scale;
+//        tileSize.height *= [UIScreen mainScreen].scale;
+//        
+//        layer.tileSize = tileSize;
+#endif
+        
+        
 		// next redraw will do new layout
 		self.layouter = nil;
 		
