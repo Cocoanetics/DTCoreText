@@ -33,9 +33,6 @@
  - OSX does not add extra space after UL block
  */
 
-// TODO: Decode HTML Entities
-// TODO: make attributes case independent (currently lowercase)
-
 #define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
 #define UNICODE_LINE_FEED @"\u2028"
 
