@@ -79,6 +79,7 @@
 		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
 		
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        contentView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 		[contentViewCache setObject:contentView forKey:indexPath];
 	}
 	

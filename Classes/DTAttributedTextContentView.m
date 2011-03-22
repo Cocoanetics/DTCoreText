@@ -76,8 +76,6 @@
 	self.contentMode = UIViewContentModeRedraw;
 	self.userInteractionEnabled = YES;
 	
-	edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-	
 	self.opaque = NO;
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	

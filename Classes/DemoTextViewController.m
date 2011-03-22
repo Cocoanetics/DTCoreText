@@ -116,6 +116,7 @@
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data baseURL:baseURL documentAttributes:NULL];
 	
 	// Display string
+    _textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.attributedString = string;
 
 	
