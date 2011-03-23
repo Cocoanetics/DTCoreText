@@ -882,10 +882,28 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		{
 			//----------------------------------------- TAG CONTENTS -----------------------------------------
 			NSString *tagContents = nil;
+            
+            // if we find a < at this stage then we can assume it was a malformed tag, need to skip it to prevent endless loop
+            
+            BOOL skippedAngleBracket = NO;
+            if ([scanner scanString:@"<" intoString:NULL])
+            {
+                skippedAngleBracket = YES;
+            }
 			
-			if ([scanner scanUpToString:@"<" intoString:&tagContents] && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
+			if ((skippedAngleBracket||[scanner scanUpToString:@"<" intoString:&tagContents]) && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
 			{
-				//				NSLog(@"tag: -%@-", tagContents);
+                if (skippedAngleBracket)
+                {
+                    if (tagContents)
+                    {
+                        tagContents = [@"<" stringByAppendingString:tagContents];
+                    }
+                    else
+                    {
+                        tagContents = @"<";
+                    }
+                }
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{

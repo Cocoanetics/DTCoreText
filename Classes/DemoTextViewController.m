@@ -62,7 +62,7 @@
 	
 	[lastActionLink release];
 	[mediaPlayers release];
-
+    
 	[super dealloc];
 }
 
@@ -120,26 +120,30 @@
 	// Display string
     _textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.attributedString = string;
-
+    
 	
 	// Create range view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
 	NSDictionary *attributes = nil;
 	NSRange effectiveRange = NSMakeRange(0, 0);
-	
-	while ((attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
-	{
-		[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
-		effectiveRange.location += effectiveRange.length;
-		
-		if (effectiveRange.location >= [string length])
-		{
-			break;
-		}
-	}
+    
+    if ([string length])
+    {
+        
+        while ((attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
+        {
+            [dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+            effectiveRange.location += effectiveRange.length;
+            
+            if (effectiveRange.location >= [string length])
+            {
+                break;
+            }
+        }
+    }
 	_rangeView.text = dumpOutput;
 	
-
+    
 	// Create characters view
 	[dumpOutput setString:@""];
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
@@ -155,9 +159,9 @@
 	
 	// Data view
 	_dataView.text = [data description];
-  
-  [string release];
-
+    
+    [string release];
+    
 }
 
 
@@ -178,7 +182,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-
+    
 	// now the bar is up so we can autoresize again
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
@@ -226,10 +230,10 @@
 		button.url = link;
 		button.alpha = 0.4;
         button.guid = [attributes objectForKey:@"DTGUID"];
-
+        
 		// use normal push action for opening URL
 		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
-
+        
 		// demonstrate combination with long press
 		UILongPressGestureRecognizer *longPress = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)] autorelease];
 		[button addGestureRecognizer:longPress];
@@ -262,7 +266,7 @@
 				
 				player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 				[grayView addSubview:player.view];
-
+                
 				// will get resized and added to view by caller
 				return grayView;
 			}
