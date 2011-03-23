@@ -76,6 +76,7 @@
 		
 		// set width, height is calculated later from text
 		CGFloat width = self.view.frame.size.width;
+        [DTAttributedTextContentView setLayerClass:nil];
 		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
 		
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

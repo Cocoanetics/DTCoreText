@@ -23,6 +23,7 @@
 @end
 
 
+
 @interface DTAttributedTextContentView : UIView 
 {
 	NSAttributedString *_attributedString;
@@ -49,3 +50,12 @@
 
 
 @end
+
+
+@interface DTAttributedTextContentView (Tiling)
+
++ (void)setLayerClass:(Class)layerClass;
++ (Class)layerClass;
+
+@end
+

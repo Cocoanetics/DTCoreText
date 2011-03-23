@@ -13,6 +13,7 @@
 #import "DTTextAttachment.h"
 
 #import "DTLinkButton.h"
+#import <QuartzCore/QuartzCore.h>
 
 #import <MediaPlayer/MediaPlayer.h>
 
@@ -97,6 +98,7 @@
 	[self.view addSubview:_rangeView];
 	
 	// Create text view
+    [DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	_textView.contentView.delegate = (id)self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;

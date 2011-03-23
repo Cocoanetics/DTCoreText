@@ -15,8 +15,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#define USE_TILING 1
-
 #define TAG_BASE 9999
 
 @interface DTAttributedTextContentView ()
@@ -29,16 +27,30 @@
 @end
 
 
+static Class _layerClassToUseForDTAttributedTextContentView = nil;
+
+@implementation DTAttributedTextContentView (Tiling)
+
++ (void)setLayerClass:(Class)layerClass
+{
+    _layerClassToUseForDTAttributedTextContentView = layerClass;
+}
+
++ (Class)layerClass
+{
+    if (_layerClassToUseForDTAttributedTextContentView)
+    {
+        return _layerClassToUseForDTAttributedTextContentView;
+    }
+    
+    return [CALayer class];
+}
+
+@end
+
+
 
 @implementation DTAttributedTextContentView
-
-#if USE_TILING
-+ (Class) layerClass
-{
-    return [CATiledLayer class];
-}
-#endif
-
 
 - (id)initWithFrame:(CGRect)frame 
 {
@@ -88,18 +100,6 @@
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	
 	drawDebugFrames = NO;
-    
-#if USE_TILING
-    CATiledLayer *layer = (id)self.layer;
-    
-    layer.levelsOfDetail = 1;
-    layer.levelsOfDetailBias = 0;
-    CGSize tileSize = CGSizeMake(512, 512);
-    tileSize.width *= [UIScreen mainScreen].scale;
-    tileSize.height *= [UIScreen mainScreen].scale;
-    
-    layer.tileSize = tileSize;
-#endif
 }
 
 - (void)layoutSubviews
@@ -149,25 +149,26 @@
 
 -(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
 {
+    CGRect rect = CGContextGetClipBoundingBox(context);
+    
+    NSLog(@"%@", NSStringFromCGRect(rect));
     UIGraphicsPushContext(context);
     
-    CGRect rect = CGContextGetClipBoundingBox(context);
-    NSLog(@"draw %@", NSStringFromCGRect(rect));
 	//CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// TODO: do all these settings make sense?
-//	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-//	CGContextSetAllowsAntialiasing(context, YES);
-//	CGContextSetShouldAntialias(context, YES);
-//	
-//	CGContextSetAllowsFontSubpixelQuantization(context, YES);
-//	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
-//	
-//	CGContextSetShouldSmoothFonts(context, YES);
-//	CGContextSetAllowsFontSmoothing(context, YES);
-//	
-//	CGContextSetShouldSubpixelPositionFonts(context,YES);
-//	CGContextSetAllowsFontSubpixelPositioning(context, YES);
+    //	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    //	CGContextSetAllowsAntialiasing(context, YES);
+    //	CGContextSetShouldAntialias(context, YES);
+    //	
+    //	CGContextSetAllowsFontSubpixelQuantization(context, YES);
+    //	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
+    //	
+    //	CGContextSetShouldSmoothFonts(context, YES);
+    //	CGContextSetAllowsFontSmoothing(context, YES);
+    //	
+    //	CGContextSetShouldSubpixelPositionFonts(context,YES);
+    //	CGContextSetAllowsFontSubpixelPositioning(context, YES);
 	
 	
 	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
@@ -184,168 +185,184 @@
 	
 	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
 	{
-		if (drawDebugFrames)
-		{
-			[[UIColor blueColor] set];
-			
-			CGContextSetLineDash(context, 0, NULL, 0);
-			CGContextStrokeRect(context, oneLine.frame);
-			
-			CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
-			CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
-			CGContextStrokePath(context);
-			
-			CGContextSetRGBFillColor(context, 0, 0, 1, 0.1);
-			
-		}
-		
-		NSInteger runIndex = 0;
-		
-		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
-		{
-			if (drawDebugFrames)
-			{
-				if (runIndex%2)
-				{
-					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
-				}
-				else 
-				{
-					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
-				}
-				
-				CGContextFillRect(context, oneRun.frame);
-				runIndex ++;
-			}
-			
-			
-			// -------------- Draw Embedded Images
-			DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-			
-			if (attachment)
-			{
-				if ([attachment.contents isKindOfClass:[UIImage class]])
-				{
-					UIImage *image = (id)attachment.contents;
-					
-					CGRect imageBounds = CGRectMake(roundf(oneRun.frame.origin.x), roundf(oneRun.baselineOrigin.y - attachment.size.height), 
-													attachment.size.width, attachment.size.height);
-					
-					
-					[image drawInRect:imageBounds];
-				}
-			}
-			
-			
-			// -------------- Line-Out
-			
-			CGRect runImageBounds = [oneRun imageBoundsInContext:context];
-			
-			// whitespace glyph at EOL has zero width, we don't want to stroke that
-			if (runImageBounds.size.width>0)
-			{
-				if ([[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue])
-				{
-					CGRect runStrokeBounds = oneRun.frame;
-					
-					runStrokeBounds.origin.y += roundf(oneRun.frame.size.height/2.0);
-					
-					// get text color or use black
-					id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
-					
-					if (color)
-					{
-						CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
-					}
-					else
-					{
-						CGContextSetGrayStrokeColor(context, 0, 1.0);
-					}
-					
-					CGContextSetLineDash(context, 0, NULL, 0);
-					CGContextSetLineWidth(context, 1);
-					
-					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-					
-					CGContextStrokePath(context);
-				}
-			}
-		}
+        if (CGRectIntersectsRect(rect, oneLine.frame))
+        {
+            if (drawDebugFrames)
+            {
+                [[UIColor blueColor] set];
+                
+                CGContextSetLineDash(context, 0, NULL, 0);
+                CGContextStrokeRect(context, oneLine.frame);
+                
+                CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
+                CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
+                CGContextStrokePath(context);
+                
+                CGContextSetRGBFillColor(context, 0, 0, 1, 0.1);
+                
+            }
+            
+            NSInteger runIndex = 0;
+            
+            for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+            {
+                if (drawDebugFrames)
+                {
+                    if (runIndex%2)
+                    {
+                        CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
+                    }
+                    else 
+                    {
+                        CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
+                    }
+                    
+                    CGContextFillRect(context, oneRun.frame);
+                    runIndex ++;
+                }
+                
+                
+                // -------------- Draw Embedded Images
+                DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
+                
+                if (attachment)
+                {
+                    if ([attachment.contents isKindOfClass:[UIImage class]])
+                    {
+                        UIImage *image = (id)attachment.contents;
+                        
+                        CGRect imageBounds = CGRectMake(roundf(oneRun.frame.origin.x), roundf(oneRun.baselineOrigin.y - attachment.size.height), 
+                                                        attachment.size.width, attachment.size.height);
+                        
+                        
+                        [image drawInRect:imageBounds];
+                    }
+                }
+                
+                
+                // -------------- Line-Out
+                
+                CGRect runImageBounds = [oneRun imageBoundsInContext:context];
+                
+                // whitespace glyph at EOL has zero width, we don't want to stroke that
+                if (runImageBounds.size.width>0)
+                {
+                    if ([[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue])
+                    {
+                        CGRect runStrokeBounds = oneRun.frame;
+                        
+                        runStrokeBounds.origin.y += roundf(oneRun.frame.size.height/2.0);
+                        
+                        // get text color or use black
+                        id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
+                        
+                        if (color)
+                        {
+                            CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+                        }
+                        else
+                        {
+                            CGContextSetGrayStrokeColor(context, 0, 1.0);
+                        }
+                        
+                        CGContextSetLineDash(context, 0, NULL, 0);
+                        CGContextSetLineWidth(context, 1);
+                        
+                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+                        
+                        CGContextStrokePath(context);
+                    }
+                }
+            }
+        }
 	}
 	
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
 	CGContextTranslateCTM(context, 0, -self.frame.size.height);
-
-	
-	//CGContextTranslateCTM(context, 0, -edgeInsets.top+edgeInsets.bottom);
-	//[layoutFrame drawInContext:context];
-	
+    
 	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
-
+    
+    BOOL earlyBreakArmed = NO; 
+    
 	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
 	{
-		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
-		{
-          //  NSLog(@"run %@", NSStringFromCGRect(oneRun.frame));
-            
-            
-			CGContextSaveGState(context);
-			
-			CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
-			
-			
-			NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
-			
-			if (shadows)
-			{
-				for (NSDictionary *shadowDict in shadows)
-				{
-					UIColor *color = [shadowDict objectForKey:@"Color"];
-					CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
-					CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
-					
-					CGFloat scaleFactor = 1.0;
-					if ([self respondsToSelector:@selector(contentScaleFactor)])
-					{
-						scaleFactor = [self contentScaleFactor];
-					}
-					
-					
-					// workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
-					if (scaleFactor==1.0)
-					{
-						if (fabs(offset.width)==1.0)
-						{
-							offset.width *= 1.50;
-						}
-						
-						if (fabs(offset.height)==1.0)
-						{
-							offset.height *= 1.50;
-						}
-					}
-					
-					CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
-					
-					// draw once per shadow
-					[oneRun drawInContext:context];
-					
-				}
-			}
-			else
-			{
-				[oneRun drawInContext:context];
-			}
-			
-			CGContextRestoreGState(context);
-			
+        if (CGRectIntersectsRect(rect, oneLine.frame))
+        {
+            for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+            {
+                earlyBreakArmed = YES;
+                
+                CGContextSaveGState(context);
+                
+                CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
+                
+                
+                NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
+                
+                if (shadows)
+                {
+                    for (NSDictionary *shadowDict in shadows)
+                    {
+                        UIColor *color = [shadowDict objectForKey:@"Color"];
+                        CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
+                        CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
+                        
+                        CGFloat scaleFactor = 1.0;
+                        if ([self respondsToSelector:@selector(contentScaleFactor)])
+                        {
+                            scaleFactor = [self contentScaleFactor];
+                        }
+                        
+                        
+                        // workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
+                        if (scaleFactor==1.0)
+                        {
+                            if (fabs(offset.width)==1.0)
+                            {
+                                offset.width *= 1.50;
+                            }
+                            
+                            if (fabs(offset.height)==1.0)
+                            {
+                                offset.height *= 1.50;
+                            }
+                        }
+                        
+                        CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+                        
+                        // draw once per shadow
+                        [oneRun drawInContext:context];
+                        
+                    }
+                }
+                else
+                {
+                    [oneRun drawInContext:context];
+                }
+                
+                CGContextRestoreGState(context);
+                
+            }
 		}
+        else
+        {
+            if (earlyBreakArmed)
+            {
+                break;
+            }
+        }
 	}
 	
     UIGraphicsPopContext();
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [self drawLayer:self.layer inContext:context];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -416,15 +433,21 @@
 	{
 		[super setFrame:newFrame];
 		
-#if USE_TILING
-//        CATiledLayer *layer = (id)self.layer;
-//        CGSize tileSize = self.bounds.size;
-//        tileSize.width *= [UIScreen mainScreen].scale;
-//        tileSize.height *= [UIScreen mainScreen].scale;
-//        
-//        layer.tileSize = tileSize;
-#endif
-        
+        // set tile size if applicable
+        CATiledLayer *layer = (id)self.layer;
+        if ([layer isKindOfClass:[CATiledLayer class]])
+        {
+            CGSize tileSize = CGSizeMake(newFrame.size.width, 1024);
+            
+            if ([self respondsToSelector:@selector(contentScaleFactor)])
+            {
+                CGFloat scaleFactor = [self contentScaleFactor];
+                tileSize.width *= scaleFactor;
+                tileSize.height *= scaleFactor;
+            }
+            
+            layer.tileSize = tileSize;
+        }
         
 		// next redraw will do new layout
 		self.layouter = nil;
