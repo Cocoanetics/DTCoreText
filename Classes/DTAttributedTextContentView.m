@@ -17,15 +17,6 @@
 
 #define TAG_BASE 9999
 
-@interface DTAttributedTextContentView ()
-
-- (void)setup;
-
-
-@property (nonatomic, retain) DTCoreTextLayouter *layouter;
-@property (nonatomic, retain) NSMutableSet *customViews;
-@end
-
 
 static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
@@ -51,6 +42,17 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 
 @implementation DTAttributedTextContentView
+
+- (void)setup
+{
+	self.contentMode = UIViewContentModeRedraw;
+	self.userInteractionEnabled = YES;
+	
+	self.opaque = NO;
+	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
+	
+	drawDebugFrames = NO;
+}
 
 - (id)initWithFrame:(CGRect)frame 
 {
@@ -89,17 +91,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)awakeFromNib
 {
 	[self setup];
-}
-
-- (void)setup
-{
-	self.contentMode = UIViewContentModeRedraw;
-	self.userInteractionEnabled = YES;
-	
-	self.opaque = NO;
-	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
-	
-	drawDebugFrames = NO;
 }
 
 - (void)layoutSubviews

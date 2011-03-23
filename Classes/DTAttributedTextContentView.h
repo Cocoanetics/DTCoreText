@@ -38,7 +38,8 @@
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 - (void)relayoutText;
 
-@property (nonatomic, readonly, retain) DTCoreTextLayouter *layouter;
+@property (nonatomic, retain) DTCoreTextLayouter *layouter;
+@property (nonatomic, retain) NSMutableSet *customViews;
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
@@ -46,6 +47,7 @@
 
 
 @property (nonatomic, assign) id <DTAttributedTextContentViewDelegate> delegate;
+
 
 
 
