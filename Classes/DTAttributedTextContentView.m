@@ -151,7 +151,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
     CGRect rect = CGContextGetClipBoundingBox(context);
     
-    NSLog(@"%@", NSStringFromCGRect(rect));
     UIGraphicsPushContext(context);
     
 	//CGContextRef context = UIGraphicsGetCurrentContext();
