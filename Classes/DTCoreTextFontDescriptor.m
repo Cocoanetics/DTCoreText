@@ -41,9 +41,15 @@
         CTFontDescriptorRef fd = CTFontCopyFontDescriptor(ctFont);
         CFDictionaryRef dict = CTFontDescriptorCopyAttributes(fd);
         
+        CFDictionaryRef traitsDict = CTFontDescriptorCopyAttribute(fd, kCTFontTraitsAttribute);
+        CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
+        
+        self.symbolicTraits = traitsValue;
+        
         [self setFontAttributes:(id)dict];
         
         CFRelease(dict);
+        CFRelease(traitsDict);
         CFRelease(fd);
     }
     
@@ -257,10 +263,12 @@
 	}
 	
 	NSDictionary *traitsDict = [attributes objectForKey:(id)kCTFontTraitsAttribute];
-	
-	CTFontSymbolicTraits traitsValue = [[traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
-	
-    self.symbolicTraits = traitsValue;
+    
+    if (traitsDict)
+    {
+        CTFontSymbolicTraits traitsValue = [[traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
+        self.symbolicTraits = traitsValue;
+    }
 	
 	
 	NSNumber *pointNum = [attributes objectForKey:(id)kCTFontSizeAttribute];
