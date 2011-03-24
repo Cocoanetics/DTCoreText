@@ -339,7 +339,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	NSString *htmlString = [_htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	
 	[_htmlString release];
-  
+    
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
@@ -354,7 +354,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
-
+    
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
 	defaultFontDescriptor.pointSize = 12;
@@ -367,7 +367,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-
+    
 	
 	
 	while (![scanner isAtEnd]) 
@@ -376,7 +376,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		NSDictionary *tagAttributesDict = nil;
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
-
+        
 		// default font
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
@@ -413,7 +413,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if (parentFontDescriptor)
 				{
 					currentFontDescriptor = [[parentFontDescriptor copy] autorelease];  // inherit
-
+                    
 					// never inherit font name
 					currentFontDescriptor.fontName = nil;
 				}
@@ -496,7 +496,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = image;
 				attachment.size = CGSizeMake(width, height);
-
+                
 				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 				
 				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
@@ -699,7 +699,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 #endif
 				}
 			}
-
+            
 			else if ([tagName isEqualToString:@"u"])
 			{
 				if (tagOpen)
@@ -952,20 +952,20 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					{
 						[attributes setObject:link forKey:@"DTLink"];
 					}
-
+                    
 					// if we don't know a font name yet, find it
 					if (!currentFontDescriptor.fontName)
 					{
 						[currentFontDescriptor normalize];
 					}
-
+                    
 					// create font
                     CTFontRef font = [currentFontDescriptor newMatchingFont];
                     
 #if ADD_FONT_DESCRIPTORS
                     // adds the font description of this string to the attribute dictionary
                     // e.g. for overriding later
-
+                    
                     [attributes setObject:currentFontDescriptor forKey:@"FontDescriptor"];
 #endif
 					
@@ -1006,20 +1006,22 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-
+                    
 					CFRelease(font);
 					CFRelease(paragraphStyle);
 					
 					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
 					
-					if (fontColor)
-					{
-						UIColor *color = [UIColor colorWithHTMLName:fontColor];
-						
-						if (color)
-						{
-							[attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
-						}
+                    if (!fontColor)
+                    {
+                        fontColor = @"black";
+                    }
+                    
+                    UIColor *color = [UIColor colorWithHTMLName:fontColor];
+                    
+                    if (color)
+                    {
+                        [attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
 					}
 					
 					NSNumber *underlineStyle = [currentTag objectForKey:@"UnderlineStyle"];
@@ -1130,7 +1132,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];
 					[tagString release];
-
+                    
                     
 					previousAttributes = attributes;
 				}
