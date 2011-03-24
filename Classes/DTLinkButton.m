@@ -68,7 +68,7 @@
 	[super dealloc];
 }
 
-#pragma Notifications
+#pragma mark Notifications
 - (void)highlightNotification:(NSNotification *)notification
 {
     if ([notification object] == self)
@@ -89,7 +89,7 @@
 }
 
 
-#pragma Properties
+#pragma mark Properties
 
 @synthesize url = _url;
 @synthesize guid = _guid;
