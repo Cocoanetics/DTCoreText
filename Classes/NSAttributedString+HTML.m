@@ -450,8 +450,21 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
 				
 				// assume it's a relative file URL
-				NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-				UIImage *image = [UIImage imageWithContentsOfFile:path];
+                UIImage *image;
+                
+                if (baseURL)
+                {
+                    // relative file URL
+                    
+                    NSURL *imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
+                    image = [UIImage imageWithContentsOfFile:[imageURL path]];
+                }
+                else
+                {
+                    // file in app bundle
+                    NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+                    image = [UIImage imageWithContentsOfFile:path];
+                }
 				
 				if (image)
 				{
