@@ -25,6 +25,8 @@
     NSInteger tag;
 }
 
++ (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
+
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter;
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range;
 
