@@ -43,7 +43,7 @@ NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
 // custom options
 NSString *DTMaxImageSize = @"DTMaxImageSize";
 
-CTParagraphStyleRef createDefaultParagraphStyle()
+CTParagraphStyleRef createDefaultParagraphStyle(void)
 {
 	CTTextAlignment alignment = kCTNaturalTextAlignment;
 	CGFloat firstLineIndent = 0.0;

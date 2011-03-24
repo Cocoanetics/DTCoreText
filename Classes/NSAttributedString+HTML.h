@@ -11,6 +11,10 @@
 extern NSString *NSBaseURLDocumentOption;
 extern NSString *NSTextEncodingNameDocumentOption;
 
+CTParagraphStyleRef createDefaultParagraphStyle(void);
+CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops, CTTextAlignment alignment);
+
+
 @interface NSAttributedString (HTML)
 
 - (id)initWithHTML:(NSData *)data documentAttributes:(NSDictionary **)dict;

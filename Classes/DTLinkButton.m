@@ -10,6 +10,13 @@
 #import "CGUtils.h"
 #import "UIColor+HTML.h"
 
+@interface DTLinkButton ()
+
+- (void)highlightNotification:(NSNotification *)notification;
+
+@end
+
+
 @implementation DTLinkButton
 
 

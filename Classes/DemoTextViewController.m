@@ -20,6 +20,10 @@
 @interface DemoTextViewController ()
 - (void)_segmentedControlChanged:(id)sender;
 
+- (void)linkPushed:(DTLinkButton *)button;
+- (void)linkLongPressed:(UILongPressGestureRecognizer *)gesture;
+- (void)debugButton:(UIBarButtonItem *)sender;
+
 @property (nonatomic, retain) NSMutableSet *mediaPlayers;
 
 @end

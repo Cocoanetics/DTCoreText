@@ -12,4 +12,4 @@ void embeddedObjectDeallocCallback(void *context);
 CGFloat embeddedObjectGetAscentCallback(void *context);
 CGFloat embeddedObjectGetDescentCallback(void *context);
 CGFloat embeddedObjectGetWidthCallback(void *context);
-CTRunDelegateRef createEmbeddedObjectRunDelegate();
+CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context);

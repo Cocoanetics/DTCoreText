@@ -21,7 +21,9 @@
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 {
-	if (self = [super init])
+    self = [super init];
+    
+	if (self)
 	{
 		_layoutFrame = layoutFrame;
 		

@@ -25,8 +25,9 @@
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine origin:(CGPoint)origin
 {
-	
-	if (self = [super init])
+	self = [super init];
+    
+	if (self)
 	{
     attributes = nil;
 		_run = run;
