@@ -1164,9 +1164,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					[tmpString appendAttributedString:tagString];
 					[tagString release];
                     
-                    NSLog(@"%@", attributes);
-                    
-                    
 					previousAttributes = attributes;
 				}
 				
