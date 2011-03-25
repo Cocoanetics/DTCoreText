@@ -37,11 +37,14 @@
 #define UNICODE_LINE_FEED @"\u2028"
 
 // standard options
-NSString *NSBaseURLDocumentOption = @"BaseURL";
-NSString *NSTextEncodingNameDocumentOption = @"TextEncodingName";
+NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
+NSString *NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
+NSString *NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
 
 // custom options
 NSString *DTMaxImageSize = @"DTMaxImageSize";
+NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
+NSString *DTDefaultTextColor = @"DTDefaultTextColor";
 
 CTParagraphStyleRef createDefaultParagraphStyle(void)
 {
@@ -357,9 +360,35 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
     
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
-	defaultFontDescriptor.pointSize = 12;
-	defaultFontDescriptor.fontFamily = @"Times New Roman";
-	NSDictionary *bodyTag = [NSDictionary dictionaryWithObjectsAndKeys:defaultFontDescriptor, @"FontDescriptor", @"black", @"color", nil];
+    
+    NSNumber *textSizeMultiplier = [options objectForKey:NSTextSizeMultiplierDocumentOption];
+    if (textSizeMultiplier)
+    {
+        defaultFontDescriptor.pointSize = 12.0 * [textSizeMultiplier floatValue];
+    }
+    else
+    {
+        defaultFontDescriptor.pointSize = 12;
+    }
+    
+    NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
+    if (defaultFontFamily)
+    {
+        defaultFontDescriptor.fontFamily = defaultFontFamily;
+    }
+    else
+    {
+        defaultFontDescriptor.fontFamily = @"Times New Roman";
+    }
+    
+    NSString *defaultColor = [options objectForKey:DTDefaultTextColor];
+    
+    if (!defaultColor)
+    {
+        defaultColor = @"black";
+    }
+    
+	NSDictionary *bodyTag = [NSDictionary dictionaryWithObjectsAndKeys:defaultFontDescriptor, @"FontDescriptor", defaultColor, @"color", nil];
 	[tagStack addObject:bodyTag];
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
@@ -1014,7 +1043,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
                     if (!fontColor)
                     {
-                        fontColor = @"black";
+                        fontColor = defaultColor;
                     }
                     
                     UIColor *color = [UIColor colorWithHTMLName:fontColor];

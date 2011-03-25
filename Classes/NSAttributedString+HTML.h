@@ -10,6 +10,11 @@
 
 extern NSString *NSBaseURLDocumentOption;
 extern NSString *NSTextEncodingNameDocumentOption;
+extern NSString *NSTextSizeMultiplierDocumentOption;
+
+extern NSString *DTMaxImageSize;
+extern NSString *DTDefaultFontFamily;
+extern NSString *DTDefaultTextColor;
 
 CTParagraphStyleRef createDefaultParagraphStyle(void);
 CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops, CTTextAlignment alignment);

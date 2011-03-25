@@ -119,7 +119,10 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	// Create attributed string from HTML
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data baseURL:baseURL documentAttributes:NULL];
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.5], NSTextSizeMultiplierDocumentOption, 
+                            @"Times New Roman", DTDefaultFontFamily, @"black", DTDefaultTextColor, nil];
+    
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	// Display string
     _textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
