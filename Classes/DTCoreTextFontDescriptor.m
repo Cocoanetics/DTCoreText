@@ -216,8 +216,6 @@
 {
     NSDictionary *fontAttributes = [self fontAttributes];
     
-    NSLog(@"%@", fontAttributes);
-    
     CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
     CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, self.pointSize, NULL);
     CFRelease(fontDesc);
