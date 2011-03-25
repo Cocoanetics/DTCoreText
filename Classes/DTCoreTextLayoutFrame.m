@@ -148,16 +148,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
     CFRetain(_textFrame);
-	//CTFrameDraw(_textFrame, context);
     
     UIGraphicsPushContext(context);
     
     [self retain];
     [_layouter retain];
     
-	//CGContextRef context = UIGraphicsGetCurrentContext();
-	
-	// TODO: do all these settings make sense?
+	// any of these settings make sense?
     //	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
     //	CGContextSetAllowsAntialiasing(context, YES);
     //	CGContextSetShouldAntialias(context, YES);
@@ -243,19 +240,21 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 }
                 
                 
-                // -------------- Line-Out
+                // -------------- Line-Out and Underline
                 
                 CGRect runImageBounds = [oneRun imageBoundsInContext:context];
+                BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
+
+               
                 
                 // whitespace glyph at EOL has zero width, we don't want to stroke that
                 if (runImageBounds.size.width>0)
                 {
-                    if ([[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue])
+                    BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
+                    BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+                    
+                    if (drawStrikeOut||drawUnderline)
                     {
-                        CGRect runStrokeBounds = oneRun.frame;
-                        
-                        runStrokeBounds.origin.y += roundf(oneRun.frame.size.height/2.0);
-                        
                         // get text color or use black
                         id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
                         
@@ -271,10 +270,32 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                         CGContextSetLineDash(context, 0, NULL, 0);
                         CGContextSetLineWidth(context, 1);
                         
-                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
                         
-                        CGContextStrokePath(context);
+                        CGRect runStrokeBounds = oneRun.frame;
+                        if (lastRunInLine)
+                        {
+                            runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
+                        }
+                        
+                        if (drawStrikeOut)
+                        {
+                            runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
+
+                            CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                            CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+                        
+                            CGContextStrokePath(context);
+                        }
+                        
+                        if (drawUnderline)
+                        {
+                            runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
+                            
+                            CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                            CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+                            
+                            CGContextStrokePath(context);
+                        }
                     }
                 }
                 [oneRun release];
@@ -287,7 +308,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
+    
+  //  CTFrameDraw(_textFrame, context);
+
 	CGContextTranslateCTM(context, 0, -self.frame.size.height);
+    
+
     
 	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
     

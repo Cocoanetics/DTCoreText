@@ -315,6 +315,8 @@
 - (void)debugButton:(UIBarButtonItem *)sender
 {
 	_textView.contentView.drawDebugFrames = !_textView.contentView.drawDebugFrames;
+    [DTCoreTextLayoutFrame setShouldDrawDebugFrames:_textView.contentView.drawDebugFrames];
+    [self.view setNeedsDisplay];
 }
 
 #pragma mark Properties

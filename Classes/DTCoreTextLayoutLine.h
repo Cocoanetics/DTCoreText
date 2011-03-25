@@ -36,12 +36,15 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 
+- (void)drawInContext:(CGContextRef)context;
+
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, retain, readonly) NSArray *glyphRuns;
 
 @property (nonatomic, assign, readonly) CGFloat ascent;
 @property (nonatomic, assign, readonly) CGFloat descent;
 @property (nonatomic, assign, readonly) CGFloat leading;
+@property (nonatomic, assign, readonly) CGFloat trailingWhitespaceWidth;
 
 @property (nonatomic, assign, readonly) CGPoint baselineOrigin;
 

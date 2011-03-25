@@ -117,6 +117,11 @@
 	return CTLineGetImageBounds(_line, context);
 }
 
+- (void)drawInContext:(CGContextRef)context
+{
+    CTLineDraw(_line, context);
+}
+
 #pragma mark Properties
 - (NSArray *)glyphRuns
 {
@@ -154,6 +159,7 @@
 @synthesize ascent;
 @synthesize descent;
 @synthesize leading;
+@synthesize trailingWhitespaceWidth;
 
 @synthesize baselineOrigin = _baselineOrigin;
 

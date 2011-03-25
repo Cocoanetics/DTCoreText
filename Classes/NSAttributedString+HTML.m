@@ -1057,6 +1057,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					if (underlineStyle)
 					{
 						[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
+                        [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
+                        
 					}
 					
 					NSNumber *strikeOut = [currentTag objectForKey:@"_StrikeOut"];
@@ -1161,6 +1163,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
 					[tmpString appendAttributedString:tagString];
 					[tagString release];
+                    
+                    NSLog(@"%@", attributes);
                     
                     
 					previousAttributes = attributes;
