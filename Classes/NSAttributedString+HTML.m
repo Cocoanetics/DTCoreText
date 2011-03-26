@@ -317,7 +317,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 }
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
-	// Specify the appropriate text encoding for the passed data, default is UTF8 
+ 	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
 	
@@ -346,6 +346,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
+    NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
 	
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 	BOOL seenPreviousParagraph = NO;
@@ -982,14 +983,31 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						[attributes setObject:link forKey:@"DTLink"];
 					}
                     
-					// if we don't know a font name yet, find it
-					if (!currentFontDescriptor.fontName)
-					{
-						[currentFontDescriptor normalize];
-					}
                     
 					// create font
-                    CTFontRef font = [currentFontDescriptor newMatchingFont];
+                    CTFontRef font;
+                    
+                    // try font cache first
+                    NSNumber *key = [NSNumber numberWithInt:[currentFontDescriptor hash]];
+                    font = (CTFontRef)[fontCache objectForKey:key];
+                    
+                    if (!font)
+                    {
+                        // if we don't know a font name yet, find it
+                        if (!currentFontDescriptor.fontName)
+                        {
+                            [currentFontDescriptor normalize];
+                        }
+                        font = [currentFontDescriptor newMatchingFont];
+                    
+                        [fontCache setObject:(id)font forKey:key];
+                    }
+                    else
+                    {
+                       // NSLog(@"Got cached font");
+                    }
+                        
+                    
                     
 #if ADD_FONT_DESCRIPTORS
                     // adds the font description of this string to the attribute dictionary
@@ -1171,7 +1189,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		}
 		
 	}
-	
+    
 	return [self initWithAttributedString:tmpString];
 }
 

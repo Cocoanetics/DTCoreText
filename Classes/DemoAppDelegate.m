@@ -9,9 +9,6 @@
 #import "DemoAppDelegate.h"
 #import "DemoSnippetsViewController.h"
 
-#import "DTCoreTextFontDescriptor.h"
-
-
 @implementation DemoAppDelegate
 
 @synthesize window = _window;

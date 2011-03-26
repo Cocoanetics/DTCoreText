@@ -223,6 +223,19 @@
     return font;
 }
 
+- (NSUInteger)hash
+{
+    // two font descriptors are equal if their attribute dictionary are the same
+    NSString *attributesDesc = [[self fontAttributes] description];
+    
+    return [attributesDesc hash];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    return ([self hash] == [object hash]);
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
