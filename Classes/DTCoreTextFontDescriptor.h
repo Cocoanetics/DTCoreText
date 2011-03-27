@@ -37,8 +37,6 @@
 
 - (void)setFontAttributes:(NSDictionary *)newAttributes;
 
-- (void)normalize;
-
 - (CTFontSymbolicTraits)symbolicTraits;
 - (NSDictionary *)fontAttributes;
 

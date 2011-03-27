@@ -146,73 +146,128 @@
 
 #pragma mark Finding Font
 
-
-
-- (void)normalize
+- (CTFontRef)newMatchingFont
 {
-	CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)[self fontAttributes]);
-	
-	if (fontDesc)
-	{
-		NSSet *set;
-		
-		if (self.fontFamily)
-		{
-			set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, (id)kCTFontFamilyNameAttribute, nil];
-		}
-		else 
-		{
-			set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
-		}
-		
-		CFArrayRef matches = CTFontDescriptorCreateMatchingFontDescriptors(fontDesc, (CFSetRef)set);
-		
-		if (matches)
-		{
-			if (CFArrayGetCount(matches))
-			{
-				CTFontDescriptorRef matchingDesc = CFArrayGetValueAtIndex(matches, 0);
-				
-				CFDictionaryRef attributes = CTFontDescriptorCopyAttributes(matchingDesc);
-				
-				CFStringRef family = CTFontDescriptorCopyAttribute(matchingDesc, kCTFontFamilyNameAttribute);
-				if (family)
-				{
-					self.fontFamily = (id)family;
-					CFRelease(family);
-				}
-				
-				if (attributes)
-				{
-					[self setFontAttributes:(id)attributes];
-					CFRelease(attributes);
-				}
-			}
-			else 
-			{
-				NSLog(@"No matches for %@", (id)fontDesc);
-			}
-			
-			
-			CFRelease(matches);
-		}
-		else 
-		{
-			NSLog(@"No matches for %@", (id)fontDesc);
-		}
-		
-		CFRelease(fontDesc);
-	}
-	else 
-	{
-		NSLog(@"No matches for %@", [self fontAttributes]);
-	}
-	
-	
+    NSDictionary *attributes = [self fontAttributes];
+    
+    CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+    
+    CTFontRef matchingFont;
+    
+    if (fontName || fontFamily)
+    {
+        // fast font creation
+        matchingFont = CTFontCreateWithFontDescriptor(fontDesc, pointSize, NULL);
+    }
+    else
+    {
+        // without font name or family we need to do expensive search
+        // otherwise we always get Helvetica
+        
+        NSSet *set;
+        
+        if (fontFamily)
+        {
+            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, (id)kCTFontFamilyNameAttribute, nil];
+        }
+        else 
+        {
+            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
+        }
+        
+        CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (CFSetRef)set);
+        
+        if (matchingDesc)
+        {
+            matchingFont = CTFontCreateWithFontDescriptor(matchingDesc, pointSize, NULL);
+            CFRelease(matchingDesc);
+        }
+        else 
+        {
+            NSLog(@"No matches for %@", (id)fontDesc);
+        }
+    }
+    
+    CFRelease(fontDesc);
+
+    return matchingFont;
+}
+
+- (void)normalizeSlow
+{
+    NSLog(@"looking for %@", [self fontAttributes]);
+    
+    NSDictionary *attributes = [self fontAttributes];
+    
+    CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+    
+    if (fontDesc)
+    {
+        NSSet *set;
+        
+        if (self.fontFamily)
+        {
+            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, (id)kCTFontFamilyNameAttribute, nil];
+        }
+        else 
+        {
+            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
+        }
+        
+        CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (CFSetRef)set);
+        
+        if (matchingDesc)
+        {
+            //		CFArrayRef matches = CTFontDescriptorCreateMatchingFontDescriptors(fontDesc, (CFSetRef)set);
+            //		
+            //		if (matches)
+            //		{
+            //			if (CFArrayGetCount(matches))
+            //			{
+            //				CTFontDescriptorRef matchingDesc = CFArrayGetValueAtIndex(matches, 0);
+            
+            CFDictionaryRef attributes = CTFontDescriptorCopyAttributes(matchingDesc);
+            
+            NSLog(@"found %@", attributes);
+            
+            CFStringRef family = CTFontDescriptorCopyAttribute(matchingDesc, kCTFontFamilyNameAttribute);
+            if (family)
+            {
+                self.fontFamily = (id)family;
+                CFRelease(family);
+            }
+            
+            if (attributes)
+            {
+                [self setFontAttributes:(id)attributes];
+                CFRelease(attributes);
+            }
+            //			}
+            //			else 
+            //			{
+            //				NSLog(@"No matches for %@", (id)fontDesc);
+            //			}
+            //			
+            //			
+            //			CFRelease(matches);
+        }
+        else 
+        {
+            NSLog(@"No matches for %@", (id)fontDesc);
+        }
+        
+        CFRelease(fontDesc);
+    }
+    else 
+    {
+        NSLog(@"No matches for %@", [self fontAttributes]);
+    }
+    
+    
 }
 
 
-- (CTFontRef)newMatchingFont
+- (CTFontRef)newMatchingFontSlow
 {
     NSDictionary *fontAttributes = [self fontAttributes];
     
@@ -240,112 +295,112 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-	DTCoreTextFontDescriptor *newDesc = [[DTCoreTextFontDescriptor allocWithZone:zone] initWithFontAttributes:[self fontAttributes]];
-	newDesc.pointSize = self.pointSize;
-	if (stylisticClass)
-	{
-		newDesc.stylisticClass = self.stylisticClass;
-	}
-	
-	return newDesc;
+    DTCoreTextFontDescriptor *newDesc = [[DTCoreTextFontDescriptor allocWithZone:zone] initWithFontAttributes:[self fontAttributes]];
+    newDesc.pointSize = self.pointSize;
+    if (stylisticClass)
+    {
+        newDesc.stylisticClass = self.stylisticClass;
+    }
+    
+    return newDesc;
 }
 
 
 #pragma mark Properties
 - (void)setStylisticClass:(CTFontStylisticClass)newClass
 {
-	self.fontFamily = nil;
-	
-	stylisticClass = newClass;
+    self.fontFamily = nil;
+    
+    stylisticClass = newClass;
 }
 
 
 - (void)setFontAttributes:(NSDictionary *)attributes
 {
-	if (!attributes) 
-	{
-		self.fontFamily = nil;
-		self.pointSize = 12;
-		
-		boldTrait = NO;
-		italicTrait = NO;
-		expandedTrait = NO;
-		condensedTrait = NO;
-		monospaceTrait = NO;
-		verticalTrait = NO;
-		UIoptimizedTrait = NO;
-	}
-	
-	NSDictionary *traitsDict = [attributes objectForKey:(id)kCTFontTraitsAttribute];
+    if (!attributes) 
+    {
+        self.fontFamily = nil;
+        self.pointSize = 12;
+        
+        boldTrait = NO;
+        italicTrait = NO;
+        expandedTrait = NO;
+        condensedTrait = NO;
+        monospaceTrait = NO;
+        verticalTrait = NO;
+        UIoptimizedTrait = NO;
+    }
+    
+    NSDictionary *traitsDict = [attributes objectForKey:(id)kCTFontTraitsAttribute];
     
     if (traitsDict)
     {
         CTFontSymbolicTraits traitsValue = [[traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
         self.symbolicTraits = traitsValue;
     }
-	
-	
-	NSNumber *pointNum = [attributes objectForKey:(id)kCTFontSizeAttribute];
-	if (pointNum)
-	{
-		pointSize = [pointNum floatValue];
-	}
-	
-	NSString *family = [attributes objectForKey:(id)kCTFontFamilyNameAttribute];
-	
-	if (family)
-	{
-		self.fontFamily = family;
-	}
-	
-	NSString *name = [attributes objectForKey:(id)kCTFontNameAttribute];
-	
-	if (name)
-	{
-		self.fontName = name;
-	}
-	
+    
+    
+    NSNumber *pointNum = [attributes objectForKey:(id)kCTFontSizeAttribute];
+    if (pointNum)
+    {
+        pointSize = [pointNum floatValue];
+    }
+    
+    NSString *family = [attributes objectForKey:(id)kCTFontFamilyNameAttribute];
+    
+    if (family)
+    {
+        self.fontFamily = family;
+    }
+    
+    NSString *name = [attributes objectForKey:(id)kCTFontNameAttribute];
+    
+    if (name)
+    {
+        self.fontName = name;
+    }
+    
 }
 
 - (void)setSymbolicTraits:(CTFontSymbolicTraits)symbolicTraits
 {
     if (symbolicTraits & kCTFontBoldTrait)
-	{
-		boldTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontItalicTrait)
-	{
-		italicTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontExpandedTrait)
-	{
-		expandedTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontCondensedTrait)
-	{
-		condensedTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontMonoSpaceTrait)
-	{
-		monospaceTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontVerticalTrait)
-	{
-		verticalTrait = YES;
-	}
-	
-	if (symbolicTraits & kCTFontUIOptimizedTrait)
-	{
-		UIoptimizedTrait = YES;
-	}
-	
-	// stylistic class is bundled in the traits
-	stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
+    {
+        boldTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontItalicTrait)
+    {
+        italicTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontExpandedTrait)
+    {
+        expandedTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontCondensedTrait)
+    {
+        condensedTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontMonoSpaceTrait)
+    {
+        monospaceTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontVerticalTrait)
+    {
+        verticalTrait = YES;
+    }
+    
+    if (symbolicTraits & kCTFontUIOptimizedTrait)
+    {
+        UIoptimizedTrait = YES;
+    }
+    
+    // stylistic class is bundled in the traits
+    stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
 }
 
 @synthesize fontFamily;
