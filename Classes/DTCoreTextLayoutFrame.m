@@ -216,9 +216,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 
                  // -------------- Line-Out and Underline
                 BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
-                
-                
-                
+
                 BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
                 BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
                 
@@ -337,7 +335,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                         {
                             UIImage *image = (id)attachment.contents;
                             
-                            CGRect flippedRect = CGContextConvertRectToUserSpace(context, oneRun.frame);
+                            CGPoint origin = oneRun.frame.origin;
+                            origin.y = self.frame.size.height - origin.y - oneRun.ascent;
+                            CGRect flippedRect = {origin, oneRun.frame.size};
+                            
                             CGContextDrawImage(context, flippedRect, image.CGImage);
                         }
                     }
