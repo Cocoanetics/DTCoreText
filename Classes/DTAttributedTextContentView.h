@@ -46,7 +46,7 @@
 @property (nonatomic) BOOL drawDebugFrames;
 
 
-@property (nonatomic, assign) id <DTAttributedTextContentViewDelegate> delegate;
+@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
 
 
 
