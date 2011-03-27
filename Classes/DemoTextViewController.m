@@ -127,48 +127,11 @@
 	// Display string
     _textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.attributedString = string;
-    
-	
-	// Create range view
-	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
-	NSDictionary *attributes = nil;
-	NSRange effectiveRange = NSMakeRange(0, 0);
-    
-    if ([string length])
-    {
-        
-        while ((attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
-        {
-            [dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
-            effectiveRange.location += effectiveRange.length;
-            
-            if (effectiveRange.location >= [string length])
-            {
-                break;
-            }
-        }
-    }
-	_rangeView.text = dumpOutput;
-	
-    
-	// Create characters view
-	[dumpOutput setString:@""];
-	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	for (NSInteger i = 0; i < [dump length]; i++)
-	{
-		char *bytes = (char *)[dump bytes];
-		char b = bytes[i];
-		
-		[dumpOutput appendFormat:@"%x %c\n", b, b];
-	}
-	_charsView.text = dumpOutput;
-	[dumpOutput release];
-	
+   
 	// Data view
 	_dataView.text = [data description];
-    
+     
     [string release];
-    
 }
 
 
@@ -177,7 +140,6 @@
 	[super viewWillAppear:animated];
 	
 	CGRect bounds = self.view.bounds;
-	//bounds.size.height += 44;
 	_textView.frame = bounds;
 	
 	[self _segmentedControlChanged:nil];
@@ -192,6 +154,42 @@
     
 	// now the bar is up so we can autoresize again
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    // fill other tabs
+    // Create range view
+	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
+	NSDictionary *attributes = nil;
+	NSRange effectiveRange = NSMakeRange(0, 0);
+    
+    if ([_textView.attributedString length])
+    {
+        
+        while ((attributes = [_textView.attributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
+        {
+            [dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+            effectiveRange.location += effectiveRange.length;
+            
+            if (effectiveRange.location >= [_textView.attributedString length])
+            {
+                break;
+            }
+        }
+    }
+	_rangeView.text = dumpOutput;
+	
+    
+	// Create characters view
+	[dumpOutput setString:@""];
+	NSData *dump = [[_textView.attributedString string] dataUsingEncoding:NSUTF8StringEncoding];
+	for (NSInteger i = 0; i < [dump length]; i++)
+	{
+		char *bytes = (char *)[dump bytes];
+		char b = bytes[i];
+		
+		[dumpOutput appendFormat:@"%x %c\n", b, b];
+	}
+	_charsView.text = dumpOutput;
+	[dumpOutput release];
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
