@@ -185,6 +185,7 @@
         else 
         {
             NSLog(@"No matches for %@", (id)fontDesc);
+            matchingFont = nil;
         }
     }
     
