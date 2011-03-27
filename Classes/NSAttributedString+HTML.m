@@ -985,19 +985,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
                     
                     
-					// create font
-                    CTFontRef font;
-                    
-                    // try font cache first
-                    NSNumber *key = [NSNumber numberWithInt:[currentFontDescriptor hash]];
-                    font = (CTFontRef)[fontCache objectForKey:key];
-                    
-                    if (!font)
-                    {
-                        font = [currentFontDescriptor newMatchingFont];
-                    
-                        [fontCache setObject:(id)font forKey:key];
-                    }
+
                     
 #if ADD_FONT_DESCRIPTORS
                     // adds the font description of this string to the attribute dictionary
@@ -1041,10 +1029,23 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops, textAlignment);
 					
+                    
+                    // create font
+                    CTFontRef font;
+                    
+                    // try font cache first
+                    NSNumber *key = [NSNumber numberWithInt:[currentFontDescriptor hash]];
+                    font = (CTFontRef)[fontCache objectForKey:key];
+                    
+                    if (!font)
+                    {
+                        font = [currentFontDescriptor newMatchingFont];
+                        [fontCache setObject:(id)font forKey:key];
+                        CFRelease(font);
+                    }
 					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
 					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
                     
-					CFRelease(font);
 					CFRelease(paragraphStyle);
 					
 					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
