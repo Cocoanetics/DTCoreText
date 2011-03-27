@@ -55,7 +55,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         {
             NSLog(@"Strange, should have gotten a valid framesetter");
         }
-            
+        
 		CGPathRelease(path);
 	}
 	
@@ -117,7 +117,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CGPoint lineOrigin = origins[lineIndex];
 			lineOrigin.y = _frame.size.height - lineOrigin.y + self.frame.origin.y;
 			lineOrigin.x += self.frame.origin.x;
-
+            
 			DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
 			[tmpLines addObject:newLine];
 			[newLine release];
@@ -149,8 +149,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
     CFRetain(_textFrame);
     
-    UIGraphicsPushContext(context);
-    
     [self retain];
     [_layouter retain];
     
@@ -171,42 +169,37 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
+        CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
 		CGContextSetLineDash(context, 0, dashes, 2);
 		
 		CGPathRef framePath = [self path];
 		CGContextAddPath(context, framePath);
 		CGContextStrokePath(context);
+        CGContextRestoreGState(context);
 	}
 	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
-        [oneLine retain];
-        
         if (CGRectIntersectsRect(rect, oneLine.frame))
         {
             if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
             {
-                [[UIColor blueColor] set];
-                
-                CGContextSetLineDash(context, 0, NULL, 0);
+                // draw line bounds
+                CGContextSetRGBStrokeColor(context, 0, 0, 1.0f, 1.0f);
                 CGContextStrokeRect(context, oneLine.frame);
                 
+                // draw baseline
                 CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
                 CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
                 CGContextStrokePath(context);
-                
-                CGContextSetRGBFillColor(context, 0, 0, 1, 0.1);
-                
             }
             
             NSInteger runIndex = 0;
             
             for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
             {
-                [oneRun retain];
-                
-                if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+                 if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
                 {
                     if (runIndex%2)
                     {
@@ -221,99 +214,62 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                     runIndex ++;
                 }
                 
-                
-                // -------------- Draw Embedded Images
-                DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-                
-                if (attachment)
-                {
-                    if ([attachment.contents isKindOfClass:[UIImage class]])
-                    {
-                        UIImage *image = (id)attachment.contents;
-                        
-                        CGRect imageBounds = CGRectMake(roundf(oneRun.frame.origin.x), roundf(oneRun.baselineOrigin.y - attachment.size.height), 
-                                                        attachment.size.width, attachment.size.height);
-                        
-                        
-                        [image drawInRect:imageBounds];
-                    }
-                }
-                
-                
-                // -------------- Line-Out and Underline
-                
-                CGRect runImageBounds = [oneRun imageBoundsInContext:context];
+                 // -------------- Line-Out and Underline
                 BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
-
-               
                 
-                // whitespace glyph at EOL has zero width, we don't want to stroke that
-                if (runImageBounds.size.width>0)
+                
+                
+                BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
+                BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+                
+                if (drawStrikeOut||drawUnderline)
                 {
-                    BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
-                    BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+                    // get text color or use black
+                    id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
                     
-                    if (drawStrikeOut||drawUnderline)
+                    if (color)
                     {
-                        // get text color or use black
-                        id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
+                        CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+                    }
+                    else
+                    {
+                        CGContextSetGrayStrokeColor(context, 0, 1.0);
+                    }
+                    
+                    CGRect runStrokeBounds = oneRun.frame;
+                    if (lastRunInLine)
+                    {
+                        runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
+                    }
+                    
+                    if (drawStrikeOut)
+                    {
+                        runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
                         
-                        if (color)
-                        {
-                            CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
-                        }
-                        else
-                        {
-                            CGContextSetGrayStrokeColor(context, 0, 1.0);
-                        }
+                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
                         
-                        CGContextSetLineDash(context, 0, NULL, 0);
-                        CGContextSetLineWidth(context, 1);
+                        CGContextStrokePath(context);
+                    }
+                    
+                    if (drawUnderline)
+                    {
+                        runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
                         
+                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
                         
-                        CGRect runStrokeBounds = oneRun.frame;
-                        if (lastRunInLine)
-                        {
-                            runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
-                        }
-                        
-                        if (drawStrikeOut)
-                        {
-                            runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
-
-                            CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                            CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                        
-                            CGContextStrokePath(context);
-                        }
-                        
-                        if (drawUnderline)
-                        {
-                            runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
-                            
-                            CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                            CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                            
-                            CGContextStrokePath(context);
-                        }
+                        CGContextStrokePath(context);
                     }
                 }
-                [oneRun release];
             }
         }
-        
-        [oneLine release];
 	}
 	
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
-    
-  //  CTFrameDraw(_textFrame, context);
-
 	CGContextTranslateCTM(context, 0, -self.frame.size.height);
-    
-
     
 	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
     
@@ -327,15 +283,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
             {
                 earlyBreakArmed = YES;
                 
-                CGContextSaveGState(context);
-                
                 CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
-                
                 
                 NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
                 
                 if (shadows)
                 {
+                    CGContextSaveGState(context);
+                    
                     for (NSDictionary *shadowDict in shadows)
                     {
                         UIColor *color = [shadowDict objectForKey:@"Color"];
@@ -367,16 +322,31 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                         
                         // draw once per shadow
                         [oneRun drawInContext:context];
-                        
                     }
+                    
+                    CGContextRestoreGState(context);
                 }
                 else
                 {
-                    [oneRun drawInContext:context];
+                    // -------------- Draw Embedded Images
+                    DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
+                    
+                    if (attachment)
+                    {
+                        if ([attachment.contents isKindOfClass:[UIImage class]])
+                        {
+                            UIImage *image = (id)attachment.contents;
+                            
+                            CGRect flippedRect = CGContextConvertRectToUserSpace(context, oneRun.frame);
+                            CGContextDrawImage(context, flippedRect, image.CGImage);
+                        }
+                    }
+                    else
+                    {
+                        // regular text
+                        [oneRun drawInContext:context];
+                    }
                 }
-                
-                CGContextRestoreGState(context);
-                
             }
 		}
         else
@@ -388,10 +358,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         }
 	}
 	
-    UIGraphicsPopContext();
     [self release];
     [_layouter release];
-
+    
     if (_textFrame)
     {
         CFRelease(_textFrame);
@@ -425,7 +394,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		retIndex++;
 	}
 	
-	return retIndex; //NSIntegerMax;
+	return retIndex;
 }
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
