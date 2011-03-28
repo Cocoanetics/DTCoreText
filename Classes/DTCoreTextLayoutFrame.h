@@ -7,8 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import <CoreText/CoreText.h>
+
+
+#define CGFLOAT_OPEN_HEIGHT 16777215.0f
 
 
 @class DTCoreTextLayouter;

@@ -92,42 +92,60 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return [self.lines description];
 }
 
+- (void)buildLines
+{
+    // get lines
+    CFArrayRef lines = CTFrameGetLines(_textFrame);
+    
+    if (!lines)
+    {
+        // probably no string set
+        return;
+    }
+    
+    CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
+    CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
+    
+    NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
+    
+    NSInteger lineIndex = 0;
+    
+    for (id oneLine in (NSArray *)lines)
+    {
+        CGPoint lineOrigin = origins[lineIndex];
+        lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
+        lineOrigin.x += _frame.origin.x;
+        
+        DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+        [tmpLines addObject:newLine];
+        [newLine release];
+        
+        lineIndex++;
+    }
+    
+    _lines = tmpLines;
+    
+    free(origins);
+    
+    // at this point we can correct the frame if it is open-ended
+    if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
+    {
+        // actual frame is spanned between first and last lines
+        DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
+        DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+        
+        CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
+        CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
+        
+        _frame = (CGRect){origin, size};
+    }
+}
+
 - (NSArray *)lines
 {
 	if (!_lines)
 	{
-		// get lines
-		CFArrayRef lines = CTFrameGetLines(_textFrame);
-		
-		if (!lines)
-		{
-			// probably no string set
-			return nil;
-		}
-		
-		CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
-		CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
-		
-		NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
-		
-		NSInteger lineIndex = 0;
-		
-		for (id oneLine in (NSArray *)lines)
-		{
-			CGPoint lineOrigin = origins[lineIndex];
-			lineOrigin.y = _frame.size.height - lineOrigin.y + self.frame.origin.y;
-			lineOrigin.x += self.frame.origin.x;
-            
-			DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
-			[tmpLines addObject:newLine];
-			[newLine release];
-			
-			lineIndex++;
-		}
-		
-		_lines = tmpLines;
-		
-		free(origins);
+        [self buildLines];
 	}
 	
 	return _lines;
@@ -177,6 +195,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGContextAddPath(context, framePath);
 		CGContextStrokePath(context);
         CGContextRestoreGState(context);
+        
+        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        CGContextStrokeRect(context, self.frame);
 	}
 	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
@@ -415,6 +436,43 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	return CGRectZero;
 }
+
+- (CGRect)frame
+{
+    if (_frame.size.height == CGFLOAT_OPEN_HEIGHT && !_lines)
+    {
+        [self buildLines]; // corrects frame if open-ended
+    }
+    
+    if (![self.lines count])
+    {
+        return CGRectZero;
+    }
+    
+    // actual frame is spanned between first and last lines
+    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
+    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
+    
+    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
+    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
+    
+    return (CGRect){origin, size};
+}
+
+//- (void)correctFrame
+//{
+//    // only correct if we have "open ended" frame
+//    if (_frame.size.height < CGFLOAT_OPEN_HEIGHT)
+//    {
+//        return;
+//    }
+//    
+//    CGRect inferredFrame = [self inferredFrame];
+//    if (inferredFrame.size.height < self.frame.size.height)
+//    {
+//       _frame = inferredFrame;
+//    }
+//}
 
 #pragma mark Properties
 @synthesize frame = _frame;
