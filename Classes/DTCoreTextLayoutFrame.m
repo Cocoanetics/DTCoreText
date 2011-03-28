@@ -391,6 +391,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSRange)visibleStringRange
 {
+    if (!_textFrame)
+    {
+        return NSMakeRange(0, 0);
+    }
+    
 	CFRange range = CTFrameGetVisibleStringRange(_textFrame);
 	
 	return NSMakeRange(range.location, range.length);
