@@ -87,7 +87,6 @@
 	if (!contentView)
 	{
 		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
-		contentView.delegate = self;
 		contentView.userInteractionEnabled = YES;
         [self addSubview:contentView];
 	}		
@@ -197,12 +196,18 @@
 	}
 }
 
-- (void)setTextDelegate:(id)textDelegate
+- (void)setTextDelegate:(id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-    contentView.delegate = textDelegate;
+    self.contentView.delegate = textDelegate;
+}
+
+- (id<DTAttributedTextContentViewDelegate>)textDelegate
+{
+    return contentView.delegate;
 }
 
 @synthesize attributedString;
 @synthesize contentView;
+@synthesize textDelegate;
 
 @end

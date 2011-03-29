@@ -104,7 +104,7 @@
 	// Create text view
     [DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
-	_textView.contentView.delegate = (id)self;
+	_textView.textDelegate = self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
 }
@@ -119,7 +119,7 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	// Create attributed string from HTML
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.5], NSTextSizeMultiplierDocumentOption, 
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, 
                             @"Times New Roman", DTDefaultFontFamily, @"black", DTDefaultTextColor, nil];
     
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
@@ -223,7 +223,7 @@
 
 
 #pragma mark Custom Views on Text
-- (UIView *)attributedTextContentView:(DTAttributedTextView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
 {
 	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
 	

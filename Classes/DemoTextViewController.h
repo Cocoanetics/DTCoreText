@@ -6,9 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@class DTAttributedTextView;
+#import "DTAttributedTextView.h"
 
-@interface DemoTextViewController : UIViewController <UIActionSheetDelegate>
+
+@interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate>
 {
 
 	NSString *_fileName;

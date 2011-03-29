@@ -10,7 +10,7 @@
 
 @class DTAttributedTextView;
 
-@interface DTAttributedTextView : UIScrollView <DTAttributedTextContentViewDelegate>
+@interface DTAttributedTextView : UIScrollView
 {
 	DTAttributedTextContentView *contentView;
 	UIView *backgroundView;
@@ -19,6 +19,8 @@
 @property (nonatomic, retain) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) DTAttributedTextContentView *contentView;
-@property (nonatomic, retain) UIView *backgroundView;
+@property (nonatomic, retain) IBOutlet UIView *backgroundView;
+
+@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
 @end
