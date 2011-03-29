@@ -96,6 +96,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
+    
+    if (![delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)])
+    {
+        return;
+    }
 	
 	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
 	
@@ -104,36 +109,35 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
 			// add custom views if necessary
-			if ([delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)])
-			{
-				NSRange stringRange = [oneRun stringRange];
-				
-				NSInteger tag = (TAG_BASE + stringRange.location);
-				
-				UIView *existingView = [self viewWithTag:tag];
-				
-				// only add if there is no view yet with this tag
-				if (existingView)
-				{
-					existingView.frame = oneRun.frame;
-				}
-				else 
-				{
-					NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
-					
-					UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:oneRun.frame];
-					
-					if (view)
-					{
-						view.frame = oneRun.frame;
-						view.tag = tag;
-						
-						[self addSubview:view];
-						
-						[self.customViews addObject:view];
-					}
-				}
-			}
+			
+            NSRange stringRange = [oneRun stringRange];
+            
+            NSInteger tag = (TAG_BASE + stringRange.location);
+            
+            UIView *existingView = [self viewWithTag:tag];
+            
+            // only add if there is no view yet with this tag
+            if (existingView)
+            {
+                existingView.frame = oneRun.frame;
+            }
+            else 
+            {
+                NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
+                
+                UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:oneRun.frame];
+                
+                if (view)
+                {
+                    view.frame = oneRun.frame;
+                    view.tag = tag;
+                    
+                    [self addSubview:view];
+                    
+                    [self.customViews addObject:view];
+                }
+            }
+			
 		}
 	}
 }
