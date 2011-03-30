@@ -45,6 +45,7 @@ NSString *NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOpt
 NSString *DTMaxImageSize = @"DTMaxImageSize";
 NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString *DTDefaultTextColor = @"DTDefaultTextColor";
+NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 
 CTParagraphStyleRef createDefaultParagraphStyle(void)
 {
@@ -142,7 +143,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		if (color)
 		{
 			[currentTagAttributes setObject:color forKey:@"color"];
-			
 		}
 		
 		// TODO: better mapping from font families to available families
@@ -331,6 +331,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
     // custom option to limit image size
     NSValue *maxImageSizeValue = [options objectForKey:DTMaxImageSize];
     
+    // custom option to scale text
+    CGFloat textScale = [[options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
+    if (!textScale)
+    {
+        textScale = 1.0f;
+    }
 	
 	// use baseURL from options if present
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
@@ -363,16 +369,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
     
-    NSNumber *textSizeMultiplier = [options objectForKey:NSTextSizeMultiplierDocumentOption];
-    if (textSizeMultiplier)
-    {
-        defaultFontDescriptor.pointSize = 12.0 * [textSizeMultiplier floatValue];
-    }
-    else
-    {
-        defaultFontDescriptor.pointSize = 12;
-    }
-    
+    defaultFontDescriptor.pointSize = 12.0 * textScale;
+     
     NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
     if (defaultFontFamily)
     {
@@ -384,13 +382,22 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
     }
     
     NSString *defaultColor = [options objectForKey:DTDefaultTextColor];
+    NSString *defaultLinkColor = [options objectForKey:DTDefaultLinkColor];
     
-    if (!defaultColor)
+	NSMutableDictionary *bodyTag = [NSMutableDictionary dictionaryWithObject:defaultFontDescriptor forKey: @"FontDescriptor"];
+    
+    if (defaultColor)
     {
-        defaultColor = @"black";
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:defaultColor forKey:@"color"];
+        [bodyTag setObject:attributes forKey:@"Attributes"];
+    }
+
+    if (defaultColor)
+    {
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:defaultColor forKey:@"color"];
+        [bodyTag setObject:attributes forKey:@"Attributes"];
     }
     
-	NSDictionary *bodyTag = [NSDictionary dictionaryWithObjectsAndKeys:defaultFontDescriptor, @"FontDescriptor", defaultColor, @"color", nil];
 	[tagStack addObject:bodyTag];
 	
 	NSMutableDictionary *currentTag = [tagStack lastObject];
@@ -398,9 +405,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-    
-	
-	
+ 	
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -607,7 +612,15 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if (tagOpen)
 				{
 					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-					[currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
+                    
+                    if (defaultLinkColor)
+                    {
+                        [currentTagAttributes setObject:defaultLinkColor forKey:@"color"];
+                    }
+                    else
+                    {
+                        [currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
+                    }
 					
 					// remove line breaks and whitespace in links
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -649,13 +662,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					
 #if ALLOW_IPHONE_SPECIAL_CASES						
-					[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
+					[currentTag setObject:[NSNumber numberWithFloat:25.0 * textScale] forKey:@"HeadIndent"];
 					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-										   [NSNumber numberWithFloat:25.0], nil] forKey:@"TabStops"];
+										   [NSNumber numberWithFloat:25.0 * textScale], nil] forKey:@"TabStops"];
 #else
-					[currentTag setObject:[NSNumber numberWithFloat:25.0] forKey:@"HeadIndent"];
+					[currentTag setObject:[NSNumber numberWithFloat:25.0 * textScale] forKey:@"HeadIndent"];
 					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-										   [NSNumber numberWithFloat:36.0], nil] forKey:@"TabStops"];
+										   [NSNumber numberWithFloat:36.0 * textScale], nil] forKey:@"TabStops"];
 					
 #endif
 				}
@@ -679,7 +692,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 #if ALLOW_IPHONE_SPECIAL_CASES
 				else 
 				{
-					nextParagraphAdditionalSpaceBefore = 12.0;
+					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 				}
 #endif
 			}
@@ -687,14 +700,14 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
 #if ALLOW_IPHONE_SPECIAL_CASES						
-				nextParagraphAdditionalSpaceBefore = 12.0;
+				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 			}
 			else if ([tagName isEqualToString:@"right"] && tagOpen)
 			{
 				[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
 #if ALLOW_IPHONE_SPECIAL_CASES						
-				nextParagraphAdditionalSpaceBefore = 12.0;
+				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 			}
 			else if ([tagName isEqualToString:@"del"]) 
@@ -713,7 +726,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = 12.0;
+					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
@@ -726,7 +739,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = 12.0;
+					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
@@ -772,37 +785,37 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 							case 1:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
-								currentFontDescriptor.pointSize = 24.0;
+								currentFontDescriptor.pointSize = textScale * 24.0;
 								break;
 							}
 							case 2:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = 18.0;
+								currentFontDescriptor.pointSize = textScale * 18.0;
 								break;
 							}
 							case 3:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
-								currentFontDescriptor.pointSize = 14.0;
+								currentFontDescriptor.pointSize = textScale * 14.0;
 								break;
 							}
 							case 4:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = 12.0;
+								currentFontDescriptor.pointSize = textScale * 12.0;
 								break;
 							}
 							case 5:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = 10.0;
+								currentFontDescriptor.pointSize = textScale * 10.0;
 								break;
 							}
 							case 6:
 							{
 								[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = 9.0;
+								currentFontDescriptor.pointSize = textScale * 9.0;
 								break;
 							}
 							default:
@@ -823,26 +836,26 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					switch (size) 
 					{
 						case 1:
-							currentFontDescriptor.pointSize = 9.0;
+							currentFontDescriptor.pointSize = textScale * 9.0;
 							break;
 						case 2:
-							currentFontDescriptor.pointSize = 10.0;
+							currentFontDescriptor.pointSize = textScale * 10.0;
 							break;
 						case 4:
-							currentFontDescriptor.pointSize = 14.0;
+							currentFontDescriptor.pointSize = textScale * 14.0;
 							break;
 						case 5:
-							currentFontDescriptor.pointSize = 18.0;
+							currentFontDescriptor.pointSize = textScale * 18.0;
 							break;
 						case 6:
-							currentFontDescriptor.pointSize = 24.0;
+							currentFontDescriptor.pointSize = textScale * 24.0;
 							break;
 						case 7:
-							currentFontDescriptor.pointSize = 37.0;
+							currentFontDescriptor.pointSize = textScale * 37.0;
 							break;	
 						case 3:
 						default:
-							currentFontDescriptor.pointSize = 12.0;
+							currentFontDescriptor.pointSize = defaultFontDescriptor.pointSize;
 							break;
 					}
 					
@@ -858,7 +871,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithFloat:12.0] forKey:@"ParagraphSpacing"];
+					[currentTag setObject:[NSNumber numberWithFloat:defaultFontDescriptor.pointSize] forKey:@"ParagraphSpacing"];
 					
 					seenPreviousParagraph = YES;
 				}
