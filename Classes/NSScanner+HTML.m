@@ -48,7 +48,6 @@
 
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
 {
-	
 	NSInteger initialScanLocation = [self scanLocation];
 	
 	if (![self scanString:@"<" intoString:NULL])
@@ -180,6 +179,40 @@
 	
 	return YES;
 }
+
+
+- (BOOL)scanDOCTYPE:(NSString **)contents
+{
+ 	NSInteger initialScanLocation = [self scanLocation];
+	
+	if (![self scanString:@"<!" intoString:NULL])
+	{
+		[self setScanLocation:initialScanLocation];
+		return NO;
+	}
+   
+    NSString *body = nil;
+    
+    if (![self scanUpToString:@">" intoString:&body])
+    {
+		[self setScanLocation:initialScanLocation];
+        return NO;
+    }
+    
+    if (![self scanString:@">" intoString:NULL])
+    {
+		[self setScanLocation:initialScanLocation];
+        return NO;
+    }
+    
+    if (contents)
+    {
+        *contents = body;
+    }
+    
+    return YES;
+}
+
 
 #pragma mark CSS
 

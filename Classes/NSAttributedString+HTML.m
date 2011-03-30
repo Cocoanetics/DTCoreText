@@ -406,6 +406,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
  	
+    // skip doctype tag
+    [scanner scanDOCTYPE:NULL];
+
+    // skip initial whitespace
+	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
+
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -968,6 +974,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					NSDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
 					DTCoreTextFontDescriptor *currentFontDescriptor = [currentTag objectForKey:@"FontDescriptor"];
+                    
+                    tagName = [currentTag objectForKey:@"_tag"];
 					
 					NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 					
@@ -1181,9 +1189,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
                     [tagPath release];
 #endif
                     
-					NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
-					[tmpString appendAttributedString:tagString];
-					[tagString release];
+                    // we don't want whitespace before first tag to turn into paragraphs
+                    if (![tagName isEqualToString:@"html"])
+                    {
+                        NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
+                        [tmpString appendAttributedString:tagString];
+                        [tagString release];
+                    }
                     
 					previousAttributes = attributes;
 				}
