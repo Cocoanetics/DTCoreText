@@ -15,13 +15,11 @@ static NSDictionary *entityLookup = nil;
 
 @implementation NSString (HTML)
 
-- (NSUInteger)integerValueFromHex
+- (NSUInteger)integerValueFromHex 
 {
-	NSScanner *scanner = [NSScanner scannerWithString:self];
-	unsigned int result = 0;
-	[scanner scanHexInt: &result];
-	
-	return result;
+    NSUInteger result = 0;
+    sscanf([self UTF8String], "%x", &result);
+    return result;
 }
 
 - (BOOL)isInlineTag

@@ -13,28 +13,21 @@ static NSDictionary *colorLookup = nil;
 
 @implementation UIColor (HTML)
 
-+ (UIColor *)colorWithHexString:(NSString *)hex
++ (UIColor *)colorWithHexString:(NSString *)hex 
 {
-	// #rgb = #rrggbb
-	if ([hex length]==3)
-	{
-		NSString *oneR = [hex substringWithRange:NSMakeRange(0, 1)];
-		NSString *oneG = [hex substringWithRange:NSMakeRange(1, 1)];
-		NSString *oneB = [hex substringWithRange:NSMakeRange(2, 1)];
-		
-		hex = [NSString stringWithFormat:@"%@%@%@%@%@%@", oneR, oneR, oneG, oneG, oneB, oneB];
-	}
-	
-	if ([hex length]!=6)
-	{
-		return nil;
-	}
-	
-	CGFloat red = [[hex substringWithRange:NSMakeRange(0, 2)] integerValueFromHex] / 255.0f;
-	CGFloat green = [[hex substringWithRange:NSMakeRange(2, 2)] integerValueFromHex] / 255.0f;
-	CGFloat blue = [[hex substringWithRange:NSMakeRange(4, 2)] integerValueFromHex] / 255.0f;
-	
-	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+    if ([hex length]!=6 && [hex length]!=3) 
+    {
+        return nil;   
+    }
+    
+    NSUInteger digits = [hex length]/3;
+    CGFloat maxValue = (digits==1)?15.0:255.0;
+    
+    CGFloat red = [[hex substringWithRange:NSMakeRange(0, digits)] integerValueFromHex]/maxValue;
+    CGFloat green = [[hex substringWithRange:NSMakeRange(digits, digits)] integerValueFromHex]/maxValue;
+    CGFloat blue = [[hex substringWithRange:NSMakeRange(2*digits, digits)] integerValueFromHex]/maxValue;
+    
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
 
