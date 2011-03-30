@@ -214,4 +214,31 @@ static NSDictionary *colorLookup = nil;
 	return components[count-1];
 }
 
+- (NSString *)htmlHexString
+{
+	CGColorRef color = self.CGColor;
+	size_t count = CGColorGetNumberOfComponents(color);
+	const CGFloat *components = CGColorGetComponents(color);
+    
+    if (count==2)
+    {
+        // grayscale
+        char white = components[0]*255;
+        
+        return [NSString stringWithFormat:@"#%02x%02x%02x", white, white, white];
+    }
+    else if (count==4)
+    {
+        // grayscale
+        NSUInteger red = components[0]*255;
+        NSUInteger green = components[1]*255;
+        NSUInteger blue = components[2]*255;
+        
+        
+        return [NSString stringWithFormat:@"#%02x%02x%02x", red, green, blue];
+    }
+	
+	return nil;
+}
+
 @end
