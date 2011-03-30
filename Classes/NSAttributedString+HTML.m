@@ -433,12 +433,11 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				NSDictionary *previousAttributes = [previousTag objectForKey:@"Attributes"];
 				
+                // inherit parent tag attributes
 				NSMutableDictionary *mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:previousAttributes];
 				
-				for (NSString *oneKey in [tagAttributesDict allKeys])
-				{
-					[mutableAttributes setObject:[tagAttributesDict objectForKey:oneKey] forKey:oneKey];
-				}
+                // add/replace with current tag attributes
+                [mutableAttributes addEntriesFromDictionary:tagAttributesDict];
 				
 				tagAttributesDict = mutableAttributes;
 				
