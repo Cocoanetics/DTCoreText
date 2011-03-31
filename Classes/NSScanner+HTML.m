@@ -61,10 +61,9 @@
 	
 	NSCharacterSet *tagCharacterSet = [NSCharacterSet tagNameCharacterSet];
     NSCharacterSet *tagAttributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
-	NSCharacterSet *quoteCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"'\""];
+	NSCharacterSet *quoteCharacterSet = [NSCharacterSet quoteCharacterSet];
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-	NSMutableCharacterSet *nonquoteAttributedEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"/>"];
-	[nonquoteAttributedEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
+	NSCharacterSet *nonquoteAttributedEndCharacterSet = [NSCharacterSet nonQuotedAttributeEndCharacterSet];
 	
 	NSString *scannedTagName = nil;
 	NSMutableDictionary *tmpAttributes = [NSMutableDictionary dictionary];
@@ -169,7 +168,9 @@
 	
 	if (attributes)
 	{
-		*attributes = [NSDictionary dictionaryWithDictionary:tmpAttributes];
+        // converting to immutable costs 10.4% of method
+		//*attributes = [NSDictionary dictionaryWithDictionary:tmpAttributes];
+        *attributes = tmpAttributes;
 	}
 	
 	if (tagName)
@@ -227,11 +228,10 @@
 	
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	
-	NSMutableCharacterSet *attributeEndCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@";"];
-	//[attributeEndCharacterSet formUnionWithCharacterSet:whiteCharacterSet];
-	
-	NSMutableCharacterSet *attributeNameCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"-"];
-	[attributeNameCharacterSet formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+
+	// alphanumeric plus -
+	NSCharacterSet *attributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
+                                                 
 	
 	
 	if (![self scanCharactersFromSet:attributeNameCharacterSet intoString:&attrName])
@@ -252,14 +252,14 @@
 	// skip whitespace
 	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 
-	if (![self scanUpToCharactersFromSet:attributeEndCharacterSet intoString:&attrValue])
+	if (![self scanUpToString:@";" intoString:&attrValue])
 	{
 		[self setScanLocation:initialScanLocation];
 		return NO;
 	}
 	
 	// skip ending characters
-	[self scanCharactersFromSet:attributeEndCharacterSet intoString:NULL];
+	[self scanString:@";" intoString:NULL];
 	
 	
 	// Success 

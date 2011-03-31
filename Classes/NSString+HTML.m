@@ -33,48 +33,57 @@ static NSDictionary *entityLookup = nil;
 	return [inlineTags containsObject:[self lowercaseString]];
 }
 
-
 - (NSString *)stringByNormalizingWhitespace
 {
-	NSCharacterSet *whiteSpaceCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-	
-	NSScanner *scanner = [NSScanner scannerWithString:self];
-	[scanner setCharactersToBeSkipped:nil];
-	
-	NSMutableArray *tokens = [NSMutableArray array];
-	
-	NSString *prefix = @"";
-	if ([scanner scanCharactersFromSet:whiteSpaceCharacterSet intoString:NULL])
-	{
-		prefix = @" ";
-	}
-	
-	NSString *suffix = @"";
-	
-	while (![scanner isAtEnd])
-	{
-		NSString *string = nil;
-		
-		if ([scanner scanUpToCharactersFromSet:whiteSpaceCharacterSet intoString:&string])
-		{
-			[tokens addObject:string];
-		}
-		
-		if ([scanner scanCharactersFromSet:whiteSpaceCharacterSet intoString:NULL])
-		{
-			suffix = @" ";
-		}
-		else 
-		{
-			suffix = @"";
-		}
-	}
-	
-	NSString *retStr = [NSString stringWithFormat:@"%@%@%@", prefix, [tokens componentsJoinedByString:@" "], suffix];
-	
-	return retStr;
+    // get c string
+    const char *string = [self UTF8String];
+    
+    // reserve buffer, probably shorter, but +1 if it's same size + '\0'
+    char *buf = malloc(strlen(string)+1);
+    
+    char oneChar;
+    char *inPos = (char *)string;
+    char *outPos = buf;
+    
+    const char *whitespaceChars = " \x0A\x0B\x0C\x0D \t\x85";
+    
+    BOOL inWhite = NO;
+    
+    while ((oneChar = *inPos)) 
+    {
+        // of whitespace chars only output one space for first
+        if (strchr(whitespaceChars, *inPos))
+        {
+            if (!inWhite)
+            {
+                *outPos = ' ';
+                outPos++;
+                
+                inWhite = YES;
+            }
+        }
+        else
+        {
+            // all other characters we simply copy
+            *outPos = *inPos;
+            outPos++;
+            
+            inWhite = NO;
+        }
+        
+        inPos++;
+    }
+    
+    // zero terminate output
+    *outPos = '\0';
+    
+    // convert to objC-String
+    NSString *retString = [NSString stringWithUTF8String:buf];
+    
+    free(buf);
+    
+    return retString;
 }
-
 
 - (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet
 {
@@ -414,8 +423,10 @@ static NSDictionary *entityLookup = nil;
 	{
 		[tmpDict setObject:value forKey:name];
 	}
-	
-	return [NSDictionary dictionaryWithDictionary:tmpDict];
+
+// converting to non-mutable costs 37.5% of method	
+//	return [NSDictionary dictionaryWithDictionary:tmpDict];
+    return tmpDict;
 }
 
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize

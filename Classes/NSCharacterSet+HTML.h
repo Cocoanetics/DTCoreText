@@ -13,5 +13,7 @@
 
 + (NSCharacterSet *)tagNameCharacterSet;
 + (NSCharacterSet *)tagAttributeNameCharacterSet;
++ (NSCharacterSet *)quoteCharacterSet;
++ (NSCharacterSet *)nonQuotedAttributeEndCharacterSet;
 
 @end

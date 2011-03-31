@@ -141,7 +141,10 @@
 	
 	[tmpDict setObject:[NSNumber numberWithFloat:pointSize] forKey:(id)kCTFontSizeAttribute];
 	
-	return [NSDictionary dictionaryWithDictionary:tmpDict];
+	//return [NSDictionary dictionaryWithDictionary:tmpDict];
+    
+    // converting to non-mutable costs 42% of entire method
+    return tmpDict;
 }
 
 #pragma mark Finding Font

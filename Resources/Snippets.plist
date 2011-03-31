@@ -3,70 +3,78 @@
 <plist version="1.0">
 <array>
 	<dict>
-		<key>Title</key>
-		<string>READ ME</string>
-		<key>File</key>
-		<string>README.html</string>
 		<key>Description</key>
 		<string>This is the &lt;b&gt;introduction&lt;/b&gt; to the &lt;font color=&quot;blue&quot; face=&quot;Courier&quot;&gt;NSAttributedString&lt;/font&gt; HTML Additions for iOS. Even this very table view here demonstrates that you can easily add HTML formatted text to table views.</string>
+		<key>File</key>
+		<string>README.html</string>
+		<key>Title</key>
+		<string>READ ME</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>CSS Styles</string>
-		<key>File</key>
-		<string>styles.html</string>
 		<key>Description</key>
 		<string>Demonstrates CSS styles that are supported so far.</string>
+		<key>File</key>
+		<string>styles.html</string>
+		<key>Title</key>
+		<string>CSS Styles</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>Lorem Ipsum</string>
-		<key>File</key>
-		<string>LoremIpsum.html</string>
 		<key>Description</key>
 		<string>Demonstrates really long text. Definitely longer than this meager description.</string>
-	</dict>
-		<dict>
-		<key>Title</key>
-		<string>Text Alignment</string>
 		<key>File</key>
-		<string>Alignment.html</string>
+		<string>LoremIpsum.html</string>
+		<key>Title</key>
+		<string>Lorem Ipsum</string>
+	</dict>
+	<dict>
 		<key>Description</key>
 		<string>Demonstrates text alignment via tags and style attributes.</string>
+		<key>File</key>
+		<string>Alignment.html</string>
+		<key>Title</key>
+		<string>Text Alignment</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>Image Handling</string>
-		<key>File</key>
-		<string>Image.html</string>
 		<key>Description</key>
 		<string>Shows the current level of image support.</string>
+		<key>File</key>
+		<string>Image.html</string>
+		<key>Title</key>
+		<string>Image Handling</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>Video</string>
-		<key>File</key>
-		<string>Video.html</string>
 		<key>Description</key>
 		<string>Demonstrating support for the HTML5 Video tag when somebody gets around to implement it.</string>
+		<key>File</key>
+		<string>Video.html</string>
+		<key>Title</key>
+		<string>Video</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>Space and Newline Handling.</string>
-		<key>File</key>
-		<string>APOD.html</string>
-		<key>Description</key>
-		<string>HTML handles newlines as spaces, but not always.</string>
 		<key>BaseURL</key>
 		<string>http://apod.nasa.gov/apod/</string>
+		<key>Description</key>
+		<string>HTML handles newlines as spaces, but not always.</string>
+		<key>File</key>
+		<string>APOD.html</string>
+		<key>Title</key>
+		<string>Space and Newline Handling.</string>
 	</dict>
 	<dict>
-		<key>Title</key>
-		<string>Never mind this file ...</string>
+		<key>Description</key>
+		<string>Extremely long HTML document for profiling and performance tuning</string>
 		<key>File</key>
-		<string>CurrentTest.html</string>
+		<string>WarAndPeace.html</string>
+		<key>Title</key>
+		<string>War &amp; Peace</string>
+	</dict>
+	<dict>
 		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
+		<key>File</key>
+		<string>CurrentTest.html</string>
+		<key>Title</key>
+		<string>Never mind this file ...</string>
 	</dict>
 </array>
 </plist>
