@@ -260,8 +260,8 @@
 		A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */ = {
 			isa = PBXGroup;
 			children = (
-				A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */,
 				A73BC3ED12D9F5AD00F064C6 /* NSAttributedString+HTML.h */,
+				A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */,
 				A7EA579D12E05FBF0045411B /* NSAttributedStringRunDelegates.h */,
 				A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */,
 				A73BC5E812DA1B5200F064C6 /* NSString+HTML.h */,
