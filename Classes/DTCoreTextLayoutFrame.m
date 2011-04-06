@@ -464,21 +464,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     return (CGRect){origin, size};
 }
 
-//- (void)correctFrame
-//{
-//    // only correct if we have "open ended" frame
-//    if (_frame.size.height < CGFLOAT_OPEN_HEIGHT)
-//    {
-//        return;
-//    }
-//    
-//    CGRect inferredFrame = [self inferredFrame];
-//    if (inferredFrame.size.height < self.frame.size.height)
-//    {
-//       _frame = inferredFrame;
-//    }
-//}
-
 #pragma mark Properties
 @synthesize frame = _frame;
 @synthesize layouter = _layouter;
