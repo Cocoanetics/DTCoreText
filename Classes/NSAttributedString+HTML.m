@@ -343,14 +343,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	
 	
 	// Make it a string
-	NSString *_htmlString = [[NSString alloc] initWithData:data encoding:encoding];
+	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
 	
-	// trim whitespace
-	NSString *htmlString = [_htmlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	
-	[_htmlString release];
-    
-	NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
+    // for performance we will return this mutable string
+	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
     NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
@@ -558,15 +554,17 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-						NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+						NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
 						[tmpString appendAttributedString:string];
+                        [string release];
 					}
 					
 					needsNewLineBefore = NO;
 				}
 				
-				NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
+				NSAttributedString *string = [[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes];
 				[tmpString appendAttributedString:string];
+                [string release];
 			}
 			else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{
@@ -601,15 +599,17 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-						NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+						NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
 						[tmpString appendAttributedString:string];
+                        [string release];
 					}
 					
 					needsNewLineBefore = NO;
 				}
 				
-				NSAttributedString *string = [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes] autorelease];
+				NSAttributedString *string = [[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes];
 				[tmpString appendAttributedString:string];
+                [string release];
 				
 			}
 			else if ([tagName isEqualToString:@"a"])
@@ -905,8 +905,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					// remove extra space
 					previousAttributes = nil;
 					
-					NSAttributedString *string = [[[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes] autorelease];
+					NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
 					[tmpString appendAttributedString:string];
+                    [string release];
 				}
 				
 				needsNewLineBefore = NO;
@@ -1098,7 +1099,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					}
 					
 					// HTML ignores newlines
-					tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+//					tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+// this line unnecessary because stringByNormalizingWhitespace already did that                   
 					
 					if (needsListItemStart)
 					{
@@ -1206,7 +1208,11 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	}
     
     //NSLog(@"finish");
-	return [self initWithAttributedString:tmpString];
+	//return [self initWithAttributedString:tmpString];
+    
+    // returning the temporary mutable string is faster
+    return tmpString;
+    
 }
 
 #pragma mark Convenience Methods
