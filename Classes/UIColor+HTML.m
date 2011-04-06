@@ -207,6 +207,34 @@ static NSDictionary *colorLookup = nil;
 	return components[count-1];
 }
 
+- (UIColor *)invertedColor
+{
+	CGColorRef color = self.CGColor;
+	size_t count = CGColorGetNumberOfComponents(color);
+	const CGFloat *components = CGColorGetComponents(color);
+    
+    if (count==2)
+    {
+        // grayscale
+        CGFloat white = components[0];
+        CGFloat alpha = components[1];
+        
+        return [UIColor colorWithWhite:1.0 - white alpha:alpha];
+    }
+    else if (count==4)
+    {
+        // grayscale
+        CGFloat red = components[0];
+        CGFloat green = components[1];
+        CGFloat blue = components[2];
+        CGFloat alpha = components[3];
+        
+        return [UIColor colorWithRed:1.0 - red green:1.0 - green blue:1.0 - blue alpha:alpha];
+    } 
+    
+    return nil;
+}
+
 - (NSString *)htmlHexString
 {
 	CGColorRef color = self.CGColor;

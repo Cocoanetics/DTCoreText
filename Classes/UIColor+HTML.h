@@ -12,6 +12,8 @@
 + (UIColor *)colorWithHTMLName:(NSString *)name;
 
 - (CGFloat)alpha;
+- (UIColor *)invertedColor;
+
 - (NSString *)htmlHexString;
 
 @end
