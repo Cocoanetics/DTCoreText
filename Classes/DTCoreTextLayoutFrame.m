@@ -158,6 +158,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)drawInContext:(CGContextRef)context
 {
+    CGContextSaveGState(context);
+    
     CGRect rect = CGContextGetClipBoundingBox(context);
     
 	if (!_textFrame || !context)
@@ -387,6 +389,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     {
         CFRelease(_textFrame);
     }
+    
+    CGContextRestoreGState(context);
 }
 
 - (NSRange)visibleStringRange
