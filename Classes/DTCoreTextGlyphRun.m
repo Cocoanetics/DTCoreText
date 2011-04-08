@@ -68,7 +68,7 @@
 	
 	if (index >= self.numberOfGlyphs)
 	{
-		return CGRectZero;
+		return CGRectNull;
 	}
 	
 	CGPoint glyphPosition = glyphPositionPoints[index];

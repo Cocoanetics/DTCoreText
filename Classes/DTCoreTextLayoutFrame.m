@@ -443,7 +443,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}
 	
-	return CGRectZero;
+	return CGRectNull;
 }
 
 - (CGRect)frame
