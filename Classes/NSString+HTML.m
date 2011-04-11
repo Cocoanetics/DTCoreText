@@ -48,12 +48,12 @@ static NSDictionary *entityLookup = nil;
         unichar oneChar = [self characterAtIndex:i];
         
         // of whitespace chars only output one space for first
-        if (oneChar == 32 ||
-            oneChar == 10 ||
+        if (oneChar == 32 ||    // space
+            oneChar == 10 ||    // various newlines
             oneChar == 11 ||
             oneChar == 12 ||
             oneChar == 13 ||
-            oneChar == (unichar)'\t' ||
+            oneChar == (unichar)'\t' || // tab
             oneChar == (unichar)'\x85')
         {
             if (!inWhite)
