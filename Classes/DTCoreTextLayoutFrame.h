@@ -39,6 +39,7 @@
 
 - (NSInteger)lineIndexForGlyphIndex:(NSInteger)index;
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
+- (NSArray *)linesVisibleInRect:(CGRect)rect;
 
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) DTCoreTextLayouter *layouter;
