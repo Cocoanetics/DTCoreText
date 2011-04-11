@@ -151,6 +151,31 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return _lines;
 }
 
+- (NSArray *)linesVisibleInRect:(CGRect)rect
+{
+    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
+    
+    BOOL earlyBreakPossible = NO;
+    
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+        if (CGRectIntersectsRect(rect, oneLine.frame))
+        {
+            [tmpArray addObject:oneLine];
+            earlyBreakPossible = YES;
+        }
+        else
+        {
+            if (earlyBreakPossible)
+            {
+                break;
+            }
+        }
+    }
+    
+    return tmpArray;
+}
+
 - (CGPathRef)path
 {
 	return CTFrameGetPath(_textFrame);
@@ -201,87 +226,87 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
         CGContextStrokeRect(context, self.frame);
 	}
+    
+    NSArray *visibleLines = [self linesVisibleInRect:rect];
+    
 	
-	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
-        if (CGRectIntersectsRect(rect, oneLine.frame))
+        if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+        {
+            // draw line bounds
+            CGContextSetRGBStrokeColor(context, 0, 0, 1.0f, 1.0f);
+            CGContextStrokeRect(context, oneLine.frame);
+            
+            // draw baseline
+            CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
+            CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
+            CGContextStrokePath(context);
+        }
+        
+        NSInteger runIndex = 0;
+        
+        for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
         {
             if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
             {
-                // draw line bounds
-                CGContextSetRGBStrokeColor(context, 0, 0, 1.0f, 1.0f);
-                CGContextStrokeRect(context, oneLine.frame);
-                
-                // draw baseline
-                CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
-                CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
-                CGContextStrokePath(context);
-            }
-            
-            NSInteger runIndex = 0;
-            
-            for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
-            {
-                 if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+                if (runIndex%2)
                 {
-                    if (runIndex%2)
-                    {
-                        CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
-                    }
-                    else 
-                    {
-                        CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
-                    }
-                    
-                    CGContextFillRect(context, oneRun.frame);
-                    runIndex ++;
+                    CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
+                }
+                else 
+                {
+                    CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
                 }
                 
-                 // -------------- Line-Out and Underline
-                BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
-
-                BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
-                BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+                CGContextFillRect(context, oneRun.frame);
+                runIndex ++;
+            }
+            
+            // -------------- Line-Out and Underline
+            BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
+            
+            BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
+            BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+            
+            if (drawStrikeOut||drawUnderline)
+            {
+                // get text color or use black
+                id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
                 
-                if (drawStrikeOut||drawUnderline)
+                if (color)
                 {
-                    // get text color or use black
-                    id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
+                    CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+                }
+                else
+                {
+                    CGContextSetGrayStrokeColor(context, 0, 1.0);
+                }
+                
+                CGRect runStrokeBounds = oneRun.frame;
+                if (lastRunInLine)
+                {
+                    runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
+                }
+                
+                if (drawStrikeOut)
+                {
+                    runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
                     
-                    if (color)
-                    {
-                        CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
-                    }
-                    else
-                    {
-                        CGContextSetGrayStrokeColor(context, 0, 1.0);
-                    }
+                    CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                    CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
                     
-                    CGRect runStrokeBounds = oneRun.frame;
-                    if (lastRunInLine)
-                    {
-                        runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
-                    }
+                    CGContextStrokePath(context);
+                }
+                
+                if (drawUnderline)
+                {
+                    runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
                     
-                    if (drawStrikeOut)
-                    {
-                        runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
-                        
-                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                        
-                        CGContextStrokePath(context);
-                    }
+                    CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+                    CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
                     
-                    if (drawUnderline)
-                    {
-                        runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
-                        
-                        CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                        CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                        
-                        CGContextStrokePath(context);
-                    }
+                    CGContextStrokePath(context);
                 }
             }
         }
@@ -294,92 +319,78 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     
 	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
     
-    BOOL earlyBreakArmed = NO; 
-    
-	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
-        if (CGRectIntersectsRect(rect, oneLine.frame))
+        for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
         {
-            for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+            CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
+            
+            NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
+            
+            if (shadows)
             {
-                earlyBreakArmed = YES;
+                CGContextSaveGState(context);
                 
-                CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
-                
-                NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
-                
-                if (shadows)
+                for (NSDictionary *shadowDict in shadows)
                 {
-                    CGContextSaveGState(context);
+                    UIColor *color = [shadowDict objectForKey:@"Color"];
+                    CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
+                    CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
                     
-                    for (NSDictionary *shadowDict in shadows)
+                    CGFloat scaleFactor = 1.0;
+                    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
                     {
-                        UIColor *color = [shadowDict objectForKey:@"Color"];
-                        CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
-                        CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
-                        
-                        CGFloat scaleFactor = 1.0;
-                        if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-                        {
-                            scaleFactor = [[UIScreen mainScreen] scale];
-                        }
-                        
-                        
-                        // workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
-                        if (scaleFactor==1.0)
-                        {
-                            if (fabs(offset.width)==1.0)
-                            {
-                                offset.width *= 1.50;
-                            }
-                            
-                            if (fabs(offset.height)==1.0)
-                            {
-                                offset.height *= 1.50;
-                            }
-                        }
-                        
-                        CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
-                        
-                        // draw once per shadow
-                        [oneRun drawInContext:context];
+                        scaleFactor = [[UIScreen mainScreen] scale];
                     }
                     
-                    CGContextRestoreGState(context);
+                    
+                    // workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
+                    if (scaleFactor==1.0)
+                    {
+                        if (fabs(offset.width)==1.0)
+                        {
+                            offset.width *= 1.50;
+                        }
+                        
+                        if (fabs(offset.height)==1.0)
+                        {
+                            offset.height *= 1.50;
+                        }
+                    }
+                    
+                    CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+                    
+                    // draw once per shadow
+                    [oneRun drawInContext:context];
+                }
+                
+                CGContextRestoreGState(context);
+            }
+            else
+            {
+                // -------------- Draw Embedded Images
+                DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
+                
+                if (attachment)
+                {
+                    if ([attachment.contents isKindOfClass:[UIImage class]])
+                    {
+                        UIImage *image = (id)attachment.contents;
+                        
+                        CGPoint origin = oneRun.frame.origin;
+                        origin.y = self.frame.size.height - origin.y - oneRun.ascent;
+                        CGRect flippedRect = {origin, oneRun.frame.size};
+                        
+                        CGContextDrawImage(context, flippedRect, image.CGImage);
+                    }
                 }
                 else
                 {
-                    // -------------- Draw Embedded Images
-                    DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-                    
-                    if (attachment)
-                    {
-                        if ([attachment.contents isKindOfClass:[UIImage class]])
-                        {
-                            UIImage *image = (id)attachment.contents;
-                            
-                            CGPoint origin = oneRun.frame.origin;
-                            origin.y = self.frame.size.height - origin.y - oneRun.ascent;
-                            CGRect flippedRect = {origin, oneRun.frame.size};
-                            
-                            CGContextDrawImage(context, flippedRect, image.CGImage);
-                        }
-                    }
-                    else
-                    {
-                        // regular text
-                        [oneRun drawInContext:context];
-                    }
+                    // regular text
+                    [oneRun drawInContext:context];
                 }
             }
 		}
-        else
-        {
-            if (earlyBreakArmed)
-            {
-                break;
-            }
-        }
 	}
 	
     [self release];
