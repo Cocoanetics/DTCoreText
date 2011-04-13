@@ -214,17 +214,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
+        // stroke the frame because the layout frame might be open ended
         CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
 		CGContextSetLineDash(context, 0, dashes, 2);
-		
-		CGPathRef framePath = [self path];
-		CGContextAddPath(context, framePath);
-		CGContextStrokePath(context);
-        CGContextRestoreGState(context);
-        
-        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
         CGContextStrokeRect(context, self.frame);
+        CGContextRestoreGState(context);
 	}
     
     NSArray *visibleLines = [self linesVisibleInRect:rect];
