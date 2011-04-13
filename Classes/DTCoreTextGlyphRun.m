@@ -74,6 +74,11 @@
 	CGPoint glyphPosition = glyphPositionPoints[index];
 	
 	CGRect rect = CGRectMake(_line.frame.origin.x + glyphPosition.x, _line.frame.origin.y, 3, _line.frame.size.height);
+    
+    if (index < self.numberOfGlyphs-1)
+    {
+        rect.size.width = glyphPositionPoints[index+1].x - glyphPosition.x;
+    }
 	
 	return rect;
 }
