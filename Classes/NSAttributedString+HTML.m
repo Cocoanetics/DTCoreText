@@ -13,6 +13,7 @@
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import "NSScanner+HTML.h"
+#import "NSCharacterSet+HTML.h"
 #import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
@@ -146,29 +147,32 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		}
 		
 		// TODO: better mapping from font families to available families
-		NSString *fontFamily = [[styles objectForKey:@"font-family"] lowercaseString];
+		NSString *fontFamily = [[styles objectForKey:@"font-family"] stringByTrimmingCharactersInSet:[NSCharacterSet quoteCharacterSet]];
+        
 		if (fontFamily)
 		{
-			if ([fontFamily rangeOfString:@"helvetica"].length || [fontFamily rangeOfString:@"arial"].length || [fontFamily rangeOfString:@"geneva"].length)
+            NSString *lowercaseFontFamily = [fontFamily lowercaseString];
+
+			if ([lowercaseFontFamily rangeOfString:@"helvetica"].length || [lowercaseFontFamily rangeOfString:@"arial"].length || [lowercaseFontFamily rangeOfString:@"geneva"].length)
 			{
 				fontDescriptor.fontFamily = @"Helvetica";
 			}
-			else if ([fontFamily rangeOfString:@"courier"].length)
+			else if ([lowercaseFontFamily rangeOfString:@"courier"].length)
 			{
 				fontDescriptor.fontFamily = @"Courier";
 			}
-			else if ([fontFamily rangeOfString:@"cursive"].length)
+			else if ([lowercaseFontFamily rangeOfString:@"cursive"].length)
 			{
 				fontDescriptor.stylisticClass = kCTFontScriptsClass;
 				fontDescriptor.fontFamily = nil;
 			}
-			else if ([fontFamily rangeOfString:@"sans-serif"].length)
+			else if ([lowercaseFontFamily rangeOfString:@"sans-serif"].length)
 			{
 				// too many matches (24)
 				// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
 				fontDescriptor.fontFamily = @"Helvetica";
 			}
-			else if ([fontFamily rangeOfString:@"serif"].length)
+			else if ([lowercaseFontFamily rangeOfString:@"serif"].length)
 			{
 				// kCTFontTransitionalSerifsClass = Baskerville
 				// kCTFontClarendonSerifsClass = American Typewriter
@@ -177,19 +181,19 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// strangely none of the classes yields Times
 				fontDescriptor.fontFamily = @"Times New Roman";
 			}
-			else if ([fontFamily rangeOfString:@"fantasy"].length)
+			else if ([lowercaseFontFamily rangeOfString:@"fantasy"].length)
 			{
 				fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
 			}
-			else if ([fontFamily rangeOfString:@"monospace"].length) 
+			else if ([lowercaseFontFamily rangeOfString:@"monospace"].length) 
 			{
 				fontDescriptor.monospaceTrait = YES;
 				fontDescriptor.fontFamily = nil;
 			}
 			else
 			{
-				// probably something special or custom-font?
-				fontDescriptor.fontName = [styles objectForKey:@"font-family"];
+				// probably custom font registered in info.plist
+				fontDescriptor.fontFamily = fontFamily;
 			}
 		}
 		
