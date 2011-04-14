@@ -82,6 +82,10 @@
 		A7EA581412E0C9010045411B /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA581312E0C9010045411B /* DTTextAttachment.m */; };
 		A7EA585712E0CE130045411B /* Image.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EA585612E0CE130045411B /* Image.html */; };
 		A7EA5FB012E1AC7F0045411B /* CurrentTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */; };
+		A7F2A7391356F2E30097BF31 /* XB Niloofar.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A7F2A7381356F2E30097BF31 /* XB Niloofar.ttf */; };
+		A7F2A73B1356F3950097BF31 /* CustomFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F2A73A1356F3950097BF31 /* CustomFont.html */; };
+		A7F2A73C1356F4F30097BF31 /* CustomFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F2A73A1356F3950097BF31 /* CustomFont.html */; };
+		A7F2A7401356F5720097BF31 /* XB NiloofarBd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A7F2A73D1356F5720097BF31 /* XB NiloofarBd.ttf */; };
 		B23558F312E04C57005EA62F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B23558E212E04C3C005EA62F /* main.m */; };
 		B23558F712E04C8E005EA62F /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = B23558E712E04C3C005EA62F /* README.html */; };
 		B235592712E05065005EA62F /* DemoSnippetsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B235590212E04D1F005EA62F /* DemoSnippetsViewController.m */; };
@@ -153,6 +157,9 @@
 		A7EA581312E0C9010045411B /* DTTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextAttachment.m; sourceTree = "<group>"; };
 		A7EA585612E0CE130045411B /* Image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Image.html; sourceTree = "<group>"; };
 		A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CurrentTest.html; sourceTree = "<group>"; };
+		A7F2A7381356F2E30097BF31 /* XB Niloofar.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "XB Niloofar.ttf"; sourceTree = "<group>"; };
+		A7F2A73A1356F3950097BF31 /* CustomFont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CustomFont.html; sourceTree = "<group>"; };
+		A7F2A73D1356F5720097BF31 /* XB NiloofarBd.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "XB NiloofarBd.ttf"; sourceTree = "<group>"; };
 		B23558E012E04C3C005EA62F /* CoreTextExtensions_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextExtensions_Prefix.pch; sourceTree = "<group>"; };
 		B23558E112E04C3C005EA62F /* CoreTextExtensionsUnitTest_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextExtensionsUnitTest_Prefix.pch; sourceTree = "<group>"; };
 		B23558E212E04C3C005EA62F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -336,6 +343,8 @@
 		B23558E312E04C3C005EA62F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A7F2A73D1356F5720097BF31 /* XB NiloofarBd.ttf */,
+				A7F2A7381356F2E30097BF31 /* XB Niloofar.ttf */,
 				A78455191344D53500D7E6EC /* WarAndPeace.html */,
 				A76F058B12EF500C0065A4E7 /* Icon.png */,
 				A76F058C12EF500C0065A4E7 /* Icon@2x.png */,
@@ -351,6 +360,7 @@
 				A76FF0E612ED652F0065A4E7 /* styles.html */,
 				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
 				A76F065112F0032A0065A4E7 /* Alignment.html */,
+				A7F2A73A1356F3950097BF31 /* CustomFont.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -426,6 +436,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7F2A73C1356F4F30097BF31 /* CustomFont.html in Resources */,
 				B23558F712E04C8E005EA62F /* README.html in Resources */,
 				B235594412E05090005EA62F /* Snippets.plist in Resources */,
 				B235598C12E055BC005EA62F /* LoremIpsum.html in Resources */,
@@ -439,6 +450,8 @@
 				A76F058D12EF500C0065A4E7 /* Icon.png in Resources */,
 				A76F058E12EF500C0065A4E7 /* Icon@2x.png in Resources */,
 				A76F065212F0032A0065A4E7 /* Alignment.html in Resources */,
+				A7F2A7391356F2E30097BF31 /* XB Niloofar.ttf in Resources */,
+				A7F2A7401356F5720097BF31 /* XB NiloofarBd.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +469,7 @@
 				A7DBFC1312E9661E00F25897 /* CurrentTest.html in Resources */,
 				A7DBFC2012E9664400F25897 /* Snippets.plist in Resources */,
 				A784551A1344D53500D7E6EC /* WarAndPeace.html in Resources */,
+				A7F2A73B1356F3950097BF31 /* CustomFont.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
