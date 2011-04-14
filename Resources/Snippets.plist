@@ -70,6 +70,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Using Custom Fonts registered in info.plist</string>
+		<key>File</key>
+		<string>CustomFont.html</string>
+		<key>Title</key>
+		<string>Custom Fonts</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>

@@ -24,5 +24,10 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>XB NiloofarBd.ttf</string>
+		<string>XB Niloofar.ttf</string>
+	</array>
 </dict>
 </plist>
