@@ -10,6 +10,8 @@
 #import <UIKit/UIKit.h>
 
 #import "NSAttributedString+HTML.h"
+#import "NSMutableAttributedString+HTML.h"
+
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import "NSScanner+HTML.h"
@@ -17,7 +19,10 @@
 #import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
+#import "DTHTMLElement.h"
 #import "DTCoreTextFontDescriptor.h"
+#import "DTCoreTextParagraphStyle.h"
+
 #import "CGUtils.h"
 
 // Allows variations to cater for different behavior on iOS than OSX to have similar visual output
@@ -26,16 +31,10 @@
 // adds the path of tags to attributes dict
 //#define ADD_TAG_PATH 1
 
-// adds the original font descriptors to the attributes dicts
-//#define ADD_FONT_DESCRIPTORS 1
-
 /* Known Differences:
  - OSX has an entire attributes block for an UL block
  - OSX does not add extra space after UL block
  */
-
-#define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
-#define UNICODE_LINE_FEED @"\u2028"
 
 // standard options
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
@@ -48,58 +47,6 @@ NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString *DTDefaultTextColor = @"DTDefaultTextColor";
 NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 
-CTParagraphStyleRef createDefaultParagraphStyle(void)
-{
-	CTTextAlignment alignment = kCTNaturalTextAlignment;
-	CGFloat firstLineIndent = 0.0;
-	CGFloat defaultTabInterval = 36.0;
-	CFArrayRef tabStops = NULL;
-	
-	CTParagraphStyleSetting settings[] = {
-		{kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
-		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
-		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
-		{kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops}
-		
-	};	
-	
-	return CTParagraphStyleCreate(settings, 4);
-}
-
-CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat paragraphSpacing, CGFloat headIndent, NSArray *tabStops, CTTextAlignment alignment)
-{
-	CGFloat firstLineIndent = 0.0;
-	CGFloat defaultTabInterval = 36.0;
-	
-	NSMutableArray *textTabs = nil;
-	
-	NSInteger numTabs = [tabStops count];
-	if (numTabs)
-	{
-		textTabs = [NSMutableArray array];
-		
-		// Convert from NSNumber to CTTextTab
-		for (NSNumber *num in tabStops)
-		{
-			CTTextTabRef tab = CTTextTabCreate(kCTLeftTextAlignment, [num floatValue], NULL);
-			[textTabs addObject:(id)tab];
-			CFRelease(tab);
-		}
-	}
-	
-	CTParagraphStyleSetting settings[] = {
-		{kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
-		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
-		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
-		{kCTParagraphStyleSpecifierTabStops, sizeof(textTabs), &textTabs},
-		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing},
-		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paragraphSpacingBefore), &paragraphSpacingBefore},
-		{kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent}
-	};	
-	
-	return CTParagraphStyleCreate(settings, 7);
-}
-
 
 @implementation NSAttributedString (HTML)
 
@@ -107,7 +54,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 {
 	return [self initWithHTML:data options:nil documentAttributes:dict];
 }
-
 
 - (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict
 {
@@ -121,207 +67,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	return [self initWithHTML:data options:optionsDict documentAttributes:dict];
 }
 
-
-- (void)remapCSSStylesOnTagDictionary:(NSMutableDictionary *)currentTag
-{
-	NSMutableDictionary *currentTagAttributes  = [currentTag objectForKey:@"Attributes"];
-	
-	DTCoreTextFontDescriptor *fontDescriptor = [currentTag objectForKey:@"FontDescriptor"];
-	
-	NSString *styleString = [currentTagAttributes objectForKey:@"style"];
-	
-	if (styleString)
-	{
-		NSDictionary *styles = [styleString dictionaryOfCSSStyles];
-		
-		NSString *fontSize = [styles objectForKey:@"font-size"];
-		if (fontSize)
-		{
-			fontDescriptor.pointSize = [fontSize CSSpixelSize];
-		}
-		
-		NSString *color = [styles objectForKey:@"color"];
-		if (color)
-		{
-			[currentTagAttributes setObject:color forKey:@"color"];
-		}
-		
-		// TODO: better mapping from font families to available families
-		NSString *fontFamily = [[styles objectForKey:@"font-family"] stringByTrimmingCharactersInSet:[NSCharacterSet quoteCharacterSet]];
-        
-		if (fontFamily)
-		{
-            NSString *lowercaseFontFamily = [fontFamily lowercaseString];
-
-			if ([lowercaseFontFamily rangeOfString:@"helvetica"].length || [lowercaseFontFamily rangeOfString:@"arial"].length || [lowercaseFontFamily rangeOfString:@"geneva"].length)
-			{
-				fontDescriptor.fontFamily = @"Helvetica";
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"courier"].length)
-			{
-				fontDescriptor.fontFamily = @"Courier";
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"cursive"].length)
-			{
-				fontDescriptor.stylisticClass = kCTFontScriptsClass;
-				fontDescriptor.fontFamily = nil;
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"sans-serif"].length)
-			{
-				// too many matches (24)
-				// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
-				fontDescriptor.fontFamily = @"Helvetica";
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"serif"].length)
-			{
-				// kCTFontTransitionalSerifsClass = Baskerville
-				// kCTFontClarendonSerifsClass = American Typewriter
-				// kCTFontSlabSerifsClass = Courier New
-				// 
-				// strangely none of the classes yields Times
-				fontDescriptor.fontFamily = @"Times New Roman";
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"fantasy"].length)
-			{
-				fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
-			}
-			else if ([lowercaseFontFamily rangeOfString:@"monospace"].length) 
-			{
-				fontDescriptor.monospaceTrait = YES;
-				fontDescriptor.fontFamily = nil;
-			}
-			else
-			{
-				// probably custom font registered in info.plist
-				fontDescriptor.fontFamily = fontFamily;
-			}
-		}
-		
-		NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
-		if (fontStyle)
-		{
-			if ([fontStyle isEqualToString:@"normal"])
-			{
-				fontDescriptor.italicTrait = NO;
-			}
-			else if ([fontStyle isEqualToString:@"italic"] || [fontStyle isEqualToString:@"oblique"])
-			{
-				fontDescriptor.italicTrait = YES;
-			}
-			else if ([fontStyle isEqualToString:@"inherit"])
-			{
-				// nothing to do
-			}
-		}
-		
-		NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
-		if (fontWeight)
-		{
-			if ([fontWeight isEqualToString:@"normal"])
-			{
-				fontDescriptor.boldTrait = NO;
-			}
-			else if ([fontWeight isEqualToString:@"bold"])
-			{
-				fontDescriptor.boldTrait = YES;
-			}
-			else if ([fontWeight isEqualToString:@"bolder"])
-			{
-				fontDescriptor.boldTrait = YES;
-			}
-			else if ([fontWeight isEqualToString:@"lighter"])
-			{
-				fontDescriptor.boldTrait = NO;
-			}
-			else 
-			{
-				// can be 100 - 900
-				
-				NSInteger value = [fontWeight intValue];
-				
-				if (value<=600)
-				{
-					fontDescriptor.boldTrait = NO;
-				}
-				else 
-				{
-					fontDescriptor.boldTrait = YES;
-				}
-			}
-		}
-		
-		
-		NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
-		if (decoration)
-		{
-			if ([decoration isEqualToString:@"underline"])
-			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-			}
-			else if ([decoration isEqualToString:@"line-through"])
-			{
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];	
-			}
-			else if ([decoration isEqualToString:@"none"])
-			{
-				// remove all
-				[currentTag removeObjectForKey:@"UnderlineStyle"];
-				[currentTag removeObjectForKey:@"_StrikeOut"];
-			}
-			else if ([decoration isEqualToString:@"overline"])
-			{
-				//TODO: add support for overline decoration
-			}
-			else if ([decoration isEqualToString:@"blink"])
-			{
-				//TODO: add support for blink decoration
-			}
-			else if ([decoration isEqualToString:@"inherit"])
-			{
-				// nothing to do
-			}
-		}
-		
-		NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
-		if (alignment)
-		{
-			if ([alignment isEqualToString:@"left"])
-			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
-			}
-			else if ([alignment isEqualToString:@"right"])
-			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
-			}
-			else if ([alignment isEqualToString:@"center"])
-			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
-			}
-			else if ([alignment isEqualToString:@"justify"])
-			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTJustifiedTextAlignment] forKey:@"TextAlignment"];
-			}
-			else if ([alignment isEqualToString:@"inherit"])
-			{
-				// nothing to do
-			}
-		}
-		
-		NSString *shadow = [styles objectForKey:@"text-shadow"];
-		if (shadow)
-		{
-			NSString *currentColorString = [currentTag objectForKey:@"color"];
-			UIColor *color = [UIColor colorWithHTMLName:currentColorString];
-			NSArray *shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:fontDescriptor.pointSize currentColor:color];
-			[currentTag setObject:shadows forKey:@"_Shadows"];
-		}
-		
-	}
-	
-}
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
-    //NSLog(@"start");
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -353,7 +100,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
-    NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
+    // NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
 	
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 	BOOL seenPreviousParagraph = NO;
@@ -368,9 +115,8 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
     
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
-    
     defaultFontDescriptor.pointSize = 12.0 * textScale;
-     
+    
     NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
     if (defaultFontFamily)
     {
@@ -381,37 +127,56 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
         defaultFontDescriptor.fontFamily = @"Times New Roman";
     }
     
-    NSString *defaultColor = [options objectForKey:DTDefaultTextColor];
-    NSString *defaultLinkColor = [options objectForKey:DTDefaultLinkColor];
+    id defaultLinkColor = [options objectForKey:DTDefaultLinkColor];
     
-	NSMutableDictionary *bodyTag = [NSMutableDictionary dictionaryWithObject:defaultFontDescriptor forKey: @"FontDescriptor"];
-    
-    if (defaultColor)
+    if (defaultLinkColor)
     {
-        NSDictionary *attributes = [NSDictionary dictionaryWithObject:defaultColor forKey:@"color"];
-        [bodyTag setObject:attributes forKey:@"Attributes"];
+        if ([defaultLinkColor isKindOfClass:[NSString class]])
+        {
+            // convert from string to color
+            defaultLinkColor = [UIColor colorWithHTMLName:defaultLinkColor];
+        }
     }
-
-    if (defaultColor)
+    else
     {
-        NSDictionary *attributes = [NSDictionary dictionaryWithObject:defaultColor forKey:@"color"];
-        [bodyTag setObject:attributes forKey:@"Attributes"];
+        defaultLinkColor = [UIColor colorWithHTMLName:@"#0000EE"];
     }
     
-	[tagStack addObject:bodyTag];
+    // default paragraph style
+    DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+    
+    DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
+    defaultTag.fontDescriptor = defaultFontDescriptor;
+    defaultTag.paragraphStyle = defaultParagraphStyle;
+    
+    id defaultColor = [options objectForKey:DTDefaultTextColor];
+    if (defaultColor)
+    {
+        if ([defaultColor isKindOfClass:[UIColor class]])
+        {
+            // already a UIColor
+            defaultTag.textColor = defaultColor;
+        }
+        else
+        {
+            // need to convert first
+            defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
+        }
+    }
+    
+	[tagStack addObject:defaultTag];
 	
-	NSMutableDictionary *currentTag = [tagStack lastObject];
-	NSDictionary *previousAttributes = NULL;
+	DTHTMLElement *currentTag = [tagStack lastObject];
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
  	
     // skip doctype tag
     [scanner scanDOCTYPE:NULL];
-
+    
     // skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-
+    
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -419,7 +184,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
         
-		// default font
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
 			if (![tagName isInlineTag])
@@ -428,58 +192,13 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				needsNewLineBefore = YES;
 			}
 			
-			NSDictionary *previousTag = currentTag;
-			DTCoreTextFontDescriptor *currentFontDescriptor = nil;
-			
-			currentTag = [NSMutableDictionary dictionaryWithObject:tagName forKey:@"Tag"];
-			[currentTag setDictionary:[tagStack lastObject]];
-			[currentTag setObject:tagName forKey:@"_tag"];
-			
 			if (tagOpen)
 			{
-				NSDictionary *previousAttributes = [previousTag objectForKey:@"Attributes"];
-				
-                // inherit parent tag attributes
-				NSMutableDictionary *mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:previousAttributes];
-				
-                // add/replace with current tag attributes
-                [mutableAttributes addEntriesFromDictionary:tagAttributesDict];
-				
-				tagAttributesDict = mutableAttributes;
-				
-				[currentTag setObject:mutableAttributes forKey:@"Attributes"];
-				
-				DTCoreTextFontDescriptor *parentFontDescriptor = [previousTag objectForKey:@"FontDescriptor"];
-				
-				if (parentFontDescriptor)
-				{
-					currentFontDescriptor = [[parentFontDescriptor copy] autorelease];  // inherit
-                    
-					// never inherit font name
-					currentFontDescriptor.fontName = nil;
-				}
-				else 
-				{
-					currentFontDescriptor = [DTCoreTextFontDescriptor fontDescriptorWithFontAttributes:nil];
-					
-					// set default
-					currentFontDescriptor.pointSize = 12;
-					currentFontDescriptor.fontFamily = @"Times New Roman";
-				}
-				
-				[currentTag setObject:currentFontDescriptor forKey:@"FontDescriptor"];
-				
-				// copy color from parent
-				NSString *color = [previousTag objectForKey:@"color"];
-				if (color)
-				{
-					[currentTag setObject:color forKey:@"color"];
-				}
+                // make new tag as copy of previous tag
+                currentTag = [[currentTag copy] autorelease];
+                currentTag.tagName = tagName;
 			}
-			
-			NSMutableDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
-			
-			
+            
 			// ---------- Processing
 			
 			if ([tagName isEqualToString:@"img"] && tagOpen)
@@ -538,44 +257,25 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				attachment.contents = image;
 				attachment.size = CGSizeMake(width, height);
                 
-				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
-				
-				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
-				
-				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
-														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
-														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
-				CFRelease(embeddedObjectRunDelegate);
-                CFRelease(paragraphStyle);
-				
-				id link = [currentTag objectForKey:@"DTLink"];
-				if (link)
-				{
-					[localAttributes setObject:link forKey:@"DTLink"];
-				}
+                currentTag.textAttachment = attachment;
                 
 				if (needsNewLineBefore)
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-						NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
-						[tmpString appendAttributedString:string];
-                        [string release];
+                        [tmpString appendString:@"\n"];
 					}
 					
 					needsNewLineBefore = NO;
 				}
-				
-				NSAttributedString *string = [[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes];
-				[tmpString appendAttributedString:string];
-                [string release];
+                
+                [tmpString appendAttributedString:[currentTag attributedString]];
 			}
 			else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{
 				// hide contents of recognized tag
-				[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_tagContentsInvisible"];
-				
-				
+                currentTag.tagContentInvisible = YES;
+                
 				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
 				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
 				
@@ -586,50 +286,19 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				}
 				
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
-				attachment.contents = currentTag;
+				attachment.contents = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
+                attachment.contentType = DTTextAttachmentTypeVideoURL;
 				attachment.size = CGSizeMake(width, height);
-				
-				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
-				
-				CTParagraphStyleRef paragraphStyle = createParagraphStyle(0, 0, 0, 0, 0);
-				
-				NSMutableDictionary *localAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:attachment, @"DTTextAttachment",
-														(id)embeddedObjectRunDelegate, kCTRunDelegateAttributeName, 
-														(id)paragraphStyle, kCTParagraphStyleAttributeName, nil];
-				CFRelease(embeddedObjectRunDelegate);
-                CFRelease(paragraphStyle);
-				
-				if (needsNewLineBefore)
-				{
-					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
-					{
-						NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
-						[tmpString appendAttributedString:string];
-                        [string release];
-					}
-					
-					needsNewLineBefore = NO;
-				}
-				
-				NSAttributedString *string = [[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:localAttributes];
-				[tmpString appendAttributedString:string];
-                [string release];
-				
+                
+                currentTag.textAttachment = attachment;
+                
+                [tmpString appendAttributedString:[currentTag attributedString]];
 			}
 			else if ([tagName isEqualToString:@"a"])
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
-                    
-                    if (defaultLinkColor)
-                    {
-                        [currentTagAttributes setObject:defaultLinkColor forKey:@"color"];
-                    }
-                    else
-                    {
-                        [currentTagAttributes setObject:@"#0000EE" forKey:@"color"];
-                    }
+                    currentTag.underlineStyle = kCTUnderlineStyleSingle;
 					
 					// remove line breaks and whitespace in links
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -643,42 +312,31 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
 					}
 					
-					
-					if (link)
-					{
-						[currentTag setObject:link forKey:@"DTLink"];
-					}
-                    
-                    // add a guid to have all parts of a link highlight in sync
-                    [currentTag setObject:[NSString guid] forKey:@"DTGUID"];
+                    currentTag.link = link;
 				}
 			}
 			else if ([tagName isEqualToString:@"b"] || [tagName isEqualToString:@"strong"])
 			{
-				currentFontDescriptor.boldTrait = YES;
+				currentTag.fontDescriptor.boldTrait = YES;
 			}
 			else if ([tagName isEqualToString:@"i"] || [tagName isEqualToString:@"em"])
 			{
-				currentFontDescriptor.italicTrait = YES;
+				currentTag.fontDescriptor.italicTrait = YES;
 			}
 			else if ([tagName isEqualToString:@"li"]) 
 			{
 				if (tagOpen)
 				{
 					needsListItemStart = YES;
-					[currentTag setObject:[NSNumber numberWithFloat:0.0] forKey:@"ParagraphSpacing"];
+                    currentTag.paragraphStyle.paragraphSpacing = 0;
 					
+                    currentTag.paragraphStyle.headIndent = 25.0 * textScale;
+                    [currentTag.paragraphStyle addTabStopAtPosition:11.0 alignment:kCTLeftTextAlignment];
 					
-					
-#if ALLOW_IPHONE_SPECIAL_CASES						
-					[currentTag setObject:[NSNumber numberWithFloat:25.0 * textScale] forKey:@"HeadIndent"];
-					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-										   [NSNumber numberWithFloat:25.0 * textScale], nil] forKey:@"TabStops"];
+#if ALLOW_IPHONE_SPECIAL_CASES
+                    [currentTag.paragraphStyle addTabStopAtPosition:25.0 * textScale alignment:kCTLeftTextAlignment];
 #else
-					[currentTag setObject:[NSNumber numberWithFloat:25.0 * textScale] forKey:@"HeadIndent"];
-					[currentTag setObject:[NSArray arrayWithObjects:[NSNumber numberWithFloat:11.0],
-										   [NSNumber numberWithFloat:36.0 * textScale], nil] forKey:@"TabStops"];
-					
+                    [currentTag.paragraphStyle addTabStopAtPosition:36.0 * textScale alignment:kCTLeftTextAlignment];
 #endif
 				}
 				else 
@@ -696,7 +354,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithInt:kCTLeftTextAlignment] forKey:@"TextAlignment"];
+                    currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
 				}
 #if ALLOW_IPHONE_SPECIAL_CASES
 				else 
@@ -707,14 +365,14 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			}
 			else if ([tagName isEqualToString:@"center"] && tagOpen)
 			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTCenterTextAlignment] forKey:@"TextAlignment"];
+                currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
 #if ALLOW_IPHONE_SPECIAL_CASES						
 				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 			}
 			else if ([tagName isEqualToString:@"right"] && tagOpen)
 			{
-				[currentTag setObject:[NSNumber numberWithInt:kCTRightTextAlignment] forKey:@"TextAlignment"];
+                currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
 #if ALLOW_IPHONE_SPECIAL_CASES						
 				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
@@ -723,7 +381,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];
+                    currentTag.strikeOut = YES;
 				}
 			}
 			else if ([tagName isEqualToString:@"ol"]) 
@@ -757,21 +415,21 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithInt:kCTUnderlineStyleSingle] forKey:@"UnderlineStyle"];
+                    currentTag.underlineStyle = kCTUnderlineStyleSingle;
 				}
 			}
 			else if ([tagName isEqualToString:@"sup"])
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithInt:1] forKey:@"Superscript"];
+                    currentTag.superscriptStyle = 1;
 				}
 			}
 			else if ([tagName isEqualToString:@"sub"])
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithInt:-1] forKey:@"Superscript"];
+                    currentTag.superscriptStyle = -1;
 				}
 			}
 			else if ([tagName hasPrefix:@"h"])
@@ -786,45 +444,45 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					if ([scanner scanInteger:&headerLevel])
 					{
-						[currentTag setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"HeaderLevel"];	
-						currentFontDescriptor.boldTrait = YES;
+                        currentTag.headerLevel = headerLevel;
+						currentTag.fontDescriptor.boldTrait = YES;
 						
 						switch (headerLevel) 
 						{
 							case 1:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];
-								currentFontDescriptor.pointSize = textScale * 24.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 16.0;
+								currentTag.fontDescriptor.pointSize = textScale * 24.0;
 								break;
 							}
 							case 2:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = textScale * 18.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 14.0;
+								currentTag.fontDescriptor.pointSize = textScale * 18.0;
 								break;
 							}
 							case 3:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:14.0] forKey:@"ParagraphSpacing"];
-								currentFontDescriptor.pointSize = textScale * 14.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 14.0;
+								currentTag.fontDescriptor.pointSize = textScale * 14.0;
 								break;
 							}
 							case 4:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:15.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = textScale * 12.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 15.0;
+								currentTag.fontDescriptor.pointSize = textScale * 12.0;
 								break;
 							}
 							case 5:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:16.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = textScale * 10.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 16.0;
+								currentTag.fontDescriptor.pointSize = textScale * 10.0;
 								break;
 							}
 							case 6:
 							{
-								[currentTag setObject:[NSNumber numberWithFloat:20.0] forKey:@"ParagraphSpacing"];	
-								currentFontDescriptor.pointSize = textScale * 9.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 20.0;
+								currentTag.fontDescriptor.pointSize = textScale * 9.0;
 								break;
 							}
 							default:
@@ -845,26 +503,26 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					switch (size) 
 					{
 						case 1:
-							currentFontDescriptor.pointSize = textScale * 9.0;
+							currentTag.fontDescriptor.pointSize = textScale * 9.0;
 							break;
 						case 2:
-							currentFontDescriptor.pointSize = textScale * 10.0;
+							currentTag.fontDescriptor.pointSize = textScale * 10.0;
 							break;
 						case 4:
-							currentFontDescriptor.pointSize = textScale * 14.0;
+							currentTag.fontDescriptor.pointSize = textScale * 14.0;
 							break;
 						case 5:
-							currentFontDescriptor.pointSize = textScale * 18.0;
+							currentTag.fontDescriptor.pointSize = textScale * 18.0;
 							break;
 						case 6:
-							currentFontDescriptor.pointSize = textScale * 24.0;
+							currentTag.fontDescriptor.pointSize = textScale * 24.0;
 							break;
 						case 7:
-							currentFontDescriptor.pointSize = textScale * 37.0;
+							currentTag.fontDescriptor.pointSize = textScale * 37.0;
 							break;	
 						case 3:
 						default:
-							currentFontDescriptor.pointSize = defaultFontDescriptor.pointSize;
+							currentTag.fontDescriptor.pointSize = defaultFontDescriptor.pointSize;
 							break;
 					}
 					
@@ -872,7 +530,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 					
 					if (face)
 					{
-						currentFontDescriptor.fontFamily = face;
+						currentTag.fontDescriptor.fontFamily = face;
 					}
 				}
 			}
@@ -880,7 +538,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			{
 				if (tagOpen)
 				{
-					[currentTag setObject:[NSNumber numberWithFloat:defaultFontDescriptor.pointSize] forKey:@"ParagraphSpacing"];
+                    currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 					
 					seenPreviousParagraph = YES;
 				}
@@ -893,8 +551,12 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 			
 			
 			// convert CSS Styles into our own style
-			[self remapCSSStylesOnTagDictionary:currentTag];
-			
+            NSString *styleString = [tagAttributesDict objectForKey:@"style"];
+            
+            if (styleString)
+            {
+                [currentTag parseStyleString:styleString];
+            }
 			
 			// --------------------- push tag on stack if it's opening
 			if (tagOpen&&!immediatelyClosed)
@@ -906,12 +568,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				// block items have to have a NL at the end.
 				if (![tagName isInlineTag] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
-					// remove extra space
-					previousAttributes = nil;
-					
-					NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"\n" attributes:previousAttributes];
-					[tmpString appendAttributedString:string];
-                    [string release];
+                    [tmpString appendString:@"\n"];  // extends attributed area at end
 				}
 				
 				needsNewLineBefore = NO;
@@ -920,17 +577,16 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				if ([tagStack count])
 				{
 					// check if this tag is indeed closing the currently open one
-					NSDictionary *topStackTag = [tagStack lastObject];
-					NSString *topTagName = [topStackTag objectForKey:@"_tag"];
+					DTHTMLElement *topStackTag = [tagStack lastObject];
 					
-					if ([tagName isEqualToString:topTagName])
+					if ([tagName isEqualToString:topStackTag.tagName])
 					{
 						[tagStack removeLastObject];
 						currentTag = [tagStack lastObject];
 					}
 					else 
 					{
-						NSLog(@"Ignoring non-open tag %@", topTagName);
+						NSLog(@"Ignoring non-open tag %@", topStackTag.tagName);
 					}
 					
 				}
@@ -958,7 +614,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
                 skippedAngleBracket = YES;
             }
 			
-			if ((skippedAngleBracket||[scanner scanUpToString:@"<" intoString:&tagContents]) && ![[currentTag objectForKey:@"_tagContentsInvisible"] boolValue])
+			if ((skippedAngleBracket||[scanner scanUpToString:@"<" intoString:&tagContents]) && !currentTag.tagContentInvisible)
 			{
                 if (skippedAngleBracket)
                 {
@@ -976,52 +632,9 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 				{
 					tagContents = [tagContents stringByNormalizingWhitespace];
 					tagContents = [tagContents stringByReplacingHTMLEntities];
-					
-					NSDictionary *currentTagAttributes = [currentTag objectForKey:@"Attributes"];
-					DTCoreTextFontDescriptor *currentFontDescriptor = [currentTag objectForKey:@"FontDescriptor"];
                     
-                    tagName = [currentTag objectForKey:@"_tag"];
-					
-					NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-					
-					NSNumber *superscriptStyle = [currentTag objectForKey:@"Superscript"];
-					if ([superscriptStyle intValue])
-					{
-						[attributes setObject:superscriptStyle forKey:(id)kCTSuperscriptAttributeName];
-					}
-					
-					NSArray *shadows = [currentTag objectForKey:@"_Shadows"];
-					if (shadows)
-					{
-						[attributes setObject:shadows forKey:@"_Shadows"];
-					}
-					
-					
-					id runDelegate = [currentTag objectForKey:@"_RunDelegate"];
-					if (runDelegate)
-					{
-						[attributes setObject:runDelegate forKey:(id)kCTRunDelegateAttributeName];
-					}
-					
-					id link = [currentTag objectForKey:@"DTLink"];
-					if (link)
-					{
-						[attributes setObject:link forKey:@"DTLink"];
-					}
+                    tagName = currentTag.tagName;
                     
-                    
-
-                    
-#if ADD_FONT_DESCRIPTORS
-                    // adds the font description of this string to the attribute dictionary
-                    // e.g. for overriding later
-                    
-                    [attributes setObject:currentFontDescriptor forKey:@"FontDescriptor"];
-#endif
-					
-					CGFloat paragraphSpacing = [[currentTag objectForKey:@"ParagraphSpacing"] floatValue];
-					CGFloat paragraphSpacingBefore = [[currentTag objectForKey:@"ParagraphSpacingBefore"] floatValue];
-					
 #if ALLOW_IPHONE_SPECIAL_CASES				
 					if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
 					{
@@ -1037,74 +650,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						}
 					}
 #endif
-					
-					
-					CGFloat headIndent = [[currentTag objectForKey:@"HeadIndent"] floatValue];
-					
-					NSArray *tabStops = [currentTag objectForKey:@"TabStops"];
-					
-					
-					NSNumber *textAlignmentNum = [currentTag objectForKey:@"TextAlignment"];
-					CTTextAlignment textAlignment = kCTNaturalTextAlignment;
-					
-					if (textAlignmentNum)
-					{
-						textAlignment = [textAlignmentNum intValue];
-					}
-					
-					CTParagraphStyleRef paragraphStyle = createParagraphStyle(paragraphSpacingBefore, paragraphSpacing, headIndent, tabStops, textAlignment);
-					
-                    
-                    // create font
-                    CTFontRef font;
-                    
-                    // try font cache first
-                    NSNumber *key = [NSNumber numberWithInt:[currentFontDescriptor hash]];
-                    font = (CTFontRef)[fontCache objectForKey:key];
-                    
-                    if (!font)
-                    {
-                        font = [currentFontDescriptor newMatchingFont];
-                        [fontCache setObject:(id)font forKey:key];
-                        CFRelease(font);
-                    }
-					[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-					[attributes setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-                    
-					CFRelease(paragraphStyle);
-					
-					NSString *fontColor = [currentTagAttributes objectForKey:@"color"];
-					
-                    if (!fontColor)
-                    {
-                        fontColor = defaultColor;
-                    }
-                    
-                    UIColor *color = [UIColor colorWithHTMLName:fontColor];
-                    
-                    if (color)
-                    {
-                        [attributes setObject:(id)[color CGColor] forKey:(id)kCTForegroundColorAttributeName];
-					}
-					
-					NSNumber *underlineStyle = [currentTag objectForKey:@"UnderlineStyle"];
-					if (underlineStyle)
-					{
-						[attributes setObject:underlineStyle forKey:(id)kCTUnderlineStyleAttributeName];
-                        [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
-                        
-					}
-					
-					NSNumber *strikeOut = [currentTag objectForKey:@"_StrikeOut"];
-					
-					if (strikeOut)
-					{
-						[attributes setObject:strikeOut forKey:@"_StrikeOut"];
-					}
-					
-					// HTML ignores newlines
-//					tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-// this line unnecessary because stringByNormalizingWhitespace already did that                   
 					
 					if (needsListItemStart)
 					{
@@ -1140,7 +685,7 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 						{
 							if ([tagContents length])
 							{
-								tagContents = [tagContents stringByAppendingString:@"\n"];
+								//tagContents = [tagContents stringByAppendingString:@"\n"];
 							}
 						}
 					}
@@ -1171,12 +716,6 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
-					
-                    id guid = [currentTag objectForKey:@"DTGUID"];
-                    if (guid)
-                    {
-                        [attributes setObject:guid forKey:@"DTGUID"];
-                    }
                     
 #if ADD_TAG_PATH 
                     // adds the path of the tag containing this string to the attribute dictionary
@@ -1198,12 +737,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
                     // we don't want whitespace before first tag to turn into paragraphs
                     if (![tagName isEqualToString:@"html"])
                     {
-                        NSAttributedString *tagString = [[NSAttributedString alloc] initWithString:tagContents attributes:attributes];
-                        [tmpString appendAttributedString:tagString];
-                        [tagString release];
+                        currentTag.text = tagContents;
+                        
+                        [tmpString appendAttributedString:[currentTag attributedString]];
                     }
-                    
-					previousAttributes = attributes;
 				}
 				
 			}
@@ -1211,12 +748,10 @@ CTParagraphStyleRef createParagraphStyle(CGFloat paragraphSpacingBefore, CGFloat
 		
 	}
     
-    //NSLog(@"finish");
-	//return [self initWithAttributedString:tmpString];
     
     // returning the temporary mutable string is faster
+	//return [self initWithAttributedString:tmpString];
     return tmpString;
-    
 }
 
 #pragma mark Convenience Methods

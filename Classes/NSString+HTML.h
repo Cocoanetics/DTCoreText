@@ -6,6 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+
+#define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
+#define UNICODE_LINE_FEED @"\u2028"
+
 @interface NSString (HTML)
 
 - (NSUInteger)integerValueFromHex;

@@ -120,17 +120,17 @@
 	
 	// Create attributed string from HTML
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.3], NSTextSizeMultiplierDocumentOption, 
-                            @"Verdana", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, nil]; // @"green",DTDefaultTextColor,
+                             @"Verdana", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, nil]; // @"green",DTDefaultTextColor,
     
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	// Display string
     _textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.attributedString = string;
-   
+    
 	// Data view
 	_dataView.text = [data description];
-     
+    
     [string release];
 }
 
@@ -250,32 +250,27 @@
 	
 	if (attachment)
 	{
-		if ([attachment.contents isKindOfClass:[NSDictionary class]])
-		{
-			if ([[attachment.contents objectForKey:@"_tag"] isEqualToString:@"video"])
-			{
-				NSDictionary *attributes = [attachment.contents objectForKey:@"Attributes"];
-				
-				NSURL *url = [NSURL URLWithString:[attributes objectForKey:@"src"]];
-				
-				// we could customize the view that shows before playback starts
-				UIView *grayView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
-				grayView.backgroundColor = [UIColor blackColor];
-				
-				MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
-				player.controlStyle = MPMovieControlStyleEmbedded;
-				
-				[player prepareToPlay];
-				[player setShouldAutoplay:NO];
-				[self.mediaPlayers addObject:player];
-				
-				player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-				[grayView addSubview:player.view];
-                
-				// will get resized and added to view by caller
-				return grayView;
-			}
-		}
+        if (attachment.contentType == DTTextAttachmentTypeVideoURL)
+        {
+            NSURL *url = (id)attachment.contents;;
+            
+            // we could customize the view that shows before playback starts
+            UIView *grayView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+            grayView.backgroundColor = [UIColor blackColor];
+            
+            MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+            player.controlStyle = MPMovieControlStyleEmbedded;
+            
+            [player prepareToPlay];
+            [player setShouldAutoplay:NO];
+            [self.mediaPlayers addObject:player];
+            
+            player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            [grayView addSubview:player.view];
+            
+            // will get resized and added to view by caller
+            return grayView;
+        }
 	}
 	
 	return nil;

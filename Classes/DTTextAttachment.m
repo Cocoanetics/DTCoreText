@@ -1,5 +1,5 @@
 //
-//  NSTextAttachment.m
+//  DTTextAttachment.m
 //  CoreTextExtensions
 //
 //  Created by Oliver on 14.01.11.
@@ -11,14 +11,17 @@
 
 @implementation DTTextAttachment
 
-@synthesize size;
-@synthesize contents;
-
 - (void) dealloc
 {
 	[contents release];
 	[super dealloc];
 }
 
+
+#pragma mark Properties
+
+@synthesize size;
+@synthesize contents;
+@synthesize contentType;
 
 @end
