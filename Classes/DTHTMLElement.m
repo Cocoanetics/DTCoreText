@@ -108,16 +108,16 @@
     if (underlineStyle)
     {
         [tmpDict setObject:[NSNumber numberWithInteger:underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
-
+        
         // we could set an underline color as well if we wanted, but not supported by HTML
-//      [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
+        //      [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
     }
     
     if (textColor)
     {
         [tmpDict setObject:(id)[textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
     }
-
+    
     // add paragraph style
     [tmpDict setObject:(id)[self.paragraphStyle createCTParagraphStyle] forKey:(id)kCTParagraphStyleAttributeName];
     
@@ -327,7 +327,28 @@
     if (shadow)
     {
         self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:fontDescriptor.pointSize currentColor:textColor];
-    }    
+    }
+    
+    NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
+    if (lineHeight)
+    {
+        if ([lineHeight isEqualToString:@"normal"])
+        {
+            self.paragraphStyle.lineHeightMultiple = 0.0; // default
+        }
+        else if ([lineHeight isEqualToString:@"inherit"])
+        {
+            // no op, we already inherited it
+        }
+        else if ([lineHeight isNumeric])
+        {
+            self.paragraphStyle.lineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+        }
+        else // interpret as length
+        {
+            self.paragraphStyle.lineHeight = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+        }
+    }
 }
 
 #pragma mark Copying
@@ -335,7 +356,7 @@
 - (id)copyWithZone:(NSZone *)zone
 {
     DTHTMLElement *newObject = [[DTHTMLElement allocWithZone:zone] init];
-
+    
     newObject.fontDescriptor = self.fontDescriptor; // copy
     newObject.paragraphStyle = self.paragraphStyle; // copy
     
@@ -360,7 +381,7 @@
     {
         _fontCache = [[NSMutableDictionary alloc] init];
     }
-
+    
     return _fontCache;
 }
 

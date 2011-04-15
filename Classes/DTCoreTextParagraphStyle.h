@@ -15,6 +15,8 @@
     CGFloat paragraphSpacingBefore;
     CGFloat paragraphSpacing;
     CGFloat headIndent;
+    CGFloat lineHeightMultiple;
+    CGFloat lineHeight;
     
     CTTextAlignment textAlignment;
     CTWritingDirection writingDirection;
@@ -26,6 +28,8 @@
 @property (nonatomic, assign) CGFloat defaultTabInterval;
 @property (nonatomic, assign) CGFloat paragraphSpacingBefore;
 @property (nonatomic, assign) CGFloat paragraphSpacing;
+@property (nonatomic, assign) CGFloat lineHeightMultiple;
+@property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, assign) CGFloat headIndent;
 @property (nonatomic, copy) NSMutableArray *tabStops;
 

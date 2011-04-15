@@ -27,6 +27,8 @@
         defaultTabInterval = 36.0;
         writingDirection = kCTWritingDirectionNatural;
         textAlignment = kCTNaturalTextAlignment;
+        lineHeightMultiple = 0.0;
+        lineHeight = 0.0;
     }
 
     return self;
@@ -52,9 +54,12 @@
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paragraphSpacingBefore), &paragraphSpacingBefore},
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection},
+        {kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiple), &lineHeightMultiple},
+        {kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight},
+        {kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(lineHeight), &lineHeight}
 	};	
 	
-	return CTParagraphStyleCreate(settings, 8);
+	return CTParagraphStyleCreate(settings, 11);
 }
 
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
@@ -79,6 +84,7 @@
     newObject.defaultTabInterval = self.defaultTabInterval;
     newObject.paragraphSpacing = self.paragraphSpacing;
     newObject.paragraphSpacingBefore = self.paragraphSpacingBefore;
+    newObject.lineHeightMultiple = self.lineHeightMultiple;
     newObject.headIndent = self.headIndent;
     newObject.textAlignment = self.textAlignment;
     newObject.writingDirection = self.writingDirection;
@@ -93,6 +99,8 @@
 @synthesize defaultTabInterval;
 @synthesize paragraphSpacingBefore;
 @synthesize paragraphSpacing;
+@synthesize lineHeightMultiple;
+@synthesize lineHeight;
 @synthesize headIndent;
 @synthesize textAlignment;
 @synthesize writingDirection;

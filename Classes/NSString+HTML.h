@@ -14,6 +14,7 @@
 
 - (NSUInteger)integerValueFromHex;
 - (BOOL)isInlineTag;
+- (BOOL)isNumeric;
 - (NSString *)stringByNormalizingWhitespace;
 - (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet;
 - (BOOL)hasSuffixCharacterFromSet:(NSCharacterSet *)characterSet;

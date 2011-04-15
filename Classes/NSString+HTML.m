@@ -33,6 +33,13 @@ static NSDictionary *entityLookup = nil;
 	return [inlineTags containsObject:[self lowercaseString]];
 }
 
+- (BOOL)isNumeric
+{
+    NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:self];
+
+    return [[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet:characterSet];
+}
+
 - (NSString *)stringByNormalizingWhitespace
 {
     NSInteger stringLength = [self length];
