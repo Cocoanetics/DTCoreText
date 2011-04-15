@@ -38,6 +38,8 @@
     NSArray *shadows;
     
     NSMutableDictionary *_fontCache;
+    
+    NSInteger _isInline;
 }
 
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
@@ -58,6 +60,7 @@
 @property (nonatomic, assign) NSInteger superscriptStyle;
 
 @property (nonatomic, assign) NSInteger headerLevel;
+@property (nonatomic, readonly) BOOL isInline;
 
 
 

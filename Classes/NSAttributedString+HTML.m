@@ -69,6 +69,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
+    NSLog(@"start");
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -186,17 +187,17 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
         
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
-			if (![tagName isInlineTag])
-			{
-				// next text needs a NL
-				needsNewLineBefore = YES;
-			}
-			
 			if (tagOpen)
 			{
                 // make new tag as copy of previous tag
                 currentTag = [[currentTag copy] autorelease];
                 currentTag.tagName = tagName;
+                
+                if (![currentTag isInline])
+                {
+                    // next text needs a NL
+                    needsNewLineBefore = YES;
+                }
 			}
             
 			// ---------- Processing
@@ -436,13 +437,11 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			{
 				if (tagOpen)
 				{
-					NSInteger headerLevel = 0;
-					NSScanner *scanner = [NSScanner scannerWithString:tagName];
-					
-					// Skip h
-					[scanner scanString:@"h" intoString:NULL];
-					
-					if ([scanner scanInteger:&headerLevel])
+                    NSString *levelString = [tagName substringFromIndex:1];
+                    
+                    NSInteger headerLevel = [levelString integerValue];
+
+					if (headerLevel)
 					{
                         currentTag.headerLevel = headerLevel;
 						currentTag.fontDescriptor.boldTrait = YES;
@@ -547,6 +546,8 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			else if ([tagName isEqualToString:@"br"])
 			{
 				immediatelyClosed = YES; 
+                
+                [tmpString appendString:UNICODE_LINE_FEED];
 			}
 			
 			
@@ -566,7 +567,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			else if (!tagOpen)
 			{
 				// block items have to have a NL at the end.
-				if (![tagName isInlineTag] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
+				if (![currentTag isInline] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
                     [tmpString appendString:@"\n"];  // extends attributed area at end
 				}
@@ -636,7 +637,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                     tagName = currentTag.tagName;
                     
 #if ALLOW_IPHONE_SPECIAL_CASES				
-					if (tagOpen && ![tagName isInlineTag] && ![tagName isEqualToString:@"li"])
+					if (tagOpen && ![currentTag isInline] && ![tagName isEqualToString:@"li"])
 					{
 						if (nextParagraphAdditionalSpaceBefore>0)
 						{
@@ -666,28 +667,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 						}
 						
 						needsListItemStart = NO;
-					}
-					
-					
-					// Add newline after block contents if a new block follows
-					NSString *nextTag = [scanner peekNextTagSkippingClosingTags:YES];
-					
-					if ([nextTag isEqualToString:@"br"])
-					{
-						// Add linefeed
-						tagContents = [tagContents stringByAppendingString:UNICODE_LINE_FEED];
-					}
-					else
-					{
-						
-						// add paragraph break if this is the end of paragraph
-						if (nextTag && ![nextTag isInlineTag])
-						{
-							if ([tagContents length])
-							{
-								//tagContents = [tagContents stringByAppendingString:@"\n"];
-							}
-						}
 					}
 					
 					if (needsNewLineBefore)
@@ -748,7 +727,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 		
 	}
     
-    
+    NSLog(@"end");
     // returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
     return tmpString;

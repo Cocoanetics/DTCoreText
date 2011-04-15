@@ -24,6 +24,20 @@
 
 @implementation DTHTMLElement
 
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        _isInline = -1;
+    }
+    
+    return self;
+    
+}
+
+
+
 - (void)dealloc
 {
     [fontDescriptor release];
@@ -350,6 +364,16 @@
     return _fontCache;
 }
 
+- (BOOL)isInline
+{
+    if (_isInline<0)
+    {
+        _isInline = [tagName isInlineTag];
+    }
+    
+    return _isInline;
+}
+
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
 @synthesize textColor;
@@ -363,7 +387,7 @@
 @synthesize superscriptStyle;
 @synthesize headerLevel;
 @synthesize shadows;
-
+@synthesize isInline;
 @synthesize fontCache = _fontCache;
 
 
