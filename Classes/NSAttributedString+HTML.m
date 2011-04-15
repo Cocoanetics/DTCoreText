@@ -69,7 +69,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
-    NSLog(@"start");
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -197,6 +196,25 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                 {
                     // next text needs a NL
                     needsNewLineBefore = YES;
+                }
+                
+                
+                // direction
+                NSString *direction = [tagAttributesDict objectForKey:@"dir"];
+                
+                if (direction)
+                {
+                    NSString *lowerDirection = [direction lowercaseString];
+                    
+                    
+                    if ([lowerDirection isEqualToString:@"ltr"])
+                    {
+                        currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
+                    }
+                    else if ([lowerDirection isEqualToString:@"rtl"])
+                    {
+                        currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
+                    }
                 }
 			}
             
@@ -727,7 +745,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 		
 	}
     
-    NSLog(@"end");
     // returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
     return tmpString;

@@ -26,6 +26,7 @@
         firstLineIndent = 0.0;
         defaultTabInterval = 36.0;
         writingDirection = kCTWritingDirectionNatural;
+        textAlignment = kCTNaturalTextAlignment;
     }
 
     return self;
