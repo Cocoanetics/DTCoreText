@@ -77,6 +77,8 @@
 		A7DBFC1612E9661F00F25897 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
 		A7DBFC1712E9662000F25897 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
 		A7DBFC2012E9664400F25897 /* Snippets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B235590512E04DF9005EA62F /* Snippets.plist */; };
+		A7E5D0F5135EBCD0004B6C67 /* Subviews.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E5D0F4135EBCD0004B6C67 /* Subviews.html */; };
+		A7E5D0F6135EBCD0004B6C67 /* Subviews.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E5D0F4135EBCD0004B6C67 /* Subviews.html */; };
 		A7EA579F12E05FBF0045411B /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */; };
 		A7EA57F012E0C5590045411B /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A7EA57EF12E0C5590045411B /* Oliver.jpg */; };
 		A7EA581412E0C9010045411B /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA581312E0C9010045411B /* DTTextAttachment.m */; };
@@ -156,6 +158,7 @@
 		A7DBFB9312E960AF00F25897 /* APOD.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = APOD.html; sourceTree = "<group>"; };
 		A7DBFBEB12E965DE00F25897 /* UnitTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7DBFBEC12E965DE00F25897 /* UnitTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTest-Info.plist"; sourceTree = "<group>"; };
+		A7E5D0F4135EBCD0004B6C67 /* Subviews.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Subviews.html; sourceTree = "<group>"; };
 		A7EA579D12E05FBF0045411B /* NSAttributedStringRunDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringRunDelegates.h; sourceTree = "<group>"; };
 		A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringRunDelegates.m; sourceTree = "<group>"; };
 		A7EA57EF12E0C5590045411B /* Oliver.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Oliver.jpg; sourceTree = "<group>"; };
@@ -376,9 +379,10 @@
 				A7DBE3F612E6C6F500F25897 /* Video.html */,
 				A7DBFB9312E960AF00F25897 /* APOD.html */,
 				A76FF0E612ED652F0065A4E7 /* styles.html */,
-				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
 				A76F065112F0032A0065A4E7 /* Alignment.html */,
 				A7F2A73A1356F3950097BF31 /* CustomFont.html */,
+				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
+				A7E5D0F4135EBCD0004B6C67 /* Subviews.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -470,6 +474,7 @@
 				A76F065212F0032A0065A4E7 /* Alignment.html in Resources */,
 				A7F2A7391356F2E30097BF31 /* XB Niloofar.ttf in Resources */,
 				A7F2A7401356F5720097BF31 /* XB NiloofarBd.ttf in Resources */,
+				A7E5D0F6135EBCD0004B6C67 /* Subviews.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,6 +493,7 @@
 				A7DBFC2012E9664400F25897 /* Snippets.plist in Resources */,
 				A784551A1344D53500D7E6EC /* WarAndPeace.html in Resources */,
 				A7F2A73B1356F3950097BF31 /* CustomFont.html in Resources */,
+				A7E5D0F5135EBCD0004B6C67 /* Subviews.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

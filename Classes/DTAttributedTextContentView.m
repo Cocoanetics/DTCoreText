@@ -106,35 +106,65 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
 	{
+        NSRange lineRange = [oneLine stringRange];
+        
+        NSInteger skipRunsBeforeLocation = 0;
+        
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
 			// add custom views if necessary
-			
             NSRange stringRange = [oneRun stringRange];
+            CGRect frameForSubview = CGRectZero;
             
-            NSInteger tag = (TAG_BASE + stringRange.location);
             
-            UIView *existingView = [self viewWithTag:tag];
-            
-            // only add if there is no view yet with this tag
-            if (existingView)
+            if (stringRange.location>=skipRunsBeforeLocation)
             {
-                existingView.frame = oneRun.frame;
-            }
-            else 
-            {
-                NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
+                // see if it's a link
+                NSRange effectiveRange;
+                NSURL *linkURL = [_attributedString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
                 
-                UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:oneRun.frame];
-                
-                if (view)
+                if (linkURL)
                 {
-                    view.frame = oneRun.frame;
-                    view.tag = tag;
+                    // compute bounding frame over potentially multiple (chinese) glyphs
                     
-                    [self addSubview:view];
+                    // make one link view for all glyphruns in this line
+                    NSLog(@"%@", linkURL);
                     
-                    [self.customViews addObject:view];
+                    frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRange];
+                    stringRange = effectiveRange;
+                    
+                    skipRunsBeforeLocation = effectiveRange.location+effectiveRange.length;
+                }
+                else
+                {
+                    // individual glyph run
+                    frameForSubview = oneRun.frame;
+                }
+                
+                NSInteger tag = (TAG_BASE + stringRange.location);
+                
+                UIView *existingView = [self viewWithTag:tag];
+                
+                // only add if there is no view yet with this tag
+                if (existingView)
+                {
+                    existingView.frame = oneRun.frame;
+                }
+                else 
+                {
+                    NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
+                    
+                    UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+                    
+                    if (view)
+                    {
+                        view.frame = frameForSubview;
+                        view.tag = tag;
+                        
+                        [self addSubview:view];
+                        
+                        [self.customViews addObject:view];
+                    }
                 }
             }
 			

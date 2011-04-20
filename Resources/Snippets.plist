@@ -78,6 +78,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Custom subviews can be affixed over any glyph run.</string>
+		<key>Title</key>
+		<string>Custom Subviews</string>
+		<key>File</key>
+		<string>Subviews.html</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>

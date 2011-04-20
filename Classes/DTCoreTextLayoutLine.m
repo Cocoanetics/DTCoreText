@@ -111,6 +111,61 @@
 	return CGRectZero;
 }
 
+- (NSArray *)glyphRunsWithRange:(NSRange)range
+{
+    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self numberOfGlyphs]];
+    
+    for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+    {
+        NSRange runRange = [oneRun stringRange];
+
+        // we only care about locations, assume that number of glyphs >= indexes
+        if (NSLocationInRange(runRange.location, range))
+        {
+            [tmpArray addObject:oneRun];
+        }
+    }
+    
+    return tmpArray;
+}
+
+- (CGRect)frameOfGlyphsWithRange:(NSRange)range
+{
+    NSArray *glyphRuns = [self glyphRunsWithRange:range];
+    
+    CGRect tmpRect = CGRectMake(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
+    
+    for (DTCoreTextGlyphRun *oneRun in glyphRuns)
+    {
+        CGRect glyphFrame = oneRun.frame;
+        
+        if (glyphFrame.origin.x < tmpRect.origin.x)
+        {
+            tmpRect.origin.x = glyphFrame.origin.x;
+        }
+
+        if (glyphFrame.origin.y < tmpRect.origin.y)
+        {
+            tmpRect.origin.y = glyphFrame.origin.y;
+        }
+
+        if (glyphFrame.size.height > tmpRect.size.height)
+        {
+            tmpRect.size.height = glyphFrame.size.height;
+        }
+        
+        tmpRect.size.width = glyphFrame.origin.x + glyphFrame.size.width;
+    }
+
+    CGFloat maxX = CGRectGetMaxX(self.frame) - trailingWhitespaceWidth;
+    if (CGRectGetMaxX(tmpRect) > maxX)
+    {
+        tmpRect.size.width = maxX - tmpRect.origin.x;
+    }
+    
+    return tmpRect;
+}
+
 // bounds of an image encompassing the entire run
 - (CGRect)imageBoundsInContext:(CGContextRef)context
 {

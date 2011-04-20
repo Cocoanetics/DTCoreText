@@ -34,6 +34,8 @@
 - (NSRange)stringRange;
 - (NSInteger)numberOfGlyphs;
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
+- (NSArray *)glyphRunsWithRange:(NSRange)range;
+- (CGRect)frameOfGlyphsWithRange:(NSRange)range;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 
 - (void)drawInContext:(CGContextRef)context;
