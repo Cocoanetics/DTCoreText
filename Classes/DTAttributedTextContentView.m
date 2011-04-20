@@ -128,8 +128,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                     // compute bounding frame over potentially multiple (chinese) glyphs
                     
                     // make one link view for all glyphruns in this line
-                    NSLog(@"%@", linkURL);
-                    
                     frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRange];
                     stringRange = effectiveRange;
                     

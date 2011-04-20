@@ -154,7 +154,7 @@
             tmpRect.size.height = glyphFrame.size.height;
         }
         
-        tmpRect.size.width = glyphFrame.origin.x + glyphFrame.size.width;
+        tmpRect.size.width = glyphFrame.origin.x + glyphFrame.size.width - tmpRect.origin.x;
     }
 
     CGFloat maxX = CGRectGetMaxX(self.frame) - trailingWhitespaceWidth;
