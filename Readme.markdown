@@ -31,8 +31,6 @@ Currently attributes are inherited by enclosed tags via 'brute force'. I don't k
 
 ### DTAttributedTextView
 
-* Run Delegate: make room for IMG and draw the IMG
-* Run Delegate: Characters with super/subscript need baseline adjusted when drawn
 * Caret Positioning
 * Hit Detection on strings attributed with HREF
 * Text Insertion
