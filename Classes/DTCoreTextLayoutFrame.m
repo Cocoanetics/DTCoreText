@@ -176,6 +176,31 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     return tmpArray;
 }
 
+- (NSArray *)linesContainedInRect:(CGRect)rect
+{
+    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
+    
+    BOOL earlyBreakPossible = NO;
+    
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+        if (CGRectContainsRect(rect, oneLine.frame))
+        {
+            [tmpArray addObject:oneLine];
+            earlyBreakPossible = YES;
+        }
+        else
+        {
+            if (earlyBreakPossible)
+            {
+                break;
+            }
+        }
+    }
+    
+    return tmpArray;
+}
+
 - (CGPathRef)path
 {
 	return CTFrameGetPath(_textFrame);
@@ -472,6 +497,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
     
     return (CGRect){origin, size};
+}
+
+- (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
+{
+    for (DTCoreTextLayoutLine *oneLine in self.lines)
+    {
+        if (NSLocationInRange(index, [oneLine stringRange]))
+        {
+            return oneLine;
+        }
+    }
+    
+    return nil;
 }
 
 #pragma mark Properties

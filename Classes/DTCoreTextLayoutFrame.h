@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreText/CoreText.h>
 
+@class DTCoreTextLayoutLine;
+
 
 #define CGFLOAT_OPEN_HEIGHT 16777215.0f
 
@@ -39,7 +41,10 @@
 
 - (NSInteger)lineIndexForGlyphIndex:(NSInteger)index;
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
-- (NSArray *)linesVisibleInRect:(CGRect)rect;
+
+- (NSArray *)linesVisibleInRect:(CGRect)rect; // lines that are intersected, i.e. also incomplete lines
+- (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
+- (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) DTCoreTextLayouter *layouter;

@@ -8,6 +8,8 @@
 
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextGlyphRun.h"
+#import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextLayouter.h"
 
 @interface DTCoreTextLayoutLine ()
 
@@ -57,7 +59,14 @@
 
 - (NSString *)description
 {
-	return [self.glyphRuns description];
+    NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self stringRange].location];
+    
+    if ([extract length]>20)
+    {
+        extract = [extract substringToIndex:20];
+    }
+    
+	return [NSString stringWithFormat:@"<%@ '%@'>", [self class], extract];
 }
 
 //- (NSString *)description
