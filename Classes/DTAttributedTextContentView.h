@@ -32,7 +32,8 @@
 	BOOL drawDebugFrames;
 	NSMutableSet *customViews;
     
-    id <DTAttributedTextContentViewDelegate> delegate;
+    id <DTAttributedTextContentViewDelegate> _delegate;
+	BOOL _delegateSupportsCustomViews;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;

@@ -28,26 +28,21 @@
 		self.userInteractionEnabled = YES;
 		self.enabled = YES;
 		
-		UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, 0);
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		
-		CGPathRef roundedRectPath = newPathForRoundedRect(self.bounds, 3.0, YES, YES);
-		[[UIColor colorWithHTMLName:@"#BBBBBB"] set];
-		CGContextAddPath(ctx, roundedRectPath);
-		CGContextFillPath(ctx);
-		UIImage *background = UIGraphicsGetImageFromCurrentImageContext();
-		
-		CGPathRelease(roundedRectPath);
-		
-		[self setBackgroundImage:background forState:UIControlStateHighlighted]; 
-		
-		UIGraphicsEndImageContext();
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:@"DTLinkButtonDidHighlight" object:nil];
 	}
 	
 	
 	return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+	[_url release];
+    [_guid release];
+	
+	[super dealloc];
 }
 
 - (void)setHighlighted:(BOOL)highlighted
@@ -64,16 +59,42 @@
     }
 }
 
-
-- (void)dealloc
+- (void)setFrame:(CGRect)frame
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-	[_url release];
-    [_guid release];
+	[super setFrame:frame];
 	
-	[super dealloc];
+	if (CGRectIsEmpty(frame))
+	{
+		return;
+	}
+	
+	// build highlight image
+	
+	frame.origin = CGPointZero;
+	
+	UIGraphicsBeginImageContextWithOptions(frame.size, NO, 0);
+	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	
+	if (!ctx)
+	{
+		NSLog(@"Context is nil! bounds: %@", NSStringFromCGRect(self.bounds));
+	}
+	
+	CGPathRef roundedRectPath = newPathForRoundedRect(frame, 3.0, YES, YES);
+	[[UIColor colorWithHTMLName:@"#BBBBBB"] set];
+	CGContextAddPath(ctx, roundedRectPath);
+	CGContextFillPath(ctx);
+	UIImage *background = UIGraphicsGetImageFromCurrentImageContext();
+	
+	CGPathRelease(roundedRectPath);
+	
+	[self setBackgroundImage:background forState:UIControlStateHighlighted]; 
+	
+	UIGraphicsEndImageContext();
+	
 }
+
+
 
 #pragma mark Notifications
 - (void)highlightNotification:(NSNotification *)notification

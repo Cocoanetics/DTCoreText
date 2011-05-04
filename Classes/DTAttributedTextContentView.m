@@ -97,7 +97,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	[super layoutSubviews];
     
-    if (![delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)])
+    if (!_delegateSupportsCustomViews)
     {
         return;
     }
@@ -138,6 +138,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                     // individual glyph run
                     frameForSubview = oneRun.frame;
                 }
+				
+				if (CGRectIsEmpty(frameForSubview))
+				{
+					continue;
+				}
                 
                 NSInteger tag = (TAG_BASE + stringRange.location);
                 
@@ -152,7 +157,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                 {
                     NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
                     
-                    UIView *view = [delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+                    UIView *view = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
                     
                     if (view)
                     {
@@ -314,9 +319,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return customViews;
 }
 
+- (void)setDelegate:(id<DTAttributedTextContentViewDelegate>)delegate
+{
+	_delegate = delegate;
+	
+	_delegateSupportsCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+}
+
 @synthesize layouter;
 @synthesize attributedString = _attributedString;
-@synthesize delegate;
+@synthesize delegate = _delegate;
 @synthesize edgeInsets;
 @synthesize drawDebugFrames;
 @synthesize customViews;
