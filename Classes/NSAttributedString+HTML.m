@@ -90,8 +90,10 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
     // NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
-	
+
+#if ALLOW_IPHONE_SPECIAL_CASES
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
+#endif
 	BOOL seenPreviousParagraph = NO;
 	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
@@ -735,23 +737,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
-                    
-#if ADD_TAG_PATH 
-                    // adds the path of the tag containing this string to the attribute dictionary
-                    NSMutableArray *tagPath = [[NSMutableArray alloc] init];
-                    for (NSDictionary *oneTag in tagStack)
-                    {
-                        NSString *tag = [oneTag objectForKey:@"_tag"];
-                        if (!tag)
-                        {
-                            tag = @"";
-                        }
-                        [tagPath addObject:tag];  
-                    }
-                    
-                    [attributes setObject:[tagPath componentsJoinedByString:@"/"] forKey:@"Path"];
-                    [tagPath release];
-#endif
                     
                     // we don't want whitespace before first tag to turn into paragraphs
                     if (![tagName isEqualToString:@"html"])

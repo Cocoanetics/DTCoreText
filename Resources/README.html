@@ -10,18 +10,17 @@ This is useful for drawing simple rich text - like this document - without havin
 <li>Underline <b>U</b></li>
 <li>Superscript <b>SUP</b> and Subscript <b>SUB</b>, e.g. e = mc<sup>2</sup> (Drawing missing)</li>
 <li>Strike Out <b>DEL</b>, e.g. <del>Something Removed</del></li>
-<li><b>FONT</b> (face,color and size 1-7). It would be great if we could support many more styles</li>
-<li>Images <b>IMG</b> (Online local files)</li>
-<li>Hyperlinks <b>A</b> (<a>Formatting</a> only, not clickable yet)</li>
+<li><b>FONT</b> (face,color and size 1-7)</li>
+<li>Horizontal Rule<b>HR</b> (coloring via background-color style, simplified)</li>
+<li>Hyperlinks <b>A</b> (<a>Formatting</a> only, clickable as custom view)</li>
 <li>Unordered Lists <b>LI</b></li>
 <li>Ordered Lists <b>OL</b></li></ul>
-<p>Currently attributes are inherited by enclosed tags via brute force. I don't know if this is accurate.</p>
+<p>Currently attributes are inherited from enclosed tags via brute force. I don't know if this is accurate.</p>
 <h3>To Do</h3>
 <h4>NSAttributedString+HTML</h4>
 <ol>
-<li>Decode HTML Entities</li>
+<li>Variations of the HR tag, currently it's only drawn as single 1px line</li>
 <li>More robust handling for inline versus block elements</li>
-<li>A HREF tags, to format links</li>
 <li>More styles, as far as supported by CoreText</li>
 </ol>
 <h4>DTAttributedTextView</h4>
