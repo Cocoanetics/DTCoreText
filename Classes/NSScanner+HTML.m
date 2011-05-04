@@ -91,8 +91,6 @@
 	// Read attributes of tag
 	while (![self isAtEnd])
 	{
-		[self logPosition];
-		
 		if ([self scanString:@"/" intoString:NULL])
 		{
 			
