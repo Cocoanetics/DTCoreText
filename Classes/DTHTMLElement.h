@@ -15,6 +15,14 @@
 #import <CoreText/CoreText.h>
 
 
+typedef enum
+{
+	DTHTMLElementFloatStyleNone = 0,
+	DTHTMLElementFloatStyleLeft,
+	DTHTMLElementFloatStyleRight
+} DTHTMLElementFloatStyle;
+
+
 @interface DTHTMLElement : NSObject <NSCopying>
 {
     DTCoreTextFontDescriptor *fontDescriptor;
@@ -43,6 +51,8 @@
     NSInteger _isInline;
 	
 	NSMutableDictionary *_additionalAttributes;
+	
+	DTHTMLElementFloatStyle floatStyle;
 }
 
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
@@ -66,6 +76,7 @@
 
 @property (nonatomic, assign) NSInteger headerLevel;
 @property (nonatomic, readonly) BOOL isInline;
+@property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
 
 
 

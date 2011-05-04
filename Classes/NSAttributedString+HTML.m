@@ -288,6 +288,14 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				}
                 
                 [tmpString appendAttributedString:[currentTag attributedString]];
+
+#if ALLOW_IPHONE_SPECIAL_CASES
+				// workaround, make float images blocks because we have no float
+				if (currentTag.floatStyle)
+				{
+					needsNewLineBefore = YES;
+				}
+#endif
 			}
 			else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{

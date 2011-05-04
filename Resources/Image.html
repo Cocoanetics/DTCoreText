@@ -1,11 +1,12 @@
 <h1>Image Handling</h1>
 <p>Some basic <b>image</b> handling has been implemented</p>
 <h2>Inline</h2>
-<p style="font-size:30px;">So far <img width="50" height="50" src="Oliver.jpg"> images work inline, sitting on the line's baseline.</p>
+<p>So far <img width="50" height="50" src="Oliver.jpg"> images work inline, sitting on the line's baseline.</p>
 <h2>Block</h2>
 <p>There is a known issue with images as blocks, outside of p tags.<p>
 <img width="100" height="100" src="Oliver.jpg">
 <p>An Image outside of P is treated as a paragraph</p>
+<p><img style="float:right;" width="100" height="100" src="Oliver.jpg">The previous image has float style. As a <span style="background-color:yellow;">Workaround</span> a newline is added after it until we can support floating in the layouting.</p>
 <h2>Supported Attributes</h2>
 <ul>
 <li><b>width</b>, <b>height</b> in pixels</li>
@@ -23,4 +24,3 @@
 <li>cur</li>
 <li>xbm</li>
 </ul>
-<p style="font-size:40px;">Large Text</p>

@@ -182,7 +182,24 @@
         self.backgroundColor = [UIColor colorWithHTMLName:bgColor];       
     }
     
-    // TODO: better mapping from font families to available families
+	NSString *floatString = [styles objectForKey:@"float"];
+	
+	if (floatString)
+	{
+		if ([floatString isEqualToString:@"left"])
+		{
+			floatStyle = DTHTMLElementFloatStyleLeft;
+		}
+		else if ([floatString isEqualToString:@"right"])
+		{
+			floatStyle = DTHTMLElementFloatStyleRight;
+		}
+		else if ([floatString isEqualToString:@"none"])
+		{
+			floatStyle = DTHTMLElementFloatStyleNone;
+		}
+	}
+	
     NSString *fontFamily = [[styles objectForKey:@"font-family"] stringByTrimmingCharactersInSet:[NSCharacterSet quoteCharacterSet]];
     
     if (fontFamily)
@@ -441,7 +458,10 @@
 @synthesize headerLevel;
 @synthesize shadows;
 @synthesize isInline;
+@synthesize floatStyle;
+
 @synthesize fontCache = _fontCache;
+
 
 
 @end
