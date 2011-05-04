@@ -86,24 +86,25 @@
 	// make tags lowercase
 	scannedTagName = [scannedTagName lowercaseString];
 	
-	//[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	
 	// Read attributes of tag
 	while (![self isAtEnd])
 	{
+		[self logPosition];
+		
 		if ([self scanString:@"/" intoString:NULL])
 		{
 			
 			immediatelyClosed = YES;
-			break;
 		}
-		
+
+		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+
 		if ([self scanString:@">" intoString:NULL])
 		{
 			break;
 		}
-		
-		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 		
 		NSString *attrName = nil;
 		NSString *attrValue = nil;
@@ -150,11 +151,6 @@
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	}
 
-	// skip ending bracket
-	//[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-	//[self scanString:@">" intoString:NULL];
-	
-	
 	// Success 
 	if (isClosed)
 	{
