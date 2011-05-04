@@ -25,17 +25,6 @@
 
 #import "CGUtils.h"
 
-// Allows variations to cater for different behavior on iOS than OSX to have similar visual output
-#define ALLOW_IPHONE_SPECIAL_CASES 1
-
-// adds the path of tags to attributes dict
-//#define ADD_TAG_PATH 1
-
-/* Known Differences:
- - OSX has an entire attributes block for an UL block
- - OSX does not add extra space after UL block
- */
-
 // standard options
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
 NSString *NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
@@ -191,6 +180,14 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                 // make new tag as copy of previous tag
                 currentTag = [[currentTag copy] autorelease];
                 currentTag.tagName = tagName;
+				
+				// convert CSS Styles into our own style
+				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
+				
+				if (styleString)
+				{
+					[currentTag parseStyleString:styleString];
+				}
                 
                 if (![currentTag isInline])
                 {
@@ -455,6 +452,36 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                     currentTag.superscriptStyle = -1;
 				}
 			}
+			else if ([tagName isEqualToString:@"hr"])
+			{
+				if (tagOpen)
+				{
+					immediatelyClosed = YES;
+					
+					// open block needs closing
+					if (needsNewLineBefore)
+					{
+						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+						{
+							[tmpString appendString:@"\n"];
+						}
+						
+						needsNewLineBefore = NO;
+					}
+					
+					currentTag.text = @"\n";
+					
+					NSMutableDictionary *styleDict = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"Dummy"];
+					
+					if (currentTag.backgroundColor)
+					{
+						[styleDict setObject:currentTag.backgroundColor forKey:@"BackgroundColor"];
+					}
+					[currentTag addAdditionalAttribute:styleDict forKey:@"DTHorizontalRuleStyle"];
+					
+					[tmpString appendAttributedString:[currentTag attributedString]];
+				}
+			}
 			else if ([tagName hasPrefix:@"h"])
 			{
 				if (tagOpen)
@@ -571,15 +598,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                 
                 [tmpString appendString:UNICODE_LINE_FEED];
 			}
-			
-			
-			// convert CSS Styles into our own style
-            NSString *styleString = [tagAttributesDict objectForKey:@"style"];
-            
-            if (styleString)
-            {
-                [currentTag parseStyleString:styleString];
-            }
 			
 			// --------------------- push tag on stack if it's opening
 			if (tagOpen&&!immediatelyClosed)

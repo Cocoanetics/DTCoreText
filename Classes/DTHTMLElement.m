@@ -45,6 +45,8 @@
     [textAttachment release];
     
     [textColor release];
+	[backgroundColor release];
+	
     [tagName release];
     [text release];
     [link release];
@@ -52,6 +54,7 @@
     [shadows release];
     
     [_fontCache release];
+	[_additionalAttributes release];
     
     [super dealloc];
 }
@@ -60,6 +63,12 @@
 - (NSDictionary *)attributesDictionary
 {
     NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
+	
+	// copy additional attributes
+	if (_additionalAttributes)
+	{
+		[tmpDict setDictionary:_additionalAttributes];
+	}
     
     // add text attachment
     if (textAttachment)
@@ -117,6 +126,11 @@
     {
         [tmpDict setObject:(id)[textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
     }
+	
+	if (backgroundColor)
+	{
+		[tmpDict setObject:(id)[backgroundColor CGColor] forKey:@"DTBackgroundColor"];
+	}
     
     // add paragraph style
     [tmpDict setObject:(id)[self.paragraphStyle createCTParagraphStyle] forKey:(id)kCTParagraphStyleAttributeName];
@@ -160,6 +174,12 @@
     if (color)
     {
         self.textColor = [UIColor colorWithHTMLName:color];       
+    }
+	
+	NSString *bgColor = [styles objectForKey:@"background-color"];
+    if (bgColor)
+    {
+        self.backgroundColor = [UIColor colorWithHTMLName:bgColor];       
     }
     
     // TODO: better mapping from font families to available families
@@ -351,6 +371,16 @@
     }
 }
 
+- (void)addAdditionalAttribute:(id)attribute forKey:(id)key
+{
+	if (!_additionalAttributes)
+	{
+		_additionalAttributes = [[NSMutableDictionary alloc] init];
+	}
+	
+	[_additionalAttributes setObject:attribute forKey:key];
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
@@ -362,7 +392,8 @@
     
     newObject.underlineStyle = self.underlineStyle;
     newObject.tagContentInvisible = self.tagContentInvisible;
-    newObject.textColor = self.textColor; // copy
+    newObject.textColor = self.textColor; 
+	newObject.backgroundColor = self.backgroundColor;
     newObject.strikeOut = self.strikeOut;
     newObject.superscriptStyle = self.superscriptStyle;
     
@@ -398,6 +429,7 @@
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
 @synthesize textColor;
+@synthesize backgroundColor;
 @synthesize tagName;
 @synthesize text;
 @synthesize link;
