@@ -316,7 +316,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
             // -------------- Line-Out, Underline, Background-Color
             BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
             
-            BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"_StrikeOut"] boolValue];
+            BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"DTStrikeOut"] boolValue];
             BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
             
             if (drawStrikeOut||drawUnderline||backgroundColor)
@@ -381,7 +381,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         {
             CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
             
-            NSArray *shadows = [oneRun.attributes objectForKey:@"_Shadows"];
+            NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
             
             if (shadows)
             {

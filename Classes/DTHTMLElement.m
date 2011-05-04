@@ -110,7 +110,7 @@
     // add strikout if applicable
     if (strikeOut)
     {
-        [tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"_StrikeOut"];
+        [tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"DTStrikeOut"];
     }
     
     // set underline style
@@ -138,7 +138,7 @@
     // add shadow array if applicable
     if (shadows)
     {
-        [tmpDict setObject:shadows forKey:@"_Shadows"];
+        [tmpDict setObject:shadows forKey:@"DTShadows"];
     }
     
     return tmpDict;
