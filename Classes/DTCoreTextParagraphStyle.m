@@ -36,7 +36,7 @@
 
 - (void)dealloc
 {
-    [tabStops release];
+    [_tabStops release];
     
     [super dealloc];
 }
@@ -49,7 +49,7 @@
 		{kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment},
 		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
 		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
-		{kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops},
+		{kCTParagraphStyleSpecifierTabStops, sizeof(_tabStops), &_tabStops},
 		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing},
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paragraphSpacingBefore), &paragraphSpacingBefore},
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent},
@@ -64,13 +64,13 @@
 
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
 {
-    if (!tabStops)
+    if (!_tabStops)
     {
-        tabStops = [[NSMutableArray alloc] init];
+        _tabStops = [[NSMutableArray alloc] init];
     }
     
     CTTextTabRef tab = CTTextTabCreate(alignment, position, NULL);
-    [tabStops addObject:(id)tab];
+    [_tabStops addObject:(id)tab];
     CFRelease(tab);
 }
 
@@ -95,6 +95,15 @@
 
 #pragma mark Properties
 
+- (void)setTabStops:(NSMutableArray *)tabStops
+{
+	if (tabStops != _tabStops)
+	{
+		[_tabStops release];
+		_tabStops = [tabStops mutableCopy]; // keep mutability
+	}
+}
+
 @synthesize firstLineIndent;
 @synthesize defaultTabInterval;
 @synthesize paragraphSpacingBefore;
@@ -104,6 +113,6 @@
 @synthesize headIndent;
 @synthesize textAlignment;
 @synthesize writingDirection;
-@synthesize tabStops;
+@synthesize tabStops = _tabStops;
 
 @end

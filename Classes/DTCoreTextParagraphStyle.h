@@ -21,7 +21,7 @@
     CTTextAlignment textAlignment;
     CTWritingDirection writingDirection;
     
-    NSMutableArray *tabStops;
+    NSMutableArray *_tabStops;
 }
 
 @property (nonatomic, assign) CGFloat firstLineIndent;
