@@ -312,6 +312,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				continue;
 			}
+
+			// don't draw decorations on images
+			DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
+			if (attachment)
+			{
+				continue;
+			}
 			
             // -------------- Line-Out, Underline, Background-Color
             BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
