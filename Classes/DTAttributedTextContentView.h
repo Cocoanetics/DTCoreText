@@ -18,7 +18,7 @@
 
 @protocol DTAttributedTextContentViewDelegate <NSObject>
 
-@optional
+//@optional
 
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
 
@@ -43,6 +43,7 @@
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 
 - (void)relayoutText;
+- (void)removeAllCustomViews;
 
 @property (nonatomic, retain) DTCoreTextLayouter *layouter;
 @property (nonatomic, retain) DTCoreTextLayoutFrame *layoutFrame;

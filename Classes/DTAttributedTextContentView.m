@@ -14,6 +14,8 @@
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 
+#import "DTLinkButton.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 #define TAG_BASE 9999
@@ -46,11 +48,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)setup
 {
-	self.contentMode = UIViewContentModeRedraw;
-	self.userInteractionEnabled = YES;
-	
-	self.opaque = NO;
-	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
+	self.contentMode = UIViewContentModeRedraw; // to avoid bitmap scaling effect on resize
 	
 	drawDebugFrames = NO;
 	
@@ -112,6 +110,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
     {
         return;
     }
+
+	NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
 	
 	for (DTCoreTextLayoutLine *oneLine in self.layoutFrame.lines)
 	{
@@ -130,7 +130,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
             {
                 // see if it's a link
                 NSRange effectiveRange;
-                NSURL *linkURL = [self.layouter.attributedString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
+				
+                NSURL *linkURL = [layoutString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
                 
                 if (linkURL)
                 {
@@ -160,11 +161,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                 // only add if there is no view yet with this tag
                 if (existingView)
                 {
+					// update frame
                     existingView.frame = oneRun.frame;
                 }
                 else 
                 {
-                    NSAttributedString *string = [self.layouter.attributedString attributedSubstringFromRange:stringRange]; 
+					// create new customView via delegate
+                    NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
                     
                     UIView *view = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
                     
@@ -208,6 +211,17 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return CGSizeMake(size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom));
 }
 
+- (NSString *)description
+{
+    NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
+	
+    if ([extract length]>10)
+    {
+        extract = [extract substringToIndex:10];
+    }
+	
+    return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
+}
 
 - (void)relayoutText
 {
@@ -226,6 +240,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[self setNeedsDisplay];
 }
 
+- (void)removeAllCustomViews
+{
+	// remove all existing custom views for links
+	for (UIView *customView in [NSSet setWithSet:customViews])
+	{
+		[customView removeFromSuperview];
+		[customViews removeObject:customView];
+	}
+}
 
 #pragma mark Properties
 - (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
@@ -248,48 +271,29 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		// need new layouter
 		self.layouter = nil;
-		
-		// remove custom views
-		[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-		self.customViews = nil;
+
+		[self removeAllCustomViews];
 		
 		[self setNeedsDisplay];
 	}
 }
 
-//- (void)setFrame:(CGRect)newFrame
-//{
-//	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
-//	{
-//		[super setFrame:newFrame];
-//		
-//        // set tile size if applicable
-//        CATiledLayer *layer = (id)self.layer;
-//        if ([layer isKindOfClass:[CATiledLayer class]])
-//        {
-//            CGSize tileSize = CGSizeMake(newFrame.size.width, 1024);
-//            
-//            if ([self respondsToSelector:@selector(contentScaleFactor)])
-//            {
-//                CGFloat scaleFactor = [self contentScaleFactor];
-//                tileSize.width *= scaleFactor;
-//                tileSize.height *= scaleFactor;
-//            }
-//            
-//            layer.tileSize = tileSize;
-//        }
-//        
-//		// next redraw will do new layout
-//		self.layouter = nil;
-//		
-//		// contentMode = topLeft, no automatic redraw on bounds change
-//		[self setNeedsDisplay];
-//	}
-//	else 
-//	{
-//		//NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
-//	}
-//}
+- (void)setFrame:(CGRect)frame
+{
+	CGRect previousFrame = self.frame;
+	
+	[super setFrame:frame];
+	
+	if (!CGRectEqualToRect(frame, previousFrame) && !CGRectIsEmpty(frame) && !(frame.size.height<0))
+	{
+		// if we have a layouter then it can create a new layoutFrame for us on redraw
+		if (_layouter)
+		{
+			// next redraw will do new layout
+			self.layoutFrame = nil;
+		}
+	}
+}
 
 - (void)setDrawDebugFrames:(BOOL)newSetting
 {
@@ -303,7 +307,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	if (!_layouter)
+	if (!_layouter && _attributedString)
 	{
 		_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
 	}
@@ -320,6 +324,35 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		[_layoutFrame retain];
 	}
 	return _layoutFrame;
+}
+
+- (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
+{
+    if (_layoutFrame != layoutFrame)
+    {
+        [_layoutFrame release];
+		
+        _layoutFrame = [layoutFrame retain];
+		
+        if (layoutFrame)
+        {
+            // remove all existing custom views for links
+            for (UIView *customView in [NSSet setWithSet:customViews])
+            {
+                if ([customView isKindOfClass:[DTLinkButton class]])
+                {
+                    [customView removeFromSuperview];
+                    [customViews removeObject:customView];
+                }
+            }
+			
+            [self setNeedsDisplay];
+        }
+		else
+		{
+			[self removeAllCustomViews];
+		}
+    }
 }
 
 - (NSMutableSet *)customViews
