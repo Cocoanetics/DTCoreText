@@ -12,7 +12,9 @@
 
 #import "DTCoreTextLayouter.h"
 
+
 @class DTAttributedTextContentView;
+@class DTCoreTextLayoutFrame;
 
 @protocol DTAttributedTextContentViewDelegate <NSObject>
 
@@ -28,18 +30,23 @@
 {
 	NSAttributedString *_attributedString;
 	UIEdgeInsets edgeInsets;
-	DTCoreTextLayouter *layouter;
 	BOOL drawDebugFrames;
 	NSMutableSet *customViews;
     
     id <DTAttributedTextContentViewDelegate> _delegate;
 	BOOL _delegateSupportsCustomViews;
+	
+	DTCoreTextLayouter *_layouter;
+	DTCoreTextLayoutFrame *_layoutFrame;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
+
 - (void)relayoutText;
 
 @property (nonatomic, retain) DTCoreTextLayouter *layouter;
+@property (nonatomic, retain) DTCoreTextLayoutFrame *layoutFrame;
+
 @property (nonatomic, retain) NSMutableSet *customViews;
 
 @property (nonatomic, copy) NSAttributedString *attributedString;

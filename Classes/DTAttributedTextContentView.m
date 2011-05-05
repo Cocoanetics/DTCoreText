@@ -8,6 +8,7 @@
 
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
+#import "DTCoreTextLayoutFrame.h"
 
 #import "DTTextAttachment.h"
 #import "NSString+HTML.h"
@@ -52,6 +53,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	
 	drawDebugFrames = NO;
+	
+	// set tile size if applicable
+	CATiledLayer *layer = (id)self.layer;
+	if ([layer isKindOfClass:[CATiledLayer class]])
+	{
+		CGSize tileSize = CGSizeMake(1024, 1024); //CGSizeMake(newFrame.size.width, 1024);
+		layer.tileSize = tileSize;
+	}
 }
 
 - (id)initWithFrame:(CGRect)frame 
@@ -81,9 +90,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)dealloc 
 {
-	[_attributedString release];
-	[layouter release];
 	[customViews release];
+	
+	[_layouter release];
+	[_layoutFrame release];
+	
 	
 	[super dealloc];
 }
@@ -102,9 +113,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
         return;
     }
 	
-	DTCoreTextLayoutFrame *layoutFrame = [self.layouter layoutFrameAtIndex:0];
-	
-	for (DTCoreTextLayoutLine *oneLine in layoutFrame.lines)
+	for (DTCoreTextLayoutLine *oneLine in self.layoutFrame.lines)
 	{
         NSRange lineRange = [oneLine stringRange];
         
@@ -121,7 +130,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
             {
                 // see if it's a link
                 NSRange effectiveRange;
-                NSURL *linkURL = [_attributedString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
+                NSURL *linkURL = [self.layouter.attributedString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
                 
                 if (linkURL)
                 {
@@ -155,7 +164,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                 }
                 else 
                 {
-                    NSAttributedString *string = [_attributedString attributedSubstringFromRange:stringRange]; 
+                    NSAttributedString *string = [self.layouter.attributedString attributedSubstringFromRange:stringRange]; 
                     
                     UIView *view = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
                     
@@ -175,17 +184,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
--(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {
-    DTCoreTextLayoutFrame *frame = [self.layouter layoutFrameAtIndex:0];
-    
-    [frame drawInContext:context];
+    [self.layoutFrame drawInContext:ctx];
 }
 
 - (void)drawRect:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [self drawLayer:self.layer inContext:context];
+	CGContextRef context = UIGraphicsGetCurrentContext();
+    [self.layoutFrame drawInContext:context];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -250,39 +257,39 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
-- (void)setFrame:(CGRect)newFrame
-{
-	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
-	{
-		[super setFrame:newFrame];
-		
-        // set tile size if applicable
-        CATiledLayer *layer = (id)self.layer;
-        if ([layer isKindOfClass:[CATiledLayer class]])
-        {
-            CGSize tileSize = CGSizeMake(newFrame.size.width, 1024);
-            
-            if ([self respondsToSelector:@selector(contentScaleFactor)])
-            {
-                CGFloat scaleFactor = [self contentScaleFactor];
-                tileSize.width *= scaleFactor;
-                tileSize.height *= scaleFactor;
-            }
-            
-            layer.tileSize = tileSize;
-        }
-        
-		// next redraw will do new layout
-		self.layouter = nil;
-		
-		// contentMode = topLeft, no automatic redraw on bounds change
-		[self setNeedsDisplay];
-	}
-	else 
-	{
-		//NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
-	}
-}
+//- (void)setFrame:(CGRect)newFrame
+//{
+//	if (!CGRectEqualToRect(newFrame, self.frame) && !CGRectIsEmpty(newFrame) && !(newFrame.size.height<0))
+//	{
+//		[super setFrame:newFrame];
+//		
+//        // set tile size if applicable
+//        CATiledLayer *layer = (id)self.layer;
+//        if ([layer isKindOfClass:[CATiledLayer class]])
+//        {
+//            CGSize tileSize = CGSizeMake(newFrame.size.width, 1024);
+//            
+//            if ([self respondsToSelector:@selector(contentScaleFactor)])
+//            {
+//                CGFloat scaleFactor = [self contentScaleFactor];
+//                tileSize.width *= scaleFactor;
+//                tileSize.height *= scaleFactor;
+//            }
+//            
+//            layer.tileSize = tileSize;
+//        }
+//        
+//		// next redraw will do new layout
+//		self.layouter = nil;
+//		
+//		// contentMode = topLeft, no automatic redraw on bounds change
+//		[self setNeedsDisplay];
+//	}
+//	else 
+//	{
+//		//NSLog(@"ignoring content set to: %@", NSStringFromCGRect(newFrame) );
+//	}
+//}
 
 - (void)setDrawDebugFrames:(BOOL)newSetting
 {
@@ -296,17 +303,23 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	if (!layouter)
+	if (!_layouter)
 	{
-		layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+		_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
 	}
 	
-	if (![layouter numberOfFrames])
+	return _layouter;
+}
+
+- (DTCoreTextLayoutFrame *)layoutFrame
+{
+	if (!_layoutFrame)
 	{
-		[layouter addTextFrameWithFrame:UIEdgeInsetsInsetRect(self.bounds, edgeInsets)];
+		CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+		_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+		[_layoutFrame retain];
 	}
-	
-	return layouter;
+	return _layoutFrame;
 }
 
 - (NSMutableSet *)customViews
@@ -326,7 +339,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegateSupportsCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
 }
 
-@synthesize layouter;
+@synthesize layouter = _layouter;
+@synthesize layoutFrame = _layoutFrame;
 @synthesize attributedString = _attributedString;
 @synthesize delegate = _delegate;
 @synthesize edgeInsets;
