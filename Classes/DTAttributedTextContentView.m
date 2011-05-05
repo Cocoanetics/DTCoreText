@@ -49,7 +49,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setup
 {
 	self.contentMode = UIViewContentModeRedraw; // to avoid bitmap scaling effect on resize
-	self.backgroundColor = [UIColor whiteColor];
+	
+	// possibly already set in NIB
+	if (!self.backgroundColor)
+	{
+		self.backgroundColor = [UIColor whiteColor];
+	}
 	
 	// set tile size if applicable
 	CATiledLayer *layer = (id)self.layer;
