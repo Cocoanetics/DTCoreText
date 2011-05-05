@@ -196,6 +196,12 @@
 {
 	[self.navigationController setToolbarHidden:YES animated:YES];
 	
+	// stop all playing media
+	for (MPMoviePlayerController *player in self.mediaPlayers)
+	{
+		[player stop];
+	}
+	
 	[super viewWillDisappear:animated];
 }
 

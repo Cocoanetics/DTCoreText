@@ -49,14 +49,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setup
 {
 	self.contentMode = UIViewContentModeRedraw; // to avoid bitmap scaling effect on resize
-	
-	drawDebugFrames = NO;
+	self.backgroundColor = [UIColor whiteColor];
 	
 	// set tile size if applicable
 	CATiledLayer *layer = (id)self.layer;
 	if ([layer isKindOfClass:[CATiledLayer class]])
 	{
-		CGSize tileSize = CGSizeMake(1024, 1024); //CGSizeMake(newFrame.size.width, 1024);
+		CGSize tileSize = CGSizeMake(1024, 1024); // tiled layer reduzes with to fit
 		layer.tileSize = tileSize;
 	}
 }
@@ -86,31 +85,44 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return self;
 }
 
+- (void)awakeFromNib
+{
+	[self setup];
+}
+
 - (void)dealloc 
 {
+	[self removeAllCustomViews];
 	[customViews release];
 	
 	[_layouter release];
 	[_layoutFrame release];
-	
+	[_attributedString release];
 	
 	[super dealloc];
-}
-
-- (void)awakeFromNib
-{
-	[self setup];
 }
 
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
     
-    if (!_delegateSupportsCustomViews)
+    if (!_delegateSupportsCustomViews || !self.layoutFrame)
     {
+		[self removeAllCustomViews];
+		
         return;
     }
-
+	
+	// remove all existing custom views for links, other custom views we can adjust frame
+	for (UIView *customView in [NSSet setWithSet:customViews])
+	{
+		if ([customView isKindOfClass:[DTLinkButton class]])
+		{
+			[customView removeFromSuperview];
+			[customViews removeObject:customView];
+		}
+	}
+	
 	NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
 	
 	for (DTCoreTextLayoutLine *oneLine in self.layoutFrame.lines)
@@ -189,6 +201,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {
+	// needs clearing of background
+	CGRect rect = CGContextGetClipBoundingBox(ctx);
+	
+	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
+	CGContextFillRect(ctx, rect);
+	
     [self.layoutFrame drawInContext:ctx];
 }
 
@@ -271,8 +289,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		// need new layouter
 		self.layouter = nil;
-
-		[self removeAllCustomViews];
 		
 		[self setNeedsDisplay];
 	}
@@ -334,24 +350,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
         _layoutFrame = [layoutFrame retain];
 		
-        if (layoutFrame)
-        {
-            // remove all existing custom views for links
-            for (UIView *customView in [NSSet setWithSet:customViews])
-            {
-                if ([customView isKindOfClass:[DTLinkButton class]])
-                {
-                    [customView removeFromSuperview];
-                    [customViews removeObject:customView];
-                }
-            }
-			
-            [self setNeedsDisplay];
-        }
-		else
-		{
-			[self removeAllCustomViews];
-		}
+		[self setNeedsLayout];
+		[self setNeedsDisplay];
     }
 }
 
