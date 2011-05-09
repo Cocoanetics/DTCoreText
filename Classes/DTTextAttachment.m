@@ -20,7 +20,8 @@
 
 #pragma mark Properties
 
-@synthesize size;
+@synthesize originalSize;
+@synthesize displaySize;
 @synthesize contents;
 @synthesize contentType;
 

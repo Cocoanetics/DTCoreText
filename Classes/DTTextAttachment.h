@@ -17,13 +17,15 @@ typedef enum
 
 
 @interface DTTextAttachment : NSObject {
-	CGSize size;
+	CGSize originalSize;
+	CGSize displaySize;
 	id contents;
     
     DTTextAttachmentType contentType;
 }
 
-@property (nonatomic, assign) CGSize size;
+@property (nonatomic, assign) CGSize originalSize;
+@property (nonatomic, assign) CGSize displaySize;
 @property (nonatomic, retain) id contents;
 @property (nonatomic, assign) DTTextAttachmentType contentType;
 
