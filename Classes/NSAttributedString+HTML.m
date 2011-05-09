@@ -606,7 +606,8 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			{
 				immediatelyClosed = YES; 
                 
-                [tmpString appendString:UNICODE_LINE_FEED];
+				currentTag.text = UNICODE_LINE_FEED;
+				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
 			
 			// --------------------- push tag on stack if it's opening
