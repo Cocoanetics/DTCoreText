@@ -17,8 +17,8 @@ typedef enum
 
 
 @interface DTTextAttachment : NSObject {
-	CGSize originalSize;
-	CGSize displaySize;
+	CGSize _originalSize;
+	CGSize _displaySize;
 	id contents;
     
     DTTextAttachmentType contentType;
