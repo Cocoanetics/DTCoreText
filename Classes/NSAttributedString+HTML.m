@@ -90,7 +90,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 	
 	NSMutableArray *tagStack = [NSMutableArray array];
     // NSMutableDictionary *fontCache = [NSMutableDictionary dictionaryWithCapacity:10];
-
+    
 #if ALLOW_IPHONE_SPECIAL_CASES
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 #endif
@@ -288,7 +288,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				}
                 
                 [tmpString appendAttributedString:[currentTag attributedString]];
-
+                
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
 				if (currentTag.floatStyle)
@@ -297,7 +297,13 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				}
 #endif
 			}
-			else if ([tagName isEqualToString:@"video"] && tagOpen)
+            else if ([tagName isEqualToString:@"blockquote"] && tagOpen)
+            {
+                currentTag.paragraphStyle.headIndent += 25.0 * textScale;
+                currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+                currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+            }
+            else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{
 				// hide contents of recognized tag
                 currentTag.tagContentInvisible = YES;
@@ -360,15 +366,14 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
 					
-                    currentTag.paragraphStyle.headIndent = 25.0 * textScale;
-                    [currentTag.paragraphStyle addTabStopAtPosition:11.0 alignment:kCTLeftTextAlignment];
-					
-#if ALLOW_IPHONE_SPECIAL_CASES
-                    [currentTag.paragraphStyle addTabStopAtPosition:25.0 * textScale alignment:kCTLeftTextAlignment];
+#if ALLOW_IPHONE_SPECIAL_CASES                    
+                    currentTag.paragraphStyle.headIndent += 25.0 * textScale;
 #else
-                    [currentTag.paragraphStyle addTabStopAtPosition:36.0 * textScale alignment:kCTLeftTextAlignment];
+                    currentTag.paragraphStyle.headIndent += 36.0 * textScale;
 #endif
-				}
+                    [currentTag.paragraphStyle addTabStopAtPosition:11.0 alignment:kCTLeftTextAlignment];
+                    [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
+                }
 				else 
 				{
 					needsListItemStart = NO;
@@ -499,7 +504,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
                     NSString *levelString = [tagName substringFromIndex:1];
                     
                     NSInteger headerLevel = [levelString integerValue];
-
+                    
 					if (headerLevel)
 					{
                         currentTag.headerLevel = headerLevel;
