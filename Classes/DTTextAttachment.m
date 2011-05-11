@@ -20,7 +20,14 @@
 
 #pragma mark Properties
 
-@synthesize size;
+- (void)setOriginalSize:(CGSize)originalSize
+{
+	_originalSize = originalSize;
+	self.displaySize = _originalSize;
+}
+
+@synthesize originalSize = _originalSize;
+@synthesize displaySize = _displaySize;
 @synthesize contents;
 @synthesize contentType;
 

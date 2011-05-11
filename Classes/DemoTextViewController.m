@@ -239,7 +239,7 @@
 	{
 		DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
 		button.url = link;
-		button.alpha = 0.4;
+		button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
         button.guid = [attributes objectForKey:@"DTGUID"];
         
 		// use normal push action for opening URL
@@ -261,7 +261,7 @@
             NSURL *url = (id)attachment.contents;;
             
             // we could customize the view that shows before playback starts
-            UIView *grayView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+            UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
             grayView.backgroundColor = [UIColor blackColor];
             
             MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
@@ -272,6 +272,7 @@
             [self.mediaPlayers addObject:player];
             
             player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+			player.view.frame = grayView.bounds;
             [grayView addSubview:player.view];
             
             // will get resized and added to view by caller

@@ -188,9 +188,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                     
                     UIView *view = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
                     
+					// delegate responsible to set proper frame
                     if (view)
                     {
-                        view.frame = frameForSubview;
                         view.tag = tag;
                         
                         [self addSubview:view];

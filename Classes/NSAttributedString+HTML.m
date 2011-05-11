@@ -273,7 +273,8 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = image;
-				attachment.size = CGSizeMake(width, height);
+				attachment.originalSize = image.size;
+				attachment.displaySize = CGSizeMake(width, height);
                 
                 currentTag.textAttachment = attachment;
                 
@@ -320,7 +321,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contents = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
                 attachment.contentType = DTTextAttachmentTypeVideoURL;
-				attachment.size = CGSizeMake(width, height);
+				attachment.originalSize = CGSizeMake(width, height);
                 
                 currentTag.textAttachment = attachment;
                 
@@ -611,7 +612,8 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			{
 				immediatelyClosed = YES; 
                 
-                [tmpString appendString:UNICODE_LINE_FEED];
+				currentTag.text = UNICODE_LINE_FEED;
+				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
 			
 			// --------------------- push tag on stack if it's opening

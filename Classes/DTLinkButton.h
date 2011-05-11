@@ -13,9 +13,13 @@
 {
 	NSURL *_url;
     NSString *_guid;
+	
+	CGSize _minimumHitSize;
 }
 
 @property (nonatomic, copy) NSURL *url;
 @property (nonatomic, copy) NSString *guid;
+
+@property (nonatomic, assign) CGSize minimumHitSize;
 
 @end
