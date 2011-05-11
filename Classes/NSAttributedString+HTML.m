@@ -94,7 +94,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 #if ALLOW_IPHONE_SPECIAL_CASES
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 #endif
-	BOOL seenPreviousParagraph = NO;
 	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
@@ -553,9 +552,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 								break;
 						}
 					}
-					
-					// First paragraph after a header needs a newline to not stick to header
-					seenPreviousParagraph = NO;
 				}
 			}
 			else if ([tagName isEqualToString:@"font"])
@@ -603,8 +599,6 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				if (tagOpen)
 				{
                     currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
-					
-					seenPreviousParagraph = YES;
 				}
 				
 			}
@@ -709,7 +703,8 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 					}
 #endif
 					
-					if (needsListItemStart)
+					// if we start a list, then we wait until we have actual text
+					if (needsListItemStart && ![tagContents isEqualToString:@" "])
 					{
 						if (listCounter)
 						{
@@ -737,7 +732,7 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-								tagContents = [@"\n" stringByAppendingString:tagContents];
+								tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
 							}
 						}
 						needsNewLineBefore = NO;
