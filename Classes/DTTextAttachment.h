@@ -16,17 +16,23 @@ typedef enum
 }  DTTextAttachmentType;
 
 
-@interface DTTextAttachment : NSObject {
+@interface DTTextAttachment : NSObject 
+{
 	CGSize _originalSize;
 	CGSize _displaySize;
 	id contents;
     
     DTTextAttachmentType contentType;
+	
+	NSURL *_contentURL;
+	NSURL *_hyperLinkURL;
 }
 
 @property (nonatomic, assign) CGSize originalSize;
 @property (nonatomic, assign) CGSize displaySize;
 @property (nonatomic, retain) id contents;
 @property (nonatomic, assign) DTTextAttachmentType contentType;
+@property (nonatomic, retain) NSURL *contentURL;
+@property (nonatomic, retain) NSURL *hyperLinkURL;
 
 @end

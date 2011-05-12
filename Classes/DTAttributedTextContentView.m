@@ -109,9 +109,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviews
 {
+	NSLog(@"layout DT %@", self);
+	
 	[super layoutSubviews];
-    
-    if (!_delegateSupportsCustomViews || !self.layoutFrame)
+	
+    if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews || !self.layoutFrame)
     {
 		[self removeAllCustomViews];
 		
@@ -183,19 +185,50 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                 }
                 else 
                 {
-					// create new customView via delegate
-                    NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
-                    
-                    UIView *view = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
-                    
+					UIView *customView = nil;
+					
+					if (linkURL)
+					{
+						if (_delegateSupportsCustomViewsForLinks)
+						{
+							NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
+							
+							NSString *guid = [attributes objectForKey:@"DTGUID"];
+							customView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
+						}
+						else if (_delegateSupportsGenericCustomViews)
+						{
+							NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
+							customView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+						}
+					}
+					else
+					{
+						if (_delegateSupportsCustomViewsForAttachments)
+						{
+							NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
+							DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+							
+							if (attachment)
+							{
+								customView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
+							}
+						}
+						else if (_delegateSupportsGenericCustomViews)
+						{
+							NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
+							customView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+						}
+					}
+					
 					// delegate responsible to set proper frame
-                    if (view)
+                    if (customView)
                     {
-                        view.tag = tag;
+                        customView.tag = tag;
                         
-                        [self addSubview:view];
+                        [self addSubview:customView];
                         
-                        [self.customViews addObject:view];
+                        [self.customViews addObject:customView];
                     }
                 }
             }
@@ -212,7 +245,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
 	CGContextFillRect(ctx, rect);
 	
-    [self.layoutFrame drawInContext:ctx];
+    [self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 }
 
 - (void)drawRect:(CGRect)rect
@@ -305,7 +338,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	[super setFrame:frame];
 	
-	if (!CGRectEqualToRect(frame, previousFrame) && !CGRectIsEmpty(frame) && !(frame.size.height<0))
+	if (!CGSizeEqualToSize(frame.size, previousFrame.size) && !CGRectIsEmpty(frame) && !(frame.size.height<0))
 	{
 		// if we have a layouter then it can create a new layoutFrame for us on redraw
 		if (_layouter)
@@ -374,7 +407,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	_delegate = delegate;
 	
-	_delegateSupportsCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+	_delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
+	_delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
+	_delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)]; 
 }
 
 @synthesize layouter = _layouter;
@@ -384,5 +419,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize edgeInsets;
 @synthesize drawDebugFrames;
 @synthesize customViews;
+@synthesize shouldDrawImages;
 
 @end

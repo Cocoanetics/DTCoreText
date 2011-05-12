@@ -276,6 +276,13 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				attachment.displaySize = CGSizeMake(width, height);
                 
                 currentTag.textAttachment = attachment;
+				
+				// transfer link to attachment if present
+				if (currentTag.link)
+				{
+					attachment.hyperLinkURL = currentTag.link;
+					currentTag.link = nil;
+				}
                 
 				if (needsNewLineBefore)
 				{

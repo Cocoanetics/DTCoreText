@@ -11,7 +11,7 @@
 #import "NSAttributedString+HTML.h"
 
 #import "DTCoreTextLayouter.h"
-
+#import "DTTextAttachment.h"
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
@@ -20,6 +20,10 @@
 
 @optional
 
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame;
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
+
+// old style
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
 
 @end
@@ -31,10 +35,14 @@
 	NSAttributedString *_attributedString;
 	UIEdgeInsets edgeInsets;
 	BOOL drawDebugFrames;
+	BOOL shouldDrawImages;
+	
 	NSMutableSet *customViews;
     
     id <DTAttributedTextContentViewDelegate> _delegate;
-	BOOL _delegateSupportsCustomViews;
+	BOOL _delegateSupportsCustomViewsForAttachments;
+	BOOL _delegateSupportsCustomViewsForLinks;
+	BOOL _delegateSupportsGenericCustomViews;
 	
 	DTCoreTextLayouter *_layouter;
 	DTCoreTextLayoutFrame *_layoutFrame;
@@ -53,12 +61,11 @@
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
 @property (nonatomic) BOOL drawDebugFrames;
+@property (nonatomic) BOOL shouldDrawImages;
+
 
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
-
-
-
 
 @end
 

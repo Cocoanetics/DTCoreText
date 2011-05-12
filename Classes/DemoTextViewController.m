@@ -229,59 +229,62 @@
 
 
 #pragma mark Custom Views on Text
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame
 {
-	NSDictionary *attributes = [string attributesAtIndex:0 effectiveRange:NULL];
+	DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
+	button.url = url;
+	button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
+	button.guid = identifier;
 	
-	NSURL *link = [attributes objectForKey:@"DTLink"];
+	// use normal push action for opening URL
+	[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
 	
-	if (link)
+	// demonstrate combination with long press
+	UILongPressGestureRecognizer *longPress = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)] autorelease];
+	[button addGestureRecognizer:longPress];
+	
+	return button;
+}
+
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
+{
+	if (attachment.contentType == DTTextAttachmentTypeVideoURL)
 	{
-		DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
-		button.url = link;
-		button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
-        button.guid = [attributes objectForKey:@"DTGUID"];
-        
-		// use normal push action for opening URL
-		[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
-        
-		// demonstrate combination with long press
-		UILongPressGestureRecognizer *longPress = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)] autorelease];
-		[button addGestureRecognizer:longPress];
-		return button;
+		NSURL *url = (id)attachment.contents;;
+		
+		// we could customize the view that shows before playback starts
+		UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
+		grayView.backgroundColor = [UIColor blackColor];
+		
+		MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+		player.controlStyle = MPMovieControlStyleEmbedded;
+		
+		[player prepareToPlay];
+		[player setShouldAutoplay:NO];
+		[self.mediaPlayers addObject:player];
+		
+		player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		player.view.frame = grayView.bounds;
+		[grayView addSubview:player.view];
+		
+		return grayView;
 	}
-	
-	
-	DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
-	
-	if (attachment)
+	else if (attachment.contentType == DTTextAttachmentTypeImage)
 	{
-        if (attachment.contentType == DTTextAttachmentTypeVideoURL)
-        {
-            NSURL *url = (id)attachment.contents;;
-            
-            // we could customize the view that shows before playback starts
-            UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
-            grayView.backgroundColor = [UIColor blackColor];
-            
-            MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
-            player.controlStyle = MPMovieControlStyleEmbedded;
-            
-            [player prepareToPlay];
-            [player setShouldAutoplay:NO];
-            [self.mediaPlayers addObject:player];
-            
-            player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-			player.view.frame = grayView.bounds;
-            [grayView addSubview:player.view];
-            
-            // will get resized and added to view by caller
-            return grayView;
-        }
+		UIImage *image = (id)attachment.contents;
+		
+		// if the attachment has a hyperlinkURL then this is currently ignored
+		UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
+		imageView.frame = frame;
+		
+		return imageView;
 	}
 	
 	return nil;
 }
+
+
+#pragma mark Actions
 
 - (void)linkPushed:(DTLinkButton *)button
 {

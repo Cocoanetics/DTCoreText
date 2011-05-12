@@ -14,6 +14,9 @@
 - (void) dealloc
 {
 	[contents release];
+	[_contentURL release];
+	[_hyperLinkURL release];
+	
 	[super dealloc];
 }
 
@@ -30,5 +33,7 @@
 @synthesize displaySize = _displaySize;
 @synthesize contents;
 @synthesize contentType;
+@synthesize contentURL = _contentURL;
+@synthesize hyperLinkURL = _hyperLinkURL;
 
 @end
