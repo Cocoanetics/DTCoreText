@@ -37,7 +37,8 @@
 - (CGPathRef)path;
 - (NSRange)visibleStringRange;
 
-- (void)drawInContext:(CGContextRef)context;
+- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages;
+- (void)drawInContext:(CGContextRef)context;  // draws images
 
 - (NSInteger)lineIndexForGlyphIndex:(NSInteger)index;
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;

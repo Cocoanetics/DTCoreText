@@ -206,7 +206,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return CTFrameGetPath(_textFrame);
 }
 
-- (void)drawInContext:(CGContextRef)context
+- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages
 {
     CGContextSaveGState(context);
     
@@ -431,27 +431,35 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
             }
             else
             {
-                // -------------- Draw Embedded Images
-                DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-                
-                if (attachment)
-                {
-                    if ([attachment.contents isKindOfClass:[UIImage class]])
-                    {
-                        UIImage *image = (id)attachment.contents;
-                        
-                        CGPoint origin = oneRun.frame.origin;
-                        origin.y = self.frame.size.height - origin.y - oneRun.ascent;
-                        CGRect flippedRect = {origin, oneRun.frame.size};
-                        
-                        CGContextDrawImage(context, flippedRect, image.CGImage);
-                    }
-                }
-                else
-                {
-                    // regular text
-                    [oneRun drawInContext:context];
-                }
+				if (drawImages)
+				{
+					// -------------- Draw Embedded Images
+					DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
+					
+					if (attachment)
+					{
+						if ([attachment.contents isKindOfClass:[UIImage class]])
+						{
+							UIImage *image = (id)attachment.contents;
+							
+							CGPoint origin = oneRun.frame.origin;
+							origin.y = self.frame.size.height - origin.y - oneRun.ascent;
+							CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), oneRun.frame.size.width, oneRun.frame.size.height);
+							
+							CGContextDrawImage(context, flippedRect, image.CGImage);
+						}
+					}
+					else
+					{
+						// regular text
+						[oneRun drawInContext:context];
+					}
+				}
+				else
+				{
+					// unicode placeholder is invisible if this is an image
+					[oneRun drawInContext:context];
+				}
             }
 		}
 	}
@@ -466,6 +474,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     
     CGContextRestoreGState(context);
 }
+
+// assume we want to draw images statically
+- (void)drawInContext:(CGContextRef)context
+{
+	[self drawInContext:context drawImages:YES];
+}
+
 
 - (NSRange)visibleStringRange
 {
