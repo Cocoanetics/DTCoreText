@@ -131,8 +131,16 @@
 			
 			if ([self scanCharactersFromSet:quoteCharacterSet intoString:&quote])
 			{
-				[self scanUpToString:quote intoString:&attrValue];	
-				[self scanString:quote intoString:NULL];
+				if ([quote length]==1)
+				{
+					[self scanUpToString:quote intoString:&attrValue];	
+					[self scanString:quote intoString:NULL];
+				}
+				else
+				{
+					// most likely e.g. href=""
+					attrValue = @"";
+				}
 				
 				[tmpAttributes setObject:attrValue forKey:attrName];
 			}

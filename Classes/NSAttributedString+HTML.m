@@ -352,7 +352,14 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 					// deal with relative URL
 					if (![link scheme])
 					{
-						link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+						if ([cleanString length])
+						{
+							link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+						}
+						else
+						{
+							link = baseURL;
+						}
 					}
 					
                     currentTag.link = link;
