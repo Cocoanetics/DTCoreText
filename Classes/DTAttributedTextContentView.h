@@ -66,7 +66,6 @@
 @property (nonatomic) BOOL shouldDrawImages;
 @property (nonatomic) CGPoint layoutOffset;
 
-
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
 
 @end
