@@ -59,33 +59,24 @@ typedef enum
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
 @property (nonatomic, retain) DTTextAttachment *textAttachment;
 @property (nonatomic, copy) NSURL *link;
-
 @property (nonatomic, retain) UIColor *textColor;
 @property (nonatomic, retain) UIColor *backgroundColor;
-
 @property (nonatomic, copy) NSString *tagName;
 @property (nonatomic, copy) NSString *text;
-
 @property (nonatomic, retain) NSArray *shadows;
-
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;
-
 @property (nonatomic, assign) BOOL tagContentInvisible;
 @property (nonatomic, assign) BOOL strikeOut;
 @property (nonatomic, assign) NSInteger superscriptStyle;
-
 @property (nonatomic, assign) NSInteger headerLevel;
 @property (nonatomic, readonly) BOOL isInline;
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
-
 
 
 - (NSAttributedString *)attributedString;
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;
-
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
-
 
 @end
