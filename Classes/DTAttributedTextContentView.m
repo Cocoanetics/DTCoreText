@@ -109,8 +109,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviews
 {
-	NSLog(@"layout DT %@", self);
-	
 	[super layoutSubviews];
 	
     if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews || !self.layoutFrame)
