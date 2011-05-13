@@ -176,12 +176,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                 NSInteger tag = (TAG_BASE + stringRange.location);
                 
                 UIView *existingView = [self viewWithTag:tag];
+				
+				// offset layout if necessary
+				if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
+				{
+					frameForSubview.origin.x += _layoutOffset.x;
+					frameForSubview.origin.y += _layoutOffset.y;
+				}
                 
                 // only add if there is no view yet with this tag
                 if (existingView)
                 {
 					// update frame
-                    existingView.frame = oneRun.frame;
+                    existingView.frame = frameForSubview;
                 }
                 else 
                 {
@@ -244,6 +251,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
 	CGContextFillRect(ctx, rect);
+	
+	// offset layout if necessary
+	if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
+	{
+		CGAffineTransform transform = CGAffineTransformMakeTranslation(_layoutOffset.x, _layoutOffset.y);
+		CGContextConcatCTM(ctx, transform);
+	}
 	
     [self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 }
@@ -420,5 +434,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize drawDebugFrames;
 @synthesize customViews;
 @synthesize shouldDrawImages;
+@synthesize layoutOffset = _layoutOffset;
 
 @end

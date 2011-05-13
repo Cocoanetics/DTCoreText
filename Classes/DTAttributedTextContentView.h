@@ -46,6 +46,8 @@
 	
 	DTCoreTextLayouter *_layouter;
 	DTCoreTextLayoutFrame *_layoutFrame;
+	
+	CGPoint _layoutOffset;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
@@ -62,7 +64,7 @@
 @property (nonatomic) UIEdgeInsets edgeInsets;
 @property (nonatomic) BOOL drawDebugFrames;
 @property (nonatomic) BOOL shouldDrawImages;
-
+@property (nonatomic) CGPoint layoutOffset;
 
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
