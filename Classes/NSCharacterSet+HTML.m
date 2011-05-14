@@ -19,7 +19,7 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 {
     if (!_tagNameCharacterSet)
     {
-        _tagNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+        _tagNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@":abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
     }
     
     return _tagNameCharacterSet;
@@ -29,7 +29,7 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 {
     if (!_tagAttributeNameCharacterSet)
     {
-        _tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+        _tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@":-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
     }
     
     return _tagAttributeNameCharacterSet;
