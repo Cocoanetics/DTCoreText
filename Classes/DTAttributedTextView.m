@@ -88,6 +88,7 @@
 	{
 		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
 		contentView.userInteractionEnabled = YES;
+		contentView.backgroundColor = self.backgroundColor;
         [self addSubview:contentView];
 	}		
 	
@@ -100,7 +101,6 @@
 	{
 		super.backgroundColor = newColor;
 		contentView.backgroundColor = [UIColor clearColor];
-		contentView.opaque = NO;
 		self.opaque = NO;
 	}
 	else 

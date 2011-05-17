@@ -371,6 +371,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
+- (void)setBackgroundColor:(UIColor *)newColor
+{
+	super.backgroundColor = newColor;
+
+	if ([newColor alpha]<1.0)
+	{
+		self.opaque = NO;
+	}
+	else 
+	{
+		self.opaque = YES;
+	}
+}
+
+
 - (DTCoreTextLayouter *)layouter
 {
 	if (!_layouter && _attributedString)
