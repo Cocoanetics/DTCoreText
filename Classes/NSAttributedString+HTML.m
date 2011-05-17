@@ -35,7 +35,7 @@ NSString *DTMaxImageSize = @"DTMaxImageSize";
 NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString *DTDefaultTextColor = @"DTDefaultTextColor";
 NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
-
+NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 
 @implementation NSAttributedString (HTML)
 
@@ -131,6 +131,16 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
     {
         defaultLinkColor = [UIColor colorWithHTMLName:@"#0000EE"];
     }
+	
+	// default is to have A underlined
+	BOOL defaultLinkDecoration = YES;
+	
+	NSNumber *linkDecorationDefault = [options objectForKey:DTDefaultLinkDecoration];
+	
+	if (linkDecorationDefault)
+	{
+		defaultLinkDecoration = [linkDecorationDefault boolValue];
+	}
     
     // default paragraph style
     DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
@@ -337,7 +347,10 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 			{
 				if (tagOpen)
 				{
-                    currentTag.underlineStyle = kCTUnderlineStyleSingle;
+					if (defaultLinkDecoration)
+					{
+						currentTag.underlineStyle = kCTUnderlineStyleSingle;
+					}
                     
  					if (currentTag.isColorInherited || !currentTag.textColor)
 					{

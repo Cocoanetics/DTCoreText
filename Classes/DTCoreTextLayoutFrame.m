@@ -206,6 +206,36 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return CTFrameGetPath(_textFrame);
 }
 
+- (void)setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
+{
+	UIColor *color = [dictionary objectForKey:@"Color"];
+	CGSize offset = [[dictionary objectForKey:@"Offset"] CGSizeValue];
+	CGFloat blur = [[dictionary objectForKey:@"Blur"] floatValue];
+	
+	CGFloat scaleFactor = 1.0;
+	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+	{
+		scaleFactor = [[UIScreen mainScreen] scale];
+	}
+	
+	
+	// workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
+	if (scaleFactor==1.0)
+	{
+		if (fabs(offset.width)==1.0)
+		{
+			offset.width *= 1.50;
+		}
+		
+		if (fabs(offset.height)==1.0)
+		{
+			offset.height *= 1.50;
+		}
+	}
+	
+	CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+}
+
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages
 {
     CGContextSaveGState(context);
@@ -396,32 +426,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 
                 for (NSDictionary *shadowDict in shadows)
                 {
-                    UIColor *color = [shadowDict objectForKey:@"Color"];
-                    CGSize offset = [[shadowDict objectForKey:@"Offset"] CGSizeValue];
-                    CGFloat blur = [[shadowDict objectForKey:@"Blur"] floatValue];
-                    
-                    CGFloat scaleFactor = 1.0;
-                    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-                    {
-                        scaleFactor = [[UIScreen mainScreen] scale];
-                    }
-                    
-                    
-                    // workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
-                    if (scaleFactor==1.0)
-                    {
-                        if (fabs(offset.width)==1.0)
-                        {
-                            offset.width *= 1.50;
-                        }
-                        
-                        if (fabs(offset.height)==1.0)
-                        {
-                            offset.height *= 1.50;
-                        }
-                    }
-                    
-                    CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+                   [self setShadowInContext:context fromDictionary:shadowDict];
                     
                     // draw once per shadow
                     [oneRun drawInContext:context];
