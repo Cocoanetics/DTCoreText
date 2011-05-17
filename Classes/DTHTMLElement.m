@@ -44,7 +44,7 @@
     [paragraphStyle release];
     [textAttachment release];
     
-    [textColor release];
+    [_textColor release];
 	[backgroundColor release];
 	
     [tagName release];
@@ -122,9 +122,9 @@
         //      [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
     }
     
-    if (textColor)
+    if (_textColor)
     {
-        [tmpDict setObject:(id)[textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+        [tmpDict setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
     }
 	
 	if (backgroundColor)
@@ -363,7 +363,7 @@
     NSString *shadow = [styles objectForKey:@"text-shadow"];
     if (shadow)
     {
-        self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:fontDescriptor.pointSize currentColor:textColor];
+        self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:fontDescriptor.pointSize currentColor:_textColor];
     }
     
     NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
@@ -409,10 +409,12 @@
     
     newObject.underlineStyle = self.underlineStyle;
     newObject.tagContentInvisible = self.tagContentInvisible;
-    newObject.textColor = self.textColor; 
+    newObject.textColor = self.textColor;
+	newObject.isColorInherited = YES;
 	newObject.backgroundColor = self.backgroundColor;
     newObject.strikeOut = self.strikeOut;
     newObject.superscriptStyle = self.superscriptStyle;
+	newObject.shadows = self.shadows;
     
     newObject.link = self.link; // copy
     
@@ -443,9 +445,20 @@
     return _isInline;
 }
 
+- (void)setTextColor:(UIColor *)textColor
+{
+	if (_textColor != textColor)
+	{
+		[_textColor release];
+		
+		_textColor = [textColor retain];
+		isColorInherited = NO;
+	}
+}
+
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
-@synthesize textColor;
+@synthesize textColor = _textColor;
 @synthesize backgroundColor;
 @synthesize tagName;
 @synthesize text;
@@ -459,6 +472,7 @@
 @synthesize shadows;
 @synthesize isInline;
 @synthesize floatStyle;
+@synthesize isColorInherited;
 
 @synthesize fontCache = _fontCache;
 

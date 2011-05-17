@@ -30,7 +30,7 @@ typedef enum
     DTTextAttachment *textAttachment;
     NSURL *link;
     
-    UIColor *textColor;
+    UIColor *_textColor;
 	UIColor *backgroundColor;
     
     CTUnderlineStyle underlineStyle;
@@ -53,6 +53,7 @@ typedef enum
 	NSMutableDictionary *_additionalAttributes;
 	
 	DTHTMLElementFloatStyle floatStyle;
+	BOOL isColorInherited;
 }
 
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
@@ -63,7 +64,7 @@ typedef enum
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, copy) NSString *tagName;
 @property (nonatomic, copy) NSString *text;
-@property (nonatomic, retain) NSArray *shadows;
+@property (nonatomic, copy) NSArray *shadows;
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;
 @property (nonatomic, assign) BOOL tagContentInvisible;
 @property (nonatomic, assign) BOOL strikeOut;
@@ -71,6 +72,7 @@ typedef enum
 @property (nonatomic, assign) NSInteger headerLevel;
 @property (nonatomic, readonly) BOOL isInline;
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
+@property (nonatomic, assign) BOOL isColorInherited;
 
 
 - (NSAttributedString *)attributedString;

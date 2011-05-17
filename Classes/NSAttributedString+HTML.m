@@ -339,9 +339,11 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 				{
                     currentTag.underlineStyle = kCTUnderlineStyleSingle;
                     
-                    // apply default link color
-                    // FIXME: this does not consider color tag right on the a
-                    currentTag.textColor = defaultLinkColor;
+ 					if (currentTag.isColorInherited || !currentTag.textColor)
+					{
+						currentTag.textColor = defaultLinkColor;
+						currentTag.isColorInherited = NO;
+					}
 					
 					// remove line breaks and whitespace in links
 					NSString *cleanString = [[tagAttributesDict objectForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
