@@ -16,6 +16,11 @@
     return [[[DTCoreTextParagraphStyle alloc] init] autorelease];
 }
 
++ (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
+{
+	return [[[DTCoreTextParagraphStyle alloc] init] autorelease];
+}
+
 - (id)init
 {
     self = [super init];
@@ -34,6 +39,36 @@
     return self;
 }
 
+
+- (id)initWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
+{
+	self = [super init];
+	
+	if (self)
+	{
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierAlignment,sizeof(textAlignment), &textAlignment);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval);
+
+		NSArray *tabStops;
+		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops))
+		{
+			self.tabStops = tabStops;
+		}
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore,sizeof(paragraphSpacingBefore), &paragraphSpacingBefore);
+
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiple), &lineHeightMultiple);
+
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(lineHeight), &lineHeight);
+	}
+	
+	return self;
+}
+
 - (void)dealloc
 {
     [_tabStops release];
@@ -49,13 +84,16 @@
 		{kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment},
 		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
 		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
+		
 		{kCTParagraphStyleSpecifierTabStops, sizeof(_tabStops), &_tabStops},
 		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing},
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paragraphSpacingBefore), &paragraphSpacingBefore},
+		
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection},
         {kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiple), &lineHeightMultiple},
-        {kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight},
+        
+		{kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight},
         {kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(lineHeight), &lineHeight}
 	};	
 	
@@ -95,7 +133,7 @@
 
 #pragma mark Properties
 
-- (void)setTabStops:(NSMutableArray *)tabStops
+- (void)setTabStops:(NSArray *)tabStops
 {
 	if (tabStops != _tabStops)
 	{

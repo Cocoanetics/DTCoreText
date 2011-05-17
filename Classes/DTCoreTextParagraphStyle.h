@@ -31,14 +31,16 @@
 @property (nonatomic, assign) CGFloat lineHeightMultiple;
 @property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, assign) CGFloat headIndent;
-@property (nonatomic, copy) NSMutableArray *tabStops;
+@property (nonatomic, copy) NSArray *tabStops;
 
 @property (nonatomic, assign) CTTextAlignment textAlignment;
 @property (nonatomic, assign) CTWritingDirection writingDirection;
 
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle;
++ (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle;
 
+- (id)initWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle;
 - (CTParagraphStyleRef)createCTParagraphStyle;
 
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment;
