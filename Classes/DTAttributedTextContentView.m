@@ -340,6 +340,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		// need new layouter
 		self.layouter = nil;
 		
+		// ditch the previous layout frame
+		self.layoutFrame = nil;
+		
+		// will trigger relayout
 		[self setNeedsDisplay];
 	}
 }
