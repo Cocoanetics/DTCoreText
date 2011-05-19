@@ -592,6 +592,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Other Sources/CoreTextExtensions_Prefix.pch";
 				INFOPLIST_FILE = "Resources/CoreTextExtensions-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PRODUCT_NAME = CoreTextExtensions;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -605,6 +606,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Other Sources/CoreTextExtensions_Prefix.pch";
 				INFOPLIST_FILE = "Resources/CoreTextExtensions-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PRODUCT_NAME = CoreTextExtensions;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
