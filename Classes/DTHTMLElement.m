@@ -133,7 +133,9 @@
 	}
     
     // add paragraph style
-    [tmpDict setObject:(id)[self.paragraphStyle createCTParagraphStyle] forKey:(id)kCTParagraphStyleAttributeName];
+	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
+    [tmpDict setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+	CFRelease(newParagraphStyle);
     
     // add shadow array if applicable
     if (shadows)
