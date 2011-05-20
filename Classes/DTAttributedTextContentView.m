@@ -119,6 +119,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsForRect:(CGRect)rect
 {
+	[CATransaction begin];
+	[CATransaction setDisableActions:YES];
+	
 	NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
 	
 	NSArray *lines;
@@ -247,7 +250,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					UIView *existingLinkView = [self.customViewsForLinksIndex objectForKey:indexKey];
 					
 					if (existingLinkView)
-					{
+					{						
 						existingLinkView.frame = frameForSubview;
 					}
 					else
@@ -281,6 +284,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
+	
+	[CATransaction commit];
 }
 
 
