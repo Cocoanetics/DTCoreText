@@ -248,7 +248,7 @@
         else if ([lowercaseFontFamily rangeOfString:@"monospace"].length) 
         {
             fontDescriptor.monospaceTrait = YES;
-            fontDescriptor.fontFamily = nil;
+            fontDescriptor.fontFamily = @"Courier";
         }
         else
         {
@@ -424,6 +424,8 @@
 	newObject.shadows = self.shadows;
     
     newObject.link = self.link; // copy
+	
+	newObject.preserveNewlines = self.preserveNewlines;
     
     newObject.fontCache = self.fontCache; // reference
     
@@ -480,6 +482,7 @@
 @synthesize isInline;
 @synthesize floatStyle;
 @synthesize isColorInherited;
+@synthesize preserveNewlines;
 
 @synthesize fontCache = _fontCache;
 

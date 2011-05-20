@@ -54,6 +54,8 @@ typedef enum
 	
 	DTHTMLElementFloatStyle floatStyle;
 	BOOL isColorInherited;
+	
+	BOOL preserveNewlines;
 }
 
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
@@ -73,6 +75,7 @@ typedef enum
 @property (nonatomic, readonly) BOOL isInline;
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
 @property (nonatomic, assign) BOOL isColorInherited;
+@property (nonatomic, assign) BOOL preserveNewlines;
 
 
 - (NSAttributedString *)attributedString;

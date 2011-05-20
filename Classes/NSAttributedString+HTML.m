@@ -490,6 +490,14 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
+			else if ([tagName isEqualToString:@"pre"])
+			{
+				if (tagOpen)
+				{
+                    currentTag.fontDescriptor.fontFamily = @"Courier";
+					currentTag.preserveNewlines = YES;
+				}
+			}
 			else if ([tagName isEqualToString:@"sub"])
 			{
 				if (tagOpen)
@@ -713,7 +721,10 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
-					tagContents = [tagContents stringByNormalizingWhitespace];
+					if (!currentTag.preserveNewlines)
+					{
+						tagContents = [tagContents stringByNormalizingWhitespace];
+					}
 					tagContents = [tagContents stringByReplacingHTMLEntities];
                     
                     tagName = currentTag.tagName;
