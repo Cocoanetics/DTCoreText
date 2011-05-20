@@ -371,6 +371,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 }
                 
                 CGRect runStrokeBounds = oneRun.frame;
+				
+				NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+				
+				switch (superscriptStyle) 
+				{
+					case 1:
+					{
+						runStrokeBounds.origin.y -= oneRun.ascent * 0.47;
+						break;
+					}	
+					case -1:
+					{
+						runStrokeBounds.origin.y += oneRun.ascent * 0.25;
+						break;
+					}	
+					default:
+						break;
+				}
+				
+				
                 if (lastRunInLine)
                 {
                     runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
@@ -416,7 +436,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
         for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
         {
-            CGContextSetTextPosition(context, oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
+			CGPoint textPosition = CGPointMake(oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
+			
+			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+			
+			switch (superscriptStyle) 
+			{
+				case 1:
+				{
+					textPosition.y += oneRun.ascent * 0.47;
+					break;
+				}	
+				case -1:
+				{
+					textPosition.y -= oneRun.ascent * 0.25;
+					break;
+				}	
+				default:
+					break;
+			}
+
+            CGContextSetTextPosition(context, textPosition.x, textPosition.y);
             
             NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
             

@@ -131,6 +131,11 @@
 	{
 		[tmpDict setObject:(id)[backgroundColor CGColor] forKey:@"DTBackgroundColor"];
 	}
+	
+	if (superscriptStyle)
+	{
+		[tmpDict setObject:(id)[NSNumber numberWithInt:superscriptStyle] forKey:(id)kCTSuperscriptAttributeName];
+	}
     
     // add paragraph style
 	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];

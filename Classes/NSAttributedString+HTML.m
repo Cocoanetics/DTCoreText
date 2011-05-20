@@ -487,6 +487,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
                     currentTag.superscriptStyle = 1;
+					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
 			else if ([tagName isEqualToString:@"sub"])
@@ -494,6 +495,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
                     currentTag.superscriptStyle = -1;
+					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
 			else if ([tagName isEqualToString:@"hr"])
