@@ -134,6 +134,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		lines = [self.layoutFrame linesVisibleInRect:rect];
 	}
 	
+	// hide all customViews
+	for (UIView *view in self.customViews)
+	{
+		view.hidden = YES;
+	}
+	
 	for (DTCoreTextLayoutLine *oneLine in lines)
 	{
         NSRange lineRange = [oneLine stringRange];
@@ -207,6 +213,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					if (existingAttachmentView)
 					{
 						existingAttachmentView.frame = frameForSubview;
+						existingAttachmentView.hidden = NO;
 					}
 					else
 					{
@@ -252,6 +259,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					if (existingLinkView)
 					{						
 						existingLinkView.frame = frameForSubview;
+						existingLinkView.hidden = NO;
 					}
 					else
 					{
@@ -293,10 +301,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	[super layoutSubviews];
 	
-	if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews || !self.layoutFrame)
+	if (!_layoutFrame)
 	{
-		[self removeAllCustomViews];
-		
 		return;
 	}
 	
@@ -456,7 +462,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setFrame:(CGRect)frame
 {
 	CGRect previousFrame = self.frame;
-	
+
+	// need to remove otherwise some get wrong positions
+//	[self removeAllCustomViews];
+
 	[super setFrame:frame];
 	
 	if (!CGSizeEqualToSize(frame.size, previousFrame.size) && !CGRectIsEmpty(frame) && !(frame.size.height<0))
@@ -466,6 +475,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		{
 			// next redraw will do new layout
 			self.layoutFrame = nil;
+			NSLog(@"Nil");
 		}
 	}
 }
@@ -526,8 +536,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[self removeAllCustomViewsForLinks];
 		
-		[self setNeedsLayout];
-		[self setNeedsDisplay];
+		if (layoutFrame)
+		{
+			[self setNeedsLayout];
+			[self setNeedsDisplay];
+		}
     }
 }
 
@@ -568,6 +581,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
 	_delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
 	_delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)]; 
+	
+	if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews)
+	{
+		[self removeAllCustomViews];
+	}
 }
 
 @synthesize layouter = _layouter;
