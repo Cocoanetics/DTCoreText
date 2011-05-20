@@ -38,16 +38,21 @@
 	BOOL shouldDrawImages;
 	
 	NSMutableSet *customViews;
+	NSMutableDictionary *customViewsForLinksIndex;
+	NSMutableDictionary *customViewsForAttachmentsIndex;
     
     id <DTAttributedTextContentViewDelegate> _delegate;
 	BOOL _delegateSupportsCustomViewsForAttachments;
 	BOOL _delegateSupportsCustomViewsForLinks;
 	BOOL _delegateSupportsGenericCustomViews;
 	
+	BOOL _isTiling;
+	
 	DTCoreTextLayouter *_layouter;
 	DTCoreTextLayoutFrame *_layoutFrame;
 	
 	CGPoint _layoutOffset;
+	BOOL shouldOnlyLayoutVisibleSubviews;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
@@ -67,6 +72,8 @@
 @property (nonatomic) CGPoint layoutOffset;
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
+
+@property (nonatomic, assign) BOOL shouldOnlyLayoutVisibleSubviews;
 
 @end
 

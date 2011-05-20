@@ -47,6 +47,8 @@
     {
         [self addSubview:self.contentView];
     }
+	
+	[contentView setNeedsLayout];
 }
 
 - (void)awakeFromNib
@@ -89,6 +91,7 @@
 		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
+		contentView.shouldOnlyLayoutVisibleSubviews = YES; // we call layout when scrolling
         [self addSubview:contentView];
 	}		
 	

@@ -287,13 +287,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                 
                 currentTag.textAttachment = attachment;
 				
-				// transfer link to attachment if present
-				if (currentTag.link)
-				{
-					attachment.hyperLinkURL = currentTag.link;
-					currentTag.link = nil;
-				}
-                
 				if (needsNewLineBefore)
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
