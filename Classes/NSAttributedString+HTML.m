@@ -233,57 +233,61 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				immediatelyClosed = YES;
 				
 				NSString *src = [tagAttributesDict objectForKey:@"src"];
-				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
-				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
+				CGSize imageSize;
+				imageSize.width = [[tagAttributesDict objectForKey:@"width"] intValue];
+				imageSize.height = [[tagAttributesDict objectForKey:@"height"] intValue];
 				
-				// assume it's a relative file URL
-                UIImage *image;
-                
+				NSURL *imageURL;
+				
                 if (baseURL)
                 {
                     // relative file URL
                     
-                    NSURL *imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
-                    image = [UIImage imageWithContentsOfFile:[imageURL path]];
+                    imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
                 }
                 else
                 {
                     // file in app bundle
                     NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-                    image = [UIImage imageWithContentsOfFile:path];
+					imageURL = [NSURL fileURLWithPath:path];
                 }
 				
-				if (image)
+				if (!imageSize.width || !imageSize.height)
 				{
-					if (!width)
+					// inspect local file
+					if ([imageURL isFileURL])
 					{
-						width = image.size.width;
-					}
-					
-					if (!height)
-					{
-						height = image.size.height;
+						UIImage *image = [UIImage imageWithContentsOfFile:[imageURL path]];
+						
+						if (!imageSize.width)
+						{
+							imageSize.width = image.size.width;
+						}
+						
+						if (!imageSize.height)
+						{
+							imageSize.height = image.size.height;
+						}
 					}
 				}
                 
+				CGSize adjustedSize = imageSize;
+				
                 // option DTMaxImageSize
                 if (maxImageSizeValue)
                 {
                     CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
                     
-                    if (maxImageSize.width < width || maxImageSize.height < height)
+                    if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
                     {
-                        CGSize adjustedSize = sizeThatFitsKeepingAspectRatio(image.size,maxImageSize);
-                        
-                        width = adjustedSize.width;
-                        height = adjustedSize.height;
+                        adjustedSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
                     }
                 }
 				
-				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
-				attachment.contents = image;
-				attachment.originalSize = image.size;
-				attachment.displaySize = CGSizeMake(width, height);
+				DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
+				attachment.contentURL = imageURL;
+				attachment.originalSize = imageSize;
+				attachment.displaySize = adjustedSize;
                 
                 currentTag.textAttachment = attachment;
 				
@@ -298,6 +302,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				}
                 
                 [tmpString appendAttributedString:[currentTag attributedString]];
+				[attachment release];
                 
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float

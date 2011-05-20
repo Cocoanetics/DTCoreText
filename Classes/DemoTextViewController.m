@@ -13,6 +13,8 @@
 #import "DTTextAttachment.h"
 
 #import "DTLinkButton.h"
+#import "DTLazyImageView.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 #import <MediaPlayer/MediaPlayer.h>
@@ -271,11 +273,15 @@
 	}
 	else if (attachment.contentType == DTTextAttachmentTypeImage)
 	{
-		UIImage *image = (id)attachment.contents;
-		
 		// if the attachment has a hyperlinkURL then this is currently ignored
-		UIImageView *imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
-		imageView.frame = frame;
+		DTLazyImageView *imageView = [[[DTLazyImageView alloc] initWithFrame:frame] autorelease];
+		if (attachment.contents)
+		{
+			imageView.image = attachment.contents;
+		}
+
+		// url for deferred loading
+		imageView.url = attachment.contentURL;
 		
 		return imageView;
 	}

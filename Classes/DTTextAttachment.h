@@ -12,7 +12,8 @@
 typedef enum
 {
     DTTextAttachmentTypeImage,
-    DTTextAttachmentTypeVideoURL
+    DTTextAttachmentTypeVideoURL,
+
 }  DTTextAttachmentType;
 
 
