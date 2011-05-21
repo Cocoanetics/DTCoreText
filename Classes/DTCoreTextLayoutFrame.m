@@ -131,13 +131,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
     {
         // actual frame is spanned between first and last lines
-        DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
         DTCoreTextLayoutLine *lastLine = [_lines lastObject];
         
-        CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
-        CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
-        
-        _frame = (CGRect){origin, size};
+        _frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5));
     }
 }
 
@@ -592,14 +588,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         return CGRectZero;
     }
     
-    // actual frame is spanned between first and last lines
-    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
-    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
-    
-    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
-    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
-    
-    return (CGRect){origin, size};
+	return _frame;
+//	
+//    // actual frame is spanned between first and last lines
+//    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
+//    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
+//    
+//    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
+//    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
+//    
+//    return (CGRect){origin, size};
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
