@@ -301,11 +301,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	[super layoutSubviews];
 	
-	if (!_layoutFrame)
-	{
-		return;
-	}
-	
 	if (shouldOnlyLayoutVisibleSubviews)
 	{
 		CGRect visibleRect = CGRectIntersection([self convertRect:self.window.frame fromView:self.window], self.bounds);
@@ -475,7 +470,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		{
 			// next redraw will do new layout
 			self.layoutFrame = nil;
-			NSLog(@"Nil");
 		}
 	}
 }
