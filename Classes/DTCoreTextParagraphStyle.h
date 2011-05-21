@@ -16,7 +16,8 @@
     CGFloat paragraphSpacing;
     CGFloat headIndent;
     CGFloat lineHeightMultiple;
-    CGFloat lineHeight;
+    CGFloat minimumLineHeight;
+    CGFloat maximumLineHeight;
     
     CTTextAlignment textAlignment;
     CTWritingDirection writingDirection;
@@ -29,7 +30,8 @@
 @property (nonatomic, assign) CGFloat paragraphSpacingBefore;
 @property (nonatomic, assign) CGFloat paragraphSpacing;
 @property (nonatomic, assign) CGFloat lineHeightMultiple;
-@property (nonatomic, assign) CGFloat lineHeight;
+@property (nonatomic, assign) CGFloat minimumLineHeight;
+@property (nonatomic, assign) CGFloat maximumLineHeight;
 @property (nonatomic, assign) CGFloat headIndent;
 @property (nonatomic, copy) NSArray *tabStops;
 

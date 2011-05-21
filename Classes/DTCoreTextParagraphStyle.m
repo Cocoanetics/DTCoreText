@@ -33,7 +33,8 @@
         writingDirection = kCTWritingDirectionNatural;
         textAlignment = kCTNaturalTextAlignment;
         lineHeightMultiple = 0.0;
-        lineHeight = 0.0;
+        minimumLineHeight = 0.0;
+		maximumLineHeight = 0.0;
     }
 
     return self;
@@ -62,8 +63,8 @@
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiple), &lineHeightMultiple);
 
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight);
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(lineHeight), &lineHeight);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minimumLineHeight), &minimumLineHeight);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maximumLineHeight), &maximumLineHeight);
 	}
 	
 	return self;
@@ -93,8 +94,8 @@
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection},
         {kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiple), &lineHeightMultiple},
         
-		{kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(lineHeight), &lineHeight},
-        {kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(lineHeight), &lineHeight}
+		{kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minimumLineHeight), &minimumLineHeight},
+        {kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maximumLineHeight), &maximumLineHeight}
 	};	
 	
 	return CTParagraphStyleCreate(settings, 11);
@@ -123,6 +124,8 @@
     newObject.paragraphSpacing = self.paragraphSpacing;
     newObject.paragraphSpacingBefore = self.paragraphSpacingBefore;
     newObject.lineHeightMultiple = self.lineHeightMultiple;
+	newObject.minimumLineHeight = self.minimumLineHeight;
+	newObject.maximumLineHeight = self.maximumLineHeight;
     newObject.headIndent = self.headIndent;
     newObject.textAlignment = self.textAlignment;
     newObject.writingDirection = self.writingDirection;
@@ -147,7 +150,8 @@
 @synthesize paragraphSpacingBefore;
 @synthesize paragraphSpacing;
 @synthesize lineHeightMultiple;
-@synthesize lineHeight;
+@synthesize minimumLineHeight;
+@synthesize maximumLineHeight;
 @synthesize headIndent;
 @synthesize textAlignment;
 @synthesize writingDirection;
