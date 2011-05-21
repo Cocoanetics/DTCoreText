@@ -191,8 +191,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				// round frame
-				frameForSubview.origin.x = roundf(frameForSubview.origin.x);
-				frameForSubview.origin.y = roundf(frameForSubview.origin.y);
+				frameForSubview.origin.x = floorf(frameForSubview.origin.x);
+				frameForSubview.origin.y = ceilf(frameForSubview.origin.y);
 				frameForSubview.size.width = roundf(frameForSubview.size.width);
 				frameForSubview.size.height = roundf(frameForSubview.size.height);
 				
