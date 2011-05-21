@@ -386,11 +386,13 @@
         }
         else if ([lineHeight isNumeric])
         {
-            self.paragraphStyle.lineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
         }
         else // interpret as length
         {
-            self.paragraphStyle.lineHeight = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+            self.paragraphStyle.minimumLineHeight = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
         }
     }
 }
