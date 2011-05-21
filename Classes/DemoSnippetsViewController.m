@@ -91,7 +91,7 @@
 {
 	DTAttributedTextContentView *contentView = [self contentViewForIndexPath:indexPath];
 	
-	return contentView.bounds.size.height+1; // for unknown reason 1 needs to be added
+	return contentView.bounds.size.height+5; // for unknown reason 1 needs to be added from 4.2, previous 5
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
