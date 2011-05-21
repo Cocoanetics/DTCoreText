@@ -23,7 +23,10 @@
 @property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, retain) NSMutableDictionary *customViewsForAttachmentsIndex;
 
+- (void)removeAllCustomViews;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
+- (void)removeAllCustomViewsForLinks;
+
 
 @end
 
@@ -54,7 +57,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)setup
 {
-	self.contentMode = UIViewContentModeRedraw; // to avoid bitmap scaling effect on resize
+	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	
 	// possibly already set in NIB
 	if (!self.backgroundColor)
@@ -304,6 +307,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (shouldOnlyLayoutVisibleSubviews)
 	{
 		CGRect visibleRect = CGRectIntersection([self convertRect:self.window.frame fromView:self.window], self.bounds);
+		
+		// Ignore horizontal movement, i.e. paging
+		visibleRect.origin.x = 0;
+		visibleRect.size.width = self.bounds.size.width;
 
 		[self removeSubviewsOutsideRect:visibleRect];
 		[self layoutSubviewsForRect:visibleRect];
@@ -345,10 +352,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		size.width = self.bounds.size.width;
 	}
 	
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
 	
-	// increase by edge insets
-	return CGSizeMake(size.width, ceilf(neededSize.height+edgeInsets.top+edgeInsets.bottom));
+	// this returns an incorrect size before 4.2
+//	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+	
+	return neededSize;
 }
 
 - (NSString *)description
@@ -365,19 +374,24 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
-	// remove custom views
-	[self.customViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	self.customViews = nil;
-	
-	CGSize neededSize = [self sizeThatFits:CGSizeZero];
-	
-	// set frame to fit text preserving origin
-	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
-	
 	// need new layouter
 	self.layouter = nil;
+	self.layoutFrame = nil;
+
+	// remove custom views
+	[self removeAllCustomViewsForLinks];
+	
+	if (_attributedString)
+	{
+		// triggers new layout
+		CGSize neededSize = [self sizeThatFits:self.bounds.size];
+
+		// set frame to fit text preserving origin
+		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+	}
 	
 	[self setNeedsDisplay];
+	[self setNeedsLayout];
 }
 
 - (void)removeAllCustomViewsForLinks
@@ -456,20 +470,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)setFrame:(CGRect)frame
 {
-	CGRect previousFrame = self.frame;
-
-	// need to remove otherwise some get wrong positions
-//	[self removeAllCustomViews];
-
 	[super setFrame:frame];
-	
-	if (!CGSizeEqualToSize(frame.size, previousFrame.size) && !CGRectIsEmpty(frame) && !(frame.size.height<0))
+
+	if (!_layoutFrame) 
 	{
-		// if we have a layouter then it can create a new layoutFrame for us on redraw
+		return;	
+	}
+	
+	CGSize sizeThatFits = [self sizeThatFits:self.bounds.size];
+	
+	if (!CGSizeEqualToSize(frame.size, sizeThatFits))
+	{
 		if (_layouter)
 		{
-			// next redraw will do new layout
-			self.layoutFrame = nil;
+			// layouter means we are responsible for layouting yourselves
+			[self relayoutText];
 		}
 	}
 }
@@ -501,9 +516,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	if (!_layouter && _attributedString)
+	if (!_layouter)
 	{
-		_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+		if (_attributedString)
+		{
+			_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+		}
 	}
 	
 	return _layouter;
@@ -513,9 +531,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (!_layoutFrame)
 	{
-		CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
-		_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-		[_layoutFrame retain];
+		// we can only layout if we have our own layouter
+		if (self.layouter)
+		{
+			CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+			rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+
+			_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+			[_layoutFrame retain];
+		}
 	}
 	return _layoutFrame;
 }
@@ -527,6 +551,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
         [_layoutFrame release];
 		
         _layoutFrame = [layoutFrame retain];
+		
+//		[self sizeToFit];
 		
 		[self removeAllCustomViewsForLinks];
 		
