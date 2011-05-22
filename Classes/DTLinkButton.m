@@ -109,7 +109,8 @@
     if ([guid isEqualToString:_guid])
     {
         BOOL highlighted = [[userInfo objectForKey:@"Highlighted"] boolValue];
-        [super setHighlighted:highlighted];
+		[super setHighlighted:highlighted];
+		[self setNeedsDisplay];
     }
 }
 
