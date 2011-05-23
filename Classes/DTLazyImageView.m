@@ -25,23 +25,20 @@
 
 - (void)loadImageAtURL:(NSURL *)url
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
 	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
-	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-	[request release];
+
+	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+	[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+	[_connection start];
 	
-	// so that our connection events get processed even if a scrollview blocks the main run loop
-	CFRunLoopRun(); 
-	[pool release];
+	[request release];
 }
 
 - (void)didMoveToSuperview
 {
 	if (!self.image && _url && !_connection)
 	{
-		//[self loadImageAtURL:_url];
-		[self performSelectorInBackground:@selector(loadImageAtURL:) withObject:_url];
+		[self loadImageAtURL:_url];
 	}	
 }
 
@@ -51,8 +48,6 @@
 	[_connection release], _connection = nil;
 	
 	[_receivedData release], _receivedData = nil;
-	
-	CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 #pragma mark NSURL Loading
@@ -87,8 +82,7 @@
 	{
 		UIImage *image = [[UIImage alloc] initWithData:_receivedData];
 		
-		//self.image = image;
-		[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
+		self.image = image;
 		
 		[image release];
 		
@@ -96,8 +90,6 @@
 	}
 	
 	[_connection release], _connection = nil;
-	
-	CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -106,8 +98,6 @@
 	
 	[_connection release], _connection = nil;
 	[_receivedData release], _receivedData = nil;
-	
-	CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 
