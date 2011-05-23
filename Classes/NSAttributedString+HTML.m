@@ -102,6 +102,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
+	[htmlString release];
     
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
