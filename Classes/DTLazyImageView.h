@@ -13,9 +13,12 @@
 {
 	NSURL *_url;
 	
-	BOOL _loading;
+	NSURLConnection *_connection;
+	NSMutableData *_receivedData;
 }
 
 @property (nonatomic, retain) NSURL *url;
+
+- (void)cancelLoading;
 
 @end
