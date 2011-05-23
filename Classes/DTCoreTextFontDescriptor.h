@@ -10,7 +10,7 @@
 #import <CoreText/CoreText.h>
 
 
-@interface DTCoreTextFontDescriptor : NSObject <NSCopying>
+@interface DTCoreTextFontDescriptor : NSObject <NSCopying, NSCoding>
 {
 	NSString *fontFamily;
 	NSString *fontName;
@@ -28,6 +28,8 @@
 	
 	CTFontStylisticClass stylisticClass;
 }
+
++ (NSCache *)fontCache;
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes;
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont;

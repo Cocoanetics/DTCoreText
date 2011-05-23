@@ -91,6 +91,7 @@
         if (!font)
         {
             font = [fontDescriptor newMatchingFont];
+			
             [self.fontCache setObject:(id)font forKey:key];
             CFRelease(font);
         }

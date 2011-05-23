@@ -8,9 +8,21 @@
 
 #import "DTCoreTextFontDescriptor.h"
 
+static NSCache *_fontCache = nil;
 
 @implementation DTCoreTextFontDescriptor
 
+
+
++ (NSCache *)fontCache
+{
+	if (!_fontCache)
+	{
+		_fontCache = [[NSCache alloc] init];
+	}
+	
+	return _fontCache;
+}
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes
 {
@@ -245,13 +257,45 @@
 
 - (CTFontRef)newMatchingFont
 {
+	NSCache *fontCache = [DTCoreTextFontDescriptor fontCache];
+	NSNumber *cacheKey = [NSNumber numberWithInteger:[self hash]];
+	
+	CTFontRef cachedFont = (CTFontRef)[fontCache objectForKey:cacheKey];
+	
+	if (cachedFont)
+	{
+		CFRetain(cachedFont);
+		return cachedFont;
+	}
+	
+	// we have a a name already
+	if (fontName)
+	{
+		CTFontRef font = CTFontCreateWithName((CFStringRef)fontName, pointSize, NULL);
+		
+		// cache it
+		[fontCache setObject:(id)font forKey:cacheKey];
+		
+		return font;
+	}
+	
+//	// try cached font match
+//	DTCoreTextFontCollection *availableFonts = [DTCoreTextFontCollection availableFontsCollection];
+//	DTCoreTextFontDescriptor *matching = [availableFonts matchingFontDescriptorForFontDescriptor:self];
+//	
+//	if (matching)
+//	{
+//		return [matching newMatchingFont];
+//	}
+	
+	
     NSDictionary *attributes = [self fontAttributes];
     
     CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
     
     CTFontRef matchingFont;
     
-    if (fontName || fontFamily)
+    if (fontFamily)
     {
         // fast font creation
         matchingFont = CTFontCreateWithFontDescriptor(fontDesc, pointSize, NULL);
@@ -287,6 +331,12 @@
     }
     
     CFRelease(fontDesc);
+	
+	if (matchingFont)
+	{
+		// cache it
+		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
+	}
 
     return matchingFont;
 }
@@ -388,6 +438,33 @@
 {
     return ([self hash] == [object hash]);
 }
+
+
+#pragma mark NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+	[encoder encodeObject:self.fontName forKey:@"FontName"];
+	[encoder encodeObject:self.fontFamily forKey:@"FontFamily"];
+	[encoder encodeBool:boldTrait forKey:@"BoldTrait"];
+	[encoder encodeBool:italicTrait forKey:@"ItalicTrait"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+	self = [super init];
+	
+	if (self)
+	{
+		self.fontName = [decoder decodeObjectForKey:@"FontName"];
+		self.fontFamily = [decoder decodeObjectForKey:@"FontFamily"];
+		boldTrait = [decoder decodeBoolForKey:@"BoldTrait"];
+		italicTrait = [decoder decodeBoolForKey:@"ItalicTrait"];
+	}
+	
+	return self;
+}
+
 
 #pragma mark Copying
 

@@ -8,12 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@class DTCoreTextFontDescriptor;
 
 @interface DTCoreTextFontCollection : NSObject 
 {
-    
+	NSArray *_fontDescriptors;
+	NSCache *fontMatchCache;
 }
 
-+ (NSArray *)availableFonts;
++ (DTCoreTextFontCollection *)availableFontsCollection;
+
+- (id)initWithAvailableFonts;
+
+- (DTCoreTextFontDescriptor *)matchingFontDescriptorForFontDescriptor:(DTCoreTextFontDescriptor *)descriptor;
+
 
 @end
