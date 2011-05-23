@@ -12,6 +12,8 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		28D7ACF80DDB3853001CB0EB /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
+		A70F5511138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */; };
+		A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */; };
 		A717FFEA1386EDD200D3BE31 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */; };
 		A717FFEB1386EDD200D3BE31 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */; };
 		A73BC3EF12D9F5AD00F064C6 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */; };
@@ -118,6 +120,8 @@
 		6A5A32CC12DD11740019AAF1 /* NSAttributedStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringHTMLTest.m; sourceTree = "<group>"; };
 		6A5A32CE12DD11960019AAF1 /* NSStringHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringHTMLTest.h; sourceTree = "<group>"; };
 		6A5A32CF12DD11960019AAF1 /* NSStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringHTMLTest.m; sourceTree = "<group>"; };
+		A70F550F138A746200D642C5 /* DTCoreTextFontCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontCollection.h; sourceTree = "<group>"; };
+		A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontCollection.m; sourceTree = "<group>"; };
 		A717FFE81386EDD100D3BE31 /* DTLazyImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLazyImageView.h; sourceTree = "<group>"; };
 		A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLazyImageView.m; sourceTree = "<group>"; };
 		A73BC3ED12D9F5AD00F064C6 /* NSAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+HTML.h"; sourceTree = "<group>"; };
@@ -353,6 +357,8 @@
 				A7F2A74413571E820097BF31 /* DTCoreTextParagraphStyle.m */,
 				A7F2A7471357227C0097BF31 /* DTHTMLElement.h */,
 				A7F2A7481357227C0097BF31 /* DTHTMLElement.m */,
+				A70F550F138A746200D642C5 /* DTCoreTextFontCollection.h */,
+				A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */,
 			);
 			name = "CoreText Layout";
 			sourceTree = "<group>";
@@ -550,6 +556,7 @@
 				A7F2A74A1357227C0097BF31 /* DTHTMLElement.m in Sources */,
 				A7F2A77613575E710097BF31 /* NSMutableAttributedString+HTML.m in Sources */,
 				A717FFEB1386EDD200D3BE31 /* DTLazyImageView.m in Sources */,
+				A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,6 +591,7 @@
 				A7F2A7491357227C0097BF31 /* DTHTMLElement.m in Sources */,
 				A7F2A77513575E710097BF31 /* NSMutableAttributedString+HTML.m in Sources */,
 				A717FFEA1386EDD200D3BE31 /* DTLazyImageView.m in Sources */,
+				A70F5511138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
