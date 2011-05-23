@@ -3,7 +3,7 @@
 //  PagingTextScroller
 //
 //  Created by Oliver Drobnik on 5/20/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 . All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
