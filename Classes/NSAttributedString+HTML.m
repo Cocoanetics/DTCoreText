@@ -237,20 +237,22 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				imageSize.width = [[tagAttributesDict objectForKey:@"width"] intValue];
 				imageSize.height = [[tagAttributesDict objectForKey:@"height"] intValue];
 				
-				NSURL *imageURL;
+				NSURL *imageURL = [NSURL URLWithString:src];
 				
-                if (baseURL)
+                if (![imageURL scheme])
                 {
-                    // relative file URL
-                    
-                    imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
-                }
-                else
-                {
-                    // file in app bundle
-                    NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-					imageURL = [NSURL fileURLWithPath:path];
-                }
+					// possibly a relative url
+					if (baseURL)
+					{
+						imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
+					}
+					else
+					{
+						// file in app bundle
+						NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+						imageURL = [NSURL fileURLWithPath:path];
+					}
+				}
 				
 				if (!imageSize.width || !imageSize.height)
 				{
@@ -268,6 +270,11 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							imageSize.height = image.size.height;
 						}
+					}
+					else
+					{
+						// set it to anything for now
+						imageSize = CGSizeMake(100, 100);
 					}
 				}
                 
