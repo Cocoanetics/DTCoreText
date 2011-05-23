@@ -33,6 +33,33 @@
 	return self;
 }
 
+- (id)initWithCTFontDescriptor:(CTFontDescriptorRef)ctFontDescriptor
+{
+	self = [super init];
+	if (self)
+	{
+        CFDictionaryRef dict = CTFontDescriptorCopyAttributes(ctFontDescriptor);
+        
+        CFDictionaryRef traitsDict = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontTraitsAttribute);
+        CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
+        
+        self.symbolicTraits = traitsValue;
+        
+        [self setFontAttributes:(id)dict];
+		
+        CFRelease(dict);
+        CFRelease(traitsDict);
+		
+		// also get family name
+		
+		CFStringRef familyName = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontFamilyNameAttribute);
+		self.fontFamily = (id)familyName;
+		CFRelease(familyName);
+	}
+	
+	return self;
+}
+
 - (id)initWithCTFont:(CTFontRef)ctFont
 {
     self = [super init];
@@ -42,7 +69,7 @@
         CFDictionaryRef dict = CTFontDescriptorCopyAttributes(fd);
         
         CFDictionaryRef traitsDict = CTFontDescriptorCopyAttribute(fd, kCTFontTraitsAttribute);
-        CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait ] unsignedIntValue];
+        CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
         
         self.symbolicTraits = traitsValue;
         
@@ -63,6 +90,73 @@
 	[fontName release];
 	
 	[super dealloc];
+}
+
+- (NSString *)description
+{
+	NSMutableString *string = [NSMutableString string];
+	
+	[string appendFormat:@"<%@ ", [self class]];
+	
+	
+	if (fontName)
+	{
+		[string appendFormat:@"name:\'%@\' ", fontName];
+	}
+	
+	if (fontFamily)
+	{
+		[string appendFormat:@"family:\'%@\' ", fontFamily];
+	}
+	
+	NSMutableArray *tmpTraits = [NSMutableArray array];
+	
+	if (boldTrait)
+	{
+		[tmpTraits addObject:@"bold"];
+	}
+	
+	if (italicTrait)
+	{
+		[tmpTraits addObject:@"italic"];
+	}
+
+	if (monospaceTrait)
+	{
+		[tmpTraits addObject:@"monospace"];
+	}
+
+	if (condensedTrait)
+	{
+		[tmpTraits addObject:@"condensed"];
+	}
+
+	if (expandedTrait)
+	{
+		[tmpTraits addObject:@"expanded"];
+	}
+	
+	if (verticalTrait)
+	{
+		[tmpTraits addObject:@"vertical"];
+	}
+
+	if (UIoptimizedTrait)
+	{
+		[tmpTraits addObject:@"UI optimized"];
+	}
+
+
+	if ([tmpTraits count])
+	{
+		[string appendString:@"attributes:"];
+		[string appendString:[tmpTraits componentsJoinedByString:@", "]];
+	}
+	
+	
+	[string appendString:@">"];
+
+	return string;
 }
 
 - (CTFontSymbolicTraits)symbolicTraits

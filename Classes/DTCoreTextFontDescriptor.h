@@ -33,6 +33,7 @@
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont;
 
 - (id)initWithFontAttributes:(NSDictionary *)attributes;
+- (id)initWithCTFontDescriptor:(CTFontDescriptorRef)ctFontDescriptor;
 - (id)initWithCTFont:(CTFontRef)ctFont;
 
 - (void)setFontAttributes:(NSDictionary *)newAttributes;
