@@ -58,7 +58,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
-	NSLog(@"start");
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -810,8 +809,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 		
 	}
 	
-	NSLog(@"finish");
-    
     // returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
     return tmpString;
