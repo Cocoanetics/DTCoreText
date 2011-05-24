@@ -8,6 +8,7 @@
 
 #import "DTCoreTextGlyphRun.h"
 #import "DTCoreTextLayoutLine.h"
+#import "DTTextAttachment.h"
 
 
 @interface DTCoreTextGlyphRun ()
@@ -47,8 +48,8 @@
 
 - (void)dealloc
 {
-	
 	CFRelease(_run);
+	[_attachment release];
 	
 	[super dealloc];
 }
@@ -128,6 +129,21 @@
 	return attributes;
 }
 
+- (DTTextAttachment *)attachment
+{
+	if (!_attachment)
+	{
+		if (!_didCheckForAttachmentInAttributes)
+		{
+			_attachment = [[self.attributes objectForKey:@"DTTextAttachment"] retain];
+			
+			_didCheckForAttachmentInAttributes = YES;
+		}
+	}
+	
+	return _attachment;
+}
+
 
 @synthesize frame = _frame;
 @synthesize numberOfGlyphs;
@@ -137,5 +153,6 @@
 @synthesize descent;
 @synthesize leading;
 @synthesize baselineOrigin = _baselineOrigin;
+@synthesize attachment = _attachment;
 
 @end

@@ -13,7 +13,7 @@
 #import "NSString+HTML.h"
 #import "UIColor+HTML.h"
 #import "NSCharacterSet+HTML.h"
-
+#import "DTTextAttachment.h"
 
 @interface DTHTMLElement ()
 
@@ -79,6 +79,19 @@
         
         // add attachment
         [tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
+		
+		// --- begin workaround for image squishing bug in iOS < 4.2
+		
+		// add a font that is display height plus a bit more for the descender
+		self.fontDescriptor.fontName = @"Times New Roman";
+		self.fontDescriptor.fontFamily = nil;
+		self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize;
+		CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
+        [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
+		CFRelease(font);
+		
+		// --- end workaround
+		
     }
     else
     {

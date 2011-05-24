@@ -29,6 +29,21 @@
 	self.displaySize = _originalSize;
 }
 
+- (id)contents
+{
+	if (!contents)
+	{
+		if (contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
+		{
+			UIImage *image = [UIImage imageWithContentsOfFile:[_contentURL path]];
+			
+			return image;
+		}
+	}
+	
+	return contents;
+}
+
 @synthesize originalSize = _originalSize;
 @synthesize displaySize = _displaySize;
 @synthesize contents;

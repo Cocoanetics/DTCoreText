@@ -308,10 +308,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 CGContextFillRect(context, oneRun.frame);
                 runIndex ++;
             }
-
+			
 			
 			CGColorRef backgroundColor = (CGColorRef)[oneRun.attributes objectForKey:@"DTBackgroundColor"];
-
+			
 			
 			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:@"DTHorizontalRuleStyle"];
 			
@@ -338,10 +338,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				continue;
 			}
-
+			
 			// don't draw decorations on images
-			DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-			if (attachment)
+			if (oneRun.attachment)
 			{
 				continue;
 			}
@@ -451,7 +450,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				default:
 					break;
 			}
-
+			
             CGContextSetTextPosition(context, textPosition.x, textPosition.y);
             
             NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
@@ -462,7 +461,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 
                 for (NSDictionary *shadowDict in shadows)
                 {
-                   [self setShadowInContext:context fromDictionary:shadowDict];
+					[self setShadowInContext:context fromDictionary:shadowDict];
                     
                     // draw once per shadow
                     [oneRun drawInContext:context];
@@ -472,33 +471,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
             }
             else
             {
-				if (drawImages)
+				DTTextAttachment *attachment = oneRun.attachment;
+				
+				if (attachment)
 				{
-					// -------------- Draw Embedded Images
-					DTTextAttachment *attachment = [oneRun.attributes objectForKey:@"DTTextAttachment"];
-					
-					if (attachment)
+					if (drawImages)
 					{
-						if ([attachment.contents isKindOfClass:[UIImage class]])
+						if (attachment.contentType == DTTextAttachmentTypeImage)
 						{
 							UIImage *image = (id)attachment.contents;
 							
 							CGPoint origin = oneRun.frame.origin;
 							origin.y = self.frame.size.height - origin.y - oneRun.ascent;
-							CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), oneRun.frame.size.width, oneRun.frame.size.height);
+							CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
 							
 							CGContextDrawImage(context, flippedRect, image.CGImage);
 						}
 					}
-					else
-					{
-						// regular text
-						[oneRun drawInContext:context];
-					}
 				}
 				else
 				{
-					// unicode placeholder is invisible if this is an image
+					// regular text
 					[oneRun drawInContext:context];
 				}
             }
@@ -589,15 +582,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
     
 	return _frame;
-//	
-//    // actual frame is spanned between first and last lines
-//    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
-//    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
-//    
-//    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
-//    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
-//    
-//    return (CGRect){origin, size};
+	//	
+	//    // actual frame is spanned between first and last lines
+	//    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
+	//    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
+	//    
+	//    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
+	//    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
+	//    
+	//    return (CGRect){origin, size};
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index

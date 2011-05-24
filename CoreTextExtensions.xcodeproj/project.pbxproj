@@ -306,6 +306,8 @@
 				A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */,
 				A7F2A77313575E700097BF31 /* NSMutableAttributedString+HTML.h */,
 				A7F2A77413575E700097BF31 /* NSMutableAttributedString+HTML.m */,
+				A7F2A7471357227C0097BF31 /* DTHTMLElement.h */,
+				A7F2A7481357227C0097BF31 /* DTHTMLElement.m */,
 			);
 			name = "NSAttributedString HTML Additions";
 			sourceTree = "<group>";
@@ -355,8 +357,6 @@
 				A76F0DE712F0D72D0065A4E7 /* DTCoreTextFontDescriptor.m */,
 				A7F2A74313571E820097BF31 /* DTCoreTextParagraphStyle.h */,
 				A7F2A74413571E820097BF31 /* DTCoreTextParagraphStyle.m */,
-				A7F2A7471357227C0097BF31 /* DTHTMLElement.h */,
-				A7F2A7481357227C0097BF31 /* DTHTMLElement.m */,
 				A70F550F138A746200D642C5 /* DTCoreTextFontCollection.h */,
 				A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */,
 			);

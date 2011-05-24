@@ -209,6 +209,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				
+				// fix size for <4.2 image squishing bug
+				if (oneRun.attachment)
+				{
+					frameForSubview.size = oneRun.attachment.displaySize;
+				}
+				
+				
 				if (_delegateSupportsCustomViewsForAttachments || _delegateSupportsGenericCustomViews)
 				{
 					UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
@@ -222,8 +229,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					{
 						UIView *newCustomAttachmentView = nil;
 						
-						NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
-						DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+						DTTextAttachment *attachment = oneRun.attachment;
 						
 						if (attachment)
 						{
@@ -494,6 +500,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (drawDebugFrames != newSetting)
 	{
 		drawDebugFrames = newSetting;
+		
+		[self setNeedsDisplay];
+	}
+}
+
+- (void)setShouldDrawImages:(BOOL)newSetting
+{
+	if (shouldDrawImages != newSetting)
+	{
+		shouldDrawImages = newSetting;
 		
 		[self setNeedsDisplay];
 	}
