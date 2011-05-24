@@ -23,8 +23,18 @@ typedef enum
 } DTHTMLElementFloatStyle;
 
 
+typedef enum
+{
+	DTHTMLElementFontVariantInherit = 0,
+	DTHTMLElementFontVariantNormal = 0,
+	DTHTMLElementFontVariantSmallCaps
+} DTHTMLElementFontVariant;
+
+
 @interface DTHTMLElement : NSObject <NSCopying>
 {
+	DTHTMLElement *parent;
+	
     DTCoreTextFontDescriptor *fontDescriptor;
     DTCoreTextParagraphStyle *paragraphStyle;
     DTTextAttachment *textAttachment;
@@ -56,8 +66,11 @@ typedef enum
 	BOOL isColorInherited;
 	
 	BOOL preserveNewlines;
+	
+	DTHTMLElementFontVariant fontVariant;
 }
 
+@property (nonatomic, assign) DTHTMLElement *parent;
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
 @property (nonatomic, retain) DTTextAttachment *textAttachment;
@@ -76,6 +89,7 @@ typedef enum
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
 @property (nonatomic, assign) BOOL isColorInherited;
 @property (nonatomic, assign) BOOL preserveNewlines;
+@property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
 
 
 - (NSAttributedString *)attributedString;

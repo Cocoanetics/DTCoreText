@@ -14,6 +14,7 @@
 #import "UIColor+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "DTTextAttachment.h"
+#import "NSAttributedString+HTML.h"
 
 @interface DTHTMLElement ()
 
@@ -165,7 +166,6 @@
     return tmpDict;
 }
 
-
 - (NSAttributedString *)attributedString
 {
     NSDictionary *attributes = [self attributesDictionary];
@@ -177,7 +177,14 @@
     }
     else
     {
-        return [[[NSAttributedString alloc] initWithString:text attributes:attributes] autorelease];
+		if (self.fontVariant == DTHTMLElementFontVariantNormal)
+		{
+			return [[[NSAttributedString alloc] initWithString:text attributes:attributes] autorelease];
+		}
+		else
+		{
+			return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:text attributes:attributes];
+		}
     }
 }
 
@@ -409,6 +416,23 @@
             self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
         }
     }
+	
+	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
+	if (fontVariantStr)
+	{
+		if ([fontVariantStr isEqualToString:@"small-caps"])
+		{
+			fontVariant = DTHTMLElementFontVariantSmallCaps;
+		}
+		else if ([fontVariantStr isEqualToString:@"inherit"])
+		{
+			fontVariant = DTHTMLElementFontVariantInherit;
+		}
+		else
+		{
+			fontVariant = DTHTMLElementFontVariantNormal;
+		}
+	}
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
@@ -481,6 +505,22 @@
 	}
 }
 
+- (DTHTMLElementFontVariant)fontVariant
+{
+	if (fontVariant == DTHTMLElementFontVariantInherit)
+	{
+		if (parent)
+		{
+			return parent.fontVariant;
+		}
+		
+		return DTHTMLElementFontVariantNormal;
+	}
+	
+	return fontVariant;
+}
+
+@synthesize parent;
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
 @synthesize textColor = _textColor;
@@ -499,6 +539,7 @@
 @synthesize floatStyle;
 @synthesize isColorInherited;
 @synthesize preserveNewlines;
+@synthesize fontVariant;
 
 @synthesize fontCache = _fontCache;
 
