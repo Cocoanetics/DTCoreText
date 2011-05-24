@@ -26,7 +26,7 @@ typedef enum
 typedef enum
 {
 	DTHTMLElementFontVariantInherit = 0,
-	DTHTMLElementFontVariantNormal = 0,
+	DTHTMLElementFontVariantNormal,
 	DTHTMLElementFontVariantSmallCaps
 } DTHTMLElementFontVariant;
 
