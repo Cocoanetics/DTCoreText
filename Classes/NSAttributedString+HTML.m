@@ -295,6 +295,12 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				attachment.contentURL = imageURL;
 				attachment.originalSize = imageSize;
 				attachment.displaySize = adjustedSize;
+				
+				// we copy the link because we might need for it making the custom view
+				if (currentTag.link)
+				{
+					attachment.hyperLinkURL = currentTag.link;
+				}
                 
                 currentTag.textAttachment = attachment;
 				
