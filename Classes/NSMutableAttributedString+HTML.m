@@ -8,6 +8,8 @@
 
 #import "NSMutableAttributedString+HTML.h"
 
+#import <CoreText/CoreText.h>
+
 
 @implementation NSMutableAttributedString (HTML)
 
@@ -23,6 +25,20 @@
     {
         // get attributes from last character
         previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
+		
+		
+		// need to remove attachment to avoid ending up with two images
+		id attachment = [previousAttributes objectForKey:@"DTTextAttachment"];
+		
+		if (attachment)
+		{
+			NSMutableDictionary *tmpDict = [[previousAttributes mutableCopy] autorelease];
+			
+			[tmpDict removeObjectForKey:@"DTTextAttachment"];
+			[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
+			
+			 previousAttributes = tmpDict;
+		}
     }
 
     

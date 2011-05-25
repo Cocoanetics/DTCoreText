@@ -86,7 +86,7 @@
 		// add a font that is display height plus a bit more for the descender
 		self.fontDescriptor.fontName = @"Times New Roman";
 		self.fontDescriptor.fontFamily = nil;
-		self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize;
+		self.fontDescriptor.pointSize = textAttachment.displaySize.height*0.5+0.3*self.fontDescriptor.pointSize;
 		CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
         [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
 		CFRelease(font);
@@ -223,7 +223,7 @@
         }
         case DTHTMLElementListStyleDecimalLeadingZero:
         {
-            NSString *string = [NSString stringWithFormat:@"\x09%d.\x09", counter];
+            NSString *string = [NSString stringWithFormat:@"\x09%02d.\x09", counter];
             return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
         }
         case DTHTMLElementListStyleDisc:
@@ -233,12 +233,18 @@
         case DTHTMLElementListStyleUpperAlpha:
         case DTHTMLElementListStyleUpperLatin:
         {
-            return [[[NSAttributedString alloc] initWithString:@"\x09\u2022\x09" attributes:attributes] autorelease];
+			char letter = 'A' + counter-1;
+			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
+			
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
         }
         case DTHTMLElementListStyleLowerAlpha:
         case DTHTMLElementListStyleLowerLatin:
         {
-            return [[[NSAttributedString alloc] initWithString:@"\x09\u2022\x09" attributes:attributes] autorelease];
+			char letter = 'a' + counter-1;
+			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
+
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
         }
         case DTHTMLElementListStylePlus:
         {

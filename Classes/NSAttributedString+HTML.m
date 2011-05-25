@@ -409,11 +409,12 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                     currentTag.paragraphStyle.paragraphSpacing = 0;
 					
 #if ALLOW_IPHONE_SPECIAL_CASES                    
-                    currentTag.paragraphStyle.headIndent += 25.0 * textScale;
+                    currentTag.paragraphStyle.headIndent += 27.0 * textScale;
 #else
                     currentTag.paragraphStyle.headIndent += 36.0 * textScale;
 #endif
-                    [currentTag.paragraphStyle addTabStopAtPosition:11.0 alignment:kCTLeftTextAlignment];
+                    [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
+					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
                 }
 				else 
@@ -769,6 +770,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
+								// this eliminates an attachment if present in attributes
                                 [tmpString appendString:UNICODE_LINE_FEED];
 							}
 						}
