@@ -30,6 +30,22 @@ typedef enum
 	DTHTMLElementFontVariantSmallCaps
 } DTHTMLElementFontVariant;
 
+typedef enum
+{
+    DTHTMLElementListStyleInherit = 0,
+    DTHTMLElementListStyleNone,
+    DTHTMLElementListStyleCircle,
+    DTHTMLElementListStyleDecimal,
+    DTHTMLElementListStyleDecimalLeadingZero,
+    DTHTMLElementListStyleDisc,
+    DTHTMLElementListStyleUpperAlpha,
+    DTHTMLElementListStyleUpperLatin,
+    DTHTMLElementListStyleLowerAlpha,
+    DTHTMLElementListStyleLowerLatin,
+    DTHTMLElementListStylePlus,
+    DTHTMLElementListStyleUnderscore
+} DTHTMLElementListStyle;
+
 
 @interface DTHTMLElement : NSObject <NSCopying>
 {
@@ -63,6 +79,8 @@ typedef enum
 	NSMutableDictionary *_additionalAttributes;
 	
 	DTHTMLElementFloatStyle floatStyle;
+    DTHTMLElementListStyle listStyle;
+    
 	BOOL isColorInherited;
 	
 	BOOL preserveNewlines;
@@ -90,9 +108,11 @@ typedef enum
 @property (nonatomic, assign) BOOL isColorInherited;
 @property (nonatomic, assign) BOOL preserveNewlines;
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
+@property (nonatomic, assign) DTHTMLElementListStyle listStyle;
 
 
 - (NSAttributedString *)attributedString;
+- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter;
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;

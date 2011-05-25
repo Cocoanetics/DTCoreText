@@ -758,24 +758,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					}
 #endif
 					
-					// if we start a list, then we wait until we have actual text
-					if (needsListItemStart && ![tagContents isEqualToString:@" "])
-					{
-						if (listCounter)
-						{
-							NSString *prefix = [NSString stringWithFormat:@"\x09%d.\x09", listCounter];
-							
-							tagContents = [prefix stringByAppendingString:tagContents];
-						}
-						else
-						{
-							// Ul li prefixes bullet
-							tagContents = [@"\x09\u2022\x09" stringByAppendingString:tagContents];
-						}
-						
-						needsListItemStart = NO;
-					}
-					
 					if (needsNewLineBefore)
 					{
 						if ([tagContents hasPrefix:@" "])
@@ -787,7 +769,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-								tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
+                                [tmpString appendString:UNICODE_LINE_FEED];
 							}
 						}
 						needsNewLineBefore = NO;
@@ -802,6 +784,20 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
+                    
+                    // if we start a list, then we wait until we have actual text
+					if (needsListItemStart && ![tagContents isEqualToString:@" "])
+					{
+                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:listCounter];
+                        
+                        if (prefixString)
+                        {
+                            [tmpString appendAttributedString:prefixString]; 
+                        }
+						
+						needsListItemStart = NO;
+					}
+
                     
                     // we don't want whitespace before first tag to turn into paragraphs
                     if (![tagName isEqualToString:@"html"])
@@ -934,6 +930,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	
 	return 	[tmpString autorelease];
 }
+
 
 
 
