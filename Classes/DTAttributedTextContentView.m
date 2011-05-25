@@ -224,6 +224,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					{
 						existingAttachmentView.frame = frameForSubview;
 						existingAttachmentView.hidden = NO;
+						
+						linkURL = nil; // prevent adding link button on top of image view
 					}
 					else
 					{
@@ -253,6 +255,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 									
 									[self.customViews addObject:newCustomAttachmentView];
 									[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
+									
+									linkURL = nil; // prevent adding link button on top of image view
 								}
 							}
 						}
