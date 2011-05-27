@@ -97,45 +97,36 @@
 #pragma mark Properties
 - (CTFramesetterRef) framesetter
 {
-    @synchronized(_attributedString)
-    {
-        if (!framesetter)
-        {
-            framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
-        }
-        
-        return framesetter;
-    }
+	if (!framesetter)
+	{
+		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+	}
+	
+	return framesetter;
 }
 
 
 - (void)relayoutText
 {
-    @synchronized(_attributedString)
-    {
-        // framesetter needs to go
-        if (framesetter)
-        {
-            CFRelease(framesetter);
-            framesetter = NULL;
-        }
-    }
+	// framesetter needs to go
+	if (framesetter)
+	{
+		CFRelease(framesetter);
+		framesetter = NULL;
+	}
 }
 
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-    @synchronized(_attributedString)
-    {
-        if (_attributedString != attributedString)
-        {
-            [_attributedString release];
-            
-            _attributedString = [attributedString mutableCopy];
-            
-            [self relayoutText];
-        }
-    }
+	if (_attributedString != attributedString)
+	{
+		[_attributedString release];
+		
+		_attributedString = [attributedString mutableCopy];
+		
+		[self relayoutText];
+	}
 }
 
 - (NSMutableArray *)frames
