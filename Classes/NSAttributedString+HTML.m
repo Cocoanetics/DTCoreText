@@ -643,7 +643,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					
 					if (face)
 					{
-						currentTag.fontDescriptor.fontFamily = face;
+						currentTag.fontDescriptor.fontName = face;
 					}
 				}
 			}
@@ -834,65 +834,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
 {
 	CTFontRef normalFont = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
-	
-	BOOL smallCapsSupported = NO;
-	
-	// check if this font supports small caps
-	CFArrayRef fontFeatures = CTFontCopyFeatures(normalFont);
-	
-	if (fontFeatures)
-	{
-		for (NSDictionary *oneFeature in (NSArray *)fontFeatures)
-		{
-			NSInteger featureTypeIdentifier = [[oneFeature objectForKey:@"CTFeatureTypeIdentifier"] integerValue];
-
-			if (featureTypeIdentifier == 3) // Letter Case
-			{
-				NSArray *featureSelectors = [oneFeature objectForKey:@"CTFeatureTypeSelectors"];
-				
-				for (NSDictionary *oneFeatureSelector in featureSelectors)
-				{
-					NSInteger featureSelectorIdentifier = [[oneFeatureSelector objectForKey:@"CTFeatureSelectorIdentifier"] integerValue];
-					
-					if (featureSelectorIdentifier == 3) // Small Caps
-					{
-						// hooray, small caps supported!
-						
-						smallCapsSupported = YES;
-						
-						break;
-					}
-				}
-				
-				break;
-			}
-		}
-		
-		CFRelease(fontFeatures);
-	}
-	
-	if (smallCapsSupported)
-	{
-		CTFontDescriptorRef fontDesc = CTFontCopyFontDescriptor(normalFont);
-		CTFontDescriptorRef smallCapsFontDesc = CTFontDescriptorCreateCopyWithFeature(fontDesc, (CFNumberRef)[NSNumber numberWithInt:3], 
-																					   (CFNumberRef)[NSNumber numberWithInt:3]);
-		CFRelease(fontDesc);
-		
-		CTFontRef smallCapsFont = CTFontCreateWithFontDescriptor(smallCapsFontDesc, 0, NULL);
-		CFRelease(smallCapsFontDesc);
-		
-		NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-		[smallAttributes setObject:(id)smallCapsFont forKey:(id)kCTFontAttributeName];
-		CFRelease(smallCapsFont);
-		
-		NSAttributedString *retString = [[NSAttributedString alloc] initWithString:text attributes:smallAttributes];
-		[smallAttributes release];
-		
-		return [retString autorelease];
-	}
-
-	
-	// font does not support small caps, need to synthesize
 
 	DTCoreTextFontDescriptor *smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:normalFont];
 	smallerFontDesc.pointSize *= 0.7;

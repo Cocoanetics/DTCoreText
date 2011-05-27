@@ -9,6 +9,8 @@
 #import "DTCoreTextFontDescriptor.h"
 
 static NSCache *_fontCache = nil;
+static NSMutableDictionary *_smallCapsFontFaceLookup = nil;
+
 
 @implementation DTCoreTextFontDescriptor
 
@@ -23,6 +25,26 @@ static NSCache *_fontCache = nil;
 	
 	return _fontCache;
 }
+
++ (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
+{
+    if (!_smallCapsFontFaceLookup)
+    {
+        _smallCapsFontFaceLookup = [[NSMutableDictionary alloc] init];
+    }
+    
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%d", fontFamily, bold, italic];
+    
+    [_smallCapsFontFaceLookup setObject:fontName forKey:key];
+}
+
++ (NSString *)smallCapsFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
+{
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%d", fontFamily, bold, italic];
+    
+    return [_smallCapsFontFaceLookup objectForKey:key];
+}
+
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes
 {
@@ -111,9 +133,9 @@ static NSCache *_fontCache = nil;
 	[string appendFormat:@"<%@ ", [self class]];
 	
 	
-	if (fontName)
+	if (self.fontName)
 	{
-		[string appendFormat:@"name:\'%@\' ", fontName];
+		[string appendFormat:@"name:\'%@\' ", self.fontName];
 	}
 	
 	if (fontFamily)
@@ -240,25 +262,90 @@ static NSCache *_fontCache = nil;
 		[tmpDict setObject:fontFamily forKey:(id)kCTFontFamilyNameAttribute];
 	}
 	
-	if (fontName)
+	if (self.fontName)
 	{
-		[tmpDict setObject:fontName forKey:(id)kCTFontNameAttribute];
+		[tmpDict setObject:self.fontName forKey:(id)kCTFontNameAttribute];
 	}
 	
 	[tmpDict setObject:[NSNumber numberWithFloat:pointSize] forKey:(id)kCTFontSizeAttribute];
+
 	
+    if (smallCapsFeature)
+    {
+        NSNumber *typeNum = [NSNumber numberWithInteger:3];
+        NSNumber *selNum = [NSNumber numberWithInteger:3];
+        
+        NSDictionary *setting = [NSDictionary dictionaryWithObjectsAndKeys:selNum, (id)kCTFontFeatureSelectorIdentifierKey,
+                                 typeNum, (id)kCTFontFeatureTypeIdentifierKey, nil];
+        
+        NSArray *featureSettings = [NSArray arrayWithObject:setting];
+        
+        [tmpDict setObject:featureSettings forKey:(id)kCTFontFeatureSettingsAttribute];
+    }
+    
 	//return [NSDictionary dictionaryWithDictionary:tmpDict];
     
     // converting to non-mutable costs 42% of entire method
     return tmpDict;
 }
 
+- (BOOL)supportsNativeSmallCaps
+{
+    if ([DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:fontFamily bold:boldTrait italic:italicTrait])
+    {
+        return YES;
+    }
+    
+    CTFontRef tmpFont = [self newMatchingFont];
+    
+    BOOL smallCapsSupported = NO;
+	
+	// check if this font supports small caps
+	CFArrayRef fontFeatures = CTFontCopyFeatures(tmpFont);
+	
+	if (fontFeatures)
+	{
+		for (NSDictionary *oneFeature in (NSArray *)fontFeatures)
+		{
+			NSInteger featureTypeIdentifier = [[oneFeature objectForKey:(id)kCTFontFeatureTypeIdentifierKey] integerValue];
+            
+			if (featureTypeIdentifier == 3) // Letter Case
+			{
+				NSArray *featureSelectors = [oneFeature objectForKey:(id)kCTFontFeatureTypeSelectorsKey];
+				
+				for (NSDictionary *oneFeatureSelector in featureSelectors)
+				{
+					NSInteger featureSelectorIdentifier = [[oneFeatureSelector objectForKey:(id)kCTFontFeatureSelectorIdentifierKey] integerValue];
+					
+					if (featureSelectorIdentifier == 3) // Small Caps
+					{
+						// hooray, small caps supported!
+						smallCapsSupported = YES;
+						
+						break;
+					}
+				}
+				
+				break;
+			}
+		}
+		
+		CFRelease(fontFeatures);
+	}
+    
+    CFRelease(tmpFont);
+    
+    return smallCapsSupported;
+}
+
 #pragma mark Finding Font
 
 - (CTFontRef)newMatchingFont
 {
+    NSDictionary *attributes = [self fontAttributes];
+
 	NSCache *fontCache = [DTCoreTextFontDescriptor fontCache];
-	NSNumber *cacheKey = [NSNumber numberWithInteger:[self hash]];
+	NSString *cacheKey = [attributes description];
 	
 	CTFontRef cachedFont = (CTFontRef)[fontCache objectForKey:cacheKey];
 	
@@ -268,34 +355,11 @@ static NSCache *_fontCache = nil;
 		return cachedFont;
 	}
 	
-	// we have a a name already
-	if (fontName)
-	{
-		CTFontRef font = CTFontCreateWithName((CFStringRef)fontName, pointSize, NULL);
-		
-		// cache it
-		[fontCache setObject:(id)font forKey:cacheKey];
-		
-		return font;
-	}
-	
-//	// try cached font match
-//	DTCoreTextFontCollection *availableFonts = [DTCoreTextFontCollection availableFontsCollection];
-//	DTCoreTextFontDescriptor *matching = [availableFonts matchingFontDescriptorForFontDescriptor:self];
-//	
-//	if (matching)
-//	{
-//		return [matching newMatchingFont];
-//	}
-	
-	
-    NSDictionary *attributes = [self fontAttributes];
-    
     CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
     
     CTFontRef matchingFont;
     
-    if (fontFamily)
+    if (fontFamily||fontName)
     {
         // fast font creation
         matchingFont = CTFontCreateWithFontDescriptor(fontDesc, pointSize, NULL);
@@ -305,15 +369,16 @@ static NSCache *_fontCache = nil;
         // without font name or family we need to do expensive search
         // otherwise we always get Helvetica
         
-        NSSet *set;
+        NSMutableSet *set = [NSMutableSet setWithObject:(id)kCTFontTraitsAttribute];
         
         if (fontFamily)
         {
-            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, (id)kCTFontFamilyNameAttribute, nil];
+            [set addObject:(id)kCTFontFamilyNameAttribute];
         }
-        else 
+        
+        if (smallCapsFeature)
         {
-            set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
+            [set addObject:(id)kCTFontFeaturesAttribute];
         }
         
         CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (CFSetRef)set);
@@ -336,7 +401,7 @@ static NSCache *_fontCache = nil;
 	{
 		// cache it
 		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
-	}
+  	}
 
     return matchingFont;
 }
@@ -347,7 +412,7 @@ static NSCache *_fontCache = nil;
     
     NSDictionary *attributes = [self fontAttributes];
     
-    CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+    CTFontDescriptorRef fontDesc = nil; CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
     
     if (fontDesc)
     {
@@ -514,7 +579,6 @@ static NSCache *_fontCache = nil;
         self.symbolicTraits = traitsValue;
     }
     
-    
     NSNumber *pointNum = [attributes objectForKey:(id)kCTFontSizeAttribute];
     if (pointNum)
     {
@@ -578,6 +642,21 @@ static NSCache *_fontCache = nil;
     stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
 }
 
+- (NSString *)fontName
+{
+    if (smallCapsFeature && fontFamily && _smallCapsFontFaceLookup)
+    {
+        NSString *forcedFontName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:fontFamily bold:boldTrait italic:italicTrait];
+        
+        if (forcedFontName)
+        {
+            return forcedFontName;
+        }
+    }
+    
+    return fontName;
+}
+
 @synthesize fontFamily;
 @synthesize fontName;
 
@@ -593,6 +672,7 @@ static NSCache *_fontCache = nil;
 @synthesize symbolicTraits;
 
 @synthesize stylisticClass;
+@synthesize smallCapsFeature;
 
 @end
 

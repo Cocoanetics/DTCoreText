@@ -74,6 +74,8 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	
 	NSArray *matchingDescriptors = [self.fontDescriptors filteredArrayUsingPredicate:predicate];
 	
+    NSLog(@"%@", matchingDescriptors);
+    
 	if ([matchingDescriptors count])
 	{
 		firstMatch = [matchingDescriptors objectAtIndex:0];

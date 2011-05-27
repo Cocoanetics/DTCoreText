@@ -182,6 +182,22 @@
 		}
 		else
 		{
+            if ([self.fontDescriptor supportsNativeSmallCaps])
+            {
+                DTCoreTextFontDescriptor *smallDesc = [self.fontDescriptor copy];
+                smallDesc.smallCapsFeature = YES;
+                
+                CTFontRef smallerFont = [smallDesc newMatchingFont];
+                
+                NSMutableDictionary *smallAttributes = [attributes mutableCopy];
+                [smallAttributes setObject:(id)smallerFont forKey:(id)kCTFontAttributeName];
+                CFRelease(smallerFont);
+                
+                [smallDesc release];
+
+                return [[[NSAttributedString alloc] initWithString:text attributes:smallAttributes] autorelease];
+            }
+            
 			return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:text attributes:attributes];
 		}
     }
@@ -576,6 +592,8 @@
     
     newObject.fontDescriptor = self.fontDescriptor; // copy
     newObject.paragraphStyle = self.paragraphStyle; // copy
+    
+    newObject.fontVariant = self.fontVariant;
     
     newObject.underlineStyle = self.underlineStyle;
     newObject.tagContentInvisible = self.tagContentInvisible;
