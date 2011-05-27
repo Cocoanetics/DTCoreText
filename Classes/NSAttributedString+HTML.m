@@ -409,11 +409,12 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                     currentTag.paragraphStyle.paragraphSpacing = 0;
 					
 #if ALLOW_IPHONE_SPECIAL_CASES                    
-                    currentTag.paragraphStyle.headIndent += 25.0 * textScale;
+                    currentTag.paragraphStyle.headIndent += 27.0 * textScale;
 #else
                     currentTag.paragraphStyle.headIndent += 36.0 * textScale;
 #endif
-                    [currentTag.paragraphStyle addTabStopAtPosition:11.0 alignment:kCTLeftTextAlignment];
+                    [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
+					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
                 }
 				else 
@@ -758,24 +759,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					}
 #endif
 					
-					// if we start a list, then we wait until we have actual text
-					if (needsListItemStart && ![tagContents isEqualToString:@" "])
-					{
-						if (listCounter)
-						{
-							NSString *prefix = [NSString stringWithFormat:@"\x09%d.\x09", listCounter];
-							
-							tagContents = [prefix stringByAppendingString:tagContents];
-						}
-						else
-						{
-							// Ul li prefixes bullet
-							tagContents = [@"\x09\u2022\x09" stringByAppendingString:tagContents];
-						}
-						
-						needsListItemStart = NO;
-					}
-					
 					if (needsNewLineBefore)
 					{
 						if ([tagContents hasPrefix:@" "])
@@ -787,7 +770,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-								tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
+								// this eliminates an attachment if present in attributes
+                                [tmpString appendString:UNICODE_LINE_FEED];
 							}
 						}
 						needsNewLineBefore = NO;
@@ -802,6 +786,20 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
+                    
+                    // if we start a list, then we wait until we have actual text
+					if (needsListItemStart && ![tagContents isEqualToString:@" "])
+					{
+                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:listCounter];
+                        
+                        if (prefixString)
+                        {
+                            [tmpString appendAttributedString:prefixString]; 
+                        }
+						
+						needsListItemStart = NO;
+					}
+
                     
                     // we don't want whitespace before first tag to turn into paragraphs
                     if (![tagName isEqualToString:@"html"])
@@ -934,6 +932,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	
 	return 	[tmpString autorelease];
 }
+
 
 
 

@@ -86,7 +86,7 @@
 		// add a font that is display height plus a bit more for the descender
 		self.fontDescriptor.fontName = @"Times New Roman";
 		self.fontDescriptor.fontFamily = nil;
-		self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize;
+		self.fontDescriptor.pointSize = textAttachment.displaySize.height*0.5+0.3*self.fontDescriptor.pointSize;
 		CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
         [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
 		CFRelease(font);
@@ -110,7 +110,6 @@
             CFRelease(font);
         }
         [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
-        [tmpDict setObject:(id)paragraphStyle forKey:(id)kCTParagraphStyleAttributeName];
     }
     
     // add hyperlink
@@ -187,6 +186,81 @@
 		}
     }
 }
+
+- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter
+{
+    // make a font without italic or bold
+    DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
+    fontDesc.boldTrait = NO;
+    fontDesc.italicTrait = NO;
+    
+    CTFontRef font = [fontDesc newMatchingFont];
+    [fontDesc release];
+    
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    [attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
+    CFRelease(font);
+    
+    // add paragraph style (this has the tabs)
+	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
+    [attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+	CFRelease(newParagraphStyle);
+    
+    switch (self.listStyle) 
+    {
+        case DTHTMLElementListStyleNone:
+        {
+            return nil;
+        }
+        case DTHTMLElementListStyleCircle:
+        {
+            return [[[NSAttributedString alloc] initWithString:@"\x09\u25e6\x09" attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleDecimal:
+        {
+            NSString *string = [NSString stringWithFormat:@"\x09%d.\x09", counter];
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleDecimalLeadingZero:
+        {
+            NSString *string = [NSString stringWithFormat:@"\x09%02d.\x09", counter];
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleDisc:
+        {
+            return [[[NSAttributedString alloc] initWithString:@"\x09\u2022\x09" attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleUpperAlpha:
+        case DTHTMLElementListStyleUpperLatin:
+        {
+			char letter = 'A' + counter-1;
+			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
+			
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleLowerAlpha:
+        case DTHTMLElementListStyleLowerLatin:
+        {
+			char letter = 'a' + counter-1;
+			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
+
+            return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStylePlus:
+        {
+            return [[[NSAttributedString alloc] initWithString:@"\x09+\x09" attributes:attributes] autorelease];
+        }
+        case DTHTMLElementListStyleUnderscore:
+        {
+            return [[[NSAttributedString alloc] initWithString:@"\x09_\x09" attributes:attributes] autorelease];
+        }
+        default:
+            return nil;
+    }
+    
+    return nil;
+}
+
 
 - (void)parseStyleString:(NSString *)styleString
 {
@@ -433,6 +507,55 @@
 			fontVariant = DTHTMLElementFontVariantNormal;
 		}
 	}
+    
+    NSString *listStyleStr = [[styles objectForKey:@"list-style"] lowercaseString];
+	if (listStyleStr)
+	{
+		if ([listStyleStr isEqualToString:@"inherit"])
+		{
+			listStyle = DTHTMLElementListStyleInherit;
+		}
+		else if ([listStyleStr isEqualToString:@"none"])
+		{
+			listStyle = DTHTMLElementListStyleNone;
+		}
+		else if ([listStyleStr isEqualToString:@"circle"])
+		{
+			listStyle = DTHTMLElementListStyleCircle;
+		}		
+		else if ([listStyleStr isEqualToString:@"decimal"])
+		{
+			listStyle = DTHTMLElementListStyleDecimal;
+		}
+		else if ([listStyleStr isEqualToString:@"decimal-leading-zero"])
+		{
+			listStyle = DTHTMLElementListStyleDecimalLeadingZero;
+		}        
+		else if ([listStyleStr isEqualToString:@"disc"])
+		{
+			listStyle = DTHTMLElementListStyleDisc;
+		}
+		else if ([listStyleStr isEqualToString:@"upper-alpha"]||[listStyleStr isEqualToString:@"upper-latin"])
+		{
+			listStyle = DTHTMLElementListStyleUpperAlpha;
+		}		
+		else if ([listStyleStr isEqualToString:@"lower-alpha"]||[listStyleStr isEqualToString:@"lower-latin"])
+		{
+			listStyle = DTHTMLElementListStyleLowerAlpha;
+		}		
+		else if ([listStyleStr isEqualToString:@"plus"])
+		{
+			listStyle = DTHTMLElementListStylePlus;
+		}        
+		else if ([listStyleStr isEqualToString:@"underscore"])
+		{
+			listStyle = DTHTMLElementListStyleUnderscore;
+		}  
+        else
+        {
+            listStyle = DTHTMLElementListStyleInherit;
+        }
+	}
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
@@ -520,6 +643,34 @@
 	return fontVariant;
 }
 
+- (DTHTMLElementListStyle)listStyle
+{
+	if (listStyle == DTHTMLElementListStyleInherit)
+	{
+        // defaults
+        if ([tagName isEqualToString:@"ul"])
+        {
+            return DTHTMLElementListStyleDisc;
+        }
+        else if ([tagName isEqualToString:@"ol"])
+        {
+            return DTHTMLElementListStyleDecimal;
+        }
+
+		if (parent)
+		{
+			return parent.listStyle;
+		}
+		
+        
+		return DTHTMLElementListStyleNone;
+	}
+	
+	return listStyle;
+}
+
+
+
 @synthesize parent;
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
@@ -540,6 +691,7 @@
 @synthesize isColorInherited;
 @synthesize preserveNewlines;
 @synthesize fontVariant;
+@synthesize listStyle;
 
 @synthesize fontCache = _fontCache;
 

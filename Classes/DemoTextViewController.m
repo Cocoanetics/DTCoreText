@@ -121,7 +121,7 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	// Create attributed string from HTML
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:2.0], NSTextSizeMultiplierDocumentOption, 
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, 
                              @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, nil]; // @"green",DTDefaultTextColor,
     
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
