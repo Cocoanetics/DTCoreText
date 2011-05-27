@@ -8,6 +8,8 @@
 
 #import "DTLazyImageView.h"
 
+static NSCache *_imageCache = nil;
+
 
 @implementation DTLazyImageView
 
@@ -19,6 +21,9 @@
 	[_receivedData release];
 	[_connection cancel];
 	[_connection release];
+    
+    if (_imageSource)
+		CFRelease(_imageSource), _imageSource = NULL;
 	
 	[super dealloc];
 }
@@ -36,8 +41,16 @@
 
 - (void)didMoveToSuperview
 {
-	if (!self.image && _url && !_connection)
+	if (!self.image && _url && !_connection && self.superview)
 	{
+        UIImage *image = [_imageCache objectForKey:_url];
+        
+        if (image)
+        {
+            self.image = image;
+            return;
+        }
+        
 		[self loadImageAtURL:_url];
 	}	
 }
@@ -48,6 +61,68 @@
 	[_connection release], _connection = nil;
 	
 	[_receivedData release], _receivedData = nil;
+}
+
+#pragma mark Progressive Image
+-(CGImageRef)createTransitoryImage:(CGImageRef)partialImg
+{
+	const size_t height = CGImageGetHeight(partialImg);
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGContextRef bmContext = CGBitmapContextCreate(NULL, _fullWidth, _fullHeight, 8, _fullWidth * 4, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+	CGColorSpaceRelease(colorSpace);
+	if (!bmContext)
+	{
+		NSLog(@"fail creating context");
+		return NULL;
+	}
+	CGContextDrawImage(bmContext, (CGRect){.origin.x = 0.0f, .origin.y = 0.0f, .size.width = _fullWidth, .size.height = height}, partialImg);
+	CGImageRef goodImageRef = CGBitmapContextCreateImage(bmContext);
+	CGContextRelease(bmContext);
+	return goodImageRef;
+}
+
+- (void)createAndShowProgressiveImage
+{
+    if (!_imageSource)
+    {
+        return;
+    }
+    
+    /* For progressive download */
+	const NSUInteger totalSize = [_receivedData length];
+	CGImageSourceUpdateData(_imageSource, (CFDataRef)_receivedData, (totalSize == _expectedSize) ? true : false);
+	
+	if (_fullHeight > 0 && _fullWidth > 0)
+	{
+		CGImageRef image = CGImageSourceCreateImageAtIndex(_imageSource, 0, NULL);
+		if (image)
+		{
+			CGImageRef imgTmp = [self createTransitoryImage:image]; // iOS fix to correctly handle JPG see : http://www.cocoabyss.com/mac-os-x/progressive-image-download-imageio/
+			if (imgTmp)
+			{
+                UIImage *image = [[UIImage alloc] initWithCGImage:imgTmp];
+				[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
+                [image release];
+                
+				CGImageRelease(imgTmp);
+			}
+			CGImageRelease(image);
+		}
+	}
+	else
+	{
+		CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(_imageSource, 0, NULL);
+		if (properties)
+		{
+			CFTypeRef val = CFDictionaryGetValue(properties, kCGImagePropertyPixelHeight);
+			if (val)
+				CFNumberGetValue(val, kCFNumberFloatType, &_fullHeight);
+			val = CFDictionaryGetValue(properties, kCGImagePropertyPixelWidth);
+			if (val)
+				CFNumberGetValue(val, kCFNumberFloatType, &_fullWidth);
+			CFRelease(properties);
+		}
+	}
 }
 
 #pragma mark NSURL Loading
@@ -65,15 +140,35 @@
 		if (![[httpResponse MIMEType] hasPrefix:@"image"])
 		{
 			[self cancelLoading];
+            return;
 		}
 	}
+
+	 /* For progressive download */
+	_fullWidth = _fullHeight = -1.0f;
+	_expectedSize = [response expectedContentLength];
 	
 	_receivedData = [[NSMutableData alloc] init];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
 	[_receivedData appendData:data];
+	
+    if (!CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
+    {
+        // don't show progressive
+        return;
+    }
+    
+    if (!_imageSource)
+    {
+        _imageSource = CGImageSourceCreateIncremental(NULL);
+    }
+    
+    [self createAndShowProgressiveImage];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -83,6 +178,17 @@
 		UIImage *image = [[UIImage alloc] initWithData:_receivedData];
 		
 		self.image = image;
+        
+        if (!_imageCache)
+        {
+            _imageCache = [[NSCache alloc] init];
+        }
+        
+        if (_url)
+        {
+            // cache image
+            [_imageCache setObject:image forKey:_url];
+        }
 		
 		[image release];
 		
@@ -90,6 +196,10 @@
 	}
 	
 	[_connection release], _connection = nil;
+	
+	/* For progressive download */
+	if (_imageSource)
+		CFRelease(_imageSource), _imageSource = NULL;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -98,11 +208,15 @@
 	
 	[_connection release], _connection = nil;
 	[_receivedData release], _receivedData = nil;
+	
+	/* For progressive download */
+	if (_imageSource)
+		CFRelease(_imageSource), _imageSource = NULL;
 }
-
 
 #pragma mark Properties
 
 @synthesize url = _url;
+@synthesize shouldShowProgressiveDownload;
 
 @end
