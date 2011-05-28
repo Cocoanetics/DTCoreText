@@ -80,6 +80,16 @@
 
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
+    // need to multiple paragraph spacing with line height multiplier
+    float tmpParagraphSpacing = paragraphSpacing;
+    float tmpParagraphSpacingBefore = paragraphSpacingBefore;
+    
+    if (lineHeightMultiple&&(lineHeightMultiple!=1.0))
+    {
+        tmpParagraphSpacing *= lineHeightMultiple;
+        tmpParagraphSpacingBefore *= lineHeightMultiple;
+    }
+    
 	CTParagraphStyleSetting settings[] = 
     {
 		{kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment},
@@ -87,8 +97,9 @@
 		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
 		
 		{kCTParagraphStyleSpecifierTabStops, sizeof(_tabStops), &_tabStops},
-		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing},
-		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paragraphSpacingBefore), &paragraphSpacingBefore},
+        
+		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(tmpParagraphSpacing), &tmpParagraphSpacing},
+		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(tmpParagraphSpacingBefore), &tmpParagraphSpacingBefore},
 		
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(headIndent), &headIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(writingDirection), &writingDirection},

@@ -152,6 +152,8 @@
 	}
     
     // add paragraph style
+    self.paragraphStyle.paragraphSpacing = self.fontDescriptor.pointSize;
+    
 	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
     [tmpDict setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
 	CFRelease(newParagraphStyle);
@@ -497,8 +499,9 @@
         }
         else if ([lineHeight isNumeric])
         {
-            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
-            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
+            self.paragraphStyle.lineHeightMultiple = [lineHeight floatValue];
+//            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+//            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
         }
         else // interpret as length
         {
