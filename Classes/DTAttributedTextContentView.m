@@ -120,7 +120,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[super dealloc];
 }
 
-- (void)layoutSubviewsForRect:(CGRect)rect
+- (void)layoutSubviewsInRect:(CGRect)rect
 {
 	[CATransaction begin];
 	[CATransaction setDisableActions:YES];
@@ -323,11 +323,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		visibleRect.size.width = self.bounds.size.width;
 
 		[self removeSubviewsOutsideRect:visibleRect];
-		[self layoutSubviewsForRect:visibleRect];
+		[self layoutSubviewsInRect:visibleRect];
 	}
 	else
 	{
-		[self layoutSubviewsForRect:CGRectInfinite];
+		[self layoutSubviewsInRect:CGRectInfinite];
 	}
 }
 

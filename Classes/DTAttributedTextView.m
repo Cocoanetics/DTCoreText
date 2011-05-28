@@ -48,7 +48,7 @@
         [self addSubview:self.contentView];
     }
 	
-	[contentView setNeedsLayout];
+    [contentView layoutSubviewsInRect:self.bounds];
 }
 
 - (void)awakeFromNib
@@ -92,6 +92,7 @@
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
 		contentView.shouldOnlyLayoutVisibleSubviews = YES; // we call layout when scrolling
+        
         [self addSubview:contentView];
 	}		
 	

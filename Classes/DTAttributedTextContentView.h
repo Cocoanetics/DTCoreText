@@ -57,6 +57,7 @@
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 
+- (void)layoutSubviewsInRect:(CGRect)rect;
 - (void)relayoutText;
 - (void)removeAllCustomViews;
 
