@@ -31,6 +31,7 @@
 	
 	DTCoreTextLayoutLine *_line;
 	NSDictionary *attributes;
+    NSArray *stringIndices;
 	
 	DTTextAttachment *_attachment;
 	BOOL _didCheckForAttachmentInAttributes;
@@ -41,6 +42,7 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 - (NSRange)stringRange;
+- (NSArray *)stringIndices;
 
 - (void)drawInContext:(CGContextRef)context;
 
