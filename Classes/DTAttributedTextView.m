@@ -178,9 +178,7 @@
 {
 	if (!CGRectEqualToRect(self.frame, frame))
 	{
-		// TODO: Is there a way to animate content?
-		// if this is not here then the content jumps 
-		[self setContentOffset:CGPointZero];
+		[self setContentOffset:CGPointZero animated:YES];
 		
 		if (self.frame.size.width != frame.size.width)
 		{

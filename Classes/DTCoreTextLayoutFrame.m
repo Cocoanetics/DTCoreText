@@ -530,6 +530,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
 #pragma mark Calculations
+- (NSArray *)sringIndices {
+    NSMutableArray *array = [NSMutableArray array];
+    for (DTCoreTextLayoutLine *oneLine in self.lines) {
+        [array addObjectsFromArray:[oneLine stringIndices]];
+    }
+    return array;
+}
+
 - (NSInteger)lineIndexForGlyphIndex:(NSInteger)index
 {
 	NSInteger retIndex = 0;
