@@ -47,6 +47,8 @@
 - (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
+- (NSArray *)stringIndices;
+
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) DTCoreTextLayouter *layouter;
 
