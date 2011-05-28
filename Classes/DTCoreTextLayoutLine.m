@@ -102,6 +102,14 @@
 
 
 #pragma mark Calculations
+- (NSArray *)stringIndices {
+    NSMutableArray *array = [NSMutableArray array];
+    for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
+        [array addObjectsFromArray:[oneRun stringIndices]];
+    }
+    return array;
+}
+
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
 {
 	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)

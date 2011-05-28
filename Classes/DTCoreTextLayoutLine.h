@@ -39,6 +39,7 @@
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 
 - (void)drawInContext:(CGContextRef)context;
+- (NSArray *)stringIndices;
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, retain, readonly) NSArray *glyphRuns;
