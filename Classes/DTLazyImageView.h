@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ImageIO/ImageIO.h>
 
 
 @interface DTLazyImageView : UIImageView 
@@ -15,9 +16,18 @@
 	
 	NSURLConnection *_connection;
 	NSMutableData *_receivedData;
+
+	/* For progressive download */
+	CGImageSourceRef _imageSource;
+	CGFloat _fullHeight;
+	CGFloat _fullWidth;
+	NSUInteger _expectedSize;
+    
+    BOOL shouldShowProgressiveDownload;
 }
 
 @property (nonatomic, retain) NSURL *url;
+@property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
 
 - (void)cancelLoading;
 
