@@ -148,6 +148,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
     DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
     defaultTag.fontDescriptor = defaultFontDescriptor;
     defaultTag.paragraphStyle = defaultParagraphStyle;
+    defaultTag.textScale = textScale;
     
     id defaultColor = [options objectForKey:DTDefaultTextColor];
     if (defaultColor)
@@ -193,7 +194,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                 currentTag = [[currentTag copy] autorelease];
                 currentTag.tagName = tagName;
 				currentTag.parent = parent;
-				
+                currentTag.textScale = textScale;
+
 				// convert CSS Styles into our own style
 				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
 				

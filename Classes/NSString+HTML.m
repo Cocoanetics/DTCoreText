@@ -446,14 +446,9 @@ static NSDictionary *entityLookup = nil;
 
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize
 {
-	NSScanner *scanner = [NSScanner scannerWithString:self];
-	CGFloat value;
-	
-	if (![scanner scanFloat:&value])
-	{
-		return 0;
-	}
-	
+    float value = textSize;
+    sscanf([self UTF8String], "%f", &value);
+    
 	if ([self hasSuffix:@"em"])
 	{
 		return value * textSize;
