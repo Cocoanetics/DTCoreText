@@ -530,7 +530,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
 #pragma mark Calculations
-- (NSArray *)sringIndices {
+- (NSArray *)stringIndices {
     NSMutableArray *array = [NSMutableArray array];
     for (DTCoreTextLayoutLine *oneLine in self.lines) {
         [array addObjectsFromArray:[oneLine stringIndices]];
