@@ -567,38 +567,43 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							case 1:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 16.0;
-								currentTag.fontDescriptor.pointSize = textScale * 24.0;
+                                // H1: 2 em, spacing before 0.67 em, after 0.67 em
+                                currentTag.fontDescriptor.pointSize *= 2.0;
+                                currentTag.paragraphStyle.paragraphSpacing = 0.67 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 2:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 14.0;
-								currentTag.fontDescriptor.pointSize = textScale * 18.0;
+                                // H2: 1.5 em, spacing before 0.83 em, after 0.83 em
+                                currentTag.fontDescriptor.pointSize *= 1.5;
+                                currentTag.paragraphStyle.paragraphSpacing = 0.83 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 3:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 14.0;
-								currentTag.fontDescriptor.pointSize = textScale * 14.0;
+                                // H3: 1.17 em, spacing before 1 em, after 1 em
+                                currentTag.fontDescriptor.pointSize *= 1.17;
+                                currentTag.paragraphStyle.paragraphSpacing = 1.0 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 4:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 15.0;
-								currentTag.fontDescriptor.pointSize = textScale * 12.0;
+                                // H4: 1 em, spacing before 1.33 em, after 1.33 em
+                                currentTag.paragraphStyle.paragraphSpacing = 1.33 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 5:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 16.0;
-								currentTag.fontDescriptor.pointSize = textScale * 10.0;
+                                // H5: 0.83 em, spacing before 1.67 em, after 1.167 em
+                                currentTag.fontDescriptor.pointSize *= 0.83;
+                                currentTag.paragraphStyle.paragraphSpacing = 1.67 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 6:
 							{
-                                currentTag.paragraphStyle.paragraphSpacing = 20.0;
-								currentTag.fontDescriptor.pointSize = textScale * 9.0;
+                                // H6: 0.67 em, spacing before 2.33 em, after 2.33 em
+                                currentTag.fontDescriptor.pointSize *= 0.67;
+                                currentTag.paragraphStyle.paragraphSpacing = 2.33 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							default:

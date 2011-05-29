@@ -287,7 +287,7 @@
     NSString *fontSize = [styles objectForKey:@"font-size"];
     if (fontSize)
     {
-        fontDescriptor.pointSize = [fontSize CSSpixelSize];
+        fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
     }
     
     NSString *color = [styles objectForKey:@"color"];
