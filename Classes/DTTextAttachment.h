@@ -22,6 +22,7 @@ typedef enum
 	CGSize _originalSize;
 	CGSize _displaySize;
 	id contents;
+    NSDictionary *_attributes;
     
     DTTextAttachmentType contentType;
 	
@@ -35,5 +36,6 @@ typedef enum
 @property (nonatomic, assign) DTTextAttachmentType contentType;
 @property (nonatomic, retain) NSURL *contentURL;
 @property (nonatomic, retain) NSURL *hyperLinkURL;
+@property (nonatomic, retain) NSDictionary *attributes;
 
 @end

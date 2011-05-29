@@ -252,17 +252,54 @@
 {
 	if (attachment.contentType == DTTextAttachmentTypeVideoURL)
 	{
-		NSURL *url = (id)attachment.contents;;
+		NSURL *url = (id)attachment.contentURL;
 		
 		// we could customize the view that shows before playback starts
 		UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
 		grayView.backgroundColor = [UIColor blackColor];
 		
 		MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
-		player.controlStyle = MPMovieControlStyleEmbedded;
-		
+        
+        NSString *airplayAttr = [attachment.attributes objectForKey:@"x-webkit-airplay"];
+        if ([airplayAttr isEqualToString:@"allow"])
+        {
+            if ([player respondsToSelector:@selector(setAllowsAirPlay:)])
+            {
+                player.allowsAirPlay = YES;
+            }
+        }
+
+        NSString *controlsAttr = [attachment.attributes objectForKey:@"controls"];
+        if (controlsAttr)
+        {
+            player.controlStyle = MPMovieControlStyleEmbedded;
+        }
+        else
+        {
+            player.controlStyle = MPMovieControlStyleNone;
+        }
+
+        NSString *loopAttr = [attachment.attributes objectForKey:@"loop"];
+        if (loopAttr)
+        {
+            player.repeatMode = MPMovieRepeatModeOne;
+        }
+        else
+        {
+            player.repeatMode = MPMovieRepeatModeNone;
+        }
+        
+        NSString *autoplayAttr = [attachment.attributes objectForKey:@"autoplay"];
+        if (autoplayAttr)
+        {
+            player.shouldAutoplay = YES;
+        }
+        else
+        {
+            player.shouldAutoplay = NO;
+        }
+        
 		[player prepareToPlay];
-		[player setShouldAutoplay:NO];
 		[self.mediaPlayers addObject:player];
 		
 		player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

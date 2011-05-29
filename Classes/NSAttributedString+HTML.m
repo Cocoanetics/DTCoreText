@@ -299,6 +299,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				attachment.contentURL = imageURL;
 				attachment.originalSize = imageSize;
 				attachment.displaySize = adjustedSize;
+                attachment.attributes = tagAttributesDict;
 				
 				// we copy the link because we might need for it making the custom view
 				if (currentTag.link)
@@ -350,9 +351,10 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				}
 				
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
-				attachment.contents = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
+				attachment.contentURL = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
                 attachment.contentType = DTTextAttachmentTypeVideoURL;
 				attachment.originalSize = CGSizeMake(width, height);
+                attachment.attributes = tagAttributesDict;
                 
                 currentTag.textAttachment = attachment;
                 
