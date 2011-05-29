@@ -612,6 +612,20 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					}
 				}
 			}
+            else if ([tagName isEqualToString:@"big"])
+            {
+                if (tagOpen)
+                {
+                    currentTag.fontDescriptor.pointSize *= 1.2;
+                }
+            }
+            else if ([tagName isEqualToString:@"small"])
+            {
+                if (tagOpen)
+                {
+                    currentTag.fontDescriptor.pointSize /= 1.2;
+                }
+            }
 			else if ([tagName isEqualToString:@"font"])
 			{
 				if (tagOpen)
