@@ -58,6 +58,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setup
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
+    shouldLayoutCustomSubviews = YES;
 	
 	// possibly already set in NIB
 	if (!self.backgroundColor)
@@ -112,7 +113,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[customViews release];
 	[customViewsForLinksIndex release];
 	[customViewsForAttachmentsIndex release];
-
+    
 	[_layouter release];
 	[_layoutFrame release];
 	[_attributedString release];
@@ -122,6 +123,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
+    // if we are called for partial (non-infinate) we remove unneeded custom subviews first
+    if (!CGRectIsInfinite(rect))
+    {
+         [self removeSubviewsOutsideRect:rect];
+    }
+    
 	[CATransaction begin];
 	[CATransaction setDisableActions:YES];
 	
@@ -199,14 +206,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				frameForSubview.size.width = roundf(frameForSubview.size.width);
 				frameForSubview.size.height = roundf(frameForSubview.size.height);
 				
-				if (shouldOnlyLayoutVisibleSubviews)
-				{
+
 					if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
 					{
 						// is still outside even though the bounds of the line already intersect visible area
 						continue;
 					}
-				}
 				
 				
 				// fix size for <4.2 image squishing bug
@@ -314,18 +319,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	[super layoutSubviews];
 	
-	if (shouldOnlyLayoutVisibleSubviews)
-	{
-		CGRect visibleRect = CGRectIntersection([self convertRect:self.window.frame fromView:self.window], self.bounds);
-		
-		// Ignore horizontal movement, i.e. paging
-		visibleRect.origin.x = 0;
-		visibleRect.size.width = self.bounds.size.width;
-
-		[self removeSubviewsOutsideRect:visibleRect];
-		[self layoutSubviewsInRect:visibleRect];
-	}
-	else
+	if (shouldLayoutCustomSubviews)
 	{
 		[self layoutSubviewsInRect:CGRectInfinite];
 	}
@@ -365,7 +359,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
 	
 	// this returns an incorrect size before 4.2
-//	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+    //	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
 	
 	return neededSize;
 }
@@ -387,7 +381,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// need new layouter
 	self.layouter = nil;
 	self.layoutFrame = nil;
-
+    
 	// remove custom views
 	[self removeAllCustomViewsForLinks];
 	
@@ -395,7 +389,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		// triggers new layout
 		CGSize neededSize = [self sizeThatFits:self.bounds.size];
-
+        
 		// set frame to fit text preserving origin
 		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
 	}
@@ -481,7 +475,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setFrame:(CGRect)frame
 {
 	[super setFrame:frame];
-
+    
 	if (!_layoutFrame) 
 	{
 		return;	
@@ -556,7 +550,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		{
 			CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
 			rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-
+            
 			_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 			[_layoutFrame retain];
 		}
@@ -572,7 +566,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
         _layoutFrame = [layoutFrame retain];
 		
-//		[self sizeToFit];
+        //		[self sizeToFit];
 		
 		[self removeAllCustomViewsForLinks];
 		
@@ -635,7 +629,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize edgeInsets;
 @synthesize drawDebugFrames;
 @synthesize shouldDrawImages;
-@synthesize shouldOnlyLayoutVisibleSubviews;
+@synthesize shouldLayoutCustomSubviews;
 @synthesize layoutOffset = _layoutOffset;
 
 @synthesize customViews;

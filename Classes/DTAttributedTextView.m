@@ -48,6 +48,7 @@
         [self addSubview:self.contentView];
     }
 	
+    // layout custom subviews for visible area
     [contentView layoutSubviewsInRect:self.bounds];
 }
 
@@ -91,7 +92,7 @@
 		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
-		contentView.shouldOnlyLayoutVisibleSubviews = YES; // we call layout when scrolling
+		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
         
         [self addSubview:contentView];
 	}		
