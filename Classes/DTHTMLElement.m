@@ -15,6 +15,7 @@
 #import "NSCharacterSet+HTML.h"
 #import "DTTextAttachment.h"
 #import "NSAttributedString+HTML.h"
+#import "UIDevice+DTVersion.h"
 
 @interface DTHTMLElement ()
 
@@ -83,15 +84,20 @@
 		
 		// --- begin workaround for image squishing bug in iOS < 4.2
 		
-		// add a font that is display height plus a bit more for the descender
-		self.fontDescriptor.fontName = @"Times New Roman";
-		self.fontDescriptor.fontFamily = nil;
-		self.fontDescriptor.pointSize = textAttachment.displaySize.height*0.5+0.3*self.fontDescriptor.pointSize;
-		CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
-        [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
-		CFRelease(font);
-		
-		// --- end workaround
+        DTVersion version = [[UIDevice currentDevice] osVersion];
+        
+        if (version.major<4 || (version.major==4 && version.minor < 2))
+        {
+            // add a font that is display height plus a bit more for the descender
+            self.fontDescriptor.fontName = @"Times New Roman";
+            self.fontDescriptor.fontFamily = nil;
+            self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize; // *0.5 >= 4.2
+            CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
+            [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
+            CFRelease(font);
+            
+            // --- end workaround
+        }
 		
     }
     else
@@ -196,7 +202,7 @@
                 CFRelease(smallerFont);
                 
                 [smallDesc release];
-
+                
                 return [[[NSAttributedString alloc] initWithString:text attributes:smallAttributes] autorelease];
             }
             
@@ -261,7 +267,7 @@
         {
 			char letter = 'a' + counter-1;
 			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
-
+            
             return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
         }
         case DTHTMLElementListStylePlus:
@@ -548,8 +554,8 @@
         else if ([lineHeight isNumeric])
         {
             self.paragraphStyle.lineHeightMultiple = [lineHeight floatValue];
-//            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
-//            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
+            //            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+            //            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
         }
         else // interpret as length
         {
@@ -725,7 +731,7 @@
         {
             return DTHTMLElementListStyleDecimal;
         }
-
+        
 		if (parent)
 		{
 			return parent.listStyle;
