@@ -35,11 +35,17 @@ static NSDictionary *entityLookup = nil;
 
 - (BOOL)isNumeric
 {
-    float f = [self floatValue];
-//    NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:self];
-//
-//    return [[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet:characterSet];
-    return (f!=0)?YES:NO;
+    const char *s = [self UTF8String];
+    
+    for (int i=0;i<strlen(s);i++)
+    {
+        if (s[i]<'0' || s[i]>'9')
+        {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 - (float)percentValue
