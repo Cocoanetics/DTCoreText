@@ -630,6 +630,18 @@
             listStyle = DTHTMLElementListStyleInherit;
         }
 	}
+    
+    NSString *widthString = [styles objectForKey:@"width"];
+    if (widthString)
+    {
+        size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+    }
+    
+    NSString *heightString = [styles objectForKey:@"height"];
+    if (heightString)
+    {
+        size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+    }
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
@@ -769,6 +781,7 @@
 @synthesize fontVariant;
 @synthesize listStyle;
 @synthesize textScale;
+@synthesize size;
 
 @synthesize fontCache = _fontCache;
 

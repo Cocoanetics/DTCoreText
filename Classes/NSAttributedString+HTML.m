@@ -237,9 +237,19 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				immediatelyClosed = YES;
 				
 				NSString *src = [tagAttributesDict objectForKey:@"src"];
-				CGSize imageSize;
-				imageSize.width = [[tagAttributesDict objectForKey:@"width"] intValue];
-				imageSize.height = [[tagAttributesDict objectForKey:@"height"] intValue];
+                
+                // get size of width/height if it's not in style
+				CGSize imageSize = currentTag.size;
+
+                if (!imageSize.width)
+                {
+                    imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
+                }
+            
+                if (!imageSize.height)
+                {
+                    imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
+                }
 				
 				NSURL *imageURL = [NSURL URLWithString:src];
 				
@@ -341,19 +351,40 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				// hide contents of recognized tag
                 currentTag.tagContentInvisible = YES;
                 
-				CGFloat width = [[tagAttributesDict objectForKey:@"width"] intValue];
-				CGFloat height = [[tagAttributesDict objectForKey:@"height"] intValue];
-				
-				if (width==0 || height==0)
-				{
-					width = 300;
-					height = 225;
-				}
-				
+                // get size of width/height if it's not in style
+				CGSize imageSize = currentTag.size;
+                
+                if (!imageSize.width)
+                {
+                    imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
+                }
+                
+                if (!imageSize.height)
+                {
+                    imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
+                }
+
+                // if we still have no size then we use standard size
+                if (!imageSize.width || !imageSize.height)
+                {
+                    imageSize = CGSizeMake(300, 225);
+                }
+                
+                // option DTMaxImageSize
+                if (maxImageSizeValue)
+                {
+                    CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
+                    
+                    if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
+                    {
+                        imageSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
+                    }
+                }
+                
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contentURL = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
                 attachment.contentType = DTTextAttachmentTypeVideoURL;
-				attachment.originalSize = CGSizeMake(width, height);
+				attachment.originalSize = imageSize;
                 attachment.attributes = tagAttributesDict;
                 
                 currentTag.textAttachment = attachment;

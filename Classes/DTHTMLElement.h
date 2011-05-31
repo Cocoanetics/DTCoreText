@@ -88,6 +88,7 @@ typedef enum
 	DTHTMLElementFontVariant fontVariant;
     
     CGFloat textScale;
+    CGSize size;
 }
 
 @property (nonatomic, assign) DTHTMLElement *parent;
@@ -112,6 +113,7 @@ typedef enum
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
 @property (nonatomic, assign) DTHTMLElementListStyle listStyle;
 @property (nonatomic, assign) CGFloat textScale;
+@property (nonatomic, assign) CGSize size;
 
 
 
