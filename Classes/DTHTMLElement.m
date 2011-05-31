@@ -91,7 +91,8 @@
             // add a font that is display height plus a bit more for the descender
             self.fontDescriptor.fontName = @"Times New Roman";
             self.fontDescriptor.fontFamily = nil;
-            self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize; // *0.5 >= 4.2
+            self.fontDescriptor.pointSize = textAttachment.displaySize.height+0.3*self.fontDescriptor.pointSize;
+            self.paragraphStyle.minimumLineHeight = textAttachment.displaySize.height;
             CTFontRef font = (CTFontRef)[self.fontDescriptor newMatchingFont];
             [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
             CFRelease(font);

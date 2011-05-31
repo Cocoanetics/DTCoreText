@@ -218,6 +218,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				if (oneRun.attachment)
 				{
 					frameForSubview.size = oneRun.attachment.displaySize;
+                    frameForSubview.origin.y = oneLine.baselineOrigin.y - frameForSubview.size.height;
 				}
 				
 				
