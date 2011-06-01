@@ -113,10 +113,17 @@
         {
             font = [fontDescriptor newMatchingFont];
 			
-            [self.fontCache setObject:(id)font forKey:key];
-            CFRelease(font);
+            if (font)
+            {
+                [self.fontCache setObject:(id)font forKey:key];
+                CFRelease(font);
+            }
         }
-        [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
+        
+        if (font)
+        {
+            [tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
+        }
     }
     
     // add hyperlink
