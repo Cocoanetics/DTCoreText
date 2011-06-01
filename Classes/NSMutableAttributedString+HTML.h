@@ -13,5 +13,6 @@
 
 
 - (void)appendString:(NSString *)string;
+- (void)appendNakedString:(NSString *)string;
 
 @end

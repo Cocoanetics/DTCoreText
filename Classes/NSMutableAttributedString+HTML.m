@@ -25,26 +25,19 @@
     {
         // get attributes from last character
         previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
-		
-		
-		// need to remove attachment to avoid ending up with two images
-		id attachment = [previousAttributes objectForKey:@"DTTextAttachment"];
-		
-		if (attachment)
-		{
-			NSMutableDictionary *tmpDict = [[previousAttributes mutableCopy] autorelease];
-			
-			[tmpDict removeObjectForKey:@"DTTextAttachment"];
-			[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
-			
-			 previousAttributes = tmpDict;
-		}
     }
-
     
     NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
     [self appendAttributedString:tmpString];
     [tmpString release];
+}
+
+// appends a string without any attributes
+- (void)appendNakedString:(NSString *)string
+{
+    NSAttributedString *nakedString = [[NSAttributedString alloc] initWithString:string attributes:nil];
+    [self appendAttributedString:nakedString];
+    [nakedString release];
 }
 
 @end

@@ -323,7 +323,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-                        [tmpString appendString:@"\n"];
+                        [tmpString appendNakedString:@"\n"];
 					}
 					
 					needsNewLineBefore = NO;
@@ -566,7 +566,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					{
 						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 						{
-							[tmpString appendString:@"\n"];
+							[tmpString appendNakedString:@"\n"];
 						}
 						
 						needsNewLineBefore = NO;
@@ -824,8 +824,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-								// this eliminates an attachment if present in attributes
-                                [tmpString appendString:UNICODE_LINE_FEED];
+                                [tmpString appendNakedString:UNICODE_LINE_FEED];
 							}
 						}
 						needsNewLineBefore = NO;
