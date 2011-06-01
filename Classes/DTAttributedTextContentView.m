@@ -126,7 +126,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
     // if we are called for partial (non-infinate) we remove unneeded custom subviews first
     if (!CGRectIsInfinite(rect))
     {
-         [self removeSubviewsOutsideRect:rect];
+        [self removeSubviewsOutsideRect:rect];
     }
     
 	[CATransaction begin];
@@ -206,21 +206,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				frameForSubview.size.width = roundf(frameForSubview.size.width);
 				frameForSubview.size.height = roundf(frameForSubview.size.height);
 				
-
-					if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
-					{
-						// is still outside even though the bounds of the line already intersect visible area
-						continue;
-					}
-				
-				
-				// fix size for <4.2 image squishing bug
-				if (oneRun.attachment)
-				{
-					frameForSubview.size = oneRun.attachment.displaySize;
-                    frameForSubview.origin.y = oneLine.baselineOrigin.y - frameForSubview.size.height;
-				}
-				
+                
+                if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
+                {
+                    // is still outside even though the bounds of the line already intersect visible area
+                    continue;
+                }
 				
 				if (_delegateSupportsCustomViewsForAttachments || _delegateSupportsGenericCustomViews)
 				{
