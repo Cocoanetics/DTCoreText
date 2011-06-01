@@ -18,7 +18,7 @@
 
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
 {
-	return [[[DTCoreTextParagraphStyle alloc] init] autorelease];
+	return [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
 }
 
 - (id)init
