@@ -334,7 +334,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                 
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
-				if (currentTag.floatStyle)
+				if (currentTag.floatStyle || attachment.displaySize.height > 2.0 * currentTag.fontDescriptor.pointSize)
 				{
 					needsNewLineBefore = YES;
 				}
@@ -824,7 +824,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-                                [tmpString appendNakedString:UNICODE_LINE_FEED];
+                                [tmpString appendNakedString:@"\n"];
 							}
 						}
 						needsNewLineBefore = NO;
