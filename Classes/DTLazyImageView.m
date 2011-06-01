@@ -64,7 +64,7 @@ static NSCache *_imageCache = nil;
 }
 
 #pragma mark Progressive Image
--(CGImageRef)createTransitoryImage:(CGImageRef)partialImg
+-(CGImageRef)newTransitoryImage:(CGImageRef)partialImg
 {
 	const size_t height = CGImageGetHeight(partialImg);
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -97,7 +97,7 @@ static NSCache *_imageCache = nil;
 		CGImageRef image = CGImageSourceCreateImageAtIndex(_imageSource, 0, NULL);
 		if (image)
 		{
-			CGImageRef imgTmp = [self createTransitoryImage:image]; // iOS fix to correctly handle JPG see : http://www.cocoabyss.com/mac-os-x/progressive-image-download-imageio/
+			CGImageRef imgTmp = [self newTransitoryImage:image]; // iOS fix to correctly handle JPG see : http://www.cocoabyss.com/mac-os-x/progressive-image-download-imageio/
 			if (imgTmp)
 			{
                 UIImage *image = [[UIImage alloc] initWithCGImage:imgTmp];

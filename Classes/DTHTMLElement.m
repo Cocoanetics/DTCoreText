@@ -198,7 +198,7 @@
                 
                 CTFontRef smallerFont = [smallDesc newMatchingFont];
                 
-                NSMutableDictionary *smallAttributes = [attributes mutableCopy];
+                NSMutableDictionary *smallAttributes = [[attributes mutableCopy] autorelease];
                 [smallAttributes setObject:(id)smallerFont forKey:(id)kCTFontAttributeName];
                 CFRelease(smallerFont);
                 
