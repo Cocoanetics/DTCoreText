@@ -30,13 +30,23 @@ static NSCache *_imageCache = nil;
 
 - (void)loadImageAtURL:(NSURL *)url
 {
+	if ([NSThread isMainThread])
+	{
+		[self performSelectorInBackground:@selector(loadImageAtURL:) withObject:url];
+		return;
+	}
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
-
+    
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
 	[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	[_connection start];
 	
+	CFRunLoopRun();
+	
 	[request release];
+	
+	[pool drain];
 }
 
 - (void)didMoveToSuperview
@@ -143,15 +153,13 @@ static NSCache *_imageCache = nil;
             return;
 		}
 	}
-
-	 /* For progressive download */
+    
+    /* For progressive download */
 	_fullWidth = _fullHeight = -1.0f;
 	_expectedSize = [response expectedContentLength];
 	
 	_receivedData = [[NSMutableData alloc] init];
 }
-
-
 
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
@@ -162,13 +170,13 @@ static NSCache *_imageCache = nil;
         // don't show progressive
         return;
     }
-    
-    if (!_imageSource)
-    {
-        _imageSource = CGImageSourceCreateIncremental(NULL);
-    }
-    
-    [self createAndShowProgressiveImage];
+	
+	if (!_imageSource)
+	{
+		_imageSource = CGImageSourceCreateIncremental(NULL);
+	}
+	
+	[self createAndShowProgressiveImage];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -196,10 +204,12 @@ static NSCache *_imageCache = nil;
 	}
 	
 	[_connection release], _connection = nil;
-	
+
 	/* For progressive download */
 	if (_imageSource)
 		CFRelease(_imageSource), _imageSource = NULL;
+	
+	CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -212,6 +222,8 @@ static NSCache *_imageCache = nil;
 	/* For progressive download */
 	if (_imageSource)
 		CFRelease(_imageSource), _imageSource = NULL;
+	
+	CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 #pragma mark Properties
