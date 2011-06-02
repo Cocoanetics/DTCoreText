@@ -31,6 +31,30 @@ static NSMutableDictionary *_fontOverrides = nil;
     if (!_fontOverrides)
     {
         _fontOverrides = [[NSMutableDictionary alloc] init];
+        
+        
+        // see if there is an overrides table to preload
+        
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
+        NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
+        
+        for (NSDictionary *oneOverride in fileArray)
+        {
+            NSString *fontFamily = [oneOverride objectForKey:@"FontFamily"];
+            NSString *overrideFontName = [oneOverride objectForKey:@"OverrideFontName"];
+            BOOL bold = [[oneOverride objectForKey:@"Bold"] boolValue];
+            BOOL italic = [[oneOverride objectForKey:@"Italic"] boolValue];
+            BOOL smallcaps = [[oneOverride objectForKey:@"SmallCaps"] boolValue];
+            
+            if (smallcaps)
+            {
+                [DTCoreTextFontDescriptor setSmallCapsFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
+            }
+            else
+            {
+                [DTCoreTextFontDescriptor setOverrideFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
+            }
+        }
     }
 
     return _fontOverrides;
@@ -382,7 +406,7 @@ static NSMutableDictionary *_fontOverrides = nil;
     
     
     // override fontName if a small caps or regular override is registered
-    if (_fontOverrides && fontFamily)
+    if (fontFamily)
     {
         NSString *overrideFontName = nil;
         if (smallCapsFeature)
