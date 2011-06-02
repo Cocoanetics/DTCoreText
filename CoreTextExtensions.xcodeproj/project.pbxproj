@@ -44,6 +44,8 @@
 		A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
 		A78A38F812E30153007CE622 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
 		A78A3D9E12E42D49007CE622 /* icon_smile.gif in Resources */ = {isa = PBXBuildFile; fileRef = A78A3D9D12E42D49007CE622 /* icon_smile.gif */; };
+		A7BF4B6D13970D9800491C6F /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */; };
+		A7BF4B6E13970D9800491C6F /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */; };
 		A7C306E51394683400B2E925 /* UIDevice+DTVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */; };
 		A7C306E61394683400B2E925 /* UIDevice+DTVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */; };
 		A7DBE3F812E6C6F500F25897 /* Video.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBE3F612E6C6F500F25897 /* Video.html */; };
@@ -164,6 +166,7 @@
 		A78A38F612E30153007CE622 /* CGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtils.h; sourceTree = "<group>"; };
 		A78A38F712E30153007CE622 /* CGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGUtils.m; sourceTree = "<group>"; };
 		A78A3D9D12E42D49007CE622 /* icon_smile.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = icon_smile.gif; sourceTree = "<group>"; };
+		A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTCoreTextFontOverrides.plist; sourceTree = "<group>"; };
 		A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+DTVersion.h"; sourceTree = "<group>"; };
 		A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+DTVersion.m"; sourceTree = "<group>"; };
 		A7DBE3F612E6C6F500F25897 /* Video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Video.html; sourceTree = "<group>"; };
@@ -405,6 +408,7 @@
 				A7F2A73A1356F3950097BF31 /* CustomFont.html */,
 				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
 				A7E5D0F4135EBCD0004B6C67 /* Subviews.html */,
+				A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -497,6 +501,7 @@
 				A7F2A7391356F2E30097BF31 /* XB Niloofar.ttf in Resources */,
 				A7F2A7401356F5720097BF31 /* XB NiloofarBd.ttf in Resources */,
 				A7E5D0F6135EBCD0004B6C67 /* Subviews.html in Resources */,
+				A7BF4B6E13970D9800491C6F /* DTCoreTextFontOverrides.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,6 +521,7 @@
 				A784551A1344D53500D7E6EC /* WarAndPeace.html in Resources */,
 				A7F2A73B1356F3950097BF31 /* CustomFont.html in Resources */,
 				A7E5D0F5135EBCD0004B6C67 /* Subviews.html in Resources */,
+				A7BF4B6D13970D9800491C6F /* DTCoreTextFontOverrides.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
