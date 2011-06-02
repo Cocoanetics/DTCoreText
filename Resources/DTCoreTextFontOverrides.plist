@@ -3,44 +3,44 @@
 <plist version="1.0">
 <array>
 	<dict>
-		<key>fontFamily</key>
-		<string>Helvetica</string>
-		<key>overrideFontName</key>
-		<string>Helvetica</string>
 		<key>Bold</key>
 		<false/>
+		<key>FontFamily</key>
+		<string>Helvetica</string>
 		<key>Italic</key>
 		<false/>
+		<key>OverrideFontName</key>
+		<string>Helvetica</string>
 	</dict>
 	<dict>
-		<key>fontFamily</key>
-		<string>Helvetica</string>
-		<key>overrideFontName</key>
-		<string>Helvetica</string>
 		<key>Bold</key>
 		<true/>
+		<key>FontFamily</key>
+		<string>Helvetica</string>
 		<key>Italic</key>
 		<false/>
+		<key>OverrideFontName</key>
+		<string>Helvetica</string>
 	</dict>
 	<dict>
-		<key>fontFamily</key>
-		<string>Helvetica</string>
-		<key>overrideFontName</key>
-		<string>Helvetica</string>
 		<key>Bold</key>
 		<false/>
+		<key>FontFamily</key>
+		<string>Helvetica</string>
 		<key>Italic</key>
 		<true/>
+		<key>OverrideFontName</key>
+		<string>Helvetica</string>
 	</dict>
 	<dict>
-		<key>fontFamily</key>
-		<string>Helvetica</string>
-		<key>overrideFontName</key>
-		<string>Helvetica</string>
 		<key>Bold</key>
 		<true/>
+		<key>FontFamily</key>
+		<string>Helvetica</string>
 		<key>Italic</key>
 		<true/>
+		<key>OverrideFontName</key>
+		<string>Helvetica</string>
 	</dict>
 </array>
 </plist>
