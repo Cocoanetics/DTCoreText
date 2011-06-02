@@ -730,9 +730,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                     [tmpString appendString:@"\n"];  // extends attributed area at end
 				}
 				
-				needsNewLineBefore = NO;
-				
-				
 				if ([tagStack count])
 				{
 					// check if this tag is indeed closing the currently open one
