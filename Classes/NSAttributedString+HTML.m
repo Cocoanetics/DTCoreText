@@ -204,7 +204,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					[currentTag parseStyleString:styleString];
 				}
                 
-                if (![currentTag isInline])
+                if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
                 {
                     // next text needs a NL
                     needsNewLineBefore = YES;
@@ -555,6 +555,15 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
+			else if ([tagName isEqualToString:@"style"])
+			{
+				if (tagOpen)
+				{
+                    // TODO: store style info in a dictionary and apply it to tags
+                   currentTag.tagContentInvisible = YES;
+                    needsNewLineBefore = NO;
+				}
+			}
 			else if ([tagName isEqualToString:@"hr"])
 			{
 				if (tagOpen)
@@ -725,7 +734,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 			else if (!tagOpen)
 			{
 				// block items have to have a NL at the end.
-				if (![currentTag isInline] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
+				if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
                     [tmpString appendString:@"\n"];  // extends attributed area at end
 				}
@@ -851,7 +860,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 
                     
                     // we don't want whitespace before first tag to turn into paragraphs
-                    if (![tagName isEqualToString:@"html"])
+                    if (![currentTag isMeta])
                     {
                         currentTag.text = tagContents;
                         

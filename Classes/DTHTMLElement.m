@@ -32,6 +32,7 @@
     if (self)
     {
         _isInline = -1;
+        _isMeta = -1;
     }
     
     return self;
@@ -712,6 +713,15 @@
     return _isInline;
 }
 
+- (BOOL)isMeta
+{
+    if (_isMeta<0)
+    {
+        _isMeta = [tagName isMetaTag];
+    }
+    
+    return _isMeta;
+}
 - (void)setTextColor:(UIColor *)textColor
 {
 	if (_textColor != textColor)

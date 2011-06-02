@@ -75,6 +75,7 @@ typedef enum
     NSMutableDictionary *_fontCache;
     
     NSInteger _isInline;
+    NSInteger _isMeta;
 	
 	NSMutableDictionary *_additionalAttributes;
 	
@@ -107,6 +108,7 @@ typedef enum
 @property (nonatomic, assign) NSInteger superscriptStyle;
 @property (nonatomic, assign) NSInteger headerLevel;
 @property (nonatomic, readonly) BOOL isInline;
+@property (nonatomic, readonly) BOOL isMeta;
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
 @property (nonatomic, assign) BOOL isColorInherited;
 @property (nonatomic, assign) BOOL preserveNewlines;

@@ -11,6 +11,7 @@
 #import "UIColor+HTML.h"
 
 static NSSet *inlineTags = nil;
+static NSSet *metaTags = nil;
 static NSDictionary *entityLookup = nil;
 
 @implementation NSString (HTML)
@@ -31,6 +32,16 @@ static NSDictionary *entityLookup = nil;
 	}
 	
 	return [inlineTags containsObject:[self lowercaseString]];
+}
+
+- (BOOL)isMetaTag
+{
+	if (!metaTags)
+	{
+		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", nil];
+	}
+	
+	return [metaTags containsObject:[self lowercaseString]];
 }
 
 - (BOOL)isNumeric
