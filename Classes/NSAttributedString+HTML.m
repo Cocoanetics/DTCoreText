@@ -744,7 +744,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					{
 						NSLog(@"Ignoring non-open tag %@", topStackTag.tagName);
 					}
-					
 				}
 				else 
 				{
