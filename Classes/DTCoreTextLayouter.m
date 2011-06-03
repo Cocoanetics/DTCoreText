@@ -12,7 +12,7 @@
 
 @property (nonatomic, retain) NSMutableArray *frames;
 
-@property (nonatomic) CTFramesetterRef framesetter;
+- (CTFramesetterRef) framesetter;
 
 @end
 
@@ -41,11 +41,7 @@
 	[_attributedString release];
 	[frames release];
     
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-		framesetter = NULL;
-	}
+    [self discardFramesetter];
 	
 	[super dealloc];
 }
@@ -97,36 +93,53 @@
 #pragma mark Properties
 - (CTFramesetterRef) framesetter
 {
-	if (!framesetter)
-	{
-		framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
-	}
+    if (!framesetter)
+    {
+        @synchronized(self)
+        {
+            if (!framesetter)
+            {
+                framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+            }
+        }
+    }
 	
 	return framesetter;
 }
 
 
-- (void)relayoutText
+- (void)discardFramesetter
 {
-	// framesetter needs to go
-	if (framesetter)
-	{
-		CFRelease(framesetter);
-		framesetter = NULL;
-	}
+    @synchronized(self)
+    {
+        // framesetter needs to go
+        if (framesetter)
+        {
+            CFRelease(framesetter);
+            framesetter = NULL;
+        }
+    }
 }
 
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-	if (_attributedString != attributedString)
-	{
-		[_attributedString release];
-		
-		_attributedString = [attributedString mutableCopy];
-		
-		[self relayoutText];
-	}
+    @synchronized(self)
+    {
+        if (_attributedString != attributedString)
+        {
+            [_attributedString release];
+            
+            _attributedString = [attributedString mutableCopy];
+            
+            [self discardFramesetter];
+        }
+    }
+}
+
+- (NSAttributedString *)attributedString
+{
+    return _attributedString;
 }
 
 - (NSMutableArray *)frames
