@@ -329,7 +329,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
     
 	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
 	CGContextFillRect(ctx, rect);
-	
+    
 	// offset layout if necessary
 	if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
 	{

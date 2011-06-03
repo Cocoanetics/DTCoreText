@@ -45,10 +45,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		CFRange cfRange = CFRangeMake(range.location, range.length);
         _framesetter = layouter.framesetter;
-        CFRetain(_framesetter);
         
         if (_framesetter)
         {
+            CFRetain(_framesetter);
             _textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
         }
         else
