@@ -53,6 +53,7 @@
 	DTCoreTextLayoutFrame *_layoutFrame;
 	
 	CGPoint _layoutOffset;
+    CGSize _backgroundOffset;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
@@ -72,6 +73,7 @@
 @property (nonatomic) BOOL shouldDrawImages;
 @property (nonatomic) BOOL shouldLayoutCustomSubviews;
 @property (nonatomic) CGPoint layoutOffset;
+@property (nonatomic) CGSize backgroundOffset;
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
 

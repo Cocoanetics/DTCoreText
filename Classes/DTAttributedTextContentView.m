@@ -322,6 +322,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// needs clearing of background
 	CGRect rect = CGContextGetClipBoundingBox(ctx);
 	
+    if (_backgroundOffset.height || _backgroundOffset.width)
+    {
+        CGContextSetPatternPhase(ctx, _backgroundOffset);
+    }
+    
 	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
 	CGContextFillRect(ctx, rect);
 	
@@ -623,6 +628,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize shouldDrawImages;
 @synthesize shouldLayoutCustomSubviews;
 @synthesize layoutOffset = _layoutOffset;
+@synthesize backgroundOffset = _backgroundOffset;
 
 @synthesize customViews;
 @synthesize customViewsForLinksIndex;
