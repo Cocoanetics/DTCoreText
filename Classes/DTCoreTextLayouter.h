@@ -38,7 +38,7 @@
 - (void)discardFramesetter;
 
 
-@property (nonatomic, copy) NSAttributedString *attributedString;
+@property (nonatomic, retain) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 

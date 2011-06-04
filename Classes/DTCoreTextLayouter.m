@@ -100,6 +100,11 @@
             if (!framesetter)
             {
                 framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+                
+                if (!framesetter)
+                {
+                    NSLog(@"No Framesetter!");
+                }
             }
         }
     }
@@ -130,7 +135,7 @@
         {
             [_attributedString release];
             
-            _attributedString = [attributedString mutableCopy];
+            _attributedString = [attributedString retain];
             
             [self discardFramesetter];
         }

@@ -40,8 +40,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		_layouter = [layouter retain];
 		
-		CGMutablePathRef path = CGPathCreateMutable();
-		CGPathAddRect(path, NULL, frame);
 		
 		CFRange cfRange = CFRangeMake(range.location, range.length);
         _framesetter = layouter.framesetter;
@@ -49,14 +47,24 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         if (_framesetter)
         {
             CFRetain(_framesetter);
+
+            CGMutablePathRef path = CGPathCreateMutable();
+            CGPathAddRect(path, NULL, frame);
+
             _textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
+            
+            CGPathRelease(path);
         }
         else
         {
             NSLog(@"Strange, should have gotten a valid framesetter");
+            
+            
+            [_layouter release];
+            [self release];
+            return nil;
         }
         
-		CGPathRelease(path);
 	}
 	
 	return self;
