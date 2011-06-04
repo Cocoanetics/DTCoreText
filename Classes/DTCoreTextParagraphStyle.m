@@ -65,6 +65,20 @@
 
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minimumLineHeight), &minimumLineHeight);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maximumLineHeight), &maximumLineHeight);
+        
+        if (lineHeightMultiple)
+        {
+            // paragraph space is pre-multiplied
+            if (paragraphSpacing)
+            {
+                paragraphSpacing /= lineHeightMultiple;
+            }
+            
+            if (paragraphSpacingBefore)
+            {
+                paragraphSpacingBefore /= lineHeightMultiple;
+            }
+        }
 	}
 	
 	return self;
