@@ -302,54 +302,51 @@
     NSString *fontSize = [styles objectForKey:@"font-size"];
     if (fontSize)
     {
-        if ([fontSize isNumeric])
+        // absolute sizes based on 12.0 CoreText default size, Safari has 16.0
+        
+        if ([fontSize isEqualToString:@"smaller"])
         {
-            fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize]; // already multiplied with textScale
+            fontDescriptor.pointSize /= 1.2f;
+        }
+        else if ([fontSize isEqualToString:@"larger"])
+        {
+            fontDescriptor.pointSize *= 1.2f;
+        }
+        else if ([fontSize isEqualToString:@"xx-small"])
+        {
+            fontDescriptor.pointSize = 9.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"x-small"])
+        {
+            fontDescriptor.pointSize = 10.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"small"])
+        {
+            fontDescriptor.pointSize = 13.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"medium"])
+        {
+            fontDescriptor.pointSize = 16.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"large"])
+        {
+            fontDescriptor.pointSize = 22.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"x-large"])
+        {
+            fontDescriptor.pointSize = 24.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"xx-large"])
+        {
+            fontDescriptor.pointSize = 37.0f/1.3333f * textScale;
+        }
+        else if ([fontSize isEqualToString:@"inherit"])
+        {
+            fontDescriptor.pointSize = parent.fontDescriptor.pointSize;
         }
         else
         {
-            // absolute sizes based on 12.0 CoreText default size, Safari has 16.0
-            
-            if ([fontSize isEqualToString:@"smaller"])
-            {
-                fontDescriptor.pointSize /= 1.2f;
-            }
-            else if ([fontSize isEqualToString:@"larger"])
-            {
-                fontDescriptor.pointSize *= 1.2f;
-            }
-            else if ([fontSize isEqualToString:@"xx-small"])
-            {
-                fontDescriptor.pointSize = 9.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"x-small"])
-            {
-                fontDescriptor.pointSize = 10.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"small"])
-            {
-                fontDescriptor.pointSize = 13.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"medium"])
-            {
-                fontDescriptor.pointSize = 16.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"large"])
-            {
-                fontDescriptor.pointSize = 22.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"x-large"])
-            {
-                fontDescriptor.pointSize = 24.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"xx-large"])
-            {
-                fontDescriptor.pointSize = 37.0f/1.3333f * textScale;
-            }
-            else if ([fontSize isEqualToString:@"inherit"])
-            {
-                fontDescriptor.pointSize = parent.fontDescriptor.pointSize;
-            }
+            fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize]; // already multiplied with textScale
         }
     }
     
