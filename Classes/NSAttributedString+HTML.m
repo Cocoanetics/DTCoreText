@@ -875,6 +875,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	
     // returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
+    [self release];
     return tmpString;
 }
 
