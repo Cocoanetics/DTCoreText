@@ -90,7 +90,8 @@
         const CFIndex *indices = CTRunGetStringIndicesPtr(_run);
         NSInteger count = self.numberOfGlyphs;
         NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
-        for (NSInteger i = 0; i < count; i++) {
+        NSInteger i;
+        for (i = 0; i < count; i++) {
             [array addObject:[NSNumber numberWithInteger:indices[i]]];
         }
         stringIndices = [array retain];

@@ -93,7 +93,7 @@
 #pragma mark Properties
 - (CTFramesetterRef) framesetter
 {
-    if (!framesetter)
+//    if (!framesetter)
     {
         @synchronized(self)
         {
