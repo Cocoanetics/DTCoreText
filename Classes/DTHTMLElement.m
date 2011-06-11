@@ -165,10 +165,20 @@
 	{
 		[tmpDict setObject:(id)[NSNumber numberWithInt:superscriptStyle] forKey:(id)kCTSuperscriptAttributeName];
 	}
-    
+
+    // correct spacing to match current font size
+    if (self.paragraphStyle.paragraphSpacing>0)
+    {
+        self.paragraphStyle.paragraphSpacing = self.fontDescriptor.pointSize;
+    }
+
+    // correct spacing to match current font size
+    if (self.paragraphStyle.paragraphSpacingBefore>0)
+    {
+        self.paragraphStyle.paragraphSpacingBefore = self.fontDescriptor.pointSize;
+    }
+
     // add paragraph style
-    self.paragraphStyle.paragraphSpacing = self.fontDescriptor.pointSize;
-    
 	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
     [tmpDict setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
 	CFRelease(newParagraphStyle);
@@ -771,7 +781,20 @@
 	return listStyle;
 }
 
+- (NSString *)path
+{
+    if (parent)
+    {
+        return [[parent path] stringByAppendingFormat:@"/%@", self.tagName];
+    }
 
+    if (tagName)
+    {
+        return tagName;
+    }
+    
+    return @"root";
+}
 
 @synthesize parent;
 @synthesize fontDescriptor;

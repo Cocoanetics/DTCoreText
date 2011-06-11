@@ -867,10 +867,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                         [tmpString appendAttributedString:[currentTag attributedString]];
                     }
 				}
-				
 			}
 		}
-		
 	}
 	
     // returning the temporary mutable string is faster
