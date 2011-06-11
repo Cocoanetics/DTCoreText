@@ -244,6 +244,11 @@
     [attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
     CFRelease(font);
     
+    // text color for bullet same as text
+    if (_textColor)
+    {
+        [attributes setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+    }
     // add paragraph style (this has the tabs)
 	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
     [attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
