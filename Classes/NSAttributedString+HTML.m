@@ -490,7 +490,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 			}
-			else if ([tagName isEqualToString:@"del"]) 
+			else if ([tagName isEqualToString:@"del"] || [tagName isEqualToString:@"strike"] ) 
 			{
 				if (tagOpen)
 				{
