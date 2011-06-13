@@ -708,6 +708,13 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					{
 						currentTag.fontDescriptor.fontName = face;
 					}
+                    
+                    NSString *color = [tagAttributesDict objectForKey:@"color"];
+                    
+                    if (color)
+                    {
+                        currentTag.textColor = [UIColor colorWithHTMLName:color];       
+                    }
 				}
 			}
 			else if ([tagName isEqualToString:@"p"])
