@@ -38,7 +38,16 @@ static NSDictionary *colorLookup = nil;
 	{
 		return [UIColor colorWithHexString:[name substringFromIndex:1]];
 	}
-	
+    
+    if([name hasPrefix:@"rgb"])
+    {
+        NSString * rgbName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rbg() "]];
+        NSArray* rbg = [rgbName componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@","]];
+        return [UIColor colorWithRed:[[rbg objectAtIndex:0]floatValue]/255 
+                               green:[[rbg objectAtIndex:1]floatValue] /255
+                                blue:[[rbg objectAtIndex:2]floatValue] /255
+                               alpha:1.0];
+    }
 	
 	if (!colorLookup)
 	{
