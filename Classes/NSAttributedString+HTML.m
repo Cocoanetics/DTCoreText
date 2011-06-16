@@ -96,7 +96,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
-	
+	NSInteger listDepth = 0; // Increment this for each nested list
 	
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
@@ -442,11 +442,14 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				{
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
-					
+                    CGFloat indentHang = 27.0 * textScale;
+                    
 #if ALLOW_IPHONE_SPECIAL_CASES                    
                     currentTag.paragraphStyle.headIndent += 27.0 * textScale;
+                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
 #else
-                    currentTag.paragraphStyle.headIndent += 36.0 * textScale;
+                    currentTag.paragraphStyle.headIndent += 36.0 * textScale * listDepth;
+                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
 #endif
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
 					
@@ -502,12 +505,16 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
 					listCounter = 1;
+                    listDepth++;
+                    needsNewLineBefore = YES;
 				} 
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
 					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
+                    if (listDepth > 0)
+                        listDepth--;
 				}
 			}
 			else if ([tagName isEqualToString:@"ul"]) 
@@ -515,12 +522,16 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
 					listCounter = 0;
+                    listDepth++;
+                    needsNewLineBefore = YES;
 				}
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES						
 					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
+                    if (listDepth > 0)
+                        listDepth--;
 				}
 			}
             
