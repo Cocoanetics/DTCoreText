@@ -442,15 +442,18 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				{
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
-                    CGFloat indentHang = 27.0 * textScale;
-                    
+
 #if ALLOW_IPHONE_SPECIAL_CASES                    
-                    currentTag.paragraphStyle.headIndent += 27.0 * textScale;
-                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
+                    CGFloat indentSize = 27.0 * textScale;
 #else
-                    currentTag.paragraphStyle.headIndent += 36.0 * textScale * listDepth;
-                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
+                    CGFloat indentSize = 36.0 * textScale;
 #endif
+                    
+                    CGFloat indentHang = indentSize;
+
+                    currentTag.paragraphStyle.headIndent += indentSize;
+                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
+
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
 					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
@@ -864,7 +867,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					}
                     
                     // if we start a list, then we wait until we have actual text
-					if (needsListItemStart && ![tagContents isEqualToString:@" "])
+					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
                         NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:listCounter];
                         
