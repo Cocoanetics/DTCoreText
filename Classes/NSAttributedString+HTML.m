@@ -95,8 +95,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 #endif
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
-    NSMutableArray *listCounters = [NSMutableArray array];
-    [listCounters addObject:[NSNumber numberWithInt:0]];
 	
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
@@ -193,8 +191,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				DTHTMLElement *parent = currentTag;
                 currentTag = [[currentTag copy] autorelease];
                 currentTag.tagName = tagName;
-				currentTag.parent = parent;
                 currentTag.textScale = textScale;
+                [parent addChild:currentTag];
 
 				// convert CSS Styles into our own style
 				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
@@ -461,12 +459,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				else 
 				{
 					needsListItemStart = NO;
-                    NSInteger listCounter = [[listCounters lastObject] intValue];
-					if (listCounter)
-					{
-                        [listCounters removeLastObject];
-                        [listCounters addObject:[NSNumber numberWithInt:++listCounter]];
-					}
 				}
 				
 			}
@@ -508,32 +500,28 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 			{
 				if (tagOpen)
 				{
-                    [listCounters addObject:[NSNumber numberWithInt:1]];
                     needsNewLineBefore = YES;
 				} 
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if ([currentTag listDepth] < 2)
+                    if (currentTag.listDepth < 1)
                         nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
-                    [listCounters removeLastObject];
 				}
 			}
 			else if ([tagName isEqualToString:@"ul"]) 
 			{
 				if (tagOpen)
 				{
-                    [listCounters addObject:[NSNumber numberWithInt:0]];
                     needsNewLineBefore = YES;
 				}
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if ([currentTag listDepth] < 2)
+                    if (currentTag.listDepth < 1)
                         nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
-                    [listCounters removeLastObject];
 				}
 			}
             
@@ -868,7 +856,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                     // if we start a list, then we wait until we have actual text
 					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
-                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:[[listCounters lastObject] intValue]];
+                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
                         
                         if (prefixString)
                         {
