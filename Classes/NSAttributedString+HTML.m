@@ -515,8 +515,9 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				} 
 				else 
 				{
-#if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+#if ALLOW_IPHONE_SPECIAL_CASES
+                    if (listDepth < 2)
+                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
                     [listCounters removeLastObject];
                     if (listDepth > 0)
@@ -533,8 +534,9 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				}
 				else 
 				{
-#if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+#if ALLOW_IPHONE_SPECIAL_CASES
+                    if (listDepth < 2)
+                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
                     [listCounters removeLastObject];
                     if (listDepth > 0)
