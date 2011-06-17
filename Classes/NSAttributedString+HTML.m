@@ -95,7 +95,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 #endif
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
-	NSInteger listDepth = 0; // Increment this for each nested list
     NSMutableArray *listCounters = [NSMutableArray array];
     [listCounters addObject:[NSNumber numberWithInt:0]];
 	
@@ -510,18 +509,15 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
                     [listCounters addObject:[NSNumber numberWithInt:1]];
-                    listDepth++;
                     needsNewLineBefore = YES;
 				} 
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if (listDepth < 2)
+                    if ([currentTag listDepth] < 2)
                         nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
                     [listCounters removeLastObject];
-                    if (listDepth > 0)
-                        listDepth--;
 				}
 			}
 			else if ([tagName isEqualToString:@"ul"]) 
@@ -529,18 +525,15 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				if (tagOpen)
 				{
                     [listCounters addObject:[NSNumber numberWithInt:0]];
-                    listDepth++;
                     needsNewLineBefore = YES;
 				}
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if (listDepth < 2)
+                    if ([currentTag listDepth] < 2)
                         nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
                     [listCounters removeLastObject];
-                    if (listDepth > 0)
-                        listDepth--;
 				}
 			}
             

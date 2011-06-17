@@ -90,6 +90,8 @@ typedef enum
     
     CGFloat textScale;
     CGSize size;
+    
+    NSInteger _listDepth;
 }
 
 @property (nonatomic, assign) DTHTMLElement *parent;
@@ -118,7 +120,6 @@ typedef enum
 @property (nonatomic, assign) CGSize size;
 
 
-
 - (NSAttributedString *)attributedString;
 - (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter;
 - (NSDictionary *)attributesDictionary;
@@ -127,5 +128,6 @@ typedef enum
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
 
 - (NSString *)path;
+- (NSInteger)listDepth;
 
 @end

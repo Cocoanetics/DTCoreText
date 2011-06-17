@@ -33,6 +33,7 @@
     {
         _isInline = -1;
         _isMeta = -1;
+        _listDepth = -1;
     }
     
     return self;
@@ -799,6 +800,34 @@
     }
     
     return @"root";
+}
+
+- (NSInteger)listDepth
+{
+    if (_listDepth < 0)
+    {
+        // See if this is a list related element.
+        if ([tagName isEqualToString:@"ol"] || [tagName isEqualToString:@"ul"] || [tagName isEqualToString:@"li"])
+        {
+            // Walk up the tree to the root. Increment the count every time we hit an OL or UL tag
+            // so we have our nesting count correct.
+            DTHTMLElement *elem = self;
+            _listDepth = 0;
+            while (elem.parent) {
+                NSString *tag = elem.parent.tagName;
+                if ([tag isEqualToString:@"ol"] || [tag isEqualToString:@"ul"])
+                {
+                    _listDepth++;
+                }
+                elem = elem.parent;
+            }
+        }
+        else {
+            // We're not a list element, so set the depth to zero.
+            _listDepth = 0;
+        }
+    }
+    return _listDepth;
 }
 
 @synthesize parent;
