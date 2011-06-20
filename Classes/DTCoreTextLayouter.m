@@ -23,13 +23,14 @@
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
 {
-	if (!attributedString)
-	{
-		return nil;
-	}
-	
 	if ((self = [super init]))
 	{
+		if (!attributedString)
+		{
+			[self autorelease];
+			return nil;
+		}
+		
 		self.attributedString = attributedString;
 	}
 	
