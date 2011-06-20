@@ -18,7 +18,6 @@
 	CTRunRef _run;
 	
 	CGRect _frame;
-	CGPoint _baselineOrigin;
 	
 	CGFloat ascent;
 	CGFloat descent;
@@ -38,7 +37,7 @@
 	BOOL _didCalculateMetrics;
 }
 
-- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine origin:(CGPoint)origin;
+- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine;
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
@@ -55,8 +54,6 @@
 @property (nonatomic, assign, readonly) CGFloat descent;
 @property (nonatomic, assign, readonly) CGFloat leading;
 @property (nonatomic, assign, readonly) CGFloat width;
-
-@property (nonatomic, assign, readonly) CGPoint baselineOrigin;
 
 @property (nonatomic, retain) DTTextAttachment *attachment;
 

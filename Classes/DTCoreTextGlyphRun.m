@@ -23,7 +23,7 @@
 @implementation DTCoreTextGlyphRun
 
 
-- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine origin:(CGPoint)origin
+- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine
 {
 	self = [super init];
     
@@ -32,7 +32,6 @@
 		_run = run;
 		CFRetain(_run);
 		
-		_baselineOrigin = origin;	
 		_line = layoutLine;
 	}
 	
@@ -172,9 +171,7 @@
 		[self calculateMetrics];
 	}
 
-	CGRect ret = CGRectMake(_baselineOrigin.x, _baselineOrigin.y - ascent, width, ascent + descent);
-	
-	return ret;
+	return CGRectMake(_line.baselineOrigin.x, _line.baselineOrigin.y - ascent, width, ascent + descent);
 }
 
 - (CGFloat)width
@@ -225,7 +222,6 @@
 @synthesize ascent;
 @synthesize descent;
 @synthesize leading;
-@synthesize baselineOrigin = _baselineOrigin;
 @synthesize attachment = _attachment;
 
 @end
