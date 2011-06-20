@@ -23,7 +23,7 @@
 @implementation DTCoreTextGlyphRun
 
 
-- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine
+- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset
 {
 	self = [super init];
     
@@ -32,6 +32,7 @@
 		_run = run;
 		CFRetain(_run);
 		
+		_offset = offset;
 		_line = layoutLine;
 	}
 	
@@ -128,6 +129,20 @@
 	}
 }
 
+- (void)fixMetricsFromAttachment
+{
+	if (self.attachment)
+	{
+		if (!_didCalculateMetrics)
+		{
+			[self calculateMetrics];
+		}
+		
+		descent = 0;
+		ascent = self.attachment.displaySize.height;
+	}
+}
+
 #pragma mark Properites
 - (NSInteger)numberOfGlyphs
 {
@@ -171,7 +186,7 @@
 		[self calculateMetrics];
 	}
 
-	return CGRectMake(_line.baselineOrigin.x, _line.baselineOrigin.y - ascent, width, ascent + descent);
+	return CGRectMake(_line.baselineOrigin.x + _offset, _line.baselineOrigin.y - ascent, width, ascent + descent);
 }
 
 - (CGFloat)width

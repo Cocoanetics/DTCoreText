@@ -27,6 +27,8 @@
 	CGFloat trailingWhitespaceWidth;
 	
 	NSArray *_glyphRuns;
+
+	BOOL _didCalculateMetrics;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
@@ -41,6 +43,8 @@
 - (void)drawInContext:(CGContextRef)context;
 - (NSArray *)stringIndices;
 
+- (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
+
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, retain, readonly) NSArray *glyphRuns;
 
@@ -49,6 +53,6 @@
 @property (nonatomic, assign, readonly) CGFloat leading;
 @property (nonatomic, assign, readonly) CGFloat trailingWhitespaceWidth;
 
-@property (nonatomic, assign, readonly) CGPoint baselineOrigin;
+@property (nonatomic, assign) CGPoint baselineOrigin;
 
 @end

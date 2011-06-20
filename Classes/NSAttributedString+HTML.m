@@ -234,6 +234,11 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 			{
 				immediatelyClosed = YES;
 				
+				if (![currentTag.parent.tagName isEqualToString:@"p"])
+				{
+					needsNewLineBefore = YES;
+				}
+				
 				NSString *src = [tagAttributesDict objectForKey:@"src"];
                 
                 // get size of width/height if it's not in style
@@ -332,7 +337,7 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
                 
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
-				if (currentTag.floatStyle || attachment.displaySize.height > 2.0 * currentTag.fontDescriptor.pointSize)
+				if (currentTag.floatStyle || attachment.displaySize.height > 5.0 * currentTag.fontDescriptor.pointSize)
 				{
 					needsNewLineBefore = YES;
 				}

@@ -49,6 +49,8 @@
 
 - (NSArray *)stringIndices;
 
+- (void)correctAttachmentHeights;
+
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) DTCoreTextLayouter *layouter;
 

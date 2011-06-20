@@ -19,6 +19,7 @@
 	
 	CGRect _frame;
 	
+	CGFloat _offset; // x distance from line origin 
 	CGFloat ascent;
 	CGFloat descent;
 	CGFloat leading;
@@ -37,7 +38,7 @@
 	BOOL _didCalculateMetrics;
 }
 
-- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine;
+- (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset;
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
@@ -45,6 +46,8 @@
 - (NSArray *)stringIndices;
 
 - (void)drawInContext:(CGContextRef)context;
+
+- (void)fixMetricsFromAttachment;
 
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) NSInteger numberOfGlyphs;

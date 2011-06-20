@@ -11,6 +11,7 @@
 #import "DTCoreTextLayoutLine.h"
 
 #import "DTTextAttachment.h"
+#import "UIDevice+DTVersion.h"
 
 @interface DTCoreTextLayoutFrame ()
 
@@ -47,10 +48,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         if (_framesetter)
         {
             CFRetain(_framesetter);
-
+			
             CGMutablePathRef path = CGPathCreateMutable();
             CGPathAddRect(path, NULL, frame);
-
+			
             _textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
             
             CGPathRelease(path);
@@ -143,6 +144,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         
         _frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5));
     }
+	
+	// --- begin workaround for image squishing bug in iOS < 4.2
+	
+	DTVersion version = [[UIDevice currentDevice] osVersion];
+	
+	if (version.major<4 || (version.major==4 && version.minor < 2))
+	{
+		[self correctAttachmentHeights];
+	}
 }
 
 - (NSArray *)lines
@@ -620,6 +630,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
     
     return nil;
+}
+
+- (void)correctAttachmentHeights
+{
+	CGFloat downShiftSoFar = 0;
+	
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+		CGFloat lineShift = 0;
+		if ([oneLine correctAttachmentHeights:&lineShift])
+		{
+			downShiftSoFar += lineShift;
+		}
+		
+		if (downShiftSoFar>0)
+		{
+			CGPoint origin = oneLine.baselineOrigin;
+			origin.y += downShiftSoFar;
+			oneLine.baselineOrigin = origin;
+		}
+	}
 }
 
 #pragma mark Properties
