@@ -12,6 +12,8 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		28D7ACF80DDB3853001CB0EB /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
+		4F02B9BF13AA998200ED7AB1 /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = 4F02B9BE13AA998200ED7AB1 /* ListTest.html */; };
+		4F02B9C113AA9ACC00ED7AB1 /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = 4F02B9BE13AA998200ED7AB1 /* ListTest.html */; };
 		A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
 		A70F5511138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */; };
 		A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */; };
@@ -119,6 +121,7 @@
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		28D7ACF60DDB3853001CB0EB /* DemoTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoTextViewController.h; sourceTree = "<group>"; };
 		28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoTextViewController.m; sourceTree = "<group>"; };
+		4F02B9BE13AA998200ED7AB1 /* ListTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ListTest.html; sourceTree = "<group>"; };
 		6A5A32C512DD10BB0019AAF1 /* UIColorHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorHTMLTest.h; sourceTree = "<group>"; };
 		6A5A32C612DD10BB0019AAF1 /* UIColorHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorHTMLTest.m; sourceTree = "<group>"; };
 		6A5A32CB12DD11740019AAF1 /* NSAttributedStringHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringHTMLTest.h; sourceTree = "<group>"; };
@@ -409,6 +412,7 @@
 				A7EA5FAF12E1AC7F0045411B /* CurrentTest.html */,
 				A7E5D0F4135EBCD0004B6C67 /* Subviews.html */,
 				A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */,
+				4F02B9BE13AA998200ED7AB1 /* ListTest.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -484,6 +488,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F02B9C113AA9ACC00ED7AB1 /* ListTest.html in Resources */,
 				A7F2A73C1356F4F30097BF31 /* CustomFont.html in Resources */,
 				B23558F712E04C8E005EA62F /* README.html in Resources */,
 				B235594412E05090005EA62F /* Snippets.plist in Resources */,
@@ -522,6 +527,7 @@
 				A7F2A73B1356F3950097BF31 /* CustomFont.html in Resources */,
 				A7E5D0F5135EBCD0004B6C67 /* Subviews.html in Resources */,
 				A7BF4B6D13970D9800491C6F /* DTCoreTextFontOverrides.plist in Resources */,
+				4F02B9BF13AA998200ED7AB1 /* ListTest.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
