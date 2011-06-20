@@ -33,6 +33,9 @@
     {
         _isInline = -1;
         _isMeta = -1;
+        _listDepth = -1;
+        _listCounter = NSIntegerMin;
+        children = [NSMutableArray array];
     }
     
     return self;
@@ -674,6 +677,12 @@
 	[_additionalAttributes setObject:attribute forKey:key];
 }
 
+- (void)addChild:(DTHTMLElement *)child
+{
+    child.parent = self;
+    [children addObject:child];
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
@@ -801,6 +810,77 @@
     return @"root";
 }
 
+- (NSInteger)listDepth
+{
+    if (_listDepth < 0)
+    {
+        // See if this is a list related element.
+        if ([tagName isEqualToString:@"ol"] || [tagName isEqualToString:@"ul"] || [tagName isEqualToString:@"li"])
+        {
+            // Walk up the tree to the root. Increment the count every time we hit an OL or UL tag
+            // so we have our nesting count correct.
+            DTHTMLElement *elem = self;
+            _listDepth = 0;
+            while (elem.parent) {
+                NSString *tag = elem.parent.tagName;
+                if ([tag isEqualToString:@"ol"] || [tag isEqualToString:@"ul"])
+                {
+                    _listDepth++;
+                }
+                elem = elem.parent;
+            }
+        }
+        else {
+            // We're not a list element, so set the depth to zero.
+            _listDepth = 0;
+        }
+    }
+    return _listDepth;
+}
+
+- (NSInteger)listCounter
+{
+    // If the counter is set to NSIntegerMin, it hasn't been calculated or manually set.
+    // Calculate it on demand.
+    if (_listCounter == NSIntegerMin)
+    {
+        // See if this is an LI. No other elements get a counter.
+        if ([tagName isEqualToString:@"li"])
+        {
+            // Count the number of LI elements in the parent until we reach self. That's our counter.
+            NSInteger counter = 1;
+            NSUInteger numChildren = [parent.children count];
+            for (NSInteger i = 0; i < numChildren; i++)
+            {
+                // We walk through the children and check for LI elements just in case someone
+                // slipped us some bad HTML.
+                DTHTMLElement *child = [parent.children objectAtIndex:i];
+                if (child != self && [child.tagName isEqualToString:@"li"])
+                {
+                    // Add one to the last LI's value just in case its listCounter property got overridden and
+                    // set to something other than its natural order in the elements list.
+                    counter = child.listCounter + 1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            _listCounter = counter;
+        }
+        else
+        {
+            _listCounter = 0;
+        }
+    }
+    return _listCounter;
+}
+
+- (void)setListCounter:(NSInteger)count
+{
+    _listCounter = count;
+}
+
 @synthesize parent;
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
@@ -826,6 +906,7 @@
 @synthesize size;
 
 @synthesize fontCache = _fontCache;
+@synthesize children;
 
 
 

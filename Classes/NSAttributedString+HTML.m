@@ -93,10 +93,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 #if ALLOW_IPHONE_SPECIAL_CASES
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 #endif
-	NSInteger listCounter = 0;  // Unordered, set to 1 to get ordered list
 	BOOL needsListItemStart = NO;
 	BOOL needsNewLineBefore = NO;
-	
 	
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
@@ -193,8 +191,8 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				DTHTMLElement *parent = currentTag;
                 currentTag = [[currentTag copy] autorelease];
                 currentTag.tagName = tagName;
-				currentTag.parent = parent;
                 currentTag.textScale = textScale;
+                [parent addChild:currentTag];
 
 				// convert CSS Styles into our own style
 				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
@@ -442,12 +440,18 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				{
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
-					
+
 #if ALLOW_IPHONE_SPECIAL_CASES                    
-                    currentTag.paragraphStyle.headIndent += 27.0 * textScale;
+                    CGFloat indentSize = 27.0 * textScale;
 #else
-                    currentTag.paragraphStyle.headIndent += 36.0 * textScale;
+                    CGFloat indentSize = 36.0 * textScale;
 #endif
+                    
+                    CGFloat indentHang = indentSize;
+
+                    currentTag.paragraphStyle.headIndent += indentSize;
+                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
+
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
 					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
@@ -455,11 +459,6 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 				else 
 				{
 					needsListItemStart = NO;
-					
-					if (listCounter)
-					{
-						listCounter++;
-					}
 				}
 				
 			}
@@ -501,12 +500,13 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 			{
 				if (tagOpen)
 				{
-					listCounter = 1;
+                    needsNewLineBefore = YES;
 				} 
 				else 
 				{
-#if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+#if ALLOW_IPHONE_SPECIAL_CASES
+                    if (currentTag.listDepth < 1)
+                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
@@ -514,12 +514,13 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 			{
 				if (tagOpen)
 				{
-					listCounter = 0;
+                    needsNewLineBefore = YES;
 				}
 				else 
 				{
-#if ALLOW_IPHONE_SPECIAL_CASES						
-					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+#if ALLOW_IPHONE_SPECIAL_CASES
+                    if (currentTag.listDepth < 1)
+                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
@@ -853,9 +854,9 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 					}
                     
                     // if we start a list, then we wait until we have actual text
-					if (needsListItemStart && ![tagContents isEqualToString:@" "])
+					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
-                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:listCounter];
+                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
                         
                         if (prefixString)
                         {

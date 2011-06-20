@@ -79,10 +79,18 @@
 	<dict>
 		<key>Description</key>
 		<string>Custom subviews can be affixed over any glyph run.</string>
-		<key>Title</key>
-		<string>Custom Subviews</string>
 		<key>File</key>
 		<string>Subviews.html</string>
+		<key>Title</key>
+		<string>Custom Subviews</string>
+	</dict>
+	<dict>
+		<key>Description</key>
+		<string>Demo of nested HTML lists</string>
+		<key>File</key>
+		<string>ListTest.html</string>
+		<key>Title</key>
+		<string>Nested Lists</string>
 	</dict>
 	<dict>
 		<key>Description</key>
