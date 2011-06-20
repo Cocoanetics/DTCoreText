@@ -78,13 +78,16 @@
 	return rect;
 }
 
-- (NSArray *)stringIndices {
-    if (!stringIndices) {
+- (NSArray *)stringIndices 
+{
+    if (!stringIndices) 
+	{
         const CFIndex *indices = CTRunGetStringIndicesPtr(_run);
         NSInteger count = self.numberOfGlyphs;
         NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
         NSInteger i;
-        for (i = 0; i < count; i++) {
+        for (i = 0; i < count; i++) 
+		{
             [array addObject:[NSNumber numberWithInteger:indices[i]]];
         }
         stringIndices = [array retain];
