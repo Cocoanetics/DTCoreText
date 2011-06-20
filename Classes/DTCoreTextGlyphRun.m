@@ -12,7 +12,6 @@
 
 
 @interface DTCoreTextGlyphRun ()
-
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
 @property (nonatomic, assign) NSDictionary *attributes;
@@ -30,17 +29,11 @@
     
 	if (self)
 	{
-    attributes = nil;
 		_run = run;
 		CFRetain(_run);
 		
 		_baselineOrigin = origin;	
 		_line = layoutLine;
-		
-		// calculate metrics
-		width = CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
-		
-		_frame = CGRectMake(origin.x, origin.y - ascent, width, ascent + descent);
 	}
 	
 	return self;
@@ -123,6 +116,19 @@
 	CTRunDraw(_run, context, CFRangeMake(0, 0));
 }
 
+- (void)calculateMetrics
+{
+	// calculate metrics
+	@synchronized(self)
+	{
+		if (!_didCalculateMetrics)
+		{
+			width = CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+			_didCalculateMetrics = YES;
+		}
+	}
+}
+
 #pragma mark Properites
 - (NSInteger)numberOfGlyphs
 {
@@ -157,6 +163,58 @@
 	}
 	
 	return _attachment;
+}
+
+- (CGRect)frame
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+
+	CGRect ret = CGRectMake(_baselineOrigin.x, _baselineOrigin.y - ascent, width, ascent + descent);
+	
+	return ret;
+}
+
+- (CGFloat)width
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return width;
+}
+
+- (CGFloat)ascent
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return ascent;
+}
+
+- (CGFloat)descent
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return descent;
+}
+
+- (CGFloat)leading
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return leading;
 }
 
 

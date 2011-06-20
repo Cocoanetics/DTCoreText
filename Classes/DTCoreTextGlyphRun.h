@@ -35,6 +35,7 @@
 	
 	DTTextAttachment *_attachment;
 	BOOL _didCheckForAttachmentInAttributes;
+	BOOL _didCalculateMetrics;
 }
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine origin:(CGPoint)origin;
@@ -53,6 +54,7 @@
 @property (nonatomic, assign, readonly) CGFloat ascent;
 @property (nonatomic, assign, readonly) CGFloat descent;
 @property (nonatomic, assign, readonly) CGFloat leading;
+@property (nonatomic, assign, readonly) CGFloat width;
 
 @property (nonatomic, assign, readonly) CGPoint baselineOrigin;
 
