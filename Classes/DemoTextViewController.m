@@ -259,7 +259,8 @@
 		grayView.backgroundColor = [UIColor blackColor];
 		
 		MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
-        
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_4_2
         NSString *airplayAttr = [attachment.attributes objectForKey:@"x-webkit-airplay"];
         if ([airplayAttr isEqualToString:@"allow"])
         {
@@ -268,6 +269,7 @@
                 player.allowsAirPlay = YES;
             }
         }
+#endif
 
         NSString *controlsAttr = [attachment.attributes objectForKey:@"controls"];
         if (controlsAttr)
