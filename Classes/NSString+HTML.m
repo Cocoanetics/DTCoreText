@@ -597,10 +597,14 @@ static NSDictionary *entityLookup = nil;
 + (NSString *)guid
 {
     CFUUIDRef uuid = CFUUIDCreate(NULL);
+    CFStringRef cfStr = CFUUIDCreateString(NULL, uuid);
     
-    NSString *ret = (NSString *)CFUUIDCreateString(NULL, uuid);
+    NSString *ret = [NSString stringWithString:(NSString *)cfStr];
     
-    return [ret autorelease];
+    CFRelease(uuid);
+    CFRelease(cfStr);
+    
+    return ret;
 }
 
 @end
