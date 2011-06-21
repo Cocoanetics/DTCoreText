@@ -185,6 +185,12 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
         
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
+			
+			if ([tagName isMetaTag])
+			{
+				continue;
+			}
+			
 			if (tagOpen)
 			{
                 // make new tag as copy of previous tag
@@ -230,7 +236,11 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
             
 			// ---------- Processing
 			
-			if ([tagName isEqualToString:@"img"] && tagOpen)
+			if ([tagName isEqualToString:@"#COMMENT#"])
+			{
+				continue;
+			}
+			else if ([tagName isEqualToString:@"img"] && tagOpen)
 			{
 				immediatelyClosed = YES;
 				

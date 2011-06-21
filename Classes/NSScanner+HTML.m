@@ -77,19 +77,43 @@
 	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 
 	// Read the tag name
-	if (![self scanCharactersFromSet:tagCharacterSet intoString:&scannedTagName])
+	if ([self scanCharactersFromSet:tagCharacterSet intoString:&scannedTagName])
 	{
-		[self setScanLocation:initialScanLocation];
-		return NO;
+		// make tags lowercase
+		scannedTagName = [scannedTagName lowercaseString];
+		
+		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	}
-
-	// make tags lowercase
-	scannedTagName = [scannedTagName lowercaseString];
-	
-	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+	else
+	{
+		// might also be a comment
+		if ([self scanString:@"!--" intoString:NULL])
+		{
+			scannedTagName = @"#COMMENT#";
+			
+			NSString *commentStr = nil;
+			
+			if ([self scanUpToString:@"-->" intoString:&commentStr])
+			{
+				[tmpAttributes setObject:commentStr forKey:@"CommentText"];
+			}
+			
+			// skip closing
+			[self scanString:@"-->" intoString:NULL];
+			
+			tagOpen = NO;
+			immediatelyClosed = YES;
+		}
+		else
+		{
+			// not a valid tag, treat as text
+			[self setScanLocation:initialScanLocation];
+			return NO;
+		}
+	}
 	
 	// Read attributes of tag
-	while (![self isAtEnd])
+	while (![self isAtEnd] && !immediatelyClosed)
 	{
 		if ([self scanString:@"/" intoString:NULL])
 		{
