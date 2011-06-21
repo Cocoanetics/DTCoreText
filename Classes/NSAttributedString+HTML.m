@@ -36,6 +36,8 @@ NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString *DTDefaultTextColor = @"DTDefaultTextColor";
 NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
+NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
+NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 
 @implementation NSAttributedString (HTML)
 
@@ -147,9 +149,24 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	{
 		defaultLinkDecoration = [linkDecorationDefault boolValue];
 	}
-    
-    // default paragraph style
+
+	// default paragraph style
     DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+	
+	NSNumber *defaultLineHeightMultiplierNum = [options objectForKey:DTDefaultLineHeightMultiplier];
+	
+	if (defaultLineHeightMultiplierNum)
+	{
+		CGFloat defaultLineHeightMultiplier = [defaultLineHeightMultiplierNum floatValue];
+		defaultParagraphStyle.lineHeightMultiple = defaultLineHeightMultiplier;
+	}
+	
+	NSNumber *defaultTextAlignmentNum = [options objectForKey:DTDefaultTextAlignment];
+	
+	if (defaultTextAlignmentNum)
+	{
+		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
+	}
     
     DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
     defaultTag.fontDescriptor = defaultFontDescriptor;

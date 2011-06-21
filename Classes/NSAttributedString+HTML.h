@@ -17,6 +17,8 @@ extern NSString *DTDefaultFontFamily;
 extern NSString *DTDefaultTextColor;
 extern NSString *DTDefaultLinkColor;
 extern NSString *DTDefaultLinkDecoration;
+extern NSString *DTDefaultTextAlignment;
+extern NSString *DTDefaultLineHeightMultiplier;
 
 @interface NSAttributedString (HTML)
 
