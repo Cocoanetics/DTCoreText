@@ -85,6 +85,14 @@ NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 	// Make it a string
 	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
 	
+	if (!htmlString)
+	{
+		NSLog(@"No valid HTML passed to to initWithHTML");
+		
+		[self release];
+		return nil;
+	}
+	
     // for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
