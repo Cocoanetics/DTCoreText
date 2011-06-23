@@ -51,6 +51,8 @@
 		A7C306E51394683400B2E925 /* UIDevice+DTVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */; };
 		A7C306E61394683400B2E925 /* UIDevice+DTVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */; };
 		A7C6BAF613AF749400AD37D7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
+		A7D66A5F13B353D200A9A7AC /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */; };
+		A7D66A6013B353D200A9A7AC /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */; };
 		A7DBE3F812E6C6F500F25897 /* Video.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBE3F612E6C6F500F25897 /* Video.html */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
@@ -173,6 +175,8 @@
 		A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTCoreTextFontOverrides.plist; sourceTree = "<group>"; };
 		A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+DTVersion.h"; sourceTree = "<group>"; };
 		A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+DTVersion.m"; sourceTree = "<group>"; };
+		A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		A7D66A5E13B353D200A9A7AC /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		A7DBE3F612E6C6F500F25897 /* Video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Video.html; sourceTree = "<group>"; };
 		A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -244,6 +248,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A7D66A5C13B353BF00A9A7AC /* Utilities */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */,
 				A76FF75912EDF8A80065A4E7 /* CoreText Layout */,
@@ -379,6 +384,15 @@
 				A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */,
 			);
 			name = "CoreText Layout";
+			sourceTree = "<group>";
+		};
+		A7D66A5C13B353BF00A9A7AC /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A7D66A5E13B353D200A9A7AC /* NSData+Base64.h */,
+				A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		B23558DF12E04C3C005EA62F /* Other Sources */ = {
@@ -583,6 +597,7 @@
 				A717FFEB1386EDD200D3BE31 /* DTLazyImageView.m in Sources */,
 				A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 				A7C306E61394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
+				A7D66A6013B353D200A9A7AC /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,6 +634,7 @@
 				A717FFEA1386EDD200D3BE31 /* DTLazyImageView.m in Sources */,
 				A70F5511138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 				A7C306E51394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
+				A7D66A5F13B353D200A9A7AC /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

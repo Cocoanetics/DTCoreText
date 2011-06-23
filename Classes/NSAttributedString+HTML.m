@@ -24,6 +24,7 @@
 #import "DTCoreTextParagraphStyle.h"
 
 #import "CGUtils.h"
+#import "NSData+Base64.h"
 
 // standard options
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
@@ -149,7 +150,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	{
 		defaultLinkDecoration = [linkDecorationDefault boolValue];
 	}
-
+	
 	// default paragraph style
     DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
 	
@@ -224,7 +225,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
                 currentTag.tagName = tagName;
                 currentTag.textScale = textScale;
                 [parent addChild:currentTag];
-
+				
 				// convert CSS Styles into our own style
 				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
 				
@@ -275,58 +276,87 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				}
 				
 				NSString *src = [tagAttributesDict objectForKey:@"src"];
-                
+				
+				NSURL *imageURL = nil;
+				UIImage *decodedImage = nil;
+				
                 // get size of width/height if it's not in style
 				CGSize imageSize = currentTag.size;
-
+				
                 if (!imageSize.width)
                 {
                     imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
                 }
-            
+				
                 if (!imageSize.height)
                 {
                     imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
                 }
 				
-				NSURL *imageURL = [NSURL URLWithString:src];
-				
-                if (![imageURL scheme])
-                {
-					// possibly a relative url
-					if (baseURL)
-					{
-						imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
-					}
-					else
-					{
-						// file in app bundle
-						NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-						imageURL = [NSURL fileURLWithPath:path];
-					}
-				}
-				
-				if (!imageSize.width || !imageSize.height)
+				// decode data URL
+				if ([src hasPrefix:@"data:"])
 				{
-					// inspect local file
-					if ([imageURL isFileURL])
+					NSRange range = [src rangeOfString:@"base64,"];
+					
+					if (range.length)
 					{
-						UIImage *image = [UIImage imageWithContentsOfFile:[imageURL path]];
+						NSString *encodedData = [src substringFromIndex:range.location + range.length];
+						NSData *decodedData = [NSData dataFromBase64String:encodedData];
+						
+						decodedImage = [UIImage imageWithData:decodedData];
 						
 						if (!imageSize.width)
 						{
-							imageSize.width = image.size.width;
+							imageSize.width = decodedImage.size.width;
 						}
 						
 						if (!imageSize.height)
 						{
-							imageSize.height = image.size.height;
+							imageSize.height = decodedImage.size.height;
 						}
 					}
-					else
+				}
+				else // normal URL
+				{
+					imageURL = [NSURL URLWithString:src];
+					
+					if (![imageURL scheme])
 					{
-						// set it to anything for now
-						imageSize = CGSizeMake(100, 100);
+						// possibly a relative url
+						if (baseURL)
+						{
+							imageURL = [NSURL URLWithString:src relativeToURL:baseURL];
+						}
+						else
+						{
+							// file in app bundle
+							NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+							imageURL = [NSURL fileURLWithPath:path];
+						}
+					}
+					
+					if (!imageSize.width || !imageSize.height)
+					{
+						// inspect local file
+						if ([imageURL isFileURL])
+						{
+							UIImage *image = [UIImage imageWithContentsOfFile:[imageURL path]];
+							
+							if (!imageSize.width)
+							{
+								imageSize.width = image.size.width;
+							}
+							
+							if (!imageSize.height)
+							{
+								imageSize.height = image.size.height;
+							}
+						}
+						else
+						{
+							// set it to anything for now
+							imageSize = CGSizeMake(100, 100);
+						}
 					}
 				}
                 
@@ -348,6 +378,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				attachment.originalSize = imageSize;
 				attachment.displaySize = adjustedSize;
                 attachment.attributes = tagAttributesDict;
+				attachment.contents = decodedImage;
 				
 				// we copy the link because we might need for it making the custom view
 				if (currentTag.link)
@@ -401,7 +432,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
                 {
                     imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
                 }
-
+				
                 // if we still have no size then we use standard size
                 if (!imageSize.width || !imageSize.height)
                 {
@@ -480,7 +511,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				{
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
-
+					
 #if ALLOW_IPHONE_SPECIAL_CASES                    
                     CGFloat indentSize = 27.0 * textScale;
 #else
@@ -488,10 +519,10 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 #endif
                     
                     CGFloat indentHang = indentSize;
-
+					
                     currentTag.paragraphStyle.headIndent += indentSize;
                     currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
-
+					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
 					
                     [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
@@ -601,7 +632,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				if (tagOpen)
 				{
                     // TODO: store style info in a dictionary and apply it to tags
-                   currentTag.tagContentInvisible = YES;
+					currentTag.tagContentInvisible = YES;
                     needsNewLineBefore = NO;
 				}
 			}
@@ -905,7 +936,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						
 						needsListItemStart = NO;
 					}
-
+					
                     
                     // we don't want whitespace before first tag to turn into paragraphs
                     if (![currentTag isMeta])
@@ -939,7 +970,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
 {
 	CTFontRef normalFont = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
-
+	
 	DTCoreTextFontDescriptor *smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:normalFont];
 	smallerFontDesc.pointSize *= 0.7;
 	CTFontRef smallerFont = [smallerFontDesc newMatchingFont];
@@ -978,8 +1009,5 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	
 	return 	[tmpString autorelease];
 }
-
-
-
 
 @end
