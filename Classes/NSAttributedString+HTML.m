@@ -505,6 +505,8 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
+					// have inherit the correct list counter from parent
+					
 					DTHTMLElement *counterElement = currentTag.parent;
 					
 					NSNumber *valueNum = [tagAttributesDict objectForKey:@"value"];
@@ -514,11 +516,8 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						counterElement.listCounter = value;
 						currentTag.listCounter = value;
 					}
-					else
-					{
-						counterElement.listCounter++;
-						currentTag.listCounter = counterElement.listCounter;
-					}
+
+					counterElement.listCounter++;
 					
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
@@ -586,11 +585,11 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					if (valueNum)
 					{
 						NSInteger value = [valueNum integerValue];
-						currentTag.listCounter = value-1;
+						currentTag.listCounter = value;
 					}
 					else
 					{
-						currentTag.listCounter = 0;
+						currentTag.listCounter = 1;
 					}
 					
                     needsNewLineBefore = YES;
