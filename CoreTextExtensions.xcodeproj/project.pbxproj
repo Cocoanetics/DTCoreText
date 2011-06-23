@@ -329,8 +329,6 @@
 				A7F2A77413575E700097BF31 /* NSMutableAttributedString+HTML.m */,
 				A7F2A7471357227C0097BF31 /* DTHTMLElement.h */,
 				A7F2A7481357227C0097BF31 /* DTHTMLElement.m */,
-				A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */,
-				A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */,
 			);
 			name = "NSAttributedString HTML Additions";
 			sourceTree = "<group>";
@@ -391,6 +389,8 @@
 			children = (
 				A7D66A5E13B353D200A9A7AC /* NSData+Base64.h */,
 				A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */,
+				A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */,
+				A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
