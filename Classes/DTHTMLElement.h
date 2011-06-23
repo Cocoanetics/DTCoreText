@@ -136,5 +136,6 @@ typedef enum
 - (NSString *)path;
 
 - (void)addChild:(DTHTMLElement *)child;
+- (void)removeChild:(DTHTMLElement *)child;
 
 @end

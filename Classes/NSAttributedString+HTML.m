@@ -99,8 +99,6 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
     // for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
-	NSMutableArray *tagStack = [NSMutableArray array];
-    
 #if ALLOW_IPHONE_SPECIAL_CASES
 	CGFloat nextParagraphAdditionalSpaceBefore = 0.0;
 #endif
@@ -189,9 +187,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
         }
     }
     
-	[tagStack addObject:defaultTag];
-	
-	DTHTMLElement *currentTag = [tagStack lastObject];
+	DTHTMLElement *currentTag = defaultTag; // our defaults are the root
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
@@ -806,9 +802,11 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			}
 			
 			// --------------------- push tag on stack if it's opening
-			if (tagOpen&&!immediatelyClosed)
+			if (tagOpen&&immediatelyClosed)
 			{
-				[tagStack addObject:currentTag];
+				DTHTMLElement *popChild = currentTag;
+				currentTag = currentTag.parent;
+				[currentTag removeChild:popChild];
 			}
 			else if (!tagOpen)
 			{
@@ -818,30 +816,22 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
                     [tmpString appendString:@"\n"];  // extends attributed area at end
 				}
 				
-				if ([tagStack count])
+				// check if this tag is indeed closing the currently open one
+				if ([tagName isEqualToString:currentTag.tagName])
 				{
-					// check if this tag is indeed closing the currently open one
-					DTHTMLElement *topStackTag = [tagStack lastObject];
-					
-					if ([tagName isEqualToString:topStackTag.tagName])
-					{
-						[tagStack removeLastObject];
-						currentTag = [tagStack lastObject];
-					}
-					else 
-					{
-						NSLog(@"Ignoring non-open tag %@", topStackTag.tagName);
-					}
+					DTHTMLElement *popChild = currentTag;
+					currentTag = currentTag.parent;
+					[currentTag removeChild:popChild];
 				}
 				else 
 				{
-					currentTag = nil;
+					NSLog(@"Ignoring non-open tag %@", currentTag.tagName);
 				}
 			}
 			else if (immediatelyClosed)
 			{
 				// If it's immediately closed it's not relevant for following body
-				currentTag = [tagStack lastObject];
+				//	currentTag = [tagStack lastObject];
 			}
 		}
 		else 

@@ -663,6 +663,11 @@
     [children addObject:child];
 }
 
+- (void)removeChild:(DTHTMLElement *)child
+{
+	[children removeObject:child];
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
