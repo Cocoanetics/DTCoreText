@@ -138,4 +138,6 @@ typedef enum
 - (void)addChild:(DTHTMLElement *)child;
 - (void)removeChild:(DTHTMLElement *)child;
 
+- (DTHTMLElement *)parentWithTagName:(NSString *)name;
+
 @end

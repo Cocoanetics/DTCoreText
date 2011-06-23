@@ -668,6 +668,16 @@
 	[children removeObject:child];
 }
 
+- (DTHTMLElement *)parentWithTagName:(NSString *)name
+{
+	if ([self.parent.tagName isEqualToString:name])
+	{
+		return self.parent;
+	}
+	
+	return [self.parent parentWithTagName:name];
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
@@ -693,6 +703,7 @@
 	newObject.preserveNewlines = self.preserveNewlines;
     
     newObject.fontCache = self.fontCache; // reference
+	newObject.listCounter = self.listCounter;
     
     return newObject;
 }

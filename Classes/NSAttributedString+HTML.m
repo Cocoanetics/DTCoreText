@@ -505,6 +505,21 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
+					DTHTMLElement *counterElement = currentTag.parent;
+					
+					NSNumber *valueNum = [tagAttributesDict objectForKey:@"value"];
+					if (valueNum)
+					{
+						NSInteger value = [valueNum integerValue];
+						counterElement.listCounter = value;
+						currentTag.listCounter = value;
+					}
+					else
+					{
+						counterElement.listCounter++;
+						currentTag.listCounter = counterElement.listCounter;
+					}
+					
 					needsListItemStart = YES;
                     currentTag.paragraphStyle.paragraphSpacing = 0;
 					
@@ -567,6 +582,17 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
+					NSNumber *valueNum = [tagAttributesDict objectForKey:@"start"];
+					if (valueNum)
+					{
+						NSInteger value = [valueNum integerValue];
+						currentTag.listCounter = value-1;
+					}
+					else
+					{
+						currentTag.listCounter = 0;
+					}
+					
                     needsNewLineBefore = YES;
 				} 
 				else 
@@ -582,6 +608,8 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				if (tagOpen)
 				{
                     needsNewLineBefore = YES;
+					
+					currentTag.listCounter = 0;
 				}
 				else 
 				{
