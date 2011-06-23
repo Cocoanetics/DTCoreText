@@ -646,9 +646,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (downShiftSoFar>0)
 		{
+			// shift the frame baseline down for the total shift so far
 			CGPoint origin = oneLine.baselineOrigin;
 			origin.y += downShiftSoFar;
 			oneLine.baselineOrigin = origin;
+			
+			// increase the ascent by the extend needed for this lines attachments
+			oneLine.ascent += lineShift;
 		}
 	}
 }

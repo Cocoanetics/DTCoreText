@@ -48,7 +48,7 @@
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, retain, readonly) NSArray *glyphRuns;
 
-@property (nonatomic, assign, readonly) CGFloat ascent;
+@property (nonatomic, assign) CGFloat ascent; // needs to be modifyable
 @property (nonatomic, assign, readonly) CGFloat descent;
 @property (nonatomic, assign, readonly) CGFloat leading;
 @property (nonatomic, assign, readonly) CGFloat trailingWhitespaceWidth;
