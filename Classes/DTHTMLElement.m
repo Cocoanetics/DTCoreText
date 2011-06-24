@@ -81,6 +81,7 @@
         // need run delegate for sizing
         CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(textAttachment);
         [tmpDict setObject:(id)embeddedObjectRunDelegate forKey:(id)kCTRunDelegateAttributeName];
+        CFRelease(embeddedObjectRunDelegate);
         
         // add attachment
         [tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
