@@ -16,7 +16,7 @@
 	[contents release];
 	[_contentURL release];
 	[_hyperLinkURL release];
-    [_attributes release];
+	[_attributes release];
 	
 	[super dealloc];
 }

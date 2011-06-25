@@ -27,7 +27,7 @@
 // Mapping from 6 bit pattern to ASCII character.
 //
 static unsigned char base64EncodeLookup[65] =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 //
 // Definition for "masked-out" areas of the base64DecodeLookup mapping
@@ -39,22 +39,22 @@ static unsigned char base64EncodeLookup[65] =
 //
 static unsigned char base64DecodeLookup[256] =
 {
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 62, xx, xx, xx, 63, 
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, xx, xx, xx, xx, xx, xx, 
-    xx,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, xx, xx, xx, xx, xx, 
-    xx, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 62, xx, xx, xx, 63, 
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, xx, xx, xx, xx, xx, xx, 
+	xx,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, xx, xx, xx, xx, xx, 
+	xx, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 
+	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
+	xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
 };
 
 //
@@ -77,9 +77,9 @@ static unsigned char base64DecodeLookup[256] =
 //	outputLength.
 //
 void *NewBase64Decode(
-	const char *inputBuffer,
-	size_t length,
-	size_t *outputLength)
+											const char *inputBuffer,
+											size_t length,
+											size_t *outputLength)
 {
 	if (length == -1)
 	{
@@ -87,7 +87,7 @@ void *NewBase64Decode(
 	}
 	
 	size_t outputBufferSize =
-		((length+BASE64_UNIT_SIZE-1) / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
+	((length+BASE64_UNIT_SIZE-1) / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
 	unsigned char *outputBuffer = (unsigned char *)malloc(outputBufferSize);
 	
 	size_t i = 0;
@@ -152,36 +152,36 @@ void *NewBase64Decode(
 //	outputLength.
 //
 char *NewBase64Encode(
-	const void *buffer,
-	size_t length,
-	bool separateLines,
-	size_t *outputLength)
+											const void *buffer,
+											size_t length,
+											bool separateLines,
+											size_t *outputLength)
 {
 	const unsigned char *inputBuffer = (const unsigned char *)buffer;
 	
-	#define MAX_NUM_PADDING_CHARS 2
-	#define OUTPUT_LINE_LENGTH 64
-	#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
-	#define CR_LF_SIZE 2
+#define MAX_NUM_PADDING_CHARS 2
+#define OUTPUT_LINE_LENGTH 64
+#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
+#define CR_LF_SIZE 2
 	
 	//
 	// Byte accurate calculation of final buffer size
 	//
 	size_t outputBufferSize =
-			((length / BINARY_UNIT_SIZE)
-				+ ((length % BINARY_UNIT_SIZE) ? 1 : 0))
-					* BASE64_UNIT_SIZE;
+	((length / BINARY_UNIT_SIZE)
+	 + ((length % BINARY_UNIT_SIZE) ? 1 : 0))
+	* BASE64_UNIT_SIZE;
 	if (separateLines)
 	{
 		outputBufferSize +=
-			(outputBufferSize / OUTPUT_LINE_LENGTH) * CR_LF_SIZE;
+		(outputBufferSize / OUTPUT_LINE_LENGTH) * CR_LF_SIZE;
 	}
 	
 	//
 	// Include space for a terminating zero
 	//
 	outputBufferSize += 1;
-
+	
 	//
 	// Allocate the output buffer
 	//
@@ -190,7 +190,7 @@ char *NewBase64Encode(
 	{
 		return NULL;
 	}
-
+	
 	size_t i = 0;
 	size_t j = 0;
 	const size_t lineLength = separateLines ? INPUT_LINE_LENGTH : length;
@@ -202,7 +202,7 @@ char *NewBase64Encode(
 		{
 			lineEnd = length;
 		}
-
+		
 		for (; i + BINARY_UNIT_SIZE - 1 < lineEnd; i += BINARY_UNIT_SIZE)
 		{
 			//
@@ -210,9 +210,9 @@ char *NewBase64Encode(
 			//
 			outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
 			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
-				| ((inputBuffer[i + 1] & 0xF0) >> 4)];
+																						 | ((inputBuffer[i + 1] & 0xF0) >> 4)];
 			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
-				| ((inputBuffer[i + 2] & 0xC0) >> 6)];
+																						 | ((inputBuffer[i + 2] & 0xC0) >> 6)];
 			outputBuffer[j++] = base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
 		}
 		
@@ -236,7 +236,7 @@ char *NewBase64Encode(
 		//
 		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
 		outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
-			| ((inputBuffer[i + 1] & 0xF0) >> 4)];
+																					 | ((inputBuffer[i + 1] & 0xF0) >> 4)];
 		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
 		outputBuffer[j++] =	'=';
 	}
@@ -298,14 +298,14 @@ char *NewBase64Encode(
 {
 	size_t outputLength;
 	char *outputBuffer =
-		NewBase64Encode([self bytes], [self length], true, &outputLength);
+	NewBase64Encode([self bytes], [self length], true, &outputLength);
 	
 	NSString *result =
-		[[[NSString alloc]
-			initWithBytes:outputBuffer
-			length:outputLength
-			encoding:NSASCIIStringEncoding]
-		autorelease];
+	[[[NSString alloc]
+		initWithBytes:outputBuffer
+		length:outputLength
+		encoding:NSASCIIStringEncoding]
+	 autorelease];
 	free(outputBuffer);
 	return result;
 }

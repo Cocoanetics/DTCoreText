@@ -41,7 +41,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	
 	if (self)
 	{
-        
+		
 	}
 	
 	return self;
@@ -58,7 +58,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 {
 	DTCoreTextFontDescriptor *firstMatch = nil;
 	NSNumber *cacheKey = [NSString stringWithFormat:@"fontFamily BEGINSWITH[cd] %@ and boldTrait == %d and italicTrait == %d", descriptor.fontFamily, descriptor.boldTrait, descriptor.italicTrait];
-    
+	
 	// try cache
 	firstMatch = [self.fontMatchCache objectForKey:cacheKey];
 	
@@ -74,8 +74,8 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	
 	NSArray *matchingDescriptors = [self.fontDescriptors filteredArrayUsingPredicate:predicate];
 	
-    NSLog(@"%@", matchingDescriptors);
-    
+	NSLog(@"%@", matchingDescriptors);
+	
 	if ([matchingDescriptors count])
 	{
 		firstMatch = [matchingDescriptors objectAtIndex:0];
@@ -107,35 +107,35 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 			CTFontCollectionRef fonts = CTFontCollectionCreateFromAvailableFonts(NULL);
 			
 			CFArrayRef matchingFonts = CTFontCollectionCreateMatchingFontDescriptors(fonts);
-            
-            if (matchingFonts)
-            {
-                
-                // convert all to our objects
-                NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
-                
-                for (NSInteger i=0; i<CFArrayGetCount(matchingFonts); i++)
-                {
-                    CTFontDescriptorRef fontDesc = CFArrayGetValueAtIndex(matchingFonts, i);
-                    
-                    DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFontDescriptor:fontDesc];
-                    [tmpArray addObject:desc];
-                    [desc release];
-                }
-                
-                
-                CFRelease(matchingFonts);
-                
-                self.fontDescriptors = tmpArray;
-                [tmpArray release];
-            }
-        }
-        
-        // cache that
-        [NSKeyedArchiver archiveRootObject:self.fontDescriptors toFile:cachesPath];
-    }
-    
-    return _fontDescriptors;
+			
+			if (matchingFonts)
+			{
+				
+				// convert all to our objects
+				NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
+				
+				for (NSInteger i=0; i<CFArrayGetCount(matchingFonts); i++)
+				{
+					CTFontDescriptorRef fontDesc = CFArrayGetValueAtIndex(matchingFonts, i);
+					
+					DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFontDescriptor:fontDesc];
+					[tmpArray addObject:desc];
+					[desc release];
+				}
+				
+				
+				CFRelease(matchingFonts);
+				
+				self.fontDescriptors = tmpArray;
+				[tmpArray release];
+			}
+		}
+		
+		// cache that
+		[NSKeyedArchiver archiveRootObject:self.fontDescriptors toFile:cachesPath];
+	}
+	
+	return _fontDescriptors;
 }
 
 - (NSCache *)fontMatchCache

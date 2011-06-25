@@ -21,8 +21,8 @@ static NSCache *_imageCache = nil;
 	[_receivedData release];
 	[_connection cancel];
 	[_connection release];
-    
-    if (_imageSource)
+	
+	if (_imageSource)
 		CFRelease(_imageSource), _imageSource = NULL;
 	
 	[super dealloc];
@@ -37,7 +37,7 @@ static NSCache *_imageCache = nil;
 	}
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
-    
+	
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
 	[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	[_connection start];
@@ -53,14 +53,14 @@ static NSCache *_imageCache = nil;
 {
 	if (!self.image && _url && !_connection && self.superview)
 	{
-        UIImage *image = [_imageCache objectForKey:_url];
-        
-        if (image)
-        {
-            self.image = image;
-            return;
-        }
-        
+		UIImage *image = [_imageCache objectForKey:_url];
+		
+		if (image)
+		{
+			self.image = image;
+			return;
+		}
+		
 		[self loadImageAtURL:_url];
 	}	
 }
@@ -93,12 +93,12 @@ static NSCache *_imageCache = nil;
 
 - (void)createAndShowProgressiveImage
 {
-    if (!_imageSource)
-    {
-        return;
-    }
-    
-    /* For progressive download */
+	if (!_imageSource)
+	{
+		return;
+	}
+	
+	/* For progressive download */
 	const NSUInteger totalSize = [_receivedData length];
 	CGImageSourceUpdateData(_imageSource, (CFDataRef)_receivedData, (totalSize == _expectedSize) ? true : false);
 	
@@ -110,10 +110,10 @@ static NSCache *_imageCache = nil;
 			CGImageRef imgTmp = [self newTransitoryImage:image]; // iOS fix to correctly handle JPG see : http://www.cocoabyss.com/mac-os-x/progressive-image-download-imageio/
 			if (imgTmp)
 			{
-                UIImage *image = [[UIImage alloc] initWithCGImage:imgTmp];
+				UIImage *image = [[UIImage alloc] initWithCGImage:imgTmp];
 				[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
-                [image release];
-                
+				[image release];
+				
 				CGImageRelease(imgTmp);
 			}
 			CGImageRelease(image);
@@ -150,11 +150,11 @@ static NSCache *_imageCache = nil;
 		if (![[httpResponse MIMEType] hasPrefix:@"image"])
 		{
 			[self cancelLoading];
-            return;
+			return;
 		}
 	}
-    
-    /* For progressive download */
+	
+	/* For progressive download */
 	_fullWidth = _fullHeight = -1.0f;
 	_expectedSize = [response expectedContentLength];
 	
@@ -165,11 +165,11 @@ static NSCache *_imageCache = nil;
 {
 	[_receivedData appendData:data];
 	
-    if (!CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
-    {
-        // don't show progressive
-        return;
-    }
+	if (!CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
+	{
+		// don't show progressive
+		return;
+	}
 	
 	if (!_imageSource)
 	{
@@ -186,17 +186,17 @@ static NSCache *_imageCache = nil;
 		UIImage *image = [[UIImage alloc] initWithData:_receivedData];
 		
 		self.image = image;
-        
-        if (!_imageCache)
-        {
-            _imageCache = [[NSCache alloc] init];
-        }
-        
-        if (_url)
-        {
-            // cache image
-            [_imageCache setObject:image forKey:_url];
-        }
+		
+		if (!_imageCache)
+		{
+			_imageCache = [[NSCache alloc] init];
+		}
+		
+		if (_url)
+		{
+			// cache image
+			[_imageCache setObject:image forKey:_url];
+		}
 		
 		[image release];
 		
@@ -204,7 +204,7 @@ static NSCache *_imageCache = nil;
 	}
 	
 	[_connection release], _connection = nil;
-
+	
 	/* For progressive download */
 	if (_imageSource)
 		CFRelease(_imageSource), _imageSource = NULL;

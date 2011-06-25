@@ -14,15 +14,15 @@
 {
 	NSString *versionString = [self systemVersion];
 	NSArray *parts = [versionString componentsSeparatedByString:@"."];
-    
+	
 	DTVersion retVersion;
-    
+	
 	NSUInteger partCount = [parts count];
-    
+	
 	retVersion.major = (partCount>0)?[[parts objectAtIndex:0] intValue]:0;
 	retVersion.minor = (partCount>1)?[[parts objectAtIndex:1] intValue]:0;
 	retVersion.point = (partCount>2)?[[parts objectAtIndex:2] intValue]:0;
-    
+	
 	return retVersion;
 }
 

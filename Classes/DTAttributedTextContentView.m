@@ -38,17 +38,17 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 + (void)setLayerClass:(Class)layerClass
 {
-    _layerClassToUseForDTAttributedTextContentView = layerClass;
+	_layerClassToUseForDTAttributedTextContentView = layerClass;
 }
 
 + (Class)layerClass
 {
-    if (_layerClassToUseForDTAttributedTextContentView)
-    {
-        return _layerClassToUseForDTAttributedTextContentView;
-    }
-    
-    return [CALayer class];
+	if (_layerClassToUseForDTAttributedTextContentView)
+	{
+		return _layerClassToUseForDTAttributedTextContentView;
+	}
+	
+	return [CALayer class];
 }
 
 @end
@@ -58,7 +58,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setup
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
-    shouldLayoutCustomSubviews = YES;
+	shouldLayoutCustomSubviews = YES;
 	
 	// possibly already set in NIB
 	if (!self.backgroundColor)
@@ -79,17 +79,17 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (id)initWithFrame:(CGRect)frame 
 {
-    if ((self = [super initWithFrame:frame])) 
+	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-    }
-    return self;
+	}
+	return self;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width
 {
-    self = [super initWithFrame:CGRectMake(0, 0, width, 0)];
-    
+	self = [super initWithFrame:CGRectMake(0, 0, width, 0)];
+	
 	if (self)
 	{
 		[self setup];
@@ -113,7 +113,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[customViews release];
 	[customViewsForLinksIndex release];
 	[customViewsForAttachmentsIndex release];
-    
+	
 	[_layouter release];
 	[_layoutFrame release];
 	[_attributedString release];
@@ -123,12 +123,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
-    // if we are called for partial (non-infinate) we remove unneeded custom subviews first
-    if (!CGRectIsInfinite(rect))
-    {
-        [self removeSubviewsOutsideRect:rect];
-    }
-    
+	// if we are called for partial (non-infinate) we remove unneeded custom subviews first
+	if (!CGRectIsInfinite(rect))
+	{
+		[self removeSubviewsOutsideRect:rect];
+	}
+	
 	[CATransaction begin];
 	[CATransaction setDisableActions:YES];
 	
@@ -152,48 +152,48 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	for (DTCoreTextLayoutLine *oneLine in lines)
 	{
-        NSRange lineRange = [oneLine stringRange];
-        
-        NSInteger skipRunsBeforeLocation = 0;
-        
+		NSRange lineRange = [oneLine stringRange];
+		
+		NSInteger skipRunsBeforeLocation = 0;
+		
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
 			// add custom views if necessary
-            NSRange stringRange = [oneRun stringRange];
-            CGRect frameForSubview = CGRectZero;
-            
-            
-            if (stringRange.location>=skipRunsBeforeLocation)
-            {
-                // see if it's a link
-                NSRange effectiveRange;
+			NSRange stringRange = [oneRun stringRange];
+			CGRect frameForSubview = CGRectZero;
+			
+			
+			if (stringRange.location>=skipRunsBeforeLocation)
+			{
+				// see if it's a link
+				NSRange effectiveRange;
 				
-                NSURL *linkURL = [layoutString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
-                
-                if (linkURL)
-                {
-                    // compute bounding frame over potentially multiple (chinese) glyphs
-                    
-                    // make one link view for all glyphruns in this line
-                    frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRange];
-                    stringRange = effectiveRange;
-                    
-                    skipRunsBeforeLocation = effectiveRange.location+effectiveRange.length;
-                }
-                else
-                {
-                    // individual glyph run
-                    frameForSubview = oneRun.frame;
-                }
+				NSURL *linkURL = [layoutString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
+				
+				if (linkURL)
+				{
+					// compute bounding frame over potentially multiple (chinese) glyphs
+					
+					// make one link view for all glyphruns in this line
+					frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRange];
+					stringRange = effectiveRange;
+					
+					skipRunsBeforeLocation = effectiveRange.location+effectiveRange.length;
+				}
+				else
+				{
+					// individual glyph run
+					frameForSubview = oneRun.frame;
+				}
 				
 				if (CGRectIsEmpty(frameForSubview))
 				{
 					continue;
 				}
-                
+				
 				NSNumber *indexKey = [NSNumber numberWithInteger:stringRange.location];
-                
-   				// offset layout if necessary
+				
+				// offset layout if necessary
 				if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
 				{
 					frameForSubview.origin.x += _layoutOffset.x;
@@ -206,12 +206,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				frameForSubview.size.width = roundf(frameForSubview.size.width);
 				frameForSubview.size.height = roundf(frameForSubview.size.height);
 				
-                
-                if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
-                {
-                    // is still outside even though the bounds of the line already intersect visible area
-                    continue;
-                }
+				
+				if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
+				{
+					// is still outside even though the bounds of the line already intersect visible area
+					continue;
+				}
 				
 				if (_delegateSupportsCustomViewsForAttachments || _delegateSupportsGenericCustomViews)
 				{
@@ -322,14 +322,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// needs clearing of background
 	CGRect rect = CGContextGetClipBoundingBox(ctx);
 	
-    if (_backgroundOffset.height || _backgroundOffset.width)
-    {
-        CGContextSetPatternPhase(ctx, _backgroundOffset);
-    }
-    
+	if (_backgroundOffset.height || _backgroundOffset.width)
+	{
+		CGContextSetPatternPhase(ctx, _backgroundOffset);
+	}
+	
 	CGContextSetFillColorWithColor(ctx, [self.backgroundColor CGColor]);
 	CGContextFillRect(ctx, rect);
-    
+	
 	// offset layout if necessary
 	if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
 	{
@@ -337,13 +337,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		CGContextConcatCTM(ctx, transform);
 	}
 	
-    [self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
+	[self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 }
 
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-    [self.layoutFrame drawInContext:context];
+	[self.layoutFrame drawInContext:context];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -356,21 +356,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
 	
 	// this returns an incorrect size before 4.2
-    //	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+	//	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
 	
 	return neededSize;
 }
 
 - (NSString *)description
 {
-    NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
+	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
 	
-    if ([extract length]>10)
-    {
-        extract = [extract substringToIndex:10];
-    }
+	if ([extract length]>10)
+	{
+		extract = [extract substringToIndex:10];
+	}
 	
-    return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
+	return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
 }
 
 - (void)relayoutText
@@ -378,7 +378,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// need new layouter
 	self.layouter = nil;
 	self.layoutFrame = nil;
-    
+	
 	// remove custom views
 	[self removeAllCustomViewsForLinks];
 	
@@ -386,7 +386,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		// triggers new layout
 		CGSize neededSize = [self sizeThatFits:self.bounds.size];
-        
+		
 		// set frame to fit text preserving origin
 		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
 	}
@@ -455,7 +455,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (_attributedString != string)
 	{
 		[_attributedString release];
-        
+		
 		_attributedString = [string copy];
 		
 		// need new layouter
@@ -472,7 +472,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setFrame:(CGRect)frame
 {
 	[super setFrame:frame];
-    
+	
 	if (!_layoutFrame) 
 	{
 		return;	
@@ -547,7 +547,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		{
 			CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
 			rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-            
+			
 			_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 			[_layoutFrame retain];
 		}
@@ -557,13 +557,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
-    if (_layoutFrame != layoutFrame)
-    {
-        [_layoutFrame release];
+	if (_layoutFrame != layoutFrame)
+	{
+		[_layoutFrame release];
 		
-        _layoutFrame = [layoutFrame retain];
+		_layoutFrame = [layoutFrame retain];
 		
-        //		[self sizeToFit];
+		//		[self sizeToFit];
 		
 		[self removeAllCustomViewsForLinks];
 		
@@ -572,7 +572,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			[self setNeedsLayout];
 			[self setNeedsDisplay];
 		}
-    }
+	}
 }
 
 - (NSMutableSet *)customViews

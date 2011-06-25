@@ -13,14 +13,14 @@
 
 - (void) testValidColorWithHexString
 {
-    UIColor *htmlColor;
+	UIColor *htmlColor;
 	UIColor *namedColor;
 	
 	namedColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
 	htmlColor = [UIColor colorWithHexString:@"000000"];
 	STAssertNotNil(htmlColor, @"Failed to create black color");
 	STAssertEqualObjects(namedColor, htmlColor, @"Hmmm... black is not black");
-    
+	
 	namedColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
 	htmlColor = [UIColor colorWithHexString:@"FFFFFF"];
 	STAssertNotNil(htmlColor, @"Failed to create white color");

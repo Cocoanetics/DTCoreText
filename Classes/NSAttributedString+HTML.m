@@ -70,16 +70,16 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
-    
-    // custom option to limit image size
-    NSValue *maxImageSizeValue = [options objectForKey:DTMaxImageSize];
-    
-    // custom option to scale text
-    CGFloat textScale = [[options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
-    if (!textScale)
-    {
-        textScale = 1.0f;
-    }
+	
+	// custom option to limit image size
+	NSValue *maxImageSizeValue = [options objectForKey:DTMaxImageSize];
+	
+	// custom option to scale text
+	CGFloat textScale = [[options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
+	if (!textScale)
+	{
+		textScale = 1.0f;
+	}
 	
 	// use baseURL from options if present
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
@@ -96,7 +96,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		return nil;
 	}
 	
-    // for performance we will return this mutable string
+	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
 #if ALLOW_IPHONE_SPECIAL_CASES
@@ -109,35 +109,35 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
 	[htmlString release];
-    
+	
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
-    defaultFontDescriptor.pointSize = 12.0 * textScale;
-    
-    NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
-    if (defaultFontFamily)
-    {
-        defaultFontDescriptor.fontFamily = defaultFontFamily;
-    }
-    else
-    {
-        defaultFontDescriptor.fontFamily = @"Times New Roman";
-    }
-    
-    id defaultLinkColor = [options objectForKey:DTDefaultLinkColor];
-    
-    if (defaultLinkColor)
-    {
-        if ([defaultLinkColor isKindOfClass:[NSString class]])
-        {
-            // convert from string to color
-            defaultLinkColor = [UIColor colorWithHTMLName:defaultLinkColor];
-        }
-    }
-    else
-    {
-        defaultLinkColor = [UIColor colorWithHTMLName:@"#0000EE"];
-    }
+	defaultFontDescriptor.pointSize = 12.0 * textScale;
+	
+	NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
+	if (defaultFontFamily)
+	{
+		defaultFontDescriptor.fontFamily = defaultFontFamily;
+	}
+	else
+	{
+		defaultFontDescriptor.fontFamily = @"Times New Roman";
+	}
+	
+	id defaultLinkColor = [options objectForKey:DTDefaultLinkColor];
+	
+	if (defaultLinkColor)
+	{
+		if ([defaultLinkColor isKindOfClass:[NSString class]])
+		{
+			// convert from string to color
+			defaultLinkColor = [UIColor colorWithHTMLName:defaultLinkColor];
+		}
+	}
+	else
+	{
+		defaultLinkColor = [UIColor colorWithHTMLName:@"#0000EE"];
+	}
 	
 	// default is to have A underlined
 	BOOL defaultLinkDecoration = YES;
@@ -150,7 +150,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	}
 	
 	// default paragraph style
-    DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+	DTCoreTextParagraphStyle *defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
 	
 	NSNumber *defaultLineHeightMultiplierNum = [options objectForKey:DTDefaultLineHeightMultiplier];
 	
@@ -166,45 +166,45 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	{
 		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
 	}
-    
-    DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
-    defaultTag.fontDescriptor = defaultFontDescriptor;
-    defaultTag.paragraphStyle = defaultParagraphStyle;
-    defaultTag.textScale = textScale;
-    
-    id defaultColor = [options objectForKey:DTDefaultTextColor];
-    if (defaultColor)
-    {
-        if ([defaultColor isKindOfClass:[UIColor class]])
-        {
-            // already a UIColor
-            defaultTag.textColor = defaultColor;
-        }
-        else
-        {
-            // need to convert first
-            defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
-        }
-    }
-    
+	
+	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
+	defaultTag.fontDescriptor = defaultFontDescriptor;
+	defaultTag.paragraphStyle = defaultParagraphStyle;
+	defaultTag.textScale = textScale;
+	
+	id defaultColor = [options objectForKey:DTDefaultTextColor];
+	if (defaultColor)
+	{
+		if ([defaultColor isKindOfClass:[UIColor class]])
+		{
+			// already a UIColor
+			defaultTag.textColor = defaultColor;
+		}
+		else
+		{
+			// need to convert first
+			defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
+		}
+	}
+	
 	DTHTMLElement *currentTag = defaultTag; // our defaults are the root
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
  	
-    // skip doctype tag
-    [scanner scanDOCTYPE:NULL];
-    
-    // skip initial whitespace
+	// skip doctype tag
+	[scanner scanDOCTYPE:NULL];
+	
+	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-    
+	
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
 		NSDictionary *tagAttributesDict = nil;
 		BOOL tagOpen = YES;
 		BOOL immediatelyClosed = NO;
-        
+		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
 			
@@ -215,12 +215,12 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			
 			if (tagOpen)
 			{
-                // make new tag as copy of previous tag
+				// make new tag as copy of previous tag
 				DTHTMLElement *parent = currentTag;
-                currentTag = [[currentTag copy] autorelease];
-                currentTag.tagName = tagName;
-                currentTag.textScale = textScale;
-                [parent addChild:currentTag];
+				currentTag = [[currentTag copy] autorelease];
+				currentTag.tagName = tagName;
+				currentTag.textScale = textScale;
+				[parent addChild:currentTag];
 				
 				// convert CSS Styles into our own style
 				NSString *styleString = [tagAttributesDict objectForKey:@"style"];
@@ -229,33 +229,33 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				{
 					[currentTag parseStyleString:styleString];
 				}
-                
-                if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
-                {
-                    // next text needs a NL
-                    needsNewLineBefore = YES;
-                }
-                
-                
-                // direction
-                NSString *direction = [tagAttributesDict objectForKey:@"dir"];
-                
-                if (direction)
-                {
-                    NSString *lowerDirection = [direction lowercaseString];
-                    
-                    
-                    if ([lowerDirection isEqualToString:@"ltr"])
-                    {
-                        currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
-                    }
-                    else if ([lowerDirection isEqualToString:@"rtl"])
-                    {
-                        currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
-                    }
-                }
+				
+				if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
+				{
+					// next text needs a NL
+					needsNewLineBefore = YES;
+				}
+				
+				
+				// direction
+				NSString *direction = [tagAttributesDict objectForKey:@"dir"];
+				
+				if (direction)
+				{
+					NSString *lowerDirection = [direction lowercaseString];
+					
+					
+					if ([lowerDirection isEqualToString:@"ltr"])
+					{
+						currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
+					}
+					else if ([lowerDirection isEqualToString:@"rtl"])
+					{
+						currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
+					}
+				}
 			}
-            
+			
 			// ---------- Processing
 			
 			if ([tagName isEqualToString:@"#COMMENT#"])
@@ -276,18 +276,18 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				NSURL *imageURL = nil;
 				UIImage *decodedImage = nil;
 				
-                // get size of width/height if it's not in style
+				// get size of width/height if it's not in style
 				CGSize imageSize = currentTag.size;
 				
-                if (!imageSize.width)
-                {
-                    imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
-                }
+				if (!imageSize.width)
+				{
+					imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
+				}
 				
-                if (!imageSize.height)
-                {
-                    imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
-                }
+				if (!imageSize.height)
+				{
+					imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
+				}
 				
 				// decode data URL
 				if ([src hasPrefix:@"data:"])
@@ -355,25 +355,25 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						}
 					}
 				}
-                
+				
 				CGSize adjustedSize = imageSize;
 				
-                // option DTMaxImageSize
-                if (maxImageSizeValue)
-                {
-                    CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
-                    
-                    if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
-                    {
-                        adjustedSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
-                    }
-                }
+				// option DTMaxImageSize
+				if (maxImageSizeValue)
+				{
+					CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
+					
+					if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
+					{
+						adjustedSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
+					}
+				}
 				
 				DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
 				attachment.contentURL = imageURL;
 				attachment.originalSize = imageSize;
 				attachment.displaySize = adjustedSize;
-                attachment.attributes = tagAttributesDict;
+				attachment.attributes = tagAttributesDict;
 				attachment.contents = decodedImage;
 				
 				// we copy the link because we might need for it making the custom view
@@ -381,22 +381,22 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				{
 					attachment.hyperLinkURL = currentTag.link;
 				}
-                
-                currentTag.textAttachment = attachment;
+				
+				currentTag.textAttachment = attachment;
 				
 				if (needsNewLineBefore)
 				{
 					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
 					{
-                        [tmpString appendNakedString:@"\n"];
+						[tmpString appendNakedString:@"\n"];
 					}
 					
 					needsNewLineBefore = NO;
 				}
-                
-                [tmpString appendAttributedString:[currentTag attributedString]];
+				
+				[tmpString appendAttributedString:[currentTag attributedString]];
 				[attachment release];
-                
+				
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
 				if (currentTag.floatStyle || attachment.displaySize.height > 5.0 * currentTag.fontDescriptor.pointSize)
@@ -405,56 +405,56 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				}
 #endif
 			}
-            else if ([tagName isEqualToString:@"blockquote"] && tagOpen)
-            {
-                currentTag.paragraphStyle.headIndent += 25.0 * textScale;
-                currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
-                currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
-            }
-            else if ([tagName isEqualToString:@"video"] && tagOpen)
+			else if ([tagName isEqualToString:@"blockquote"] && tagOpen)
+			{
+				currentTag.paragraphStyle.headIndent += 25.0 * textScale;
+				currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+				currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+			}
+			else if ([tagName isEqualToString:@"video"] && tagOpen)
 			{
 				// hide contents of recognized tag
-                currentTag.tagContentInvisible = YES;
-                
-                // get size of width/height if it's not in style
-				CGSize imageSize = currentTag.size;
-                
-                if (!imageSize.width)
-                {
-                    imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
-                }
-                
-                if (!imageSize.height)
-                {
-                    imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
-                }
+				currentTag.tagContentInvisible = YES;
 				
-                // if we still have no size then we use standard size
-                if (!imageSize.width || !imageSize.height)
-                {
-                    imageSize = CGSizeMake(300, 225);
-                }
-                
-                // option DTMaxImageSize
-                if (maxImageSizeValue)
-                {
-                    CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
-                    
-                    if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
-                    {
-                        imageSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
-                    }
-                }
-                
+				// get size of width/height if it's not in style
+				CGSize imageSize = currentTag.size;
+				
+				if (!imageSize.width)
+				{
+					imageSize.width = [[tagAttributesDict objectForKey:@"width"] floatValue];
+				}
+				
+				if (!imageSize.height)
+				{
+					imageSize.height = [[tagAttributesDict objectForKey:@"height"] floatValue];
+				}
+				
+				// if we still have no size then we use standard size
+				if (!imageSize.width || !imageSize.height)
+				{
+					imageSize = CGSizeMake(300, 225);
+				}
+				
+				// option DTMaxImageSize
+				if (maxImageSizeValue)
+				{
+					CGSize maxImageSize = [maxImageSizeValue CGSizeValue];
+					
+					if (maxImageSize.width < imageSize.width || maxImageSize.height < imageSize.height)
+					{
+						imageSize = sizeThatFitsKeepingAspectRatio(imageSize,maxImageSize);
+					}
+				}
+				
 				DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
 				attachment.contentURL = [NSURL URLWithString:[tagAttributesDict objectForKey:@"src"]];
-                attachment.contentType = DTTextAttachmentTypeVideoURL;
+				attachment.contentType = DTTextAttachmentTypeVideoURL;
 				attachment.originalSize = imageSize;
-                attachment.attributes = tagAttributesDict;
-                
-                currentTag.textAttachment = attachment;
-                
-                [tmpString appendAttributedString:[currentTag attributedString]];
+				attachment.attributes = tagAttributesDict;
+				
+				currentTag.textAttachment = attachment;
+				
+				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
 			else if ([tagName isEqualToString:@"a"])
 			{
@@ -464,7 +464,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					{
 						currentTag.underlineStyle = kCTUnderlineStyleSingle;
 					}
-                    
+					
  					if (currentTag.isColorInherited || !currentTag.textColor)
 					{
 						currentTag.textColor = defaultLinkColor;
@@ -490,7 +490,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						}
 					}
 					
-                    currentTag.link = link;
+					currentTag.link = link;
 				}
 			}
 			else if ([tagName isEqualToString:@"b"] || [tagName isEqualToString:@"strong"])
@@ -516,27 +516,27 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						counterElement.listCounter = value;
 						currentTag.listCounter = value;
 					}
-
+					
 					counterElement.listCounter++;
 					
 					needsListItemStart = YES;
-                    currentTag.paragraphStyle.paragraphSpacing = 0;
+					currentTag.paragraphStyle.paragraphSpacing = 0;
 					
 #if ALLOW_IPHONE_SPECIAL_CASES                    
-                    CGFloat indentSize = 27.0 * textScale;
+					CGFloat indentSize = 27.0 * textScale;
 #else
-                    CGFloat indentSize = 36.0 * textScale;
+					CGFloat indentSize = 36.0 * textScale;
 #endif
-                    
-                    CGFloat indentHang = indentSize;
 					
-                    currentTag.paragraphStyle.headIndent += indentSize;
-                    currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
+					CGFloat indentHang = indentSize;
 					
-                    [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
+					currentTag.paragraphStyle.headIndent += indentSize;
+					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
 					
-                    [currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
-                }
+					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
+					
+					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
+				}
 				else 
 				{
 					needsListItemStart = NO;
@@ -547,7 +547,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
+					currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
 				}
 #if ALLOW_IPHONE_SPECIAL_CASES
 				else 
@@ -558,14 +558,14 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			}
 			else if ([tagName isEqualToString:@"center"] && tagOpen)
 			{
-                currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
+				currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
 #if ALLOW_IPHONE_SPECIAL_CASES						
 				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 			}
 			else if ([tagName isEqualToString:@"right"] && tagOpen)
 			{
-                currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
+				currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
 #if ALLOW_IPHONE_SPECIAL_CASES						
 				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
@@ -574,7 +574,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    currentTag.strikeOut = YES;
+					currentTag.strikeOut = YES;
 				}
 			}
 			else if ([tagName isEqualToString:@"ol"]) 
@@ -592,13 +592,13 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						currentTag.listCounter = 1;
 					}
 					
-                    needsNewLineBefore = YES;
+					needsNewLineBefore = YES;
 				} 
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if (currentTag.listDepth < 1)
-                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+					if (currentTag.listDepth < 1)
+						nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
@@ -606,31 +606,31 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    needsNewLineBefore = YES;
+					needsNewLineBefore = YES;
 					
 					currentTag.listCounter = 0;
 				}
 				else 
 				{
 #if ALLOW_IPHONE_SPECIAL_CASES
-                    if (currentTag.listDepth < 1)
-                        nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+					if (currentTag.listDepth < 1)
+						nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
 #endif
 				}
 			}
-            
+			
 			else if ([tagName isEqualToString:@"u"])
 			{
 				if (tagOpen)
 				{
-                    currentTag.underlineStyle = kCTUnderlineStyleSingle;
+					currentTag.underlineStyle = kCTUnderlineStyleSingle;
 				}
 			}
 			else if ([tagName isEqualToString:@"sup"])
 			{
 				if (tagOpen)
 				{
-                    currentTag.superscriptStyle = 1;
+					currentTag.superscriptStyle = 1;
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
@@ -638,7 +638,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    currentTag.fontDescriptor.fontFamily = @"Courier";
+					currentTag.fontDescriptor.fontFamily = @"Courier";
 					currentTag.preserveNewlines = YES;
 				}
 			}
@@ -646,7 +646,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    currentTag.superscriptStyle = -1;
+					currentTag.superscriptStyle = -1;
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
@@ -654,9 +654,9 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    // TODO: store style info in a dictionary and apply it to tags
+					// TODO: store style info in a dictionary and apply it to tags
 					currentTag.tagContentInvisible = YES;
-                    needsNewLineBefore = NO;
+					needsNewLineBefore = NO;
 				}
 			}
 			else if ([tagName isEqualToString:@"hr"])
@@ -693,56 +693,56 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
-                    NSString *levelString = [tagName substringFromIndex:1];
-                    
-                    NSInteger headerLevel = [levelString integerValue];
-                    
+					NSString *levelString = [tagName substringFromIndex:1];
+					
+					NSInteger headerLevel = [levelString integerValue];
+					
 					if (headerLevel)
 					{
-                        currentTag.headerLevel = headerLevel;
+						currentTag.headerLevel = headerLevel;
 						currentTag.fontDescriptor.boldTrait = YES;
 						
 						switch (headerLevel) 
 						{
 							case 1:
 							{
-                                // H1: 2 em, spacing before 0.67 em, after 0.67 em
-                                currentTag.fontDescriptor.pointSize *= 2.0;
-                                currentTag.paragraphStyle.paragraphSpacing = 0.67 * currentTag.fontDescriptor.pointSize;
+								// H1: 2 em, spacing before 0.67 em, after 0.67 em
+								currentTag.fontDescriptor.pointSize *= 2.0;
+								currentTag.paragraphStyle.paragraphSpacing = 0.67 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 2:
 							{
-                                // H2: 1.5 em, spacing before 0.83 em, after 0.83 em
-                                currentTag.fontDescriptor.pointSize *= 1.5;
-                                currentTag.paragraphStyle.paragraphSpacing = 0.83 * currentTag.fontDescriptor.pointSize;
+								// H2: 1.5 em, spacing before 0.83 em, after 0.83 em
+								currentTag.fontDescriptor.pointSize *= 1.5;
+								currentTag.paragraphStyle.paragraphSpacing = 0.83 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 3:
 							{
-                                // H3: 1.17 em, spacing before 1 em, after 1 em
-                                currentTag.fontDescriptor.pointSize *= 1.17;
-                                currentTag.paragraphStyle.paragraphSpacing = 1.0 * currentTag.fontDescriptor.pointSize;
+								// H3: 1.17 em, spacing before 1 em, after 1 em
+								currentTag.fontDescriptor.pointSize *= 1.17;
+								currentTag.paragraphStyle.paragraphSpacing = 1.0 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 4:
 							{
-                                // H4: 1 em, spacing before 1.33 em, after 1.33 em
-                                currentTag.paragraphStyle.paragraphSpacing = 1.33 * currentTag.fontDescriptor.pointSize;
+								// H4: 1 em, spacing before 1.33 em, after 1.33 em
+								currentTag.paragraphStyle.paragraphSpacing = 1.33 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 5:
 							{
-                                // H5: 0.83 em, spacing before 1.67 em, after 1.167 em
-                                currentTag.fontDescriptor.pointSize *= 0.83;
-                                currentTag.paragraphStyle.paragraphSpacing = 1.67 * currentTag.fontDescriptor.pointSize;
+								// H5: 0.83 em, spacing before 1.67 em, after 1.167 em
+								currentTag.fontDescriptor.pointSize *= 0.83;
+								currentTag.paragraphStyle.paragraphSpacing = 1.67 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 6:
 							{
-                                // H6: 0.67 em, spacing before 2.33 em, after 2.33 em
-                                currentTag.fontDescriptor.pointSize *= 0.67;
-                                currentTag.paragraphStyle.paragraphSpacing = 2.33 * currentTag.fontDescriptor.pointSize;
+								// H6: 0.67 em, spacing before 2.33 em, after 2.33 em
+								currentTag.fontDescriptor.pointSize *= 0.67;
+								currentTag.paragraphStyle.paragraphSpacing = 2.33 * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							default:
@@ -751,20 +751,20 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					}
 				}
 			}
-            else if ([tagName isEqualToString:@"big"])
-            {
-                if (tagOpen)
-                {
-                    currentTag.fontDescriptor.pointSize *= 1.2;
-                }
-            }
-            else if ([tagName isEqualToString:@"small"])
-            {
-                if (tagOpen)
-                {
-                    currentTag.fontDescriptor.pointSize /= 1.2;
-                }
-            }
+			else if ([tagName isEqualToString:@"big"])
+			{
+				if (tagOpen)
+				{
+					currentTag.fontDescriptor.pointSize *= 1.2;
+				}
+			}
+			else if ([tagName isEqualToString:@"small"])
+			{
+				if (tagOpen)
+				{
+					currentTag.fontDescriptor.pointSize /= 1.2;
+				}
+			}
 			else if ([tagName isEqualToString:@"font"])
 			{
 				if (tagOpen)
@@ -803,27 +803,27 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					{
 						currentTag.fontDescriptor.fontName = face;
 					}
-                    
-                    NSString *color = [tagAttributesDict objectForKey:@"color"];
-                    
-                    if (color)
-                    {
-                        currentTag.textColor = [UIColor colorWithHTMLName:color];       
-                    }
+					
+					NSString *color = [tagAttributesDict objectForKey:@"color"];
+					
+					if (color)
+					{
+						currentTag.textColor = [UIColor colorWithHTMLName:color];       
+					}
 				}
 			}
 			else if ([tagName isEqualToString:@"p"])
 			{
 				if (tagOpen)
 				{
-                    currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+					currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 				}
 				
 			}
 			else if ([tagName isEqualToString:@"br"])
 			{
 				immediatelyClosed = YES; 
-                
+				
 				currentTag.text = UNICODE_LINE_FEED;
 				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
@@ -840,7 +840,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				// block items have to have a NL at the end.
 				if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
-                    [tmpString appendString:@"\n"];  // extends attributed area at end
+					[tmpString appendString:@"\n"];  // extends attributed area at end
 				}
 				
 				// check if this tag is indeed closing the currently open one
@@ -865,28 +865,28 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		{
 			//----------------------------------------- TAG CONTENTS -----------------------------------------
 			NSString *tagContents = nil;
-            
-            // if we find a < at this stage then we can assume it was a malformed tag, need to skip it to prevent endless loop
-            
-            BOOL skippedAngleBracket = NO;
-            if ([scanner scanString:@"<" intoString:NULL])
-            {
-                skippedAngleBracket = YES;
-            }
+			
+			// if we find a < at this stage then we can assume it was a malformed tag, need to skip it to prevent endless loop
+			
+			BOOL skippedAngleBracket = NO;
+			if ([scanner scanString:@"<" intoString:NULL])
+			{
+				skippedAngleBracket = YES;
+			}
 			
 			if ((skippedAngleBracket||[scanner scanUpToString:@"<" intoString:&tagContents]) && !currentTag.tagContentInvisible)
 			{
-                if (skippedAngleBracket)
-                {
-                    if (tagContents)
-                    {
-                        tagContents = [@"<" stringByAppendingString:tagContents];
-                    }
-                    else
-                    {
-                        tagContents = @"<";
-                    }
-                }
+				if (skippedAngleBracket)
+				{
+					if (tagContents)
+					{
+						tagContents = [@"<" stringByAppendingString:tagContents];
+					}
+					else
+					{
+						tagContents = @"<";
+					}
+				}
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
@@ -895,9 +895,9 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						tagContents = [tagContents stringByNormalizingWhitespace];
 					}
 					tagContents = [tagContents stringByReplacingHTMLEntities];
-                    
-                    tagName = currentTag.tagName;
-                    
+					
+					tagName = currentTag.tagName;
+					
 #if ALLOW_IPHONE_SPECIAL_CASES				
 					if (tagOpen && ![currentTag isInline] && ![tagName isEqualToString:@"li"])
 					{
@@ -925,7 +925,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						{
 							if (![[tmpString string] hasSuffix:@"\n"])
 							{
-                                [tmpString appendNakedString:@"\n"];
+								[tmpString appendNakedString:@"\n"];
 							}
 						}
 						needsNewLineBefore = NO;
@@ -940,37 +940,37 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 							tagContents = [tagContents substringFromIndex:1];
 						}
 					}
-                    
-                    // if we start a list, then we wait until we have actual text
+					
+					// if we start a list, then we wait until we have actual text
 					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
-                        NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
-                        
-                        if (prefixString)
-                        {
-                            [tmpString appendAttributedString:prefixString]; 
-                        }
+						NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
+						
+						if (prefixString)
+						{
+							[tmpString appendAttributedString:prefixString]; 
+						}
 						
 						needsListItemStart = NO;
 					}
 					
-                    
-                    // we don't want whitespace before first tag to turn into paragraphs
-                    if (![currentTag isMeta])
-                    {
-                        currentTag.text = tagContents;
-                        
-                        [tmpString appendAttributedString:[currentTag attributedString]];
-                    }
+					
+					// we don't want whitespace before first tag to turn into paragraphs
+					if (![currentTag isMeta])
+					{
+						currentTag.text = tagContents;
+						
+						[tmpString appendAttributedString:[currentTag attributedString]];
+					}
 				}
 			}
 		}
 	}
 	
-    // returning the temporary mutable string is faster
+	// returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
-    [self release];
-    return tmpString;
+	[self release];
+	return tmpString;
 }
 
 #pragma mark Convenience Methods

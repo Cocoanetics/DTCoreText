@@ -19,7 +19,7 @@ CGFloat embeddedObjectGetAscentCallback(void *context)
 	{
 		return [(DTTextAttachment *)context displaySize].height;
 	}
-    
+	
 	return 0;
 }
 CGFloat embeddedObjectGetDescentCallback(void *context)
@@ -28,8 +28,8 @@ CGFloat embeddedObjectGetDescentCallback(void *context)
 	{
 		return 0;
 	}
-
-    return 0;
+	
+	return 0;
 }
 
 CGFloat embeddedObjectGetWidthCallback(void * context)

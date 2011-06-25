@@ -27,14 +27,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
 {
-    _DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
+	_DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
 }
 
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
-    self = [super init];
-    
+	self = [super init];
+	
 	if (self)
 	{
 		_frame = frame;
@@ -43,29 +43,29 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		
 		CFRange cfRange = CFRangeMake(range.location, range.length);
-        _framesetter = layouter.framesetter;
-        
-        if (_framesetter)
-        {
-            CFRetain(_framesetter);
+		_framesetter = layouter.framesetter;
+		
+		if (_framesetter)
+		{
+			CFRetain(_framesetter);
 			
-            CGMutablePathRef path = CGPathCreateMutable();
-            CGPathAddRect(path, NULL, frame);
+			CGMutablePathRef path = CGPathCreateMutable();
+			CGPathAddRect(path, NULL, frame);
 			
-            _textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
-            
-            CGPathRelease(path);
-        }
-        else
-        {
-            NSLog(@"Strange, should have gotten a valid framesetter");
-            
-            
-            [_layouter release];
-            [self release];
-            return nil;
-        }
-        
+			_textFrame = CTFramesetterCreateFrame(_framesetter, cfRange, path, NULL);
+			
+			CGPathRelease(path);
+		}
+		else
+		{
+			NSLog(@"Strange, should have gotten a valid framesetter");
+			
+			
+			[_layouter release];
+			[self release];
+			return nil;
+		}
+		
 	}
 	
 	return self;
@@ -82,16 +82,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	if (_textFrame)
 	{
 		CFRelease(_textFrame);
-        _textFrame = NULL;
+		_textFrame = NULL;
 	}
 	[_lines release];
-    [_layouter release];
-    
-    if (_framesetter)
-    {
-        CFRelease(_framesetter);
-        _framesetter = NULL;
-    }
+	[_layouter release];
+	
+	if (_framesetter)
+	{
+		CFRelease(_framesetter);
+		_framesetter = NULL;
+	}
 	
 	[super dealloc];
 }
@@ -103,47 +103,47 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)buildLines
 {
-    // get lines
-    CFArrayRef lines = CTFrameGetLines(_textFrame);
-    
-    if (!lines)
-    {
-        // probably no string set
-        return;
-    }
-    
-    CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
-    CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
-    
-    NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
-    
-    NSInteger lineIndex = 0;
-    
-    for (id oneLine in (NSArray *)lines)
-    {
-        CGPoint lineOrigin = origins[lineIndex];
-        lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
-        lineOrigin.x += _frame.origin.x;
-        
-        DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
-        [tmpLines addObject:newLine];
-        [newLine release];
-        
-        lineIndex++;
-    }
-    
-    _lines = tmpLines;
-    
-    free(origins);
-    
-    // at this point we can correct the frame if it is open-ended
-    if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
-    {
-        // actual frame is spanned between first and last lines
-        DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-        
-        _frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5));
-    }
+	// get lines
+	CFArrayRef lines = CTFrameGetLines(_textFrame);
+	
+	if (!lines)
+	{
+		// probably no string set
+		return;
+	}
+	
+	CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
+	CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
+	
+	NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
+	
+	NSInteger lineIndex = 0;
+	
+	for (id oneLine in (NSArray *)lines)
+	{
+		CGPoint lineOrigin = origins[lineIndex];
+		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
+		lineOrigin.x += _frame.origin.x;
+		
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+		[tmpLines addObject:newLine];
+		[newLine release];
+		
+		lineIndex++;
+	}
+	
+	_lines = tmpLines;
+	
+	free(origins);
+	
+	// at this point we can correct the frame if it is open-ended
+	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	{
+		// actual frame is spanned between first and last lines
+		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+		
+		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5));
+	}
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
 	
@@ -159,7 +159,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	if (!_lines)
 	{
-        [self buildLines];
+		[self buildLines];
 	}
 	
 	return _lines;
@@ -167,52 +167,52 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect
 {
-    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
-    
-    BOOL earlyBreakPossible = NO;
-    
+	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
+	
+	BOOL earlyBreakPossible = NO;
+	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
-        if (CGRectIntersectsRect(rect, oneLine.frame))
-        {
-            [tmpArray addObject:oneLine];
-            earlyBreakPossible = YES;
-        }
-        else
-        {
-            if (earlyBreakPossible)
-            {
-                break;
-            }
-        }
-    }
-    
-    return tmpArray;
+		if (CGRectIntersectsRect(rect, oneLine.frame))
+		{
+			[tmpArray addObject:oneLine];
+			earlyBreakPossible = YES;
+		}
+		else
+		{
+			if (earlyBreakPossible)
+			{
+				break;
+			}
+		}
+	}
+	
+	return tmpArray;
 }
 
 - (NSArray *)linesContainedInRect:(CGRect)rect
 {
-    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
-    
-    BOOL earlyBreakPossible = NO;
-    
+	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
+	
+	BOOL earlyBreakPossible = NO;
+	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
-        if (CGRectContainsRect(rect, oneLine.frame))
-        {
-            [tmpArray addObject:oneLine];
-            earlyBreakPossible = YES;
-        }
-        else
-        {
-            if (earlyBreakPossible)
-            {
-                break;
-            }
-        }
-    }
-    
-    return tmpArray;
+		if (CGRectContainsRect(rect, oneLine.frame))
+		{
+			[tmpArray addObject:oneLine];
+			earlyBreakPossible = YES;
+		}
+		else
+		{
+			if (earlyBreakPossible)
+			{
+				break;
+			}
+		}
+	}
+	
+	return tmpArray;
 }
 
 - (CGPathRef)path
@@ -252,80 +252,80 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages
 {
-    CGContextSaveGState(context);
-    
-    CGRect rect = CGContextGetClipBoundingBox(context);
-    
+	CGContextSaveGState(context);
+	
+	CGRect rect = CGContextGetClipBoundingBox(context);
+	
 	if (!_textFrame || !context)
 	{
 		return;
 	}
 	
-    CFRetain(_textFrame);
-    
-    [self retain];
-    [_layouter retain];
-    
+	CFRetain(_textFrame);
+	
+	[self retain];
+	[_layouter retain];
+	
 	// any of these settings make sense?
-    //	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    //	CGContextSetAllowsAntialiasing(context, YES);
-    //	CGContextSetShouldAntialias(context, YES);
-    //	
-    //	CGContextSetAllowsFontSubpixelQuantization(context, YES);
-    //	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
-    //	
-    //	CGContextSetShouldSmoothFonts(context, YES);
-    //	CGContextSetAllowsFontSmoothing(context, YES);
-    //	
-    //	CGContextSetShouldSubpixelPositionFonts(context,YES);
-    //	CGContextSetAllowsFontSubpixelPositioning(context, YES);
+	//	CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+	//	CGContextSetAllowsAntialiasing(context, YES);
+	//	CGContextSetShouldAntialias(context, YES);
+	//	
+	//	CGContextSetAllowsFontSubpixelQuantization(context, YES);
+	//	CGContextSetShouldSubpixelQuantizeFonts(context, YES);
+	//	
+	//	CGContextSetShouldSmoothFonts(context, YES);
+	//	CGContextSetAllowsFontSmoothing(context, YES);
+	//	
+	//	CGContextSetShouldSubpixelPositionFonts(context,YES);
+	//	CGContextSetAllowsFontSubpixelPositioning(context, YES);
 	
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
-        // stroke the frame because the layout frame might be open ended
-        CGContextSaveGState(context);
+		// stroke the frame because the layout frame might be open ended
+		CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
 		CGContextSetLineDash(context, 0, dashes, 2);
-        CGContextStrokeRect(context, self.frame);
-        CGContextRestoreGState(context);
+		CGContextStrokeRect(context, self.frame);
+		CGContextRestoreGState(context);
 	}
-    
-    NSArray *visibleLines = [self linesVisibleInRect:rect];
-    
+	
+	NSArray *visibleLines = [self linesVisibleInRect:rect];
+	
 	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
-        if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
-        {
-            // draw line bounds
-            CGContextSetRGBStrokeColor(context, 0, 0, 1.0f, 1.0f);
-            CGContextStrokeRect(context, oneLine.frame);
-            
-            // draw baseline
-            CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
-            CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
-            CGContextStrokePath(context);
-        }
-        
-        NSInteger runIndex = 0;
-        
-        for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
-        {
-            if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
-            {
-                if (runIndex%2)
-                {
-                    CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
-                }
-                else 
-                {
-                    CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
-                }
-                
-                CGContextFillRect(context, oneRun.frame);
-                runIndex ++;
-            }
+		if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+		{
+			// draw line bounds
+			CGContextSetRGBStrokeColor(context, 0, 0, 1.0f, 1.0f);
+			CGContextStrokeRect(context, oneLine.frame);
+			
+			// draw baseline
+			CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
+			CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
+			CGContextStrokePath(context);
+		}
+		
+		NSInteger runIndex = 0;
+		
+		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+		{
+			if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+			{
+				if (runIndex%2)
+				{
+					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
+				}
+				else 
+				{
+					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
+				}
+				
+				CGContextFillRect(context, oneRun.frame);
+				runIndex ++;
+			}
 			
 			
 			CGColorRef backgroundColor = (CGColorRef)[oneRun.attributes objectForKey:@"DTBackgroundColor"];
@@ -363,27 +363,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				continue;
 			}
 			
-            // -------------- Line-Out, Underline, Background-Color
-            BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
-            
-            BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"DTStrikeOut"] boolValue];
-            BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
-            
-            if (drawStrikeOut||drawUnderline||backgroundColor)
-            {
-                // get text color or use black
-                id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
-                
-                if (color)
-                {
-                    CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
-                }
-                else
-                {
-                    CGContextSetGrayStrokeColor(context, 0, 1.0);
-                }
-                
-                CGRect runStrokeBounds = oneRun.frame;
+			// -------------- Line-Out, Underline, Background-Color
+			BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
+			
+			BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"DTStrikeOut"] boolValue];
+			BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+			
+			if (drawStrikeOut||drawUnderline||backgroundColor)
+			{
+				// get text color or use black
+				id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
+				
+				if (color)
+				{
+					CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+				}
+				else
+				{
+					CGContextSetGrayStrokeColor(context, 0, 1.0);
+				}
+				
+				CGRect runStrokeBounds = oneRun.frame;
 				
 				NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 				
@@ -404,51 +404,51 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				}
 				
 				
-                if (lastRunInLine)
-                {
-                    runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
-                }
+				if (lastRunInLine)
+				{
+					runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
+				}
 				
 				if (backgroundColor)
 				{
 					CGContextSetFillColorWithColor(context, backgroundColor);
 					CGContextFillRect(context, runStrokeBounds);
 				}
-                
-                if (drawStrikeOut)
-                {
-                    runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
-                    
-                    CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                    CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                    
-                    CGContextStrokePath(context);
-                }
-                
-                if (drawUnderline)
-                {
-                    runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
-                    
-                    CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-                    CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-                    
-                    CGContextStrokePath(context);
-                }
-            }
-        }
+				
+				if (drawStrikeOut)
+				{
+					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
+					
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+					
+					CGContextStrokePath(context);
+				}
+				
+				if (drawUnderline)
+				{
+					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
+					
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+					
+					CGContextStrokePath(context);
+				}
+			}
+		}
 	}
 	
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
 	CGContextTranslateCTM(context, 0, -self.frame.size.height);
-    
+	
 	// instead of using the convenience method to draw the entire frame, we draw individual glyph runs
-    
+	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
-        for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
-        {
+		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+		{
 			CGPoint textPosition = CGPointMake(oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
 			
 			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
@@ -469,26 +469,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					break;
 			}
 			
-            CGContextSetTextPosition(context, textPosition.x, textPosition.y);
-            
-            NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
-            
-            if (shadows)
-            {
-                CGContextSaveGState(context);
-                
-                for (NSDictionary *shadowDict in shadows)
-                {
+			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
+			
+			NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
+			
+			if (shadows)
+			{
+				CGContextSaveGState(context);
+				
+				for (NSDictionary *shadowDict in shadows)
+				{
 					[self setShadowInContext:context fromDictionary:shadowDict];
-                    
-                    // draw once per shadow
-                    [oneRun drawInContext:context];
-                }
-                
-                CGContextRestoreGState(context);
-            }
-            else
-            {
+					
+					// draw once per shadow
+					[oneRun drawInContext:context];
+				}
+				
+				CGContextRestoreGState(context);
+			}
+			else
+			{
 				DTTextAttachment *attachment = oneRun.attachment;
 				
 				if (attachment)
@@ -512,19 +512,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					// regular text
 					[oneRun drawInContext:context];
 				}
-            }
+			}
 		}
 	}
 	
-    [self release];
-    [_layouter release];
-    
-    if (_textFrame)
-    {
-        CFRelease(_textFrame);
-    }
-    
-    CGContextRestoreGState(context);
+	[self release];
+	[_layouter release];
+	
+	if (_textFrame)
+	{
+		CFRelease(_textFrame);
+	}
+	
+	CGContextRestoreGState(context);
 }
 
 // assume we want to draw images statically
@@ -536,11 +536,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSRange)visibleStringRange
 {
-    if (!_textFrame)
-    {
-        return NSMakeRange(0, 0);
-    }
-    
+	if (!_textFrame)
+	{
+		return NSMakeRange(0, 0);
+	}
+	
 	CFRange range = CTFrameGetVisibleStringRange(_textFrame);
 	
 	return NSMakeRange(range.location, range.length);
@@ -549,11 +549,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark Calculations
 - (NSArray *)stringIndices {
-    NSMutableArray *array = [NSMutableArray array];
-    for (DTCoreTextLayoutLine *oneLine in self.lines) {
-        [array addObjectsFromArray:[oneLine stringIndices]];
-    }
-    return array;
+	NSMutableArray *array = [NSMutableArray array];
+	for (DTCoreTextLayoutLine *oneLine in self.lines) {
+		[array addObjectsFromArray:[oneLine stringIndices]];
+	}
+	return array;
 }
 
 - (NSInteger)lineIndexForGlyphIndex:(NSInteger)index
@@ -597,16 +597,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (CGRect)frame
 {
-    if (_frame.size.height == CGFLOAT_OPEN_HEIGHT && !_lines)
-    {
-        [self buildLines]; // corrects frame if open-ended
-    }
-    
-    if (![self.lines count])
-    {
-        return CGRectZero;
-    }
-    
+	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT && !_lines)
+	{
+		[self buildLines]; // corrects frame if open-ended
+	}
+	
+	if (![self.lines count])
+	{
+		return CGRectZero;
+	}
+	
 	return _frame;
 	//	
 	//    // actual frame is spanned between first and last lines
@@ -621,15 +621,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
 {
-    for (DTCoreTextLayoutLine *oneLine in self.lines)
-    {
-        if (NSLocationInRange(index, [oneLine stringRange]))
-        {
-            return oneLine;
-        }
-    }
-    
-    return nil;
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+		if (NSLocationInRange(index, [oneLine stringRange]))
+		{
+			return oneLine;
+		}
+	}
+	
+	return nil;
 }
 
 - (void)correctAttachmentHeights
