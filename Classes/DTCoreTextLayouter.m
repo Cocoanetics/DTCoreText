@@ -41,8 +41,8 @@
 {
 	[_attributedString release];
 	[frames release];
-    
-    [self discardFramesetter];
+	
+	[self discardFramesetter];
 	
 	[super dealloc];
 }
@@ -60,8 +60,8 @@
 - (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
 {
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
-																	 CGSizeMake(width, CGFLOAT_MAX),
-																	 NULL);
+																																	 CGSizeMake(width, CGFLOAT_MAX),
+																																	 NULL);
 	
 	// for unknown reasons suddenly 1 needs to be added to fit
 	neededSize.height = ceilf(neededSize.height)+1.0;
@@ -94,21 +94,21 @@
 #pragma mark Properties
 - (CTFramesetterRef) framesetter
 {
-//    if (!framesetter)
-    {
-        @synchronized(self)
-        {
-            if (!framesetter)
-            {
-                framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
-                
-                if (!framesetter)
-                {
-                    NSLog(@"No Framesetter!");
-                }
-            }
-        }
-    }
+	//    if (!framesetter)
+	{
+		@synchronized(self)
+		{
+			if (!framesetter)
+			{
+				framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+				
+				if (!framesetter)
+				{
+					NSLog(@"No Framesetter!");
+				}
+			}
+		}
+	}
 	
 	return framesetter;
 }
@@ -116,36 +116,36 @@
 
 - (void)discardFramesetter
 {
-    @synchronized(self)
-    {
-        // framesetter needs to go
-        if (framesetter)
-        {
-            CFRelease(framesetter);
-            framesetter = NULL;
-        }
-    }
+	@synchronized(self)
+	{
+		// framesetter needs to go
+		if (framesetter)
+		{
+			CFRelease(framesetter);
+			framesetter = NULL;
+		}
+	}
 }
 
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-    @synchronized(self)
-    {
-        if (_attributedString != attributedString)
-        {
-            [_attributedString release];
-            
-            _attributedString = [attributedString retain];
-            
-            [self discardFramesetter];
-        }
-    }
+	@synchronized(self)
+	{
+		if (_attributedString != attributedString)
+		{
+			[_attributedString release];
+			
+			_attributedString = [attributedString retain];
+			
+			[self discardFramesetter];
+		}
+	}
 }
 
 - (NSAttributedString *)attributedString
 {
-    return _attributedString;
+	return _attributedString;
 }
 
 - (NSMutableArray *)frames

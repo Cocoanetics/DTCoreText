@@ -24,8 +24,8 @@
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 {
-    self = [super init];
-    
+	self = [super init];
+	
 	if (self)
 	{
 		_layoutFrame = layoutFrame;
@@ -52,13 +52,13 @@
 
 - (NSString *)description
 {
-    NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self stringRange].location];
-    
-    if ([extract length]>20)
-    {
-        extract = [extract substringToIndex:20];
-    }
-    
+	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self stringRange].location];
+	
+	if ([extract length]>20)
+	{
+		extract = [extract substringToIndex:20];
+	}
+	
 	return [NSString stringWithFormat:@"<%@ '%@'>", [self class], extract];
 }
 
@@ -89,11 +89,11 @@
 
 #pragma mark Calculations
 - (NSArray *)stringIndices {
-    NSMutableArray *array = [NSMutableArray array];
-    for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
-        [array addObjectsFromArray:[oneRun stringIndices]];
-    }
-    return array;
+	NSMutableArray *array = [NSMutableArray array];
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
+		[array addObjectsFromArray:[oneRun stringIndices]];
+	}
+	return array;
 }
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
@@ -116,57 +116,57 @@
 
 - (NSArray *)glyphRunsWithRange:(NSRange)range
 {
-    NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self numberOfGlyphs]];
-    
-    for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
-    {
-        NSRange runRange = [oneRun stringRange];
+	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self numberOfGlyphs]];
+	
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		NSRange runRange = [oneRun stringRange];
 		
-        // we only care about locations, assume that number of glyphs >= indexes
-        if (NSLocationInRange(runRange.location, range))
-        {
-            [tmpArray addObject:oneRun];
-        }
-    }
-    
-    return tmpArray;
+		// we only care about locations, assume that number of glyphs >= indexes
+		if (NSLocationInRange(runRange.location, range))
+		{
+			[tmpArray addObject:oneRun];
+		}
+	}
+	
+	return tmpArray;
 }
 
 - (CGRect)frameOfGlyphsWithRange:(NSRange)range
 {
-    NSArray *glyphRuns = [self glyphRunsWithRange:range];
-    
-    CGRect tmpRect = CGRectMake(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
-    
-    for (DTCoreTextGlyphRun *oneRun in glyphRuns)
-    {
-        CGRect glyphFrame = oneRun.frame;
-        
-        if (glyphFrame.origin.x < tmpRect.origin.x)
-        {
-            tmpRect.origin.x = glyphFrame.origin.x;
-        }
-		
-        if (glyphFrame.origin.y < tmpRect.origin.y)
-        {
-            tmpRect.origin.y = glyphFrame.origin.y;
-        }
-		
-        if (glyphFrame.size.height > tmpRect.size.height)
-        {
-            tmpRect.size.height = glyphFrame.size.height;
-        }
-        
-        tmpRect.size.width = glyphFrame.origin.x + glyphFrame.size.width - tmpRect.origin.x;
-    }
+	NSArray *glyphRuns = [self glyphRunsWithRange:range];
 	
-    CGFloat maxX = CGRectGetMaxX(self.frame) - trailingWhitespaceWidth;
-    if (CGRectGetMaxX(tmpRect) > maxX)
-    {
-        tmpRect.size.width = maxX - tmpRect.origin.x;
-    }
-    
-    return tmpRect;
+	CGRect tmpRect = CGRectMake(CGFLOAT_MAX, CGFLOAT_MAX, 0, 0);
+	
+	for (DTCoreTextGlyphRun *oneRun in glyphRuns)
+	{
+		CGRect glyphFrame = oneRun.frame;
+		
+		if (glyphFrame.origin.x < tmpRect.origin.x)
+		{
+			tmpRect.origin.x = glyphFrame.origin.x;
+		}
+		
+		if (glyphFrame.origin.y < tmpRect.origin.y)
+		{
+			tmpRect.origin.y = glyphFrame.origin.y;
+		}
+		
+		if (glyphFrame.size.height > tmpRect.size.height)
+		{
+			tmpRect.size.height = glyphFrame.size.height;
+		}
+		
+		tmpRect.size.width = glyphFrame.origin.x + glyphFrame.size.width - tmpRect.origin.x;
+	}
+	
+	CGFloat maxX = CGRectGetMaxX(self.frame) - trailingWhitespaceWidth;
+	if (CGRectGetMaxX(tmpRect) > maxX)
+	{
+		tmpRect.size.width = maxX - tmpRect.origin.x;
+	}
+	
+	return tmpRect;
 }
 
 // bounds of an image encompassing the entire run
@@ -177,7 +177,7 @@
 
 - (void)drawInContext:(CGContextRef)context
 {
-    CTLineDraw(_line, context);
+	CTLineDraw(_line, context);
 }
 
 // fix for image squishing bug < iOS 4.2

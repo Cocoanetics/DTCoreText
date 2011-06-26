@@ -23,8 +23,8 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    
+	self = [super initWithFrame:frame];
+	
 	if (self)
 	{
 		[self setup];
@@ -36,20 +36,20 @@
 - (void)dealloc 
 {
 	[contentView release];
-    [super dealloc];
+	[super dealloc];
 }
 
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
 	
-    if (!contentView)
-    {
-        [self addSubview:self.contentView];
-    }
+	if (!contentView)
+	{
+		[self addSubview:self.contentView];
+	}
 	
-    // layout custom subviews for visible area
-    [contentView layoutSubviewsInRect:self.bounds];
+	// layout custom subviews for visible area
+	[contentView layoutSubviewsInRect:self.bounds];
 }
 
 - (void)awakeFromNib
@@ -93,8 +93,8 @@
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
 		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
-        
-        [self addSubview:contentView];
+		
+		[self addSubview:contentView];
 	}		
 	
 	return contentView;
@@ -185,9 +185,9 @@
 		{
 			contentView.frame = CGRectMake(0,0,frame.size.width, frame.size.height);
 		}
-
+		
 		[super setFrame:frame];
-
+		
 		// always set the content size
 		self.contentSize = contentView.bounds.size;
 	}
@@ -195,12 +195,12 @@
 
 - (void)setTextDelegate:(id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-    self.contentView.delegate = textDelegate;
+	self.contentView.delegate = textDelegate;
 }
 
 - (id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-    return contentView.delegate;
+	return contentView.delegate;
 }
 
 @synthesize attributedString;
