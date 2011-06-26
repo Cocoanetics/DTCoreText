@@ -34,8 +34,8 @@
 #pragma mark UIViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-
+	[super viewDidLoad];
+	
 	// Load snippets from plist
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Snippets" ofType:@"plist"];
 	_snippets = [[NSArray alloc] initWithContentsOfFile:plistPath];
@@ -45,12 +45,12 @@
 #pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+	return 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_snippets count];
+	return [_snippets count];
 }
 
 
@@ -69,18 +69,18 @@
 		
 		NSString *title = [snippet objectForKey:@"Title"];
 		NSString *description = [snippet objectForKey:@"Description"];
-
+		
 		NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
 		NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 		NSAttributedString *string = [[[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL] autorelease];
 		
 		// set width, height is calculated later from text
 		CGFloat width = self.view.frame.size.width;
-        [DTAttributedTextContentView setLayerClass:nil];
+		[DTAttributedTextContentView setLayerClass:nil];
 		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
 		
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        contentView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+		contentView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 		[contentViewCache setObject:contentView forKey:indexPath];
 	}
 	
@@ -95,14 +95,14 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    static NSString *cellIdentifier = @"cellIdentifier";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
+	
+	static NSString *cellIdentifier = @"cellIdentifier";
+	
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+	if (cell == nil) {
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
+	}
 	
 	[cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	
@@ -110,8 +110,8 @@
 	
 	contentView.frame = cell.contentView.bounds;
 	[cell.contentView addSubview:contentView];
-    
-    return cell;
+	
+	return cell;
 }
 
 

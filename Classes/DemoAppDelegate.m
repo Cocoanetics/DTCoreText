@@ -25,17 +25,17 @@
 	
 	// Display the window
 	[_window addSubview:_navigationController.view];
-    [_window makeKeyAndVisible];
-
-    return YES;
+	[_window makeKeyAndVisible];
+	
+	return YES;
 }
 
 
 - (void)dealloc 
 {
-    [_window release];
+	[_window release];
 	[_navigationController release];
-    [super dealloc];
+	[super dealloc];
 }
 
 @end

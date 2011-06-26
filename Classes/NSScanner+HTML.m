@@ -60,7 +60,7 @@
 	BOOL immediatelyClosed = NO;
 	
 	NSCharacterSet *tagCharacterSet = [NSCharacterSet tagNameCharacterSet];
-    NSCharacterSet *tagAttributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
+	NSCharacterSet *tagAttributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
 	NSCharacterSet *quoteCharacterSet = [NSCharacterSet quoteCharacterSet];
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	NSCharacterSet *nonquoteAttributedEndCharacterSet = [NSCharacterSet nonQuotedAttributeEndCharacterSet];
@@ -75,7 +75,7 @@
 	}
 	
 	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-
+	
 	// Read the tag name
 	if ([self scanCharactersFromSet:tagCharacterSet intoString:&scannedTagName])
 	{
@@ -120,9 +120,9 @@
 			
 			immediatelyClosed = YES;
 		}
-
+		
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-
+		
 		if ([self scanString:@">" intoString:NULL])
 		{
 			break;
@@ -180,7 +180,7 @@
 		
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
 	}
-
+	
 	// Success 
 	if (isClosed)
 	{
@@ -194,9 +194,9 @@
 	
 	if (attributes)
 	{
-        // converting to immutable costs 10.4% of method
+		// converting to immutable costs 10.4% of method
 		//*attributes = [NSDictionary dictionaryWithDictionary:tmpAttributes];
-        *attributes = tmpAttributes;
+		*attributes = tmpAttributes;
 	}
 	
 	if (tagName)
@@ -217,27 +217,27 @@
 		[self setScanLocation:initialScanLocation];
 		return NO;
 	}
-   
-    NSString *body = nil;
-    
-    if (![self scanUpToString:@">" intoString:&body])
-    {
+	
+	NSString *body = nil;
+	
+	if (![self scanUpToString:@">" intoString:&body])
+	{
 		[self setScanLocation:initialScanLocation];
-        return NO;
-    }
-    
-    if (![self scanString:@">" intoString:NULL])
-    {
+		return NO;
+	}
+	
+	if (![self scanString:@">" intoString:NULL])
+	{
 		[self setScanLocation:initialScanLocation];
-        return NO;
-    }
-    
-    if (contents)
-    {
-        *contents = body;
-    }
-    
-    return YES;
+		return NO;
+	}
+	
+	if (contents)
+	{
+		*contents = body;
+	}
+	
+	return YES;
 }
 
 
@@ -249,15 +249,15 @@
 {
 	NSString *attrName = nil;
 	NSString *attrValue = nil;
-
+	
 	NSInteger initialScanLocation = [self scanLocation];
 	
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	
-
+	
 	// alphanumeric plus -
 	NSCharacterSet *attributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
-                                                 
+	
 	
 	
 	if (![self scanCharactersFromSet:attributeNameCharacterSet intoString:&attrName])
@@ -274,10 +274,10 @@
 		[self setScanLocation:initialScanLocation];
 		return NO;
 	}
-
+	
 	// skip whitespace
 	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-
+	
 	if (![self scanUpToString:@";" intoString:&attrValue])
 	{
 		[self setScanLocation:initialScanLocation];

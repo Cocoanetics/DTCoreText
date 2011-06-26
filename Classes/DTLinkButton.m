@@ -22,14 +22,14 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
+	self = [super initWithFrame:frame];
 	if (self)
 	{
 		self.userInteractionEnabled = YES;
 		self.enabled = YES;
 		self.opaque = NO;
 		
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:@"DTLinkButtonDidHighlight" object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:@"DTLinkButtonDidHighlight" object:nil];
 	}
 	
 	
@@ -38,10 +38,10 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[_url release];
-    [_guid release];
+	[_guid release];
 	
 	[super dealloc];
 }
@@ -96,22 +96,22 @@
 #pragma mark Notifications
 - (void)highlightNotification:(NSNotification *)notification
 {
-    if ([notification object] == self)
-    {
-        // that was me
-        return;
-    }
-    
-    NSDictionary *userInfo = [notification userInfo];
-    
-    NSString *guid = [userInfo objectForKey:@"GUID"];
-    
-    if ([guid isEqualToString:_guid])
-    {
-        BOOL highlighted = [[userInfo objectForKey:@"Highlighted"] boolValue];
+	if ([notification object] == self)
+	{
+		// that was me
+		return;
+	}
+	
+	NSDictionary *userInfo = [notification userInfo];
+	
+	NSString *guid = [userInfo objectForKey:@"GUID"];
+	
+	if ([guid isEqualToString:_guid])
+	{
+		BOOL highlighted = [[userInfo objectForKey:@"Highlighted"] boolValue];
 		[super setHighlighted:highlighted];
 		[self setNeedsDisplay];
-    }
+	}
 }
 
 
@@ -120,17 +120,17 @@
 
 - (void)setHighlighted:(BOOL)highlighted
 {
-    [super setHighlighted:highlighted];
+	[super setHighlighted:highlighted];
 	[self setNeedsDisplay];
-    
-    
-    // notify other parts of the same link
-    if (_guid)
-    {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:highlighted], @"Highlighted", _guid, @"GUID", nil];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"DTLinkButtonDidHighlight" object:self userInfo:userInfo];
-    }
+	
+	
+	// notify other parts of the same link
+	if (_guid)
+	{
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:highlighted], @"Highlighted", _guid, @"GUID", nil];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"DTLinkButtonDidHighlight" object:self userInfo:userInfo];
+	}
 }
 
 - (void)setFrame:(CGRect)frame

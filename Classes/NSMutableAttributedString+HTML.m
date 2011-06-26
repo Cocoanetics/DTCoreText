@@ -17,27 +17,27 @@
 // apends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
 {
-    NSInteger length = [self length];
-    
-    NSDictionary *previousAttributes = nil;
-    
-    if (length)
-    {
-        // get attributes from last character
-        previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
-    }
-    
-    NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
-    [self appendAttributedString:tmpString];
-    [tmpString release];
+	NSInteger length = [self length];
+	
+	NSDictionary *previousAttributes = nil;
+	
+	if (length)
+	{
+		// get attributes from last character
+		previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
+	}
+	
+	NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
+	[self appendAttributedString:tmpString];
+	[tmpString release];
 }
 
 // appends a string without any attributes
 - (void)appendNakedString:(NSString *)string
 {
-    NSAttributedString *nakedString = [[NSAttributedString alloc] initWithString:string attributes:nil];
-    [self appendAttributedString:nakedString];
-    [nakedString release];
+	NSAttributedString *nakedString = [[NSAttributedString alloc] initWithString:string attributes:nil];
+	[self appendAttributedString:nakedString];
+	[nakedString release];
 }
 
 @end

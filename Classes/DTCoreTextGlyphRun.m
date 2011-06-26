@@ -26,7 +26,7 @@
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset
 {
 	self = [super init];
-    
+	
 	if (self)
 	{
 		_run = run;
@@ -43,7 +43,7 @@
 {
 	CFRelease(_run);
 	[_attachment release];
-    [stringIndices release];
+	[stringIndices release];
 	
 	[super dealloc];
 }
@@ -69,30 +69,30 @@
 	CGPoint glyphPosition = glyphPositionPoints[index];
 	
 	CGRect rect = CGRectMake(_line.frame.origin.x + glyphPosition.x, _line.frame.origin.y, CGRectGetMaxX(_frame) - _line.frame.origin.x - glyphPosition.x, _line.frame.size.height);
-    
-    if (index < self.numberOfGlyphs-1)
-    {
-        rect.size.width = glyphPositionPoints[index+1].x - glyphPosition.x;
-    }
+	
+	if (index < self.numberOfGlyphs-1)
+	{
+		rect.size.width = glyphPositionPoints[index+1].x - glyphPosition.x;
+	}
 	
 	return rect;
 }
 
 - (NSArray *)stringIndices 
 {
-    if (!stringIndices) 
+	if (!stringIndices) 
 	{
-        const CFIndex *indices = CTRunGetStringIndicesPtr(_run);
-        NSInteger count = self.numberOfGlyphs;
-        NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
-        NSInteger i;
-        for (i = 0; i < count; i++) 
+		const CFIndex *indices = CTRunGetStringIndicesPtr(_run);
+		NSInteger count = self.numberOfGlyphs;
+		NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
+		NSInteger i;
+		for (i = 0; i < count; i++) 
 		{
-            [array addObject:[NSNumber numberWithInteger:indices[i]]];
-        }
-        stringIndices = [array retain];
-    }
-    return stringIndices;
+			[array addObject:[NSNumber numberWithInteger:indices[i]]];
+		}
+		stringIndices = [array retain];
+	}
+	return stringIndices;
 }
 
 // bounds of an image encompassing the entire run
@@ -188,7 +188,7 @@
 	{
 		[self calculateMetrics];
 	}
-
+	
 	return CGRectMake(_line.baselineOrigin.x + _offset, _line.baselineOrigin.y - ascent, width, ascent + descent);
 }
 
