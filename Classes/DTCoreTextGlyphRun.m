@@ -54,8 +54,24 @@
 }
 
 #pragma mark Calculations
+- (void)calculateMetrics
+{
+	// calculate metrics
+	@synchronized(self)
+	{
+		if (!_didCalculateMetrics)
+		{
+			width = CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+			_didCalculateMetrics = YES;
+		}
+	}
+}
+
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
 {
+	if (!_didCalculateMetrics) {
+		[self calculateMetrics];
+	}
 	if (!glyphPositionPoints)
 	{
 		glyphPositionPoints = CTRunGetPositionsPtr(_run);
@@ -68,8 +84,7 @@
 	
 	CGPoint glyphPosition = glyphPositionPoints[index];
 	
-	CGRect rect = CGRectMake(_line.frame.origin.x + glyphPosition.x, _line.frame.origin.y, CGRectGetMaxX(_frame) - _line.frame.origin.x - glyphPosition.x, _line.frame.size.height);
-	
+	CGRect rect = CGRectMake(_line.baselineOrigin.x + glyphPosition.x, _line.baselineOrigin.y - ascent, _offset + width - glyphPosition.x, ascent + descent);
 	if (index < self.numberOfGlyphs-1)
 	{
 		rect.size.width = glyphPositionPoints[index+1].x - glyphPosition.x;
@@ -117,19 +132,6 @@
 	}
 	
 	CTRunDraw(_run, context, CFRangeMake(0, 0));
-}
-
-- (void)calculateMetrics
-{
-	// calculate metrics
-	@synchronized(self)
-	{
-		if (!_didCalculateMetrics)
-		{
-			width = CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
-			_didCalculateMetrics = YES;
-		}
-	}
 }
 
 - (void)fixMetricsFromAttachment
