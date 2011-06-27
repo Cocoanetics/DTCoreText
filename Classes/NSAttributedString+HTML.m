@@ -25,6 +25,7 @@
 
 #import "CGUtils.h"
 #import "NSData+Base64.h"
+#import "NSString+UTF8Cleaner.h"
 
 // standard options
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
@@ -86,7 +87,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	
 	
 	// Make it a string
-	NSString *htmlString = [[NSString alloc] initWithData:data encoding:encoding];
+	NSString *htmlString = [[NSString alloc] initWithPotentiallyMalformedUTF8Data:data];
 	
 	if (!htmlString)
 	{

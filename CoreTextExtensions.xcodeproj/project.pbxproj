@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1207700413B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 1207700313B81A2000C841C3 /* NSString+UTF8Cleaner.m */; };
+		1207700513B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 1207700313B81A2000C841C3 /* NSString+UTF8Cleaner.m */; };
 		1D3623260D0F684500981E51 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* DemoAppDelegate.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -116,6 +118,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1207700213B81A2000C841C3 /* NSString+UTF8Cleaner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UTF8Cleaner.h"; sourceTree = "<group>"; };
+		1207700313B81A2000C841C3 /* NSString+UTF8Cleaner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UTF8Cleaner.m"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* DemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* DemoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoAppDelegate.m; sourceTree = "<group>"; };
@@ -390,6 +394,8 @@
 			children = (
 				A7D66A5E13B353D200A9A7AC /* NSData+Base64.h */,
 				A7D66A5D13B353D200A9A7AC /* NSData+Base64.m */,
+				1207700213B81A2000C841C3 /* NSString+UTF8Cleaner.h */,
+				1207700313B81A2000C841C3 /* NSString+UTF8Cleaner.m */,
 				A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */,
 				A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */,
 			);
@@ -599,6 +605,7 @@
 				A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 				A7C306E61394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
 				A7D66A6013B353D200A9A7AC /* NSData+Base64.m in Sources */,
+				1207700513B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,6 +643,7 @@
 				A70F5511138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */,
 				A7C306E51394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
 				A7D66A5F13B353D200A9A7AC /* NSData+Base64.m in Sources */,
+				1207700413B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
