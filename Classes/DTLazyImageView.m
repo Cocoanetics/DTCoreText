@@ -51,6 +51,8 @@ static NSCache *_imageCache = nil;
 
 - (void)didMoveToSuperview
 {
+	[super didMoveToSuperview];
+	
 	if (!self.image && _url && !_connection && self.superview)
 	{
 		UIImage *image = [_imageCache objectForKey:_url];
@@ -58,6 +60,11 @@ static NSCache *_imageCache = nil;
 		if (image)
 		{
 			self.image = image;
+			_fullWidth = image.size.width;
+			_fullHeight = image.size.height;
+			
+			// for unknown reasons direct notify does not work below iOS 5
+			[self performSelector:@selector(notify) withObject:nil afterDelay:0.0];
 			return;
 		}
 		
