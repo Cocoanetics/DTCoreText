@@ -534,50 +534,71 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	if (!_layouter)
+	@synchronized(_layouter)
 	{
-		if (_attributedString)
+		if (!_layouter)
 		{
-			_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+			if (_attributedString)
+			{
+				_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+			}
+		}
+		
+		return _layouter;
+	}
+}
+
+- (void)setLayouter:(DTCoreTextLayouter *)layouter
+{
+	@synchronized(layouter)
+	{
+		if (_layouter != layouter)
+		{
+			[_layouter release];
+			_layouter = [layouter retain];
 		}
 	}
-	
-	return _layouter;
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
-	if (!_layoutFrame)
+	@synchronized(_layoutFrame)
 	{
-		// we can only layout if we have our own layouter
-		if (self.layouter)
+		if (!_layoutFrame)
 		{
-			CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
-			rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-			
-			_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-			[_layoutFrame retain];
+			// we can only layout if we have our own layouter
+			if (self.layouter)
+			{
+				CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+				rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+				
+				_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+				[_layoutFrame retain];
+			}
 		}
+		return _layoutFrame;
 	}
-	return _layoutFrame;
 }
 
 - (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
-	if (_layoutFrame != layoutFrame)
+	@synchronized(layoutFrame)
 	{
-		[_layoutFrame release];
-		
-		_layoutFrame = [layoutFrame retain];
-		
-		//		[self sizeToFit];
-		
-		[self removeAllCustomViewsForLinks];
-		
-		if (layoutFrame)
+		if (_layoutFrame != layoutFrame)
 		{
-			[self setNeedsLayout];
-			[self setNeedsDisplay];
+			[_layoutFrame release];
+			
+			_layoutFrame = [layoutFrame retain];
+			
+			//		[self sizeToFit];
+			
+			[self removeAllCustomViewsForLinks];
+			
+			if (layoutFrame)
+			{
+				[self setNeedsLayout];
+				[self setNeedsDisplay];
+			}
 		}
 	}
 }

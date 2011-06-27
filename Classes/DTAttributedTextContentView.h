@@ -62,8 +62,8 @@
 - (void)relayoutText;
 - (void)removeAllCustomViews;
 
-@property (nonatomic, retain) DTCoreTextLayouter *layouter;
-@property (nonatomic, retain) DTCoreTextLayoutFrame *layoutFrame;
+@property (retain) DTCoreTextLayouter *layouter;
+@property (retain) DTCoreTextLayoutFrame *layoutFrame;
 
 @property (nonatomic, retain) NSMutableSet *customViews;
 
