@@ -9,6 +9,7 @@
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayouter.h"
 #import "DTCoreTextLayoutLine.h"
+#import "DTCoreTextGlyphRun.h"
 
 #import "DTTextAttachment.h"
 #import "UIDevice+DTVersion.h"
@@ -92,6 +93,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRelease(_framesetter);
 		_framesetter = NULL;
 	}
+	
+	[_textAttachments release];
 	
 	[super dealloc];
 }
@@ -546,6 +549,36 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return NSMakeRange(range.location, range.length);
 }
 
+- (NSArray *)textAttachments
+{
+	if (!_textAttachments)
+	{
+		NSMutableArray *tmpAttachments = [NSMutableArray array];
+		
+		for (DTCoreTextLayoutLine *oneLine in self.lines)
+		{
+			for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
+			{
+				DTTextAttachment *attachment = [oneRun attachment];
+				
+				if (attachment)
+				{
+					[tmpAttachments addObject:attachment];
+				}
+			}
+		}
+		
+		_textAttachments = [[NSArray alloc] initWithArray:tmpAttachments];
+	}
+
+	
+	return _textAttachments;
+}
+
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
+{
+	return [[self textAttachments] filteredArrayUsingPredicate:predicate];
+}
 
 #pragma mark Calculations
 - (NSArray *)stringIndices {

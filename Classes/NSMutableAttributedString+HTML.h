@@ -8,11 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class DTCoreTextParagraphStyle;
 
 @interface NSMutableAttributedString (HTML)
 
 
 - (void)appendString:(NSString *)string;
+
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle;
+
 - (void)appendNakedString:(NSString *)string;
+
 
 @end

@@ -27,6 +27,8 @@
 	
 	NSArray *_lines;
     NSInteger tag;
+	
+	NSArray *_textAttachments;
 }
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
@@ -48,6 +50,9 @@
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
 - (NSArray *)stringIndices;
+
+- (NSArray *)textAttachments;
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
 
 - (void)correctAttachmentHeights;
 

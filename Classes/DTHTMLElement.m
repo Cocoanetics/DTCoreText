@@ -679,6 +679,23 @@
 	return [self.parent parentWithTagName:name];
 }
 
+- (BOOL)isContainedInBlockElement
+{
+	if (!parent || [parent isMeta] || !parent.tagName) // default tag has no tag name
+	{
+		return NO;
+	}
+	
+	if ([self.parent isInline])
+	{
+		return [self.parent isContainedInBlockElement];
+	}
+	
+	return YES;
+}
+
+
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone

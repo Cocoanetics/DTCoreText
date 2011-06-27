@@ -351,8 +351,8 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						}
 						else
 						{
-							// set it to anything for now
-							imageSize = CGSizeMake(100, 100);
+							// remote image, we have to relayout once this size is known
+							imageSize = CGSizeMake(1, 1); // one pixel so that loading is triggered
 						}
 					}
 				}
@@ -400,9 +400,9 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
-				if (currentTag.floatStyle || attachment.displaySize.height > 5.0 * currentTag.fontDescriptor.pointSize)
+				if (currentTag.floatStyle || attachment.displaySize.height > 5.0 * currentTag.fontDescriptor.pointSize || ![currentTag isContainedInBlockElement])
 				{
-					needsNewLineBefore = YES;
+					[tmpString appendString:@"\n" withParagraphStyle:currentTag.paragraphStyle];
 				}
 #endif
 			}

@@ -9,6 +9,7 @@
 #import "NSMutableAttributedString+HTML.h"
 
 #import <CoreText/CoreText.h>
+#import "DTCoreTextParagraphStyle.h"
 
 
 @implementation NSMutableAttributedString (HTML)
@@ -32,12 +33,27 @@
 	[tmpString release];
 }
 
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle
+{
+	NSMutableDictionary *attributes = nil;
+	
+	if (paragraphStyle)
+	{
+		attributes = [NSMutableDictionary dictionary];
+		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+		[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+		CFRelease(newParagraphStyle);
+	}
+	
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
+	[self appendAttributedString:attributedString];
+	[attributedString release];
+}
+
 // appends a string without any attributes
 - (void)appendNakedString:(NSString *)string
 {
-	NSAttributedString *nakedString = [[NSAttributedString alloc] initWithString:string attributes:nil];
-	[self appendAttributedString:nakedString];
-	[nakedString release];
+	[self appendString:string withParagraphStyle:nil];
 }
 
 @end

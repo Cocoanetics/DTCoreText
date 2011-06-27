@@ -51,6 +51,10 @@
 		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
 		NSArray *toolbarItems = [NSArray arrayWithObjects:spacer, debug, nil];
 		[self setToolbarItems:toolbarItems];
+		
+		
+		// register notifications
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lazyImageDidFinishLoading:) name:@"DTLazyImageViewDidFinishLoading" object:nil];
 	}
 	return self;
 }
@@ -58,6 +62,7 @@
 
 - (void)dealloc 
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[_fileName release];
 	[_segmentedControl release];
 	[_textView release];
@@ -365,6 +370,31 @@
 	_textView.contentView.drawDebugFrames = !_textView.contentView.drawDebugFrames;
 	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:_textView.contentView.drawDebugFrames];
 	[self.view setNeedsDisplay];
+}
+
+#pragma mark Notifications
+- (void)lazyImageDidFinishLoading:(NSNotification *)notification
+{
+	NSDictionary *userInfo = [notification userInfo];
+	NSURL *url = [userInfo objectForKey:@"ImageURL"];
+	CGSize imageSize = [[userInfo objectForKey:@"ImageSize"] CGSizeValue];
+	
+	NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
+	
+	// update all attachments that matchin this URL (possibly multiple images with same size)
+	for (DTTextAttachment *oneAttachment in [_textView.contentView.layoutFrame textAttachmentsWithPredicate:pred])
+	{
+		oneAttachment.originalSize = imageSize;
+		
+		if (!CGSizeEqualToSize(imageSize, oneAttachment.displaySize))
+		{
+			oneAttachment.displaySize = imageSize;
+		}
+	}
+	
+	// redo layout
+	// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
+	[_textView.contentView relayoutText];
 }
 
 #pragma mark Properties

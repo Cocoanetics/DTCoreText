@@ -35,6 +35,7 @@
 		lineHeightMultiple = 0.0;
 		minimumLineHeight = 0.0;
 		maximumLineHeight = 0.0;
+		paragraphSpacing = 12.0;
 	}
 	
 	return self;

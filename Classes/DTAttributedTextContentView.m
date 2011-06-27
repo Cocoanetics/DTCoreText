@@ -123,6 +123,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
+	NSLog(@"layout");
 	// if we are called for partial (non-infinate) we remove unneeded custom subviews first
 	if (!CGRectIsInfinite(rect))
 	{
@@ -221,8 +222,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						
 						if (existingAttachmentView)
 						{
-							existingAttachmentView.frame = frameForSubview;
 							existingAttachmentView.hidden = NO;
+							existingAttachmentView.frame = frameForSubview;
+							
+							existingAttachmentView.alpha = 1;
+							[existingAttachmentView setNeedsLayout];
+							[existingAttachmentView setNeedsDisplay];
 							
 							linkURL = nil; // prevent adding link button on top of image view
 						}
@@ -250,7 +255,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 									if (newCustomAttachmentView)
 									{
 										newCustomAttachmentView.tag = stringRange.location;
-										[self addSubview:newCustomAttachmentView];
+										[self.superview addSubview:newCustomAttachmentView];
 										
 										[self.customViews addObject:newCustomAttachmentView];
 										[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
@@ -307,6 +312,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[CATransaction commit];
 	}
+	
+	NSLog(@"%@", customViews);
+	NSLog(@"%@", [self recursiveDescription]);
 }
 
 

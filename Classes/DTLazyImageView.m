@@ -137,6 +137,39 @@ static NSCache *_imageCache = nil;
 
 #pragma mark NSURL Loading
 
+- (void)notify
+{
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:CGSizeMake(_fullWidth, _fullHeight)], @"ImageSize", _url, @"ImageURL", nil];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"DTLazyImageViewDidFinishLoading" object:nil userInfo:userInfo];
+}
+
+- (void)completeDownloadWithData:(NSData *)data
+{
+	UIImage *image = [[UIImage alloc] initWithData:data];
+	
+	self.image = image;
+	_fullWidth = image.size.width;
+	_fullHeight = image.size.height;
+	
+	self.bounds = CGRectMake(0, 0, _fullWidth, _fullHeight);
+	
+	[self notify];
+	
+	if (!_imageCache)
+	{
+		_imageCache = [[NSCache alloc] init];
+	}
+	
+	if (_url)
+	{
+		// cache image
+		[_imageCache setObject:image forKey:_url];
+	}
+	
+	[image release];
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 	// every time we get an response it might be a forward, so we discard what data we have
@@ -179,26 +212,17 @@ static NSCache *_imageCache = nil;
 	[self createAndShowProgressiveImage];
 }
 
+
+- (void)removeFromSuperview
+{
+	[super removeFromSuperview];
+}
+
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
 	if (_receivedData)
 	{
-		UIImage *image = [[UIImage alloc] initWithData:_receivedData];
-		
-		self.image = image;
-		
-		if (!_imageCache)
-		{
-			_imageCache = [[NSCache alloc] init];
-		}
-		
-		if (_url)
-		{
-			// cache image
-			[_imageCache setObject:image forKey:_url];
-		}
-		
-		[image release];
+		[self performSelectorOnMainThread:@selector(completeDownloadWithData:) withObject:_receivedData waitUntilDone:YES];
 		
 		[_receivedData release], _receivedData = nil;
 	}
