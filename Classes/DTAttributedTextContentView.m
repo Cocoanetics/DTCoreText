@@ -123,7 +123,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
-	NSLog(@"layout");
 	// if we are called for partial (non-infinate) we remove unneeded custom subviews first
 	if (!CGRectIsInfinite(rect))
 	{
@@ -312,9 +311,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[CATransaction commit];
 	}
-	
-	NSLog(@"%@", customViews);
-	NSLog(@"%@", [self recursiveDescription]);
 }
 
 
