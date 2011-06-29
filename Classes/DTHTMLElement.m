@@ -85,6 +85,9 @@
 		
 		// add attachment
 		[tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
+		
+		// remember original paragraphSpacing
+		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
 	}
 	else
 	{
