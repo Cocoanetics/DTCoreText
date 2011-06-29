@@ -400,7 +400,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				
 #if ALLOW_IPHONE_SPECIAL_CASES
 				// workaround, make float images blocks because we have no float
-				if (currentTag.floatStyle || attachment.displaySize.height > 5.0 * currentTag.fontDescriptor.pointSize || ![currentTag isContainedInBlockElement])
+				if (currentTag.floatStyle || attachment.displaySize.height > 2.0 * currentTag.fontDescriptor.pointSize || ![currentTag isContainedInBlockElement])
 				{
 					[tmpString appendString:@"\n" withParagraphStyle:currentTag.paragraphStyle];
 				}
