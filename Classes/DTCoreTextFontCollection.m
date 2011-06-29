@@ -27,10 +27,17 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 
 + (DTCoreTextFontCollection *)availableFontsCollection
 {
+#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
+	static dispatch_once_t predicate;
+	dispatch_once(&predicate, ^{
+		_availableFontsCollection = [[DTCoreTextFontCollection alloc] initWithAvailableFonts];
+	});
+#else
 	if (!_availableFontsCollection)
 	{
 		_availableFontsCollection = [[DTCoreTextFontCollection alloc] initWithAvailableFonts];
 	}
+#endif
 	
 	return _availableFontsCollection;
 }

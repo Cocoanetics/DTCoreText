@@ -163,10 +163,17 @@ static NSCache *_imageCache = nil;
 	
 	[self notify];
 	
+#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
+	static dispatch_once_t predicate;
+	dispatch_once(&predicate, ^{
+		_imageCache = [[NSCache alloc] init];
+	});
+#else
 	if (!_imageCache)
 	{
 		_imageCache = [[NSCache alloc] init];
 	}
+#endif
 	
 	if (_url)
 	{
