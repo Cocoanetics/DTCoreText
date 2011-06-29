@@ -254,7 +254,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 									if (newCustomAttachmentView)
 									{
 										newCustomAttachmentView.tag = stringRange.location;
-										[self.superview addSubview:newCustomAttachmentView];
+										[self addSubview:newCustomAttachmentView];
 										
 										[self.customViews addObject:newCustomAttachmentView];
 										[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
