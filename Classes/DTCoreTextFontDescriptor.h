@@ -29,6 +29,9 @@
 	CTFontStylisticClass stylisticClass;
     
     BOOL smallCapsFeature;
+  
+  BOOL _hashSet;
+  NSUInteger _hash;
 }
 
 // generated fonts are cached

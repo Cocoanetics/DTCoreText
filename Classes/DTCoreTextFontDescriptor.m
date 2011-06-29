@@ -11,47 +11,23 @@
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-static NSRecursiveLock *_fontOverridesLock = nil;
-
-static void dt_loadTimeInitialization(void) __attribute__ ((constructor, used));
-static void dt_loadTimeInitialization(void) {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at load time initialization may be less than ideal.
-
-	_fontOverridesLock = [[NSRecursiveLock alloc] init];
-	[_fontOverridesLock setName:@"DTCoreTextFontDescriptor fontOverrides lock"];
-
-	[pool drain]; pool = NULL;
-}
-#endif // DT_USE_THREAD_SAFE_INITIALIZATION
-
 
 @implementation DTCoreTextFontDescriptor
 
+
+
 + (NSCache *)fontCache
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	static dispatch_once_t predicate;
-	dispatch_once(&predicate, ^{
-		_fontCache = [[NSCache alloc] init];
-	});
-#else
 	if (!_fontCache)
 	{
 		_fontCache = [[NSCache alloc] init];
 	}
-#endif
 	
 	return _fontCache;
 }
 
 + (NSMutableDictionary *)fontOverrides
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	NSParameterAssert(_fontOverridesLock != nil);
-	[_fontOverridesLock lock];
-#endif
-	
 	if (!_fontOverrides)
 	{
 		_fontOverrides = [[NSMutableDictionary alloc] init];
@@ -80,11 +56,7 @@ static void dt_loadTimeInitialization(void) {
 			}
 		}
 	}
-
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	[_fontOverridesLock unlock];
-#endif
-
+	
 	return _fontOverrides;
 }
 
@@ -92,60 +64,28 @@ static void dt_loadTimeInitialization(void) {
 {
 	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
 	
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	NSParameterAssert(_fontOverridesLock != nil);
-	[_fontOverridesLock lock];
-#endif
 	[[DTCoreTextFontDescriptor fontOverrides] setObject:fontName forKey:key];
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	[_fontOverridesLock unlock];
-#endif
 }
 
 + (NSString *)smallCapsFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
 	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
-
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	NSParameterAssert(_fontOverridesLock != nil);
-	[_fontOverridesLock lock];
-	NSString *returnString = [[[DTCoreTextFontDescriptor fontOverrides] objectForKey:key] retain];
-	[_fontOverridesLock unlock];
-
-	return [returnString autorelease];
-#else
+	
 	return [[DTCoreTextFontDescriptor fontOverrides] objectForKey:key];
-#endif
 }
 
 + (void)setOverrideFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
 	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
 	
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	NSParameterAssert(_fontOverridesLock != nil);
-	[_fontOverridesLock lock];
-#endif
 	[[DTCoreTextFontDescriptor fontOverrides] setObject:fontName forKey:key];
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	[_fontOverridesLock unlock];
-#endif
 }
 
 + (NSString *)overrideFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
 	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
 	
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
-	NSParameterAssert(_fontOverridesLock != nil);
-	[_fontOverridesLock lock];
-	NSString *returnString = [[[DTCoreTextFontDescriptor fontOverrides] objectForKey:key] retain];
-	[_fontOverridesLock unlock];
-	
-	return [returnString autorelease];
-#else
 	return [[DTCoreTextFontDescriptor fontOverrides] objectForKey:key];
-#endif
 }
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes
@@ -615,15 +555,18 @@ static void dt_loadTimeInitialization(void) {
 
 - (NSUInteger)hash
 {
-	// two font descriptors are equal if their attribute dictionary are the same
-	NSString *attributesDesc = [[self fontAttributes] description];
-	
-	return [attributesDesc hash];
+  if(_hashSet == NO) {
+    // two font descriptors are equal if their attribute dictionary are the same
+    _hash = [[[self fontAttributes] description] hash];
+    _hashSet = YES;
+    
+  }
+  return(_hash);
 }
 
 - (BOOL)isEqual:(id)object
 {
-	return ([self hash] == [object hash]);
+	return (([object isKindOfClass:[DTCoreTextFontDescriptor class]]) && ([self hash] == [object hash]));
 }
 
 
