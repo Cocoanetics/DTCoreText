@@ -377,6 +377,9 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				attachment.attributes = tagAttributesDict;
 				attachment.contents = decodedImage;
 				
+				// to avoid much too much space before the image
+				currentTag.paragraphStyle.lineHeightMultiple = 1;
+				
 				// we copy the link because we might need for it making the custom view
 				if (currentTag.link)
 				{
@@ -454,6 +457,9 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				attachment.attributes = tagAttributesDict;
 				
 				currentTag.textAttachment = attachment;
+				
+				// to avoid much too much space before the image
+				currentTag.paragraphStyle.lineHeightMultiple = 1;
 				
 				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
