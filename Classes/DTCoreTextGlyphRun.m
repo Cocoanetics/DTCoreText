@@ -41,7 +41,15 @@
 
 - (void)dealloc
 {
-	CFRelease(_run);
+	if (_run)
+	{
+		CFRelease(_run);
+	}
+	if (glyphPositionPoints)
+	{
+		CFRelease(glyphPositionPoints);
+	}
+	
 	[_attachment release];
 	[stringIndices release];
 	
@@ -77,7 +85,7 @@
 		glyphPositionPoints = CTRunGetPositionsPtr(_run);
 	}
 	
-	if (index >= self.numberOfGlyphs)
+	if (!glyphPositionPoints || index >= self.numberOfGlyphs)
 	{
 		return CGRectNull;
 	}
