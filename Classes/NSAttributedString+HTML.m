@@ -647,7 +647,6 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				{
 					currentTag.fontDescriptor.fontFamily = @"Courier";
 					currentTag.preserveNewlines = YES;
-					currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;
 				}
 			}
 			else if ([tagName isEqualToString:@"sub"])
@@ -898,11 +897,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				
 				if ([[tagContents stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] length])
 				{
-					if (currentTag.preserveNewlines)
-					{
-						tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:UNICODE_LINE_FEED];
-					}
-					else
+					if (!currentTag.preserveNewlines)
 					{
 						tagContents = [tagContents stringByNormalizingWhitespace];
 					}
