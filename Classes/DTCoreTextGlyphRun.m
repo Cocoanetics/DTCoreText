@@ -45,10 +45,7 @@
 	{
 		CFRelease(_run);
 	}
-	if (glyphPositionPoints)
-	{
-		CFRelease(glyphPositionPoints);
-	}
+	if(glyphPositionPoints != NULL) { if(needToFreeGlyphPositionPoints == YES) { free((void *)glyphPositionPoints); } glyphPositionPoints = NULL; }
 	
 	[_attachment release];
 	[stringIndices release];
@@ -80,9 +77,13 @@
 	if (!_didCalculateMetrics) {
 		[self calculateMetrics];
 	}
-	if (!glyphPositionPoints)
-	{
-		glyphPositionPoints = CTRunGetPositionsPtr(_run);
+	if((glyphPositionPoints == NULL) && ((glyphPositionPoints = CTRunGetPositionsPtr(_run)) == NULL)) {
+    CFIndex glyphCount = CTRunGetGlyphCount(_run);
+    CGPoint *glyphBuffer = NULL;
+    if((glyphBuffer = malloc(sizeof(CGPoint) * glyphCount)) == NULL) { return(CGRectZero); } // XXX unable to allocate memory for glyph buffer, return zero rect.
+    needToFreeGlyphPositionPoints = YES;
+    glyphPositionPoints = glyphBuffer;
+    CTRunGetPositions(_run, CFRangeMake(0l, 0l), glyphBuffer);
 	}
 	
 	if (!glyphPositionPoints || index >= self.numberOfGlyphs)
