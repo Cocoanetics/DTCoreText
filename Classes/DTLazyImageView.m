@@ -8,6 +8,10 @@
 
 #import "DTLazyImageView.h"
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#warning Thread safe initialization is not enabled.
+#endif
+
 static NSCache *_imageCache = nil;
 
 
