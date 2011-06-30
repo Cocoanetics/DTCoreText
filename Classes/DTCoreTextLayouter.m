@@ -74,8 +74,10 @@
 // a temporary frame
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
 {
-	DTCoreTextLayoutFrame *newFrame = [[[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range] autorelease];
-	return newFrame;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
+  [pool release]; pool = NULL;
+	return [newFrame autorelease];
 }
 
 // reusable frame

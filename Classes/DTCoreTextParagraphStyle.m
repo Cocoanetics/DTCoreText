@@ -8,6 +8,8 @@
 
 #import "DTCoreTextParagraphStyle.h"
 
+static NSCache *_paragraphStyleCache = nil;
+
 
 @implementation DTCoreTextParagraphStyle
 
@@ -18,7 +20,23 @@
 
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
 {
-	return [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
+  // TODO SCAtomicallyInitObjCPointer
+  
+	static dispatch_once_t predicate;
+  
+	dispatch_once(&predicate, ^{
+    _paragraphStyleCache = [[NSCache alloc] init];
+	});
+
+  DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
+  
+  if((returnParagraphStyle = [_paragraphStyleCache objectForKey:(id)ctParagraphStyle]) == NULL) {
+    returnParagraphStyle = [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
+    [_paragraphStyleCache setObject:returnParagraphStyle forKey:(id)ctParagraphStyle];
+  }
+  
+  return(returnParagraphStyle);
+	//return [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
 }
 
 - (id)init
