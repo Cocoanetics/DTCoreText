@@ -176,6 +176,12 @@
 		[tmpDict setObject:shadows forKey:@"DTShadows"];
 	}
 	
+	// add tag for PRE so that we can omit changing this font if we override fonts
+	if (preserveNewlines)
+	{
+		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"DTPreserveNewlines"];
+	}
+	
 	return tmpDict;
 }
 
