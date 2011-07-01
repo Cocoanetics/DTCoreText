@@ -860,7 +860,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				}
 				else 
 				{
-					NSLog(@"Ignoring non-open tag %@", currentTag.tagName);
+					FLLog(@"Ignoring non-open tag %@", currentTag.tagName);
 				}
 			}
 			else if (immediatelyClosed)

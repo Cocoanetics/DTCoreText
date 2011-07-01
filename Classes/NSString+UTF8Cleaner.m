@@ -134,7 +134,7 @@ static __inline__ __attribute__((always_inline)) ConversionResult ConvertSingleC
 {
   NSString *returnString = NULL;
   if((returnString = [self initWithData:data encoding:NSUTF8StringEncoding]) == NULL) {
-    //NSLog(@"NSString failed to init with data, trying again by cleaning any malformed UTF8...");
+    FLLog(@"NSString failed to init with data, trying again by cleaning any malformed UTF8...");
     NSMutableData *cleanUTF8Data  = [NSMutableData dataWithData:data];
     unsigned char *cleanUTF8Bytes = [cleanUTF8Data mutableBytes];
     NSUInteger cleanUTF8Idx = 0UL, cleanUTF8Length = [cleanUTF8Data length];

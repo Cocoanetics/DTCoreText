@@ -106,7 +106,7 @@
 				
 				if (!framesetter)
 				{
-					NSLog(@"No Framesetter!");
+					FLLog(@"No Framesetter!");
 				}
 			}
 		}
