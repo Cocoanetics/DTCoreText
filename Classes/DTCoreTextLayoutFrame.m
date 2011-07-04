@@ -176,7 +176,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
-		if (CGRectIntersectsRect(rect, oneLine.frame))
+        CGRect lineFrame = oneLine.frame;
+        // CGRectIntersectsRect returns false if the frame has 0 width, which
+        // lines that consist only of line-breaks have. Set the min-width
+        // to one to work-around.
+        lineFrame.size.width = lineFrame.size.width>1?lineFrame.size.width:1;
+		if (CGRectIntersectsRect(rect, lineFrame))
 		{
 			[tmpArray addObject:oneLine];
 			earlyBreakPossible = YES;
