@@ -45,10 +45,6 @@
 	{
 		CFRelease(_run);
 	}
-	if (glyphPositionPoints)
-	{
-		CFRelease(glyphPositionPoints);
-	}
 	
 	[_attachment release];
 	[stringIndices release];
@@ -82,6 +78,7 @@
 	}
 	if (!glyphPositionPoints)
 	{
+		// this is a pointer to the points inside the run, thus no retain necessary
 		glyphPositionPoints = CTRunGetPositionsPtr(_run);
 	}
 	
