@@ -43,12 +43,12 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
-		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
 	});
 #else
 	if (!_tagAttributeNameCharacterSet)
 	{
-		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
 	}
 #endif
 	
