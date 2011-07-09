@@ -45,10 +45,6 @@
 	{
 		CFRelease(_run);
 	}
-	if (glyphPositionPoints)
-	{
-		CFRelease(glyphPositionPoints);
-	}
 	
 	[_attachment release];
 	[stringIndices release];
