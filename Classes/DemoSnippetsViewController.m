@@ -61,7 +61,10 @@
 		contentViewCache = [[NSMutableDictionary alloc] init];
 	}
 	
-	DTAttributedTextContentView *contentView = (id)[contentViewCache objectForKey:indexPath];
+	// workaround for iOS 5 bug
+	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
+	
+	DTAttributedTextContentView *contentView = (id)[contentViewCache objectForKey:key];
 	
 	if (!contentView)
 	{
@@ -78,6 +81,7 @@
 		CGFloat width = self.view.frame.size.width;
 		[DTAttributedTextContentView setLayerClass:nil];
 		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
+		contentView.shouldDrawImages = YES;
 		
 		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		contentView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);

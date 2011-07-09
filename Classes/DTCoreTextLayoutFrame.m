@@ -59,7 +59,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		else
 		{
-			NSLog(@"Strange, should have gotten a valid framesetter");
+			// Strange, should have gotten a valid framesetter
 			
 			
 			[_layouter release];

@@ -8,6 +8,12 @@
 
 #import "NSCharacterSet+HTML.h"
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#warning Thread safe initialization is not enabled.
+#endif
+#endif
+
 static NSCharacterSet *_tagNameCharacterSet = nil;
 static NSCharacterSet *_tagAttributeNameCharacterSet = nil;
 static NSCharacterSet *_quoteCharacterSet = nil;
@@ -37,6 +43,7 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
+		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
 	});
 #else
 	if (!_tagAttributeNameCharacterSet)

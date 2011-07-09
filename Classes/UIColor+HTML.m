@@ -9,6 +9,12 @@
 #import "UIColor+HTML.h"
 #import "NSString+HTML.h"
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#warning Thread safe initialization is not enabled.
+#endif
+#endif
+
 static NSDictionary *colorLookup = nil;
 
 @implementation UIColor (HTML)

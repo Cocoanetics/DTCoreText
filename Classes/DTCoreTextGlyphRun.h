@@ -28,6 +28,7 @@
 	NSInteger numberOfGlyphs;
 	
 	const CGPoint *glyphPositionPoints;
+  BOOL needToFreeGlyphPositionPoints;
 	
 	DTCoreTextLayoutLine *_line;
 	NSDictionary *attributes;

@@ -8,6 +8,12 @@
 
 #import "DTLazyImageView.h"
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#warning Thread safe initialization is not enabled.
+#endif
+#endif
+
 static NSCache *_imageCache = nil;
 
 
@@ -89,7 +95,7 @@ static NSCache *_imageCache = nil;
 	CGColorSpaceRelease(colorSpace);
 	if (!bmContext)
 	{
-		NSLog(@"fail creating context");
+		// fail creating context
 		return NULL;
 	}
 	CGContextDrawImage(bmContext, (CGRect){.origin.x = 0.0f, .origin.y = 0.0f, .size.width = _fullWidth, .size.height = height}, partialImg);
@@ -252,8 +258,6 @@ static NSCache *_imageCache = nil;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	NSLog(@"Failed to load image at %@, %@", _url, [error localizedDescription]);
-	
 	[_connection release], _connection = nil;
 	[_receivedData release], _receivedData = nil;
 	
