@@ -10,6 +10,12 @@
 #import "NSScanner+HTML.h"
 #import "UIColor+HTML.h"
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#warning Thread safe initialization is not enabled.
+#endif
+#endif
+
 static NSSet *inlineTags = nil;
 static NSSet *metaTags = nil;
 static NSDictionary *entityLookup = nil;

@@ -11,6 +11,11 @@
 
 #import <CoreText/CoreText.h>
 
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
+#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#warning Thread safe initialization is not enabled.
+#endif
+#endif
 
 
 @interface DTCoreTextFontCollection ()
@@ -81,7 +86,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	
 	NSArray *matchingDescriptors = [self.fontDescriptors filteredArrayUsingPredicate:predicate];
 	
-	NSLog(@"%@", matchingDescriptors);
+	//NSLog(@"%@", matchingDescriptors);
 	
 	if ([matchingDescriptors count])
 	{

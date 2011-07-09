@@ -15,3 +15,10 @@
  - OSX has an entire attributes block for an UL block
  - OSX does not add extra space after UL block
  */
+
+// Enable thread safe instantiation, requires iOS 4
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_4_0
+#define DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
+#else
+#define DT_USE_THREAD_SAFE_INITIALIZATION
+#endif

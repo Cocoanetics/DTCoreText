@@ -103,11 +103,6 @@
 			if (!framesetter)
 			{
 				framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
-				
-				if (!framesetter)
-				{
-					NSLog(@"No Framesetter!");
-				}
 			}
 		}
 	}
