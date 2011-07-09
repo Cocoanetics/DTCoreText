@@ -53,12 +53,12 @@ static NSDictionary *entityLookup = nil;
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
-		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", nil];
+		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
 	});
 #else
 	if (!metaTags)
 	{
-		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", nil];
+		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
 	}
 #endif
 	
