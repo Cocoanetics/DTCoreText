@@ -61,7 +61,10 @@
 		contentViewCache = [[NSMutableDictionary alloc] init];
 	}
 	
-	DTAttributedTextContentView *contentView = (id)[contentViewCache objectForKey:indexPath];
+	// workaround for iOS 5 bug
+	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
+	
+	DTAttributedTextContentView *contentView = (id)[contentViewCache objectForKey:key];
 	
 	if (!contentView)
 	{
