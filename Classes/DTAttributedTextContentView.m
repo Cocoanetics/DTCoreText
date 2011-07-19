@@ -594,8 +594,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			
 			_layoutFrame = [layoutFrame retain];
 			
-			//		[self sizeToFit];
-			
 			[self removeAllCustomViewsForLinks];
 			
 			if (layoutFrame)

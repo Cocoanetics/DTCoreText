@@ -35,6 +35,7 @@
 
 - (void)dealloc 
 {
+	[contentView removeObserver:self forKeyPath:@"frame"];
 	[contentView release];
 	[super dealloc];
 }
@@ -84,6 +85,18 @@
 	self.clipsToBounds = YES;
 }
 
+
+#pragma mark Notifications
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if (object == contentView && [keyPath isEqualToString:@"frame"])
+	{
+		CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
+		self.contentSize = newFrame.size;
+	}
+}
+
+
 #pragma mark Properties
 - (DTAttributedTextContentView *)contentView
 {
@@ -93,6 +106,9 @@
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
 		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
+		
+		// we want to know if the frame changes so that we can adjust the scrollview content size
+		[contentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
 		
 		[self addSubview:contentView];
 	}		
@@ -187,9 +203,6 @@
 		}
 		
 		[super setFrame:frame];
-		
-		// always set the content size
-		self.contentSize = contentView.bounds.size;
 	}
 }
 
