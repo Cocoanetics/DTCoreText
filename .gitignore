@@ -4,3 +4,4 @@ build
 *.pbxuser
 project.xcworkspace
 xcuserdata
+.svn
