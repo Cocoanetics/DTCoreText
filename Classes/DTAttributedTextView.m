@@ -180,9 +180,8 @@
 {
 	self.contentView.attributedString = string;
 	
-	[self.contentView sizeToFit];
-	
-	self.contentSize = contentView.bounds.size;
+	// contentView resizes itself after layout
+	// self.contentSize is updated through KVO
 }
 
 - (NSAttributedString *)attributedString

@@ -263,7 +263,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 									}
 								}
 							}
-							
 						}
 					}
 					
@@ -469,14 +468,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		_attributedString = [string copy];
 		
-		// need new layouter
-		self.layouter = nil;
-		
-		// ditch the previous layout frame
-		self.layoutFrame = nil;
-		
-		// will trigger relayout
-		[self setNeedsDisplay];
+		[self relayoutText];
 	}
 }
 
