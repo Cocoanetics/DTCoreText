@@ -18,6 +18,8 @@ static NSCharacterSet *_tagNameCharacterSet = nil;
 static NSCharacterSet *_tagAttributeNameCharacterSet = nil;
 static NSCharacterSet *_quoteCharacterSet = nil;
 static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
+static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
+
 
 @implementation NSCharacterSet (HTML)
 
@@ -95,6 +97,22 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 	return _nonQuotedAttributeEndCharacterSet;
 }
 
-
+// NOTE: cannot contain : because otherwise this messes up parsing of CSS style attributes
++ (NSCharacterSet *)cssStyleAttributeNameCharacterSet
+{
+#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
+	static dispatch_once_t predicate;
+	dispatch_once(&predicate, ^{
+		_cssStyleAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+	});
+#else
+	if (!_cssStyleAttributeNameCharacterSet)
+	{
+		_cssStyleAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+	}
+#endif
+	
+	return _cssStyleAttributeNameCharacterSet;
+}
 
 @end

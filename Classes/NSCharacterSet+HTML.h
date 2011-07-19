@@ -15,5 +15,6 @@
 + (NSCharacterSet *)tagAttributeNameCharacterSet;
 + (NSCharacterSet *)quoteCharacterSet;
 + (NSCharacterSet *)nonQuotedAttributeEndCharacterSet;
++ (NSCharacterSet *)cssStyleAttributeNameCharacterSet;
 
 @end

@@ -256,11 +256,11 @@
 	
 	
 	// alphanumeric plus -
-	NSCharacterSet *attributeNameCharacterSet = [NSCharacterSet tagAttributeNameCharacterSet];
+	NSCharacterSet *cssStyleAttributeNameCharacterSet = [NSCharacterSet cssStyleAttributeNameCharacterSet];
 	
 	
 	
-	if (![self scanCharactersFromSet:attributeNameCharacterSet intoString:&attrName])
+	if (![self scanCharactersFromSet:cssStyleAttributeNameCharacterSet intoString:&attrName])
 	{
 		return NO;
 	}
