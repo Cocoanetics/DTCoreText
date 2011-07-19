@@ -1039,4 +1039,33 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	return 	[tmpString autorelease];
 }
 
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
+{
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	NSUInteger index = 0;
+	
+	while (index<[self length]) 
+	{
+		NSRange range;
+		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&range];
+		
+		DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+		
+		if (attachment && [predicate evaluateWithObject:attachment])
+		{
+			[tmpArray addObject:attachment];
+		}
+		
+		index += range.length;
+	}
+	
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
+	
+	return nil;
+}
+
 @end

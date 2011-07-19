@@ -33,4 +33,7 @@ extern NSString *DTDefaultLineHeightMultiplier;
 // utilities
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes;
 
+// attachment handling
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
+
 @end
