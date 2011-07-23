@@ -20,6 +20,7 @@
 
 
 @implementation DTAttributedTextView
+@synthesize onlyInteractWithSubview;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -27,6 +28,7 @@
 	
 	if (self)
 	{
+        onlyInteractWithSubview = NO;
 		[self setup];
 	}
 	
@@ -51,6 +53,21 @@
 	
 	// layout custom subviews for visible area
 	[contentView layoutSubviewsInRect:self.bounds];
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    if (!onlyInteractWithSubview) {
+        return [super pointInside:point withEvent:event];
+    }
+    
+    CGPoint contentViewPoint = [self convertPoint:point toView:self.contentView];
+    for (UIView *view in self.contentView.subviews) {
+        CGPoint viewPoint = [self.contentView convertPoint:contentViewPoint toView:view];
+        if ([view pointInside:viewPoint withEvent:event]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)awakeFromNib
