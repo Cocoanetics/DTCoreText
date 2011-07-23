@@ -14,6 +14,8 @@
 {
 	DTAttributedTextContentView *contentView;
 	UIView *backgroundView;
+    
+    BOOL onlyInteractWithSubview;
 }
 
 @property (nonatomic, retain) NSAttributedString *attributedString;
@@ -22,5 +24,8 @@
 @property (nonatomic, retain) IBOutlet UIView *backgroundView;
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
+
+@property (nonatomic, assign) BOOL onlyInteractWithSubview;
+
 
 @end
