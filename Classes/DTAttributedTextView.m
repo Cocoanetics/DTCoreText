@@ -194,13 +194,10 @@
 {
 	if (!CGRectEqualToRect(self.frame, frame))
 	{
-		[self setContentOffset:CGPointZero animated:YES];
-		
 		if (self.frame.size.width != frame.size.width)
 		{
 			contentView.frame = CGRectMake(0,0,frame.size.width, frame.size.height);
 		}
-		
 		[super setFrame:frame];
 	}
 }

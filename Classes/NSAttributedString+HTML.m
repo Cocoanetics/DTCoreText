@@ -328,7 +328,10 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 						{
 							// file in app bundle
 							NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-							imageURL = [NSURL fileURLWithPath:path];
+                            if (path) {
+                                // Prevent a crash if path turns up nil.
+                                imageURL = [NSURL fileURLWithPath:path];   
+                            }
 						}
 					}
 					
@@ -641,7 +644,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
-			else if ([tagName isEqualToString:@"pre"])
+			else if ([tagName isEqualToString:@"pre"] || [tagName isEqualToString:@"code"])
 			{
 				if (tagOpen)
 				{
