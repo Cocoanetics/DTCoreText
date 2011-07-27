@@ -848,7 +848,15 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				// block items have to have a NL at the end.
 				if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER])
 				{
-					[tmpString appendString:@"\n"];  // extends attributed area at end
+					if ([tmpString length])
+					{
+						[tmpString appendString:@"\n"];  // extends attributed area at end
+					}
+					else
+					{
+						currentTag.text = @"\n";
+						[tmpString appendAttributedString:[currentTag attributedString]];
+					}
 				}
 				
 				// check if this tag is indeed closing the currently open one
