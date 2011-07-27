@@ -20,7 +20,7 @@
 		<key>Italic</key>
 		<false/>
 		<key>OverrideFontName</key>
-		<string>Helvetica</string>
+		<string>Helvetica-Bold</string>
 	</dict>
 	<dict>
 		<key>Bold</key>
@@ -30,13 +30,13 @@
 		<key>Italic</key>
 		<true/>
 		<key>OverrideFontName</key>
-		<string>Helvetica</string>
+		<string>Helvetica-Oblique</string>
 	</dict>
 	<dict>
 		<key>Bold</key>
 		<true/>
 		<key>FontFamily</key>
-		<string>Helvetica</string>
+		<string>Helvetica-BoldOblique</string>
 		<key>Italic</key>
 		<true/>
 		<key>OverrideFontName</key>
