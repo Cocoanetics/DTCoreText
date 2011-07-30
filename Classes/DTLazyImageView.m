@@ -7,6 +7,7 @@
 //
 
 #import "DTLazyImageView.h"
+#import "DTCache.h"
 
 #ifndef DT_USE_THREAD_SAFE_INITIALIZATION
 #ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
@@ -14,7 +15,7 @@
 #endif
 #endif
 
-static NSCache *_imageCache = nil;
+static DTCache *_imageCache = nil;
 
 
 @implementation DTLazyImageView
@@ -172,12 +173,12 @@ static NSCache *_imageCache = nil;
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
-		_imageCache = [[NSCache alloc] init];
+		_imageCache = [[DTCache alloc] init];
 	});
 #else
 	if (!_imageCache)
 	{
-		_imageCache = [[NSCache alloc] init];
+		_imageCache = [[DTCache alloc] init];
 	}
 #endif
 	

@@ -93,6 +93,8 @@
 		A7DBFC1612E9661F00F25897 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* DemoTextViewController.m */; };
 		A7DBFC1712E9662000F25897 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38F712E30153007CE622 /* CGUtils.m */; };
 		A7DBFC2012E9664400F25897 /* Snippets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B235590512E04DF9005EA62F /* Snippets.plist */; };
+		A7DF69CB13E3EEAD00292700 /* DTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DF69CA13E3EEAD00292700 /* DTCache.m */; };
+		A7DF69CC13E3EEAD00292700 /* DTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DF69CA13E3EEAD00292700 /* DTCache.m */; };
 		A7E5D0F5135EBCD0004B6C67 /* Subviews.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E5D0F4135EBCD0004B6C67 /* Subviews.html */; };
 		A7E5D0F6135EBCD0004B6C67 /* Subviews.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E5D0F4135EBCD0004B6C67 /* Subviews.html */; };
 		A7EA579F12E05FBF0045411B /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */; };
@@ -187,6 +189,8 @@
 		A7DBFB9312E960AF00F25897 /* APOD.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = APOD.html; sourceTree = "<group>"; };
 		A7DBFBEB12E965DE00F25897 /* UnitTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7DBFBEC12E965DE00F25897 /* UnitTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTest-Info.plist"; sourceTree = "<group>"; };
+		A7DF69C913E3EEAD00292700 /* DTCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCache.h; sourceTree = "<group>"; };
+		A7DF69CA13E3EEAD00292700 /* DTCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCache.m; sourceTree = "<group>"; };
 		A7E5D0F4135EBCD0004B6C67 /* Subviews.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Subviews.html; sourceTree = "<group>"; };
 		A7EA579D12E05FBF0045411B /* NSAttributedStringRunDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringRunDelegates.h; sourceTree = "<group>"; };
 		A7EA579E12E05FBF0045411B /* NSAttributedStringRunDelegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringRunDelegates.m; sourceTree = "<group>"; };
@@ -398,6 +402,8 @@
 				1207700313B81A2000C841C3 /* NSString+UTF8Cleaner.m */,
 				A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */,
 				A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */,
+				A7DF69C913E3EEAD00292700 /* DTCache.h */,
+				A7DF69CA13E3EEAD00292700 /* DTCache.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -606,6 +612,7 @@
 				A7C306E61394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
 				A7D66A6013B353D200A9A7AC /* NSData+Base64.m in Sources */,
 				1207700513B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
+				A7DF69CC13E3EEAD00292700 /* DTCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +651,7 @@
 				A7C306E51394683400B2E925 /* UIDevice+DTVersion.m in Sources */,
 				A7D66A5F13B353D200A9A7AC /* NSData+Base64.m in Sources */,
 				1207700413B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
+				A7DF69CB13E3EEAD00292700 /* DTCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -660,7 +668,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Other Sources/CoreTextExtensions_Prefix.pch";
 				INFOPLIST_FILE = "Resources/CoreTextExtensions-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PRODUCT_NAME = CoreTextExtensions;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -674,7 +681,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Other Sources/CoreTextExtensions_Prefix.pch";
 				INFOPLIST_FILE = "Resources/CoreTextExtensions-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PRODUCT_NAME = CoreTextExtensions;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -748,7 +754,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -762,7 +768,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 			};

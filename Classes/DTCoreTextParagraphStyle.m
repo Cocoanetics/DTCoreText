@@ -7,8 +7,9 @@
 //
 
 #import "DTCoreTextParagraphStyle.h"
+#import "DTCache.h"
 
-static NSCache *_paragraphStyleCache = nil;
+static DTCache *_paragraphStyleCache = nil;
 
 
 @implementation DTCoreTextParagraphStyle
@@ -25,7 +26,7 @@ static NSCache *_paragraphStyleCache = nil;
 	static dispatch_once_t predicate;
   
 	dispatch_once(&predicate, ^{
-    _paragraphStyleCache = [[NSCache alloc] init];
+    _paragraphStyleCache = [[DTCache alloc] init];
 	});
 
   DTCoreTextParagraphStyle *returnParagraphStyle = NULL;

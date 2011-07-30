@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreText/CoreText.h>
+#import "DTCache.h"
 
 
 @interface DTCoreTextFontDescriptor : NSObject <NSCopying, NSCoding>
@@ -35,7 +36,7 @@
 }
 
 // generated fonts are cached
-+ (NSCache *)fontCache;
++ (DTCache *)fontCache;
 
 // sets the font face name to use for a specific font family
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic;
