@@ -19,5 +19,7 @@
 
 - (void)appendNakedString:(NSString *)string;
 
+- (void)compressAttributes;
+
 
 @end

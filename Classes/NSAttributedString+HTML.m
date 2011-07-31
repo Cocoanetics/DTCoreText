@@ -1296,7 +1296,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		[retString appendFormat:@"</%@>\n", blockElement];
 	}
 	
-	NSLog(@"%@", retString);
+	//NSLog(@"%@", retString);
 	
 	return retString;
 }

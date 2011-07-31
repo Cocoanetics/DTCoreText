@@ -21,6 +21,10 @@
 		A70F5512138A746200D642C5 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */; };
 		A717FFEA1386EDD200D3BE31 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */; };
 		A717FFEB1386EDD200D3BE31 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */; };
+		A723342F13E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */ = {isa = PBXBuildFile; fileRef = A723342E13E5C113003D9CDA /* DTRangedAttributesOptimizer.m */; };
+		A723343013E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */ = {isa = PBXBuildFile; fileRef = A723342E13E5C113003D9CDA /* DTRangedAttributesOptimizer.m */; };
+		A723343413E5C12B003D9CDA /* DTRangedAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = A723343313E5C12A003D9CDA /* DTRangedAttribute.m */; };
+		A723343513E5C12B003D9CDA /* DTRangedAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = A723343313E5C12A003D9CDA /* DTRangedAttribute.m */; };
 		A73BC3EF12D9F5AD00F064C6 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A73BC48E12DA078100F064C6 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A73BC48D12DA078100F064C6 /* DTAttributedTextContentView.m */; };
@@ -142,6 +146,10 @@
 		A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontCollection.m; sourceTree = "<group>"; };
 		A717FFE81386EDD100D3BE31 /* DTLazyImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLazyImageView.h; sourceTree = "<group>"; };
 		A717FFE91386EDD200D3BE31 /* DTLazyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLazyImageView.m; sourceTree = "<group>"; };
+		A723342D13E5C113003D9CDA /* DTRangedAttributesOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTRangedAttributesOptimizer.h; sourceTree = "<group>"; };
+		A723342E13E5C113003D9CDA /* DTRangedAttributesOptimizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTRangedAttributesOptimizer.m; sourceTree = "<group>"; };
+		A723343213E5C12A003D9CDA /* DTRangedAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; path = DTRangedAttribute.h; sourceTree = "<group>"; };
+		A723343313E5C12A003D9CDA /* DTRangedAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTRangedAttribute.m; sourceTree = "<group>"; };
 		A73BC3ED12D9F5AD00F064C6 /* NSAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+HTML.h"; sourceTree = "<group>"; };
 		A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+HTML.m"; sourceTree = "<group>"; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -404,6 +412,10 @@
 				A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */,
 				A7DF69C913E3EEAD00292700 /* DTCache.h */,
 				A7DF69CA13E3EEAD00292700 /* DTCache.m */,
+				A723342D13E5C113003D9CDA /* DTRangedAttributesOptimizer.h */,
+				A723342E13E5C113003D9CDA /* DTRangedAttributesOptimizer.m */,
+				A723343213E5C12A003D9CDA /* DTRangedAttribute.h */,
+				A723343313E5C12A003D9CDA /* DTRangedAttribute.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -613,6 +625,8 @@
 				A7D66A6013B353D200A9A7AC /* NSData+Base64.m in Sources */,
 				1207700513B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
 				A7DF69CC13E3EEAD00292700 /* DTCache.m in Sources */,
+				A723343013E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */,
+				A723343513E5C12B003D9CDA /* DTRangedAttribute.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +666,8 @@
 				A7D66A5F13B353D200A9A7AC /* NSData+Base64.m in Sources */,
 				1207700413B81A2000C841C3 /* NSString+UTF8Cleaner.m in Sources */,
 				A7DF69CB13E3EEAD00292700 /* DTCache.m in Sources */,
+				A723342F13E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */,
+				A723343413E5C12B003D9CDA /* DTRangedAttribute.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
