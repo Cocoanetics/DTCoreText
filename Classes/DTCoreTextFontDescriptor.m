@@ -8,7 +8,7 @@
 
 #import "DTCoreTextFontDescriptor.h"
 
-static NSCache *_fontCache = nil;
+static DTCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
 
@@ -16,11 +16,11 @@ static NSMutableDictionary *_fontOverrides = nil;
 
 
 
-+ (NSCache *)fontCache
++ (DTCache *)fontCache
 {
 	if (!_fontCache)
 	{
-		_fontCache = [[NSCache alloc] init];
+		_fontCache = [[DTCache alloc] init];
 	}
 	
 	return _fontCache;
@@ -387,7 +387,7 @@ static NSMutableDictionary *_fontOverrides = nil;
 {
 	NSDictionary *attributes = [self fontAttributes];
 	
-	NSCache *fontCache = [DTCoreTextFontDescriptor fontCache];
+	DTCache *fontCache = [DTCoreTextFontDescriptor fontCache];
 	NSString *cacheKey = [attributes description];
 	
 	CTFontRef cachedFont = (CTFontRef)[fontCache objectForKey:cacheKey];
