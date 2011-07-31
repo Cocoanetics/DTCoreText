@@ -37,7 +37,7 @@
 
 - (id)init {
 	if ((self = [super init])) {
-		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"Data", nil];
+		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"Data", @"HTML", nil];
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		[items release];
 		
@@ -69,6 +69,7 @@
 	[_rangeView release];
 	[_charsView release];
 	[_dataView release];
+	[_htmlView release];
 	[baseURL release];
 	
 	[lastActionLink release];
@@ -107,7 +108,13 @@
 	_rangeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_rangeView.editable = NO;
 	[self.view addSubview:_rangeView];
-	
+
+	// Create html view
+	_htmlView = [[UITextView alloc] initWithFrame:frame];
+	_htmlView.editable = NO;
+	_htmlView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	[self.view addSubview:_htmlView];
+
 	// Create text view
 	[DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
@@ -197,6 +204,9 @@
 	}
 	_charsView.text = dumpOutput;
 	[dumpOutput release];
+	
+	// Create HTML view
+	_htmlView.text = [_textView.attributedString htmlString];
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
@@ -227,6 +237,9 @@
 			break;
 		case 3:
 			selectedView = _dataView;
+			break;
+		case 4:
+			selectedView = _htmlView;
 			break;
 	}
 	
