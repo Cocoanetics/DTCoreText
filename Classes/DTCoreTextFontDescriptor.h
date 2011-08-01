@@ -62,6 +62,8 @@
 
 - (BOOL)supportsNativeSmallCaps;
 
+- (NSString *)cssStyleRepresentation;
+
 @property (nonatomic, copy) NSString *fontFamily;
 @property (nonatomic, copy) NSString *fontName;
 

@@ -47,4 +47,6 @@
 
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment;
 
+- (NSString *)cssStyleRepresentation;
+
 @end

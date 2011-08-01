@@ -158,6 +158,61 @@ static DTCache *_paragraphStyleCache = nil;
 	CFRelease(tab);
 }
 
+#pragma mark HTML Encoding
+
+// representation of this paragraph style in css (as far as possible)
+- (NSString *)cssStyleRepresentation
+{
+	NSMutableString *retString = [NSMutableString string];
+	
+	switch (textAlignment) 
+	{
+		case kCTLeftTextAlignment:
+			[retString appendString:@"text-align:left;"];
+			break;
+		case kCTRightTextAlignment:
+			[retString appendString:@"text-align:right;"];
+			break;
+		case kCTCenterTextAlignment:
+			[retString appendString:@"text-align:center;"];
+			break;
+		case kCTJustifiedTextAlignment:
+			[retString appendString:@"text-align:justify;"];
+			break;
+		case kCTNaturalTextAlignment:
+			// no output, this is default
+			break;
+	}
+	
+	if (lineHeightMultiple && lineHeightMultiple!=1.0f)
+	{
+		[retString appendFormat:@"line-height:%.2fem;", lineHeightMultiple];
+	}
+
+	switch (writingDirection) 
+	{
+		case kCTWritingDirectionRightToLeft:
+			[retString appendString:@"direction:rtl;"];
+			break;
+		case kCTWritingDirectionLeftToRight:
+			[retString appendString:@"direction:ltr;"];
+			break;
+		case kCTWritingDirectionNatural:
+			// no output, this is default
+			break;
+	}	
+	
+	// return nil if no content
+	if ([retString length])
+	{
+		return retString;
+	}
+	else
+	{
+		return nil;
+	}
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone

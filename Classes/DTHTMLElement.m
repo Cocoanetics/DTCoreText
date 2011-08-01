@@ -185,6 +185,11 @@
 		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"DTPreserveNewlines"];
 	}
 	
+	if (headerLevel)
+	{
+		[tmpDict setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"DTHeaderLevel"];
+	}
+	
 	return tmpDict;
 }
 

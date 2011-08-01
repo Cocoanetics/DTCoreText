@@ -559,26 +559,14 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				{
 					currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
 				}
-#if ALLOW_IPHONE_SPECIAL_CASES
-				else 
-				{
-					nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-				}
-#endif
 			}
 			else if ([tagName isEqualToString:@"center"] && tagOpen)
 			{
 				currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
-#if ALLOW_IPHONE_SPECIAL_CASES						
-				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-#endif
 			}
 			else if ([tagName isEqualToString:@"right"] && tagOpen)
 			{
 				currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
-#if ALLOW_IPHONE_SPECIAL_CASES						
-				nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-#endif
 			}
 			else if ([tagName isEqualToString:@"del"] || [tagName isEqualToString:@"strike"] ) 
 			{
@@ -993,6 +981,10 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	// returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
 	[self release];
+	
+	// join identical fonts
+	[tmpString compressAttributes];
+	
 	return tmpString;
 }
 
@@ -1077,6 +1069,236 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	}
 	
 	return nil;
+}
+
+#pragma mark HTML Encoding
+
+// TO DO: aggregate common styles (like font) into one span
+// TO DO: correctly encode LI/OL/UL
+// TO DO: correctly encode shadows
+
+- (NSString *)htmlString
+{
+	NSString *plainString = [self string];
+	
+	// divide the string into it's blocks, we assume that these are the P
+	NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
+	
+	NSMutableString *retString = [NSMutableString string];
+	
+	NSInteger location = 0;
+	for (NSString *oneParagraph in paragraphs)
+	{
+		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
+
+		// skip empty paragraph at end
+		if (oneParagraph == [paragraphs lastObject] && !paragraphRange.length)
+		{
+			break;
+		}
+		
+		BOOL fontIsBlockLevel = NO;
+		
+		// check if font is same in all paragraph
+		NSRange fontEffectiveRange;
+		CTFontRef paragraphFont = (CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
+		
+		if (NSEqualRanges(paragraphRange, fontEffectiveRange))
+		{
+			fontIsBlockLevel = YES;
+		}
+		
+		// next paragraph start
+		location = location + paragraphRange.length + 1;
+		
+		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
+		
+		CTParagraphStyleRef paraStyle = (CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		NSString *paraStyleString = nil;
+		
+		if (paraStyle)
+		{
+			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+			
+			paraStyleString = [para cssStyleRepresentation];
+		}
+		
+		if (!paraStyleString)
+		{
+			paraStyleString = @"";
+		}
+		
+		if (fontIsBlockLevel)
+		{
+			if (paragraphFont)
+			{
+				DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:paragraphFont];
+				NSString *paraFontStyle = [desc cssStyleRepresentation];
+				
+				if (paraFontStyle)
+				{
+					paraStyleString = [paraStyleString stringByAppendingString:paraFontStyle];
+				}
+			}
+		}
+		
+		NSString *blockElement;
+		
+		NSNumber *headerLevel = [paraAttributes objectForKey:@"DTHeaderLevel"];
+		
+		if (headerLevel)
+		{
+			blockElement = [NSString stringWithFormat:@"h%d", [headerLevel integerValue]];
+		}
+		else
+		{
+			blockElement = @"p";
+		}
+		
+		if ([paraStyleString length])
+		{
+			[retString appendFormat:@"<%@ style=\"%@\">", blockElement, paraStyleString];
+		}
+		else
+		{
+			[retString appendFormat:@"<%@>", blockElement];
+		}
+		
+		// add the attributed string ranges in this paragraph to the paragraph container
+		NSRange effectiveRange;
+		NSInteger index = paragraphRange.location;
+		
+		while (index < NSMaxRange(paragraphRange))
+		{
+			NSDictionary *attributes = [self attributesAtIndex:index longestEffectiveRange:&effectiveRange inRange:paragraphRange];
+			
+			index += effectiveRange.length;
+			
+			
+			NSString *subString = [[plainString substringWithRange:effectiveRange] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+			
+			DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+			
+			
+			if (attachment)
+			{
+				if (attachment.contentURL)
+				{
+					NSString *urlString;
+					
+					if ([attachment.contentURL isFileURL])
+					{
+						NSString *path = [attachment.contentURL path];
+						
+						NSRange range = [path rangeOfString:@".app/"];
+						
+						if (range.length)
+						{
+							urlString = [path substringFromIndex:NSMaxRange(range)];
+						}
+						else
+						{
+							urlString = [attachment.contentURL absoluteString];
+						}
+					}
+					else
+					{
+						urlString = [attachment.contentURL absoluteString];
+					}
+					
+					if (attachment.contentType == DTTextAttachmentTypeVideoURL)
+					{
+						[retString appendFormat:@"<video src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+					}
+					else if (attachment.contentType == DTTextAttachmentTypeImage)
+					{
+						[retString appendFormat:@"<img src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+					}
+				}
+				
+				continue;
+			}
+			
+			NSString *fontStyle = nil;
+			if (!fontIsBlockLevel)
+			{
+				CTFontRef font = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+				if (font)
+				{
+					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+					fontStyle = [desc cssStyleRepresentation];
+				}
+			}
+			
+			if (!fontStyle)
+			{
+				fontStyle = @"";
+			}
+			
+			CGColorRef textColor = (CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+			if (textColor)
+			{
+				UIColor *color = [UIColor colorWithCGColor:textColor];
+				
+				fontStyle = [fontStyle stringByAppendingFormat:@"color:%@;", [color htmlHexString]];
+			}
+			
+			CGColorRef backgroundColor = (CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
+			if (backgroundColor)
+			{
+				UIColor *color = [UIColor colorWithCGColor:backgroundColor];
+				
+				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:%@;", [color htmlHexString]];
+			}
+			
+			NSNumber *underline = [attributes objectForKey:(id)kCTUnderlineStyleAttributeName];
+			if (underline)
+			{
+				fontStyle = [fontStyle stringByAppendingString:@"text-decoration:underline;"];
+			}
+			else
+			{
+				// there can be no underline and strike-through at the same time
+				NSNumber *strikout = [attributes objectForKey:@"DTStrikeOut"];
+				if ([strikout boolValue])
+				{
+					fontStyle = [fontStyle stringByAppendingString:@"text-decoration:line-through;"];
+				}
+			}
+			
+			
+			NSURL *url = [attributes objectForKey:@"DTLink"];
+			
+			if (url)
+			{
+				if ([fontStyle length])
+				{
+					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url absoluteString], fontStyle, subString];
+				}
+				else
+				{
+					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url absoluteString], subString];
+				}			
+			}
+			else
+			{
+				if ([fontStyle length])
+				{
+					[retString appendFormat:@"<span style=\"%@\">%@</span>\n", fontStyle, subString];
+				}
+				else
+				{
+					[retString appendString:subString];
+				}
+			}
+		}
+		
+		[retString appendFormat:@"</%@>\n", blockElement];
+	}
+	
+	//NSLog(@"%@", retString);
+	
+	return retString;
 }
 
 @end

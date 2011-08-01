@@ -154,6 +154,16 @@ static NSMutableDictionary *_fontOverrides = nil;
 		CFRelease(dict);
 		CFRelease(traitsDict);
 		CFRelease(fd);
+		
+		// also get the family while we're at it
+		CFStringRef cfStr = CTFontCopyFamilyName(ctFont);
+		
+		if (cfStr)
+		{
+			self.fontFamily = (NSString *)cfStr;
+			
+			CFRelease(cfStr);
+		}
 	}
 	
 	return self;
@@ -706,20 +716,39 @@ static NSMutableDictionary *_fontOverrides = nil;
 	stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
 }
 
-//- (NSString *)fontName
-//{
-//    if (smallCapsFeature && fontFamily && _fontOverrides)
-//    {
-//        NSString *forcedFontName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:fontFamily bold:boldTrait italic:italicTrait];
-//        
-//        if (forcedFontName)
-//        {
-//            return forcedFontName;
-//        }
-//    }
-//    
-//    return fontName;
-//}
+
+// a representation of this font in CSS style
+- (NSString *)cssStyleRepresentation
+{
+	NSMutableString *retString = [NSMutableString string];
+	
+	if (fontFamily)
+	{
+		[retString appendFormat:@"font-family:'%@';", fontFamily];
+	}
+	
+	[retString appendFormat:@"font-size:%.0fpx;", pointSize];
+	
+	if (italicTrait)
+	{
+		[retString appendString:@"font-style:italic;"];
+	}
+	
+	if (boldTrait)
+	{
+		[retString appendString:@"font-weight:bold;"];
+	}
+
+	// return nil if no content
+	if ([retString length])
+	{
+		return retString;
+	}
+	else
+	{
+		return nil;
+	}
+}
 
 @synthesize fontFamily;
 @synthesize fontName;
