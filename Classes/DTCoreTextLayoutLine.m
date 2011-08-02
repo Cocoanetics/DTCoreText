@@ -175,6 +175,11 @@
 	return CTLineGetImageBounds(_line, context);
 }
 
+- (CGFloat)offsetForStringIndex:(NSInteger)index
+{
+	return CTLineGetOffsetForStringIndex(_line, index, NULL);
+}
+
 - (void)drawInContext:(CGContextRef)context
 {
 	CTLineDraw(_line, context);
