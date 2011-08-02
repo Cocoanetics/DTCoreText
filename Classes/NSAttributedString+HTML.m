@@ -982,9 +982,6 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 	//return [self initWithAttributedString:tmpString];
 	[self release];
 	
-	// join identical fonts
-	[tmpString compressAttributes];
-	
 	return tmpString;
 }
 

@@ -41,6 +41,8 @@
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
 - (NSArray *)stringIndices;
 - (CGFloat)offsetForStringIndex:(NSInteger)index;
+- (NSInteger)stringIndexForPosition:(CGPoint)position;
+
 
 - (void)drawInContext:(CGContextRef)context;
 

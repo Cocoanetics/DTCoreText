@@ -180,6 +180,19 @@
 	return CTLineGetOffsetForStringIndex(_line, index, NULL);
 }
 
+- (NSInteger)stringIndexForPosition:(CGPoint)position
+{
+	// position is in same coordinate system as frame
+	CGPoint adjustedPosition = position;
+	CGRect frame = self.frame;
+	adjustedPosition.x -= frame.origin.x;
+	adjustedPosition.y -= frame.origin.y;
+	
+	NSInteger index = CTLineGetStringIndexForPosition(_line, adjustedPosition);
+	
+	return index;
+}
+
 - (void)drawInContext:(CGContextRef)context
 {
 	CTLineDraw(_line, context);
