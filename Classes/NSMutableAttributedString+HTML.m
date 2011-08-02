@@ -11,7 +11,7 @@
 #import <CoreText/CoreText.h>
 #import "DTCoreTextParagraphStyle.h"
 
-#import "DTRangedAttributesOptimizer.h"
+//#import "DTRangedAttributesOptimizer.h"
 
 
 @implementation NSMutableAttributedString (HTML)
@@ -59,41 +59,41 @@
 }
 
 
-// compresses certain attributes to use one range instead of multiple identical ones
-- (void)compressAttributes
-{
-	DTRangedAttributesOptimizer *optimizer = [[DTRangedAttributesOptimizer alloc] init];
-	
-	// find ranges that have the same font
-	NSRange totalRange = NSMakeRange(0, [self length]);
-	NSInteger index = 0;
-	NSRange effectiveRange;
-	
-	while (index < NSMaxRange(totalRange))
-	{
-		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&effectiveRange];
-		
-		[optimizer addAttributes:attributes range:effectiveRange];
-		index += effectiveRange.length;
-	}
-	
-	// if there's something to optimize, do it
-	if (optimizer.didMerge)
-	{
-		for (id oneKey in [optimizer allKeys])
-		{
-			NSArray *array = [optimizer rangedAttributesForKey:oneKey];
-			
-			//[self removeAttribute:oneKey range:totalRange];
-
-			for (DTRangedAttribute *oneAttribute in array)
-			{
-				[self addAttribute:oneKey value:oneAttribute.value range:oneAttribute.range];
-			}
-		}
-	}
-	
-	[optimizer release];
-}
+//// compresses certain attributes to use one range instead of multiple identical ones
+//- (void)compressAttributes
+//{
+//	DTRangedAttributesOptimizer *optimizer = [[DTRangedAttributesOptimizer alloc] init];
+//	
+//	// find ranges that have the same font
+//	NSRange totalRange = NSMakeRange(0, [self length]);
+//	NSInteger index = 0;
+//	NSRange effectiveRange;
+//	
+//	while (index < NSMaxRange(totalRange))
+//	{
+//		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&effectiveRange];
+//		
+//		[optimizer addAttributes:attributes range:effectiveRange];
+//		index += effectiveRange.length;
+//	}
+//	
+//	// if there's something to optimize, do it
+//	if (optimizer.didMerge)
+//	{
+//		for (id oneKey in [optimizer allKeys])
+//		{
+//			NSArray *array = [optimizer rangedAttributesForKey:oneKey];
+//			
+//			//[self removeAttribute:oneKey range:totalRange];
+//
+//			for (DTRangedAttribute *oneAttribute in array)
+//			{
+//				[self addAttribute:oneKey value:oneAttribute.value range:oneAttribute.range];
+//			}
+//		}
+//	}
+//	
+//	[optimizer release];
+//}
 
 @end
