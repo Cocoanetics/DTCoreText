@@ -6,11 +6,13 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+@class DTCache;
+
 @interface DemoSnippetsViewController : UITableViewController {
 
 	NSArray *_snippets;
 	
-	NSMutableDictionary *contentViewCache;
+	DTCache *cellCache;
 }
 
 @end
