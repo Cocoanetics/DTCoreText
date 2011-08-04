@@ -1174,6 +1174,11 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			
 			NSString *subString = [[plainString substringWithRange:effectiveRange] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 			
+			if (!subString)
+			{
+				continue;
+			}
+			
 			DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
 			
 			
@@ -1285,6 +1290,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 				}
 				else
 				{
+					NSLog(@"subStr: %@", subString);
 					[retString appendString:subString];
 				}
 			}
@@ -1292,8 +1298,6 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		
 		[retString appendFormat:@"</%@>\n", blockElement];
 	}
-	
-	//NSLog(@"%@", retString);
 	
 	return retString;
 }
