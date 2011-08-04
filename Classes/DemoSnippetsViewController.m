@@ -68,6 +68,8 @@
 	NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
 	
 	[cell setHTMLString:html];
+	
+	cell.attributedTextContextView.shouldDrawImages = YES;
 }
 
 - (DTAttributedTextCell *)tableView:(UITableView *)tableView preparedCellForIndexPath:(NSIndexPath *)indexPath
