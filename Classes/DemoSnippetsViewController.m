@@ -88,7 +88,8 @@
 
 	if (!cell)
 	{
-		cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+		// reuse does not work for variable height
+		//cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 	
 		if (!cell)
 		{
@@ -104,6 +105,7 @@
 	return cell;
 }
 
+// disable this method to get static height = better performance
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	DTAttributedTextCell *cell = (DTAttributedTextCell *)[self tableView:tableView preparedCellForIndexPath:indexPath];
