@@ -57,7 +57,7 @@
 	[super layoutSubviews];
 	
 	// after the first call here the content view size is correct
-	_attributedTextContextView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	_attributedTextContextView.frame = self.contentView.bounds;
 }
 
 #pragma mark Properties

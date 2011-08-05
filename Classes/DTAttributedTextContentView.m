@@ -399,7 +399,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		// set frame to fit text preserving origin
 		// call super to avoid endless loop
+		[self willChangeValueForKey:@"frame"];
 		super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+		[self didChangeValueForKey:@"frame"];
 	}
 	
 	[self setNeedsDisplay];

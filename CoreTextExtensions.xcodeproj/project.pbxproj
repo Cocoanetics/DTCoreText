@@ -49,6 +49,8 @@
 		A76FF76C12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF76B12EDFBA50065A4E7 /* DTCoreTextLayoutFrame.m */; };
 		A76FF79312EE00700065A4E7 /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */; };
 		A76FF95612EEA80D0065A4E7 /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */; };
+		A78050EB13EC365000582708 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A78050EA13EC365000582708 /* DTWebVideoView.m */; };
+		A78050EC13EC365000582708 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A78050EA13EC365000582708 /* DTWebVideoView.m */; };
 		A784551A1344D53500D7E6EC /* WarAndPeace.html in Resources */ = {isa = PBXBuildFile; fileRef = A78455191344D53500D7E6EC /* WarAndPeace.html */; };
 		A78A367412E23C56007CE622 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */; };
 		A78A38D412E2FEAC007CE622 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A78A38D312E2FEAC007CE622 /* DTLinkButton.m */; };
@@ -182,6 +184,9 @@
 		A76FF79212EE00700065A4E7 /* DTCoreTextLayoutLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutLine.m; sourceTree = "<group>"; };
 		A76FF95412EEA80D0065A4E7 /* DTCoreTextGlyphRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextGlyphRun.h; sourceTree = "<group>"; };
 		A76FF95512EEA80D0065A4E7 /* DTCoreTextGlyphRun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextGlyphRun.m; sourceTree = "<group>"; };
+		A78050E913EC365000582708 /* DTWebVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTWebVideoView.h; sourceTree = "<group>"; };
+		A78050EA13EC365000582708 /* DTWebVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTWebVideoView.m; sourceTree = "<group>"; };
+		A78050ED13EC526800582708 /* Readme.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.markdown; sourceTree = SOURCE_ROOT; };
 		A78455191344D53500D7E6EC /* WarAndPeace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WarAndPeace.html; sourceTree = "<group>"; };
 		A78A367212E23C56007CE622 /* NSCharacterSet+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+HTML.h"; sourceTree = "<group>"; };
 		A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+HTML.m"; sourceTree = "<group>"; };
@@ -382,6 +387,8 @@
 				A78A38D312E2FEAC007CE622 /* DTLinkButton.m */,
 				A78A38F612E30153007CE622 /* CGUtils.h */,
 				A78A38F712E30153007CE622 /* CGUtils.m */,
+				A78050E913EC365000582708 /* DTWebVideoView.h */,
+				A78050EA13EC365000582708 /* DTWebVideoView.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -439,6 +446,7 @@
 		B23558E312E04C3C005EA62F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A78050ED13EC526800582708 /* Readme.markdown */,
 				A7F2A73D1356F5720097BF31 /* XB NiloofarBd.ttf */,
 				A7F2A7381356F2E30097BF31 /* XB Niloofar.ttf */,
 				A78455191344D53500D7E6EC /* WarAndPeace.html */,
@@ -634,6 +642,7 @@
 				A723343013E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */,
 				A723343513E5C12B003D9CDA /* DTRangedAttribute.m in Sources */,
 				A7101B5D13EA92FF00B75ECD /* DTAttributedTextCell.m in Sources */,
+				A78050EC13EC365000582708 /* DTWebVideoView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,6 +685,7 @@
 				A723342F13E5C113003D9CDA /* DTRangedAttributesOptimizer.m in Sources */,
 				A723343413E5C12B003D9CDA /* DTRangedAttribute.m in Sources */,
 				A7101B5C13EA92FF00B75ECD /* DTAttributedTextCell.m in Sources */,
+				A78050EB13EC365000582708 /* DTWebVideoView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

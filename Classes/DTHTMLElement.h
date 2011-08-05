@@ -94,7 +94,8 @@ typedef enum
     NSInteger _listDepth;
     NSInteger _listCounter;
     
-    NSMutableArray *children;
+    NSMutableArray *_children;
+	NSDictionary *_attributes; // contains all attributes from parsing
 }
 
 @property (nonatomic, assign) DTHTMLElement *parent;
@@ -121,9 +122,9 @@ typedef enum
 @property (nonatomic, assign) DTHTMLElementListStyle listStyle;
 @property (nonatomic, assign) CGFloat textScale;
 @property (nonatomic, assign) CGSize size;
-@property (nonatomic, readonly) NSArray *children;
 @property (nonatomic, readonly) NSInteger listDepth;
 @property (nonatomic) NSInteger listCounter;
+@property (nonatomic, retain) NSDictionary *attributes;
 
 
 - (NSAttributedString *)attributedString;
@@ -134,6 +135,8 @@ typedef enum
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
 
 - (NSString *)path;
+
+- (NSString *)attributeForKey:(NSString *)key;
 
 - (void)addChild:(DTHTMLElement *)child;
 - (void)removeChild:(DTHTMLElement *)child;
