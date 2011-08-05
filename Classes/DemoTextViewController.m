@@ -14,6 +14,7 @@
 
 #import "DTLinkButton.h"
 #import "DTLazyImageView.h"
+#import "DTWebVideoView.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -133,7 +134,9 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	
 	// Create attributed string from HTML
-	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:CGSizeMake(200, 150)], DTMaxImageSize,
+	CGSize maxImageSize = CGSizeMake(self.view.bounds.size.width - 20.0, self.view.bounds.size.height - 20.0);
+	
+	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
 													 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, nil]; // @"green",DTDefaultTextColor,
 	
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
@@ -341,6 +344,13 @@
 		imageView.url = attachment.contentURL;
 		
 		return imageView;
+	}
+	else if (attachment.contentType == DTTextAttachmentTypeIframe)
+	{
+		DTWebVideoView *videoView = [[[DTWebVideoView alloc] initWithFrame:frame] autorelease];
+		videoView.attachment = attachment;
+		
+		return videoView;
 	}
 	
 	return nil;

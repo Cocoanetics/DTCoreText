@@ -1,7 +1,7 @@
 <h1>Image Handling</h1>
 <p>Some basic <b>image</b> handling has been implemented</p>
 <h2>Inline</h2>
-<p>So far <img style="width:50px;height:50px;" src="Oliver.jpg"> images work inline, sitting on the line's baseline.</p>
+<p>So far <img src="icon_smile.gif"> images work inline, sitting on the line's baseline. There is a workaround in place that if an image is more than twice as high as the surrounding text it will be treated as it's own block.</p>
 <h2>Block</h2>
 <p>There is a known issue with images as blocks, outside of p tags.</p>
 <img width="100" height="100" src="Oliver.jpg">
@@ -25,12 +25,13 @@
 <li>xbm</li>
 </ul>
 <h2>Data Source</h2>
-	<p>Base64 encoded data SRC is supported: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
+	<p>Base64 encoded data SRC is supported, for example this red dot: <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
 	AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-	9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />. Or: <img src="data:image/gif;base64,R0lGODlhDwAPAKECAAAAzMzM/////
+	9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" /></p>
+	<p>Another example:</p><img src="data:image/gif;base64,R0lGODlhDwAPAKECAAAAzMzM/////
 	wAAACwAAAAADwAPAAACIISPeQHsrZ5ModrLlN48CXF8m2iQ3YmmKqVlRtW4ML
 	wWACH+H09wdGltaXplZCBieSBVbGVhZCBTbWFydFNhdmVyIQAAOw=="
-	alt="Base64 encoded image" width="150" height="150"/></p>
+	alt="Base64 encoded image" width="100" height="100"/>
 	
 <h2>Remote Images</h2>
 <p>Images can also be loaded from remote URLs, even without specifying a size in the HTML. The code demonstrates how to update the DTTextAttachment's display size after download and triggering a re-layout.</p>

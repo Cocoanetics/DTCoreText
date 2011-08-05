@@ -8,8 +8,9 @@
 
 #import "DemoSnippetsViewController.h"
 #import "DemoTextViewController.h"
+#import "DTCache.h"
 
-#import "DTAttributedTextContentView.h"
+#import "DTAttributedTextCell.h"
 
 @implementation DemoSnippetsViewController
 
@@ -26,7 +27,7 @@
 
 - (void)dealloc {
 	[_snippets release];
-	[contentViewCache release];
+	[cellCache release];
 	[super dealloc];
 }
 
@@ -42,6 +43,10 @@
 }
 
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return YES;
+}
+
 #pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -53,73 +58,67 @@
 	return [_snippets count];
 }
 
-
-- (DTAttributedTextContentView *)contentViewForIndexPath:(NSIndexPath *)indexPath
+- (void)configureCell:(DTAttributedTextCell *)cell forIndexPath:(NSIndexPath *)indexPath
 {
-	if (!contentViewCache)
+	NSDictionary *snippet = [_snippets objectAtIndex:indexPath.row];
+	
+	NSString *title = [snippet objectForKey:@"Title"];
+	NSString *description = [snippet objectForKey:@"Description"];
+	
+	NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
+	
+	[cell setHTMLString:html];
+	
+	cell.attributedTextContextView.shouldDrawImages = YES;
+}
+
+- (DTAttributedTextCell *)tableView:(UITableView *)tableView preparedCellForIndexPath:(NSIndexPath *)indexPath
+{
+	static NSString *cellIdentifier = @"cellIdentifier";
+
+	if (!cellCache)
 	{
-		contentViewCache = [[NSMutableDictionary alloc] init];
+		cellCache = [[DTCache alloc] init];
 	}
 	
 	// workaround for iOS 5 bug
 	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
 	
-	DTAttributedTextContentView *contentView = (id)[contentViewCache objectForKey:key];
-	
-	if (!contentView)
+	DTAttributedTextCell *cell = [cellCache objectForKey:key];
+
+	if (!cell)
 	{
-		NSDictionary *snippet = [_snippets objectAtIndex:indexPath.row];
+		// reuse does not work for variable height
+		//cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+	
+		if (!cell)
+		{
+			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator];
+		}
 		
-		NSString *title = [snippet objectForKey:@"Title"];
-		NSString *description = [snippet objectForKey:@"Description"];
-		
-		NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
-		NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-		NSAttributedString *string = [[[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL] autorelease];
-		
-		// set width, height is calculated later from text
-		CGFloat width = self.view.frame.size.width;
-		[DTAttributedTextContentView setLayerClass:nil];
-		contentView = [[[DTAttributedTextContentView alloc] initWithAttributedString:string width:width - 20.0] autorelease];
-		contentView.shouldDrawImages = YES;
-		
-		contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		contentView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-		[contentViewCache setObject:contentView forKey:indexPath];
+		// cache it
+		[cellCache setObject:cell forKey:key];
 	}
 	
-	return contentView;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	DTAttributedTextContentView *contentView = [self contentViewForIndexPath:indexPath];
-	
-	return contentView.bounds.size.height+1; // for cell seperator
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	static NSString *cellIdentifier = @"cellIdentifier";
-	
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-	if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-	
-	[cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	
-	DTAttributedTextContentView *contentView = [self contentViewForIndexPath:indexPath];
-	
-	contentView.frame = cell.contentView.bounds;
-	[cell.contentView addSubview:contentView];
+	[self configureCell:cell forIndexPath:indexPath];
 	
 	return cell;
 }
 
+// disable this method to get static height = better performance
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	DTAttributedTextCell *cell = (DTAttributedTextCell *)[self tableView:tableView preparedCellForIndexPath:indexPath];
 
+	return cell.attributedTextContextView.bounds.size.height; // for cell seperator
+}
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+	DTAttributedTextCell *cell = (DTAttributedTextCell *)[self tableView:tableView preparedCellForIndexPath:indexPath];
+	
+	return cell;
+}
 
 #pragma mark UITableViewDelegate
 

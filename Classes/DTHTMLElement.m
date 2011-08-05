@@ -15,10 +15,12 @@
 #import "NSCharacterSet+HTML.h"
 #import "DTTextAttachment.h"
 #import "NSAttributedString+HTML.h"
+#import "NSMutableAttributedString+HTML.h"
 
 @interface DTHTMLElement ()
 
 @property (nonatomic, retain) NSMutableDictionary *fontCache;
+@property (nonatomic, retain) NSMutableArray *children;
 
 @end
 
@@ -34,7 +36,6 @@
 		_isMeta = -1;
 		_listDepth = -1;
 		_listCounter = NSIntegerMin;
-		children = [NSMutableArray array];
 	}
 	
 	return self;
@@ -60,6 +61,9 @@
 	
 	[_fontCache release];
 	[_additionalAttributes release];
+	
+	[_attributes release];
+	[_children release];
 	
 	[super dealloc];
 }
@@ -200,7 +204,24 @@
 	if (textAttachment)
 	{
 		// ignore text, use unicode object placeholder
-		return [[[NSAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes] autorelease];
+		NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes] autorelease];
+
+		BOOL needsNewLineAfter = ![self isContainedInBlockElement];
+		
+#if ALLOW_IPHONE_SPECIAL_CASES
+		// workaround, make float images blocks because we have no float
+		if (floatStyle || textAttachment.displaySize.height > 2.0 * fontDescriptor.pointSize)
+		{
+			needsNewLineAfter = YES;
+		}
+#endif
+
+		if (needsNewLineAfter)
+		{
+			[tmpString appendNakedString:@"\n"];
+		}
+		
+		return tmpString;
 	}
 	else
 	{
@@ -678,12 +699,12 @@
 - (void)addChild:(DTHTMLElement *)child
 {
 	child.parent = self;
-	[children addObject:child];
+	[self.children addObject:child];
 }
 
 - (void)removeChild:(DTHTMLElement *)child
 {
-	[children removeObject:child];
+	[self.children removeObject:child];
 }
 
 - (DTHTMLElement *)parentWithTagName:(NSString *)name
@@ -711,6 +732,10 @@
 	return YES;
 }
 
+- (NSString *)attributeForKey:(NSString *)key
+{
+	return [_attributes objectForKey:key];
+}
 
 
 #pragma mark Copying
@@ -912,6 +937,29 @@
 	_listCounter = count;
 }
 
+- (NSMutableArray *)children
+{
+	if (!_children)
+	{
+		_children = [[NSMutableArray alloc] init];
+	}
+	
+	return _children;
+}
+
+- (void)setAttributes:(NSDictionary *)attributes
+{
+	if (_attributes != attributes)
+	{
+		[_attributes release];
+		_attributes = [attributes retain];
+
+		// decode size contained in attributes, might be overridden later by CSS size
+		size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]); 
+	}
+}
+
+
 @synthesize parent;
 @synthesize fontDescriptor;
 @synthesize paragraphStyle;
@@ -937,7 +985,8 @@
 @synthesize size;
 
 @synthesize fontCache = _fontCache;
-@synthesize children;
+@synthesize children = _children;
+@synthesize attributes = _attributes;
 
 
 

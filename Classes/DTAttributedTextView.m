@@ -179,9 +179,9 @@
 - (void)setAttributedString:(NSAttributedString *)string
 {
 	self.contentView.attributedString = string;
-	
-	// contentView resizes itself after layout
-	// self.contentSize is updated through KVO
+
+	// adjust content size right away
+	self.contentSize = self.contentView.frame.size;
 }
 
 - (NSAttributedString *)attributedString

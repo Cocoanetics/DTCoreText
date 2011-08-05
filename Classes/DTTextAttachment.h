@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+@class DTHTMLElement;
 
 typedef enum
 {
     DTTextAttachmentTypeImage,
     DTTextAttachmentTypeVideoURL,
-
+	DTTextAttachmentTypeIframe,
+	DTTextAttachmentTypeObject
 }  DTTextAttachmentType;
 
 
@@ -37,5 +39,8 @@ typedef enum
 @property (nonatomic, retain) NSURL *contentURL;
 @property (nonatomic, retain) NSURL *hyperLinkURL;
 @property (nonatomic, retain) NSDictionary *attributes;
+
+
++ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
 @end

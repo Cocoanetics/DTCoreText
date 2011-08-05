@@ -39,9 +39,12 @@
 - (NSArray *)glyphRunsWithRange:(NSRange)range;
 - (CGRect)frameOfGlyphsWithRange:(NSRange)range;
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
+- (NSArray *)stringIndices;
+- (CGFloat)offsetForStringIndex:(NSInteger)index;
+- (NSInteger)stringIndexForPosition:(CGPoint)position;
+
 
 - (void)drawInContext:(CGContextRef)context;
-- (NSArray *)stringIndices;
 
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
 

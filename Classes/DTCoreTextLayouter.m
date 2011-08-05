@@ -59,14 +59,10 @@
 
 - (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
 {
+	// Note: this returns an unreliable measure prior to 4.2 for very long documents
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
-																																	 CGSizeMake(width, CGFLOAT_MAX),
-																																	 NULL);
-	
-	// for unknown reasons suddenly 1 needs to be added to fit
-	neededSize.height = ceilf(neededSize.height)+1.0;
-	neededSize.width = width;
-	
+																	 CGSizeMake(width, CGFLOAT_MAX),
+																	 NULL);
 	return neededSize;
 }
 
@@ -74,9 +70,9 @@
 // a temporary frame
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
 {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
-  [pool release]; pool = NULL;
+	[pool release]; pool = NULL;
 	return [newFrame autorelease];
 }
 

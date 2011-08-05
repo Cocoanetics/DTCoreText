@@ -398,7 +398,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		CGSize neededSize = [self sizeThatFits:self.bounds.size];
 		
 		// set frame to fit text preserving origin
-		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+		// call super to avoid endless loop
+		[self willChangeValueForKey:@"frame"];
+		super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+		[self didChangeValueForKey:@"frame"];
 	}
 	
 	[self setNeedsDisplay];
@@ -474,22 +477,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)setFrame:(CGRect)frame
 {
+	CGRect oldFrame = self.frame;
+	
 	[super setFrame:frame];
 	
 	if (!_layoutFrame) 
 	{
 		return;	
 	}
+
+	BOOL frameDidChange = !CGRectEqualToRect(oldFrame, frame);
 	
-	CGSize sizeThatFits = [self sizeThatFits:self.bounds.size];
-	
-	if (!CGSizeEqualToSize(frame.size, sizeThatFits))
+	// having a layouter means we are responsible for layouting yourselves
+	if (frameDidChange && _layouter)
 	{
-		if (_layouter)
-		{
-			// layouter means we are responsible for layouting yourselves
-			[self relayoutText];
-		}
+		[self relayoutText];
 	}
 }
 
