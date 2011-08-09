@@ -100,5 +100,13 @@
 		<key>Title</key>
 		<string>Never mind this file ...</string>
 	</dict>
+	<dict>
+		<key>Description</key>
+		<string>Arabic Ligation</string>
+		<key>File</key>
+		<string>ArabicTest.html</string>
+		<key>Title</key>
+		<string>Never mind this file too...</string>
+	</dict>
 </array>
 </plist>
