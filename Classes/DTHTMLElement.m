@@ -624,7 +624,7 @@
 		}
 	}
 	
-	NSString *listStyleStr = [[styles objectForKey:@"list-style"] lowercaseString];
+	NSString *listStyleStr = [[styles objectForKey:@"list-style-type"] lowercaseString];
 	if (listStyleStr)
 	{
 		if ([listStyleStr isEqualToString:@"inherit"])
