@@ -112,7 +112,7 @@ typedef enum
 
 
 - (NSAttributedString *)attributedString;
-- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter;
+- (NSAttributedString *)prefixForListItem;
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;

@@ -27,6 +27,7 @@
 {
 	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
 	style.type = DTCSSListStyleTypeDecimal;
+	style.position = DTCSSListStylePositionOutside;
 	return style;
 }
 
@@ -34,6 +35,7 @@
 {
 	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
 	style.type = DTCSSListStyleTypeDisc;
+	style.position = DTCSSListStylePositionOutside;
 	return style;
 }
 
@@ -51,6 +53,9 @@
 	
 	if (self)
 	{
+		// default
+		_position = DTCSSListStylePositionOutside; 
+		
 		[self updateFromStyleDictionary:styles];
 	}
 	
@@ -189,17 +194,89 @@
 	[self setPositionWithString:[styles objectForKey:@"list-style-position"]];
 }
 
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"<%@ type=%d position=%d>", NSStringFromClass([self class]), _type, _position];
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
 {
 	DTCSSListStyle *newStyle = [[DTCSSListStyle allocWithZone:zone] init];
 	newStyle.type = self.type;
+	newStyle.position = self.position;
 	
 	return newStyle;
 }
 	
+#pragma mark Utilities
 
+- (NSString *)prefixWithCounter:(NSInteger)counter
+{
+	NSString *token = nil;
+	
+	switch (_type) 
+	{
+		case DTCSSListStyleTypeNone:
+		case DTCSSListStyleTypeInherit:  // should never be called with inherit
+		{
+			return nil;
+		}
+		case DTCSSListStyleTypeCircle:
+		{
+			token = @"\u25e6";
+			break;
+		}
+		case DTCSSListStyleTypeDecimal:
+		{
+			token = [NSString stringWithFormat:@"%d.", counter];
+			break;
+		}
+		case DTCSSListStyleTypeDecimalLeadingZero:
+		{
+			token = [NSString stringWithFormat:@"%02d.", counter];
+			break;
+		}
+		case DTCSSListStyleTypeDisc:
+		{
+			token = @"\u2022";
+			break;
+		}
+		case DTCSSListStyleTypeUpperAlpha:
+		case DTCSSListStyleTypeUpperLatin:
+		{
+			char letter = 'A' + counter - 1;
+			token = [NSString stringWithFormat:@"%c.", letter];
+			break;
+		}
+		case DTCSSListStyleTypeLowerAlpha:
+		case DTCSSListStyleTypeLowerLatin:
+		{
+			char letter = 'a' + counter - 1;
+			token = [NSString stringWithFormat:@"%c.", letter];
+			break;
+		}
+		case DTCSSListStyleTypePlus:
+		{
+			token = @"+";
+			break;
+		}
+		case DTCSSListStyleTypeUnderscore:
+		{
+			token = @"_";
+		}
+	}	
+	
+	if (_position == DTCSSListStylePositionInside)
+	{
+		return [NSString stringWithFormat:@"\x09\x09%@", token];
+	}
+	else
+	{
+		return [NSString stringWithFormat:@"\x09%@\x09", token];
+	}
+}
 
 #pragma mark Properties
 

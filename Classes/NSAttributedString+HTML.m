@@ -384,11 +384,6 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
-					if (!currentTag.listStyle)
-					{
-						currentTag.listStyle = [DTCSSListStyle inheritedListStyle];
-					}
-					
 					// have inherit the correct list counter from parent
 					
 					DTHTMLElement *counterElement = currentTag.parent;
@@ -453,7 +448,10 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
-					currentTag.listStyle = [DTCSSListStyle decimalListStyle];
+					if (!currentTag.listStyle)
+					{
+						currentTag.listStyle = [DTCSSListStyle decimalListStyle];
+					}
 					
 					NSString *valueNum = [currentTag attributeForKey:@"start"];
 					if (valueNum)
@@ -480,7 +478,10 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
-					currentTag.listStyle = [DTCSSListStyle discListStyle];
+					if (!currentTag.listStyle)
+					{
+						currentTag.listStyle = [DTCSSListStyle discListStyle];
+					}
 
 					
 					needsNewLineBefore = YES;
@@ -834,7 +835,7 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					// if we start a list, then we wait until we have actual text
 					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
-						NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
+						NSAttributedString *prefixString = [currentTag prefixForListItem];
 						
 						if (prefixString)
 						{

@@ -258,7 +258,7 @@
 	}
 }
 
-- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter
+- (NSAttributedString *)prefixForListItem
 {
 	// make a font without italic or bold
 	DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
@@ -285,56 +285,11 @@
 	// get calculated list style
 	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
 	
-	switch (calculatedListStyle.type) 
+	NSString *prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+	
+	if (prefix)
 	{
-		case DTCSSListStyleTypeNone:
-		{
-			return nil;
-		}
-		case DTCSSListStyleTypeCircle:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09\u25e6\x09" attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeDecimal:
-		{
-			NSString *string = [NSString stringWithFormat:@"\x09%d.\x09", counter];
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeDecimalLeadingZero:
-		{
-			NSString *string = [NSString stringWithFormat:@"\x09%02d.\x09", counter];
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeDisc:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09\u2022\x09" attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeUpperAlpha:
-		case DTCSSListStyleTypeUpperLatin:
-		{
-			char letter = 'A' + counter-1;
-			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
-			
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeLowerAlpha:
-		case DTCSSListStyleTypeLowerLatin:
-		{
-			char letter = 'a' + counter-1;
-			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
-			
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypePlus:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09+\x09" attributes:attributes] autorelease];
-		}
-		case DTCSSListStyleTypeUnderscore:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09_\x09" attributes:attributes] autorelease];
-		}
-		default:
-			return nil;
+		return [[[NSAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
 	}
 	
 	return nil;
@@ -633,7 +588,7 @@
 		}
 	}
 	
-	// list style become it's own object
+	// list style became it's own object
 	self.listStyle = [DTCSSListStyle listStyleWithStyles:styles];
 	
 	
@@ -701,6 +656,57 @@
 	return [_attributes objectForKey:key];
 }
 
+#pragma mark Calulcating Properties
+
+- (id)valueForKeyPathWithInheritance:(NSString *)keyPath
+{
+	id value = [self valueForKeyPath:keyPath];
+	
+	// if property is not set we also go to parent
+	if (!value && parent)
+	{
+		return [parent valueForKeyPathWithInheritance:keyPath];
+	}
+	
+	// enum properties have 0 for inherit
+	if ([value isKindOfClass:[NSNumber class]])
+	{
+		NSNumber *number = value;
+		
+		if (([number integerValue]==0) && parent)
+		{
+			return [parent valueForKeyPathWithInheritance:keyPath];
+		}
+	}
+	
+	// string properties have 'inherit' for inheriting
+	if ([value isKindOfClass:[NSString class]])
+	{
+		NSString *string = value;
+		
+		if ([string isEqualToString:@"inherit"] && parent)
+		{
+			return [parent valueForKeyPathWithInheritance:keyPath];
+		}
+	}
+	
+	// obviously not inherited
+	return value;
+}
+
+
+- (DTCSSListStyle *)calculatedListStyle
+{
+	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	
+	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
+	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
+	
+	style.type = (DTCSSListStyleType)[calcType integerValue];
+	style.position = (DTCSSListStylePosition)[calcPos integerValue];
+	
+	return style;
+}
 
 #pragma mark Copying
 
@@ -728,7 +734,6 @@
 	
 	newObject.fontCache = self.fontCache; // reference
 	newObject.listCounter = self.listCounter;
-	newObject.listStyle = self.listStyle;
 	
 	return newObject;
 }
@@ -788,21 +793,6 @@
 	}
 	
 	return fontVariant;
-}
-
-- (DTCSSListStyle *)calculatedListStyle
-{
-	if (_listStyle.inherit)
-	{
-		if (parent)
-		{
-			return [parent calculatedListStyle];
-		}
-		
-		return nil;
-	}
-	
-	return _listStyle;
 }
 
 - (NSString *)path
