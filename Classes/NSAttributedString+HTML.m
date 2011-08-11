@@ -20,6 +20,8 @@
 #import "DTTextAttachment.h"
 
 #import "DTHTMLElement.h"
+#import "DTCSSListStyle.h"
+
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
 
@@ -382,6 +384,11 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
+					if (!currentTag.listStyle)
+					{
+						currentTag.listStyle = [DTCSSListStyle inheritedListStyle];
+					}
+					
 					// have inherit the correct list counter from parent
 					
 					DTHTMLElement *counterElement = currentTag.parent;
@@ -446,6 +453,8 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
+					currentTag.listStyle = [DTCSSListStyle decimalListStyle];
+					
 					NSString *valueNum = [currentTag attributeForKey:@"start"];
 					if (valueNum)
 					{
@@ -471,6 +480,9 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
+					currentTag.listStyle = [DTCSSListStyle discListStyle];
+
+					
 					needsNewLineBefore = YES;
 					
 					currentTag.listCounter = 0;
