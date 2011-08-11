@@ -40,6 +40,9 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
 NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
+NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
+NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
+
 
 @implementation NSAttributedString (HTML)
 
@@ -165,6 +168,18 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
 	}
 	
+	NSNumber *defaultFirstLineHeadIndent = [options objectForKey:DTDefaultFirstLineHeadIndent];
+	if (defaultFirstLineHeadIndent)
+	{
+		defaultParagraphStyle.firstLineIndent = [defaultFirstLineHeadIndent integerValue];
+	}
+	
+	NSNumber *defaultHeadIndent = [options objectForKey:DTDefaultHeadIndent];
+	if (defaultHeadIndent)
+	{
+		defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+	}
+
 	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
 	defaultTag.fontDescriptor = defaultFontDescriptor;
 	defaultTag.paragraphStyle = defaultParagraphStyle;
@@ -184,6 +199,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
 		}
 	}
+
 	
 	DTHTMLElement *currentTag = defaultTag; // our defaults are the root
 	
