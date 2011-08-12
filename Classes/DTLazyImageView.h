@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <ImageIO/ImageIO.h>
 
+@class DTLazyImageView;
+
+@protocol DTLazyImageViewDelegate <NSObject>
+@optional
+- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size;
+@end
 
 @interface DTLazyImageView : UIImageView 
 {
@@ -24,10 +30,14 @@
 	NSUInteger _expectedSize;
     
     BOOL shouldShowProgressiveDownload;
+	
+	id<DTLazyImageViewDelegate> _delegate;
 }
 
 @property (nonatomic, retain) NSURL *url;
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
+
+@property (nonatomic, assign) id<DTLazyImageViewDelegate> delegate;
 
 - (void)cancelLoading;
 

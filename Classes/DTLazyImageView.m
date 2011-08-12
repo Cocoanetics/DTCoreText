@@ -19,6 +19,7 @@ static DTCache *_imageCache = nil;
 
 
 @implementation DTLazyImageView
+@synthesize delegate=_delegate;
 
 - (void)dealloc
 {
@@ -153,9 +154,12 @@ static DTCache *_imageCache = nil;
 
 - (void)notify
 {
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:CGSizeMake(_fullWidth, _fullHeight)], @"ImageSize", _url, @"ImageURL", nil];
+//	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:CGSizeMake(_fullWidth, _fullHeight)], @"ImageSize", _url, @"ImageURL", nil];
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"DTLazyImageViewDidFinishLoading" object:nil userInfo:userInfo];
+	if ([self.delegate respondsToSelector:@selector(lazyImageView:didChangeImageSize:)]) {
+		[self.delegate lazyImageView:self didChangeImageSize:CGSizeMake(_fullWidth, _fullHeight)];
+	}
+//	[[NSNotificationCenter defaultCenter] postNotificationName:@"DTLazyImageViewDidFinishLoading" object:nil userInfo:userInfo];
 }
 
 - (void)completeDownloadWithData:(NSData *)data
