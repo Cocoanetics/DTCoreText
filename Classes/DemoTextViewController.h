@@ -7,9 +7,9 @@
 //
 
 #import "DTAttributedTextView.h"
+#import "DTLazyImageView.h"
 
-
-@interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate>
+@interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate, DTLazyImageViewDelegate>
 {
 
 	NSString *_fileName;
