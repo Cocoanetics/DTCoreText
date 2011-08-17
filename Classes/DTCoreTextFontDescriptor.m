@@ -11,10 +11,22 @@
 static DTCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
+@interface DTCoreTextFontDescriptor ()
+{
+	CTFontRef fontRef;
+}
+- (void)_newMatchingFont;
+
+@end
+
+static pthread_mutex_t mutex;
 
 @implementation DTCoreTextFontDescriptor
 
-
++ (void)initialize
+{
+    pthread_mutex_init(&mutex, NULL);
+}
 
 + (DTCache *)fontCache
 {
@@ -395,6 +407,14 @@ static NSMutableDictionary *_fontOverrides = nil;
 
 - (CTFontRef)newMatchingFont
 {
+	pthread_mutex_lock(&mutex);
+	[self performSelectorOnMainThread:@selector(_newMatchingFont) withObject:nil waitUntilDone:YES];
+	pthread_mutex_unlock(&mutex);
+	return fontRef;
+}
+
+- (void)_newMatchingFont
+{
 	NSDictionary *attributes = [self fontAttributes];
 	
 	DTCache *fontCache = [DTCoreTextFontDescriptor fontCache];
@@ -405,7 +425,8 @@ static NSMutableDictionary *_fontOverrides = nil;
 	if (cachedFont)
 	{
 		CFRetain(cachedFont);
-		return cachedFont;
+		fontRef = cachedFont;
+		return;
 	}
 	
 	CTFontDescriptorRef fontDesc = NULL;
@@ -413,7 +434,6 @@ static NSMutableDictionary *_fontOverrides = nil;
 	CTFontRef matchingFont;
 	
 	NSString *usedName = fontName;
-	
 	
 	// override fontName if a small caps or regular override is registered
 	if (fontFamily)
@@ -487,7 +507,7 @@ static NSMutableDictionary *_fontOverrides = nil;
 		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
 	}
 	
-	return matchingFont;
+	fontRef = matchingFont;
 }
 
 - (void)normalizeSlow
