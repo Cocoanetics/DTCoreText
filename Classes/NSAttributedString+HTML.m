@@ -65,8 +65,98 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 	return [self initWithHTML:data options:optionsDict documentAttributes:dict];
 }
 
+NSMutableDictionary* _styles;
+-(void)addStyleRule:(NSString*)rule withSelector:(NSString*)selectors
+{
+    NSArray* split = [selectors componentsSeparatedByString:@","];
+    for (NSString* selector in split) {
+        NSString* cleanSelector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString* cleanRule = [rule stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"; "]];
+        NSString* existing = [_styles valueForKey:cleanSelector];
+        if (existing != nil) {
+            [_styles setValue:[NSString stringWithFormat:@"%@; %@", existing, cleanRule] forKey:cleanSelector];
+        }
+        else {
+            [_styles setValue:cleanRule forKey:cleanSelector];
+        }
+    }
+}
+-(void)parseStyleBlock:(NSString*)css
+{
+    int braceLevel = 0, braceMarker = 0;
+    NSString* selector;
+    for (int i = 0, l = [css length]; i < l; i++) {
+        unichar c = [css characterAtIndex:i];
+        // An opening brace! It could be the start of a new rule, or it could be a nested brace.
+        if (c == '{') {
+            // If we start a new rule...
+            if (braceLevel == 0) {
+                // Grab the selector (we'll process it in a moment)
+                selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker-1)];
+                // And mark our position so we can grab the rule's CSS when it is closed
+                braceMarker = i + 1;
+            }
+            // Increase the brace level.
+            braceLevel += 1;
+        }
+        // A closing brace!
+        else if (c == '}') {
+            // If we finished a rule...
+            if (braceLevel == 1) {
+                NSString* rule = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker-1)];
+                [self addStyleRule:rule withSelector: selector];
+                braceMarker = i + 1;
+            }
+            braceLevel = MAX(braceLevel-1, 0);
+        }
+    }
+    NSLog(@"rules: %@", _styles);
+}
+-(NSString*)getStyleString:(DTHTMLElement*)tag
+{
+    // We are going to combine all the relevant styles for this tag.
+    // (Note that when styles are applied, the later styles take precedence,
+    //  so the order in which we grab them matters!)
+    NSMutableArray* styles = [[NSMutableArray alloc] init];
+    
+    // Get based on element
+    NSString* byTagName = [_styles valueForKey:[tag tagName]];
+    if (byTagName != nil) {
+        [styles addObject:byTagName];
+    }
+    
+    // Get based on class(es)
+    NSString* classString = [tag attributeForKey:@"class"];
+    NSArray* classes = [classString componentsSeparatedByString:@" "];
+    for (NSString* class in classes) {
+        NSString* classRule = [NSString stringWithFormat:@".%@", class];
+        NSString* byClass = [_styles valueForKey:classRule];
+        if (byClass != nil) {
+            [styles addObject:byClass];
+        }
+    }
+    
+    // Get based on id
+    NSString* idRule = [NSString stringWithFormat:@"#%@", [tag attributeForKey:@"id"]];
+    NSString* byID = [_styles valueForKey:idRule];
+    if (byID != nil) {
+        [styles addObject:byID];
+    }
+    
+    // Get based on inline styles
+    NSString* styleString = [tag attributeForKey:@"style"];
+    if (styleString != nil) {
+        [styles addObject:styleString];
+    }
+    
+    // Combine them all together in to one string.
+    return [styles componentsJoinedByString:@";"];
+}
+
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
+    _styles = [[NSMutableDictionary alloc] init];
+    
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -239,7 +329,7 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 				[parent addChild:currentTag];
 				
 				// convert CSS Styles into our own style
-				NSString *styleString = [currentTag attributeForKey:@"style"];
+                NSString* styleString = [self getStyleString:currentTag];
 				
 				if (styleString)
 				{
@@ -533,8 +623,6 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if (tagOpen)
 				{
-					// TODO: store style info in a dictionary and apply it to tags
-					currentTag.tagContentInvisible = YES;
 					needsNewLineBefore = NO;
 				}
 			}
@@ -849,9 +937,13 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					// we don't want whitespace before first tag to turn into paragraphs
 					if (![currentTag isMeta])
 					{
-						currentTag.text = tagContents;
-						
-						[tmpString appendAttributedString:[currentTag attributedString]];
+                        if ([tagName isEqualToString:@"style"]) {
+                            [self parseStyleBlock:tagContents];
+                        }
+                        else {
+                            currentTag.text = tagContents;
+                            [tmpString appendAttributedString:[currentTag attributedString]];
+                        }
 					}
 				}
 			}
