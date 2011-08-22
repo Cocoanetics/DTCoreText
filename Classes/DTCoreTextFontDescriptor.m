@@ -16,6 +16,7 @@ static dispatch_semaphore_t fontLock;
 
 @interface DTCoreTextFontDescriptor ()
 
+// generated fonts are cached
 + (DTCache *)fontCache;
 
 @end
@@ -418,6 +419,7 @@ static dispatch_semaphore_t fontLock;
 	if (cachedFont)
 	{
 		CFRetain(cachedFont);
+		dispatch_semaphore_signal(fontLock);
 		return cachedFont;
 	}
 	
@@ -500,7 +502,6 @@ static dispatch_semaphore_t fontLock;
 	}
 
 	dispatch_semaphore_signal(fontLock);
-
 	return matchingFont;
 }
 
