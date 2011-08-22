@@ -11,21 +11,20 @@
 static DTCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
+static dispatch_semaphore_t fontLock;
+
+
 @interface DTCoreTextFontDescriptor ()
-{
-	CTFontRef fontRef;
-}
-- (void)_newMatchingFont;
+
++ (DTCache *)fontCache;
 
 @end
-
-static pthread_mutex_t mutex;
 
 @implementation DTCoreTextFontDescriptor
 
 + (void)initialize
 {
-    pthread_mutex_init(&mutex, NULL);
+	fontLock = dispatch_semaphore_create(1);
 }
 
 + (DTCache *)fontCache
@@ -34,7 +33,7 @@ static pthread_mutex_t mutex;
 	{
 		_fontCache = [[DTCache alloc] init];
 	}
-	
+
 	return _fontCache;
 }
 
@@ -407,14 +406,8 @@ static pthread_mutex_t mutex;
 
 - (CTFontRef)newMatchingFont
 {
-	pthread_mutex_lock(&mutex);
-	[self performSelectorOnMainThread:@selector(_newMatchingFont) withObject:nil waitUntilDone:YES];
-	pthread_mutex_unlock(&mutex);
-	return fontRef;
-}
+	dispatch_semaphore_wait(fontLock, DISPATCH_TIME_FOREVER);
 
-- (void)_newMatchingFont
-{
 	NSDictionary *attributes = [self fontAttributes];
 	
 	DTCache *fontCache = [DTCoreTextFontDescriptor fontCache];
@@ -425,8 +418,7 @@ static pthread_mutex_t mutex;
 	if (cachedFont)
 	{
 		CFRetain(cachedFont);
-		fontRef = cachedFont;
-		return;
+		return cachedFont;
 	}
 	
 	CTFontDescriptorRef fontDesc = NULL;
@@ -506,8 +498,10 @@ static pthread_mutex_t mutex;
 		// cache it
 		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
 	}
-	
-	fontRef = matchingFont;
+
+	dispatch_semaphore_signal(fontLock);
+
+	return matchingFont;
 }
 
 - (void)normalizeSlow
