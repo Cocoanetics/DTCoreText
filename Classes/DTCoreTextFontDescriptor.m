@@ -11,8 +11,15 @@
 static DTCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
-static dispatch_semaphore_t fontLock;
+#ifndef __IPHONE_4_3
+	#define __IPHONE_4_3 40300
+#endif
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+static dispatch_semaphore_t fontLock;
+#else
+static pthread_mutex_t fontLock;
+#endif
 
 @interface DTCoreTextFontDescriptor ()
 
@@ -25,7 +32,12 @@ static dispatch_semaphore_t fontLock;
 
 + (void)initialize
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	fontLock = dispatch_semaphore_create(1);
+#else
+    pthread_mutex_init(&fontLock, NULL);
+#endif
+
 }
 
 + (DTCache *)fontCache
@@ -407,7 +419,11 @@ static dispatch_semaphore_t fontLock;
 
 - (CTFontRef)newMatchingFont
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_semaphore_wait(fontLock, DISPATCH_TIME_FOREVER);
+#else
+	pthread_mutex_lock(&fontLock);
+#endif
 
 	NSDictionary *attributes = [self fontAttributes];
 	
@@ -419,7 +435,11 @@ static dispatch_semaphore_t fontLock;
 	if (cachedFont)
 	{
 		CFRetain(cachedFont);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 		dispatch_semaphore_signal(fontLock);
+#else
+		pthread_mutex_unlock(&fontLock);
+#endif
 		return cachedFont;
 	}
 	
@@ -501,7 +521,11 @@ static dispatch_semaphore_t fontLock;
 		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
 	}
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_semaphore_signal(fontLock);
+#else
+	pthread_mutex_unlock(&fontLock);
+#endif
 	return matchingFont;
 }
 
