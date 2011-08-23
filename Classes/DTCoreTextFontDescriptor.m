@@ -11,10 +11,34 @@
 static DTCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 
+#ifndef __IPHONE_4_3
+	#define __IPHONE_4_3 40300
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+static dispatch_semaphore_t fontLock;
+#else
+static pthread_mutex_t fontLock;
+#endif
+
+@interface DTCoreTextFontDescriptor ()
+
+// generated fonts are cached
++ (DTCache *)fontCache;
+
+@end
 
 @implementation DTCoreTextFontDescriptor
 
++ (void)initialize
+{
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+	fontLock = dispatch_semaphore_create(1);
+#else
+    pthread_mutex_init(&fontLock, NULL);
+#endif
 
+}
 
 + (DTCache *)fontCache
 {
@@ -22,7 +46,7 @@ static NSMutableDictionary *_fontOverrides = nil;
 	{
 		_fontCache = [[DTCache alloc] init];
 	}
-	
+
 	return _fontCache;
 }
 
@@ -395,6 +419,12 @@ static NSMutableDictionary *_fontOverrides = nil;
 
 - (CTFontRef)newMatchingFont
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+	dispatch_semaphore_wait(fontLock, DISPATCH_TIME_FOREVER);
+#else
+	pthread_mutex_lock(&fontLock);
+#endif
+
 	NSDictionary *attributes = [self fontAttributes];
 	
 	DTCache *fontCache = [DTCoreTextFontDescriptor fontCache];
@@ -405,6 +435,11 @@ static NSMutableDictionary *_fontOverrides = nil;
 	if (cachedFont)
 	{
 		CFRetain(cachedFont);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+		dispatch_semaphore_signal(fontLock);
+#else
+		pthread_mutex_unlock(&fontLock);
+#endif
 		return cachedFont;
 	}
 	
@@ -413,7 +448,6 @@ static NSMutableDictionary *_fontOverrides = nil;
 	CTFontRef matchingFont;
 	
 	NSString *usedName = fontName;
-	
 	
 	// override fontName if a small caps or regular override is registered
 	if (fontFamily)
@@ -486,7 +520,12 @@ static NSMutableDictionary *_fontOverrides = nil;
 		// cache it
 		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
 	}
-	
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+	dispatch_semaphore_signal(fontLock);
+#else
+	pthread_mutex_unlock(&fontLock);
+#endif
 	return matchingFont;
 }
 

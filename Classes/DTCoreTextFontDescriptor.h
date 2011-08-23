@@ -29,14 +29,11 @@
 	
 	CTFontStylisticClass stylisticClass;
     
-    BOOL smallCapsFeature;
+	BOOL smallCapsFeature;
   
-  BOOL _hashSet;
-  NSUInteger _hash;
+	BOOL _hashSet;
+	NSUInteger _hash;
 }
-
-// generated fonts are cached
-+ (DTCache *)fontCache;
 
 // sets the font face name to use for a specific font family
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic;
