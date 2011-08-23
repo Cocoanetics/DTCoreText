@@ -17,10 +17,14 @@
 #import "NSAttributedString+HTML.h"
 #import "NSMutableAttributedString+HTML.h"
 
+#import "DTCSSListStyle.h"
+
 @interface DTHTMLElement ()
 
 @property (nonatomic, retain) NSMutableDictionary *fontCache;
 @property (nonatomic, retain) NSMutableArray *children;
+
+- (DTCSSListStyle *)calculatedListStyle;
 
 @end
 
@@ -58,6 +62,8 @@
 	[link release];
 	
 	[shadows release];
+	
+	[_listStyle release];
 	
 	[_fontCache release];
 	[_additionalAttributes release];
@@ -252,7 +258,7 @@
 	}
 }
 
-- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter
+- (NSAttributedString *)prefixForListItem
 {
 	// make a font without italic or bold
 	DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
@@ -276,56 +282,14 @@
 	[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
 	CFRelease(newParagraphStyle);
 	
-	switch (self.listStyle) 
+	// get calculated list style
+	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
+	
+	NSString *prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+	
+	if (prefix)
 	{
-		case DTHTMLElementListStyleNone:
-		{
-			return nil;
-		}
-		case DTHTMLElementListStyleCircle:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09\u25e6\x09" attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleDecimal:
-		{
-			NSString *string = [NSString stringWithFormat:@"\x09%d.\x09", counter];
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleDecimalLeadingZero:
-		{
-			NSString *string = [NSString stringWithFormat:@"\x09%02d.\x09", counter];
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleDisc:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09\u2022\x09" attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleUpperAlpha:
-		case DTHTMLElementListStyleUpperLatin:
-		{
-			char letter = 'A' + counter-1;
-			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
-			
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleLowerAlpha:
-		case DTHTMLElementListStyleLowerLatin:
-		{
-			char letter = 'a' + counter-1;
-			NSString *string = [NSString stringWithFormat:@"\x09%c.\x09", letter];
-			
-			return [[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStylePlus:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09+\x09" attributes:attributes] autorelease];
-		}
-		case DTHTMLElementListStyleUnderscore:
-		{
-			return [[[NSAttributedString alloc] initWithString:@"\x09_\x09" attributes:attributes] autorelease];
-		}
-		default:
-			return nil;
+		return [[[NSAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
 	}
 	
 	return nil;
@@ -624,54 +588,9 @@
 		}
 	}
 	
-	NSString *listStyleStr = [[styles objectForKey:@"list-style"] lowercaseString];
-	if (listStyleStr)
-	{
-		if ([listStyleStr isEqualToString:@"inherit"])
-		{
-			listStyle = DTHTMLElementListStyleInherit;
-		}
-		else if ([listStyleStr isEqualToString:@"none"])
-		{
-			listStyle = DTHTMLElementListStyleNone;
-		}
-		else if ([listStyleStr isEqualToString:@"circle"])
-		{
-			listStyle = DTHTMLElementListStyleCircle;
-		}		
-		else if ([listStyleStr isEqualToString:@"decimal"])
-		{
-			listStyle = DTHTMLElementListStyleDecimal;
-		}
-		else if ([listStyleStr isEqualToString:@"decimal-leading-zero"])
-		{
-			listStyle = DTHTMLElementListStyleDecimalLeadingZero;
-		}        
-		else if ([listStyleStr isEqualToString:@"disc"])
-		{
-			listStyle = DTHTMLElementListStyleDisc;
-		}
-		else if ([listStyleStr isEqualToString:@"upper-alpha"]||[listStyleStr isEqualToString:@"upper-latin"])
-		{
-			listStyle = DTHTMLElementListStyleUpperAlpha;
-		}		
-		else if ([listStyleStr isEqualToString:@"lower-alpha"]||[listStyleStr isEqualToString:@"lower-latin"])
-		{
-			listStyle = DTHTMLElementListStyleLowerAlpha;
-		}		
-		else if ([listStyleStr isEqualToString:@"plus"])
-		{
-			listStyle = DTHTMLElementListStylePlus;
-		}        
-		else if ([listStyleStr isEqualToString:@"underscore"])
-		{
-			listStyle = DTHTMLElementListStyleUnderscore;
-		}  
-		else
-		{
-			listStyle = DTHTMLElementListStyleInherit;
-		}
-	}
+	// list style became it's own object
+	self.listStyle = [DTCSSListStyle listStyleWithStyles:styles];
+	
 	
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString)
@@ -737,6 +656,57 @@
 	return [_attributes objectForKey:key];
 }
 
+#pragma mark Calulcating Properties
+
+- (id)valueForKeyPathWithInheritance:(NSString *)keyPath
+{
+	id value = [self valueForKeyPath:keyPath];
+	
+	// if property is not set we also go to parent
+	if (!value && parent)
+	{
+		return [parent valueForKeyPathWithInheritance:keyPath];
+	}
+	
+	// enum properties have 0 for inherit
+	if ([value isKindOfClass:[NSNumber class]])
+	{
+		NSNumber *number = value;
+		
+		if (([number integerValue]==0) && parent)
+		{
+			return [parent valueForKeyPathWithInheritance:keyPath];
+		}
+	}
+	
+	// string properties have 'inherit' for inheriting
+	if ([value isKindOfClass:[NSString class]])
+	{
+		NSString *string = value;
+		
+		if ([string isEqualToString:@"inherit"] && parent)
+		{
+			return [parent valueForKeyPathWithInheritance:keyPath];
+		}
+	}
+	
+	// obviously not inherited
+	return value;
+}
+
+
+- (DTCSSListStyle *)calculatedListStyle
+{
+	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	
+	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
+	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
+	
+	style.type = (DTCSSListStyleType)[calcType integerValue];
+	style.position = (DTCSSListStylePosition)[calcPos integerValue];
+	
+	return style;
+}
 
 #pragma mark Copying
 
@@ -823,32 +793,6 @@
 	}
 	
 	return fontVariant;
-}
-
-- (DTHTMLElementListStyle)listStyle
-{
-	if (listStyle == DTHTMLElementListStyleInherit)
-	{
-		// defaults
-		if ([tagName isEqualToString:@"ul"])
-		{
-			return DTHTMLElementListStyleDisc;
-		}
-		else if ([tagName isEqualToString:@"ol"])
-		{
-			return DTHTMLElementListStyleDecimal;
-		}
-		
-		if (parent)
-		{
-			return parent.listStyle;
-		}
-		
-		
-		return DTHTMLElementListStyleNone;
-	}
-	
-	return listStyle;
 }
 
 - (NSString *)path
@@ -980,7 +924,7 @@
 @synthesize isColorInherited;
 @synthesize preserveNewlines;
 @synthesize fontVariant;
-@synthesize listStyle;
+@synthesize listStyle = _listStyle;
 @synthesize textScale;
 @synthesize size;
 

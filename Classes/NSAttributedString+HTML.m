@@ -20,6 +20,8 @@
 #import "DTTextAttachment.h"
 
 #import "DTHTMLElement.h"
+#import "DTCSSListStyle.h"
+
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
 
@@ -40,6 +42,9 @@ NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
 NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
 NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
 NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
+NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
+NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
+
 
 @implementation NSAttributedString (HTML)
 
@@ -165,6 +170,18 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
 	}
 	
+	NSNumber *defaultFirstLineHeadIndent = [options objectForKey:DTDefaultFirstLineHeadIndent];
+	if (defaultFirstLineHeadIndent)
+	{
+		defaultParagraphStyle.firstLineIndent = [defaultFirstLineHeadIndent integerValue];
+	}
+	
+	NSNumber *defaultHeadIndent = [options objectForKey:DTDefaultHeadIndent];
+	if (defaultHeadIndent)
+	{
+		defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+	}
+
 	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
 	defaultTag.fontDescriptor = defaultFontDescriptor;
 	defaultTag.paragraphStyle = defaultParagraphStyle;
@@ -184,6 +201,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
 		}
 	}
+
 	
 	DTHTMLElement *currentTag = defaultTag; // our defaults are the root
 	
@@ -430,6 +448,11 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
+					if (!currentTag.listStyle)
+					{
+						currentTag.listStyle = [DTCSSListStyle decimalListStyle];
+					}
+					
 					NSString *valueNum = [currentTag attributeForKey:@"start"];
 					if (valueNum)
 					{
@@ -455,6 +478,12 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 			{
 				if (tagOpen)
 				{
+					if (!currentTag.listStyle)
+					{
+						currentTag.listStyle = [DTCSSListStyle discListStyle];
+					}
+
+					
 					needsNewLineBefore = YES;
 					
 					currentTag.listCounter = 0;
@@ -806,7 +835,7 @@ NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 					// if we start a list, then we wait until we have actual text
 					if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 					{
-						NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:currentTag.listCounter];
+						NSAttributedString *prefixString = [currentTag prefixForListItem];
 						
 						if (prefixString)
 						{

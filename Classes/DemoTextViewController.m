@@ -52,10 +52,6 @@
 		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
 		NSArray *toolbarItems = [NSArray arrayWithObjects:spacer, debug, nil];
 		[self setToolbarItems:toolbarItems];
-		
-		
-		// register notifications
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lazyImageDidFinishLoading:) name:@"DTLazyImageViewDidFinishLoading" object:nil];
 	}
 	return self;
 }
@@ -335,6 +331,7 @@
 	{
 		// if the attachment has a hyperlinkURL then this is currently ignored
 		DTLazyImageView *imageView = [[[DTLazyImageView alloc] initWithFrame:frame] autorelease];
+		imageView.delegate = self;
 		if (attachment.contents)
 		{
 			imageView.image = attachment.contents;
@@ -395,12 +392,11 @@
 	[self.view setNeedsDisplay];
 }
 
-#pragma mark Notifications
-- (void)lazyImageDidFinishLoading:(NSNotification *)notification
-{
-	NSDictionary *userInfo = [notification userInfo];
-	NSURL *url = [userInfo objectForKey:@"ImageURL"];
-	CGSize imageSize = [[userInfo objectForKey:@"ImageSize"] CGSizeValue];
+#pragma mark DTLazyImageViewDelegate
+
+- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size {
+	NSURL *url = lazyImageView.url;
+	CGSize imageSize = size;
 	
 	NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 	

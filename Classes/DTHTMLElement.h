@@ -11,6 +11,7 @@
 @class DTCoreTextParagraphStyle;
 @class DTCoreTextFontDescriptor;
 @class DTTextAttachment;
+@class DTCSSListStyle;
 
 #import <CoreText/CoreText.h>
 
@@ -29,23 +30,6 @@ typedef enum
 	DTHTMLElementFontVariantNormal,
 	DTHTMLElementFontVariantSmallCaps
 } DTHTMLElementFontVariant;
-
-typedef enum
-{
-    DTHTMLElementListStyleInherit = 0,
-    DTHTMLElementListStyleNone,
-    DTHTMLElementListStyleCircle,
-    DTHTMLElementListStyleDecimal,
-    DTHTMLElementListStyleDecimalLeadingZero,
-    DTHTMLElementListStyleDisc,
-    DTHTMLElementListStyleUpperAlpha,
-    DTHTMLElementListStyleUpperLatin,
-    DTHTMLElementListStyleLowerAlpha,
-    DTHTMLElementListStyleLowerLatin,
-    DTHTMLElementListStylePlus,
-    DTHTMLElementListStyleUnderscore
-} DTHTMLElementListStyle;
-
 
 @interface DTHTMLElement : NSObject <NSCopying>
 {
@@ -80,7 +64,7 @@ typedef enum
 	NSMutableDictionary *_additionalAttributes;
 	
 	DTHTMLElementFloatStyle floatStyle;
-    DTHTMLElementListStyle listStyle;
+    DTCSSListStyle *_listStyle;
     
 	BOOL isColorInherited;
 	
@@ -119,7 +103,7 @@ typedef enum
 @property (nonatomic, assign) BOOL isColorInherited;
 @property (nonatomic, assign) BOOL preserveNewlines;
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
-@property (nonatomic, assign) DTHTMLElementListStyle listStyle;
+@property (nonatomic, copy) DTCSSListStyle *listStyle;
 @property (nonatomic, assign) CGFloat textScale;
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, readonly) NSInteger listDepth;
@@ -128,7 +112,7 @@ typedef enum
 
 
 - (NSAttributedString *)attributedString;
-- (NSAttributedString *)prefixForListItemWithCounter:(NSInteger)counter;
+- (NSAttributedString *)prefixForListItem;
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;
