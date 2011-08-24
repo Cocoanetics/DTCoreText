@@ -79,6 +79,8 @@
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
+	BOOL shouldAddFont = YES;
+	
 	// copy additional attributes
 	if (_additionalAttributes)
 	{
@@ -98,11 +100,16 @@
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
+
+#ifndef DT_ADD_FONT_ON_ATTACHMENTS
+		// omit adding a font unless we need it also on attachments, e.g. for editing
+		shouldAddFont = NO;
+#endif
 	}
-	else
+
+	// otherwise we have a font
+	if (shouldAddFont)
 	{
-		// otherwise we have a font
-		
 		// try font cache first
 		NSNumber *key = [NSNumber numberWithInt:[fontDescriptor hash]];
 		CTFontRef font = (CTFontRef)[self.fontCache objectForKey:key];
