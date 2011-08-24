@@ -389,7 +389,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	self.layouter = nil;
 	self.layoutFrame = nil;
 	
-	// remove custom views
+	// remove all links because they might have merged or split
 	[self removeAllCustomViewsForLinks];
 	
 	if (_attributedString)
@@ -470,6 +470,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		[_attributedString release];
 		
 		_attributedString = [string copy];
+		
+		// new layout invalidates all positions for custom views
+		[self removeAllCustomViews];
 		
 		[self relayoutText];
 	}
