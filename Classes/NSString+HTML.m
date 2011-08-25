@@ -35,13 +35,13 @@ static NSDictionary *entityLookup = nil;
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-									@"u", @"a", @"img", @"del", @"br", @"span", nil];
+									@"u", @"a", @"img", @"del", @"br", @"style", @"span", nil];
 	});
 #else
 	if (!inlineTags)
 	{
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-									@"u", @"a", @"img", @"del", @"br", @"span", nil];
+									@"u", @"a", @"img", @"del", @"br", @"style", @"span", nil];
 	}
 #endif
 	
@@ -53,12 +53,12 @@ static NSDictionary *entityLookup = nil;
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
 	dispatch_once(&predicate, ^{
-		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
+		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"#COMMENT#", @"title", nil];
 	});
 #else
 	if (!metaTags)
 	{
-		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
+		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"#COMMENT#", @"title", nil];
 	}
 #endif
 	
