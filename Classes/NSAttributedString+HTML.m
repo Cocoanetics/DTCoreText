@@ -1133,7 +1133,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					}
 					
 					// end
-					[retString appendString:@" \\>"];
+					[retString appendString:@" />"];
 				}
 				
 				continue;
