@@ -1088,15 +1088,52 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					{
 						urlString = [attachment.contentURL absoluteString];
 					}
-					
+
+					// write appropriate tag
 					if (attachment.contentType == DTTextAttachmentTypeVideoURL)
 					{
-						[retString appendFormat:@"<video src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<video src=\"%@\"", urlString];
 					}
 					else if (attachment.contentType == DTTextAttachmentTypeImage)
 					{
-						[retString appendFormat:@"<img src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<img src=\"%@\"", urlString];
 					}
+
+					
+					// build a HTML 5 conformant size style if set
+					NSMutableString *styleString = [NSMutableString string];
+					
+					if (attachment.originalSize.width>0)
+					{
+						[styleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
+					}
+
+					if (attachment.originalSize.height>0)
+					{
+						[styleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
+					}
+
+					if ([styleString length])
+					{
+						[retString appendFormat:@" style=\"%@\"", styleString];
+					}
+					
+					// attach the attributes dictionary
+					NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
+					
+					// remove src and style, we already have that
+					[tmpAttributes removeObjectForKey:@"src"];
+					[tmpAttributes removeObjectForKey:@"style"];
+					
+					for (NSString *oneKey in [tmpAttributes allKeys])
+					{
+						oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						[retString appendFormat:@" %@=\"%@\"", oneKey, value];
+					}
+					
+					// end
+					[retString appendString:@" \\>"];
 				}
 				
 				continue;
