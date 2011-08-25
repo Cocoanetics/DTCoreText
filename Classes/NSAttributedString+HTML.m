@@ -44,6 +44,7 @@ NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
 NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
 NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
+NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 
 @implementation NSAttributedString (HTML)
@@ -180,6 +181,12 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 	if (defaultHeadIndent)
 	{
 		defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+	}
+	
+	NSNumber *defaultListIndent = [options objectForKey:DTDefaultListIndent];
+	if (defaultListIndent)
+	{
+		defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
 	}
 
 	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
@@ -400,20 +407,14 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					
 					needsListItemStart = YES;
 					currentTag.paragraphStyle.paragraphSpacing = 0;
+					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+					currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 					
-#if ALLOW_IPHONE_SPECIAL_CASES                    
-					CGFloat indentSize = 27.0 * textScale;
-#else
-					CGFloat indentSize = 36.0 * textScale;
-#endif
-					
-					CGFloat indentHang = indentSize;
-					
-					currentTag.paragraphStyle.headIndent += indentSize;
-					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
-					
-					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
-					
+					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
+					if(tabOffset > 20.0f) // I have no idea what an appropriate value is for this
+					{
+						[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+					}
 					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
 				}
 				else 
@@ -696,8 +697,8 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 				if (tagOpen)
 				{
 					currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineIndent;
 				}
-				
 			}
 			else if ([tagName isEqualToString:@"br"])
 			{

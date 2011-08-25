@@ -18,19 +18,45 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#ifndef __IPHONE_4_3
+	#define __IPHONE_4_3 40300
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+
+#define LAYOUTSTRING layoutLock
+#define LAYOUTER layouterLock
+#define LAYOUTFRAME layoutFrameLock
+#define SELF selfLock
+
+#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
+
+#else
+
+#define LAYOUTSTRING self
+#define LAYOUTER self
+#define LAYOUTFRAME self
+#define SELF self
+
+#define SYNCHRONIZE_START(obj) @synchronized(obj)
+#define SYNCHRONIZE_END(obj)
+
+#endif
+
 @interface DTAttributedTextContentView ()
 
 @property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, retain) NSMutableDictionary *customViewsForAttachmentsIndex;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+@property (nonatomic, assign) dispatch_semaphore_t layoutLock, layouterLock, layoutFrameLock, selfLock;
+#endif
 
 - (void)removeAllCustomViews;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
 - (void)removeAllCustomViewsForLinks;
 
-
 @end
-
-
 
 static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
@@ -54,6 +80,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @end
 
 @implementation DTAttributedTextContentView
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+@synthesize layoutLock, layouterLock, layoutFrameLock, selfLock;
+#endif
 
 - (void)setup
 {
@@ -82,18 +112,22 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+		layoutLock = dispatch_semaphore_create(1);
+		layouterLock = dispatch_semaphore_create(1);
+		layoutFrameLock = dispatch_semaphore_create(1);
+		selfLock = dispatch_semaphore_create(1);
+#endif
 	}
 	return self;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width
 {
-	self = [super initWithFrame:CGRectMake(0, 0, width, 0)];
+	self = [self initWithFrame:CGRectMake(0, 0, width, 0)];
 	
 	if (self)
-	{
-		[self setup];
-		
+	{		
 		// causes appropriate sizing
 		self.attributedString = attributedString;
 		[self sizeToFit];
@@ -117,6 +151,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[_layouter release];
 	[_layoutFrame release];
 	[_attributedString release];
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+	dispatch_release(layoutLock);
+	dispatch_release(layouterLock);
+	dispatch_release(layoutFrameLock);
+	dispatch_release(selfLock);
+#endif
 	
 	[super dealloc];
 }
@@ -132,11 +173,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[CATransaction begin];
 	[CATransaction setDisableActions:YES];
 	
-	
-	NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
-	
-	@synchronized(layoutString)
+	SYNCHRONIZE_START(LAYOUTSTRING)
 	{
+		NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
 		NSArray *lines;
 		if (CGRectIsInfinite(rect))
 		{
@@ -310,8 +349,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[CATransaction commit];
 	}
+	SYNCHRONIZE_END(LAYOUTSTRING)
 }
-
 
 - (void)layoutSubviews
 {
@@ -344,10 +383,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	// need to prevent updating of string and drawing at the same time
-	@synchronized(self.layoutFrame.layouter.attributedString)
+	SYNCHRONIZE_START(LAYOUTSTRING)
 	{
 		[self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 	}
+	SYNCHRONIZE_END(LAYOUTSTRING)
 }
 
 - (void)drawRect:(CGRect)rect
@@ -535,7 +575,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	@synchronized(_layouter)
+	SYNCHRONIZE_START(LAYOUTER)
 	{
 		if (!_layouter)
 		{
@@ -544,14 +584,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
 			}
 		}
-		
-		return _layouter;
 	}
+	SYNCHRONIZE_END(LAYOUTER)
+
+	return _layouter;
 }
 
 - (void)setLayouter:(DTCoreTextLayouter *)layouter
 {
-	@synchronized(layouter)
+	SYNCHRONIZE_START(LAYOUTER)
 	{
 		if (_layouter != layouter)
 		{
@@ -559,11 +600,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			_layouter = [layouter retain];
 		}
 	}
+	SYNCHRONIZE_END(LAYOUTER)
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
-	@synchronized(_layoutFrame)
+	SYNCHRONIZE_START(LAYOUTFRAME)
 	{
 		if (!_layoutFrame)
 		{
@@ -577,13 +619,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[_layoutFrame retain];
 			}
 		}
-		return _layoutFrame;
 	}
+	SYNCHRONIZE_END(LAYOUTFRAME)
+
+	return _layoutFrame;
 }
 
 - (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
-	@synchronized(layoutFrame)
+	SYNCHRONIZE_START(LAYOUTFRAME)
 	{
 		if (_layoutFrame != layoutFrame)
 		{
@@ -600,6 +644,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
+	SYNCHRONIZE_END(LAYOUTFRAME)
 }
 
 - (NSMutableSet *)customViews

@@ -35,9 +35,6 @@
 
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index;
 
-- (void)discardFramesetter;
-
-
 @property (nonatomic, retain) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
