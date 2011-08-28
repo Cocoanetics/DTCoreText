@@ -1086,7 +1086,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					}
 					else
 					{
-						urlString = [attachment.contentURL absoluteString];
+						urlString = [attachment.contentURL relativeString];
 					}
 
 					// write appropriate tag
@@ -1193,11 +1193,11 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				if ([fontStyle length])
 				{
-					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url absoluteString], fontStyle, subString];
+					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url relativeString], fontStyle, subString];
 				}
 				else
 				{
-					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url absoluteString], subString];
+					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url relativeString], subString];
 				}			
 			}
 			else
