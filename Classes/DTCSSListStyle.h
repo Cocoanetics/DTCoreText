@@ -48,4 +48,6 @@ typedef enum
 
 - (id)initWithStyles:(NSDictionary *)styles;
 
+- (NSString *)prefixWithCounter:(NSInteger)counter;
+
 @end

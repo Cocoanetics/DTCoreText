@@ -11,15 +11,32 @@
 @interface DTCoreTextLayouter ()
 
 @property (nonatomic, retain) NSMutableArray *frames;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+@property (nonatomic, assign) dispatch_semaphore_t selfLock;
+#endif
 
 - (CTFramesetterRef) framesetter;
+- (void)discardFramesetter;
 
 @end
 
+#ifndef __IPHONE_4_3
+	#define __IPHONE_4_3 40300
+#endif
 
-
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+#define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(selfLock);
+#else
+#define SYNCHRONIZE_START(obj) @synchronized(obj)
+#define SYNCHRONIZE_END(obj) 
+#endif
 
 @implementation DTCoreTextLayouter
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+@synthesize selfLock;
+#endif
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
 {
@@ -31,6 +48,9 @@
 			return nil;
 		}
 		
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+		selfLock = dispatch_semaphore_create(1);
+#endif
 		self.attributedString = attributedString;
 	}
 	
@@ -43,6 +63,10 @@
 	[frames release];
 	
 	[self discardFramesetter];
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+	dispatch_release(selfLock);
+#endif
 	
 	[super dealloc];
 }
@@ -90,26 +114,28 @@
 }
 
 #pragma mark Properties
-- (CTFramesetterRef) framesetter
+- (CTFramesetterRef)framesetter
 {
 	//    if (!framesetter)
 	{
-		@synchronized(self)
+		SYNCHRONIZE_START(self)
 		{
 			if (!framesetter)
 			{
 				framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
 			}
 		}
+		SYNCHRONIZE_END(self)
 	}
-	
 	return framesetter;
 }
 
 
 - (void)discardFramesetter
 {
-	@synchronized(self)
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_4_3
+	SYNCHRONIZE_START(self)
+#endif
 	{
 		// framesetter needs to go
 		if (framesetter)
@@ -118,12 +144,14 @@
 			framesetter = NULL;
 		}
 	}
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_4_3
+	SYNCHRONIZE_END(self)
+#endif
 }
-
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-	@synchronized(self)
+	SYNCHRONIZE_START(self)
 	{
 		if (_attributedString != attributedString)
 		{
@@ -134,6 +162,7 @@
 			[self discardFramesetter];
 		}
 	}
+	SYNCHRONIZE_END(self)
 }
 
 - (NSAttributedString *)attributedString
