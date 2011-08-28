@@ -1084,21 +1084,63 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					}
 					else
 					{
-						urlString = [attachment.contentURL absoluteString];
+						urlString = [attachment.contentURL relativeString];
 					}
 					
+					// write appropriate tag
 					if (attachment.contentType == DTTextAttachmentTypeVideoURL)
 					{
-						[retString appendFormat:@"<video src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<video src=\"%@\"", urlString];
 					}
 					else if (attachment.contentType == DTTextAttachmentTypeImage)
 					{
-						[retString appendFormat:@"<img src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<img src=\"%@\"", urlString];
 					}
+					
+					
+					// build a HTML 5 conformant size style if set
+					NSMutableString *styleString = [NSMutableString string];
+					
+					if (attachment.originalSize.width>0)
+					{
+						[styleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
+					}
+					
+					if (attachment.originalSize.height>0)
+					{
+						[styleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
+					}
+					
+					if ([styleString length])
+					{
+						[retString appendFormat:@" style=\"%@\"", styleString];
+					}
+					
+					// attach the attributes dictionary
+					NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
+					
+					// remove src and style, we already have that
+					[tmpAttributes removeObjectForKey:@"src"];
+					[tmpAttributes removeObjectForKey:@"style"];
+					
+					for (NSString *oneKey in [tmpAttributes allKeys])
+					{
+						oneKey = [oneKey stringByRemovingInvalidTagAttributeCharacters];
+						
+						// escape double quotes so that they don't interfere with the attribute quotes
+						NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
+						[retString appendFormat:@" %@=\"%@\"", oneKey, value];
+					}
+					
+					// end
+					[retString appendString:@" />"];
 				}
 				
 				continue;
 			}
+			
+			// e.g. \U2028 -> &nbsp;
+			subString = [subString stringByAddingHTMLEntities];
 			
 			NSString *fontStyle = nil;
 			if (!fontIsBlockLevel)
