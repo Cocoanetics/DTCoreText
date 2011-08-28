@@ -1129,6 +1129,7 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 						
 						// escape double quotes so that they don't interfere with the attribute quotes
 						NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
+						
 						[retString appendFormat:@" %@=\"%@\"", oneKey, value];
 					}
 					
