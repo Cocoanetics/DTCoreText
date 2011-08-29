@@ -425,27 +425,30 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
-	// need new layouter
-	self.layouter = nil;
-	self.layoutFrame = nil;
-	
-	// remove all links because they might have merged or split
-	[self removeAllCustomViewsForLinks];
-	
-	if (_attributedString)
-	{
-		// triggers new layout
-		CGSize neededSize = [self sizeThatFits:self.bounds.size];
-		
-		// set frame to fit text preserving origin
-		// call super to avoid endless loop
-		[self willChangeValueForKey:@"frame"];
-		super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
-		[self didChangeValueForKey:@"frame"];
-	}
-	
-	[self setNeedsDisplay];
-	[self setNeedsLayout];
+    // Make sure we actually have a superview before attempting to relayout the text.
+    if (self.superview) {
+        // need new layouter
+        self.layouter = nil;
+        self.layoutFrame = nil;
+        
+        // remove all links because they might have merged or split
+        [self removeAllCustomViewsForLinks];
+        
+        if (_attributedString)
+        {
+            // triggers new layout
+            CGSize neededSize = [self sizeThatFits:self.bounds.size];
+            
+            // set frame to fit text preserving origin
+            // call super to avoid endless loop
+            [self willChangeValueForKey:@"frame"];
+            super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+            [self didChangeValueForKey:@"frame"];
+        }
+        
+        [self setNeedsDisplay];
+        [self setNeedsLayout];
+    }
 }
 
 - (void)removeAllCustomViewsForLinks
