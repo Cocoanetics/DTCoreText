@@ -722,7 +722,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				{
 					if ([tmpString length])
 					{
-						[tmpString appendNakedString:@"\n"];  // extends attributed area at end
+						[tmpString appendString:@"\n"];  // extends attributed area at end
 					}
 					else
 					{
