@@ -44,6 +44,7 @@ NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
 NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
 NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
+NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 
 @implementation NSAttributedString (HTML)
@@ -180,6 +181,12 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 	if (defaultHeadIndent)
 	{
 		defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+	}
+	
+	NSNumber *defaultListIndent = [options objectForKey:DTDefaultListIndent];
+	if (defaultListIndent)
+	{
+		defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
 	}
 
 	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
@@ -400,20 +407,14 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					
 					needsListItemStart = YES;
 					currentTag.paragraphStyle.paragraphSpacing = 0;
+					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+					currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 					
-#if ALLOW_IPHONE_SPECIAL_CASES                    
-					CGFloat indentSize = 27.0 * textScale;
-#else
-					CGFloat indentSize = 36.0 * textScale;
-#endif
-					
-					CGFloat indentHang = indentSize;
-					
-					currentTag.paragraphStyle.headIndent += indentSize;
-					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent - indentHang;
-					
-					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent - 5.0*textScale alignment:kCTRightTextAlignment];
-					
+					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
+					if(tabOffset > 20.0f) // I have no idea what an appropriate value is for this
+					{
+						[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+					}
 					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
 				}
 				else 
@@ -696,8 +697,8 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 				if (tagOpen)
 				{
 					currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineIndent;
 				}
-				
 			}
 			else if ([tagName isEqualToString:@"br"])
 			{
@@ -721,7 +722,7 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 				{
 					if ([tmpString length])
 					{
-						[tmpString appendNakedString:@"\n"];  // extends attributed area at end
+						[tmpString appendString:@"\n"];  // extends attributed area at end
 					}
 					else
 					{
@@ -1085,17 +1086,54 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 					}
 					else
 					{
-						urlString = [attachment.contentURL absoluteString];
+						urlString = [attachment.contentURL relativeString];
 					}
-					
+
+					// write appropriate tag
 					if (attachment.contentType == DTTextAttachmentTypeVideoURL)
 					{
-						[retString appendFormat:@"<video src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<video src=\"%@\"", urlString];
 					}
 					else if (attachment.contentType == DTTextAttachmentTypeImage)
 					{
-						[retString appendFormat:@"<img src=\"%@\" width=\"%.0f\" height=\"%.0f />", urlString, attachment.displaySize.width, attachment.displaySize.height];
+						[retString appendFormat:@"<img src=\"%@\"", urlString];
 					}
+
+					
+					// build a HTML 5 conformant size style if set
+					NSMutableString *styleString = [NSMutableString string];
+					
+					if (attachment.originalSize.width>0)
+					{
+						[styleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
+					}
+
+					if (attachment.originalSize.height>0)
+					{
+						[styleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
+					}
+
+					if ([styleString length])
+					{
+						[retString appendFormat:@" style=\"%@\"", styleString];
+					}
+					
+					// attach the attributes dictionary
+					NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
+					
+					// remove src and style, we already have that
+					[tmpAttributes removeObjectForKey:@"src"];
+					[tmpAttributes removeObjectForKey:@"style"];
+					
+					for (NSString *oneKey in [tmpAttributes allKeys])
+					{
+						oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+						[retString appendFormat:@" %@=\"%@\"", oneKey, value];
+					}
+					
+					// end
+					[retString appendString:@" />"];
 				}
 				
 				continue;
@@ -1155,11 +1193,11 @@ NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 			{
 				if ([fontStyle length])
 				{
-					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url absoluteString], fontStyle, subString];
+					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url relativeString], fontStyle, subString];
 				}
 				else
 				{
-					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url absoluteString], subString];
+					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url relativeString], subString];
 				}			
 			}
 			else

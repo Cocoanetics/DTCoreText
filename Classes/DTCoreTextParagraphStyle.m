@@ -11,6 +11,12 @@
 
 static DTCache *_paragraphStyleCache = nil;
 
+#if ALLOW_IPHONE_SPECIAL_CASES
+#define SPECIAL_LIST_INDENT		27.0f
+#else
+#define SPECIAL_LIST_INDENT		36.0
+#endif
+
 
 @implementation DTCoreTextParagraphStyle
 
@@ -55,6 +61,7 @@ static DTCache *_paragraphStyleCache = nil;
 		minimumLineHeight = 0.0;
 		maximumLineHeight = 0.0;
 		paragraphSpacing = 12.0;
+		listIndent = SPECIAL_LIST_INDENT;
 	}
 	
 	return self;
@@ -146,16 +153,20 @@ static DTCache *_paragraphStyleCache = nil;
 	return CTParagraphStyleCreate(settings, 11);
 }
 
-- (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
+- (BOOL)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
 {
-	if (!_tabStops)
+	CTTextTabRef tab = CTTextTabCreate(alignment, position, NULL);
+	if(tab)
 	{
-		_tabStops = [[NSMutableArray alloc] init];
+		if (!_tabStops)
+		{
+			_tabStops = [[NSMutableArray alloc] init];
+		}
+		[_tabStops addObject:(id)tab];
+		CFRelease(tab);
 	}
 	
-	CTTextTabRef tab = CTTextTabCreate(alignment, position, NULL);
-	[_tabStops addObject:(id)tab];
-	CFRelease(tab);
+	return tab ? YES : NO;
 }
 
 #pragma mark HTML Encoding
@@ -227,6 +238,7 @@ static DTCache *_paragraphStyleCache = nil;
 	newObject.minimumLineHeight = self.minimumLineHeight;
 	newObject.maximumLineHeight = self.maximumLineHeight;
 	newObject.headIndent = self.headIndent;
+	newObject.listIndent = self.listIndent;
 	newObject.textAlignment = self.textAlignment;
 	newObject.writingDirection = self.writingDirection;
 	newObject.tabStops = self.tabStops; // copy
@@ -253,6 +265,7 @@ static DTCache *_paragraphStyleCache = nil;
 @synthesize minimumLineHeight;
 @synthesize maximumLineHeight;
 @synthesize headIndent;
+@synthesize listIndent;
 @synthesize textAlignment;
 @synthesize writingDirection;
 @synthesize tabStops = _tabStops;

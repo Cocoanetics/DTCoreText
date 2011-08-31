@@ -20,7 +20,10 @@
 - (NSString *)stringByNormalizingWhitespace;
 - (BOOL)hasPrefixCharacterFromSet:(NSCharacterSet *)characterSet;
 - (BOOL)hasSuffixCharacterFromSet:(NSCharacterSet *)characterSet;
+
+- (NSString *)stringByAddingHTMLEntities;
 - (NSString *)stringByReplacingHTMLEntities;
+- (NSString *)stringByRemovingInvalidTagAttributeCharacters;
 
 // CSS
 - (NSDictionary *)dictionaryOfCSSStyles;

@@ -54,7 +54,7 @@
 	
 	// width, height from tag
 	CGSize displaySize = element.size; // width/height from attributes or CSS style
-	CGSize originalSize = CGSizeZero;
+	CGSize originalSize = element.size;
 	
 	// get base URL
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];

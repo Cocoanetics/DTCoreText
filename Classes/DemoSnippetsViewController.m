@@ -93,7 +93,7 @@
 	
 		if (!cell)
 		{
-			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator];
+			cell = [[[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator] autorelease];
 		}
 		
 		// cache it
