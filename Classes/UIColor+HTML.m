@@ -370,11 +370,7 @@ static NSDictionary *colorLookup = nil;
 
 - (CGFloat)alpha
 {
-	CGColorRef color = self.CGColor;
-	size_t count = CGColorGetNumberOfComponents(color);
-	const CGFloat *components = CGColorGetComponents(color);
-	
-	return components[count-1];
+	return CGColorGetAlpha(self.CGColor);
 }
 
 - (UIColor *)invertedColor
