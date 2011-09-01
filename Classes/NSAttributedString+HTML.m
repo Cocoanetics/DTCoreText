@@ -682,6 +682,9 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					if (face)
 					{
 						currentTag.fontDescriptor.fontName = face;
+						
+						// face usually invalidates family
+						currentTag.fontDescriptor.fontFamily = nil; 
 					}
 					
 					NSString *color = [currentTag attributeForKey:@"color"];

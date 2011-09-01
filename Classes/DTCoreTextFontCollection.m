@@ -112,7 +112,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 		
 		NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"FontDescriptors.cache"];
 		
-		self.fontDescriptors = [NSKeyedUnarchiver unarchiveObjectWithFile:cachesPath];
+		self.fontDescriptors = nil;//[NSKeyedUnarchiver unarchiveObjectWithFile:cachesPath];
 		
 		if (!_fontDescriptors)
 		{
@@ -129,6 +129,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 				for (NSInteger i=0; i<CFArrayGetCount(matchingFonts); i++)
 				{
 					CTFontDescriptorRef fontDesc = CFArrayGetValueAtIndex(matchingFonts, i);
+					
 					
 					DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFontDescriptor:fontDesc];
 					[tmpArray addObject:desc];
@@ -158,6 +159,23 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	}
 	
 	return fontMatchCache;
+}
+
+- (NSArray *)fontFamilyNames
+{
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	for (DTCoreTextFontDescriptor *oneDescriptor in [self fontDescriptors])
+	{
+		NSString *familyName = oneDescriptor.fontFamily;
+		
+		if (![tmpArray containsObject:familyName])
+		{
+			[tmpArray addObject:familyName];
+		}
+	}
+	
+	return [tmpArray sortedArrayUsingSelector:@selector(compare:)];
 }
 
 @synthesize fontDescriptors = _fontDescriptors;
