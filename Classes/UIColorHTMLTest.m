@@ -47,4 +47,18 @@
 	STAssertEqualObjects(namedColor, htmlColor, @"Hmmm... purple is not purple");
 }
 
+- (void) testColorHTMLHexString {
+	UIColor *red = [UIColor redColor];
+	STAssertEqualObjects([red htmlHexString], @"ff0000", nil);
+	
+	UIColor *green = [UIColor greenColor];
+	STAssertEqualObjects([green htmlHexString], @"00ff00", nil);
+	
+	UIColor *blue = [UIColor blueColor];
+	STAssertEqualObjects([blue htmlHexString], @"0000ff", nil);
+	
+	UIColor *white = [UIColor whiteColor];
+	STAssertEqualObjects([white htmlHexString], @"ffffff", nil);
+}
+
 @end
