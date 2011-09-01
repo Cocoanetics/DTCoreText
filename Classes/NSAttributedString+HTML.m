@@ -68,6 +68,14 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
+	// only with valid data
+	if (![data length])
+	{
+		[self release];
+		
+		return nil;
+	}
+	
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
