@@ -20,7 +20,13 @@
 
 @optional
 
+// called after a layout frame or a part of it is drawn
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+
+// provide custom view for an attachment, e.g. an imageView for images
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame;
+
+// provide button to be placed over links, the identifier is used to link multiple parts of the same A tag
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
 // old style
@@ -46,6 +52,7 @@
 	BOOL _delegateSupportsCustomViewsForAttachments;
 	BOOL _delegateSupportsCustomViewsForLinks;
 	BOOL _delegateSupportsGenericCustomViews;
+	BOOL _delegateSupportsNotificationAfterDrawing;
 	
 	BOOL _isTiling;
 	
