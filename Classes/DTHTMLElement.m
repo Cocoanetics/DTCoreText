@@ -431,6 +431,10 @@
 			fontDescriptor.monospaceTrait = YES;
 			fontDescriptor.fontFamily = @"Courier";
 		}
+		else if ([lowercaseFontFamily rangeOfString:@"times"].length) 
+		{
+			fontDescriptor.fontFamily = @"Times New Roman";
+		}
 		else
 		{
 			// probably custom font registered in info.plist
