@@ -8,6 +8,7 @@
 
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
+#import "NSString+HTML.h"
 
 @implementation NSScanner (HTML)
 
@@ -165,6 +166,9 @@
 					// most likely e.g. href=""
 					attrValue = @"";
 				}
+
+				// decode HTML entities
+				attrValue = [attrValue stringByReplacingHTMLEntities];
 				
 				[tmpAttributes setObject:attrValue forKey:attrName];
 			}
@@ -173,6 +177,9 @@
 				// non-quoted attribute, ends at /, > or whitespace
 				if ([self scanUpToCharactersFromSet:nonquoteAttributedEndCharacterSet intoString:&attrValue])
 				{
+					// decode HTML entities
+					attrValue = [attrValue stringByReplacingHTMLEntities];
+
 					[tmpAttributes setObject:attrValue forKey:attrName];
 				}
 			}

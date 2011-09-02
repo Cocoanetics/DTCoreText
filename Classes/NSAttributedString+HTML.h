@@ -22,6 +22,7 @@ extern NSString *DTDefaultLineHeightMultiplier;
 extern NSString *DTDefaultLineHeightMultiplier;
 extern NSString *DTDefaultFirstLineHeadIndent;
 extern NSString *DTDefaultHeadIndent;
+extern NSString *DTDefaultListIndent;
 
 
 @interface NSAttributedString (HTML)
