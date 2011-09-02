@@ -313,6 +313,10 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				
 				// to avoid much too much space before the image
 				currentTag.paragraphStyle.lineHeightMultiple = 1;
+				
+				// specifiying line height interfers with correct positioning
+				currentTag.paragraphStyle.minimumLineHeight = 0;
+				currentTag.paragraphStyle.maximumLineHeight = 0;
 
 				if (needsNewLineBefore)
 				{
