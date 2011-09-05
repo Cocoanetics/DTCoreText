@@ -1,9 +1,21 @@
 <h1>CSS Styles Support</h1>
-<p>Currently CSS styling is supported inline in tags</p>
+<p>Currently CSS styling is supported inline in tags, and via simple rules.</p>
 <p>For example:</p>
 <p style="font-family:courier;">&lt;p style=&quot;color:red; font-size: 30px;text-decoration:underline;&quot;&gt;Some fancy text&lt;/p&gt;</p>
 <p style="color:red; font-size: 30px;text-decoration:underline;">Some fancy text</p>
 <p>This way you can affect the way hyperlinks are decorated: <a href="http://twitter.com/cocoanetics">@cocoanetics</a> versus <a style="color:gray; text-decoration:none;" href="http://twitter.com/cocoanetics">@cocoanetics</a></p>
+
+<h2>CSS Rules</h2>
+
+<p>One or more style blocks are merged into a style sheet. Multiple matching styles are combined in this order, later styles overriding earlier ones.</p>
+<ul>
+	<li>Tag Name</li>
+	<li>Class Name (multiple classes possible)</li>
+	<li>Class Name + Tag Name</li>
+	<li>Tag ID</li>
+	<li>Local Style attribute of Tag</li>
+	</ul>
+<p>Not yet implemented are pseudo-selectors (first child).</p>
 
 <h2>Supported Attributes</h2>
 <ul>

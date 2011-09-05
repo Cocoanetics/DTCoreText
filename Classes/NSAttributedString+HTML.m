@@ -21,6 +21,7 @@
 
 #import "DTHTMLElement.h"
 #import "DTCSSListStyle.h"
+#import "DTCSSStylesheet.h"
 
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
@@ -98,7 +99,18 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	
 	// Make it a string
-	NSString *htmlString = [[NSString alloc] initWithPotentiallyMalformedUTF8Data:data];
+	NSString *htmlString;
+	
+	if (encoding == NSUTF8StringEncoding)
+	{
+		// this method can fix malformed UTF8
+		htmlString = [[NSString alloc] initWithPotentiallyMalformedUTF8Data:data];
+	}
+	else
+	{
+		// use the specified encoding
+		htmlString = [[NSString alloc] initWithData:data encoding:encoding];
+	}
 	
 	if (!htmlString)
 	{
@@ -107,6 +119,9 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		[self release];
 		return nil;
 	}
+	
+	// the combined style sheet for entire document
+	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
 	
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
@@ -238,6 +253,18 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
+			if ([tagName isEqualToString:@"style"] && tagOpen)
+			{
+				// get contents, there cannot be anything contained in this block
+				NSString *tagContents = nil;
+				if ([scanner scanUpToString:@"<" intoString:&tagContents])
+				{
+					[styleSheet parseStyleBlock:tagContents];
+				}
+				
+				continue;
+			}
+			
 			if ([tagName isMetaTag])
 			{
 				continue;
@@ -253,13 +280,20 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				currentTag.attributes = tagAttributesDict;
 				[parent addChild:currentTag];
 				
-				// convert CSS Styles into our own style
-				NSString *styleString = [currentTag attributeForKey:@"style"];
-				
-				if (styleString)
+				// apply style from merged style sheet
+				NSDictionary *mergedStyles = [styleSheet mergedStyleDictionaryForElement:currentTag];
+				if (mergedStyles)
 				{
-					[currentTag parseStyleString:styleString];
+					[currentTag applyStyleDictionary:mergedStyles];
 				}
+				
+//				// convert CSS Styles into our own style
+//				NSString *styleString = [currentTag attributeForKey:@"style"];
+//				
+//				if (styleString)
+//				{
+//					[currentTag parseStyleString:styleString];
+//				}
 				
 				if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
 				{
@@ -540,15 +574,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				{
 					currentTag.superscriptStyle = -1;
 					currentTag.fontDescriptor.pointSize *= 0.83;
-				}
-			}
-			else if ([tagName isEqualToString:@"style"])
-			{
-				if (tagOpen)
-				{
-					// TODO: store style info in a dictionary and apply it to tags
-					currentTag.tagContentInvisible = YES;
-					needsNewLineBefore = NO;
 				}
 			}
 			else if ([tagName isEqualToString:@"hr"])
@@ -1134,7 +1159,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					}
 					
 					// attach the attributes dictionary
-					NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
+					NSMutableDictionary *tmpAttributes = [[attachment.attributes mutableCopy] autorelease];
 					
 					// remove src and style, we already have that
 					[tmpAttributes removeObjectForKey:@"src"];

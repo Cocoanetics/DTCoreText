@@ -303,9 +303,12 @@
 }
 
 
-- (void)parseStyleString:(NSString *)styleString
+- (void)applyStyleDictionary:(NSDictionary *)styles
 {
-	NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+	if (![styles count])
+	{
+		return;
+	}
 	
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)
@@ -614,6 +617,12 @@
 	{
 		size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
+}
+
+- (void)parseStyleString:(NSString *)styleString
+{
+	NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+	[self applyStyleDictionary:styles];
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
