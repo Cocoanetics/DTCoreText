@@ -141,8 +141,10 @@
 	{
 		backgroundView = [[UIView alloc] initWithFrame:self.bounds];
 		backgroundView.backgroundColor	= [UIColor whiteColor];
-		//backgroundView.userInteractionEnabled = YES;
-		//self.userInteractionEnabled = YES;
+		
+		// default is no interaction because background should have no interaction
+		backgroundView.userInteractionEnabled = NO;
+
 		[self insertSubview:backgroundView belowSubview:self.contentView];
 		
 		// make content transparent so that we see the background
