@@ -68,6 +68,14 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
 {
+	// only with valid data
+	if (![data length])
+	{
+		[self release];
+		
+		return nil;
+	}
+	
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [options objectForKey:NSTextEncodingNameDocumentOption];
 	NSStringEncoding encoding = NSUTF8StringEncoding; // default
@@ -305,6 +313,10 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				
 				// to avoid much too much space before the image
 				currentTag.paragraphStyle.lineHeightMultiple = 1;
+				
+				// specifiying line height interfers with correct positioning
+				currentTag.paragraphStyle.minimumLineHeight = 0;
+				currentTag.paragraphStyle.maximumLineHeight = 0;
 
 				if (needsNewLineBefore)
 				{
@@ -682,6 +694,9 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					if (face)
 					{
 						currentTag.fontDescriptor.fontName = face;
+						
+						// face usually invalidates family
+						currentTag.fontDescriptor.fontFamily = nil; 
 					}
 					
 					NSString *color = [currentTag attributeForKey:@"color"];

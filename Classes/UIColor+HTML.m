@@ -370,11 +370,7 @@ static NSDictionary *colorLookup = nil;
 
 - (CGFloat)alpha
 {
-	CGColorRef color = self.CGColor;
-	size_t count = CGColorGetNumberOfComponents(color);
-	const CGFloat *components = CGColorGetComponents(color);
-	
-	return components[count-1];
+	return CGColorGetAlpha(self.CGColor);
 }
 
 - (UIColor *)invertedColor
@@ -411,24 +407,23 @@ static NSDictionary *colorLookup = nil;
 	size_t count = CGColorGetNumberOfComponents(color);
 	const CGFloat *components = CGColorGetComponents(color);
 	
-	if (count==2)
+	static NSString *stringFormat = @"%02x%02x%02x";
+	
+	// Grayscale
+	if (count == 2)
 	{
-		// grayscale
-		char white = components[0]*255;
-		
-		return [NSString stringWithFormat:@"#%02x%02x%02x", white, white, white];
-	}
-	else if (count==4)
-	{
-		// grayscale
-		NSUInteger red = components[0]*255;
-		NSUInteger green = components[1]*255;
-		NSUInteger blue = components[2]*255;
-		
-		
-		return [NSString stringWithFormat:@"#%02x%02x%02x", red, green, blue];
+		NSUInteger white = (NSUInteger)(components[0] * (CGFloat)255);
+		return [NSString stringWithFormat:stringFormat, white, white, white];
 	}
 	
+	// RGB
+	else if (count == 4)
+	{
+		return [NSString stringWithFormat:stringFormat, (NSUInteger)(components[0] * (CGFloat)255),
+				(NSUInteger)(components[1] * (CGFloat)255), (NSUInteger)(components[2] * (CGFloat)255)];
+	}
+	
+	// Unsupported color space
 	return nil;
 }
 

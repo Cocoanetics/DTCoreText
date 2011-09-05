@@ -386,6 +386,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	SYNCHRONIZE_START(LAYOUTSTRING)
 	{
 		[self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
+		
+		if (_delegateSupportsNotificationAfterDrawing)
+		{
+			[_delegate attributedTextContentView:self didDrawLayoutFrame:self.layoutFrame inContext:ctx];
+		}
 	}
 	SYNCHRONIZE_END(LAYOUTSTRING)
 }
@@ -686,7 +691,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	_delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
 	_delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
-	_delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)]; 
+	_delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+	_delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
 	
 	if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews)
 	{

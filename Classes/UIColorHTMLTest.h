@@ -11,5 +11,6 @@
 }
 
 - (void) testValidColorWithHexString;
+- (void) testColorHTMLHexString;
 
 @end

@@ -22,6 +22,9 @@
 
 - (id)initWithAvailableFonts;
 
+- (NSArray *)fontFamilyNames;
+- (NSArray *)fontDescriptors;
+
 - (DTCoreTextFontDescriptor *)matchingFontDescriptorForFontDescriptor:(DTCoreTextFontDescriptor *)descriptor;
 
 
