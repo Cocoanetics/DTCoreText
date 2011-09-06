@@ -15,6 +15,8 @@
 #import "DTLinkButton.h"
 #import "DTLazyImageView.h"
 #import "DTWebVideoView.h"
+#import "DTWebArchive+HTML.h"
+#import "UIPasteboard+DTWebArchive.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -50,7 +52,9 @@
 		// toolbar
 		UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
 		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
-		NSArray *toolbarItems = [NSArray arrayWithObjects:spacer, debug, nil];
+		UIBarButtonItem *paste = [[[UIBarButtonItem alloc] initWithTitle:@"Paste" style:UIBarButtonItemStyleBordered target:self action:@selector(paste:)] autorelease];
+		
+		NSArray *toolbarItems = [NSArray arrayWithObjects:paste, spacer, debug, nil];
 		[self setToolbarItems:toolbarItems];
 	}
 	return self;
@@ -390,6 +394,18 @@
 	_textView.contentView.drawDebugFrames = !_textView.contentView.drawDebugFrames;
 	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:_textView.contentView.drawDebugFrames];
 	[self.view setNeedsDisplay];
+}
+
+- (void)paste:(id)sender
+{
+	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	
+	DTWebArchive *webArchive = [pasteboard webArchive];
+	
+	if (webArchive)
+	{
+		_textView.contentView.attributedString = [webArchive attributedString];
+	}
 }
 
 #pragma mark DTLazyImageViewDelegate

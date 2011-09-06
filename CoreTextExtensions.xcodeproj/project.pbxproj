@@ -202,8 +202,16 @@
 		A78A38F612E30153007CE622 /* CGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtils.h; sourceTree = "<group>"; };
 		A78A38F712E30153007CE622 /* CGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGUtils.m; sourceTree = "<group>"; };
 		A78A3D9D12E42D49007CE622 /* icon_smile.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = icon_smile.gif; sourceTree = "<group>"; };
-		A7B1407B1414D80000C30F08 /* DTCSSStylesheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCSSStylesheet.h; sourceTree = "<group>"; };
-		A7B1407C1414D80000C30F08 /* DTCSSStylesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSStylesheet.m; sourceTree = "<group>"; };
+		A7B35EA2141616A400C2B473 /* DTWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTWebArchive.h; path = ../../DTWebArchive/DTWebArchive/Core/DTWebArchive.h; sourceTree = "<group>"; };
+		A7B35EA3141616A400C2B473 /* DTWebArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTWebArchive.m; path = ../../DTWebArchive/DTWebArchive/Core/DTWebArchive.m; sourceTree = "<group>"; };
+		A7B35EA4141616A400C2B473 /* DTWebResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTWebResource.h; path = ../../DTWebArchive/DTWebArchive/Core/DTWebResource.h; sourceTree = "<group>"; };
+		A7B35EA5141616A400C2B473 /* DTWebResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTWebResource.m; path = ../../DTWebArchive/DTWebArchive/Core/DTWebResource.m; sourceTree = "<group>"; };
+		A7B35EA6141616A400C2B473 /* NSDictionary+Data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Data.h"; path = "../../DTWebArchive/DTWebArchive/Core/NSDictionary+Data.h"; sourceTree = "<group>"; };
+		A7B35EA7141616A400C2B473 /* NSDictionary+Data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Data.m"; path = "../../DTWebArchive/DTWebArchive/Core/NSDictionary+Data.m"; sourceTree = "<group>"; };
+		A7B35EA8141616A400C2B473 /* UIPasteboard+DTWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIPasteboard+DTWebArchive.h"; path = "../../DTWebArchive/DTWebArchive/Core/UIPasteboard+DTWebArchive.h"; sourceTree = "<group>"; };
+		A7B35EA9141616A400C2B473 /* UIPasteboard+DTWebArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIPasteboard+DTWebArchive.m"; path = "../../DTWebArchive/DTWebArchive/Core/UIPasteboard+DTWebArchive.m"; sourceTree = "<group>"; };
+		A7B35EB51416176E00C2B473 /* DTWebArchive+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DTWebArchive+HTML.h"; sourceTree = "<group>"; };
+		A7B35EB61416176E00C2B473 /* DTWebArchive+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DTWebArchive+HTML.m"; sourceTree = "<group>"; };
 		A7BF4B6C13970D9800491C6F /* DTCoreTextFontOverrides.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTCoreTextFontOverrides.plist; sourceTree = "<group>"; };
 		A7C306E31394683400B2E925 /* UIDevice+DTVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+DTVersion.h"; sourceTree = "<group>"; };
 		A7C306E41394683400B2E925 /* UIDevice+DTVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+DTVersion.m"; sourceTree = "<group>"; };
@@ -284,6 +292,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A7B35EB41416173800C2B473 /* Pasteboard */,
 				A7D66A5C13B353BF00A9A7AC /* Utilities */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */,
@@ -306,6 +315,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				A7B35EA11416167A00C2B473 /* DTWebArchive */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				B23558DF12E04C3C005EA62F /* Other Sources */,
 				B23558E312E04C3C005EA62F /* Resources */,
@@ -427,6 +437,39 @@
 				A70F5510138A746200D642C5 /* DTCoreTextFontCollection.m */,
 			);
 			name = "CoreText Layout";
+			sourceTree = "<group>";
+		};
+		A7B35EA11416167A00C2B473 /* DTWebArchive */ = {
+			isa = PBXGroup;
+			children = (
+				A7B35EB3141616F500C2B473 /* Core */,
+			);
+			name = DTWebArchive;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		A7B35EB3141616F500C2B473 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				A7B35EA2141616A400C2B473 /* DTWebArchive.h */,
+				A7B35EA3141616A400C2B473 /* DTWebArchive.m */,
+				A7B35EA4141616A400C2B473 /* DTWebResource.h */,
+				A7B35EA5141616A400C2B473 /* DTWebResource.m */,
+				A7B35EA6141616A400C2B473 /* NSDictionary+Data.h */,
+				A7B35EA7141616A400C2B473 /* NSDictionary+Data.m */,
+				A7B35EA8141616A400C2B473 /* UIPasteboard+DTWebArchive.h */,
+				A7B35EA9141616A400C2B473 /* UIPasteboard+DTWebArchive.m */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		A7B35EB41416173800C2B473 /* Pasteboard */ = {
+			isa = PBXGroup;
+			children = (
+				A7B35EB51416176E00C2B473 /* DTWebArchive+HTML.h */,
+				A7B35EB61416176E00C2B473 /* DTWebArchive+HTML.m */,
+			);
+			name = Pasteboard;
 			sourceTree = "<group>";
 		};
 		A7D66A5C13B353BF00A9A7AC /* Utilities */ = {
@@ -662,7 +705,11 @@
 				A7101B5D13EA92FF00B75ECD /* DTAttributedTextCell.m in Sources */,
 				A78050EC13EC365000582708 /* DTWebVideoView.m in Sources */,
 				A7C85FE113F3C460003F0281 /* DTCSSListStyle.m in Sources */,
-				A7B1407E1414D80000C30F08 /* DTCSSStylesheet.m in Sources */,
+				A7B35EAB141616A400C2B473 /* DTWebArchive.m in Sources */,
+				A7B35EAD141616A400C2B473 /* DTWebResource.m in Sources */,
+				A7B35EAF141616A400C2B473 /* NSDictionary+Data.m in Sources */,
+				A7B35EB1141616A400C2B473 /* UIPasteboard+DTWebArchive.m in Sources */,
+				A7B35EB81416176E00C2B473 /* DTWebArchive+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,7 +754,11 @@
 				A7101B5C13EA92FF00B75ECD /* DTAttributedTextCell.m in Sources */,
 				A78050EB13EC365000582708 /* DTWebVideoView.m in Sources */,
 				A7C85FE013F3C460003F0281 /* DTCSSListStyle.m in Sources */,
-				A7B1407D1414D80000C30F08 /* DTCSSStylesheet.m in Sources */,
+				A7B35EAA141616A400C2B473 /* DTWebArchive.m in Sources */,
+				A7B35EAC141616A400C2B473 /* DTWebResource.m in Sources */,
+				A7B35EAE141616A400C2B473 /* NSDictionary+Data.m in Sources */,
+				A7B35EB0141616A400C2B473 /* UIPasteboard+DTWebArchive.m in Sources */,
+				A7B35EB71416176E00C2B473 /* DTWebArchive+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
