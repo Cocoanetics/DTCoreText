@@ -181,6 +181,9 @@
 - (void)setAttributedString:(NSAttributedString *)string
 {
 	self.contentView.attributedString = string;
+	
+	// might need layout for visible custom views
+	[self setNeedsLayout];
 
 	// adjust content size right away
 	self.contentSize = self.contentView.frame.size;

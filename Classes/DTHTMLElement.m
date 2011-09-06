@@ -607,13 +607,13 @@
 	
 	
 	NSString *widthString = [styles objectForKey:@"width"];
-	if (widthString)
+	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
 		size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
-	if (heightString)
+	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
 		size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}

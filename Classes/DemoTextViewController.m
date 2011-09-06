@@ -15,7 +15,7 @@
 #import "DTLinkButton.h"
 #import "DTLazyImageView.h"
 #import "DTWebVideoView.h"
-#import "DTWebArchive+HTML.h"
+#import "NSAttributedString+DTWebArchive.h"
 #import "UIPasteboard+DTWebArchive.h"
 
 #import <QuartzCore/QuartzCore.h>
@@ -40,7 +40,7 @@
 
 - (id)init {
 	if ((self = [super init])) {
-		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"Data", @"HTML", nil];
+		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		[items release];
 		
@@ -53,8 +53,9 @@
 		UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
 		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
 		UIBarButtonItem *paste = [[[UIBarButtonItem alloc] initWithTitle:@"Paste" style:UIBarButtonItemStyleBordered target:self action:@selector(paste:)] autorelease];
+		UIBarButtonItem *copy = [[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStyleBordered target:self action:@selector(copy:)] autorelease];
 		
-		NSArray *toolbarItems = [NSArray arrayWithObjects:paste, spacer, debug, nil];
+		NSArray *toolbarItems = [NSArray arrayWithObjects:paste, copy, spacer, debug, nil];
 		[self setToolbarItems:toolbarItems];
 	}
 	return self;
@@ -171,45 +172,6 @@
 	
 	// now the bar is up so we can autoresize again
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	
-	// fill other tabs
-	// Create range view
-	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
-	NSDictionary *attributes = nil;
-	NSRange effectiveRange = NSMakeRange(0, 0);
-	
-	if ([_textView.attributedString length])
-	{
-		
-		while ((attributes = [_textView.attributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
-		{
-			[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
-			effectiveRange.location += effectiveRange.length;
-			
-			if (effectiveRange.location >= [_textView.attributedString length])
-			{
-				break;
-			}
-		}
-	}
-	_rangeView.text = dumpOutput;
-	
-	
-	// Create characters view
-	[dumpOutput setString:@""];
-	NSData *dump = [[_textView.attributedString string] dataUsingEncoding:NSUTF8StringEncoding];
-	for (NSInteger i = 0; i < [dump length]; i++)
-	{
-		char *bytes = (char *)[dump bytes];
-		char b = bytes[i];
-		
-		[dumpOutput appendFormat:@"%x %c\n", b, b];
-	}
-	_charsView.text = dumpOutput;
-	[dumpOutput release];
-	
-	// Create HTML view
-	_htmlView.text = [_textView.attributedString htmlString];
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
@@ -228,6 +190,60 @@
 
 #pragma mark Private Methods
 
+- (void)updateDetailViewForIndex:(NSUInteger)index
+{
+	switch (index) 
+	{
+		case 1:
+		{
+			NSMutableString *dumpOutput = [[NSMutableString alloc] init];
+			NSDictionary *attributes = nil;
+			NSRange effectiveRange = NSMakeRange(0, 0);
+			
+			if ([_textView.attributedString length])
+			{
+				
+				while ((attributes = [_textView.attributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
+				{
+					[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+					effectiveRange.location += effectiveRange.length;
+					
+					if (effectiveRange.location >= [_textView.attributedString length])
+					{
+						break;
+					}
+				}
+			}
+			_rangeView.text = dumpOutput;
+			[dumpOutput release];
+			break;
+		}
+		case 2:
+		{
+			// Create characters view
+			NSMutableString *dumpOutput = [[NSMutableString alloc] init];
+			NSData *dump = [[_textView.attributedString string] dataUsingEncoding:NSUTF8StringEncoding];
+			for (NSInteger i = 0; i < [dump length]; i++)
+			{
+				char *bytes = (char *)[dump bytes];
+				char b = bytes[i];
+				
+				[dumpOutput appendFormat:@"%x %c\n", b, b];
+			}
+			_charsView.text = dumpOutput;
+			[dumpOutput release];
+			
+			break;
+		}
+		case 3:
+		{
+			_htmlView.text = [_textView.attributedString htmlString];
+			break;
+		}
+
+	}
+}
+
 - (void)_segmentedControlChanged:(id)sender {
 	UIScrollView *selectedView = _textView;
 	
@@ -239,12 +255,14 @@
 			selectedView = _charsView;
 			break;
 		case 3:
-			selectedView = _dataView;
-			break;
-		case 4:
+		{
 			selectedView = _htmlView;
 			break;
+		}
 	}
+
+	// refresh only this tab
+	[self updateDetailViewForIndex:_segmentedControl.selectedSegmentIndex];
 	
 	[self.view bringSubviewToFront:selectedView];
 	[selectedView flashScrollIndicators];
@@ -404,8 +422,24 @@
 	
 	if (webArchive)
 	{
-		_textView.contentView.attributedString = [webArchive attributedString];
+		CGSize maxImageSize = CGSizeMake(self.view.bounds.size.width - 20.0, self.view.bounds.size.height - 20.0);
+		
+		NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
+								 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, baseURL, NSBaseURLDocumentOption, nil];
+		
+		NSAttributedString *attrString = [[[NSAttributedString alloc] initWithWebArchive:webArchive options:options documentAttributes:NULL] autorelease];
+		
+		_textView.attributedString = attrString;
 	}
+}
+
+- (void)copy:(id)sender
+{
+	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	
+	DTWebArchive *webArchive = [_textView.attributedString webArchive];
+	
+	[pasteboard setWebArchive:webArchive];
 }
 
 #pragma mark DTLazyImageViewDelegate

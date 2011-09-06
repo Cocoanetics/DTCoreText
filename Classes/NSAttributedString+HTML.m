@@ -120,6 +120,8 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		return nil;
 	}
 	
+	NSLog(@"%@", htmlString);
+	
 	// the combined style sheet for entire document
 	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
 	
@@ -973,9 +975,12 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
 		
-		if (attachment && [predicate evaluateWithObject:attachment])
+		if (attachment)
 		{
-			[tmpArray addObject:attachment];
+			if ([predicate evaluateWithObject:attachment])
+			{
+				[tmpArray addObject:attachment];
+			}
 		}
 		
 		index += range.length;
