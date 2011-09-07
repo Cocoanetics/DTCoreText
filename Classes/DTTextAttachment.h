@@ -43,4 +43,6 @@ typedef enum
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
+- (NSString *)dataURLRepresentation;
+
 @end
