@@ -30,6 +30,17 @@
 		previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
 	}
 	
+	// need to remove image placeholder to prevent duplication
+	if ([previousAttributes objectForKey:@"DTTextAttachment"])
+	{
+		NSMutableDictionary *tmpDict = [[previousAttributes mutableCopy] autorelease];
+		
+		[tmpDict removeObjectForKey:@"DTTextAttachment"];
+		[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
+		
+		 previousAttributes = tmpDict;
+	}
+	
 	NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
 	[self appendAttributedString:tmpString];
 	[tmpString release];
