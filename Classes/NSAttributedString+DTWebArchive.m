@@ -29,7 +29,7 @@
 	{
 		[localOptions addEntriesFromDictionary:options];
 	}
-
+	
 	// base URL overrides
 	if (webArchive.mainResource.url)
 	{
@@ -74,8 +74,30 @@
 	NSString *htmlString = [self htmlString];
 	NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
 	
+	NSMutableArray *subresources = nil;
+	
+	NSPredicate *imagePredicate = [NSPredicate predicateWithFormat:@"contentType == %d", DTTextAttachmentTypeImage];
+	
+	NSArray *images = [self textAttachmentsWithPredicate:imagePredicate];
+	
+	if ([images count])
+	{
+		subresources = [NSMutableArray array];
+		for (DTTextAttachment *oneAttachment in images)
+		{
+			NSData *data = UIImagePNGRepresentation(oneAttachment.contents);
+			
+			if (data)
+			{
+				DTWebResource *resource = [[DTWebResource alloc] initWithData:data URL:oneAttachment.contentURL MIMEType:@"image/png" textEncodingName:nil frameName:nil];
+				[subresources addObject:resource];
+				[resource release];
+			}
+		}
+	}
+	
 	DTWebResource *mainResource = [[[DTWebResource alloc] initWithData:data URL:nil MIMEType:@"text/html" textEncodingName:@"UTF8" frameName:nil] autorelease];
-	DTWebArchive *newArchive = [[DTWebArchive alloc] initWithMainResource:mainResource subresources:nil subframeArchives:nil];
+	DTWebArchive *newArchive = [[DTWebArchive alloc] initWithMainResource:mainResource subresources:subresources subframeArchives:nil];
 	
 	return [newArchive autorelease];
 }
