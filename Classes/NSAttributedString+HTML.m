@@ -455,11 +455,11 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
 					currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 					
+					// first tab is to right-align bullet, numbering against
 					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
-					if(tabOffset > 20.0f) // I have no idea what an appropriate value is for this
-					{
 						[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-					}
+					
+					// second tab is for the beginning of first line after bullet
 					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
 				}
 				else 
