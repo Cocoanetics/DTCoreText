@@ -437,9 +437,11 @@
 {
 	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
 	
+	// web archive contains rich text
 	DTWebArchive *webArchive = [_textView.attributedString webArchive];
-	
 	[pasteboard setWebArchive:webArchive];
+	
+	// PS: in real life you also want to put put a plain text copy in pasteboard for apps that don't take rich text
 }
 
 #pragma mark DTLazyImageViewDelegate
