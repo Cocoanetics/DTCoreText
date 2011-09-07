@@ -122,6 +122,9 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	// the combined style sheet for entire document
 	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
 	
+	// default list styles
+	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
+	
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
@@ -436,8 +439,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				if (tagOpen)
 				{
-					// have inherit the correct list counter from parent
-					
+					// have inherited the correct list counter from parent
 					DTHTMLElement *counterElement = currentTag.parent;
 					
 					NSString *valueNum = [currentTag attributeForKey:@"value"];
@@ -457,7 +459,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					
 					// first tab is to right-align bullet, numbering against
 					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
-						[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+					[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 					
 					// second tab is for the beginning of first line after bullet
 					[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
@@ -494,11 +496,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				if (tagOpen)
 				{
-					if (!currentTag.listStyle)
-					{
-						currentTag.listStyle = [DTCSSListStyle decimalListStyle];
-					}
-					
 					NSString *valueNum = [currentTag attributeForKey:@"start"];
 					if (valueNum)
 					{
@@ -524,12 +521,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				if (tagOpen)
 				{
-					if (!currentTag.listStyle)
-					{
-						currentTag.listStyle = [DTCSSListStyle discListStyle];
-					}
-					
-					
 					needsNewLineBefore = YES;
 					
 					currentTag.listCounter = 0;
