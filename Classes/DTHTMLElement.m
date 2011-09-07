@@ -100,13 +100,13 @@
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
-
+		
 #ifndef DT_ADD_FONT_ON_ATTACHMENTS
 		// omit adding a font unless we need it also on attachments, e.g. for editing
 		shouldAddFont = NO;
 #endif
 	}
-
+	
 	// otherwise we have a font
 	if (shouldAddFont)
 	{
@@ -218,7 +218,7 @@
 	{
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes] autorelease];
-
+		
 		BOOL needsNewLineAfter = ![self isContainedInBlockElement];
 		
 #if ALLOW_IPHONE_SPECIAL_CASES
@@ -228,7 +228,7 @@
 			needsNewLineAfter = YES;
 		}
 #endif
-
+		
 		if (needsNewLineAfter)
 		{
 			[tmpString appendNakedString:@"\n"];
@@ -267,17 +267,22 @@
 
 - (NSAttributedString *)prefixForListItem
 {
-	// make a font without italic or bold
-	DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
-	fontDesc.boldTrait = NO;
-	fontDesc.italicTrait = NO;
-	
-	CTFontRef font = [fontDesc newMatchingFont];
-	[fontDesc release];
-	
 	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-	[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-	CFRelease(font);
+	
+	if (fontDescriptor)
+	{
+		// make a font without italic or bold
+		DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
+		
+		fontDesc.boldTrait = NO;
+		fontDesc.italicTrait = NO;
+		
+		CTFontRef font = [fontDesc newMatchingFont];
+		[fontDesc release];
+		
+		[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
+		CFRelease(font);
+	}
 	
 	// text color for bullet same as text
 	if (_textColor)
@@ -285,9 +290,12 @@
 		[attributes setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
 	}
 	// add paragraph style (this has the tabs)
-	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
-	[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-	CFRelease(newParagraphStyle);
+	if (paragraphStyle)
+	{
+		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
+		[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+		CFRelease(newParagraphStyle);
+	}
 	
 	// get calculated list style
 	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
@@ -917,7 +925,7 @@
 	{
 		[_attributes release];
 		_attributes = [attributes retain];
-
+		
 		// decode size contained in attributes, might be overridden later by CSS size
 		size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]); 
 	}
