@@ -403,10 +403,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		size.width = self.bounds.size.width;
 	}
 	
-	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
+//CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
 	
 	// this returns an incorrect size before 4.2
-	//	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
 	
 	return neededSize;
 }
