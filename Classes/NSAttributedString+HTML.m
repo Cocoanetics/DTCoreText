@@ -120,8 +120,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		return nil;
 	}
 	
-	NSLog(@"%@", htmlString);
-	
 	// the combined style sheet for entire document
 	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
 	
