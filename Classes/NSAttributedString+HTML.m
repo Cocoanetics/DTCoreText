@@ -1175,7 +1175,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				for (NSString *oneKey in [tmpAttributes allKeys])
 				{
 					oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
 					[retString appendFormat:@" %@=\"%@\"", oneKey, value];
 				}
 				
