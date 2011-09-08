@@ -380,8 +380,7 @@
 		A7342FF412DC341000044B3C /* NSAttributedString HTML Additions */ = {
 			isa = PBXGroup;
 			children = (
-				A7922E8E141621960093FB23 /* DTCSSStylesheet.h */,
-				A7922E8F141621960093FB23 /* DTCSSStylesheet.m */,
+				A7F205451418563300487A9D /* CSS */,
 				A73BC3ED12D9F5AD00F064C6 /* NSAttributedString+HTML.h */,
 				A73BC3EE12D9F5AD00F064C6 /* NSAttributedString+HTML.m */,
 				A7EA579D12E05FBF0045411B /* NSAttributedStringRunDelegates.h */,
@@ -398,8 +397,6 @@
 				A78A367312E23C56007CE622 /* NSCharacterSet+HTML.m */,
 				A7F2A77313575E700097BF31 /* NSMutableAttributedString+HTML.h */,
 				A7F2A77413575E700097BF31 /* NSMutableAttributedString+HTML.m */,
-				A7C85FDE13F3C460003F0281 /* DTCSSListStyle.h */,
-				A7C85FDF13F3C460003F0281 /* DTCSSListStyle.m */,
 				A7F2A7471357227C0097BF31 /* DTHTMLElement.h */,
 				A7F2A7481357227C0097BF31 /* DTHTMLElement.m */,
 			);
@@ -513,6 +510,17 @@
 				A723343313E5C12A003D9CDA /* DTRangedAttribute.m */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		A7F205451418563300487A9D /* CSS */ = {
+			isa = PBXGroup;
+			children = (
+				A7C85FDE13F3C460003F0281 /* DTCSSListStyle.h */,
+				A7C85FDF13F3C460003F0281 /* DTCSSListStyle.m */,
+				A7922E8E141621960093FB23 /* DTCSSStylesheet.h */,
+				A7922E8F141621960093FB23 /* DTCSSStylesheet.m */,
+			);
+			name = CSS;
 			sourceTree = "<group>";
 		};
 		B23558DF12E04C3C005EA62F /* Other Sources */ = {

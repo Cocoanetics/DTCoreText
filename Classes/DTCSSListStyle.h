@@ -46,6 +46,9 @@ typedef enum
 + (DTCSSListStyle *)discListStyle;
 + (DTCSSListStyle *)inheritedListStyle;
 
++ (DTCSSListStyleType)listStyleTypeFromString:(NSString *)string;
++ (DTCSSListStylePosition)listStylePositionFromString:(NSString *)string;
+
 - (id)initWithStyles:(NSDictionary *)styles;
 
 - (NSString *)prefixWithCounter:(NSInteger)counter;

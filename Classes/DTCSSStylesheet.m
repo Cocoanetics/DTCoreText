@@ -7,6 +7,8 @@
 //
 
 #import "DTCSSStylesheet.h"
+#import "DTCSSListStyle.h"
+
 #import "DTHTMLElement.h"
 #import "NSString+HTML.h"
 
@@ -45,6 +47,65 @@
 	return [_styles description];
 }
 
+- (void)uncompressShorthands:(NSMutableDictionary *)styles
+{
+	NSString *shortHand = [[styles objectForKey:@"list-style"] lowercaseString];
+	
+	if (shortHand)
+	{
+		[styles removeObjectForKey:@"list-style"];
+		
+		if ([shortHand isEqualToString:@"inherit"])
+		{
+			[styles setObject:@"inherit" forKey:@"list-style-type"];
+			[styles setObject:@"inherit" forKey:@"list-style-position"];
+			return;
+		}
+		
+		NSArray *components = [shortHand componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		
+		BOOL typeWasSet = NO;
+		BOOL positionWasSet = NO;
+		
+		DTCSSListStyleType listStyleType = NSNotFound;
+		DTCSSListStylePosition listStylePosition = NSNotFound;
+		
+		for (NSString *oneComponent in components)
+		{
+			
+			
+			if (!typeWasSet)
+			{
+				// check if valid type
+				listStyleType = [DTCSSListStyle listStyleTypeFromString:oneComponent];
+				
+				if (listStyleType != NSNotFound)
+				{
+					[styles setObject:oneComponent forKey:@"list-style-type"];
+					
+					typeWasSet = YES;
+					continue;
+				}
+			}
+			
+			if (!positionWasSet)
+			{
+				// check if valid position
+				listStylePosition = [DTCSSListStyle listStylePositionFromString:oneComponent];
+				
+				if (listStylePosition != NSNotFound)
+				{
+					[styles setObject:oneComponent forKey:@"list-style-position"];
+
+					positionWasSet = YES;
+					continue;
+				}
+			}
+		}
+		
+		return;
+	}
+}
 
 - (void)addStyleRule:(NSString *)rule withSelector:(NSString*)selectors
 {
@@ -54,7 +115,10 @@
 	{
 		NSString *cleanSelector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		
-		NSDictionary *ruleDictionary = [rule dictionaryOfCSSStyles];
+		NSMutableDictionary *ruleDictionary = [[[rule dictionaryOfCSSStyles] mutableCopy] autorelease];
+
+		// need to uncompress because otherwise we might get shorthands and non-shorthands together
+		[self uncompressShorthands:ruleDictionary];
 		
 		NSDictionary *existingRulesForSelector = [self.styles objectForKey:cleanSelector];
 		
@@ -176,7 +240,10 @@
 	
 	if ([styleString length])
 	{
-		NSDictionary *localStyles = [styleString dictionaryOfCSSStyles];
+		NSMutableDictionary *localStyles = [[[styleString dictionaryOfCSSStyles] mutableCopy] autorelease];
+		
+		// need to uncompress because otherwise we might get shorthands and non-shorthands together
+		[self uncompressShorthands:localStyles];
 	
 		[tmpDict addEntriesFromDictionary:localStyles];
 	}

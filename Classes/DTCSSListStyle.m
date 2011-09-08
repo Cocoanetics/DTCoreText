@@ -8,6 +8,9 @@
 
 #import "DTCSSListStyle.h"
 
+
+
+
 @interface DTCSSListStyle ()
 
 - (void)updateFromStyleDictionary:(NSDictionary *)styles;
@@ -62,12 +65,12 @@
 	return self;
 }
 
-// returns NO if not a valid type
-- (BOOL)setTypeWithString:(NSString *)string
+// convert string to listStyleType
++ (DTCSSListStyleType)listStyleTypeFromString:(NSString *)string
 {
 	if (!string)
 	{
-		return NO;
+		return NSNotFound;
 	}
 	
 	// always compare lower case
@@ -75,80 +78,103 @@
 	
 	if ([string isEqualToString:@"inherit"])
 	{
-		_type = DTCSSListStyleTypeInherit;
+		return DTCSSListStyleTypeInherit;
 	}
 	else if ([string isEqualToString:@"none"])
 	{
-		_type = DTCSSListStyleTypeNone;
+		return DTCSSListStyleTypeNone;
 	}
 	else if ([string isEqualToString:@"circle"])
 	{
-		_type = DTCSSListStyleTypeCircle;
+		return DTCSSListStyleTypeCircle;
 	}		
 	else if ([string isEqualToString:@"decimal"])
 	{
-		_type = DTCSSListStyleTypeDecimal;
+		return DTCSSListStyleTypeDecimal;
 	}
 	else if ([string isEqualToString:@"decimal-leading-zero"])
 	{
-		_type = DTCSSListStyleTypeDecimalLeadingZero;
+		return DTCSSListStyleTypeDecimalLeadingZero;
 	}        
 	else if ([string isEqualToString:@"disc"])
 	{
-		_type = DTCSSListStyleTypeDisc;
+		return DTCSSListStyleTypeDisc;
 	}
 	else if ([string isEqualToString:@"upper-alpha"]||[string isEqualToString:@"upper-latin"])
 	{
-		_type = DTCSSListStyleTypeUpperAlpha;
+		return DTCSSListStyleTypeUpperAlpha;
 	}		
 	else if ([string isEqualToString:@"lower-alpha"]||[string isEqualToString:@"lower-latin"])
 	{
-		_type = DTCSSListStyleTypeLowerAlpha;
+		return DTCSSListStyleTypeLowerAlpha;
 	}		
 	else if ([string isEqualToString:@"plus"])
 	{
-		_type = DTCSSListStyleTypePlus;
+		return DTCSSListStyleTypePlus;
 	}        
 	else if ([string isEqualToString:@"underscore"])
 	{
-		_type = DTCSSListStyleTypeUnderscore;
+		return DTCSSListStyleTypeUnderscore;
 	}  
 	else
 	{
-		return NO;
+		return NSNotFound;
+	}
+}
+
++ (DTCSSListStylePosition)listStylePositionFromString:(NSString *)string
+{
+	if (!string)
+	{
+		return NSNotFound;
 	}
 	
+	// always compare lower case
+	string = [string lowercaseString];
+	
+	if ([string isEqualToString:@"inherit"])
+	{
+		return DTCSSListStylePositionInherit;
+	}
+	else if ([string isEqualToString:@"inside"])
+	{
+		return DTCSSListStylePositionInside;
+	}
+	else if ([string isEqualToString:@"outside"])
+	{
+		return DTCSSListStylePositionOutside;
+	}		
+	else
+	{
+		return NSNotFound;
+	}
+}
+
+// returns NO if not a valid type
+- (BOOL)setTypeWithString:(NSString *)string
+{
+	DTCSSListStyleType type = [DTCSSListStyle listStyleTypeFromString:string];
+	
+	if (type == NSNotFound)
+	{
+		return NO;
+	}
+
+	_type = type;
 	return YES;
 }
 
 // returns NO if not a valid type
 - (BOOL)setPositionWithString:(NSString *)string
 {
-	if (!string)
+	DTCSSListStylePosition position = [DTCSSListStyle listStylePositionFromString:string];
+	
+	if (position == NSNotFound)
 	{
 		return NO;
 	}
 	
-	// always compare lower case
-	string = [string lowercaseString];
-	
-	if ([string isEqualToString:@"inherit"])
-	{
-		_position = DTCSSListStylePositionInherit;
-	}
-	else if ([string isEqualToString:@"inside"])
-	{
-		_position = DTCSSListStylePositionInside;
-	}
-	else if ([string isEqualToString:@"outside"])
-	{
-		_position = DTCSSListStylePositionOutside;
-	}		
-	else
-	{
-		return NO;
-	}
-	
+	_position = position;
 	return YES;
 }
 
@@ -287,4 +313,3 @@
 @end
 
 // TO DO: Implement image 
-// TO DO: Implement position

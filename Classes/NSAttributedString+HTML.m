@@ -289,13 +289,13 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					[currentTag applyStyleDictionary:mergedStyles];
 				}
 				
-				//				// convert CSS Styles into our own style
-				//				NSString *styleString = [currentTag attributeForKey:@"style"];
-				//				
-				//				if (styleString)
-				//				{
-				//					[currentTag parseStyleString:styleString];
-				//				}
+				// convert CSS Styles into our own style
+//				NSString *styleString = [currentTag attributeForKey:@"style"];
+//								
+//				if (styleString)
+//				{
+//					[currentTag parseStyleString:styleString];
+//				}
 				
 				if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
 				{
