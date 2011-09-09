@@ -19,7 +19,8 @@ typedef enum
     DTCSSListStyleTypeLowerAlpha,
     DTCSSListStyleTypeLowerLatin,
     DTCSSListStyleTypePlus,
-    DTCSSListStyleTypeUnderscore
+    DTCSSListStyleTypeUnderscore,
+	DTCSSListStyleTypeImage
 } DTCSSListStyleType;
 
 typedef enum
@@ -35,11 +36,14 @@ typedef enum
 	
 	DTCSSListStyleType _type;
 	DTCSSListStylePosition _position;
+	
+	NSString *_imageName;
 }
 
 @property (nonatomic, assign) BOOL inherit; 
 @property (nonatomic, assign) DTCSSListStyleType type;
 @property (nonatomic, assign) DTCSSListStylePosition position;
+@property (nonatomic, copy) NSString *imageName;
 
 + (DTCSSListStyle *)listStyleWithStyles:(NSDictionary *)styles;
 + (DTCSSListStyle *)decimalListStyle;

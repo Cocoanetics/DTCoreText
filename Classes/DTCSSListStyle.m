@@ -7,6 +7,8 @@
 //
 
 #import "DTCSSListStyle.h"
+#import "NSScanner+HTML.h"
+#import "NSString+HTML.h"
 
 
 
@@ -63,6 +65,13 @@
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+	[_imageName release];
+	
+	[super dealloc];
 }
 
 // convert string to listStyleType
@@ -198,6 +207,19 @@
 		
 		for (NSString *oneComponent in components)
 		{
+			if ([oneComponent hasPrefix:@"url"])
+			{
+				// list-style-image
+				NSString *urlString;
+				NSScanner *scanner = [NSScanner scannerWithString:oneComponent];
+				
+				if ([scanner scanCSSURL:&urlString])
+				{
+					self.imageName = urlString;
+					continue;
+				}
+			}
+			
 			if (!typeWasSet && [self setTypeWithString:oneComponent])
 			{
 				typeWasSet = YES;
@@ -218,6 +240,21 @@
 	
 	[self setTypeWithString:[styles objectForKey:@"list-style-type"]];
 	[self setPositionWithString:[styles objectForKey:@"list-style-position"]];
+	
+	NSString *tmpStr =  [styles objectForKey:@"list-style-image"];
+	
+	if (tmpStr)
+	{
+		// extract just the name
+		
+		NSString *urlString;
+		NSScanner *scanner = [NSScanner scannerWithString:tmpStr];
+		
+		if ([scanner scanCSSURL:&urlString])
+		{
+			self.imageName = urlString;
+		}
+	}
 }
 
 - (NSString *)description
@@ -232,6 +269,7 @@
 	DTCSSListStyle *newStyle = [[DTCSSListStyle allocWithZone:zone] init];
 	newStyle.type = self.type;
 	newStyle.position = self.position;
+	newStyle.imageName = self.imageName;
 	
 	return newStyle;
 }
@@ -242,12 +280,24 @@
 {
 	NSString *token = nil;
 	
-	switch (_type) 
+	DTCSSListStyleType listStyleType = _type;
+	
+	if (self.imageName)
+	{
+		listStyleType = DTCSSListStyleTypeImage;
+	}
+	
+	
+	switch (listStyleType) 
 	{
 		case DTCSSListStyleTypeNone:
 		case DTCSSListStyleTypeInherit:  // should never be called with inherit
 		{
 			return nil;
+		}
+		case DTCSSListStyleTypeImage:
+		{
+			token = UNICODE_OBJECT_PLACEHOLDER;
 		}
 		case DTCSSListStyleTypeCircle:
 		{
@@ -304,11 +354,13 @@
 	}
 }
 
+
 #pragma mark Properties
 
 @synthesize inherit = _inherit;
 @synthesize type = _type;
 @synthesize position = _position;
+@synthesize imageName = _imageName;
 
 @end
 

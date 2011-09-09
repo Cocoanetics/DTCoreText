@@ -304,7 +304,51 @@
 	
 	if (prefix)
 	{
-		return [[[NSAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
+		UIImage *image = nil;
+		
+		if (calculatedListStyle.imageName)
+		{
+			image = [UIImage imageNamed:calculatedListStyle.imageName];
+			
+			if (!image)
+			{
+				// image invalid
+				calculatedListStyle.imageName = nil;
+				
+				prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+			}
+		}
+		
+		NSMutableAttributedString *tmpStr = [[[NSMutableAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
+		
+		
+		if (image)
+		{
+			// make an attachment for the image
+			DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+			attachment.contents = image;
+			attachment.contentType = DTTextAttachmentTypeImage;
+			attachment.displaySize = image.size;
+			
+			// need run delegate for sizing
+			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+			[attributes setObject:(id)embeddedObjectRunDelegate forKey:(id)kCTRunDelegateAttributeName];
+			CFRelease(embeddedObjectRunDelegate);
+			
+			// add attachment
+			[attributes setObject:attachment forKey:@"DTTextAttachment"];				
+			
+			if (calculatedListStyle.position == DTCSSListStylePositionInside)
+			{
+				[tmpStr setAttributes:attributes range:NSMakeRange(2, 1)];
+			}
+			else
+			{
+				[tmpStr setAttributes:attributes range:NSMakeRange(1, 1)];
+			}
+		}
+		
+		return tmpStr;
 	}
 	
 	return nil;
@@ -688,6 +732,8 @@
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
 {
+	
+	
 	id value = [self valueForKeyPath:keyPath];
 	
 	// if property is not set we also go to parent
@@ -729,9 +775,11 @@
 	
 	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
 	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
+	id calcImage = [self valueForKeyPathWithInheritance:@"listStyle.imageName"];
 	
 	style.type = (DTCSSListStyleType)[calcType integerValue];
 	style.position = (DTCSSListStylePosition)[calcPos integerValue];
+	style.imageName = calcImage;
 	
 	return style;
 }

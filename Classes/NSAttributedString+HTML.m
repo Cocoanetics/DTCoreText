@@ -870,6 +870,25 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 						
 						if (prefixString)
 						{
+							// need to add paragraph space after previous paragraph
+							if (nextParagraphAdditionalSpaceBefore>0)
+							{
+								NSRange effectiveRange;
+								
+								NSMutableDictionary *finalAttributes = [[[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy] autorelease];
+								CTParagraphStyleRef style = (CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+								DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
+								paragraphStyle.paragraphSpacing += nextParagraphAdditionalSpaceBefore;
+								
+								CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+								[finalAttributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+								CFRelease(newParagraphStyle);
+								
+								[tmpString setAttributes:finalAttributes range:effectiveRange];
+
+								nextParagraphAdditionalSpaceBefore = 0;
+							}
+							
 							[tmpString appendAttributedString:prefixString]; 
 						}
 						

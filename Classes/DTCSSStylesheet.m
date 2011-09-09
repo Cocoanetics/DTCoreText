@@ -11,6 +11,7 @@
 
 #import "DTHTMLElement.h"
 #import "NSString+HTML.h"
+#import "NSScanner+HTML.h"
 
 
 @interface DTCSSStylesheet ()
@@ -72,7 +73,18 @@
 		
 		for (NSString *oneComponent in components)
 		{
-			
+			if ([oneComponent hasPrefix:@"url"])
+			{
+				// list-style-image
+				NSScanner *scanner = [NSScanner scannerWithString:oneComponent];
+				
+				if ([scanner scanCSSURL:NULL])
+				{
+					[styles setObject:oneComponent forKey:@"list-style-image"];
+					
+					continue;
+				}
+			}
 			
 			if (!typeWasSet)
 			{

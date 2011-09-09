@@ -14,6 +14,7 @@
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed;
 - (BOOL)scanDOCTYPE:(NSString **)contents;
 - (BOOL)scanCSSAttribute:(NSString **)name value:(NSString **)value;
+- (BOOL)scanCSSURL:(NSString **)urlString;
 
 - (void)logPosition;
 @end
