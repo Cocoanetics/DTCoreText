@@ -48,12 +48,6 @@
 	NSMutableDictionary *customViewsForLinksIndex;
 	NSMutableDictionary *customViewsForAttachmentsIndex;
     
-    id <DTAttributedTextContentViewDelegate> _delegate;
-	BOOL _delegateSupportsCustomViewsForAttachments;
-	BOOL _delegateSupportsCustomViewsForLinks;
-	BOOL _delegateSupportsGenericCustomViews;
-	BOOL _delegateSupportsNotificationAfterDrawing;
-	
 	BOOL _isTiling;
 	
 	DTCoreTextLayouter *_layouter;
@@ -61,6 +55,17 @@
 	
 	CGPoint _layoutOffset;
     CGSize _backgroundOffset;
+	
+	// lookup bitmask what delegate methods are implemented
+	struct 
+	{
+		unsigned int delegateSupportsCustomViewsForAttachments:1;
+		unsigned int delegateSupportsCustomViewsForLinks:1;
+		unsigned int delegateSupportsGenericCustomViews:1;
+		unsigned int delegateSupportsNotificationAfterDrawing:1;
+	} _delegateFlags;
+	
+	id <DTAttributedTextContentViewDelegate> _delegate;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
