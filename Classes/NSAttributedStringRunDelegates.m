@@ -40,7 +40,7 @@ CGFloat embeddedObjectGetWidthCallback(void * context)
 		return [(DTTextAttachment *)context displaySize].width;
 	}
 	
-	return 0;
+	return 35;
 }
 
 CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context)

@@ -55,12 +55,15 @@
 	{
 		CGRect imageRect = [self contentRectForBounds:self.bounds];
 		
-		CGPathRef roundedRectPath = newPathForRoundedRect(imageRect, 3.0, YES, YES);
+		UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0];
 		CGContextSetGrayFillColor(ctx, 0.73, 0.4);
-		CGContextAddPath(ctx, roundedRectPath);
-		CGContextFillPath(ctx);
+		[roundedPath fill];							 
 		
-		CGPathRelease(roundedRectPath);
+//		CGPathRef roundedRectPath = newPathForRoundedRect(imageRect, 3.0, YES, YES);
+//		CGContextAddPath(ctx, roundedRectPath);
+//		CGContextFillPath(ctx);
+//		
+//		CGPathRelease(roundedRectPath);
 	}
 }
 

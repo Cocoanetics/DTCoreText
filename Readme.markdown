@@ -19,3 +19,5 @@ CoreText has a problem prior to iOS 5 where it takes around a second on device t
 
 - trigger the loading on a background thread like shown in http://www.cocoanetics.com/2011/04/coretext-loading-performance/
 - if you only use certain fonts then add the variants to the DTCoreTextFontOverrides.plist, this speeds up the finding of a specific font face from the font family
+
+Some combinations of fonts and unusual list types cause an extra space to appear. e.g. 20 px Courier + Circle

@@ -309,6 +309,66 @@
 	return YES;
 }
 
+/*
+ 
+ Source: http://www.w3.org/TR/CSS1/#url
+ 
+ The format of a URL value is 'url(' followed by optional white space followed by an optional single quote (') or double quote (") character followed by the URL itself (as defined in [11]) followed by an optional single quote (') or double quote (") character followed by optional whitespace followed by ')'. Quote characters that are not part of the URL itself must be balanced.
+ 
+ Parentheses, commas, whitespace characters, single quotes (') and double quotes (") appearing in a URL must be escaped with a backslash: '\(', '\)', '\,'.
+ 
+ Partial URLs are interpreted relative to the source of the style sheet, not relative to the document:
+*/
+
+// NOTE: Simplified, we assume that there are no quotes in the URL
+
+- (BOOL)scanCSSURL:(NSString **)urlString
+{
+	if (![self scanString:@"url(" intoString:NULL])
+	{
+		return NO;
+	}
+	
+
+	NSCharacterSet *quoteCharacterSet = [NSCharacterSet quoteCharacterSet];
+	NSString *quote;
+	NSString *attrValue;
+	
+	if ([self scanCharactersFromSet:quoteCharacterSet intoString:&quote])
+	{
+		if ([quote length]==1)
+		{
+			[self scanUpToString:quote intoString:&attrValue];	
+			[self scanString:quote intoString:NULL];
+		}
+		else
+		{
+			// most likely e.g. href=""
+			attrValue = @"";
+		}
+		
+		// decode HTML entities
+		attrValue = [attrValue stringByReplacingHTMLEntities];
+	}
+	else 
+	{
+		// non-quoted attribute, ends at )
+		if ([self scanUpToString:@")" intoString:&attrValue])
+		{
+			// decode HTML entities
+			attrValue = [attrValue stringByReplacingHTMLEntities];
+		}
+	}
+
+	if (urlString)
+	{
+		*urlString = attrValue;
+	}
+	
+	return YES;
+	
+	
+}
 
 // for debugging scanner
 - (void)logPosition

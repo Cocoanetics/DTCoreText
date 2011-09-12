@@ -15,7 +15,8 @@ typedef enum
     DTTextAttachmentTypeImage,
     DTTextAttachmentTypeVideoURL,
 	DTTextAttachmentTypeIframe,
-	DTTextAttachmentTypeObject
+	DTTextAttachmentTypeObject,
+	DTTextAttachmentTypeGeneric
 }  DTTextAttachmentType;
 
 
@@ -42,5 +43,7 @@ typedef enum
 
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
+
+- (NSString *)dataURLRepresentation;
 
 @end

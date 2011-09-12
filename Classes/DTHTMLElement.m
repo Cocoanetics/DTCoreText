@@ -100,13 +100,13 @@
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
-
+		
 #ifndef DT_ADD_FONT_ON_ATTACHMENTS
 		// omit adding a font unless we need it also on attachments, e.g. for editing
 		shouldAddFont = NO;
 #endif
 	}
-
+	
 	// otherwise we have a font
 	if (shouldAddFont)
 	{
@@ -218,7 +218,7 @@
 	{
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes] autorelease];
-
+		
 		BOOL needsNewLineAfter = ![self isContainedInBlockElement];
 		
 #if ALLOW_IPHONE_SPECIAL_CASES
@@ -228,7 +228,7 @@
 			needsNewLineAfter = YES;
 		}
 #endif
-
+		
 		if (needsNewLineAfter)
 		{
 			[tmpString appendNakedString:@"\n"];
@@ -267,17 +267,22 @@
 
 - (NSAttributedString *)prefixForListItem
 {
-	// make a font without italic or bold
-	DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
-	fontDesc.boldTrait = NO;
-	fontDesc.italicTrait = NO;
-	
-	CTFontRef font = [fontDesc newMatchingFont];
-	[fontDesc release];
-	
 	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-	[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-	CFRelease(font);
+	
+	if (fontDescriptor)
+	{
+		// make a font without italic or bold
+		DTCoreTextFontDescriptor *fontDesc = [self.fontDescriptor copy];
+		
+		fontDesc.boldTrait = NO;
+		fontDesc.italicTrait = NO;
+		
+		CTFontRef font = [fontDesc newMatchingFont];
+		[fontDesc release];
+		
+		[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
+		CFRelease(font);
+	}
 	
 	// text color for bullet same as text
 	if (_textColor)
@@ -285,9 +290,12 @@
 		[attributes setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
 	}
 	// add paragraph style (this has the tabs)
-	CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
-	[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-	CFRelease(newParagraphStyle);
+	if (paragraphStyle)
+	{
+		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
+		[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+		CFRelease(newParagraphStyle);
+	}
 	
 	// get calculated list style
 	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
@@ -296,16 +304,63 @@
 	
 	if (prefix)
 	{
-		return [[[NSAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
+		UIImage *image = nil;
+		
+		if (calculatedListStyle.imageName)
+		{
+			image = [UIImage imageNamed:calculatedListStyle.imageName];
+			
+			if (!image)
+			{
+				// image invalid
+				calculatedListStyle.imageName = nil;
+				
+				prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+			}
+		}
+		
+		NSMutableAttributedString *tmpStr = [[[NSMutableAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
+		
+		
+		if (image)
+		{
+			// make an attachment for the image
+			DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+			attachment.contents = image;
+			attachment.contentType = DTTextAttachmentTypeImage;
+			attachment.displaySize = image.size;
+			
+			// need run delegate for sizing
+			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+			[attributes setObject:(id)embeddedObjectRunDelegate forKey:(id)kCTRunDelegateAttributeName];
+			CFRelease(embeddedObjectRunDelegate);
+			
+			// add attachment
+			[attributes setObject:attachment forKey:@"DTTextAttachment"];				
+			
+			if (calculatedListStyle.position == DTCSSListStylePositionInside)
+			{
+				[tmpStr setAttributes:attributes range:NSMakeRange(2, 1)];
+			}
+			else
+			{
+				[tmpStr setAttributes:attributes range:NSMakeRange(1, 1)];
+			}
+		}
+		
+		return tmpStr;
 	}
 	
 	return nil;
 }
 
 
-- (void)parseStyleString:(NSString *)styleString
+- (void)applyStyleDictionary:(NSDictionary *)styles
 {
-	NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+	if (![styles count])
+	{
+		return;
+	}
 	
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)
@@ -604,16 +659,22 @@
 	
 	
 	NSString *widthString = [styles objectForKey:@"width"];
-	if (widthString)
+	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
 		size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
-	if (heightString)
+	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
 		size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
+}
+
+- (void)parseStyleString:(NSString *)styleString
+{
+	NSDictionary *styles = [styleString dictionaryOfCSSStyles];
+	[self applyStyleDictionary:styles];
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
@@ -671,6 +732,8 @@
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
 {
+	
+	
 	id value = [self valueForKeyPath:keyPath];
 	
 	// if property is not set we also go to parent
@@ -712,9 +775,11 @@
 	
 	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
 	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
+	id calcImage = [self valueForKeyPathWithInheritance:@"listStyle.imageName"];
 	
 	style.type = (DTCSSListStyleType)[calcType integerValue];
 	style.position = (DTCSSListStylePosition)[calcPos integerValue];
+	style.imageName = calcImage;
 	
 	return style;
 }
@@ -908,7 +973,7 @@
 	{
 		[_attributes release];
 		_attributes = [attributes retain];
-
+		
 		// decode size contained in attributes, might be overridden later by CSS size
 		size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]); 
 	}
