@@ -116,6 +116,8 @@ typedef enum
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;
+- (void)applyStyleDictionary:(NSDictionary *)styles;
+
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
 
 - (NSString *)path;

@@ -17,7 +17,8 @@ CGFloat embeddedObjectGetAscentCallback(void *context)
 {
 	if ([(id)context isKindOfClass:[DTTextAttachment class]])
 	{
-		return [(DTTextAttachment *)context displaySize].height;
+		DTTextAttachment *attachment = context;
+		return [attachment displaySize].height;
 	}
 	
 	return 0;
@@ -39,7 +40,7 @@ CGFloat embeddedObjectGetWidthCallback(void * context)
 		return [(DTTextAttachment *)context displaySize].width;
 	}
 	
-	return 0;
+	return 35;
 }
 
 CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context)

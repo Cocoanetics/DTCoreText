@@ -7,6 +7,11 @@
 //
 
 #import "DTCSSListStyle.h"
+#import "NSScanner+HTML.h"
+#import "NSString+HTML.h"
+
+
+
 
 @interface DTCSSListStyle ()
 
@@ -62,12 +67,19 @@
 	return self;
 }
 
-// returns NO if not a valid type
-- (BOOL)setTypeWithString:(NSString *)string
+- (void)dealloc
+{
+	[_imageName release];
+	
+	[super dealloc];
+}
+
+// convert string to listStyleType
++ (DTCSSListStyleType)listStyleTypeFromString:(NSString *)string
 {
 	if (!string)
 	{
-		return NO;
+		return NSNotFound;
 	}
 	
 	// always compare lower case
@@ -75,80 +87,103 @@
 	
 	if ([string isEqualToString:@"inherit"])
 	{
-		_type = DTCSSListStyleTypeInherit;
+		return DTCSSListStyleTypeInherit;
 	}
 	else if ([string isEqualToString:@"none"])
 	{
-		_type = DTCSSListStyleTypeNone;
+		return DTCSSListStyleTypeNone;
 	}
 	else if ([string isEqualToString:@"circle"])
 	{
-		_type = DTCSSListStyleTypeCircle;
+		return DTCSSListStyleTypeCircle;
 	}		
 	else if ([string isEqualToString:@"decimal"])
 	{
-		_type = DTCSSListStyleTypeDecimal;
+		return DTCSSListStyleTypeDecimal;
 	}
 	else if ([string isEqualToString:@"decimal-leading-zero"])
 	{
-		_type = DTCSSListStyleTypeDecimalLeadingZero;
+		return DTCSSListStyleTypeDecimalLeadingZero;
 	}        
 	else if ([string isEqualToString:@"disc"])
 	{
-		_type = DTCSSListStyleTypeDisc;
+		return DTCSSListStyleTypeDisc;
 	}
 	else if ([string isEqualToString:@"upper-alpha"]||[string isEqualToString:@"upper-latin"])
 	{
-		_type = DTCSSListStyleTypeUpperAlpha;
+		return DTCSSListStyleTypeUpperAlpha;
 	}		
 	else if ([string isEqualToString:@"lower-alpha"]||[string isEqualToString:@"lower-latin"])
 	{
-		_type = DTCSSListStyleTypeLowerAlpha;
+		return DTCSSListStyleTypeLowerAlpha;
 	}		
 	else if ([string isEqualToString:@"plus"])
 	{
-		_type = DTCSSListStyleTypePlus;
+		return DTCSSListStyleTypePlus;
 	}        
 	else if ([string isEqualToString:@"underscore"])
 	{
-		_type = DTCSSListStyleTypeUnderscore;
+		return DTCSSListStyleTypeUnderscore;
 	}  
 	else
 	{
-		return NO;
+		return NSNotFound;
+	}
+}
+
++ (DTCSSListStylePosition)listStylePositionFromString:(NSString *)string
+{
+	if (!string)
+	{
+		return NSNotFound;
 	}
 	
+	// always compare lower case
+	string = [string lowercaseString];
+	
+	if ([string isEqualToString:@"inherit"])
+	{
+		return DTCSSListStylePositionInherit;
+	}
+	else if ([string isEqualToString:@"inside"])
+	{
+		return DTCSSListStylePositionInside;
+	}
+	else if ([string isEqualToString:@"outside"])
+	{
+		return DTCSSListStylePositionOutside;
+	}		
+	else
+	{
+		return NSNotFound;
+	}
+}
+
+// returns NO if not a valid type
+- (BOOL)setTypeWithString:(NSString *)string
+{
+	DTCSSListStyleType type = [DTCSSListStyle listStyleTypeFromString:string];
+	
+	if (type == NSNotFound)
+	{
+		return NO;
+	}
+
+	_type = type;
 	return YES;
 }
 
 // returns NO if not a valid type
 - (BOOL)setPositionWithString:(NSString *)string
 {
-	if (!string)
+	DTCSSListStylePosition position = [DTCSSListStyle listStylePositionFromString:string];
+	
+	if (position == NSNotFound)
 	{
 		return NO;
 	}
 	
-	// always compare lower case
-	string = [string lowercaseString];
-	
-	if ([string isEqualToString:@"inherit"])
-	{
-		_position = DTCSSListStylePositionInherit;
-	}
-	else if ([string isEqualToString:@"inside"])
-	{
-		_position = DTCSSListStylePositionInside;
-	}
-	else if ([string isEqualToString:@"outside"])
-	{
-		_position = DTCSSListStylePositionOutside;
-	}		
-	else
-	{
-		return NO;
-	}
-	
+	_position = position;
 	return YES;
 }
 
@@ -172,6 +207,19 @@
 		
 		for (NSString *oneComponent in components)
 		{
+			if ([oneComponent hasPrefix:@"url"])
+			{
+				// list-style-image
+				NSString *urlString;
+				NSScanner *scanner = [NSScanner scannerWithString:oneComponent];
+				
+				if ([scanner scanCSSURL:&urlString])
+				{
+					self.imageName = urlString;
+					continue;
+				}
+			}
+			
 			if (!typeWasSet && [self setTypeWithString:oneComponent])
 			{
 				typeWasSet = YES;
@@ -192,6 +240,21 @@
 	
 	[self setTypeWithString:[styles objectForKey:@"list-style-type"]];
 	[self setPositionWithString:[styles objectForKey:@"list-style-position"]];
+	
+	NSString *tmpStr =  [styles objectForKey:@"list-style-image"];
+	
+	if (tmpStr)
+	{
+		// extract just the name
+		
+		NSString *urlString;
+		NSScanner *scanner = [NSScanner scannerWithString:tmpStr];
+		
+		if ([scanner scanCSSURL:&urlString])
+		{
+			self.imageName = urlString;
+		}
+	}
 }
 
 - (NSString *)description
@@ -206,6 +269,7 @@
 	DTCSSListStyle *newStyle = [[DTCSSListStyle allocWithZone:zone] init];
 	newStyle.type = self.type;
 	newStyle.position = self.position;
+	newStyle.imageName = self.imageName;
 	
 	return newStyle;
 }
@@ -216,12 +280,24 @@
 {
 	NSString *token = nil;
 	
-	switch (_type) 
+	DTCSSListStyleType listStyleType = _type;
+	
+	if (self.imageName)
+	{
+		listStyleType = DTCSSListStyleTypeImage;
+	}
+	
+	
+	switch (listStyleType) 
 	{
 		case DTCSSListStyleTypeNone:
 		case DTCSSListStyleTypeInherit:  // should never be called with inherit
 		{
 			return nil;
+		}
+		case DTCSSListStyleTypeImage:
+		{
+			token = UNICODE_OBJECT_PLACEHOLDER;
 		}
 		case DTCSSListStyleTypeCircle:
 		{
@@ -278,13 +354,14 @@
 	}
 }
 
+
 #pragma mark Properties
 
 @synthesize inherit = _inherit;
 @synthesize type = _type;
 @synthesize position = _position;
+@synthesize imageName = _imageName;
 
 @end
 
 // TO DO: Implement image 
-// TO DO: Implement position

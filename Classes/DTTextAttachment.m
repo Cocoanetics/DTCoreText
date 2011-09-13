@@ -54,7 +54,7 @@
 	
 	// width, height from tag
 	CGSize displaySize = element.size; // width/height from attributes or CSS style
-	CGSize originalSize = CGSizeZero;
+	CGSize originalSize = element.size;
 	
 	// get base URL
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
@@ -77,11 +77,10 @@
 			NSData *decodedData = [NSData dataFromBase64String:encodedData];
 			
 			decodedImage = [UIImage imageWithData:decodedData];
-			originalSize = decodedImage.size;
 			
 			if (!displaySize.width || !displaySize.height)
 			{
-				displaySize = originalSize;
+				displaySize = decodedImage.size;
 			}
 		}
 	}
@@ -184,6 +183,20 @@
 	[_attributes release];
 	
 	[super dealloc];
+}
+
+// makes a data URL of the image
+- (NSString *)dataURLRepresentation
+{
+	if (!contents || contentType != DTTextAttachmentTypeImage)
+	{
+		return nil;
+	}
+	
+	NSData *data = UIImagePNGRepresentation(contents);
+	NSString *encoded = [data base64EncodedString];
+	
+	return [@"data:image/png;base64," stringByAppendingString:encoded];
 }
 
 

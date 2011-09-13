@@ -89,6 +89,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	shouldLayoutCustomSubviews = YES;
+
+	// by default we draw images, if custom views are supported (by setting delegate) this is disabled
+	// if you still want images to be drawn together with text then set it back to YES after setting delegate
+	shouldDrawImages = YES;
 	
 	// possibly already set in NIB
 	if (!self.backgroundColor)
@@ -254,7 +258,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						continue;
 					}
 					
-					if (_delegateSupportsCustomViewsForAttachments || _delegateSupportsGenericCustomViews)
+					if (_delegateFlags.delegateSupportsCustomViewsForAttachments || _delegateFlags.delegateSupportsGenericCustomViews)
 					{
 						UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
 						
@@ -277,7 +281,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							
 							if (attachment)
 							{
-								if (_delegateSupportsCustomViewsForAttachments)
+								if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
 								{
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
 								}
@@ -306,7 +310,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					}
 					
 					
-					if (linkURL && (_delegateSupportsCustomViewsForLinks || _delegateSupportsGenericCustomViews))
+					if (linkURL && (_delegateFlags.delegateSupportsCustomViewsForLinks || _delegateFlags.delegateSupportsGenericCustomViews))
 					{
 						UIView *existingLinkView = [self.customViewsForLinksIndex objectForKey:indexKey];
 						
@@ -319,14 +323,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						{
 							UIView *newCustomLinkView = nil;
 							
-							if (_delegateSupportsCustomViewsForLinks)
+							if (_delegateFlags.delegateSupportsCustomViewsForLinks)
 							{
 								NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
 								
 								NSString *guid = [attributes objectForKey:@"DTGUID"];
 								newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
 							}
-							else if (_delegateSupportsGenericCustomViews)
+							else if (_delegateFlags.delegateSupportsGenericCustomViews)
 							{
 								NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
 								newCustomLinkView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
@@ -386,6 +390,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	SYNCHRONIZE_START(LAYOUTSTRING)
 	{
 		[self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
+		
+		if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
+		{
+			[_delegate attributedTextContentView:self didDrawLayoutFrame:self.layoutFrame inContext:ctx];
+		}
 	}
 	SYNCHRONIZE_END(LAYOUTSTRING)
 }
@@ -427,27 +436,30 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
-	// need new layouter
-	self.layouter = nil;
-	self.layoutFrame = nil;
-	
-	// remove custom views
-	[self removeAllCustomViewsForLinks];
-	
-	if (_attributedString)
-	{
-		// triggers new layout
-		CGSize neededSize = [self sizeThatFits:self.bounds.size];
-		
-		// set frame to fit text preserving origin
-		// call super to avoid endless loop
-		[self willChangeValueForKey:@"frame"];
-		super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
-		[self didChangeValueForKey:@"frame"];
-	}
-	
-	[self setNeedsDisplay];
-	[self setNeedsLayout];
+    // Make sure we actually have a superview before attempting to relayout the text.
+    if (self.superview) {
+        // need new layouter
+        self.layouter = nil;
+        self.layoutFrame = nil;
+        
+        // remove all links because they might have merged or split
+        [self removeAllCustomViewsForLinks];
+        
+        if (_attributedString)
+        {
+            // triggers new layout
+            CGSize neededSize = [self sizeThatFits:self.bounds.size];
+            
+            // set frame to fit text preserving origin
+            // call super to avoid endless loop
+            [self willChangeValueForKey:@"frame"];
+            super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+            [self didChangeValueForKey:@"frame"];
+        }
+        
+        [self setNeedsDisplay];
+        [self setNeedsLayout];
+    }
 }
 
 - (void)removeAllCustomViewsForLinks
@@ -512,6 +524,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		[_attributedString release];
 		
 		_attributedString = [string copy];
+		
+		// new layout invalidates all positions for custom views
+		[self removeAllCustomViews];
 		
 		[self relayoutText];
 	}
@@ -680,13 +695,25 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	_delegate = delegate;
 	
-	_delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
-	_delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
-	_delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)]; 
+	_delegateFlags.delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
+	_delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
+	_delegateFlags.delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+	_delegateFlags.delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
 	
-	if (!_delegateSupportsCustomViewsForLinks && ! _delegateSupportsCustomViewsForAttachments && ! _delegateSupportsGenericCustomViews)
+	if (!_delegateFlags.delegateSupportsCustomViewsForLinks && !_delegateFlags.delegateSupportsGenericCustomViews)
 	{
-		[self removeAllCustomViews];
+		[self removeAllCustomViewsForLinks];
+	}
+	
+	// we don't draw the images if imageViews are provided by the delegate method
+	// if you want images to be drawn even though you use custom views, set it back to YES after setting delegate
+	if (_delegateFlags.delegateSupportsGenericCustomViews || _delegateFlags.delegateSupportsCustomViewsForAttachments)
+	{
+		shouldDrawImages = NO;
+	}
+	else
+	{
+		shouldDrawImages = YES;
 	}
 }
 

@@ -42,5 +42,6 @@ extern NSString *DTDefaultListIndent;
 
 // encoding back to HTML
 - (NSString *)htmlString;
+- (NSString *)plainTextString;
 
 @end
