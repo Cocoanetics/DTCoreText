@@ -33,12 +33,17 @@ static DTCache *_paragraphStyleCache = nil;
 	static dispatch_once_t predicate;
   
 	dispatch_once(&predicate, ^{
+#else
+	if (!_paragraphStyleCache)
+	{
 #endif
 		
     _paragraphStyleCache = [[DTCache alloc] init];
 		
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION  
 	});
+#else
+	}
 #endif
 
 	// synchronize class-wide
