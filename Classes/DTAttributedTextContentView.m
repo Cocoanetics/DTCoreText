@@ -417,18 +417,18 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return neededSize;
 }
 
-- (CGSize)attributedStringSizeThatFits:(CGSize)size
+- (CGSize)attributedStringSizeThatFits:(CGFloat)width
 {
-	if (size.width==0)
+	if (!isnormal(width))
 	{
-		size.width = self.bounds.size.width;
+		width = self.bounds.size.width;
 	}
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_4_2
 	#warning "attributedStringSizeThatFits:" returns an unreliable measure prior to 4.2 for very long documents.
 #endif
 
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
 	
 	return neededSize;
 }
