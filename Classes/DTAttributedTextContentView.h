@@ -74,6 +74,8 @@
 - (void)relayoutText;
 - (void)removeAllCustomViews;
 
+- (CGSize)attributedStringSizeThatFits:(CGSize)size;
+
 @property (retain) DTCoreTextLayouter *layouter;
 @property (retain) DTCoreTextLayoutFrame *layoutFrame;
 
