@@ -1017,6 +1017,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	NSMutableString *retString = [NSMutableString string];
 	
 	NSInteger location = 0;
+	
 	for (NSString *oneParagraph in paragraphs)
 	{
 		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
@@ -1083,6 +1084,17 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		else
 		{
 			blockElement = @"p";
+			
+			if ([paragraphs lastObject] == oneParagraph)
+			{
+				// last paragraph in string
+				
+				if (![plainString hasSuffix:@"\n"])
+				{
+					// not a whole paragraph, so we don't put it in P
+					blockElement = @"span";
+				}
+			}
 		}
 		
 		if ([paraStyleString length])
@@ -1105,7 +1117,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			index += effectiveRange.length;
 			
 			
-			NSString *subString = [[plainString substringWithRange:effectiveRange] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+			NSString *subString = [[plainString substringWithRange:effectiveRange] stringByAddingHTMLEntities];
 			
 			if (!subString)
 			{
@@ -1226,7 +1238,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				UIColor *color = [UIColor colorWithCGColor:textColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"color:%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
 			}
 			
 			CGColorRef backgroundColor = (CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
@@ -1234,7 +1246,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				UIColor *color = [UIColor colorWithCGColor:backgroundColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", [color htmlHexString]];
 			}
 			
 			NSNumber *underline = [attributes objectForKey:(id)kCTUnderlineStyleAttributeName];
@@ -1281,6 +1293,8 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		[retString appendFormat:@"</%@>\n", blockElement];
 	}
+	
+	NSLog(@"%@", retString);
 	
 	return retString;
 }

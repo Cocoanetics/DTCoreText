@@ -27,23 +27,37 @@ static DTCache *_paragraphStyleCache = nil;
 
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
 {
-  // TODO SCAtomicallyInitObjCPointer
-  
+	DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
+
+#ifdef DT_USE_THREAD_SAFE_INITIALIZATION  
 	static dispatch_once_t predicate;
   
 	dispatch_once(&predicate, ^{
+#endif
+		
     _paragraphStyleCache = [[DTCache alloc] init];
+		
+#ifdef DT_USE_THREAD_SAFE_INITIALIZATION  
 	});
+#endif
 
-  DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
-  
-  if((returnParagraphStyle = [_paragraphStyleCache objectForKey:(id)ctParagraphStyle]) == NULL) {
-    returnParagraphStyle = [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
-    [_paragraphStyleCache setObject:returnParagraphStyle forKey:(id)ctParagraphStyle];
-  }
-  
-  return(returnParagraphStyle);
-	//return [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
+	// synchronize class-wide
+	@synchronized(self)
+	{
+		DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
+		
+		// this is naughty: CTParagraphStyle has a description
+		NSString *key = [(id)ctParagraphStyle description];
+		
+		returnParagraphStyle = [_paragraphStyleCache objectForKey:key];
+		
+		if (!returnParagraphStyle) 
+		{
+			returnParagraphStyle = [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
+			[_paragraphStyleCache setObject:returnParagraphStyle forKey:key];
+		}
+	}
+  return (returnParagraphStyle);
 }
 
 - (id)init

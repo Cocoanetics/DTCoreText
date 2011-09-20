@@ -49,7 +49,7 @@
 	// if data is available for image attachments fill it in
 	for (DTWebResource *oneResource in webArchive.subresources)
 	{
-		NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL.absoluteString == %@", oneResource.url];
+		NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL.absoluteString == %@", [oneResource.url absoluteString]];
 		
 		// possibly multiple attachments with same URL
 		NSArray *attachments = [tmpStr textAttachmentsWithPredicate:pred];
