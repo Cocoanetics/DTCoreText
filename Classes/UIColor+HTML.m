@@ -45,6 +45,15 @@ static NSDictionary *colorLookup = nil;
 		return [UIColor colorWithHexString:[name substringFromIndex:1]];
 	}
 	
+  if ([name hasPrefix:@"rgba"]) {
+    NSString *rgbaName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rgba() "]];
+    NSArray *rgba = [rgbaName componentsSeparatedByString:@","];
+    return [UIColor colorWithRed:[[rgba objectAtIndex:0] floatValue] / 255
+                           green:[[rgba objectAtIndex:1] floatValue] / 255
+                            blue:[[rgba objectAtIndex:2] floatValue] / 255
+                           alpha:[[rgba objectAtIndex:3] floatValue]];
+  }
+  
 	if([name hasPrefix:@"rgb"])
 	{
 		NSString * rgbName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rbg() "]];
