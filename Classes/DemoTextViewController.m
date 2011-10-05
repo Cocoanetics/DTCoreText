@@ -297,7 +297,21 @@
 		UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
 		grayView.backgroundColor = [UIColor blackColor];
 		
-		MPMoviePlayerController *player =[[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+		// find a player for this URL if we already got one
+		MPMoviePlayerController *player = nil;
+		for (player in self.mediaPlayers)
+		{
+			if ([player.contentURL isEqual:url])
+			{
+				break;
+			}
+		}
+		
+		if (!player)
+		{
+			player = [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+			[self.mediaPlayers addObject:player];
+		}
 		
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_4_2
 		NSString *airplayAttr = [attachment.attributes objectForKey:@"x-webkit-airplay"];
@@ -341,7 +355,6 @@
 		}
 		
 		[player prepareToPlay];
-		[self.mediaPlayers addObject:player];
 		
 		player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		player.view.frame = grayView.bounds;
