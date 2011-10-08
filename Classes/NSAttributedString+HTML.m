@@ -870,6 +870,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 						
 						if (prefixString)
 						{
+#if ALLOW_IPHONE_SPECIAL_CASES							
 							// need to add paragraph space after previous paragraph
 							if (nextParagraphAdditionalSpaceBefore>0)
 							{
@@ -888,7 +889,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 								nextParagraphAdditionalSpaceBefore = 0;
 							}
-							
+#endif							
 							[tmpString appendAttributedString:prefixString]; 
 						}
 						
