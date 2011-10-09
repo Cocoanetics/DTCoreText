@@ -549,7 +549,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
-			else if ([tagName isEqualToString:@"pre"] || [tagName isEqualToString:@"code"])
+			else if ([tagName isEqualToString:@"pre"])
 			{
 				if (tagOpen)
 				{
@@ -558,6 +558,13 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;
 				}
 			}
+            else if ([tagName isEqualToString:@"code"]) 
+            {
+                if (tagOpen) 
+                {
+                    currentTag.fontDescriptor.fontFamily = @"Courier";
+                }
+            }
 			else if ([tagName isEqualToString:@"sub"])
 			{
 				if (tagOpen)
