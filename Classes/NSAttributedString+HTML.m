@@ -124,6 +124,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
+	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
 	
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
@@ -553,7 +554,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				if (tagOpen)
 				{
-					currentTag.fontDescriptor.fontFamily = @"Courier";
 					currentTag.preserveNewlines = YES;
 					currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;
 				}
@@ -562,7 +562,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
             {
                 if (tagOpen) 
                 {
-                    currentTag.fontDescriptor.fontFamily = @"Courier";
                 }
             }
 			else if ([tagName isEqualToString:@"sub"])
