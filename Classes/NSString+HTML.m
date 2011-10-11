@@ -42,7 +42,7 @@ static NSDictionary *entityReverseLookup = nil;
 #endif
 		
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-					  @"u", @"a", @"img", @"del", @"br", @"span", nil];
+					  @"u", @"a", @"img", @"del", @"br", @"span", @"code", nil];
 			
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	});
