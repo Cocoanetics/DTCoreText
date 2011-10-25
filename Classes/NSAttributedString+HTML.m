@@ -124,6 +124,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
+	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
 	
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
@@ -549,15 +550,20 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					currentTag.fontDescriptor.pointSize *= 0.83;
 				}
 			}
-			else if ([tagName isEqualToString:@"pre"] || [tagName isEqualToString:@"code"])
+			else if ([tagName isEqualToString:@"pre"])
 			{
 				if (tagOpen)
 				{
-					currentTag.fontDescriptor.fontFamily = @"Courier";
 					currentTag.preserveNewlines = YES;
 					currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;
 				}
 			}
+            else if ([tagName isEqualToString:@"code"]) 
+            {
+                if (tagOpen) 
+                {
+                }
+            }
 			else if ([tagName isEqualToString:@"sub"])
 			{
 				if (tagOpen)
@@ -870,6 +876,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 						
 						if (prefixString)
 						{
+#if ALLOW_IPHONE_SPECIAL_CASES							
 							// need to add paragraph space after previous paragraph
 							if (nextParagraphAdditionalSpaceBefore>0)
 							{
@@ -888,7 +895,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 								nextParagraphAdditionalSpaceBefore = 0;
 							}
-							
+#endif							
 							[tmpString appendAttributedString:prefixString]; 
 						}
 						

@@ -45,14 +45,33 @@ static NSDictionary *colorLookup = nil;
 		return [UIColor colorWithHexString:[name substringFromIndex:1]];
 	}
 	
+	if ([name hasPrefix:@"rgba"]) {
+		NSString *rgbaName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rgba() "]];
+		NSArray *rgba = [rgbaName componentsSeparatedByString:@","];
+		
+		if ([rgba count] != 4) {
+			// Incorrect syntax
+			return nil;
+		}
+		
+		return [UIColor colorWithRed:[[rgba objectAtIndex:0] floatValue] / 255
+							   green:[[rgba objectAtIndex:1] floatValue] / 255
+								blue:[[rgba objectAtIndex:2] floatValue] / 255
+							   alpha:[[rgba objectAtIndex:3] floatValue]];
+	}
+	
 	if([name hasPrefix:@"rgb"])
 	{
 		NSString * rgbName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rbg() "]];
 		NSArray* rbg = [rgbName componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@","]];
+		if ([rbg count] != 3) {
+			// Incorrect syntax
+			return nil;
+		}
 		return [UIColor colorWithRed:[[rbg objectAtIndex:0]floatValue]/255 
-													 green:[[rbg objectAtIndex:1]floatValue] /255
-														blue:[[rbg objectAtIndex:2]floatValue] /255
-													 alpha:1.0];
+                               green:[[rbg objectAtIndex:1]floatValue] /255
+                                blue:[[rbg objectAtIndex:2]floatValue] /255
+                               alpha:1.0];
 	}
 	
 #ifdef DT_USE_THREAD_SAFE_INITIALIZATION
