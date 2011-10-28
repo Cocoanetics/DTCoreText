@@ -85,7 +85,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRelease(_textFrame);
 		_textFrame = NULL;
 	}
+	
 	[_lines release];
+	[_paragraphRanges release];
+	
 	[_layouter release];
 	
 	if (_framesetter)
@@ -670,6 +673,74 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return nil;
 }
 
+- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index
+{
+	NSArray *paragraphRanges = self.paragraphRanges;
+	
+	NSAssert(index < [paragraphRanges count], @"index parameter out of range");
+	
+	NSRange range = [[paragraphRanges objectAtIndex:index] rangeValue];
+	
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	// find lines that are in this range
+	
+	BOOL insideParagraph = NO;
+	
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+		if (NSLocationInRange([oneLine stringRange].location, range))
+		{
+			insideParagraph = YES;
+			[tmpArray addObject:oneLine];
+		}
+		else
+		{
+			if (insideParagraph)
+			{
+				// that means we left the range
+				
+				break;
+			}
+		}
+	}
+	
+	// return array only if there is something in it
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+#pragma mark Paragraphs
+- (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex
+{
+	for (NSValue *oneValue in self.paragraphRanges)
+	{
+		NSRange range = [oneValue rangeValue];
+		
+		if (NSLocationInRange(stringIndex, range))
+		{
+			return [self.paragraphRanges indexOfObject:oneValue];
+		}
+	}
+	
+	return NSNotFound;
+}
+
+- (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange
+{
+	NSUInteger firstParagraphIndex = [self paragraphIndexContainingStringIndex:stringRange.location];
+	NSUInteger lastParagraphIndex = [self paragraphIndexContainingStringIndex:NSMaxRange(stringRange)-1];
+	
+	return NSMakeRange(firstParagraphIndex, lastParagraphIndex - firstParagraphIndex + 1);
+}
+
+#pragma mark Corrections
 - (void)correctAttachmentHeights
 {
 	CGFloat downShiftSoFar = 0;
@@ -696,9 +767,38 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Properties
+
+// builds an array 
+- (NSArray *)paragraphRanges
+{
+	if (!_paragraphRanges)
+	{
+		NSString *plainString = [self.layouter.attributedString string];
+		
+		NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
+		NSRange range = NSMakeRange(0, 0);
+		NSMutableArray *tmpArray = [NSMutableArray array];
+		
+		for (NSString *oneString in paragraphs)
+		{
+			range.length = [oneString length]+1;
+			
+			NSValue *value = [NSValue valueWithRange:range];
+			[tmpArray addObject:value];
+			
+			range.location += range.length;
+		}
+		
+		_paragraphRanges = [tmpArray copy];
+	}
+	
+	return _paragraphRanges;
+}
+
 @synthesize frame = _frame;
 @synthesize layouter = _layouter;
 @synthesize lines = _lines;
+@synthesize paragraphRanges = _paragraphRanges;
 @synthesize tag;
 
 @end
