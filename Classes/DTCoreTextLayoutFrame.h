@@ -56,6 +56,10 @@
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
 - (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
 
+// incremental layouting
+- (void)replaceTextInRange:(NSRange)range withText:(NSAttributedString *)text;
+
+
 - (NSArray *)stringIndices;
 
 - (NSArray *)textAttachments;

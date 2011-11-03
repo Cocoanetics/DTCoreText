@@ -740,6 +740,94 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return NSMakeRange(firstParagraphIndex, lastParagraphIndex - firstParagraphIndex + 1);
 }
 
+- (void)replaceTextInRange:(NSRange)range withText:(NSAttributedString *)text
+{
+    // get affected paragraphs
+    NSRange paragraphs = [self paragraphRangeContainingStringRange:range];
+    
+    if (![self.paragraphRanges count])
+    {
+        return;
+    }
+    
+    NSRange stringRangeOfFirstParagraph = [[self.paragraphRanges objectAtIndex:0] rangeValue];
+    NSAttributedString *prefix = nil;
+    NSAttributedString *suffix = nil;
+    
+    // check for paragraph prefix
+    if (stringRangeOfFirstParagraph.location != range.location)
+    {
+        // not a first character of a paragraph
+        NSRange prefixRange = NSMakeRange(stringRangeOfFirstParagraph.location, 
+                                          range.location - stringRangeOfFirstParagraph.location);
+        prefix = [self.layouter.attributedString attributedSubstringFromRange:prefixRange];
+        
+     }
+    
+    // check for paragraph suffix
+    if (NSMaxRange(range)<NSMaxRange(stringRangeOfFirstParagraph))
+    {
+        NSRange suffixRange = NSMakeRange(NSMaxRange(range), 
+                                          NSMaxRange(stringRangeOfFirstParagraph) - NSMaxRange(range));
+        suffix = [self.layouter.attributedString attributedSubstringFromRange:suffixRange];
+    }
+    
+    // we need to append a prefix or suffix
+    if (prefix || suffix)
+    {
+        NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
+        
+        if (prefix)
+        {
+            [tmpString appendAttributedString:prefix];
+        }
+        
+        if (text)
+        {
+            [tmpString appendAttributedString:text];
+        }
+
+        if (suffix)
+        {
+            [tmpString appendAttributedString:suffix];
+        }
+
+        text = tmpString;
+    }
+    
+    
+    // remove the changed lines
+    NSMutableArray *tmpArray = [[self.lines mutableCopy] autorelease];
+    
+    for (NSInteger index=paragraphs.location; index<NSMaxRange(paragraphs); index++)
+    {
+        NSArray *lines = [self linesInParagraphAtIndex:index];
+        [tmpArray removeObjectsInArray:lines];
+    }
+    
+    // layout the new paragraph text
+    DTCoreTextLayouter *tmpLayouter = [[DTCoreTextLayouter alloc] initWithAttributedString:text];
+    CGRect rect = self.frame;
+    rect.size.height = CGFLOAT_OPEN_HEIGHT;
+    NSRange allTextRange = NSMakeRange(0, 0);
+    DTCoreTextLayoutFrame *tmpFrame = [tmpLayouter layoutFrameWithRect:rect range:allTextRange];
+    
+    // insert layouted lines
+    NSUInteger insertionIndex = paragraphs.location;
+    for (DTCoreTextLayoutLine *oneLine in tmpFrame.lines)
+    {
+        
+        [tmpArray insertObject:oneLine atIndex:insertionIndex];
+        insertionIndex++;
+    }
+    
+    [tmpLayouter release];
+    [tmpFrame release];
+    
+    // save 
+    self.lines = tmpArray;
+}
+
 #pragma mark Corrections
 - (void)correctAttachmentHeights
 {
