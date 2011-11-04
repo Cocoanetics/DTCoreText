@@ -128,10 +128,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	for (id oneLine in (NSArray *)lines)
 	{
 		CGPoint lineOrigin = origins[lineIndex];
+		
 		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
 		lineOrigin.x += _frame.origin.x;
 		
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+		
+		/*
+		 // experimental, trying to find out how to get spacing between lines
+		NSLog(@"y origin: %f", _frame.size.height - lineOrigin.y);
+		NSLog(@"%@", NSStringFromCGRect([newLine frame]));
+		CGFloat spacing = [newLine paragraphSpacing];
+		NSLog(@"as %f desc %f, lead %f, lineHeight %f, spacing %f", newLine.ascent, newLine.descent, newLine.leading, [newLine lineHeight], spacing);
+		*/
 		[tmpLines addObject:newLine];
 		[newLine release];
 		
@@ -750,7 +759,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         return;
     }
     
-    NSRange stringRangeOfFirstParagraph = [[self.paragraphRanges objectAtIndex:0] rangeValue];
+    NSRange stringRangeOfFirstParagraph = [[self.paragraphRanges objectAtIndex:paragraphs.location] rangeValue];
     NSAttributedString *prefix = nil;
     NSAttributedString *suffix = nil;
     
@@ -795,16 +804,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         text = tmpString;
     }
     
-    
-    // remove the changed lines
-    NSMutableArray *tmpArray = [[self.lines mutableCopy] autorelease];
-    
-    for (NSInteger index=paragraphs.location; index<NSMaxRange(paragraphs); index++)
-    {
-        NSArray *lines = [self linesInParagraphAtIndex:index];
-        [tmpArray removeObjectsInArray:lines];
-    }
-    
     // layout the new paragraph text
     DTCoreTextLayouter *tmpLayouter = [[DTCoreTextLayouter alloc] initWithAttributedString:text];
     CGRect rect = self.frame;
@@ -812,17 +811,50 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     NSRange allTextRange = NSMakeRange(0, 0);
     DTCoreTextLayoutFrame *tmpFrame = [tmpLayouter layoutFrameWithRect:rect range:allTextRange];
     
+	// get baseline origin of first line, all lines need to be shifted down by that
+	CGFloat baselineOffset = 0;
+	
+	if (paragraphs.location>0)
+	{
+		NSArray *preParaLines = [self linesInParagraphAtIndex:paragraphs.location-1];
+		
+		DTCoreTextLayoutLine *lineBefore = [preParaLines lastObject];
+		DTCoreTextLayoutLine *firstInsertedLine = [tmpFrame.lines objectAtIndex:0];
+		
+		CGFloat insertionBaselineOrigin = lineBefore.baselineOrigin.y + [firstInsertedLine lineHeight] + [lineBefore paragraphSpacing];
+		baselineOffset = insertionBaselineOrigin - firstInsertedLine.baselineOrigin.y;
+	}
+	
+	
+	// remove the changed lines
+    NSMutableArray *tmpArray = [[self.lines mutableCopy] autorelease];
+    
+    for (NSInteger index=paragraphs.location; index<NSMaxRange(paragraphs); index++)
+    {
+        NSArray *lines = [self linesInParagraphAtIndex:index];
+        [tmpArray removeObjectsInArray:lines];
+    }
+	
+	// remove paragraph ranges
+	[_paragraphRanges release], _paragraphRanges = nil;
+	
     // insert layouted lines
     NSUInteger insertionIndex = paragraphs.location;
     for (DTCoreTextLayoutLine *oneLine in tmpFrame.lines)
     {
-        
+		// shift down the baseline to be after previous paragraph
+		if (baselineOffset)
+		{
+			CGPoint baseLineOrigin = oneLine.baselineOrigin;
+			baseLineOrigin.y += baselineOffset;
+			oneLine.baselineOrigin = baseLineOrigin;
+		}
+		
         [tmpArray insertObject:oneLine atIndex:insertionIndex];
         insertionIndex++;
     }
     
     [tmpLayouter release];
-    [tmpFrame release];
     
     // save 
     self.lines = tmpArray;
