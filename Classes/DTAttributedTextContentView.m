@@ -414,11 +414,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
 	
-	// this returns an incorrect size before 4.2
-	//	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:size.width-edgeInsets.left-edgeInsets.right];
-	
 	return neededSize;
 }
+
+- (CGSize)attributedStringSizeThatFits:(CGFloat)width
+{
+	if (!isnormal(width))
+	{
+		width = self.bounds.size.width;
+	}
+
+	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
+	return neededSize;
+}
+
 
 - (NSString *)description
 {

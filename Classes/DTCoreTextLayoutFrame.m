@@ -85,7 +85,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRelease(_textFrame);
 		_textFrame = NULL;
 	}
+	
 	[_lines release];
+	[_paragraphRanges release];
+	
 	[_layouter release];
 	
 	if (_framesetter)
@@ -125,10 +128,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	for (id oneLine in (NSArray *)lines)
 	{
 		CGPoint lineOrigin = origins[lineIndex];
+		
 		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
 		lineOrigin.x += _frame.origin.x;
 		
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+		
+		/*
+		 // experimental, trying to find out how to get spacing between lines
+		NSLog(@"y origin: %f", _frame.size.height - lineOrigin.y);
+		NSLog(@"%@", NSStringFromCGRect([newLine frame]));
+		CGFloat spacing = [newLine paragraphSpacing];
+		NSLog(@"as %f desc %f, lead %f, lineHeight %f, spacing %f", newLine.ascent, newLine.descent, newLine.leading, [newLine lineHeight], spacing);
+		*/
 		[tmpLines addObject:newLine];
 		[newLine release];
 		
@@ -670,6 +682,185 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return nil;
 }
 
+- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index
+{
+	NSArray *paragraphRanges = self.paragraphRanges;
+	
+	NSAssert(index < [paragraphRanges count], @"index parameter out of range");
+	
+	NSRange range = [[paragraphRanges objectAtIndex:index] rangeValue];
+	
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	// find lines that are in this range
+	
+	BOOL insideParagraph = NO;
+	
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
+	{
+		if (NSLocationInRange([oneLine stringRange].location, range))
+		{
+			insideParagraph = YES;
+			[tmpArray addObject:oneLine];
+		}
+		else
+		{
+			if (insideParagraph)
+			{
+				// that means we left the range
+				
+				break;
+			}
+		}
+	}
+	
+	// return array only if there is something in it
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
+	else
+	{
+		return nil;
+	}
+}
+
+#pragma mark Paragraphs
+- (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex
+{
+	for (NSValue *oneValue in self.paragraphRanges)
+	{
+		NSRange range = [oneValue rangeValue];
+		
+		if (NSLocationInRange(stringIndex, range))
+		{
+			return [self.paragraphRanges indexOfObject:oneValue];
+		}
+	}
+	
+	return NSNotFound;
+}
+
+- (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange
+{
+	NSUInteger firstParagraphIndex = [self paragraphIndexContainingStringIndex:stringRange.location];
+	NSUInteger lastParagraphIndex = [self paragraphIndexContainingStringIndex:NSMaxRange(stringRange)-1];
+	
+	return NSMakeRange(firstParagraphIndex, lastParagraphIndex - firstParagraphIndex + 1);
+}
+
+- (void)replaceTextInRange:(NSRange)range withText:(NSAttributedString *)text
+{
+    // get affected paragraphs
+    NSRange paragraphs = [self paragraphRangeContainingStringRange:range];
+    
+    if (![self.paragraphRanges count])
+    {
+        return;
+    }
+    
+    NSRange stringRangeOfFirstParagraph = [[self.paragraphRanges objectAtIndex:paragraphs.location] rangeValue];
+    NSAttributedString *prefix = nil;
+    NSAttributedString *suffix = nil;
+    
+    // check for paragraph prefix
+    if (stringRangeOfFirstParagraph.location != range.location)
+    {
+        // not a first character of a paragraph
+        NSRange prefixRange = NSMakeRange(stringRangeOfFirstParagraph.location, 
+                                          range.location - stringRangeOfFirstParagraph.location);
+        prefix = [self.layouter.attributedString attributedSubstringFromRange:prefixRange];
+        
+     }
+    
+    // check for paragraph suffix
+    if (NSMaxRange(range)<NSMaxRange(stringRangeOfFirstParagraph))
+    {
+        NSRange suffixRange = NSMakeRange(NSMaxRange(range), 
+                                          NSMaxRange(stringRangeOfFirstParagraph) - NSMaxRange(range));
+        suffix = [self.layouter.attributedString attributedSubstringFromRange:suffixRange];
+    }
+    
+    // we need to append a prefix or suffix
+    if (prefix || suffix)
+    {
+        NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] init] autorelease];
+        
+        if (prefix)
+        {
+            [tmpString appendAttributedString:prefix];
+        }
+        
+        if (text)
+        {
+            [tmpString appendAttributedString:text];
+        }
+
+        if (suffix)
+        {
+            [tmpString appendAttributedString:suffix];
+        }
+
+        text = tmpString;
+    }
+    
+    // layout the new paragraph text
+    DTCoreTextLayouter *tmpLayouter = [[DTCoreTextLayouter alloc] initWithAttributedString:text];
+    CGRect rect = self.frame;
+    rect.size.height = CGFLOAT_OPEN_HEIGHT;
+    NSRange allTextRange = NSMakeRange(0, 0);
+    DTCoreTextLayoutFrame *tmpFrame = [tmpLayouter layoutFrameWithRect:rect range:allTextRange];
+    
+	// get baseline origin of first line, all lines need to be shifted down by that
+	CGFloat baselineOffset = 0;
+	
+	if (paragraphs.location>0)
+	{
+		NSArray *preParaLines = [self linesInParagraphAtIndex:paragraphs.location-1];
+		
+		DTCoreTextLayoutLine *lineBefore = [preParaLines lastObject];
+		DTCoreTextLayoutLine *firstInsertedLine = [tmpFrame.lines objectAtIndex:0];
+		
+		CGFloat insertionBaselineOrigin = lineBefore.baselineOrigin.y + [firstInsertedLine lineHeight] + [lineBefore paragraphSpacing];
+		baselineOffset = insertionBaselineOrigin - firstInsertedLine.baselineOrigin.y;
+	}
+	
+	
+	// remove the changed lines
+    NSMutableArray *tmpArray = [[self.lines mutableCopy] autorelease];
+    
+    for (NSInteger index=paragraphs.location; index<NSMaxRange(paragraphs); index++)
+    {
+        NSArray *lines = [self linesInParagraphAtIndex:index];
+        [tmpArray removeObjectsInArray:lines];
+    }
+	
+	// remove paragraph ranges
+	[_paragraphRanges release], _paragraphRanges = nil;
+	
+    // insert layouted lines
+    NSUInteger insertionIndex = paragraphs.location;
+    for (DTCoreTextLayoutLine *oneLine in tmpFrame.lines)
+    {
+		// shift down the baseline to be after previous paragraph
+		if (baselineOffset)
+		{
+			CGPoint baseLineOrigin = oneLine.baselineOrigin;
+			baseLineOrigin.y += baselineOffset;
+			oneLine.baselineOrigin = baseLineOrigin;
+		}
+		
+        [tmpArray insertObject:oneLine atIndex:insertionIndex];
+        insertionIndex++;
+    }
+    
+    [tmpLayouter release];
+    
+    // save 
+    self.lines = tmpArray;
+}
+
+#pragma mark Corrections
 - (void)correctAttachmentHeights
 {
 	CGFloat downShiftSoFar = 0;
@@ -696,9 +887,38 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Properties
+
+// builds an array 
+- (NSArray *)paragraphRanges
+{
+	if (!_paragraphRanges)
+	{
+		NSString *plainString = [self.layouter.attributedString string];
+		
+		NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
+		NSRange range = NSMakeRange(0, 0);
+		NSMutableArray *tmpArray = [NSMutableArray array];
+		
+		for (NSString *oneString in paragraphs)
+		{
+			range.length = [oneString length]+1;
+			
+			NSValue *value = [NSValue valueWithRange:range];
+			[tmpArray addObject:value];
+			
+			range.location += range.length;
+		}
+		
+		_paragraphRanges = [tmpArray copy];
+	}
+	
+	return _paragraphRanges;
+}
+
 @synthesize frame = _frame;
 @synthesize layouter = _layouter;
 @synthesize lines = _lines;
+@synthesize paragraphRanges = _paragraphRanges;
 @synthesize tag;
 
 @end

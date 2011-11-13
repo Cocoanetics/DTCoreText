@@ -72,12 +72,12 @@
 
 - (NSString *)description
 {
-	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self stringRange].location];
+	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringWithRange:[self stringRange]];
 	
-	if ([extract length]>20)
-	{
-		extract = [extract substringToIndex:20];
-	}
+//	if ([extract length]>20)
+//	{
+//		extract = [extract substringToIndex:20];
+//	}
 	
 	return [NSString stringWithFormat:@"<%@ '%@'>", [self class], extract];
 }
@@ -285,6 +285,70 @@
 		}
 	}
 	SYNCHRONIZE_END(self);
+}
+
+- (NSAttributedString *)attributedString
+{
+	NSAttributedString *globalString = _layoutFrame.layouter.attributedString;
+	return [globalString attributedSubstringFromRange:[self stringRange]];
+}
+
+
+// returns the maximum paragraph spacing for this line
+- (CGFloat)paragraphSpacing
+{
+	NSAttributedString *substring = [self attributedString];
+
+	// a paragraph spacing only is effective for last line in paragraph
+	if (![[substring string] hasSuffix:@"\n"])
+	{
+		return 0;
+	}
+
+	__block CGFloat retSpacing = 0;
+
+	NSRange allRange = NSMakeRange(0, [substring length]);
+	[substring enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:allRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+					   usingBlock:^(id value, NSRange range, BOOL *stop) {
+						   CTParagraphStyleRef paragraphStyle = (CTParagraphStyleRef)value;
+						   
+						   float paraSpacing;
+						   
+						   CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paraSpacing), &paraSpacing);
+						   
+						   retSpacing = MAX(retSpacing, paraSpacing);
+					   }];
+	
+	return retSpacing;
+}
+
+
+// returns the calculated line height
+// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
+- (CGFloat)lineHeight
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	CGFloat tmpLeading = MAX(0, leading);
+	
+	tmpLeading = floor (leading + 0.5);
+	
+	CGFloat lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
+	CGFloat ascenderDelta = 0;
+	
+	if (tmpLeading > 0)
+	{
+		ascenderDelta = 0;
+	}
+	else
+	{
+		ascenderDelta = floor (0.2 * lineHeight + 0.5);
+	}
+	
+	return lineHeight + ascenderDelta;
 }
 
 #pragma mark Properties
