@@ -43,6 +43,8 @@
 - (CGFloat)offsetForStringIndex:(NSInteger)index;
 - (NSInteger)stringIndexForPosition:(CGPoint)position;
 
+- (CGFloat)paragraphSpacing;
+- (CGFloat)lineHeight;
 
 - (void)drawInContext:(CGContextRef)context;
 
