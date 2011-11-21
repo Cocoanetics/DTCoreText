@@ -8,7 +8,6 @@
 
 #import "DemoSnippetsViewController.h"
 #import "DemoTextViewController.h"
-#import "DTCache.h"
 
 #import "DTAttributedTextCell.h"
 
@@ -78,7 +77,7 @@
 
 	if (!cellCache)
 	{
-		cellCache = [[DTCache alloc] init];
+		cellCache = [[NSCache alloc] init];
 	}
 	
 	// workaround for iOS 5 bug
