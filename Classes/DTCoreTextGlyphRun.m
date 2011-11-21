@@ -14,30 +14,20 @@
 	#define __IPHONE_4_3 40300
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 #define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(runLock, DISPATCH_TIME_FOREVER);
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(runLock);
-#else
-#define SYNCHRONIZE_START(obj) @synchronized(obj)
-#define SYNCHRONIZE_END(obj)
-#endif
 
 @interface DTCoreTextGlyphRun ()
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
 @property (nonatomic, assign) NSDictionary *attributes;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @property (nonatomic, assign) dispatch_semaphore_t runLock;
-#endif
 
 @end
 
 
 @implementation DTCoreTextGlyphRun
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @synthesize runLock;
-#endif
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset
 {
@@ -50,9 +40,7 @@
 		
 		_offset = offset;
 		_line = layoutLine;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 		runLock = dispatch_semaphore_create(1);
-#endif
 	}
 	
 	return self;
@@ -68,9 +56,7 @@
 	[_attachment release];
 	[stringIndices release];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_release(runLock);
-#endif	
 
 	[super dealloc];
 }

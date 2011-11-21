@@ -11,12 +11,6 @@
 #import "UIColor+HTML.h"
 #import "NSCharacterSet+HTML.h"
 
-#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
-#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
-#warning Thread safe initialization is not enabled.
-#endif
-#endif
-
 static NSSet *inlineTags = nil;
 static NSSet *metaTags = nil;
 static NSDictionary *entityLookup = nil;
@@ -33,43 +27,25 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (BOOL)isInlineTag
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
+	
 	dispatch_once(&predicate, ^{
-#else
-	if (!inlineTags)
-	{
-#endif
-		
 		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
 					  @"u", @"a", @"img", @"del", @"br", @"span", @"code", nil];
 			
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	});
-#else
-	}
-#endif
 	
 	return [inlineTags containsObject:[self lowercaseString]];
 }
 
 - (BOOL)isMetaTag
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
+
 	dispatch_once(&predicate, ^{
-#else
-	if (!metaTags)
-	{
-#endif		
-		
 		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
 
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	});
-#else
-	}
-#endif
 	
 	return [metaTags containsObject:[self lowercaseString]];
 }
@@ -174,14 +150,9 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (NSString *)stringByAddingHTMLEntities
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
-	dispatch_once(&predicate, ^{
-#else
-	if (!entityReverseLookup)
-	{
-#endif
 	
+	dispatch_once(&predicate, ^{
 		entityReverseLookup = [[NSDictionary alloc] initWithObjectsAndKeys:@"&quot;", [NSNumber numberWithInteger:0x22],
 							   @"&amp;", [NSNumber numberWithInteger:0x26],
 							   @"&apos;", [NSNumber numberWithInteger:0x27],
@@ -419,12 +390,7 @@ static NSDictionary *entityReverseLookup = nil;
 							   @"<br />", [NSNumber numberWithInteger:0x2028], 
 							   nil];
 	
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	});
-#else		
-	}
-#endif
-	
 	
 	NSMutableString *tmpString = [NSMutableString string];
 	
@@ -457,14 +423,8 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (NSString *)stringByReplacingHTMLEntities
 {
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
-	dispatch_once(&predicate, ^{
-#else
-	if (!entityLookup)
-	{
-#endif
-		
+	dispatch_once(&predicate, ^{		
 		entityLookup = [[NSDictionary alloc] initWithObjectsAndKeys:@"\x22", @"quot",
 						@"\x26", @"amp",
 						@"\x27", @"apos",
@@ -701,11 +661,7 @@ static NSDictionary *entityReverseLookup = nil;
 						@"\u2666", @"diams",
 						nil];
 		
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	});
-#else		
-	}
-#endif	
 				  
 	NSScanner *scanner = [NSScanner scannerWithString:self];
 	[scanner setCharactersToBeSkipped:nil];
