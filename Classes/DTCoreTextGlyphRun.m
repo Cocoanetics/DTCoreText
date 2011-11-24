@@ -122,6 +122,7 @@
 	return rect;
 }
 
+// TODO: fix indices if the stringRange is modified
 - (NSArray *)stringIndices 
 {
 	if (!stringIndices) 
@@ -148,9 +149,14 @@
 // range of the characters from the original string
 - (NSRange)stringRange
 {
-	CFRange range = CTRunGetStringRange(_run);
+	if (!_stringRange.length)
+	{
+		CFRange range = CTRunGetStringRange(_run);
+
+		_stringRange = NSMakeRange(range.location, range.length);
+	}
 	
-	return NSMakeRange(range.location, range.length);
+	return _stringRange;
 }
 
 - (void)drawInContext:(CGContextRef)context

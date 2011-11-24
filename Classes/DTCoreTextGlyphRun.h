@@ -37,6 +37,8 @@
 	DTTextAttachment *_attachment;
 	BOOL _didCheckForAttachmentInAttributes;
 	BOOL _didCalculateMetrics;
+	
+	NSRange _stringRange;
 }
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset;
@@ -60,6 +62,5 @@
 @property (nonatomic, assign, readonly) CGFloat width;
 
 @property (nonatomic, retain) DTTextAttachment *attachment;
-
 
 @end
