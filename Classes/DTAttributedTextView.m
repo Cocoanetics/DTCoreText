@@ -85,6 +85,11 @@
 	self.clipsToBounds = YES;
 }
 
+// override class e.g. for mutable content view
+- (Class)classForContentView
+{
+	return [DTAttributedTextContentView class];
+}
 
 #pragma mark Notifications
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -102,7 +107,10 @@
 {
 	if (!contentView)
 	{
-		contentView = [[DTAttributedTextContentView alloc] initWithFrame:self.bounds];
+		// subclasses can specify a DTAttributedTextContentView subclass instead
+		Class classToUse = [self classForContentView];
+		
+		contentView = [[classToUse alloc] initWithFrame:self.bounds];
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
 		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
