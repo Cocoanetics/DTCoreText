@@ -271,9 +271,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 										newCustomAttachmentView.tag = [indexKey integerValue];
 										[self addSubview:newCustomAttachmentView];
 										
-										newCustomAttachmentView.layer.borderColor = [UIColor redColor].CGColor;
-										newCustomAttachmentView.layer.borderWidth = 1.0;
-										
 										[self.customViews addObject:newCustomAttachmentView];
 										[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
 										
