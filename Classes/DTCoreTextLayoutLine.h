@@ -16,7 +16,7 @@
 {
 	CGRect _frame;
 	CTLineRef _line;
-	DTCoreTextLayoutFrame * _layoutFrame;
+	NSAttributedString *_attributedString;
 	
 	CGPoint _baselineOrigin;
 	
@@ -29,6 +29,7 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
+	NSInteger _stringLocationOffset;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
@@ -45,6 +46,7 @@
 
 - (CGFloat)paragraphSpacing;
 - (CGFloat)lineHeight;
+- (CGFloat)calculatedLeading;
 
 - (void)drawInContext:(CGContextRef)context;
 

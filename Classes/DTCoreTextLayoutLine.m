@@ -43,10 +43,11 @@
 {
 	if ((self = [super init]))
 	{
-		_layoutFrame = layoutFrame;
-		
 		_line = line;
 		CFRetain(line);
+
+		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
+		_attributedString = [[globalString attributedSubstringFromRange:[self stringRange]] copy];
 		
 		_baselineOrigin = origin;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
@@ -66,31 +67,22 @@
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_release(layoutLock);
 #endif
+	[_attributedString release];
 	
 	[super dealloc];
 }
 
 - (NSString *)description
 {
-	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringWithRange:[self stringRange]];
-	
-//	if ([extract length]>20)
-//	{
-//		extract = [extract substringToIndex:20];
-//	}
-	
-	return [NSString stringWithFormat:@"<%@ '%@'>", [self class], extract];
+	return [NSString stringWithFormat:@"<%@ frame=%@ %@ '%@'>", [self class], NSStringFromCGRect(self.frame), NSStringFromRange([self stringRange]), [_attributedString string]];
 }
-
-//- (NSString *)description
-//{
-//	NSRange range = [self stringRange];
-//	return [NSString stringWithFormat:@"<%@ loc=%d len=%d %@>", [self class], range.location, range.length, NSStringFromCGRect(_frame)];
-//}
 
 - (NSRange)stringRange
 {
 	CFRange range = CTLineGetStringRange(_line);
+	
+	// add offset if there is one, i.e. from merged lines
+	range.location += _stringLocationOffset;
 	
 	return NSMakeRange(range.location, range.length);
 }
@@ -197,6 +189,9 @@
 
 - (CGFloat)offsetForStringIndex:(NSInteger)index
 {
+	// subtract offset if there is one, i.e. from merged lines
+	index -= _stringLocationOffset;
+	
 	return CTLineGetOffsetForStringIndex(_line, index, NULL);
 }
 
@@ -209,6 +204,9 @@
 	adjustedPosition.y -= frame.origin.y;
 	
 	NSInteger index = CTLineGetStringIndexForPosition(_line, adjustedPosition);
+	
+	// add offset if there is one, i.e. from merged lines
+	index += _stringLocationOffset;
 	
 	return index;
 }
@@ -287,28 +285,19 @@
 	SYNCHRONIZE_END(self);
 }
 
-- (NSAttributedString *)attributedString
-{
-	NSAttributedString *globalString = _layoutFrame.layouter.attributedString;
-	return [globalString attributedSubstringFromRange:[self stringRange]];
-}
-
-
 // returns the maximum paragraph spacing for this line
 - (CGFloat)paragraphSpacing
 {
-	NSAttributedString *substring = [self attributedString];
-
 	// a paragraph spacing only is effective for last line in paragraph
-	if (![[substring string] hasSuffix:@"\n"])
+	if (![[_attributedString string] hasSuffix:@"\n"])
 	{
 		return 0;
 	}
 
 	__block CGFloat retSpacing = 0;
 
-	NSRange allRange = NSMakeRange(0, [substring length]);
-	[substring enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:allRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+	NSRange allRange = NSMakeRange(0, [_attributedString length]);
+	[_attributedString enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:allRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
 					   usingBlock:^(id value, NSRange range, BOOL *stop) {
 						   CTParagraphStyleRef paragraphStyle = (CTParagraphStyleRef)value;
 						   
@@ -332,23 +321,61 @@
 		[self calculateMetrics];
 	}
 	
-	CGFloat tmpLeading = MAX(0, leading);
+	CGFloat tmpLeading = roundf(MAX(0, leading));
 	
-	tmpLeading = floor (leading + 0.5);
-	
-	CGFloat lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
+	CGFloat lineHeight = roundf(ascent) + roundf(descent) + leading;
 	CGFloat ascenderDelta = 0;
 	
 	if (tmpLeading > 0)
 	{
+		// we have not see a non-zero leading ever before, oh well ...
 		ascenderDelta = 0;
 	}
 	else
 	{
-		ascenderDelta = floor (0.2 * lineHeight + 0.5);
+		// magically add an extra 20%
+		ascenderDelta = roundf(0.2 * lineHeight);
 	}
 	
 	return lineHeight + ascenderDelta;
+}
+
+
+
+// calculates the extra space that is before every line even though the leading is zero
+- (CGFloat)calculatedLeading
+{
+	CGFloat maxAscenderDelta = 0;
+	
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		CGFloat tmpLeading = roundf(MAX(0, oneRun.leading));
+		
+		CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent) + tmpLeading;
+		CGFloat ascenderDelta = 0;
+		
+		if (tmpLeading > 0)
+		{
+			// we have not see a non-zero leading ever before, oh well ...
+			ascenderDelta = 0;
+		}
+		else
+		{
+			// for attachments the ascent equals the image height
+			// so we don't add the 20%
+			if (!oneRun.attachment)
+			{
+				ascenderDelta = roundf(0.2 * lineHeight);
+				
+				if (ascenderDelta > maxAscenderDelta)
+				{
+					maxAscenderDelta = ascenderDelta;
+				}
+			}
+		}
+	}
+	
+	return maxAscenderDelta;
 }
 
 #pragma mark Properties
