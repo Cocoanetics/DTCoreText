@@ -15,29 +15,15 @@
 @interface DTCoreTextLayoutLine ()
 
 @property (nonatomic, retain) NSArray *glyphRuns;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @property (nonatomic, assign) dispatch_semaphore_t layoutLock;
-#endif
 
 @end
 
-#ifndef __IPHONE_4_3
-	#define __IPHONE_4_3 40300
-#endif
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 #define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(layoutLock, DISPATCH_TIME_FOREVER);
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(layoutLock);
-#else
-#define SYNCHRONIZE_START(obj) @synchronized(obj)
-#define SYNCHRONIZE_END(obj)
-#endif
 
 @implementation DTCoreTextLayoutLine
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @synthesize layoutLock;
-#endif
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 {
@@ -50,9 +36,7 @@
 		_attributedString = [[globalString attributedSubstringFromRange:[self stringRange]] copy];
 		
 		_baselineOrigin = origin;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 		layoutLock = dispatch_semaphore_create(1);
-#endif
 	}
 	return self;
 }
@@ -64,10 +48,7 @@
 		CFRelease(_line);
 	}
 	[_glyphRuns release];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_release(layoutLock);
-#endif
-	[_attributedString release];
 	
 	[super dealloc];
 }

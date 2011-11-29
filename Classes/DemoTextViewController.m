@@ -16,7 +16,7 @@
 #import "DTLazyImageView.h"
 #import "DTWebVideoView.h"
 #import "NSAttributedString+DTWebArchive.h"
-#import "UIPasteboard+DTWebArchive.h"
+//#import "UIPasteboard+DTWebArchive.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -50,12 +50,13 @@
 		self.navigationItem.titleView = _segmentedControl;	
 		
 		// toolbar
+#if 0 // DTWebArchive moved to separate project late 2011
 		UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
-		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
 		UIBarButtonItem *paste = [[[UIBarButtonItem alloc] initWithTitle:@"Paste" style:UIBarButtonItemStyleBordered target:self action:@selector(paste:)] autorelease];
 		UIBarButtonItem *copy = [[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStyleBordered target:self action:@selector(copy:)] autorelease];
-		
-		NSArray *toolbarItems = [NSArray arrayWithObjects:paste, copy, spacer, debug, nil];
+#endif		
+		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
+		NSArray *toolbarItems = [NSArray arrayWithObjects:/*paste, copy, spacer, */debug, nil];
 		[self setToolbarItems:toolbarItems];
 	}
 	return self;
@@ -427,6 +428,7 @@
 	[self.view setNeedsDisplay];
 }
 
+#if 0 // DTWebArchive split out late 2011
 - (void)paste:(id)sender
 {
 	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
@@ -456,6 +458,7 @@
 	
 	// PS: in real life you also want to put put a plain text copy in pasteboard for apps that don't take rich text
 }
+#endif
 
 #pragma mark DTLazyImageViewDelegate
 

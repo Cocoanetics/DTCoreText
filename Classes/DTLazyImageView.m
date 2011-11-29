@@ -9,12 +9,6 @@
 #import "DTLazyImageView.h"
 #import "DTCache.h"
 
-#ifndef DT_USE_THREAD_SAFE_INITIALIZATION
-#ifndef DT_USE_THREAD_SAFE_INITIALIZATION_NOT_AVAILABLE
-#warning Thread safe initialization is not enabled.
-#endif
-#endif
-
 static DTCache *_imageCache = nil;
 
 
@@ -174,17 +168,11 @@ static DTCache *_imageCache = nil;
 	
 	[self notify];
 	
-#ifdef DT_USE_THREAD_SAFE_INITIALIZATION
 	static dispatch_once_t predicate;
+
 	dispatch_once(&predicate, ^{
 		_imageCache = [[DTCache alloc] init];
 	});
-#else
-	if (!_imageCache)
-	{
-		_imageCache = [[DTCache alloc] init];
-	}
-#endif
 	
 	if (_url)
 	{

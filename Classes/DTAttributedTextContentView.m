@@ -18,13 +18,20 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+
+#define LAYOUTSTRING layoutLock
+#define LAYOUTER layouterLock
+#define LAYOUTFRAME layoutFrameLock
+#define SELF selfLock
+
+#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
+
 @interface DTAttributedTextContentView ()
 
 @property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, retain) NSMutableDictionary *customViewsForAttachmentsIndex;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @property (nonatomic, assign) dispatch_semaphore_t layoutLock, layouterLock, layoutFrameLock, selfLock;
-#endif
 
 - (void)removeAllCustomViews;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
@@ -54,10 +61,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @end
 
 @implementation DTAttributedTextContentView
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 @synthesize layoutLock, layouterLock, layoutFrameLock, selfLock;
-#endif
 
 - (void)setup
 {
@@ -83,6 +87,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		_isTiling = YES;
 	}
+	
+	if(!layoutLock) {
+		layoutLock = dispatch_semaphore_create(1);
+		layouterLock = dispatch_semaphore_create(1);
+		layoutFrameLock = dispatch_semaphore_create(1);
+		selfLock = dispatch_semaphore_create(1);
+	}
 }
 
 - (id)initWithFrame:(CGRect)frame 
@@ -90,12 +101,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
-		layoutLock = dispatch_semaphore_create(1);
-		layouterLock = dispatch_semaphore_create(1);
-		layoutFrameLock = dispatch_semaphore_create(1);
-		selfLock = dispatch_semaphore_create(1);
-#endif
+
 	}
 	return self;
 }
@@ -130,12 +136,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[_layoutFrame release];
 	[_attributedString release];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 	dispatch_release(layoutLock);
 	dispatch_release(layouterLock);
 	dispatch_release(layoutFrameLock);
 	dispatch_release(selfLock);
-#endif
 	
 	[super dealloc];
 }
