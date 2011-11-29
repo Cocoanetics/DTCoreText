@@ -23,14 +23,13 @@
 	CTFrameRef _textFrame;
     CTFramesetterRef _framesetter;
     
-	DTCoreTextLayouter *_layouter;
-	
 	NSArray *_lines;
 	NSArray *_paragraphRanges;
 	
     NSInteger tag;
 	
 	NSArray *_textAttachments;
+	NSAttributedString *_attributedStringFragment;
 }
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
@@ -51,15 +50,6 @@
 - (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
-// working with Paragraphs
-- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
-- (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
-- (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
-
-// incremental layouting
-- (void)replaceTextInRange:(NSRange)range withText:(NSAttributedString *)text;
-
-
 - (NSArray *)stringIndices;
 
 - (NSArray *)textAttachments;
@@ -67,8 +57,14 @@
 
 - (void)correctAttachmentHeights;
 
+- (NSAttributedString *)attributedStringFragment;
+
+// working with Paragraphs
+- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
+- (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
+- (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
+
 @property (nonatomic, assign, readonly) CGRect frame;
-@property (assign, readonly) DTCoreTextLayouter *layouter;
 
 @property (nonatomic, retain, readonly) NSArray *lines;
 @property (nonatomic, retain, readonly) NSArray *paragraphRanges;
