@@ -18,15 +18,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-
-#define LAYOUTSTRING layoutLock
-#define LAYOUTER layouterLock
-#define LAYOUTFRAME layoutFrameLock
-#define SELF selfLock
-
-#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
-
 @interface DTAttributedTextContentView ()
 
 @property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
