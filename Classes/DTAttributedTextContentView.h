@@ -13,6 +13,33 @@
 #import "DTCoreTextLayouter.h"
 #import "DTTextAttachment.h"
 
+#ifndef __IPHONE_4_3
+#define __IPHONE_4_3 40300
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
+
+#define LAYOUTSTRING layoutLock
+#define LAYOUTER layouterLock
+#define LAYOUTFRAME layoutFrameLock
+#define SELF selfLock
+
+#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
+
+#else
+
+#define LAYOUTSTRING self
+#define LAYOUTER self
+#define LAYOUTFRAME self
+#define SELF self
+
+#define SYNCHRONIZE_START(obj) @synchronized(obj)
+#define SYNCHRONIZE_END(obj)
+
+#endif
+
+
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
 
@@ -73,6 +100,7 @@
 - (void)layoutSubviewsInRect:(CGRect)rect;
 - (void)relayoutText;
 - (void)removeAllCustomViews;
+- (void)removeAllCustomViewsForLinks;
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
 

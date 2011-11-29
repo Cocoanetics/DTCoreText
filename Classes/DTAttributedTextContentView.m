@@ -18,32 +18,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#ifndef __IPHONE_4_3
-	#define __IPHONE_4_3 40300
-#endif
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
-
-#define LAYOUTSTRING layoutLock
-#define LAYOUTER layouterLock
-#define LAYOUTFRAME layoutFrameLock
-#define SELF selfLock
-
-#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
-
-#else
-
-#define LAYOUTSTRING self
-#define LAYOUTER self
-#define LAYOUTFRAME self
-#define SELF self
-
-#define SYNCHRONIZE_START(obj) @synchronized(obj)
-#define SYNCHRONIZE_END(obj)
-
-#endif
-
 @interface DTAttributedTextContentView ()
 
 @property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
@@ -179,7 +153,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	SYNCHRONIZE_START(LAYOUTSTRING)
 	{
-		NSAttributedString *layoutString = self.layoutFrame.layouter.attributedString;
+		NSAttributedString *layoutString = [self.layoutFrame attributedStringFragment];
 		NSArray *lines;
 		if (CGRectIsInfinite(rect))
 		{
@@ -260,27 +234,30 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (_delegateFlags.delegateSupportsCustomViewsForAttachments || _delegateFlags.delegateSupportsGenericCustomViews)
 					{
-						UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
+						DTTextAttachment *attachment = oneRun.attachment;
 						
-						if (existingAttachmentView)
+						if (attachment)
 						{
-							existingAttachmentView.hidden = NO;
-							existingAttachmentView.frame = frameForSubview;
+							indexKey = [NSNumber numberWithInteger:[attachment hash]];
 							
-							existingAttachmentView.alpha = 1;
-							[existingAttachmentView setNeedsLayout];
-							[existingAttachmentView setNeedsDisplay];
+							UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
 							
-							linkURL = nil; // prevent adding link button on top of image view
-						}
-						else
-						{
-							UIView *newCustomAttachmentView = nil;
-							
-							DTTextAttachment *attachment = oneRun.attachment;
-							
-							if (attachment)
+							if (existingAttachmentView)
 							{
+								existingAttachmentView.hidden = NO;
+								existingAttachmentView.frame = frameForSubview;
+								
+								existingAttachmentView.alpha = 1;
+								[existingAttachmentView setNeedsLayout];
+								[existingAttachmentView setNeedsDisplay];
+								
+								linkURL = nil; // prevent adding link button on top of image view
+							}
+							else
+							{
+								UIView *newCustomAttachmentView = nil;
+								
+								
 								if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
 								{
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
@@ -296,8 +273,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 									// delegate responsible to set frame
 									if (newCustomAttachmentView)
 									{
-										newCustomAttachmentView.tag = stringRange.location;
+										newCustomAttachmentView.tag = [indexKey integerValue];
 										[self addSubview:newCustomAttachmentView];
+										
+										newCustomAttachmentView.layer.borderColor = [UIColor redColor].CGColor;
+										newCustomAttachmentView.layer.borderWidth = 1.0;
 										
 										[self.customViews addObject:newCustomAttachmentView];
 										[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
@@ -423,7 +403,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		width = self.bounds.size.width;
 	}
-
+	
 	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
 	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
 	return neededSize;
@@ -432,7 +412,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (NSString *)description
 {
-	NSString *extract = [[_layoutFrame.layouter.attributedString string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
+	NSString *extract = [[[_layoutFrame attributedStringFragment] string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
 	
 	if ([extract length]>10)
 	{
@@ -540,7 +520,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
-- (void)setFrame:(CGRect)frame
+- (void)setFrame:(CGRect)frame //relayoutText:(BOOL)relayoutText
 {
 	CGRect oldFrame = self.frame;
 	
@@ -550,15 +530,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		return;	
 	}
-
+	
 	BOOL frameDidChange = !CGRectEqualToRect(oldFrame, frame);
 	
 	// having a layouter means we are responsible for layouting yourselves
-	if (frameDidChange && _layouter)
+	if (frameDidChange)
 	{
 		[self relayoutText];
 	}
 }
+
+//- (void)setFrame:(CGRect)frame
+//{
+//	// sizeToFit also calls this, but we want to be able to avoid relayouting
+//	[self setFrame:frame relayoutText:_relayoutTextOnFrameChange];
+//}
 
 - (void)setDrawDebugFrames:(BOOL)newSetting
 {
@@ -608,7 +594,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		}
 	}
 	SYNCHRONIZE_END(LAYOUTER)
-
+	
 	return _layouter;
 }
 
@@ -643,7 +629,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		}
 	}
 	SYNCHRONIZE_END(LAYOUTFRAME)
-
+	
 	return _layoutFrame;
 }
 
