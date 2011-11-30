@@ -9,8 +9,6 @@
 #import "DemoSnippetsViewController.h"
 #import "DemoTextViewController.h"
 
-#import "DTAttributedTextCell.h"
-
 @implementation DemoSnippetsViewController
 
 #pragma mark NSObject

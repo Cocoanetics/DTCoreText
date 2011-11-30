@@ -7,19 +7,7 @@
 //
 
 #import "DemoTextViewController.h"
-#import "DTAttributedTextView.h"
-#import "DTAttributedTextContentView.h"
-#import "NSAttributedString+HTML.h"
-#import "DTTextAttachment.h"
-
-#import "DTLinkButton.h"
-#import "DTLazyImageView.h"
-#import "DTWebVideoView.h"
-#import "NSAttributedString+DTWebArchive.h"
-//#import "UIPasteboard+DTWebArchive.h"
-
 #import <QuartzCore/QuartzCore.h>
-
 #import <MediaPlayer/MediaPlayer.h>
 
 @interface DemoTextViewController ()
