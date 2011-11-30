@@ -7,9 +7,8 @@
 //
 
 #import "DTLazyImageView.h"
-#import "DTCache.h"
 
-static DTCache *_imageCache = nil;
+static NSCache *_imageCache = nil;
 
 
 @implementation DTLazyImageView
@@ -171,7 +170,7 @@ static DTCache *_imageCache = nil;
 	static dispatch_once_t predicate;
 
 	dispatch_once(&predicate, ^{
-		_imageCache = [[DTCache alloc] init];
+		_imageCache = [[NSCache alloc] init];
 	});
 	
 	if (_url)

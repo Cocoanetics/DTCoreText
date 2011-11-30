@@ -4,7 +4,6 @@
 #import "DTAttributedTextView.h"
 #import "DTCSSListStyle.h"
 #import "DTCSSStylesheet.h"
-#import "DTCache.h"
 #import "DTCoreText.h"
 #import "DTCoreTextFontCollection.h"
 #import "DTCoreTextFontDescriptor.h"

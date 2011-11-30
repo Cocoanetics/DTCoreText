@@ -7,9 +7,8 @@
 //
 
 #import "DTCoreTextParagraphStyle.h"
-#import "DTCache.h"
 
-static DTCache *_paragraphStyleCache = nil;
+static NSCache *_paragraphStyleCache = nil;
 
 #if ALLOW_IPHONE_SPECIAL_CASES
 #define SPECIAL_LIST_INDENT		27.0f
@@ -32,7 +31,7 @@ static DTCache *_paragraphStyleCache = nil;
   
 	dispatch_once(&predicate, ^{
 		
-    _paragraphStyleCache = [[DTCache alloc] init];
+    _paragraphStyleCache = [[NSCache alloc] init];
 		
 	});
 

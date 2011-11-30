@@ -14,7 +14,7 @@
 @interface DTCoreTextFontCollection ()
 
 @property (nonatomic, retain) NSArray *fontDescriptors;
-@property (nonatomic, retain) DTCache *fontMatchCache;
+@property (nonatomic, retain) NSCache *fontMatchCache;
 
 @end
 
@@ -138,11 +138,11 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	return _fontDescriptors;
 }
 
-- (DTCache *)fontMatchCache
+- (NSCache *)fontMatchCache
 {
 	if (!fontMatchCache)
 	{
-		fontMatchCache = [[DTCache alloc] init];
+		fontMatchCache = [[NSCache alloc] init];
 	}
 	
 	return fontMatchCache;

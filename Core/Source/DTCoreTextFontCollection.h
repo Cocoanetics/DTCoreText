@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DTCache.h"
 
 @class DTCoreTextFontDescriptor;
 
@@ -15,7 +14,7 @@
 @interface DTCoreTextFontCollection : NSObject 
 {
 	NSArray *_fontDescriptors;
-	DTCache *fontMatchCache;
+	NSCache *fontMatchCache;
 }
 
 + (DTCoreTextFontCollection *)availableFontsCollection;

@@ -33,10 +33,6 @@
 		A788C96814863E8700E1AFD9 /* DTAttributedTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */; };
 		A788C96A14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
 		A788C96B14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
-		A788C96C14863E8700E1AFD9 /* DTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91614863E8700E1AFD9 /* DTCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C96D14863E8700E1AFD9 /* DTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91614863E8700E1AFD9 /* DTCache.h */; };
-		A788C96F14863E8700E1AFD9 /* DTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91714863E8700E1AFD9 /* DTCache.m */; };
-		A788C97014863E8700E1AFD9 /* DTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91714863E8700E1AFD9 /* DTCache.m */; };
 		A788C97114863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91814863E8700E1AFD9 /* DTCoreTextFontCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C97214863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91814863E8700E1AFD9 /* DTCoreTextFontCollection.h */; };
 		A788C97414863E8700E1AFD9 /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */; };
@@ -196,7 +192,6 @@
 		A788CA90148648C700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
 		A788CA91148648C700E1AFD9 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */; };
 		A788CA92148648C700E1AFD9 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
-		A788CA93148648C700E1AFD9 /* DTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91714863E8700E1AFD9 /* DTCache.m */; };
 		A788CA94148648C700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91D14863E8700E1AFD9 /* DTCoreTextGlyphRun.m */; };
 		A788CA95148648C700E1AFD9 /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
 		A788CA96148648C700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
@@ -249,8 +244,6 @@
 		A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextContentView.m; sourceTree = "<group>"; };
 		A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextView.h; sourceTree = "<group>"; };
 		A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextView.m; sourceTree = "<group>"; };
-		A788C91614863E8700E1AFD9 /* DTCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCache.h; sourceTree = "<group>"; };
-		A788C91714863E8700E1AFD9 /* DTCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCache.m; sourceTree = "<group>"; };
 		A788C91814863E8700E1AFD9 /* DTCoreTextFontCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontCollection.h; sourceTree = "<group>"; };
 		A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontCollection.m; sourceTree = "<group>"; };
 		A788C91A14863E8700E1AFD9 /* DTCoreTextFontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontDescriptor.h; sourceTree = "<group>"; };
@@ -616,8 +609,6 @@
 			children = (
 				A788C90E14863E8700E1AFD9 /* CGUtils.h */,
 				A788C90F14863E8700E1AFD9 /* CGUtils.m */,
-				A788C91614863E8700E1AFD9 /* DTCache.h */,
-				A788C91714863E8700E1AFD9 /* DTCache.m */,
 				A788C94214863E8700E1AFD9 /* NSData+Base64.h */,
 				A788C94314863E8700E1AFD9 /* NSData+Base64.m */,
 				A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */,
@@ -641,7 +632,6 @@
 				A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */,
 				A788C96214863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96714863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
-				A788C96C14863E8700E1AFD9 /* DTCache.h in Headers */,
 				A788C97114863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */,
 				A788C97614863E8700E1AFD9 /* DTCoreTextFontDescriptor.h in Headers */,
 				A788C97B14863E8700E1AFD9 /* DTCoreTextGlyphRun.h in Headers */,
@@ -681,7 +671,6 @@
 				A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */,
 				A788C96314863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96814863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
-				A788C96D14863E8700E1AFD9 /* DTCache.h in Headers */,
 				A788C97214863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */,
 				A788C97714863E8700E1AFD9 /* DTCoreTextFontDescriptor.h in Headers */,
 				A788C97C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h in Headers */,
@@ -930,7 +919,6 @@
 				A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96514863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96A14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
-				A788C96F14863E8700E1AFD9 /* DTCache.m in Sources */,
 				A788C97414863E8700E1AFD9 /* DTCoreTextFontCollection.m in Sources */,
 				A788C97914863E8700E1AFD9 /* DTCoreTextFontDescriptor.m in Sources */,
 				A788C97E14863E8700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
@@ -968,7 +956,6 @@
 				A788C96114863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96614863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96B14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
-				A788C97014863E8700E1AFD9 /* DTCache.m in Sources */,
 				A788C97514863E8700E1AFD9 /* DTCoreTextFontCollection.m in Sources */,
 				A788C97A14863E8700E1AFD9 /* DTCoreTextFontDescriptor.m in Sources */,
 				A788C97F14863E8700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
@@ -1020,7 +1007,6 @@
 				A788CA90148648C700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788CA91148648C700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788CA92148648C700E1AFD9 /* DTAttributedTextView.m in Sources */,
-				A788CA93148648C700E1AFD9 /* DTCache.m in Sources */,
 				A788CA94148648C700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
 				A788CA95148648C700E1AFD9 /* DTCoreTextLayouter.m in Sources */,
 				A788CA96148648C700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
