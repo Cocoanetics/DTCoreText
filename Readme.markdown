@@ -1,6 +1,12 @@
-# NSAttributedString HTML Additions
+DTCoreText
+==========
 
-This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS.
+This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS. Previously we referred to it as NSAttributedString+HTML (or NSAS+HTML in short) but this only covers about half of what this framework does. 
+
+The project covers two broad areas:
+
+1. Layouting - Interfacing with CoreText, generating NSAttributedString instances from HTML code
+2. UI - several UI-related classes render these objects
 
 This is useful for drawing simple rich text like any HTML document without having to use a `UIWebView`.
 
@@ -12,8 +18,24 @@ If you find brief test cases where the created `NSAttributedString` differs from
 
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter.
 
+License
+------- 
+ 
+It is open source and covered by a standard BSD license. That means you have to mention *Cocoanetics* as the original author of this code. You can purchase a Non-Attribution-License from us.
 
-KNOWN ISSUES
+Usage
+-----
+
+These are your options for adding DTCoreText to your project.
+
+1. Copy all classes and headers from the Core folder to your project.
+2. Link your project against the libDTCoreText static library. Note that the "Static Library" target does not produce a universal library. You will also need to add all header files contained in the Core folder to your project.
+3. Link your project against the universal static library produced from the "Static Framework". 
+
+When linking you need to add the -ObjC and -all_load to your app target's "Other Linker Flags".
+
+Known Issues
+------------
 
 CoreText has a problem prior to iOS 5 where it takes around a second on device to initialize its internal font lookup table. You have two workarounds available:
 
@@ -21,3 +43,5 @@ CoreText has a problem prior to iOS 5 where it takes around a second on device t
 - if you only use certain fonts then add the variants to the DTCoreTextFontOverrides.plist, this speeds up the finding of a specific font face from the font family
 
 Some combinations of fonts and unusual list types cause an extra space to appear. e.g. 20 px Courier + Circle
+
+If you find an issue then you are welcome to fix it and contribute your fix via a GitHub pull request.
