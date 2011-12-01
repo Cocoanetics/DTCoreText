@@ -143,7 +143,6 @@
 		A788CA3C14863EF100E1AFD9 /* ArabicTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1D14863EF100E1AFD9 /* ArabicTest.html */; };
 		A788CA3E14863EF100E1AFD9 /* CurrentTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1F14863EF100E1AFD9 /* CurrentTest.html */; };
 		A788CA3F14863EF100E1AFD9 /* CustomFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2014863EF100E1AFD9 /* CustomFont.html */; };
-		A788CA4014863EF100E1AFD9 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 		A788CA4114863EF100E1AFD9 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2214863EF100E1AFD9 /* Icon.png */; };
 		A788CA4214863EF100E1AFD9 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2314863EF100E1AFD9 /* Icon@2x.png */; };
 		A788CA4314863EF100E1AFD9 /* icon_smile.gif in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2414863EF100E1AFD9 /* icon_smile.gif */; };
@@ -163,7 +162,6 @@
 		A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3614863EF100E1AFD9 /* DemoSnippetsViewController.m */; };
 		A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3814863EF100E1AFD9 /* DemoTextViewController.m */; };
 		A788CA5314863EF100E1AFD9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3914863EF100E1AFD9 /* main.m */; };
-		A788CA5614863F6400E1AFD9 /* DemoApp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA5414863F6400E1AFD9 /* DemoApp-Info.plist */; };
 		A788CA601486416A00E1AFD9 /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A70F11DE148632CD009202BF /* libDTCoreText.a */; };
 		A788CA6B1486456100E1AFD9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		A788CA6C1486456100E1AFD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -208,6 +206,7 @@
 		A788CAA5148648D700E1AFD9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
+		DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -808,12 +807,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */,
 				A788CA3A14863EF100E1AFD9 /* Alignment.html in Resources */,
 				A788CA3B14863EF100E1AFD9 /* APOD.html in Resources */,
 				A788CA3C14863EF100E1AFD9 /* ArabicTest.html in Resources */,
 				A788CA3E14863EF100E1AFD9 /* CurrentTest.html in Resources */,
 				A788CA3F14863EF100E1AFD9 /* CustomFont.html in Resources */,
-				A788CA4014863EF100E1AFD9 /* DTCoreTextFontOverrides.plist in Resources */,
 				A788CA4114863EF100E1AFD9 /* Icon.png in Resources */,
 				A788CA4214863EF100E1AFD9 /* Icon@2x.png in Resources */,
 				A788CA4314863EF100E1AFD9 /* icon_smile.gif in Resources */,
@@ -829,7 +828,6 @@
 				A788CA4D14863EF100E1AFD9 /* WarAndPeace.html in Resources */,
 				A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */,
 				A788CA4F14863EF100E1AFD9 /* XB NiloofarBd.ttf in Resources */,
-				A788CA5614863F6400E1AFD9 /* DemoApp-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

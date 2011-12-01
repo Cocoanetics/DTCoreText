@@ -17,7 +17,6 @@
 #import "DTLinkButton.h"
 #import "DTTextAttachment.h"
 #import "DTWebVideoView.h"
-#import "NSAttributedString+DTWebArchive.h"
 #import "NSAttributedString+HTML.h"
 #import "NSAttributedStringRunDelegates.h"
 #import "NSCharacterSet+HTML.h"
