@@ -19,19 +19,14 @@
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
 
-#define LAYOUTSTRING layoutLock
-#define LAYOUTER layouterLock
-#define LAYOUTFRAME layoutFrameLock
 #define SELF selfLock
 
-#define SYNCHRONIZE_START(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock);
+// Useful to find deadlocks
+#define SYNCHRONIZE_START(lock) /* NSLog(@"LOCK: FUNC=%s Line=%d", __func__, __LINE__), */dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock) /*, NSLog(@"UN-LOCK")*/;
 
 #else
 
-#define LAYOUTSTRING self
-#define LAYOUTER self
-#define LAYOUTFRAME self
 #define SELF self
 
 #define SYNCHRONIZE_START(obj) @synchronized(obj)
@@ -118,6 +113,8 @@
 @property (nonatomic) CGSize backgroundOffset;
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
+
+@property (nonatomic, assign) dispatch_semaphore_t selfLock;
 
 
 @end
