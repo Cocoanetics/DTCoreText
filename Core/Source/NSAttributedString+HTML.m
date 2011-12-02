@@ -7,7 +7,7 @@
 //
 
 #import <CoreText/CoreText.h>
-#import <UIKit/UIKit.h>
+
 
 #import "NSAttributedString+HTML.h"
 #import "NSMutableAttributedString+HTML.h"
@@ -71,7 +71,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	// only with valid data
 	if (![data length])
 	{
-		[self release];
 		
 		return nil;
 	}
@@ -82,7 +81,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	if (textEncodingName)
 	{
-		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
+		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
 	
@@ -115,12 +114,11 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	{
 		NSLog(@"No valid HTML passed to to initWithHTML");
 		
-		[self release];
 		return nil;
 	}
 	
 	// the combined style sheet for entire document
-	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
+	DTCSSStylesheet *styleSheet = [[DTCSSStylesheet alloc] init]; 
 	
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
@@ -138,10 +136,9 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
-	[htmlString release];
 	
 	// base tag with font defaults
-	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
+	DTCoreTextFontDescriptor *defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
 	defaultFontDescriptor.pointSize = 12.0 * textScale;
 	
 	NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
@@ -215,7 +212,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
 	}
 	
-	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
+	DTHTMLElement *defaultTag = [[DTHTMLElement alloc] init];
 	defaultTag.fontDescriptor = defaultFontDescriptor;
 	defaultTag.paragraphStyle = defaultParagraphStyle;
 	defaultTag.textScale = textScale;
@@ -277,7 +274,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			{
 				// make new tag as copy of previous tag
 				DTHTMLElement *parent = currentTag;
-				currentTag = [[currentTag copy] autorelease];
+				currentTag = [currentTag copy];
 				currentTag.tagName = tagName;
 				currentTag.textScale = textScale;
 				currentTag.attributes = tagAttributesDict;
@@ -882,14 +879,14 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 							{
 								NSRange effectiveRange;
 								
-								NSMutableDictionary *finalAttributes = [[[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy] autorelease];
-								CTParagraphStyleRef style = (CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+								NSMutableDictionary *finalAttributes = [[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy];
+								CTParagraphStyleRef style = (__bridge CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 								DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
 								paragraphStyle.paragraphSpacing += nextParagraphAdditionalSpaceBefore;
 								
 								CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-								[finalAttributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-								CFRelease(newParagraphStyle);
+								[finalAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+								//CFRelease(newParagraphStyle);
 								
 								[tmpString setAttributes:finalAttributes range:effectiveRange];
 
@@ -917,7 +914,6 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	// returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
-	[self release];
 	
 	return tmpString;
 }
@@ -926,7 +922,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 + (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options
 {
-	NSAttributedString *attrString = [[[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL] autorelease];
+	NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	return attrString;
 }
@@ -935,15 +931,15 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
 {
-	CTFontRef normalFont = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+	CTFontRef normalFont = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
 	
 	DTCoreTextFontDescriptor *smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:normalFont];
 	smallerFontDesc.pointSize *= 0.7;
 	CTFontRef smallerFont = [smallerFontDesc newMatchingFont];
 	
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-	[smallAttributes setObject:(id)smallerFont forKey:(id)kCTFontAttributeName];
-	CFRelease(smallerFont);
+	[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+	//CFRelease(smallerFont);
 	
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	NSScanner *scanner = [NSScanner scannerWithString:text];
@@ -960,20 +956,17 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			part = [part uppercaseString];
 			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:smallAttributes];
 			[tmpString appendAttributedString:partString];
-			[partString release];
 		}
 		
 		if ([scanner scanUpToCharactersFromSet:lowerCaseChars intoString:&part])
 		{
 			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:attributes];
 			[tmpString appendAttributedString:partString];
-			[partString release];
 		}
 	}
 	
-	[smallAttributes release];
 	
-	return 	[tmpString autorelease];
+	return 	tmpString;
 }
 
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
@@ -1039,7 +1032,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		// check if font is same in all paragraph
 		NSRange fontEffectiveRange;
-		CTFontRef paragraphFont = (CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
+		CTFontRef paragraphFont = (__bridge CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
 		
 		if (NSEqualRanges(paragraphRange, fontEffectiveRange))
 		{
@@ -1051,7 +1044,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
 		
-		CTParagraphStyleRef paraStyle = (CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 		NSString *paraStyleString = nil;
 		
 		if (paraStyle)
@@ -1204,13 +1197,13 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				}
 				
 				// attach the attributes dictionary
-				NSMutableDictionary *tmpAttributes = [[attachment.attributes mutableCopy] autorelease];
+				NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
 				
 				// remove src and style, we already have that
 				[tmpAttributes removeObjectForKey:@"src"];
 				[tmpAttributes removeObjectForKey:@"style"];
 				
-				for (NSString *oneKey in [tmpAttributes allKeys])
+				for (__strong NSString *oneKey in [tmpAttributes allKeys])
 				{
 					oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
@@ -1227,7 +1220,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 			NSString *fontStyle = nil;
 			if (!fontIsBlockLevel)
 			{
-				CTFontRef font = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+				CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
 				if (font)
 				{
 					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
@@ -1240,7 +1233,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				fontStyle = @"";
 			}
 			
-			CGColorRef textColor = (CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 			if (textColor)
 			{
 				UIColor *color = [UIColor colorWithCGColor:textColor];
@@ -1248,7 +1241,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
 			}
 			
-			CGColorRef backgroundColor = (CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
+			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
 			if (backgroundColor)
 			{
 				UIColor *color = [UIColor colorWithCGColor:backgroundColor];

@@ -16,7 +16,7 @@
 
 #import "NSString+Paragraphs.h"
 
-
+static int lf;
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
@@ -32,7 +32,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
 	self = [super init];
-	
+++lf;	
 	if (self)
 	{
 		_frame = frame;
@@ -56,7 +56,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		else
 		{
 			// Strange, should have gotten a valid framesetter
-			[self release];
 			return nil;
 		}
 		
@@ -73,25 +72,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)dealloc
 {
+NSLog(@"LAYOUT FRAME DEALLOC (%d) LINES=%d tf=%x fs=%x", --lf, [_lines count], (unsigned int)_textFrame, (unsigned int)_framesetter);
+
+
 	if (_textFrame)
 	{
 		CFRelease(_textFrame);
-		_textFrame = NULL;
 	}
-	
-	[_lines release];
-	[_paragraphRanges release];
-	
+
 	if (_framesetter)
 	{
 		CFRelease(_framesetter);
-		_framesetter = NULL;
 	}
-	
-	[_textAttachments release];
-	[_attributedStringFragment release];
-	
-	[super dealloc];
+
+	for(id foo in _lines) {
+NSLog(@"dtline dealloc count=%ld", CFGetRetainCount((__bridge CFStringRef)foo) );
+	}
+}
+
+- (void)dump:(NSString *)msg
+{
+	for(id foo in _lines) NSLog(@"dtline %@ count=%ld", msg, CFGetRetainCount((__bridge CFStringRef)foo) );
 }
 
 - (NSString *)description
@@ -101,30 +102,30 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)buildLines
 {
-	// get lines
-	CFArrayRef lines = CTFrameGetLines(_textFrame);
+	// get lines (don't own it so no release)
+	CFArrayRef cflines = CTFrameGetLines(_textFrame);
 	
-	if (!lines)
+	if (!cflines)
 	{
 		// probably no string set
 		return;
 	}
 	
-	CGPoint *origins = malloc(sizeof(CGPoint)*[(NSArray *)lines count]);
+	CGPoint *origins = malloc(sizeof(CGPoint)*CFArrayGetCount(cflines));
 	CTFrameGetLineOrigins(_textFrame, CFRangeMake(0, 0), origins);
 	
-	NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(lines)];;
+	NSMutableArray *tmpLines = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(cflines)];
 	
 	NSInteger lineIndex = 0;
 	
-	for (id oneLine in (NSArray *)lines)
+	for (id oneLine in (__bridge NSArray *)cflines)
 	{
 		CGPoint lineOrigin = origins[lineIndex];
 		
 		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
 		lineOrigin.x += _frame.origin.x;
 		
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
 		
 		/*
 		 // experimental, trying to find out how to get spacing between lines
@@ -134,15 +135,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		NSLog(@"as %f desc %f, lead %f, lineHeight %f, spacing %f", newLine.ascent, newLine.descent, newLine.leading, [newLine lineHeight], spacing);
 		*/
 		[tmpLines addObject:newLine];
-		[newLine release];
 		
 		lineIndex++;
 	}
-	
-	_lines = tmpLines;
-	
 	free(origins);
-	
+
+NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
+	_lines = tmpLines;
+
 	// at this point we can correct the frame if it is open-ended
 	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
 	{
@@ -162,6 +162,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+#warning leak
 - (NSArray *)lines
 {
 	if (!_lines)
@@ -172,6 +173,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return _lines;
 }
 
+#warning leak?
 - (NSArray *)linesVisibleInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -202,6 +204,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
+#if 0 // appears to be unused
 - (NSArray *)linesContainedInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -226,6 +229,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	return tmpArray;
 }
+#endif
 
 - (CGPathRef)path
 {
@@ -278,7 +282,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRetain(_textFrame);
 	}
 	
-	[self retain];
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
@@ -327,7 +330,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 			
 			
-			CGColorRef backgroundColor = (CGColorRef)[oneRun.attributes objectForKey:@"DTBackgroundColor"];
+			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:@"DTBackgroundColor"];
 			
 			
 			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:@"DTHorizontalRuleStyle"];
@@ -375,7 +378,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				if (color)
 				{
-					CGContextSetStrokeColorWithColor(context, (CGColorRef)color);
+					CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
 				}
 				else
 				{
@@ -515,7 +518,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}
 	
-	[self release];
 	
 	if (_textFrame)
 	{
@@ -577,7 +579,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark Calculations
 - (NSArray *)stringIndices {
-	NSMutableArray *array = [NSMutableArray array];
+	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self.lines count]];
 	for (DTCoreTextLayoutLine *oneLine in self.lines) {
 		[array addObjectsFromArray:[oneLine stringIndices]];
 	}
@@ -660,6 +662,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return nil;
 }
 
+#if 0 // apparently unused
 - (NSArray *)linesInParagraphAtIndex:(NSUInteger)index
 {
 	NSArray *paragraphRanges = self.paragraphRanges;
@@ -702,6 +705,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return nil;
 	}
 }
+#endif
 
 #pragma mark Paragraphs
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex

@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 @class DTCoreTextParagraphStyle;
 @class DTCoreTextFontDescriptor;
@@ -33,7 +33,7 @@ typedef enum
 
 @interface DTHTMLElement : NSObject <NSCopying>
 {
-	DTHTMLElement *parent;
+	__unsafe_unretained DTHTMLElement *parent;
 	
     DTCoreTextFontDescriptor *fontDescriptor;
     DTCoreTextParagraphStyle *paragraphStyle;
@@ -82,13 +82,13 @@ typedef enum
 	NSDictionary *_attributes; // contains all attributes from parsing
 }
 
-@property (nonatomic, assign) DTHTMLElement *parent;
+@property (nonatomic, assign) DTHTMLElement *parent;	// subtle simulator bug - use assign not __unsafe_unretained
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
-@property (nonatomic, retain) DTTextAttachment *textAttachment;
+@property (nonatomic, strong) DTTextAttachment *textAttachment;
 @property (nonatomic, copy) NSURL *link;
-@property (nonatomic, retain) UIColor *textColor;
-@property (nonatomic, retain) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, copy) NSString *tagName;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSArray *shadows;
@@ -108,7 +108,7 @@ typedef enum
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, readonly) NSInteger listDepth;
 @property (nonatomic) NSInteger listCounter;
-@property (nonatomic, retain) NSDictionary *attributes;
+@property (nonatomic, strong) NSDictionary *attributes;
 
 
 - (NSAttributedString *)attributedString;

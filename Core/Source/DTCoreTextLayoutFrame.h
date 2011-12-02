@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 #import <CoreText/CoreText.h>
 
 @class DTCoreTextLayoutLine;
@@ -47,7 +47,7 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect; // lines that are intersected, i.e. also incomplete lines
-- (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
+// unused? - (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
 - (NSArray *)stringIndices;
@@ -60,16 +60,17 @@
 - (NSAttributedString *)attributedStringFragment;
 
 // working with Paragraphs
-- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
+// unused? - (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
 - (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
 
 @property (nonatomic, assign, readonly) CGRect frame;
 
-@property (nonatomic, retain, readonly) NSArray *lines;
-@property (nonatomic, retain, readonly) NSArray *paragraphRanges;
+@property (nonatomic, strong, readonly) NSArray *lines;
+@property (nonatomic, strong, readonly) NSArray *paragraphRanges;
 
 @property (nonatomic, assign) NSInteger tag;
 
+- (void)dump:(NSString *)msg;
 
 @end

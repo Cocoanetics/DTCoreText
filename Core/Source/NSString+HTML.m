@@ -904,10 +904,10 @@ static NSDictionary *entityReverseLookup = nil;
 	CFUUIDRef uuid = CFUUIDCreate(NULL);
 	CFStringRef cfStr = CFUUIDCreateString(NULL, uuid);
 	
-	NSString *ret = [NSString stringWithString:(NSString *)cfStr];
+	NSString *ret = [NSString stringWithString:CFBridgingRelease(cfStr)];
 	
 	CFRelease(uuid);
-	CFRelease(cfStr);
+	// CFRelease(cfStr);
 	
 	return ret;
 }

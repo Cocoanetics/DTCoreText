@@ -20,8 +20,8 @@
 
 @interface DTAttributedTextContentView ()
 
-@property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
-@property (nonatomic, retain) NSMutableDictionary *customViewsForAttachmentsIndex;
+@property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
+@property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
 
 - (void)removeAllCustomViews;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
@@ -49,6 +49,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 }
 
 @end
+
+static int cv;
 
 @implementation DTAttributedTextContentView
 @synthesize selfLock;
@@ -88,7 +90,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-
+++cv;
+NSLog(@"cv alloc (%d)", cv);
 	}
 	return self;
 }
@@ -115,17 +118,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)dealloc 
 {
 	[self removeAllCustomViews];
-	[customViews release];
-	[customViewsForLinksIndex release];
-	[customViewsForAttachmentsIndex release];
 	
-	[_layouter release];
-	[_layoutFrame release];
-	[_attributedString release];
-
 	dispatch_release(selfLock);
-	
-	[super dealloc];
+
+NSLog(@"cv DEALLOC (%d)", --cv);
+
 }
 
 - (void)layoutSubviewsInRect:(CGRect)rect
@@ -321,6 +318,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		[CATransaction commit];
 	}
 	SYNCHRONIZE_END(SELF)
+	
+	[theLayoutFrame  dump:@"layoutSubviewsInRect"];
 }
 
 - (void)layoutSubviews
@@ -498,7 +497,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (_attributedString != string)
 	{
-		[_attributedString release];
 		
 		_attributedString = [string copy];
 		
@@ -593,8 +591,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		if (_layouter != layouter)
 		{
-			[_layouter release];
-			_layouter = [layouter retain];
+			_layouter = layouter;
 		}
 	}
 	SYNCHRONIZE_END(SELF)
@@ -615,7 +612,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-				[_layoutFrame retain];
 			}
 		}
 	}
@@ -630,9 +626,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		if (_layoutFrame != layoutFrame)
 		{
-			[_layoutFrame release];
 			
-			_layoutFrame = [layoutFrame retain];
+			_layoutFrame = layoutFrame;
 			
 			[self removeAllCustomViewsForLinks];
 			

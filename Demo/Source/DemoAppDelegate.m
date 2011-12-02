@@ -21,7 +21,6 @@
 	// Create the view controller
 	DemoSnippetsViewController *snippetsViewController = [[DemoSnippetsViewController alloc] init];
 	_navigationController = [[UINavigationController alloc] initWithRootViewController:snippetsViewController];
-	[snippetsViewController release];	
 	
 	// Display the window
 	[_window addSubview:_navigationController.view];
@@ -31,11 +30,5 @@
 }
 
 
-- (void)dealloc 
-{
-	[_window release];
-	[_navigationController release];
-	[super dealloc];
-}
 
 @end

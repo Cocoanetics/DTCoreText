@@ -36,8 +36,6 @@
 - (void)dealloc 
 {
 	[contentView removeObserver:self forKeyPath:@"frame"];
-	[contentView release];
-	[super dealloc];
 }
 
 - (void)layoutSubviews

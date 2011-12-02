@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 @class DTHTMLElement;
 
@@ -35,11 +35,11 @@ typedef enum
 
 @property (nonatomic, assign) CGSize originalSize;
 @property (nonatomic, assign) CGSize displaySize;
-@property (nonatomic, retain) id contents;
+@property (nonatomic, strong) id contents;
 @property (nonatomic, assign) DTTextAttachmentType contentType;
-@property (nonatomic, retain) NSURL *contentURL;
-@property (nonatomic, retain) NSURL *hyperLinkURL;
-@property (nonatomic, retain) NSDictionary *attributes;
+@property (nonatomic, strong) NSURL *contentURL;
+@property (nonatomic, strong) NSURL *hyperLinkURL;
+@property (nonatomic, strong) NSDictionary *attributes;
 
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;

@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 #import <CoreText/CoreText.h>
 
@@ -35,7 +35,7 @@
 
 - (DTCoreTextLayoutFrame *)layoutFrameAtIndex:(NSInteger)index;
 
-@property (nonatomic, retain) NSAttributedString *attributedString;
+@property (nonatomic, strong) NSAttributedString *attributedString;
 
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 

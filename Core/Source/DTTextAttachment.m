@@ -171,19 +171,10 @@
 	attachment.displaySize = adjustedSize;
 	attachment.attributes = element.attributes;
 	
-	return [attachment autorelease];
+	return attachment;
 }
 
 
-- (void) dealloc
-{
-	[contents release];
-	[_contentURL release];
-	[_hyperLinkURL release];
-	[_attributes release];
-	
-	[super dealloc];
-}
 
 // makes a data URL of the image
 - (NSString *)dataURLRepresentation

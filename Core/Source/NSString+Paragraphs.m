@@ -16,7 +16,7 @@
 	CFIndex beginIndex;
 	CFIndex endIndex;
 	
-	CFStringGetParagraphBounds((CFStringRef)self, CFRangeMake(range.location, range.length), &beginIndex, &endIndex, NULL);
+	CFStringGetParagraphBounds((__bridge CFStringRef)self, CFRangeMake(range.location, range.length), &beginIndex, &endIndex, NULL);
 	
 	if (parBegIndex)
 	{

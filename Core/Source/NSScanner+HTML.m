@@ -14,7 +14,7 @@
 
 - (NSString *)peekNextTagSkippingClosingTags:(BOOL)skipClosingTags
 {
-	NSScanner *scanner = [[self copy] autorelease];
+	NSScanner *scanner = [self copy];
 	
 	do
 	{

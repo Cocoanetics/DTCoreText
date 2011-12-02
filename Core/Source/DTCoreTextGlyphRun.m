@@ -53,12 +53,7 @@
 		CFRelease(_run);
 	}
 	
-	[_attachment release];
-	[stringIndices release];
-
 	dispatch_release(runLock);
-
-	[super dealloc];
 }
 
 - (NSString *)description
@@ -121,7 +116,7 @@
 		{
 			[array addObject:[NSNumber numberWithInteger:indices[i]]];
 		}
-		stringIndices = [array retain];
+		stringIndices = array;
 	}
 	return stringIndices;
 }
@@ -184,7 +179,7 @@
 {
 	if (!attributes)
 	{
-		attributes = (NSDictionary *)CTRunGetAttributes(_run);
+		attributes = (__bridge NSDictionary *)CTRunGetAttributes(_run);
 	}
 	
 	return attributes;
@@ -196,7 +191,7 @@
 	{
 		if (!_didCheckForAttachmentInAttributes)
 		{
-			_attachment = [[self.attributes objectForKey:@"DTTextAttachment"] retain];
+			_attachment = [self.attributes objectForKey:@"DTTextAttachment"];
 			
 			_didCheckForAttachmentInAttributes = YES;
 		}

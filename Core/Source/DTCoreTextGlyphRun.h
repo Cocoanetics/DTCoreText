@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 #import <CoreText/CoreText.h>
 
@@ -28,10 +28,10 @@
 	NSInteger numberOfGlyphs;
 	
 	const CGPoint *glyphPositionPoints;
-  BOOL needToFreeGlyphPositionPoints;
+	BOOL needToFreeGlyphPositionPoints;
 	
-	DTCoreTextLayoutLine *_line;
-	NSDictionary *attributes;
+	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+	__unsafe_unretained NSDictionary *attributes;
     NSArray *stringIndices;
 	
 	DTTextAttachment *_attachment;
@@ -54,13 +54,13 @@
 
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) NSInteger numberOfGlyphs;
-@property (nonatomic, assign, readonly) NSDictionary *attributes;
+@property (nonatomic, assign, readonly) NSDictionary *attributes;	// subtle simulator bug - use assign not __unsafe_unretained
 
 @property (nonatomic, assign, readonly) CGFloat ascent;
 @property (nonatomic, assign, readonly) CGFloat descent;
 @property (nonatomic, assign, readonly) CGFloat leading;
 @property (nonatomic, assign, readonly) CGFloat width;
 
-@property (nonatomic, retain) DTTextAttachment *attachment;
+@property (nonatomic, strong) DTTextAttachment *attachment;
 
 @end

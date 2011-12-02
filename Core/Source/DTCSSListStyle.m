@@ -25,12 +25,12 @@
 
 + (DTCSSListStyle *)listStyleWithStyles:(NSDictionary *)styles
 {
-	return [[[DTCSSListStyle alloc] initWithStyles:styles] autorelease];
+	return [[DTCSSListStyle alloc] initWithStyles:styles];
 }
 
 + (DTCSSListStyle *)decimalListStyle
 {
-	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
 	style.type = DTCSSListStyleTypeDecimal;
 	style.position = DTCSSListStylePositionOutside;
 	return style;
@@ -38,7 +38,7 @@
 
 + (DTCSSListStyle *)discListStyle
 {
-	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
 	style.type = DTCSSListStyleTypeDisc;
 	style.position = DTCSSListStylePositionOutside;
 	return style;
@@ -46,7 +46,7 @@
 
 + (DTCSSListStyle *)inheritedListStyle
 {
-	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
 	style.inherit = YES;
 	return style;
 }
@@ -67,12 +67,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[_imageName release];
-	
-	[super dealloc];
-}
 
 // convert string to listStyleType
 + (DTCSSListStyleType)listStyleTypeFromString:(NSString *)string
@@ -298,6 +292,7 @@
 		case DTCSSListStyleTypeImage:
 		{
 			token = UNICODE_OBJECT_PLACEHOLDER;
+			break;
 		}
 		case DTCSSListStyleTypeCircle:
 		{

@@ -6,7 +6,7 @@
 //  Copyright 2011 . All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 #import <ImageIO/ImageIO.h>
 
 @class DTLazyImageView;
@@ -31,13 +31,13 @@
     
     BOOL shouldShowProgressiveDownload;
 	
-	id<DTLazyImageViewDelegate> _delegate;
+	__unsafe_unretained id<DTLazyImageViewDelegate> _delegate;
 }
 
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
 
-@property (nonatomic, assign) id<DTLazyImageViewDelegate> delegate;
+@property (nonatomic, assign) id<DTLazyImageViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
 
 - (void)cancelLoading;
 

@@ -87,7 +87,7 @@
 		unsigned int delegateSupportsNotificationAfterDrawing:1;
 	} _delegateFlags;
 	
-	id <DTAttributedTextContentViewDelegate> _delegate;
+	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
@@ -99,10 +99,10 @@
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
 
-@property (retain) DTCoreTextLayouter *layouter;
-@property (retain) DTCoreTextLayoutFrame *layoutFrame;
+@property (strong) DTCoreTextLayouter *layouter;
+@property (strong) DTCoreTextLayoutFrame *layoutFrame;
 
-@property (nonatomic, retain) NSMutableSet *customViews;
+@property (nonatomic, strong) NSMutableSet *customViews;
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
@@ -112,7 +112,7 @@
 @property (nonatomic) CGPoint layoutOffset;
 @property (nonatomic) CGSize backgroundOffset;
 
-@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
+@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
 
 @property (nonatomic, assign) dispatch_semaphore_t selfLock;
 

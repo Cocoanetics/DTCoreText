@@ -45,10 +45,7 @@
 - (void)dealloc
 {
 	_webView.delegate = nil;
-	[_webView release];
-	[_attachment release];
 	
-	[super dealloc];
 }
 
 
@@ -102,9 +99,8 @@
 {
 	if (_attachment != attachment)
 	{
-		[_attachment release];
 		
-		_attachment = [attachment retain];
+		_attachment = attachment;
 	}
 	
 	switch (attachment.contentType) 

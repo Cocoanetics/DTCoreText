@@ -16,7 +16,7 @@
 
 @interface DTCSSStylesheet ()
 
-@property (nonatomic, retain) NSMutableDictionary *styles;
+@property (nonatomic, strong) NSMutableDictionary *styles;
 
 @end
 
@@ -37,11 +37,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[_styles release];
-	[super dealloc];
-}
 
 - (NSString *)description
 {
@@ -127,7 +122,7 @@
 	{
 		NSString *cleanSelector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		
-		NSMutableDictionary *ruleDictionary = [[[rule dictionaryOfCSSStyles] mutableCopy] autorelease];
+		NSMutableDictionary *ruleDictionary = [[rule dictionaryOfCSSStyles] mutableCopy];
 
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
 		[self uncompressShorthands:ruleDictionary];
@@ -137,7 +132,7 @@
 		if (existingRulesForSelector) 
 		{
 			// substitute new rules over old ones
-			NSMutableDictionary *tmpDict = [[existingRulesForSelector mutableCopy] autorelease];
+			NSMutableDictionary *tmpDict = [existingRulesForSelector mutableCopy];
 			
 			// append new rules
 			[tmpDict addEntriesFromDictionary:ruleDictionary];
@@ -252,7 +247,7 @@
 	
 	if ([styleString length])
 	{
-		NSMutableDictionary *localStyles = [[[styleString dictionaryOfCSSStyles] mutableCopy] autorelease];
+		NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
 		
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
 		[self uncompressShorthands:localStyles];

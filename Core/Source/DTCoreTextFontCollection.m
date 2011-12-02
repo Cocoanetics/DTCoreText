@@ -13,8 +13,8 @@
 
 @interface DTCoreTextFontCollection ()
 
-@property (nonatomic, retain) NSArray *fontDescriptors;
-@property (nonatomic, retain) NSCache *fontMatchCache;
+@property (nonatomic, strong) NSArray *fontDescriptors;
+@property (nonatomic, strong) NSCache *fontMatchCache;
 
 @end
 
@@ -46,12 +46,6 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	return self;
 }
 
-- (void)dealloc
-{
-	[_fontDescriptors release];
-	[fontMatchCache release];
-	[super dealloc];
-}
 
 - (DTCoreTextFontDescriptor *)matchingFontDescriptorForFontDescriptor:(DTCoreTextFontDescriptor *)descriptor
 {
@@ -63,7 +57,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 	
 	if (firstMatch)
 	{
-		DTCoreTextFontDescriptor *retMatch = [[firstMatch copy] autorelease];
+		DTCoreTextFontDescriptor *retMatch = [firstMatch copy];
 		retMatch.pointSize = descriptor.pointSize;
 		return retMatch;
 	}
@@ -80,7 +74,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 		firstMatch = [matchingDescriptors objectAtIndex:0];
 		[self.fontMatchCache setObject:firstMatch forKey:cacheKey];
 		
-		DTCoreTextFontDescriptor *retMatch = [[firstMatch copy] autorelease];
+		DTCoreTextFontDescriptor *retMatch = [firstMatch copy];
 		
 		retMatch.pointSize = descriptor.pointSize;
 		return retMatch;
@@ -120,14 +114,12 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 					
 					DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFontDescriptor:fontDesc];
 					[tmpArray addObject:desc];
-					[desc release];
 				}
 				
 				
 				CFRelease(matchingFonts);
 				
 				self.fontDescriptors = tmpArray;
-				[tmpArray release];
 			}
 		}
 		

@@ -40,10 +40,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	[_url release];
-	[_guid release];
 	
-	[super dealloc];
 }
 
 

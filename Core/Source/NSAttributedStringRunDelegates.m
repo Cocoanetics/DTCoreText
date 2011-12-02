@@ -9,6 +9,8 @@
 #import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
+//typedef DTTextAttachment *(^dtBlock)(void);
+
 void embeddedObjectDeallocCallback(void *context)
 {
 }
@@ -20,7 +22,6 @@ CGFloat embeddedObjectGetAscentCallback(void *context)
 		DTTextAttachment *attachment = context;
 		return [attachment displaySize].height;
 	}
-	
 	return 0;
 }
 CGFloat embeddedObjectGetDescentCallback(void *context)
@@ -29,7 +30,6 @@ CGFloat embeddedObjectGetDescentCallback(void *context)
 	{
 		return 0;
 	}
-	
 	return 0;
 }
 
@@ -43,7 +43,7 @@ CGFloat embeddedObjectGetWidthCallback(void * context)
 	return 35;
 }
 
-CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context)
+CTRunDelegateRef createEmbeddedObjectRunDelegate(id obj)
 {
 	CTRunDelegateCallbacks callbacks;
 	callbacks.version = kCTRunDelegateCurrentVersion;
@@ -51,5 +51,6 @@ CTRunDelegateRef createEmbeddedObjectRunDelegate(void *context)
 	callbacks.getAscent = embeddedObjectGetAscentCallback;
 	callbacks.getDescent = embeddedObjectGetDescentCallback;
 	callbacks.getWidth = embeddedObjectGetWidthCallback;
-	return CTRunDelegateCreate(&callbacks, context);
+	return CTRunDelegateCreate(&callbacks, (void *)obj);
+	return NULL;
 }
