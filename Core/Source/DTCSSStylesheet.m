@@ -37,6 +37,18 @@
 	return self;
 }
 
+- (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	self = [super init];
+	
+	if (self)
+	{
+		[self mergeStylesheet:stylesheet];
+	}
+	
+	return self;
+}
+
 - (void)dealloc
 {
 	[_styles release];
@@ -171,7 +183,7 @@
 			if (braceLevel == 0) 
 			{
 				// Grab the selector (we'll process it in a moment)
-				selector = [[css substringWithRange:NSMakeRange(braceMarker, i-braceMarker-1)] lowercaseString];
+				selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker-1)];
 				
 				// And mark our position so we can grab the rule's CSS when it is closed
 				braceMarker = i + 1;
@@ -269,6 +281,12 @@
 		return nil;
 	}
 }
+
+- (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	[self.styles addEntriesFromDictionary:stylesheet.styles];
+}
+
 
 #pragma mark Properties
 
