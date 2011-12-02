@@ -24,6 +24,7 @@ extern NSString *DTDefaultFirstLineHeadIndent;
 extern NSString *DTDefaultHeadIndent;
 extern NSString *DTDefaultListIndent;
 
+extern NSString *DTDefaultStyleSheet;
 
 @interface NSAttributedString (HTML)
 

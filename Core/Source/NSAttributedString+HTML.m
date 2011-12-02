@@ -46,6 +46,8 @@ NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
 NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
+NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
+
 
 @implementation NSAttributedString (HTML)
 
@@ -120,12 +122,20 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	}
 	
 	// the combined style sheet for entire document
-	DTCSSStylesheet *styleSheet = [[[DTCSSStylesheet alloc] init] autorelease]; 
-	
+	DTCSSStylesheet *styleSheet= [[[DTCSSStylesheet alloc] init] autorelease]; 
+
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
 	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
+
+	// do we have a default style sheet passed as option?
+	DTCSSStylesheet *defaultStylesheet = [options objectForKey:DTDefaultStyleSheet];
+	if (defaultStylesheet) {
+		// merge the default styles to the combined style sheet
+		[styleSheet mergeStylesheet:defaultStylesheet];
+	}
 	
+
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
