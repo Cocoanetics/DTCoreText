@@ -17,6 +17,7 @@
 }
 
 - (id)initWithStyleBlock:(NSString *)css;
+- (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet;
 
 
 // adds styles contained in block to sheet
@@ -25,5 +26,8 @@
 
 // returns merged style for a tag
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element;
+
+// merge styles from given stylesheet into this stylesheet
+- (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet;
 
 @end

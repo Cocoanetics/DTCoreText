@@ -37,6 +37,18 @@
 	return self;
 }
 
+- (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	self = [super init];
+	
+	if (self)
+	{
+		[self mergeStylesheet:stylesheet];
+	}
+	
+	return self;
+}
+
 - (void)dealloc
 {
 	[_styles release];
@@ -269,6 +281,12 @@
 		return nil;
 	}
 }
+
+- (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	[self.styles addEntriesFromDictionary:stylesheet.styles];
+}
+
 
 #pragma mark Properties
 
