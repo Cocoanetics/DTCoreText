@@ -16,13 +16,6 @@
 
 
 @interface DTCoreTextLayouter : NSObject 
-{
-	CTFramesetterRef framesetter;
-	
-	NSAttributedString *_attributedString;
-	
-	NSMutableArray *frames;
-}
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString;
 

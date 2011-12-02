@@ -11,10 +11,6 @@
 @class DTHTMLElement;
 
 @interface DTCSSStylesheet : NSObject
-{
-	NSMutableDictionary *_styles;
-	
-}
 
 - (id)initWithStyleBlock:(NSString *)css;
 

@@ -112,8 +112,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	if (!htmlString)
 	{
-		NSLog(@"No valid HTML passed to to initWithHTML");
-		
+		//NSLog(@"No valid HTML passed to to initWithHTML");
 		return nil;
 	}
 	
@@ -139,7 +138,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	// base tag with font defaults
 	DTCoreTextFontDescriptor *defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
-	defaultFontDescriptor.pointSize = 12.0 * textScale;
+	defaultFontDescriptor.pointSize = 12.0f * textScale;
 	
 	NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
 	if (defaultFontFamily)
@@ -191,7 +190,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 	
 	if (defaultTextAlignmentNum)
 	{
-		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
+		defaultParagraphStyle.textAlignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
 	}
 	
 	NSNumber *defaultFirstLineHeadIndent = [options objectForKey:DTDefaultFirstLineHeadIndent];
@@ -456,7 +455,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 					
 					// first tab is to right-align bullet, numbering against
-					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
+					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0f*textScale;
 					[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 					
 					// second tab is for the beginning of first line after bullet
@@ -618,41 +617,41 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 							{
 								// H1: 2 em, spacing before 0.67 em, after 0.67 em
 								currentTag.fontDescriptor.pointSize *= 2.0;
-								currentTag.paragraphStyle.paragraphSpacing = 0.67 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 0.67f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 2:
 							{
 								// H2: 1.5 em, spacing before 0.83 em, after 0.83 em
 								currentTag.fontDescriptor.pointSize *= 1.5;
-								currentTag.paragraphStyle.paragraphSpacing = 0.83 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 0.83f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 3:
 							{
 								// H3: 1.17 em, spacing before 1 em, after 1 em
 								currentTag.fontDescriptor.pointSize *= 1.17;
-								currentTag.paragraphStyle.paragraphSpacing = 1.0 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.0f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 4:
 							{
 								// H4: 1 em, spacing before 1.33 em, after 1.33 em
-								currentTag.paragraphStyle.paragraphSpacing = 1.33 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.33f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 5:
 							{
 								// H5: 0.83 em, spacing before 1.67 em, after 1.167 em
 								currentTag.fontDescriptor.pointSize *= 0.83;
-								currentTag.paragraphStyle.paragraphSpacing = 1.67 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.67f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 6:
 							{
 								// H6: 0.67 em, spacing before 2.33 em, after 2.33 em
 								currentTag.fontDescriptor.pointSize *= 0.67;
-								currentTag.paragraphStyle.paragraphSpacing = 2.33 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 2.33f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							default:
@@ -684,22 +683,22 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 					switch (size) 
 					{
 						case 1:
-							currentTag.fontDescriptor.pointSize = textScale * 9.0;
+							currentTag.fontDescriptor.pointSize = textScale * 9.0f;
 							break;
 						case 2:
-							currentTag.fontDescriptor.pointSize = textScale * 10.0;
+							currentTag.fontDescriptor.pointSize = textScale * 10.0f;
 							break;
 						case 4:
-							currentTag.fontDescriptor.pointSize = textScale * 14.0;
+							currentTag.fontDescriptor.pointSize = textScale * 14.0f;
 							break;
 						case 5:
-							currentTag.fontDescriptor.pointSize = textScale * 18.0;
+							currentTag.fontDescriptor.pointSize = textScale * 18.0f;
 							break;
 						case 6:
-							currentTag.fontDescriptor.pointSize = textScale * 24.0;
+							currentTag.fontDescriptor.pointSize = textScale * 24.0f;
 							break;
 						case 7:
-							currentTag.fontDescriptor.pointSize = textScale * 37.0;
+							currentTag.fontDescriptor.pointSize = textScale * 37.0f;
 							break;	
 						case 3:
 						default:
@@ -1108,7 +1107,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
 		NSRange effectiveRange;
-		NSInteger index = paragraphRange.location;
+		NSUInteger index = paragraphRange.location;
 		
 		while (index < NSMaxRange(paragraphRange))
 		{

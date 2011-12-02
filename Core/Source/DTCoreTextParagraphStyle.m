@@ -16,8 +16,25 @@ static NSCache *_paragraphStyleCache = nil;
 #define SPECIAL_LIST_INDENT		36.0
 #endif
 
+static dispatch_semaphore_t selfLock;
 
 @implementation DTCoreTextParagraphStyle
+{
+    CGFloat firstLineIndent;
+	CGFloat defaultTabInterval;
+    CGFloat paragraphSpacingBefore;
+    CGFloat paragraphSpacing;
+    CGFloat headIndent;
+    CGFloat listIndent;
+    CGFloat lineHeightMultiple;
+    CGFloat minimumLineHeight;
+    CGFloat maximumLineHeight;
+    
+    CTTextAlignment textAlignment;
+    CTWritingDirection writingDirection;
+    
+    NSMutableArray *_tabStops;
+}
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle
 {
@@ -31,14 +48,14 @@ static NSCache *_paragraphStyleCache = nil;
   
 	dispatch_once(&predicate, ^{
 		
-    _paragraphStyleCache = [[NSCache alloc] init];
-		
+		_paragraphStyleCache = [[NSCache alloc] init];
+		selfLock = dispatch_semaphore_create(1);
 	});
 
 	// synchronize class-wide
-	@synchronized(self)
+
+	dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
 	{
-		DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
 		
 		// this is naughty: CTParagraphStyle has a description
 		NSString *key = [(__bridge id)ctParagraphStyle description];
@@ -51,7 +68,9 @@ static NSCache *_paragraphStyleCache = nil;
 			[_paragraphStyleCache setObject:returnParagraphStyle forKey:key];
 		}
 	}
-  return (returnParagraphStyle);
+	dispatch_semaphore_signal(selfLock);
+	
+	return returnParagraphStyle;
 }
 
 - (id)init

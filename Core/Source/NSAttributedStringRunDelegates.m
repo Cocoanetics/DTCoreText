@@ -9,7 +9,9 @@
 #import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
-//typedef DTTextAttachment *(^dtBlock)(void);
+#if __has_feature(objc_arc)
+#error "This file is NOT ARC compliant! Disable ARC with the -fno-objc-arc flag
+#endif
 
 void embeddedObjectDeallocCallback(void *context)
 {

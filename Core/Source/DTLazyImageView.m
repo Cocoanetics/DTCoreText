@@ -10,19 +10,36 @@
 
 static NSCache *_imageCache = nil;
 
+@interface DTLazyImageView ()
+
+- (void)notify;
+
+@end
 
 @implementation DTLazyImageView
+{
+	NSURL *_url;
+	
+	NSURLConnection *_connection;
+	NSMutableData *_receivedData;
+
+	/* For progressive download */
+	CGImageSourceRef _imageSource;
+	CGFloat _fullHeight;
+	CGFloat _fullWidth;
+	NSUInteger _expectedSize;
+    
+    BOOL shouldShowProgressiveDownload;
+	
+	__unsafe_unretained id<DTLazyImageViewDelegate> _delegate;
+}
 @synthesize delegate=_delegate;
 
 - (void)dealloc
-{
-	self.image = nil;
-	
+{	
 	[_connection cancel];
 	
-	if (_imageSource)
-		CFRelease(_imageSource), _imageSource = NULL;
-	
+	if (_imageSource) CFRelease(_imageSource);
 }
 
 - (void)loadImageAtURL:(NSURL *)url
@@ -32,6 +49,7 @@ static NSCache *_imageCache = nil;
 		[self performSelectorInBackground:@selector(loadImageAtURL:) withObject:url];
 		return;
 	}
+#warning Do you have a way to test this? Also, why do you call CFRunLoopRun() - a comment would be nice!
 	@autoreleasepool {
 		NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
 		
@@ -40,8 +58,6 @@ static NSCache *_imageCache = nil;
 		[_connection start];
 		
 		CFRunLoopRun();
-		
-	
 	}
 }
 
@@ -81,7 +97,9 @@ static NSCache *_imageCache = nil;
 {
 	const size_t height = CGImageGetHeight(partialImg);
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	CGContextRef bmContext = CGBitmapContextCreate(NULL, _fullWidth, _fullHeight, 8, _fullWidth * 4, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+	size_t lFullWidth = lrintf(_fullWidth);
+	size_t lFullHeight = lrintf(_fullHeight);
+	CGContextRef bmContext = CGBitmapContextCreate(NULL, lFullWidth, lFullHeight, 8, lFullWidth * 4, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
 	CGColorSpaceRelease(colorSpace);
 	if (!bmContext)
 	{
@@ -113,10 +131,12 @@ static NSCache *_imageCache = nil;
 			CGImageRef imgTmp = [self newTransitoryImage:image]; // iOS fix to correctly handle JPG see : http://www.cocoabyss.com/mac-os-x/progressive-image-download-imageio/
 			if (imgTmp)
 			{
-				UIImage *image = [[UIImage alloc] initWithCGImage:imgTmp];
-				[self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
-				
+				UIImage *uimage = [[UIImage alloc] initWithCGImage:imgTmp];
 				CGImageRelease(imgTmp);
+
+#warning Use dispatch here if its OK to not wait
+				//[self performSelectorOnMainThread:@selector(setImage:) withObject:uimage waitUntilDone:YES];
+				dispatch_async(dispatch_get_main_queue(), ^{ self.image = uimage; } );
 			}
 			CGImageRelease(image);
 		}
@@ -194,7 +214,7 @@ static NSCache *_imageCache = nil;
 	
 	/* For progressive download */
 	_fullWidth = _fullHeight = -1.0f;
-	_expectedSize = [response expectedContentLength];
+	_expectedSize = (NSUInteger)[response expectedContentLength];
 	
 	_receivedData = [[NSMutableData alloc] init];
 }

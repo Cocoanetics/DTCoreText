@@ -10,6 +10,12 @@
 #import "DTAttributedTextContentView.h"
 
 @implementation DTAttributedTextCell
+{
+	NSAttributedString *_attributedString;
+	DTAttributedTextContentView *_attributedTextContextView;
+	
+	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
+}
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier accessoryType:(UITableViewCellAccessoryType)accessoryType
 {

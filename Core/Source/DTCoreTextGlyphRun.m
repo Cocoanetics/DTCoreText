@@ -27,6 +27,32 @@
 
 
 @implementation DTCoreTextGlyphRun
+{
+	CTRunRef _run;
+	
+	CGRect _frame;
+	
+	CGFloat _offset; // x distance from line origin 
+	CGFloat ascent;
+	CGFloat descent;
+	CGFloat leading;
+	CGFloat width;
+	
+	NSInteger numberOfGlyphs;
+	
+	const CGPoint *glyphPositionPoints;
+	BOOL needToFreeGlyphPositionPoints;
+	
+	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+	__unsafe_unretained NSDictionary *attributes;
+    NSArray *stringIndices;
+	
+	DTTextAttachment *_attachment;
+	BOOL _didCheckForAttachmentInAttributes;
+	BOOL _didCalculateMetrics;
+	
+	NSRange _stringRange;
+}
 @synthesize runLock;
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset
@@ -69,7 +95,7 @@
 	{
 		if (!_didCalculateMetrics)
 		{
-			width = CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+			width = (CGFloat)CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
 			_didCalculateMetrics = YES;
 		}
 	}

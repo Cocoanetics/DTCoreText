@@ -18,19 +18,6 @@
 @class DTCoreTextLayouter;
 
 @interface DTCoreTextLayoutFrame : NSObject 
-{
-	CGRect _frame;
-	CTFrameRef _textFrame;
-    CTFramesetterRef _framesetter;
-    
-	NSArray *_lines;
-	NSArray *_paragraphRanges;
-	
-    NSInteger tag;
-	
-	NSArray *_textAttachments;
-	NSAttributedString *_attributedStringFragment;
-}
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
 
@@ -70,7 +57,5 @@
 @property (nonatomic, strong, readonly) NSArray *paragraphRanges;
 
 @property (nonatomic, assign) NSInteger tag;
-
-- (void)dump:(NSString *)msg;
 
 @end

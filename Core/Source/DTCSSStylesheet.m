@@ -22,6 +22,10 @@
 
 
 @implementation DTCSSStylesheet
+{
+	NSMutableDictionary *_styles;
+	
+}
 
 - (id)initWithStyleBlock:(NSString *)css
 {

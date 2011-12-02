@@ -32,55 +32,6 @@ typedef enum
 } DTHTMLElementFontVariant;
 
 @interface DTHTMLElement : NSObject <NSCopying>
-{
-	__unsafe_unretained DTHTMLElement *parent;
-	
-    DTCoreTextFontDescriptor *fontDescriptor;
-    DTCoreTextParagraphStyle *paragraphStyle;
-    DTTextAttachment *textAttachment;
-    NSURL *link;
-    
-    UIColor *_textColor;
-	UIColor *backgroundColor;
-    
-    CTUnderlineStyle underlineStyle;
-    
-    NSString *tagName;
-    NSString *text;
-    
-    BOOL tagContentInvisible;
-    BOOL strikeOut;
-    NSInteger superscriptStyle;
-    
-    NSInteger headerLevel;
-    
-    NSArray *shadows;
-    
-    NSMutableDictionary *_fontCache;
-    
-    NSInteger _isInline;
-    NSInteger _isMeta;
-	
-	NSMutableDictionary *_additionalAttributes;
-	
-	DTHTMLElementFloatStyle floatStyle;
-    DTCSSListStyle *_listStyle;
-    
-	BOOL isColorInherited;
-	
-	BOOL preserveNewlines;
-	
-	DTHTMLElementFontVariant fontVariant;
-    
-    CGFloat textScale;
-    CGSize size;
-    
-    NSInteger _listDepth;
-    NSInteger _listCounter;
-    
-    NSMutableArray *_children;
-	NSDictionary *_attributes; // contains all attributes from parsing
-}
 
 @property (nonatomic, assign) DTHTMLElement *parent;	// subtle simulator bug - use assign not __unsafe_unretained
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;

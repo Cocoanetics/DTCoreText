@@ -22,6 +22,13 @@
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(selfLock);
 
 @implementation DTCoreTextLayouter
+{
+	CTFramesetterRef framesetter;
+	
+	NSAttributedString *_attributedString;
+	
+	NSMutableArray *frames;
+}
 @synthesize selfLock;
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString

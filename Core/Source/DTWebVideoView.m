@@ -18,6 +18,13 @@
 
 
 @implementation DTWebVideoView
+{
+	DTTextAttachment *_attachment;
+	
+	__unsafe_unretained id <DTWebVideoViewDelegate> _delegate;
+	
+	UIWebView *_webView;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {

@@ -10,12 +10,6 @@
 
 
 @interface DTLinkButton : UIButton 
-{
-	NSURL *_url;
-    NSString *_guid;
-	
-	CGSize _minimumHitSize;
-}
 
 @property (nonatomic, copy) NSURL *url;
 @property (nonatomic, copy) NSString *guid;

@@ -30,6 +30,55 @@
 
 
 @implementation DTHTMLElement
+{
+	__unsafe_unretained DTHTMLElement *parent;
+	
+    DTCoreTextFontDescriptor *fontDescriptor;
+    DTCoreTextParagraphStyle *paragraphStyle;
+    DTTextAttachment *textAttachment;
+    NSURL *link;
+    
+    UIColor *_textColor;
+	UIColor *backgroundColor;
+    
+    CTUnderlineStyle underlineStyle;
+    
+    NSString *tagName;
+    NSString *text;
+    
+    BOOL tagContentInvisible;
+    BOOL strikeOut;
+    NSInteger superscriptStyle;
+    
+    NSInteger headerLevel;
+    
+    NSArray *shadows;
+    
+    NSMutableDictionary *_fontCache;
+    
+    NSInteger _isInline;
+    NSInteger _isMeta;
+	
+	NSMutableDictionary *_additionalAttributes;
+	
+	DTHTMLElementFloatStyle floatStyle;
+    DTCSSListStyle *_listStyle;
+    
+	BOOL isColorInherited;
+	
+	BOOL preserveNewlines;
+	
+	DTHTMLElementFontVariant fontVariant;
+    
+    CGFloat textScale;
+    CGSize size;
+    
+    NSInteger _listDepth;
+    NSInteger _listCounter;
+    
+    NSMutableArray *_children;
+	NSDictionary *_attributes; // contains all attributes from parsing
+}
 
 - (id)init
 {
@@ -43,12 +92,7 @@
 	}
 	
 	return self;
-	
 }
-
-
-
-
 
 - (NSDictionary *)attributesDictionary
 {
@@ -806,7 +850,7 @@
 		_isInline = [tagName isInlineTag];
 	}
 	
-	return _isInline;
+	return _isInline ? YES : NO;
 }
 
 - (BOOL)isMeta
@@ -816,7 +860,7 @@
 		_isMeta = [tagName isMetaTag];
 	}
 	
-	return _isMeta;
+	return _isMeta ? YES : NO;
 }
 - (void)setTextColor:(UIColor *)textColor
 {
@@ -898,7 +942,7 @@
 			// Count the number of LI elements in the parent until we reach self. That's our counter.
 			NSInteger counter = 1;
 			NSUInteger numChildren = [parent.children count];
-			for (NSInteger i = 0; i < numChildren; i++)
+			for (NSUInteger i = 0; i < numChildren; i++)
 			{
 				// We walk through the children and check for LI elements just in case someone
 				// slipped us some bad HTML.

@@ -22,6 +22,10 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 
 
 @implementation DTCoreTextFontCollection
+{
+	NSArray *_fontDescriptors;
+	NSCache *fontMatchCache;
+}
 
 + (DTCoreTextFontCollection *)availableFontsCollection
 {

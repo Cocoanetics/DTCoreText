@@ -22,15 +22,30 @@
 #define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(layoutLock, DISPATCH_TIME_FOREVER);
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(layoutLock);
 
-static int ll;
 
 @implementation DTCoreTextLayoutLine
+{
+	CGRect _frame;
+	CTLineRef _line;
+	NSAttributedString *_attributedString;
+	
+	CGPoint _baselineOrigin;
+	
+	CGFloat ascent;
+	CGFloat descent;
+	CGFloat leading;
+	CGFloat width;
+	CGFloat trailingWhitespaceWidth;
+	
+	NSArray *_glyphRuns;
+
+	BOOL _didCalculateMetrics;
+	NSInteger _stringLocationOffset;
+}
 @synthesize layoutLock;
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 {
-++ll;
-NSLog(@"LayoutLine alloc (%d)", ll);
 	if ((self = [super init]))
 	{
 		_line = line;
@@ -50,7 +65,6 @@ NSLog(@"LayoutLine alloc (%d)", ll);
 	CFRelease(_line);
 	
 	dispatch_release(layoutLock);
-NSLog(@"LayoutLine dealloc (%d)", --ll);
 }
 
 - (NSString *)description
@@ -220,11 +234,11 @@ NSLog(@"LayoutLine dealloc (%d)", --ll);
 			
 			if (neededGlyphHeight > currentGlyphHeight)
 			{
-				CGFloat downShift = neededGlyphHeight - currentGlyphHeight;
+				CGFloat ndownShift = neededGlyphHeight - currentGlyphHeight;
 				
-				if (downShift > necessaryDownShift)
+				if (ndownShift > necessaryDownShift)
 				{
-					necessaryDownShift = downShift;
+					necessaryDownShift = ndownShift;
 					didShift = YES;
 					
 					[correctedRuns addObject:oneRun];
@@ -256,8 +270,8 @@ NSLog(@"LayoutLine dealloc (%d)", --ll);
 	{
 		if (!_didCalculateMetrics)
 		{
-			width = CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
-			trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(_line);
+			width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
+			trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
 			
 			_didCalculateMetrics = YES;
 		}
@@ -314,7 +328,7 @@ NSLog(@"LayoutLine dealloc (%d)", --ll);
 	else
 	{
 		// magically add an extra 20%
-		ascenderDelta = roundf(0.2 * lineHeight);
+		ascenderDelta = roundf(0.2f * lineHeight);
 	}
 	
 	return lineHeight + ascenderDelta;
@@ -338,7 +352,7 @@ NSLog(@"LayoutLine dealloc (%d)", --ll);
 			if (!oneRun.attachment)
 			{
 				CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent) + tmpLeading;
-				CGFloat ascenderDelta = roundf(0.2 * lineHeight);
+				CGFloat ascenderDelta = roundf(0.2f * lineHeight);
 				
 				if (ascenderDelta > maxAscenderDelta)
 				{

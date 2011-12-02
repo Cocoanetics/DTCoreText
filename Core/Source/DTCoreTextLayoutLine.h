@@ -12,24 +12,6 @@
 @class DTCoreTextLayoutFrame;
 
 @interface DTCoreTextLayoutLine : NSObject 
-{
-	CGRect _frame;
-	CTLineRef _line;
-	NSAttributedString *_attributedString;
-	
-	CGPoint _baselineOrigin;
-	
-	CGFloat ascent;
-	CGFloat descent;
-	CGFloat leading;
-	CGFloat width;
-	CGFloat trailingWhitespaceWidth;
-	
-	NSArray *_glyphRuns;
-
-	BOOL _didCalculateMetrics;
-	NSInteger _stringLocationOffset;
-}
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 

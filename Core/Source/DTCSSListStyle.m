@@ -22,6 +22,14 @@
 
 
 @implementation DTCSSListStyle
+{
+	BOOL _inherit;
+	
+	DTCSSListStyleType _type;
+	DTCSSListStylePosition _position;
+	
+	NSString *_imageName;
+}
 
 + (DTCSSListStyle *)listStyleWithStyles:(NSDictionary *)styles
 {
@@ -317,14 +325,14 @@
 		case DTCSSListStyleTypeUpperAlpha:
 		case DTCSSListStyleTypeUpperLatin:
 		{
-			char letter = 'A' + counter - 1;
+			char letter = 'A' + (char)(counter - 1);
 			token = [NSString stringWithFormat:@"%c.", letter];
 			break;
 		}
 		case DTCSSListStyleTypeLowerAlpha:
 		case DTCSSListStyleTypeLowerLatin:
 		{
-			char letter = 'a' + counter - 1;
+			char letter = 'a' + (char)(counter - 1);
 			token = [NSString stringWithFormat:@"%c.", letter];
 			break;
 		}

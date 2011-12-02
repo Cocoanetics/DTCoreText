@@ -31,14 +31,6 @@ typedef enum
 } DTCSSListStylePosition;
 
 @interface DTCSSListStyle : NSObject
-{
-	BOOL _inherit;
-	
-	DTCSSListStyleType _type;
-	DTCSSListStylePosition _position;
-	
-	NSString *_imageName;
-}
 
 @property (nonatomic, assign) BOOL inherit; 
 @property (nonatomic, assign) DTCSSListStyleType type;

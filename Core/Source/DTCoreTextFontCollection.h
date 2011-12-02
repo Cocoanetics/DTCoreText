@@ -12,10 +12,6 @@
 
 
 @interface DTCoreTextFontCollection : NSObject 
-{
-	NSArray *_fontDescriptors;
-	NSCache *fontMatchCache;
-}
 
 + (DTCoreTextFontCollection *)availableFontsCollection;
 

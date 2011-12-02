@@ -20,17 +20,8 @@
 
 
 @interface DTWebVideoView : UIView <UIWebViewDelegate>
-{
-	DTTextAttachment *_attachment;
-	
-	__unsafe_unretained id <DTWebVideoViewDelegate> _delegate;
-	
-	UIWebView *_webView;
-}
 
 @property (nonatomic, assign) id <DTWebVideoViewDelegate> delegate; 	// subtle simulator bug - use assign not __unsafe_unretained
 @property (nonatomic, strong) DTTextAttachment *attachment;
-
-
 
 @end

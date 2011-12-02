@@ -9,12 +9,6 @@
 @class DTAttributedTextContentView;
 
 @interface DTAttributedTextCell : UITableViewCell
-{
-	NSAttributedString *_attributedString;
-	DTAttributedTextContentView *_attributedTextContextView;
-	
-	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
-}
 
 @property (nonatomic, strong) NSAttributedString *attributedString;
 @property (nonatomic, readonly) DTAttributedTextContentView *attributedTextContextView;

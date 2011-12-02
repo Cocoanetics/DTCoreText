@@ -16,12 +16,24 @@
 
 #import "NSString+Paragraphs.h"
 
-static int lf;
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
 @implementation DTCoreTextLayoutFrame
+{
+	CGRect _frame;
+	CTFrameRef _textFrame;
+    CTFramesetterRef _framesetter;
+    
+	NSArray *_lines;
+	NSArray *_paragraphRanges;
+	
+    NSInteger tag;
+	
+	NSArray *_textAttachments;
+	NSAttributedString *_attributedStringFragment;
+}
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
 {
@@ -32,7 +44,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
 	self = [super init];
-++lf;	
 	if (self)
 	{
 		_frame = frame;
@@ -72,9 +83,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)dealloc
 {
-NSLog(@"LAYOUT FRAME DEALLOC (%d) LINES=%d tf=%x fs=%x", --lf, [_lines count], (unsigned int)_textFrame, (unsigned int)_framesetter);
-
-
 	if (_textFrame)
 	{
 		CFRelease(_textFrame);
@@ -84,15 +92,6 @@ NSLog(@"LAYOUT FRAME DEALLOC (%d) LINES=%d tf=%x fs=%x", --lf, [_lines count], (
 	{
 		CFRelease(_framesetter);
 	}
-
-	for(id foo in _lines) {
-NSLog(@"dtline dealloc count=%ld", CFGetRetainCount((__bridge CFStringRef)foo) );
-	}
-}
-
-- (void)dump:(NSString *)msg
-{
-	for(id foo in _lines) NSLog(@"dtline %@ count=%ld", msg, CFGetRetainCount((__bridge CFStringRef)foo) );
 }
 
 - (NSString *)description
@@ -140,7 +139,6 @@ NSLog(@"dtline dealloc count=%ld", CFGetRetainCount((__bridge CFStringRef)foo) )
 	}
 	free(origins);
 
-NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 	_lines = tmpLines;
 
 	// at this point we can correct the frame if it is open-ended
@@ -149,7 +147,7 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 		// actual frame is spanned between first and last lines
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
 		
-		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5));
+		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
 	}
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
@@ -162,7 +160,6 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 	}
 }
 
-#warning leak
 - (NSArray *)lines
 {
 	if (!_lines)
@@ -173,7 +170,6 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 	return _lines;
 }
 
-#warning leak?
 - (NSArray *)linesVisibleInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -305,8 +301,8 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 			CGContextStrokeRect(context, oneLine.frame);
 			
 			// draw baseline
-			CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0, oneLine.baselineOrigin.y);
-			CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0, oneLine.baselineOrigin.y);
+			CGContextMoveToPoint(context, oneLine.baselineOrigin.x-5.0f, oneLine.baselineOrigin.y);
+			CGContextAddLineToPoint(context, oneLine.baselineOrigin.x + oneLine.frame.size.width + 5.0f, oneLine.baselineOrigin.y);
 			CGContextStrokePath(context);
 		}
 		
@@ -318,11 +314,11 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 			{
 				if (runIndex%2)
 				{
-					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2);
+					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2f);
 				}
 				else 
 				{
-					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2);
+					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2f);
 				}
 				
 				CGContextFillRect(context, oneRun.frame);
@@ -343,16 +339,16 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 				}
 				else
 				{
-					CGContextSetGrayStrokeColor(context, 0, 1.0);
+					CGContextSetGrayStrokeColor(context, 0, 1.0f);
 				}
 				
-				CGRect rect = self.frame;
-				rect.origin = oneLine.frame.origin;
-				rect.size.height = oneRun.frame.size.height;
-				rect.origin.y = roundf(rect.origin.y + oneRun.frame.size.height/2.0)+0.5;
+				CGRect nrect = self.frame;
+				nrect.origin = oneLine.frame.origin;
+				nrect.size.height = oneRun.frame.size.height;
+				nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
 				
-				CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-				CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y);
+				CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
+				CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
 				
 				CGContextStrokePath(context);
 				
@@ -393,12 +389,12 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 				{
 					case 1:
 					{
-						runStrokeBounds.origin.y -= oneRun.ascent * 0.47;
+						runStrokeBounds.origin.y -= oneRun.ascent * 0.47f;
 						break;
 					}	
 					case -1:
 					{
-						runStrokeBounds.origin.y += oneRun.ascent * 0.25;
+						runStrokeBounds.origin.y += oneRun.ascent * 0.25f;
 						break;
 					}	
 					default:
@@ -419,7 +415,7 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 				
 				if (drawStrikeOut)
 				{
-					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0 + 1)+0.5;
+					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0f + 1)+0.5f;
 					
 					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
 					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
@@ -429,7 +425,7 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 				
 				if (drawUnderline)
 				{
-					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5;
+					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5f;
 					
 					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
 					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
@@ -459,12 +455,12 @@ NSLog(@"_lines[%d] = tmpLines[%d]", [_lines count], [tmpLines count]);
 			{
 				case 1:
 				{
-					textPosition.y += oneRun.ascent * 0.47;
+					textPosition.y += oneRun.ascent * 0.47f;
 					break;
 				}	
 				case -1:
 				{
-					textPosition.y -= oneRun.ascent * 0.25;
+					textPosition.y -= oneRun.ascent * 0.25f;
 					break;
 				}	
 				default:

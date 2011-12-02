@@ -21,17 +21,6 @@ typedef enum
 
 
 @interface DTTextAttachment : NSObject 
-{
-	CGSize _originalSize;
-	CGSize _displaySize;
-	id contents;
-    NSDictionary *_attributes;
-    
-    DTTextAttachmentType contentType;
-	
-	NSURL *_contentURL;
-	NSURL *_hyperLinkURL;
-}
 
 @property (nonatomic, assign) CGSize originalSize;
 @property (nonatomic, assign) CGSize displaySize;

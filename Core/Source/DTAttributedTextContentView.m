@@ -19,6 +19,36 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface DTAttributedTextContentView ()
+{
+	NSAttributedString *_attributedString;
+	UIEdgeInsets edgeInsets;
+	BOOL drawDebugFrames;
+	BOOL shouldDrawImages;
+	BOOL shouldLayoutCustomSubviews;
+	
+	NSMutableSet *customViews;
+	NSMutableDictionary *customViewsForLinksIndex;
+	NSMutableDictionary *customViewsForAttachmentsIndex;
+    
+	BOOL _isTiling;
+	
+	DTCoreTextLayouter *_layouter;
+	DTCoreTextLayoutFrame *_layoutFrame;
+	
+	CGPoint _layoutOffset;
+    CGSize _backgroundOffset;
+	
+	// lookup bitmask what delegate methods are implemented
+	struct 
+	{
+		unsigned int delegateSupportsCustomViewsForAttachments:1;
+		unsigned int delegateSupportsCustomViewsForLinks:1;
+		unsigned int delegateSupportsGenericCustomViews:1;
+		unsigned int delegateSupportsNotificationAfterDrawing:1;
+	} _delegateFlags;
+	
+	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
+}
 
 @property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
@@ -50,7 +80,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 @end
 
-static int cv;
 
 @implementation DTAttributedTextContentView
 @synthesize selfLock;
@@ -90,8 +119,6 @@ static int cv;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-++cv;
-NSLog(@"cv alloc (%d)", cv);
 	}
 	return self;
 }
@@ -120,9 +147,6 @@ NSLog(@"cv alloc (%d)", cv);
 	[self removeAllCustomViews];
 	
 	dispatch_release(selfLock);
-
-NSLog(@"cv DEALLOC (%d)", --cv);
-
 }
 
 - (void)layoutSubviewsInRect:(CGRect)rect
@@ -161,7 +185,7 @@ NSLog(@"cv DEALLOC (%d)", --cv);
 		{
 			NSRange lineRange = [oneLine stringRange];
 			
-			NSInteger skipRunsBeforeLocation = 0;
+			NSUInteger skipRunsBeforeLocation = 0;
 			
 			for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 			{
@@ -318,8 +342,6 @@ NSLog(@"cv DEALLOC (%d)", --cv);
 		[CATransaction commit];
 	}
 	SYNCHRONIZE_END(SELF)
-	
-	[theLayoutFrame  dump:@"layoutSubviewsInRect"];
 }
 
 - (void)layoutSubviews

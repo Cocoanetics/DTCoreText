@@ -21,6 +21,28 @@ static dispatch_semaphore_t fontLock;
 @end
 
 @implementation DTCoreTextFontDescriptor
+{
+	NSString *fontFamily;
+	NSString *fontName;
+	
+	CGFloat pointSize;
+	
+	// symbolic traits
+	BOOL boldTrait;
+	BOOL italicTrait;
+	BOOL expandedTrait;
+	BOOL condensedTrait;
+	BOOL monospaceTrait;
+	BOOL verticalTrait;
+	BOOL UIoptimizedTrait;
+	
+	CTFontStylisticClass stylisticClass;
+    
+	BOOL smallCapsFeature;
+  
+	BOOL _hashSet;
+	NSUInteger _hash;
+}
 
 + (void)initialize
 {
@@ -478,7 +500,7 @@ static dispatch_semaphore_t fontLock;
 			}
 			else 
 			{
-				NSLog(@"No matches for %@", (__bridge id)fontDesc);
+				//NSLog(@"No matches for %@", (__bridge id)fontDesc);
 				matchingFont = nil;
 			}
 		}

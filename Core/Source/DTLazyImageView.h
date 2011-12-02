@@ -17,22 +17,6 @@
 @end
 
 @interface DTLazyImageView : UIImageView 
-{
-	NSURL *_url;
-	
-	NSURLConnection *_connection;
-	NSMutableData *_receivedData;
-
-	/* For progressive download */
-	CGImageSourceRef _imageSource;
-	CGFloat _fullHeight;
-	CGFloat _fullWidth;
-	NSUInteger _expectedSize;
-    
-    BOOL shouldShowProgressiveDownload;
-	
-	__unsafe_unretained id<DTLazyImageViewDelegate> _delegate;
-}
 
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
