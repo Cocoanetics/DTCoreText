@@ -57,7 +57,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	shouldLayoutCustomSubviews = YES;
-
+	
 	// by default we draw images, if custom views are supported (by setting delegate) this is disabled
 	// if you still want images to be drawn together with text then set it back to YES after setting delegate
 	shouldDrawImages = YES;
@@ -88,7 +88,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-
+		
 	}
 	return self;
 }
@@ -122,7 +122,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[_layouter release];
 	[_layoutFrame release];
 	[_attributedString release];
-
+	
 	dispatch_release(selfLock);
 	
 	[super dealloc];
@@ -140,7 +140,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[CATransaction setDisableActions:YES];
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
-
+	
 	SYNCHRONIZE_START(SELF)
 	{
 		NSAttributedString *layoutString = [theLayoutFrame attributedStringFragment];
@@ -354,7 +354,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
-
+	
 	// need to prevent updating of string and drawing at the same time
 	SYNCHRONIZE_START(SELF)
 	{
@@ -603,10 +603,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
 	DTCoreTextLayouter *theLayouter = self.layouter;
-
-	SYNCHRONIZE_START(SELF)
+	
+	if (!_layoutFrame)
 	{
-		if (!_layoutFrame)
+		SYNCHRONIZE_START(SELF)
 		{
 			// we can only layout if we have our own layouter
 			if (theLayouter)
@@ -618,8 +618,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[_layoutFrame retain];
 			}
 		}
+		SYNCHRONIZE_END(SELF)
 	}
-	SYNCHRONIZE_END(SELF)
 	
 	return _layoutFrame;
 }
@@ -701,6 +701,18 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		shouldDrawImages = YES;
 	}
 }
+
+
+- (dispatch_semaphore_t)selfLock
+{
+	if (!selfLock)
+	{
+		selfLock = dispatch_semaphore_create(1);
+	}
+	
+	return selfLock;
+}
+
 
 @synthesize layouter = _layouter;
 @synthesize layoutFrame = _layoutFrame;
