@@ -18,6 +18,10 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+// Commented code useful to find deadlocks
+#define SYNCHRONIZE_START(lock) /* NSLog(@"LOCK: FUNC=%s Line=%d", __func__, __LINE__), */dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock) /*, NSLog(@"UN-LOCK")*/;
+
 @interface DTAttributedTextContentView ()
 {
 	NSAttributedString *_attributedString;
@@ -162,7 +166,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
 
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		NSAttributedString *layoutString = [theLayoutFrame attributedStringFragment];
 		NSArray *lines;
@@ -341,7 +345,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[CATransaction commit];
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (void)layoutSubviews
@@ -377,7 +381,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
 
 	// need to prevent updating of string and drawing at the same time
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		[theLayoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 		
@@ -386,7 +390,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			[_delegate attributedTextContentView:self didDrawLayoutFrame:theLayoutFrame inContext:ctx];
 		}
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (void)drawRect:(CGRect)rect
@@ -592,7 +596,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (!_layouter)
 		{
@@ -602,28 +606,28 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 	
 	return _layouter;
 }
 
 - (void)setLayouter:(DTCoreTextLayouter *)layouter
 {
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (_layouter != layouter)
 		{
 			_layouter = layouter;
 		}
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
 	DTCoreTextLayouter *theLayouter = self.layouter;
 
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (!_layoutFrame)
 		{
@@ -637,14 +641,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 	
 	return _layoutFrame;
 }
 
 - (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
-	SYNCHRONIZE_START(SELF)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (_layoutFrame != layoutFrame)
 		{
@@ -660,7 +664,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
-	SYNCHRONIZE_END(SELF)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (NSMutableSet *)customViews
