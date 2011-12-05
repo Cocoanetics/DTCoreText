@@ -414,6 +414,14 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 						if ([cleanString length])
 						{
 							link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+							
+							if (!link)
+							{
+								// NSURL did not like the link, so let's encode it
+								cleanString = [cleanString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+								
+								link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+							}
 						}
 						else
 						{
