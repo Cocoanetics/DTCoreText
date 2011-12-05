@@ -273,11 +273,6 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				continue;
 			}
 			
-			if ([tagName isMetaTag])
-			{
-				continue;
-			}
-			
 			if (tagOpen)
 			{
 				// make new tag as copy of previous tag
@@ -294,21 +289,17 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				{
 					[currentTag applyStyleDictionary:mergedStyles];
 				}
-				
-				// convert CSS Styles into our own style
-//				NSString *styleString = [currentTag attributeForKey:@"style"];
-//								
-//				if (styleString)
-//				{
-//					[currentTag parseStyleString:styleString];
-//				}
-				
-				if (![currentTag isInline] && !tagOpen && ![currentTag isMeta])
+
+				if ([tagName isMetaTag])
+				{
+					// we don't care about the other stuff in META tags, but styles are inherited
+					continue;
+				}
+				else if (![currentTag isInline] && !tagOpen)
 				{
 					// next text needs a NL
 					needsNewLineBefore = YES;
 				}
-				
 				
 				// direction
 				NSString *direction = [currentTag attributeForKey:@"dir"];
