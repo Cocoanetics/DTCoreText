@@ -46,7 +46,7 @@
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
 
-#warning Do you really want atomic here???
+// properties are overwritten with locking to avoid problem with async drawing
 @property (atomic, strong) DTCoreTextLayouter *layouter;
 @property (atomic, strong) DTCoreTextLayoutFrame *layoutFrame;
 

@@ -56,12 +56,8 @@ static NSDictionary *entityReverseLookup = nil;
 	
 	for (size_t i=0;i<strlen(s);i++)
 	{
-<<<<<<< HEAD
 		if ((s[i]<'0' || s[i]>'9') && (s[i] != '.'))
 		{
-=======
-		if ((s[i]<'0' || s[i]>'9') && (s[i] != '.')) {
->>>>>>> 721cf68f1817d96784602f3304927810c9936600
 			return NO;
 		}
 	}

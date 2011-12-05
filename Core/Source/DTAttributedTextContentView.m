@@ -626,10 +626,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
 	DTCoreTextLayouter *theLayouter = self.layouter;
-
-	SYNCHRONIZE_START(selfLock)
+	
+	if (!_layoutFrame)
 	{
-		SYNCHRONIZE_START(SELF)
+		// prevent unnecessary locking if we don't need to create new layout frame
+		SYNCHRONIZE_START(selfLock)
 		{
 			// we can only layout if we have our own layouter
 			if (theLayouter)
@@ -640,9 +641,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 			}
 		}
-		SYNCHRONIZE_END(SELF)
+		SYNCHRONIZE_END(selfLock)
 	}
-	SYNCHRONIZE_END(selfLock)
 	
 	return _layoutFrame;
 }

@@ -41,6 +41,17 @@
 	return self;
 }
 
+- (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	self = [super init];
+	
+	if (self)
+	{
+		[self mergeStylesheet:stylesheet];
+	}
+	
+	return self;
+}
 
 - (NSString *)description
 {

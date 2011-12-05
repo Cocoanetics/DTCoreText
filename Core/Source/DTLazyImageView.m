@@ -49,14 +49,16 @@ static NSCache *_imageCache = nil;
 		[self performSelectorInBackground:@selector(loadImageAtURL:) withObject:url];
 		return;
 	}
-#warning Do you have a way to test this? Also, why do you call CFRunLoopRun() - a comment would be nice!
-	@autoreleasepool {
+	
+	@autoreleasepool 
+	{
 		NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
 		
 		_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
 		[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 		[_connection start];
-		
+	
+		// necessary because otherwise otherwise the delegate methods would not get delivered
 		CFRunLoopRun();
 	}
 }
@@ -134,8 +136,6 @@ static NSCache *_imageCache = nil;
 				UIImage *uimage = [[UIImage alloc] initWithCGImage:imgTmp];
 				CGImageRelease(imgTmp);
 
-#warning Use dispatch here if its OK to not wait
-				//[self performSelectorOnMainThread:@selector(setImage:) withObject:uimage waitUntilDone:YES];
 				dispatch_async(dispatch_get_main_queue(), ^{ self.image = uimage; } );
 			}
 			CGImageRelease(image);

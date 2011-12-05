@@ -119,13 +119,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	}
 	
 	// the combined style sheet for entire document
-<<<<<<< HEAD
-	DTCSSStylesheet *styleSheet= [[[DTCSSStylesheet alloc] init] autorelease]; 
-
-=======
 	DTCSSStylesheet *styleSheet = [[DTCSSStylesheet alloc] init]; 
-	
->>>>>>> 721cf68f1817d96784602f3304927810c9936600
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
 	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
