@@ -632,13 +632,17 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		// prevent unnecessary locking if we don't need to create new layout frame
 		SYNCHRONIZE_START(selfLock)
 		{
-			// we can only layout if we have our own layouter
-			if (theLayouter)
+			// Test again - small window where another thread could have been setting this value
+			if (!_layoutFrame)
 			{
-				CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
-				rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-				
-				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+				// we can only layout if we have our own layouter
+				if (theLayouter)
+				{
+					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+					
+					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+				}
 			}
 		}
 		SYNCHRONIZE_END(selfLock)
@@ -653,16 +657,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		if (_layoutFrame != layoutFrame)
 		{
-			
-			_layoutFrame = layoutFrame;
-			
-			[self removeAllCustomViewsForLinks];
-			
-			if (layoutFrame)
 			{
-				[self setNeedsLayout];
-				[self setNeedsDisplay];
+				[self removeAllCustomViewsForLinks];
+				
+				if (layoutFrame)
+				{
+					[self setNeedsLayout];
+					[self setNeedsDisplay];
+				}
 			}
+			_layoutFrame = layoutFrame;
 		}
 	}
 	SYNCHRONIZE_END(selfLock)
