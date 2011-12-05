@@ -16,12 +16,29 @@ static NSCache *_paragraphStyleCache = nil;
 #define SPECIAL_LIST_INDENT		36.0
 #endif
 
+static dispatch_semaphore_t selfLock;
 
 @implementation DTCoreTextParagraphStyle
+{
+    CGFloat firstLineIndent;
+	CGFloat defaultTabInterval;
+    CGFloat paragraphSpacingBefore;
+    CGFloat paragraphSpacing;
+    CGFloat headIndent;
+    CGFloat listIndent;
+    CGFloat lineHeightMultiple;
+    CGFloat minimumLineHeight;
+    CGFloat maximumLineHeight;
+    
+    CTTextAlignment textAlignment;
+    CTWritingDirection writingDirection;
+    
+    NSMutableArray *_tabStops;
+}
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle
 {
-	return [[[DTCoreTextParagraphStyle alloc] init] autorelease];
+	return [[DTCoreTextParagraphStyle alloc] init];
 }
 
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
@@ -31,27 +48,29 @@ static NSCache *_paragraphStyleCache = nil;
   
 	dispatch_once(&predicate, ^{
 		
-    _paragraphStyleCache = [[NSCache alloc] init];
-		
+		_paragraphStyleCache = [[NSCache alloc] init];
+		selfLock = dispatch_semaphore_create(1);
 	});
 
 	// synchronize class-wide
-	@synchronized(self)
+
+	dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
 	{
-		DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
 		
 		// this is naughty: CTParagraphStyle has a description
-		NSString *key = [(id)ctParagraphStyle description];
+		NSString *key = [(__bridge id)ctParagraphStyle description];
 		
 		returnParagraphStyle = [_paragraphStyleCache objectForKey:key];
 		
 		if (!returnParagraphStyle) 
 		{
-			returnParagraphStyle = [[[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle] autorelease];
+			returnParagraphStyle = [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
 			[_paragraphStyleCache setObject:returnParagraphStyle forKey:key];
 		}
 	}
-  return (returnParagraphStyle);
+	dispatch_semaphore_signal(selfLock);
+	
+	return returnParagraphStyle;
 }
 
 - (id)init
@@ -119,12 +138,6 @@ static NSCache *_paragraphStyleCache = nil;
 	return self;
 }
 
-- (void)dealloc
-{
-	[_tabStops release];
-	
-	[super dealloc];
-}
 
 
 - (CTParagraphStyleRef)createCTParagraphStyle
@@ -170,8 +183,8 @@ static NSCache *_paragraphStyleCache = nil;
 		{
 			_tabStops = [[NSMutableArray alloc] init];
 		}
-		[_tabStops addObject:(id)tab];
-		CFRelease(tab);
+		[_tabStops addObject:CFBridgingRelease(tab)];
+		//CFRelease(tab);
 	}
 	
 	return tab ? YES : NO;
@@ -260,7 +273,6 @@ static NSCache *_paragraphStyleCache = nil;
 {
 	if (tabStops != _tabStops)
 	{
-		[_tabStops release];
 		_tabStops = [tabStops mutableCopy]; // keep mutability
 	}
 }

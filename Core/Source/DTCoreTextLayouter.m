@@ -10,7 +10,7 @@
 
 @interface DTCoreTextLayouter ()
 
-@property (nonatomic, retain) NSMutableArray *frames;
+@property (nonatomic, strong) NSMutableArray *frames;
 @property (nonatomic, assign) dispatch_semaphore_t selfLock;
 
 - (CTFramesetterRef) framesetter;
@@ -22,6 +22,13 @@
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(selfLock);
 
 @implementation DTCoreTextLayouter
+{
+	CTFramesetterRef framesetter;
+	
+	NSAttributedString *_attributedString;
+	
+	NSMutableArray *frames;
+}
 @synthesize selfLock;
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
@@ -30,7 +37,6 @@
 	{
 		if (!attributedString)
 		{
-			[self autorelease];
 			return nil;
 		}
 		
@@ -43,14 +49,9 @@
 
 - (void)dealloc
 {
-	[_attributedString release];
-	[frames release];
-	
 	[self discardFramesetter];
 
 	dispatch_release(selfLock);
-	
-	[super dealloc];
 }
 
 - (NSString *)description
@@ -76,10 +77,11 @@
 // a temporary frame
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
-	[pool release]; pool = NULL;
-	return [newFrame autorelease];
+	DTCoreTextLayoutFrame *newFrame;
+	@autoreleasepool {
+		newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
+	};
+	return newFrame;
 }
 
 // reusable frame
@@ -104,7 +106,7 @@
 		{
 			if (!framesetter)
 			{
-				framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+				framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
 			}
 		}
 		SYNCHRONIZE_END(self)
@@ -131,9 +133,7 @@
 	{
 		if (_attributedString != attributedString)
 		{
-			[_attributedString release];
-			
-			_attributedString = [attributedString retain];
+			_attributedString = attributedString;
 			
 			[self discardFramesetter];
 		}

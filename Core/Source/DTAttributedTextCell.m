@@ -10,6 +10,12 @@
 #import "DTAttributedTextContentView.h"
 
 @implementation DTAttributedTextCell
+{
+	NSAttributedString *_attributedString;
+	DTAttributedTextContentView *_attributedTextContextView;
+	
+	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
+}
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier accessoryType:(UITableViewCellAccessoryType)accessoryType
 {
@@ -44,13 +50,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[_attributedString release];
-	[_attributedTextContextView release];
-	
-	[super dealloc];
-}
 
 - (void)layoutSubviews
 {
@@ -85,15 +84,13 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
 	self.attributedString = string;
-	[string release];
 }
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
 	if (_attributedString != attributedString)
 	{
-		[_attributedString release];
-		_attributedString = [attributedString retain];
+		_attributedString = attributedString;
 		
 		// passthrough
 		_attributedTextContextView.attributedString = _attributedString;

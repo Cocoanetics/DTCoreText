@@ -7,7 +7,7 @@
 //
 
 #import <CoreText/CoreText.h>
-#import <UIKit/UIKit.h>
+
 
 #import "NSAttributedString+HTML.h"
 #import "NSMutableAttributedString+HTML.h"
@@ -73,7 +73,6 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	// only with valid data
 	if (![data length])
 	{
-		[self release];
 		
 		return nil;
 	}
@@ -84,7 +83,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	if (textEncodingName)
 	{
-		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
+		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
 	
@@ -115,15 +114,18 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	if (!htmlString)
 	{
-		NSLog(@"No valid HTML passed to to initWithHTML");
-		
-		[self release];
+		//NSLog(@"No valid HTML passed to to initWithHTML");
 		return nil;
 	}
 	
 	// the combined style sheet for entire document
+<<<<<<< HEAD
 	DTCSSStylesheet *styleSheet= [[[DTCSSStylesheet alloc] init] autorelease]; 
 
+=======
+	DTCSSStylesheet *styleSheet = [[DTCSSStylesheet alloc] init]; 
+	
+>>>>>>> 721cf68f1817d96784602f3304927810c9936600
 	// default list styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
 	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
@@ -148,11 +150,10 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
 	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
 	scanner.charactersToBeSkipped = nil;
-	[htmlString release];
 	
 	// base tag with font defaults
-	DTCoreTextFontDescriptor *defaultFontDescriptor = [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil] autorelease];
-	defaultFontDescriptor.pointSize = 12.0 * textScale;
+	DTCoreTextFontDescriptor *defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
+	defaultFontDescriptor.pointSize = 12.0f * textScale;
 	
 	NSString *defaultFontFamily = [options objectForKey:DTDefaultFontFamily];
 	if (defaultFontFamily)
@@ -204,7 +205,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	if (defaultTextAlignmentNum)
 	{
-		defaultParagraphStyle.textAlignment = [defaultTextAlignmentNum integerValue];
+		defaultParagraphStyle.textAlignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
 	}
 	
 	NSNumber *defaultFirstLineHeadIndent = [options objectForKey:DTDefaultFirstLineHeadIndent];
@@ -225,7 +226,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
 	}
 	
-	DTHTMLElement *defaultTag = [[[DTHTMLElement alloc] init] autorelease];
+	DTHTMLElement *defaultTag = [[DTHTMLElement alloc] init];
 	defaultTag.fontDescriptor = defaultFontDescriptor;
 	defaultTag.paragraphStyle = defaultParagraphStyle;
 	defaultTag.textScale = textScale;
@@ -287,7 +288,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				// make new tag as copy of previous tag
 				DTHTMLElement *parent = currentTag;
-				currentTag = [[currentTag copy] autorelease];
+				currentTag = [currentTag copy];
 				currentTag.tagName = tagName;
 				currentTag.textScale = textScale;
 				currentTag.attributes = tagAttributesDict;
@@ -469,7 +470,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 					currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 					
 					// first tab is to right-align bullet, numbering against
-					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0*textScale;
+					CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0f*textScale;
 					[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 					
 					// second tab is for the beginning of first line after bullet
@@ -631,41 +632,41 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 							{
 								// H1: 2 em, spacing before 0.67 em, after 0.67 em
 								currentTag.fontDescriptor.pointSize *= 2.0;
-								currentTag.paragraphStyle.paragraphSpacing = 0.67 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 0.67f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 2:
 							{
 								// H2: 1.5 em, spacing before 0.83 em, after 0.83 em
 								currentTag.fontDescriptor.pointSize *= 1.5;
-								currentTag.paragraphStyle.paragraphSpacing = 0.83 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 0.83f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 3:
 							{
 								// H3: 1.17 em, spacing before 1 em, after 1 em
 								currentTag.fontDescriptor.pointSize *= 1.17;
-								currentTag.paragraphStyle.paragraphSpacing = 1.0 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.0f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 4:
 							{
 								// H4: 1 em, spacing before 1.33 em, after 1.33 em
-								currentTag.paragraphStyle.paragraphSpacing = 1.33 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.33f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 5:
 							{
 								// H5: 0.83 em, spacing before 1.67 em, after 1.167 em
 								currentTag.fontDescriptor.pointSize *= 0.83;
-								currentTag.paragraphStyle.paragraphSpacing = 1.67 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 1.67f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							case 6:
 							{
 								// H6: 0.67 em, spacing before 2.33 em, after 2.33 em
 								currentTag.fontDescriptor.pointSize *= 0.67;
-								currentTag.paragraphStyle.paragraphSpacing = 2.33 * currentTag.fontDescriptor.pointSize;
+								currentTag.paragraphStyle.paragraphSpacing = 2.33f * currentTag.fontDescriptor.pointSize;
 								break;
 							}
 							default:
@@ -697,22 +698,22 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 					switch (size) 
 					{
 						case 1:
-							currentTag.fontDescriptor.pointSize = textScale * 9.0;
+							currentTag.fontDescriptor.pointSize = textScale * 9.0f;
 							break;
 						case 2:
-							currentTag.fontDescriptor.pointSize = textScale * 10.0;
+							currentTag.fontDescriptor.pointSize = textScale * 10.0f;
 							break;
 						case 4:
-							currentTag.fontDescriptor.pointSize = textScale * 14.0;
+							currentTag.fontDescriptor.pointSize = textScale * 14.0f;
 							break;
 						case 5:
-							currentTag.fontDescriptor.pointSize = textScale * 18.0;
+							currentTag.fontDescriptor.pointSize = textScale * 18.0f;
 							break;
 						case 6:
-							currentTag.fontDescriptor.pointSize = textScale * 24.0;
+							currentTag.fontDescriptor.pointSize = textScale * 24.0f;
 							break;
 						case 7:
-							currentTag.fontDescriptor.pointSize = textScale * 37.0;
+							currentTag.fontDescriptor.pointSize = textScale * 37.0f;
 							break;	
 						case 3:
 						default:
@@ -892,14 +893,14 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 							{
 								NSRange effectiveRange;
 								
-								NSMutableDictionary *finalAttributes = [[[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy] autorelease];
-								CTParagraphStyleRef style = (CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+								NSMutableDictionary *finalAttributes = [[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy];
+								CTParagraphStyleRef style = (__bridge CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 								DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
 								paragraphStyle.paragraphSpacing += nextParagraphAdditionalSpaceBefore;
 								
 								CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-								[finalAttributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-								CFRelease(newParagraphStyle);
+								[finalAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+								//CFRelease(newParagraphStyle);
 								
 								[tmpString setAttributes:finalAttributes range:effectiveRange];
 
@@ -927,7 +928,6 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	// returning the temporary mutable string is faster
 	//return [self initWithAttributedString:tmpString];
-	[self release];
 	
 	return tmpString;
 }
@@ -936,7 +936,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 
 + (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options
 {
-	NSAttributedString *attrString = [[[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL] autorelease];
+	NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	return attrString;
 }
@@ -945,15 +945,15 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
 {
-	CTFontRef normalFont = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+	CTFontRef normalFont = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
 	
 	DTCoreTextFontDescriptor *smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:normalFont];
 	smallerFontDesc.pointSize *= 0.7;
 	CTFontRef smallerFont = [smallerFontDesc newMatchingFont];
 	
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-	[smallAttributes setObject:(id)smallerFont forKey:(id)kCTFontAttributeName];
-	CFRelease(smallerFont);
+	[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+	//CFRelease(smallerFont);
 	
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	NSScanner *scanner = [NSScanner scannerWithString:text];
@@ -970,20 +970,17 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			part = [part uppercaseString];
 			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:smallAttributes];
 			[tmpString appendAttributedString:partString];
-			[partString release];
 		}
 		
 		if ([scanner scanUpToCharactersFromSet:lowerCaseChars intoString:&part])
 		{
 			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:attributes];
 			[tmpString appendAttributedString:partString];
-			[partString release];
 		}
 	}
 	
-	[smallAttributes release];
 	
-	return 	[tmpString autorelease];
+	return 	tmpString;
 }
 
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
@@ -1049,7 +1046,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		
 		// check if font is same in all paragraph
 		NSRange fontEffectiveRange;
-		CTFontRef paragraphFont = (CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
+		CTFontRef paragraphFont = (__bridge CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
 		
 		if (NSEqualRanges(paragraphRange, fontEffectiveRange))
 		{
@@ -1061,7 +1058,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		
 		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
 		
-		CTParagraphStyleRef paraStyle = (CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 		NSString *paraStyleString = nil;
 		
 		if (paraStyle)
@@ -1125,7 +1122,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
 		NSRange effectiveRange;
-		NSInteger index = paragraphRange.location;
+		NSUInteger index = paragraphRange.location;
 		
 		while (index < NSMaxRange(paragraphRange))
 		{
@@ -1214,13 +1211,13 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				}
 				
 				// attach the attributes dictionary
-				NSMutableDictionary *tmpAttributes = [[attachment.attributes mutableCopy] autorelease];
+				NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
 				
 				// remove src and style, we already have that
 				[tmpAttributes removeObjectForKey:@"src"];
 				[tmpAttributes removeObjectForKey:@"style"];
 				
-				for (NSString *oneKey in [tmpAttributes allKeys])
+				for (__strong NSString *oneKey in [tmpAttributes allKeys])
 				{
 					oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
@@ -1237,7 +1234,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			NSString *fontStyle = nil;
 			if (!fontIsBlockLevel)
 			{
-				CTFontRef font = (CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+				CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
 				if (font)
 				{
 					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
@@ -1250,7 +1247,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				fontStyle = @"";
 			}
 			
-			CGColorRef textColor = (CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 			if (textColor)
 			{
 				UIColor *color = [UIColor colorWithCGColor:textColor];
@@ -1258,7 +1255,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
 			}
 			
-			CGColorRef backgroundColor = (CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
+			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
 			if (backgroundColor)
 			{
 				UIColor *color = [UIColor colorWithCGColor:backgroundColor];

@@ -28,11 +28,11 @@
 	NSMutableSet *mediaPlayers;
 }
 
-@property (nonatomic, retain) NSString *fileName;
+@property (nonatomic, strong) NSString *fileName;
 
-@property (nonatomic, retain) NSURL *lastActionLink;
+@property (nonatomic, strong) NSURL *lastActionLink;
 
-@property (nonatomic, retain) NSURL *baseURL;
+@property (nonatomic, strong) NSURL *baseURL;
 
 
 @end

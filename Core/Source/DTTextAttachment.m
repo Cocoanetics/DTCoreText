@@ -13,9 +13,17 @@
 #import "NSData+Base64.h"
 
 @implementation DTTextAttachment
-
-
-
+{
+	CGSize _originalSize;
+	CGSize _displaySize;
+	id contents;
+    NSDictionary *_attributes;
+    
+    DTTextAttachmentType contentType;
+	
+	NSURL *_contentURL;
+	NSURL *_hyperLinkURL;
+}
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
@@ -171,19 +179,9 @@
 	attachment.displaySize = adjustedSize;
 	attachment.attributes = element.attributes;
 	
-	return [attachment autorelease];
+	return attachment;
 }
 
-
-- (void) dealloc
-{
-	[contents release];
-	[_contentURL release];
-	[_hyperLinkURL release];
-	[_attributes release];
-	
-	[super dealloc];
-}
 
 // makes a data URL of the image
 - (NSString *)dataURLRepresentation

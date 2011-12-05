@@ -6,16 +6,12 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 @class DTCoreTextFontDescriptor;
 
 
 @interface DTCoreTextFontCollection : NSObject 
-{
-	NSArray *_fontDescriptors;
-	NSCache *fontMatchCache;
-}
 
 + (DTCoreTextFontCollection *)availableFontsCollection;
 

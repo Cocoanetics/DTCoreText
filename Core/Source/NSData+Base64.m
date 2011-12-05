@@ -81,7 +81,7 @@ void *NewBase64Decode(
 											size_t length,
 											size_t *outputLength)
 {
-	if (length == -1)
+	if ((long)length == -1)
 	{
 		length = strlen(inputBuffer);
 	}
@@ -120,11 +120,11 @@ void *NewBase64Decode(
 		// (Uses improved bounds checking suggested by Alexandre Colucci)
 		//
 		if(accumulateIndex >= 2)  
-			outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);  
+			outputBuffer[j] = (unsigned char)((accumulated[0] << 2) | (accumulated[1] >> 4));  
 		if(accumulateIndex >= 3)  
-			outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);  
+			outputBuffer[j + 1] = (unsigned char)((accumulated[1] << 4) | (accumulated[2] >> 2));  
 		if(accumulateIndex >= 4)  
-			outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
+			outputBuffer[j + 2] = (unsigned char)((accumulated[2] << 6) | accumulated[3]);
 		j += accumulateIndex - 1;
 	}
 	
@@ -301,11 +301,10 @@ char *NewBase64Encode(
 	NewBase64Encode([self bytes], [self length], true, &outputLength);
 	
 	NSString *result =
-	[[[NSString alloc]
+	[[NSString alloc]
 		initWithBytes:outputBuffer
 		length:outputLength
-		encoding:NSASCIIStringEncoding]
-	 autorelease];
+		encoding:NSASCIIStringEncoding];
 	free(outputBuffer);
 	return result;
 }

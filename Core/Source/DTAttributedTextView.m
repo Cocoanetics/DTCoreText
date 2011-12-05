@@ -20,6 +20,10 @@
 
 
 @implementation DTAttributedTextView
+{
+	DTAttributedTextContentView *contentView;
+	UIView *backgroundView;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -36,8 +40,6 @@
 - (void)dealloc 
 {
 	[contentView removeObserver:self forKeyPath:@"frame"];
-	[contentView release];
-	[super dealloc];
 }
 
 - (void)layoutSubviews

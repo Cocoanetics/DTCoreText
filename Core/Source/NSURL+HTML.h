@@ -6,7 +6,7 @@
 //  Copyright 2011 Cocoanetics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 
 @interface NSURL (HTML)

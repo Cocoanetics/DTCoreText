@@ -22,11 +22,6 @@
 }
 
 
-- (void)dealloc {
-	[_snippets release];
-	[cellCache release];
-	[super dealloc];
-}
 
 
 #pragma mark UIViewController
@@ -90,7 +85,7 @@
 	
 		if (!cell)
 		{
-			cell = [[[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator] autorelease];
+			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator];
 		}
 		
 		// cache it
@@ -128,7 +123,6 @@
 	viewController.baseURL = [NSURL URLWithString:[rowSnippet  objectForKey:@"BaseURL"]];
 	
 	[self.navigationController pushViewController:viewController animated:YES];
-	[viewController release];
 }
 
 @end

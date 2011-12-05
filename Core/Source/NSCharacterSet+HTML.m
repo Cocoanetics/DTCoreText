@@ -22,7 +22,7 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	static dispatch_once_t predicate;
 
 	dispatch_once(&predicate, ^{
-		_tagNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+		_tagNameCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"];
 	});
 	
 	return _tagNameCharacterSet;
@@ -33,7 +33,7 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	static dispatch_once_t predicate;
 
 	dispatch_once(&predicate, ^{
-		_tagAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+		_tagAttributeNameCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"-_:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"];
 	});
 	
 	return _tagAttributeNameCharacterSet;
@@ -44,7 +44,7 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	static dispatch_once_t predicate;
 
 	dispatch_once(&predicate, ^{
-		_quoteCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"'\""] retain];
+		_quoteCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"'\""];
 	});
 	
 	return _quoteCharacterSet;
@@ -70,7 +70,7 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	static dispatch_once_t predicate;
 
 	dispatch_once(&predicate, ^{
-		_cssStyleAttributeNameCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"] retain];
+		_cssStyleAttributeNameCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"];
 	});	
 	return _cssStyleAttributeNameCharacterSet;
 }

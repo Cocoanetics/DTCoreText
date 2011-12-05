@@ -6,16 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 
 @interface DTLinkButton : UIButton 
-{
-	NSURL *_url;
-    NSString *_guid;
-	
-	CGSize _minimumHitSize;
-}
 
 @property (nonatomic, copy) NSURL *url;
 @property (nonatomic, copy) NSString *guid;

@@ -13,28 +13,6 @@
 #import "DTCoreTextLayouter.h"
 #import "DTTextAttachment.h"
 
-#ifndef __IPHONE_4_3
-#define __IPHONE_4_3 40300
-#endif
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_3
-
-#define SELF selfLock
-
-// Useful to find deadlocks
-#define SYNCHRONIZE_START(lock) /* NSLog(@"LOCK: FUNC=%s Line=%d", __func__, __LINE__), */dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock) /*, NSLog(@"UN-LOCK")*/;
-
-#else
-
-#define SELF self
-
-#define SYNCHRONIZE_START(obj) @synchronized(obj)
-#define SYNCHRONIZE_END(obj)
-
-#endif
-
-
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
 
@@ -59,37 +37,6 @@
 
 
 @interface DTAttributedTextContentView : UIView 
-{
-	NSAttributedString *_attributedString;
-	UIEdgeInsets edgeInsets;
-	BOOL drawDebugFrames;
-	BOOL shouldDrawImages;
-	BOOL shouldLayoutCustomSubviews;
-	
-	NSMutableSet *customViews;
-	NSMutableDictionary *customViewsForLinksIndex;
-	NSMutableDictionary *customViewsForAttachmentsIndex;
-    
-	BOOL _isTiling;
-	
-	DTCoreTextLayouter *_layouter;
-	DTCoreTextLayoutFrame *_layoutFrame;
-	
-	CGPoint _layoutOffset;
-    CGSize _backgroundOffset;
-	
-	// lookup bitmask what delegate methods are implemented
-	struct 
-	{
-		unsigned int delegateSupportsCustomViewsForAttachments:1;
-		unsigned int delegateSupportsCustomViewsForLinks:1;
-		unsigned int delegateSupportsGenericCustomViews:1;
-		unsigned int delegateSupportsNotificationAfterDrawing:1;
-	} _delegateFlags;
-	
-	id <DTAttributedTextContentViewDelegate> _delegate;
-}
-
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 
 - (void)layoutSubviewsInRect:(CGRect)rect;
@@ -99,10 +46,11 @@
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
 
-@property (retain) DTCoreTextLayouter *layouter;
-@property (retain) DTCoreTextLayoutFrame *layoutFrame;
+#warning Do you really want atomic here???
+@property (atomic, strong) DTCoreTextLayouter *layouter;
+@property (atomic, strong) DTCoreTextLayoutFrame *layoutFrame;
 
-@property (nonatomic, retain) NSMutableSet *customViews;
+@property (nonatomic, strong) NSMutableSet *customViews;
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
@@ -112,7 +60,7 @@
 @property (nonatomic) CGPoint layoutOffset;
 @property (nonatomic) CGSize backgroundOffset;
 
-@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
+@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
 
 @property (nonatomic, assign) dispatch_semaphore_t selfLock;
 

@@ -1,36 +1,17 @@
 //
-//  DTCoreTextLine.h
+//  DTCoreTextLayoutLine.h
 //  CoreTextExtensions
 //
 //  Created by Oliver Drobnik on 1/24/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 
 #import <CoreText/CoreText.h>
 
 @class DTCoreTextLayoutFrame;
 
 @interface DTCoreTextLayoutLine : NSObject 
-{
-	CGRect _frame;
-	CTLineRef _line;
-	NSAttributedString *_attributedString;
-	
-	CGPoint _baselineOrigin;
-	
-	CGFloat ascent;
-	CGFloat descent;
-	CGFloat leading;
-	CGFloat width;
-	CGFloat trailingWhitespaceWidth;
-	
-	NSArray *_glyphRuns;
-
-	BOOL _didCalculateMetrics;
-	NSInteger _stringLocationOffset;
-}
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 
@@ -53,7 +34,7 @@
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
 
 @property (nonatomic, assign) CGRect frame;
-@property (nonatomic, retain, readonly) NSArray *glyphRuns;
+@property (nonatomic, strong, readonly) NSArray *glyphRuns;
 
 @property (nonatomic, assign) CGFloat ascent; // needs to be modifyable
 @property (nonatomic, assign, readonly) CGFloat descent;

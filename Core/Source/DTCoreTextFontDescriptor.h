@@ -6,33 +6,11 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 #import <CoreText/CoreText.h>
 
 
 @interface DTCoreTextFontDescriptor : NSObject <NSCopying, NSCoding>
-{
-	NSString *fontFamily;
-	NSString *fontName;
-	
-	CGFloat pointSize;
-	
-	// symbolic traits
-	BOOL boldTrait;
-	BOOL italicTrait;
-	BOOL expandedTrait;
-	BOOL condensedTrait;
-	BOOL monospaceTrait;
-	BOOL verticalTrait;
-	BOOL UIoptimizedTrait;
-	
-	CTFontStylisticClass stylisticClass;
-    
-	BOOL smallCapsFeature;
-  
-	BOOL _hashSet;
-	NSUInteger _hash;
-}
 
 // sets the font face name to use for a specific font family
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic;

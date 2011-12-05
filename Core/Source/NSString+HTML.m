@@ -54,10 +54,14 @@ static NSDictionary *entityReverseLookup = nil;
 {
 	const char *s = [self UTF8String];
 	
-	for (int i=0;i<strlen(s);i++)
+	for (size_t i=0;i<strlen(s);i++)
 	{
+<<<<<<< HEAD
 		if ((s[i]<'0' || s[i]>'9') && (s[i] != '.'))
 		{
+=======
+		if ((s[i]<'0' || s[i]>'9') && (s[i] != '.')) {
+>>>>>>> 721cf68f1817d96784602f3304927810c9936600
 			return NO;
 		}
 	}
@@ -70,7 +74,7 @@ static NSDictionary *entityReverseLookup = nil;
 	float result = 1;
 	sscanf([self UTF8String], "%f", &result);
 	
-	return result/100.0;
+	return result/100.0f;
 }
 
 - (NSString *)stringByNormalizingWhitespace
@@ -394,7 +398,7 @@ static NSDictionary *entityReverseLookup = nil;
 	
 	NSMutableString *tmpString = [NSMutableString string];
 	
-	for (int i = 0; i<[self length]; i++)
+	for (NSUInteger i = 0; i<[self length]; i++)
 	{
 		unichar oneChar = [self characterAtIndex:i];
 		
@@ -730,7 +734,7 @@ static NSDictionary *entityReverseLookup = nil;
 	
 	NSMutableString *tmpString = [NSMutableString string];
 	
-	for (int i = 0; i<[self length]; i++)
+	for (NSUInteger i = 0; i<[self length]; i++)
 	{
 		unichar oneChar = [self characterAtIndex:i];
 		
@@ -777,7 +781,7 @@ static NSDictionary *entityReverseLookup = nil;
 	}
 	else if ([self hasSuffix:@"%"])
 	{
-		return value * textSize / 100.0;
+		return value * textSize / 100.0f;
 	}
 	
 	// everything else interpret as pixels
@@ -904,10 +908,10 @@ static NSDictionary *entityReverseLookup = nil;
 	CFUUIDRef uuid = CFUUIDCreate(NULL);
 	CFStringRef cfStr = CFUUIDCreateString(NULL, uuid);
 	
-	NSString *ret = [NSString stringWithString:(NSString *)cfStr];
+	NSString *ret = [NSString stringWithString:CFBridgingRelease(cfStr)];
 	
 	CFRelease(uuid);
-	CFRelease(cfStr);
+	// CFRelease(cfStr);
 	
 	return ret;
 }

@@ -6,15 +6,11 @@
 //  Copyright (c) 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 @class DTHTMLElement;
 
 @interface DTCSSStylesheet : NSObject
-{
-	NSMutableDictionary *_styles;
-	
-}
 
 - (id)initWithStyleBlock:(NSString *)css;
 - (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet;

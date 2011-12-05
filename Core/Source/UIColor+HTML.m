@@ -243,7 +243,7 @@ static NSDictionary *colorLookup = nil;
 		CGFloat white = components[0];
 		CGFloat alpha = components[1];
 		
-		return [UIColor colorWithWhite:1.0 - white alpha:alpha];
+		return [UIColor colorWithWhite:1.0f - white alpha:alpha];
 	}
 	else if (count==4)
 	{
@@ -253,7 +253,7 @@ static NSDictionary *colorLookup = nil;
 		CGFloat blue = components[2];
 		CGFloat alpha = components[3];
 		
-		return [UIColor colorWithRed:1.0 - red green:1.0 - green blue:1.0 - blue alpha:alpha];
+		return [UIColor colorWithRed:1.0f - red green:1.0f - green blue:1.0f - blue alpha:alpha];
 	} 
 	
 	return nil;

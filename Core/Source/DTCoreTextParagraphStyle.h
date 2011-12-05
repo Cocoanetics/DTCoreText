@@ -9,22 +9,6 @@
 #import <CoreText/CoreText.h>
 
 @interface DTCoreTextParagraphStyle : NSObject <NSCopying>
-{
-    CGFloat firstLineIndent;
-	CGFloat defaultTabInterval;
-    CGFloat paragraphSpacingBefore;
-    CGFloat paragraphSpacing;
-    CGFloat headIndent;
-    CGFloat listIndent;
-    CGFloat lineHeightMultiple;
-    CGFloat minimumLineHeight;
-    CGFloat maximumLineHeight;
-    
-    CTTextAlignment textAlignment;
-    CTWritingDirection writingDirection;
-    
-    NSMutableArray *_tabStops;
-}
 
 @property (nonatomic, assign) CGFloat firstLineIndent;
 @property (nonatomic, assign) CGFloat defaultTabInterval;
