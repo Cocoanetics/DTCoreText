@@ -8,7 +8,7 @@
 
 #import "DTCoreTextParagraphStyle.h"
 
-static NSCache *_paragraphStyleCache = nil;
+static NSCache *_paragraphStyleCache;
 
 #if ALLOW_IPHONE_SPECIAL_CASES
 #define SPECIAL_LIST_INDENT		27.0f
@@ -74,10 +74,8 @@ static dispatch_semaphore_t selfLock;
 }
 
 - (id)init
-{
-	self = [super init];
-	
-	if (self)
+{	
+	if ((self = [super init]))
 	{
 		// defaults
 		firstLineIndent = 0.0;
@@ -96,19 +94,18 @@ static dispatch_semaphore_t selfLock;
 
 
 - (id)initWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
-{
-	self = [super init];
-	
-	if (self)
+{	
+	if ((self = [super init]))
 	{
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierAlignment,sizeof(textAlignment), &textAlignment);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval);
+
 		
-		NSArray *tabStops;
-		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(tabStops), &tabStops))
-		{
-			self.tabStops = tabStops;
+		__unsafe_unretained NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
+		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
+		if(stops) {
+			self.tabStops = stops;
 		}
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore,sizeof(paragraphSpacingBefore), &paragraphSpacingBefore);
@@ -152,13 +149,16 @@ static dispatch_semaphore_t selfLock;
 		tmpParagraphSpacingBefore *= lineHeightMultiple;
 	}
 	
+	// This just makes it that much easier to track down memory issues with tabstops
+	CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
+
 	CTParagraphStyleSetting settings[] = 
 	{
 		{kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment},
 		{kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineIndent), &firstLineIndent},
 		{kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval},
 		
-		{kCTParagraphStyleSpecifierTabStops, sizeof(_tabStops), &_tabStops},
+		{kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops},
 		
 		{kCTParagraphStyleSpecifierParagraphSpacing, sizeof(tmpParagraphSpacing), &tmpParagraphSpacing},
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(tmpParagraphSpacingBefore), &tmpParagraphSpacingBefore},
@@ -171,7 +171,10 @@ static dispatch_semaphore_t selfLock;
 		{kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maximumLineHeight), &maximumLineHeight}
 	};	
 	
-	return CTParagraphStyleCreate(settings, 11);
+	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 11);
+	if (stops) CFRelease(stops);
+
+	return ret;
 }
 
 - (BOOL)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
