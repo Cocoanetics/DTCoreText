@@ -113,9 +113,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_isTiling = YES;
 	}
 	
-	if(!selfLock) {
-		selfLock = dispatch_semaphore_create(1);
-	}
+	[self selfLock];
 }
 
 - (id)initWithFrame:(CGRect)frame 
