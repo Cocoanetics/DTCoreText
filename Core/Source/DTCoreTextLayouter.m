@@ -70,6 +70,11 @@
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
 																	 CGSizeMake(width, CGFLOAT_MAX),
 																	 NULL);
+
+	// round up because generally we don't want non-integer view sizes
+	neededSize.width = ceilf(neededSize.width);
+	neededSize.height = ceilf(neededSize.height);
+	
 	return neededSize;
 }
 

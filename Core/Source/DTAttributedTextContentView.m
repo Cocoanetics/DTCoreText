@@ -411,6 +411,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return neededSize;
 }
 
+- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
+{
+	if (!isnormal(width))
+	{
+		width = self.bounds.size.width;
+	}
+
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
+	
+	// add vertical insets
+	neededSize.height += edgeInsets.top + edgeInsets.bottom;
+	
+	return neededSize;
+}
+
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width
 {
 	if (!isnormal(width))

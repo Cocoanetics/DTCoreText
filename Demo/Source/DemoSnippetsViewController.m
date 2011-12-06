@@ -14,15 +14,12 @@
 #pragma mark NSObject
 
 - (id)init {
-	if ((self = [super initWithStyle:UITableViewStylePlain])) {
+	if ((self = [super initWithStyle:UITableViewStyleGrouped])) {
 		self.title = @"Snippets";
 		self.tabBarItem.image = [UIImage imageNamed:@"snippets.png"];
 	}
 	return self;
 }
-
-
-
 
 #pragma mark UIViewController
 
@@ -44,7 +41,6 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	return 1;
 }
-
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return [_snippets count];
@@ -102,7 +98,7 @@
 {
 	DTAttributedTextCell *cell = (DTAttributedTextCell *)[self tableView:tableView preparedCellForIndexPath:indexPath];
 
-	return cell.attributedTextContextView.bounds.size.height; // for cell seperator
+	return [cell requiredRowHeightInTableView:tableView];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
