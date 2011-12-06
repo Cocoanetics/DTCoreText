@@ -79,7 +79,7 @@
 		CFRelease(_run);
 	}
 	
-	//dispatch_release(runLock);
+	dispatch_release(runLock);
 }
 
 - (NSString *)description
