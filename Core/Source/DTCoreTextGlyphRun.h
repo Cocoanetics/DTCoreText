@@ -28,7 +28,7 @@
 
 @property (nonatomic, assign, readonly) CGRect frame;
 @property (nonatomic, assign, readonly) NSInteger numberOfGlyphs;
-@property (nonatomic, assign, readonly) NSDictionary *attributes;	// subtle simulator bug - use assign not __unsafe_unretained in 4.2
+@property (nonatomic, unsafe_unretained, readonly) NSDictionary *attributes;	// subtle simulator bug - use assign not __unsafe_unretained in 4.2
 
 @property (nonatomic, assign, readonly) CGFloat ascent;
 @property (nonatomic, assign, readonly) CGFloat descent;
