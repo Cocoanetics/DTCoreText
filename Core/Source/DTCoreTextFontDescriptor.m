@@ -589,8 +589,10 @@ static dispatch_semaphore_t fontLock;
 	if (!attributes) 
 	{
 		self.fontFamily = nil;
+		self.fontName = nil;
 		self.pointSize = 12;
-		
+		self.symbolicTraits = 0;
+	
 		boldTrait = NO;
 		italicTrait = NO;
 		expandedTrait = NO;
