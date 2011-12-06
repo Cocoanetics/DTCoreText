@@ -17,4 +17,6 @@
 
 - (void)setHTMLString:(NSString *)html;
 
+- (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView;
+
 @end

@@ -45,6 +45,7 @@
 - (void)removeAllCustomViewsForLinks;
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
+- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width; // obeys the edge insets
 
 // properties are overwritten with locking to avoid problem with async drawing
 @property (atomic, strong) DTCoreTextLayouter *layouter;

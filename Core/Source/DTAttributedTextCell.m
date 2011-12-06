@@ -22,28 +22,8 @@
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
     if (self) 
 	{
-		// this affects the space available for attributed content view
-		self.accessoryType = accessoryType;
-
-		CGFloat rightInset = 0;
-		
-		switch (accessoryType) 
-		{
-			case UITableViewCellAccessoryDisclosureIndicator:
-			case UITableViewCellAccessoryCheckmark:
-				rightInset = 20.0f;
-				break;
-			case UITableViewCellAccessoryDetailDisclosureButton:
-				rightInset = 33.0f;
-				break;
-			case UITableViewCellAccessoryNone:
-				break;
-		}
-		
-		// cannot use autoresizing because this would cause more re-layouting than necessary		
-		CGRect contentFrame = UIEdgeInsetsInsetRect(self.contentView.bounds, UIEdgeInsetsMake(0, 0, 0, rightInset));
-		
-		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:contentFrame];
+		// don't know size jetzt because there's no string in it
+		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:CGRectZero];
 		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 		[self.contentView addSubview:_attributedTextContextView];
     }
@@ -55,8 +35,56 @@
 {
 	[super layoutSubviews];
 	
+	CGFloat neededContentHeight = [self requiredRowHeightInTableView:(UITableView *)self.superview];
+	
 	// after the first call here the content view size is correct
-	_attributedTextContextView.frame = self.contentView.bounds;
+	CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
+	
+	_attributedTextContextView.frame = frame;
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview
+{
+	UITableView *tableView = (UITableView *)newSuperview;
+	
+	if (tableView.style == UITableViewStyleGrouped)
+	{
+		// need no background because otherwise this would overlap the rounded corners
+		_attributedTextContextView.backgroundColor = [UIColor clearColor];
+	}
+	
+	[super willMoveToSuperview:newSuperview];
+}
+
+- (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
+{
+	
+	CGFloat contentWidth = tableView.frame.size.width;
+
+	// reduce width for accessories
+	switch (self.accessoryType) 
+	{
+		case UITableViewCellAccessoryDisclosureIndicator:
+		case UITableViewCellAccessoryCheckmark:
+			contentWidth -= 20.0f;
+			break;
+		case UITableViewCellAccessoryDetailDisclosureButton:
+			contentWidth -= 33.0f;
+			break;
+		case UITableViewCellAccessoryNone:
+			break;
+	}
+	
+	// reduce width for grouped table views
+	if (tableView.style == UITableViewStyleGrouped)
+	{
+		contentWidth -= 19;
+	}
+	
+	CGSize neededSize = [_attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
+	
+	// note: non-integer row heights caused trouble < iOS 5.0
+	return neededSize.height;
 }
 
 #pragma mark Properties
