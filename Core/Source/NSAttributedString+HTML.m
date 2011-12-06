@@ -1301,8 +1301,6 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		[retString appendFormat:@"</%@>\n", blockElement];
 	}
 	
-	NSLog(@"%@", retString);
-	
 	return retString;
 }
 
