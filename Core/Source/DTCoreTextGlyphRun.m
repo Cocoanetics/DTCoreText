@@ -20,7 +20,7 @@
 @interface DTCoreTextGlyphRun ()
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
-@property (nonatomic, assign) NSDictionary *attributes;
+@property (nonatomic, unsafe_unretained, readwrite) NSDictionary *attributes;
 @property (nonatomic, assign) dispatch_semaphore_t runLock;
 
 @end

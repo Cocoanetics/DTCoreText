@@ -13,7 +13,7 @@
 @property (nonatomic, strong) NSMutableArray *frames;
 @property (nonatomic, assign) dispatch_semaphore_t selfLock;
 
-- (CTFramesetterRef) framesetter;
+- (CTFramesetterRef)framesetter;
 - (void)discardFramesetter;
 
 @end
@@ -49,7 +49,9 @@
 
 - (void)dealloc
 {
+	SYNCHRONIZE_START(self)	// just to be sure
 	[self discardFramesetter];
+	SYNCHRONIZE_END(self)
 
 	dispatch_release(selfLock);
 }
@@ -105,7 +107,7 @@
 #pragma mark Properties
 - (CTFramesetterRef)framesetter
 {
-	//    if (!framesetter)
+	if (!framesetter) // Race condition, could be null now but set when we get into the SYNCHRONIZE block - so do the test twice
 	{
 		SYNCHRONIZE_START(self)
 		{

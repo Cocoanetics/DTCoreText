@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSAttributedString *attributedString;
 
-@property (nonatomic, readonly) DTAttributedTextContentView *contentView;
+@property (nonatomic, strong, readonly) DTAttributedTextContentView *contentView;
 @property (nonatomic, strong) IBOutlet UIView *backgroundView;
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
