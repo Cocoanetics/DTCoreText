@@ -126,13 +126,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
 		
-		/*
-		 // experimental, trying to find out how to get spacing between lines
-		NSLog(@"y origin: %f", _frame.size.height - lineOrigin.y);
-		NSLog(@"%@", NSStringFromCGRect([newLine frame]));
-		CGFloat spacing = [newLine paragraphSpacing];
-		NSLog(@"as %f desc %f, lead %f, lineHeight %f, spacing %f", newLine.ascent, newLine.descent, newLine.leading, [newLine lineHeight], spacing);
-		*/
 		[tmpLines addObject:newLine];
 		
 		lineIndex++;
@@ -141,6 +134,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 	_lines = tmpLines;
 
+	// line origins are wrong on last line of paragraphs
+	[self correctLineOrigins];
+	
+	
+	// --- begin workaround for image squishing bug in iOS < 4.2
+	DTVersion version = [[UIDevice currentDevice] osVersion];
+	
+	if (version.major<4 || (version.major==4 && version.minor < 2))
+	{
+		[self correctAttachmentHeights];
+	}
+	
 	// at this point we can correct the frame if it is open-ended
 	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
 	{
@@ -148,15 +153,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
 		
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
-	}
-	
-	// --- begin workaround for image squishing bug in iOS < 4.2
-	
-	DTVersion version = [[UIDevice currentDevice] osVersion];
-	
-	if (version.major<4 || (version.major==4 && version.minor < 2))
-	{
-		[self correctAttachmentHeights];
 	}
 }
 
@@ -760,6 +756,43 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// increase the ascent by the extend needed for this lines attachments
 			oneLine.ascent += lineShift;
 		}
+	}
+}
+
+
+// a bug in CoreText shifts the last line of paragraphs slightly down
+- (void)correctLineOrigins
+{
+	DTCoreTextLayoutLine *previousLine = nil;
+	
+	CGPoint previousLineOrigin = CGPointZero;
+
+	if (![self.lines count])
+	{
+		return;
+	}
+	
+	previousLineOrigin = [[self.lines objectAtIndex:0] baselineOrigin];
+	
+	for (DTCoreTextLayoutLine *currentLine in self.lines)
+	{
+		CGPoint currentOrigin;
+		
+		if (previousLine)
+		{
+			currentOrigin.y = previousLineOrigin.y + previousLine.descent + currentLine.ascent + currentLine.leading + [previousLine paragraphSpacing];
+			
+			currentOrigin.x = currentLine.baselineOrigin.x;
+			
+			previousLineOrigin = currentOrigin;
+			
+			currentOrigin.y = roundf(currentOrigin.y);
+			//	origin.x = roundf(origin.x);
+			
+			currentLine.baselineOrigin = currentOrigin;
+		}
+		
+		previousLine = currentLine;
 	}
 }
 

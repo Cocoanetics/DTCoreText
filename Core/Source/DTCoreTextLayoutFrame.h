@@ -43,6 +43,7 @@
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
 
 - (void)correctAttachmentHeights;
+- (void)correctLineOrigins;
 
 - (NSAttributedString *)attributedStringFragment;
 
