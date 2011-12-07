@@ -40,7 +40,11 @@
 	// after the first call here the content view size is correct
 	CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 	
-	_attributedTextContextView.frame = frame;
+	// only change frame if width has changed to avoid extra layouting
+	if (_attributedTextContextView.frame.size.width != frame.size.width)
+	{
+		_attributedTextContextView.frame = frame;
+	}
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
