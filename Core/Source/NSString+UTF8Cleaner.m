@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+
 
 #define DT_FAST_TRAILING_BYTES
 
@@ -97,7 +97,7 @@ static __inline__ __attribute__((always_inline)) ConversionResult ConvertSingleC
 #if !defined(DT_FAST_TRAILING_BYTES)
 	unsigned short extraBytesToRead = trailingBytesForUTF8[*source];
 #else
-	unsigned short extraBytesToRead = __builtin_clz(((*source)^0xff) << 25);
+	unsigned short extraBytesToRead = (unsigned short)__builtin_clz(((*source)^0xff) << 25);
 #endif
 	
 	if(((source + extraBytesToRead + 1) > sourceEnd) || (!isLegalUTF8(source, extraBytesToRead + 1))) {

@@ -33,7 +33,7 @@
 	// need to remove image placeholder to prevent duplication
 	if ([previousAttributes objectForKey:@"DTTextAttachment"])
 	{
-		NSMutableDictionary *tmpDict = [[previousAttributes mutableCopy] autorelease];
+		NSMutableDictionary *tmpDict = [previousAttributes mutableCopy];
 		
 		[tmpDict removeObjectForKey:@"DTTextAttachment"];
 		[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
@@ -43,7 +43,6 @@
 	
 	NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
 	[self appendAttributedString:tmpString];
-	[tmpString release];
 }
 
 - (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle
@@ -54,13 +53,12 @@
 	{
 		attributes = [NSMutableDictionary dictionary];
 		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-		[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-		CFRelease(newParagraphStyle);
+		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		//CFRelease(newParagraphStyle);
 	}
 	
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
 	[self appendAttributedString:attributedString];
-	[attributedString release];
 }
 
 // appends a string without any attributes

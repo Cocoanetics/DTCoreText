@@ -17,7 +17,7 @@
 - (void)linkLongPressed:(UILongPressGestureRecognizer *)gesture;
 - (void)debugButton:(UIBarButtonItem *)sender;
 
-@property (nonatomic, retain) NSMutableSet *mediaPlayers;
+@property (nonatomic, strong) NSMutableSet *mediaPlayers;
 
 @end
 
@@ -30,7 +30,6 @@
 	if ((self = [super init])) {
 		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
-		[items release];
 		
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
 		_segmentedControl.selectedSegmentIndex = 0;
@@ -43,7 +42,7 @@
 		UIBarButtonItem *paste = [[[UIBarButtonItem alloc] initWithTitle:@"Paste" style:UIBarButtonItemStyleBordered target:self action:@selector(paste:)] autorelease];
 		UIBarButtonItem *copy = [[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStyleBordered target:self action:@selector(copy:)] autorelease];
 #endif		
-		UIBarButtonItem *debug = [[[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)] autorelease];
+		UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
 		NSArray *toolbarItems = [NSArray arrayWithObjects:/*paste, copy, spacer, */debug, nil];
 		[self setToolbarItems:toolbarItems];
 	}
@@ -54,19 +53,6 @@
 - (void)dealloc 
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[_fileName release];
-	[_segmentedControl release];
-	[_textView release];
-	[_rangeView release];
-	[_charsView release];
-	[_dataView release];
-	[_htmlView release];
-	[baseURL release];
-	
-	[lastActionLink release];
-	[mediaPlayers release];
-	
-	[super dealloc];
 }
 
 
@@ -138,7 +124,6 @@
 	// Data view
 	_dataView.text = [data description];
 	
-	[string release];
 }
 
 
@@ -204,7 +189,6 @@
 				}
 			}
 			_rangeView.text = dumpOutput;
-			[dumpOutput release];
 			break;
 		}
 		case 2:
@@ -220,7 +204,6 @@
 				[dumpOutput appendFormat:@"%x %c\n", b, b];
 			}
 			_charsView.text = dumpOutput;
-			[dumpOutput release];
 			
 			break;
 		}
@@ -261,7 +244,7 @@
 #pragma mark Custom Views on Text
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame
 {
-	DTLinkButton *button = [[[DTLinkButton alloc] initWithFrame:frame] autorelease];
+	DTLinkButton *button = [[DTLinkButton alloc] initWithFrame:frame];
 	button.url = url;
 	button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
 	button.guid = identifier;
@@ -270,7 +253,7 @@
 	[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
 	
 	// demonstrate combination with long press
-	UILongPressGestureRecognizer *longPress = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)] autorelease];
+	UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)];
 	[button addGestureRecognizer:longPress];
 	
 	return button;
@@ -283,7 +266,7 @@
 		NSURL *url = (id)attachment.contentURL;
 		
 		// we could customize the view that shows before playback starts
-		UIView *grayView = [[[UIView alloc] initWithFrame:frame] autorelease];
+		UIView *grayView = [[UIView alloc] initWithFrame:frame];
 		grayView.backgroundColor = [UIColor blackColor];
 		
 		// find a player for this URL if we already got one
@@ -298,7 +281,7 @@
 		
 		if (!player)
 		{
-			player = [[[MPMoviePlayerController alloc] initWithContentURL:url] autorelease];
+			player = [[MPMoviePlayerController alloc] initWithContentURL:url];
 			[self.mediaPlayers addObject:player];
 		}
 		
@@ -354,7 +337,7 @@
 	else if (attachment.contentType == DTTextAttachmentTypeImage)
 	{
 		// if the attachment has a hyperlinkURL then this is currently ignored
-		DTLazyImageView *imageView = [[[DTLazyImageView alloc] initWithFrame:frame] autorelease];
+		DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
 		imageView.delegate = self;
 		if (attachment.contents)
 		{
@@ -368,7 +351,7 @@
 	}
 	else if (attachment.contentType == DTTextAttachmentTypeIframe)
 	{
-		DTWebVideoView *videoView = [[[DTWebVideoView alloc] initWithFrame:frame] autorelease];
+		DTWebVideoView *videoView = [[DTWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
 		
 		return videoView;
@@ -403,7 +386,7 @@
 		
 		if ([[UIApplication sharedApplication] canOpenURL:[button.url absoluteURL]])
 		{
-			UIActionSheet *action = [[[UIActionSheet alloc] initWithTitle:[[button.url absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil] autorelease];
+			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.url absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
 	}

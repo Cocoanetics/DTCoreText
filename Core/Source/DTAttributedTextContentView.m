@@ -18,11 +18,44 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-@interface DTAttributedTextContentView ()
+// Commented code useful to find deadlocks
+#define SYNCHRONIZE_START(lock) /* NSLog(@"LOCK: FUNC=%s Line=%d", __func__, __LINE__), */dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define SYNCHRONIZE_END(lock) dispatch_semaphore_signal(lock) /*, NSLog(@"UN-LOCK")*/;
 
-@property (nonatomic, retain) NSMutableDictionary *customViewsForLinksIndex;
-@property (nonatomic, retain) NSMutableDictionary *customViewsForAttachmentsIndex;
-@property (nonatomic, assign) dispatch_semaphore_t layoutLock, layouterLock, layoutFrameLock, selfLock;
+@interface DTAttributedTextContentView ()
+{
+	NSAttributedString *_attributedString;
+	UIEdgeInsets edgeInsets;
+	BOOL drawDebugFrames;
+	BOOL shouldDrawImages;
+	BOOL shouldLayoutCustomSubviews;
+	
+	NSMutableSet *customViews;
+	NSMutableDictionary *customViewsForLinksIndex;
+	NSMutableDictionary *customViewsForAttachmentsIndex;
+    
+	BOOL _isTiling;
+	
+	DTCoreTextLayouter *_layouter;
+	DTCoreTextLayoutFrame *_layoutFrame;
+	
+	CGPoint _layoutOffset;
+    CGSize _backgroundOffset;
+	
+	// lookup bitmask what delegate methods are implemented
+	struct 
+	{
+		unsigned int delegateSupportsCustomViewsForAttachments:1;
+		unsigned int delegateSupportsCustomViewsForLinks:1;
+		unsigned int delegateSupportsGenericCustomViews:1;
+		unsigned int delegateSupportsNotificationAfterDrawing:1;
+	} _delegateFlags;
+	
+	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
+}
+
+@property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
+@property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
 
 - (void)removeAllCustomViews;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
@@ -51,14 +84,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 @end
 
+
 @implementation DTAttributedTextContentView
-@synthesize layoutLock, layouterLock, layoutFrameLock, selfLock;
+@synthesize selfLock;
 
 - (void)setup
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	shouldLayoutCustomSubviews = YES;
-
+	
 	// by default we draw images, if custom views are supported (by setting delegate) this is disabled
 	// if you still want images to be drawn together with text then set it back to YES after setting delegate
 	shouldDrawImages = YES;
@@ -79,12 +113,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_isTiling = YES;
 	}
 	
-	if(!layoutLock) {
-		layoutLock = dispatch_semaphore_create(1);
-		layouterLock = dispatch_semaphore_create(1);
-		layoutFrameLock = dispatch_semaphore_create(1);
-		selfLock = dispatch_semaphore_create(1);
-	}
+	[self selfLock];
 }
 
 - (id)initWithFrame:(CGRect)frame 
@@ -92,7 +121,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if ((self = [super initWithFrame:frame])) 
 	{
 		[self setup];
-
 	}
 	return self;
 }
@@ -119,20 +147,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)dealloc 
 {
 	[self removeAllCustomViews];
-	[customViews release];
-	[customViewsForLinksIndex release];
-	[customViewsForAttachmentsIndex release];
 	
-	[_layouter release];
-	[_layoutFrame release];
-	[_attributedString release];
-
-	dispatch_release(layoutLock);
-	dispatch_release(layouterLock);
-	dispatch_release(layoutFrameLock);
 	dispatch_release(selfLock);
-	
-	[super dealloc];
 }
 
 - (void)layoutSubviewsInRect:(CGRect)rect
@@ -146,17 +162,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[CATransaction begin];
 	[CATransaction setDisableActions:YES];
 	
-	SYNCHRONIZE_START(LAYOUTSTRING)
+	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
+
+	SYNCHRONIZE_START(selfLock)
 	{
-		NSAttributedString *layoutString = [self.layoutFrame attributedStringFragment];
+		NSAttributedString *layoutString = [theLayoutFrame attributedStringFragment];
 		NSArray *lines;
 		if (CGRectIsInfinite(rect))
 		{
-			lines = [self.layoutFrame lines];
+			lines = [theLayoutFrame lines];
 		}
 		else
 		{
-			lines = [self.layoutFrame linesVisibleInRect:rect];
+			lines = [theLayoutFrame linesVisibleInRect:rect];
 		}
 		
 		// hide all customViews
@@ -169,7 +187,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		{
 			NSRange lineRange = [oneLine stringRange];
 			
-			NSInteger skipRunsBeforeLocation = 0;
+			NSUInteger skipRunsBeforeLocation = 0;
 			
 			for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 			{
@@ -325,7 +343,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		
 		[CATransaction commit];
 	}
-	SYNCHRONIZE_END(LAYOUTSTRING)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (void)layoutSubviews
@@ -358,17 +376,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		CGContextConcatCTM(ctx, transform);
 	}
 	
+	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
+	
 	// need to prevent updating of string and drawing at the same time
-	SYNCHRONIZE_START(LAYOUTSTRING)
+	SYNCHRONIZE_START(selfLock)
 	{
-		[self.layoutFrame drawInContext:ctx drawImages:shouldDrawImages];
+		[theLayoutFrame drawInContext:ctx drawImages:shouldDrawImages];
 		
 		if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
 		{
-			[_delegate attributedTextContentView:self didDrawLayoutFrame:self.layoutFrame inContext:ctx];
+			[_delegate attributedTextContentView:self didDrawLayoutFrame:theLayoutFrame inContext:ctx];
 		}
 	}
-	SYNCHRONIZE_END(LAYOUTSTRING)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (void)drawRect:(CGRect)rect
@@ -385,6 +405,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
+	
+	return neededSize;
+}
+
+- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
+{
+	if (!isnormal(width))
+	{
+		width = self.bounds.size.width;
+	}
+
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
+	
+	// add vertical insets
+	neededSize.height += edgeInsets.top + edgeInsets.bottom;
 	
 	return neededSize;
 }
@@ -501,7 +536,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (_attributedString != string)
 	{
-		[_attributedString release];
 		
 		_attributedString = [string copy];
 		
@@ -575,7 +609,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (DTCoreTextLayouter *)layouter
 {
-	SYNCHRONIZE_START(LAYOUTER)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (!_layouter)
 		{
@@ -585,56 +619,57 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			}
 		}
 	}
-	SYNCHRONIZE_END(LAYOUTER)
+	SYNCHRONIZE_END(selfLock)
 	
 	return _layouter;
 }
 
 - (void)setLayouter:(DTCoreTextLayouter *)layouter
 {
-	SYNCHRONIZE_START(LAYOUTER)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (_layouter != layouter)
 		{
-			[_layouter release];
-			_layouter = [layouter retain];
+			_layouter = layouter;
 		}
 	}
-	SYNCHRONIZE_END(LAYOUTER)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
-	SYNCHRONIZE_START(LAYOUTFRAME)
+	DTCoreTextLayouter *theLayouter = self.layouter;
+	
+	if (!_layoutFrame)
 	{
-		if (!_layoutFrame)
+		// prevent unnecessary locking if we don't need to create new layout frame
+		SYNCHRONIZE_START(selfLock)
 		{
-			// we can only layout if we have our own layouter
-			if (self.layouter)
+			// Test again - small window where another thread could have been setting this value
+			if (!_layoutFrame)
 			{
-				CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
-				rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-				
-				_layoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-				[_layoutFrame retain];
+				// we can only layout if we have our own layouter
+				if (theLayouter)
+				{
+					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+					
+					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+				}
 			}
 		}
+		SYNCHRONIZE_END(selfLock)
 	}
-	SYNCHRONIZE_END(LAYOUTFRAME)
 	
 	return _layoutFrame;
 }
 
 - (void)setLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
-	SYNCHRONIZE_START(LAYOUTFRAME)
+	SYNCHRONIZE_START(selfLock)
 	{
 		if (_layoutFrame != layoutFrame)
 		{
-			[_layoutFrame release];
-			
-			_layoutFrame = [layoutFrame retain];
-			
 			[self removeAllCustomViewsForLinks];
 			
 			if (layoutFrame)
@@ -642,9 +677,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[self setNeedsLayout];
 				[self setNeedsDisplay];
 			}
+			_layoutFrame = layoutFrame;
 		}
 	}
-	SYNCHRONIZE_END(LAYOUTFRAME)
+	SYNCHRONIZE_END(selfLock)
 }
 
 - (NSMutableSet *)customViews
@@ -702,6 +738,18 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		shouldDrawImages = YES;
 	}
 }
+
+
+- (dispatch_semaphore_t)selfLock
+{
+	if (!selfLock)
+	{
+		selfLock = dispatch_semaphore_create(1);
+	}
+	
+	return selfLock;
+}
+
 
 @synthesize layouter = _layouter;
 @synthesize layoutFrame = _layoutFrame;

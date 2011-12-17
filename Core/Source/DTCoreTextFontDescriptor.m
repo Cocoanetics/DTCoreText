@@ -21,6 +21,28 @@ static dispatch_semaphore_t fontLock;
 @end
 
 @implementation DTCoreTextFontDescriptor
+{
+	NSString *fontFamily;
+	NSString *fontName;
+	
+	CGFloat pointSize;
+	
+	// symbolic traits
+	BOOL boldTrait;
+	BOOL italicTrait;
+	BOOL expandedTrait;
+	BOOL condensedTrait;
+	BOOL monospaceTrait;
+	BOOL verticalTrait;
+	BOOL UIoptimizedTrait;
+	
+	CTFontStylisticClass stylisticClass;
+    
+	BOOL smallCapsFeature;
+  
+	BOOL _hashSet;
+	NSUInteger _hash;
+}
 
 + (void)initialize
 {
@@ -103,12 +125,12 @@ static dispatch_semaphore_t fontLock;
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes
 {
-	return [[[DTCoreTextFontDescriptor alloc] initWithFontAttributes:attributes] autorelease];
+	return [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:attributes];
 }
 
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont
 {
-	return [[[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont] autorelease];
+	return [[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont];
 }
 
 - (id)initWithFontAttributes:(NSDictionary *)attributes
@@ -130,20 +152,19 @@ static dispatch_semaphore_t fontLock;
 		CFDictionaryRef dict = CTFontDescriptorCopyAttributes(ctFontDescriptor);
 		
 		CFDictionaryRef traitsDict = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontTraitsAttribute);
-		CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
+		CTFontSymbolicTraits traitsValue = [[(__bridge NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
+		CFRelease(traitsDict);
 		
 		self.symbolicTraits = traitsValue;
 		
-		[self setFontAttributes:(id)dict];
-		
-		CFRelease(dict);
-		CFRelease(traitsDict);
+		[self setFontAttributes:CFBridgingRelease(dict)];
+		//CFRelease(dict);
 		
 		// also get family name
 		
 		CFStringRef familyName = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontFamilyNameAttribute);
-		self.fontFamily = (id)familyName;
-		CFRelease(familyName);
+		self.fontFamily = CFBridgingRelease(familyName);
+		//CFRelease(familyName);
 	}
 	
 	return self;
@@ -158,24 +179,22 @@ static dispatch_semaphore_t fontLock;
 		CFDictionaryRef dict = CTFontDescriptorCopyAttributes(fd);
 		
 		CFDictionaryRef traitsDict = CTFontDescriptorCopyAttribute(fd, kCTFontTraitsAttribute);
-		CTFontSymbolicTraits traitsValue = [[(NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
+		CTFontSymbolicTraits traitsValue = [[(__bridge NSDictionary *)traitsDict objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue];
+		CFRelease(traitsDict);
+		CFRelease(fd);
 		
 		self.symbolicTraits = traitsValue;
 		
-		[self setFontAttributes:(id)dict];
-		
-		CFRelease(dict);
-		CFRelease(traitsDict);
-		CFRelease(fd);
+		[self setFontAttributes:CFBridgingRelease(dict)];
+		//CFRelease(dict);
 		
 		// also get the family while we're at it
 		CFStringRef cfStr = CTFontCopyFamilyName(ctFont);
 		
 		if (cfStr)
 		{
-			self.fontFamily = (NSString *)cfStr;
-			
-			CFRelease(cfStr);
+			self.fontFamily = CFBridgingRelease(cfStr);
+			//CFRelease(cfStr);
 		}
 	}
 	
@@ -183,13 +202,6 @@ static dispatch_semaphore_t fontLock;
 }
 
 
-- (void)dealloc
-{
-	[fontFamily release];
-	[fontName release];
-	
-	[super dealloc];
-}
 
 - (NSString *)description
 {
@@ -371,7 +383,7 @@ static dispatch_semaphore_t fontLock;
 	
 	if (fontFeatures)
 	{
-		for (NSDictionary *oneFeature in (NSArray *)fontFeatures)
+		for (NSDictionary *oneFeature in (__bridge NSArray *)fontFeatures)
 		{
 			NSInteger featureTypeIdentifier = [[oneFeature objectForKey:(id)kCTFontFeatureTypeIdentifierKey] integerValue];
 			
@@ -415,7 +427,7 @@ static dispatch_semaphore_t fontLock;
 	NSCache *fontCache = [DTCoreTextFontDescriptor fontCache];
 	NSString *cacheKey = [attributes description];
 	
-	CTFontRef cachedFont = (CTFontRef)[fontCache objectForKey:cacheKey];
+	CTFontRef cachedFont = (__bridge CTFontRef)[fontCache objectForKey:cacheKey];
 	
 	if (cachedFont)
 	{
@@ -451,11 +463,11 @@ static dispatch_semaphore_t fontLock;
 	
 	if (usedName)
 	{
-		matchingFont = CTFontCreateWithName((CFStringRef)usedName, pointSize, NULL);
+		matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, pointSize, NULL);
 	}
 	else
 	{
-		fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
+		fontDesc = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)attributes);
 		
 		if (fontFamily)
 		{
@@ -479,7 +491,7 @@ static dispatch_semaphore_t fontLock;
 				[set addObject:(id)kCTFontFeaturesAttribute];
 			}
 			
-			CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (CFSetRef)set);
+			CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (__bridge CFSetRef)set);
 			
 			if (matchingDesc)
 			{
@@ -488,7 +500,7 @@ static dispatch_semaphore_t fontLock;
 			}
 			else 
 			{
-				NSLog(@"No matches for %@", (id)fontDesc);
+				//NSLog(@"No matches for %@", (__bridge id)fontDesc);
 				matchingFont = nil;
 			}
 		}
@@ -499,83 +511,10 @@ static dispatch_semaphore_t fontLock;
 	if (matchingFont)
 	{
 		// cache it
-		[fontCache setObject:(id)matchingFont forKey:cacheKey];	
+		[fontCache setObject:(__bridge id)(matchingFont) forKey:cacheKey];	// if you CFBridgeRelease you get a crash
 	}
 	dispatch_semaphore_signal(fontLock);
 	return matchingFont;
-}
-
-- (void)normalizeSlow
-{
-	NSDictionary *attributes = [self fontAttributes];
-	
-	CTFontDescriptorRef fontDesc = nil; CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes);
-	
-	if (fontDesc)
-	{
-		NSSet *set;
-		
-		if (self.fontFamily)
-		{
-			set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, (id)kCTFontFamilyNameAttribute, nil];
-		}
-		else 
-		{
-			set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
-		}
-		
-		CTFontDescriptorRef matchingDesc = CTFontDescriptorCreateMatchingFontDescriptor(fontDesc, (CFSetRef)set);
-		
-		if (matchingDesc)
-		{
-			//		CFArrayRef matches = CTFontDescriptorCreateMatchingFontDescriptors(fontDesc, (CFSetRef)set);
-			//		
-			//		if (matches)
-			//		{
-			//			if (CFArrayGetCount(matches))
-			//			{
-			//				CTFontDescriptorRef matchingDesc = CFArrayGetValueAtIndex(matches, 0);
-			
-			CFDictionaryRef attributes = CTFontDescriptorCopyAttributes(matchingDesc);
-			
-			CFStringRef family = CTFontDescriptorCopyAttribute(matchingDesc, kCTFontFamilyNameAttribute);
-			if (family)
-			{
-				self.fontFamily = (id)family;
-				CFRelease(family);
-			}
-			
-			if (attributes)
-			{
-				[self setFontAttributes:(id)attributes];
-				CFRelease(attributes);
-			}
-		}
-		else 
-		{
-			NSLog(@"No matches for %@", (id)fontDesc);
-		}
-		
-		CFRelease(fontDesc);
-	}
-	else 
-	{
-		NSLog(@"No matches for %@", [self fontAttributes]);
-	}
-	
-	
-}
-
-
-- (CTFontRef)newMatchingFontSlow
-{
-	NSDictionary *fontAttributes = [self fontAttributes];
-	
-	CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)fontAttributes);
-	CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, self.pointSize, NULL);
-	CFRelease(fontDesc);
-	
-	return font;
 }
 
 - (NSUInteger)hash
@@ -650,8 +589,10 @@ static dispatch_semaphore_t fontLock;
 	if (!attributes) 
 	{
 		self.fontFamily = nil;
+		self.fontName = nil;
 		self.pointSize = 12;
-		
+		self.symbolicTraits = 0;
+	
 		boldTrait = NO;
 		italicTrait = NO;
 		expandedTrait = NO;

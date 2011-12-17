@@ -18,7 +18,12 @@
 
 
 @implementation DTLinkButton
-
+{
+	NSURL *_url;
+    NSString *_guid;
+	
+	CGSize _minimumHitSize;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -40,10 +45,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	[_url release];
-	[_guid release];
 	
-	[super dealloc];
 }
 
 
@@ -55,8 +57,8 @@
 	{
 		CGRect imageRect = [self contentRectForBounds:self.bounds];
 		
-		UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0];
-		CGContextSetGrayFillColor(ctx, 0.73, 0.4);
+		UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0f];
+		CGContextSetGrayFillColor(ctx, 0.73f, 0.4f);
 		[roundedPath fill];							 
 		
 //		CGPathRef roundedRectPath = newPathForRoundedRect(imageRect, 3.0, YES, YES);
@@ -87,7 +89,7 @@
 	
 	if (widthExtend>0 || heightExtend>0)
 	{
-		self.contentEdgeInsets = UIEdgeInsetsMake(heightExtend/2.0, widthExtend/2.0, heightExtend/2.0, widthExtend/2.0);
+		self.contentEdgeInsets = UIEdgeInsetsMake(heightExtend/2.0f, widthExtend/2.0f, heightExtend/2.0f, widthExtend/2.0f);
 		self.bounds = bounds;
 	}
 	else

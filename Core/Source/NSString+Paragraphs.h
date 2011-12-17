@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Cocoanetics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+
 
 @interface NSString (Paragraphs)
 

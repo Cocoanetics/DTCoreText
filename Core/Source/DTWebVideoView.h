@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+
 
 @class DTTextAttachment;
 @class DTWebVideoView;
@@ -20,17 +20,8 @@
 
 
 @interface DTWebVideoView : UIView <UIWebViewDelegate>
-{
-	DTTextAttachment *_attachment;
-	
-	id <DTWebVideoViewDelegate> _delegate;
-	
-	UIWebView *_webView;
-}
 
-@property (nonatomic, assign) id <DTWebVideoViewDelegate> delegate;
-@property (nonatomic, retain) DTTextAttachment *attachment;
-
-
+@property (nonatomic, assign) id <DTWebVideoViewDelegate> delegate; 	// subtle simulator bug - use assign not __unsafe_unretained
+@property (nonatomic, strong) DTTextAttachment *attachment;
 
 @end

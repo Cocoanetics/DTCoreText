@@ -26,7 +26,7 @@ It is open source and covered by a standard BSD license. That means you have to 
 Usage
 -----
 
-DTRichText needs a minimum iOS deployment target of 4.3 because of:
+DTCoreText needs a minimum iOS deployment target of 4.3 because of:
 
 - NSCache
 - GCD-based threading and locking

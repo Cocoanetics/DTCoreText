@@ -10,10 +10,10 @@
 
 @interface DTCoreTextLayouter ()
 
-@property (nonatomic, retain) NSMutableArray *frames;
+@property (nonatomic, strong) NSMutableArray *frames;
 @property (nonatomic, assign) dispatch_semaphore_t selfLock;
 
-- (CTFramesetterRef) framesetter;
+- (CTFramesetterRef)framesetter;
 - (void)discardFramesetter;
 
 @end
@@ -22,6 +22,13 @@
 #define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(selfLock);
 
 @implementation DTCoreTextLayouter
+{
+	CTFramesetterRef framesetter;
+	
+	NSAttributedString *_attributedString;
+	
+	NSMutableArray *frames;
+}
 @synthesize selfLock;
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
@@ -30,7 +37,6 @@
 	{
 		if (!attributedString)
 		{
-			[self autorelease];
 			return nil;
 		}
 		
@@ -43,14 +49,11 @@
 
 - (void)dealloc
 {
-	[_attributedString release];
-	[frames release];
-	
+	SYNCHRONIZE_START(self)	// just to be sure
 	[self discardFramesetter];
+	SYNCHRONIZE_END(self)
 
 	dispatch_release(selfLock);
-	
-	[super dealloc];
 }
 
 - (NSString *)description
@@ -69,6 +72,11 @@
 	CGSize neededSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, CFRangeMake(0, 0), NULL, 
 																	 CGSizeMake(width, CGFLOAT_MAX),
 																	 NULL);
+
+	// round up because generally we don't want non-integer view sizes
+	neededSize.width = ceilf(neededSize.width);
+	neededSize.height = ceilf(neededSize.height);
+	
 	return neededSize;
 }
 
@@ -76,10 +84,11 @@
 // a temporary frame
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	DTCoreTextLayoutFrame *newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
-	[pool release]; pool = NULL;
-	return [newFrame autorelease];
+	DTCoreTextLayoutFrame *newFrame;
+	@autoreleasepool {
+		newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
+	};
+	return newFrame;
 }
 
 // reusable frame
@@ -98,13 +107,13 @@
 #pragma mark Properties
 - (CTFramesetterRef)framesetter
 {
-	//    if (!framesetter)
+	if (!framesetter) // Race condition, could be null now but set when we get into the SYNCHRONIZE block - so do the test twice
 	{
 		SYNCHRONIZE_START(self)
 		{
 			if (!framesetter)
 			{
-				framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.attributedString);
+				framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
 			}
 		}
 		SYNCHRONIZE_END(self)
@@ -131,9 +140,7 @@
 	{
 		if (_attributedString != attributedString)
 		{
-			[_attributedString release];
-			
-			_attributedString = [attributedString retain];
+			_attributedString = attributedString;
 			
 			[self discardFramesetter];
 		}

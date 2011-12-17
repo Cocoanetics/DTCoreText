@@ -21,8 +21,8 @@
 
 @interface DTHTMLElement ()
 
-@property (nonatomic, retain) NSMutableDictionary *fontCache;
-@property (nonatomic, retain) NSMutableArray *children;
+@property (nonatomic, strong) NSMutableDictionary *fontCache;
+@property (nonatomic, strong) NSMutableArray *children;
 
 - (DTCSSListStyle *)calculatedListStyle;
 
@@ -30,6 +30,55 @@
 
 
 @implementation DTHTMLElement
+{
+	__unsafe_unretained DTHTMLElement *parent;
+	
+    DTCoreTextFontDescriptor *fontDescriptor;
+    DTCoreTextParagraphStyle *paragraphStyle;
+    DTTextAttachment *textAttachment;
+    NSURL *link;
+    
+    UIColor *_textColor;
+	UIColor *backgroundColor;
+    
+    CTUnderlineStyle underlineStyle;
+    
+    NSString *tagName;
+    NSString *text;
+    
+    BOOL tagContentInvisible;
+    BOOL strikeOut;
+    NSInteger superscriptStyle;
+    
+    NSInteger headerLevel;
+    
+    NSArray *shadows;
+    
+    NSMutableDictionary *_fontCache;
+    
+    NSInteger _isInline;
+    NSInteger _isMeta;
+	
+	NSMutableDictionary *_additionalAttributes;
+	
+	DTHTMLElementFloatStyle floatStyle;
+    DTCSSListStyle *_listStyle;
+    
+	BOOL isColorInherited;
+	
+	BOOL preserveNewlines;
+	
+	DTHTMLElementFontVariant fontVariant;
+    
+    CGFloat textScale;
+    CGSize size;
+    
+    NSInteger _listDepth;
+    NSInteger _listCounter;
+    
+    NSMutableArray *_children;
+	NSDictionary *_attributes; // contains all attributes from parsing
+}
 
 - (id)init
 {
@@ -43,37 +92,7 @@
 	}
 	
 	return self;
-	
 }
-
-
-
-- (void)dealloc
-{
-	[fontDescriptor release];
-	[paragraphStyle release];
-	[textAttachment release];
-	
-	[_textColor release];
-	[backgroundColor release];
-	
-	[tagName release];
-	[text release];
-	[link release];
-	
-	[shadows release];
-	
-	[_listStyle release];
-	
-	[_fontCache release];
-	[_additionalAttributes release];
-	
-	[_attributes release];
-	[_children release];
-	
-	[super dealloc];
-}
-
 
 - (NSDictionary *)attributesDictionary
 {
@@ -92,8 +111,8 @@
 	{
 		// need run delegate for sizing
 		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(textAttachment);
-		[tmpDict setObject:(id)embeddedObjectRunDelegate forKey:(id)kCTRunDelegateAttributeName];
-		CFRelease(embeddedObjectRunDelegate);
+		[tmpDict setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
+		//CFRelease(embeddedObjectRunDelegate);
 		
 		// add attachment
 		[tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
@@ -112,7 +131,7 @@
 	{
 		// try font cache first
 		NSNumber *key = [NSNumber numberWithInt:[fontDescriptor hash]];
-		CTFontRef font = (CTFontRef)[self.fontCache objectForKey:key];
+		CTFontRef font = (__bridge CTFontRef)[self.fontCache objectForKey:key];
 		
 		if (!font)
 		{
@@ -120,14 +139,14 @@
 			
 			if (font)
 			{
-				[self.fontCache setObject:(id)font forKey:key];
-				CFRelease(font);
+				[self.fontCache setObject:CFBridgingRelease(font) forKey:key];
 			}
 		}
 		
 		if (font)
 		{
-			[tmpDict setObject:(id)font forKey:(id)kCTFontAttributeName];
+			// __bridge since its already retained elsewhere
+			[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
 		}
 	}
 	
@@ -186,8 +205,8 @@
 	if (paragraphStyle)
 	{
 		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
-		[tmpDict setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-		CFRelease(newParagraphStyle);
+		[tmpDict setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		//CFRelease(newParagraphStyle);
 	}
 	
 	// add shadow array if applicable
@@ -217,7 +236,7 @@
 	if (textAttachment)
 	{
 		// ignore text, use unicode object placeholder
-		NSMutableAttributedString *tmpString = [[[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes] autorelease];
+		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
 		
 		BOOL needsNewLineAfter = ![self isContainedInBlockElement];
 		
@@ -240,7 +259,7 @@
 	{
 		if (self.fontVariant == DTHTMLElementFontVariantNormal)
 		{
-			return [[[NSAttributedString alloc] initWithString:text attributes:attributes] autorelease];
+			return [[NSAttributedString alloc] initWithString:text attributes:attributes];
 		}
 		else
 		{
@@ -251,13 +270,12 @@
 				
 				CTFontRef smallerFont = [smallDesc newMatchingFont];
 				
-				NSMutableDictionary *smallAttributes = [[attributes mutableCopy] autorelease];
-				[smallAttributes setObject:(id)smallerFont forKey:(id)kCTFontAttributeName];
-				CFRelease(smallerFont);
+				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
+				[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+				//CFRelease(smallerFont);
 				
-				[smallDesc release];
 				
-				return [[[NSAttributedString alloc] initWithString:text attributes:smallAttributes] autorelease];
+				return [[NSAttributedString alloc] initWithString:text attributes:smallAttributes];
 			}
 			
 			return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:text attributes:attributes];
@@ -278,10 +296,9 @@
 		fontDesc.italicTrait = NO;
 		
 		CTFontRef font = [fontDesc newMatchingFont];
-		[fontDesc release];
 		
-		[attributes setObject:(id)font forKey:(id)kCTFontAttributeName];
-		CFRelease(font);
+		[attributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+		//CFRelease(font);
 	}
 	
 	// text color for bullet same as text
@@ -293,8 +310,8 @@
 	if (paragraphStyle)
 	{
 		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
-		[attributes setObject:(id)newParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-		CFRelease(newParagraphStyle);
+		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		//CFRelease(newParagraphStyle);
 	}
 	
 	// get calculated list style
@@ -319,21 +336,21 @@
 			}
 		}
 		
-		NSMutableAttributedString *tmpStr = [[[NSMutableAttributedString alloc] initWithString:prefix attributes:attributes] autorelease];
+		NSMutableAttributedString *tmpStr = [[NSMutableAttributedString alloc] initWithString:prefix attributes:attributes];
 		
 		
 		if (image)
 		{
 			// make an attachment for the image
-			DTTextAttachment *attachment = [[[DTTextAttachment alloc] init] autorelease];
+			DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
 			attachment.contents = image;
 			attachment.contentType = DTTextAttachmentTypeImage;
 			attachment.displaySize = image.size;
 			
 			// need run delegate for sizing
 			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
-			[attributes setObject:(id)embeddedObjectRunDelegate forKey:(id)kCTRunDelegateAttributeName];
-			CFRelease(embeddedObjectRunDelegate);
+			[attributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
+			//CFRelease(embeddedObjectRunDelegate);
 			
 			// add attachment
 			[attributes setObject:attachment forKey:@"DTTextAttachment"];				
@@ -771,7 +788,7 @@
 
 - (DTCSSListStyle *)calculatedListStyle
 {
-	DTCSSListStyle *style = [[[DTCSSListStyle alloc] init] autorelease];
+	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
 	
 	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
 	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
@@ -833,7 +850,7 @@
 		_isInline = [tagName isInlineTag];
 	}
 	
-	return _isInline;
+	return _isInline ? YES : NO;
 }
 
 - (BOOL)isMeta
@@ -843,15 +860,14 @@
 		_isMeta = [tagName isMetaTag];
 	}
 	
-	return _isMeta;
+	return _isMeta ? YES : NO;
 }
 - (void)setTextColor:(UIColor *)textColor
 {
 	if (_textColor != textColor)
 	{
-		[_textColor release];
 		
-		_textColor = [textColor retain];
+		_textColor = textColor;
 		isColorInherited = NO;
 	}
 }
@@ -926,7 +942,7 @@
 			// Count the number of LI elements in the parent until we reach self. That's our counter.
 			NSInteger counter = 1;
 			NSUInteger numChildren = [parent.children count];
-			for (NSInteger i = 0; i < numChildren; i++)
+			for (NSUInteger i = 0; i < numChildren; i++)
 			{
 				// We walk through the children and check for LI elements just in case someone
 				// slipped us some bad HTML.
@@ -971,8 +987,7 @@
 {
 	if (_attributes != attributes)
 	{
-		[_attributes release];
-		_attributes = [attributes retain];
+		_attributes = attributes;
 		
 		// decode size contained in attributes, might be overridden later by CSS size
 		size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]); 
