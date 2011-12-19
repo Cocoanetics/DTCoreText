@@ -39,6 +39,7 @@
 
 - (void)dealloc 
 {
+	contentView.delegate = nil;
 	[contentView removeObserver:self forKeyPath:@"frame"];
 }
 
@@ -46,10 +47,7 @@
 {
 	[super layoutSubviews];
 	
-	if (!contentView)
-	{
-		[self addSubview:self.contentView];
-	}
+	[self contentView];
 	
 	// layout custom subviews for visible area
 	[contentView layoutSubviewsInRect:self.bounds];
