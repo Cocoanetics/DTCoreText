@@ -47,6 +47,16 @@
 	return self;
 }
 
+- (id)init
+{
+	if ((self = [super init]))
+	{
+		selfLock = dispatch_semaphore_create(1);
+	}
+	
+	return self;
+}
+
 - (void)dealloc
 {
 	SYNCHRONIZE_START(self)	// just to be sure

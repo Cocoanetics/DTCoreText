@@ -196,7 +196,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
-#if 0 // appears to be unused
+//#if 0 // appears to be unused
 - (NSArray *)linesContainedInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -221,7 +221,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	return tmpArray;
 }
-#endif
+//#endif
 
 - (CGPathRef)path
 {
