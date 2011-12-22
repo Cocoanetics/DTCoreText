@@ -370,23 +370,23 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
 				currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 			}
-			else if (([tagName isEqualToString:@"iframe"] || [tagName isEqualToString:@"video"] || [tagName isEqualToString:@"object"]) && tagOpen)
-			{
-				// hide contents of recognized tag
-				currentTag.tagContentInvisible = YES;
-				
-				// make appropriate attachment
-				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
-				
-				// add it to tag
-				currentTag.textAttachment = attachment;
-				
-				// to avoid much too much space before the image
-				currentTag.paragraphStyle.lineHeightMultiple = 1;
-				
-				// add it to output
-				[tmpString appendAttributedString:[currentTag attributedString]];
-			}
+//			else if (([tagName isEqualToString:@"iframe"] || [tagName isEqualToString:@"video"] || [tagName isEqualToString:@"object"]) && tagOpen)
+//			{
+//				// hide contents of recognized tag
+//				currentTag.tagContentInvisible = YES;
+//				
+//				// make appropriate attachment
+//				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
+//				
+//				// add it to tag
+//				currentTag.textAttachment = attachment;
+//				
+//				// to avoid much too much space before the image
+//				currentTag.paragraphStyle.lineHeightMultiple = 1;
+//				
+//				// add it to output
+//				[tmpString appendAttributedString:[currentTag attributedString]];
+//			}
 			else if ([tagName isEqualToString:@"a"])
 			{
 				if (tagOpen)
@@ -744,8 +744,11 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				immediatelyClosed = YES; 
 				
-				currentTag.text = UNICODE_LINE_FEED;
-				[tmpString appendAttributedString:[currentTag attributedString]];
+				if (![[tmpString string] hasSuffix:@"\n"]) {
+					currentTag.text = UNICODE_LINE_FEED;
+					[tmpString appendAttributedString:[currentTag attributedString]];
+				}
+				
 			}
 			
 			// --------------------- push tag on stack if it's opening
