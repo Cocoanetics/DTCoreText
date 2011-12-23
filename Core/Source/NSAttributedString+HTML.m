@@ -330,39 +330,36 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				immediatelyClosed = YES;
 				
-				if (![currentTag.parent.tagName isEqualToString:@"p"])
-				{
-					needsNewLineBefore = YES;
-				}
-				
 				// hide contents of recognized tag
 				currentTag.tagContentInvisible = YES;
 				
-				// make appropriate attachment
+				// attempt to make appropriate attachment. may return nil if tag has invalid or missing data
 				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
-				
-				// add it to tag
-				currentTag.textAttachment = attachment;
-				
-				// to avoid much too much space before the image
-				currentTag.paragraphStyle.lineHeightMultiple = 1;
-				
-				// specifiying line height interfers with correct positioning
-				currentTag.paragraphStyle.minimumLineHeight = 0;
-				currentTag.paragraphStyle.maximumLineHeight = 0;
-				
-				if (needsNewLineBefore)
-				{
-					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+				if (attachment) {
+					
+					// add it to tag
+					currentTag.textAttachment = attachment;
+					
+					// to avoid much too much space before the image
+					currentTag.paragraphStyle.lineHeightMultiple = 1;
+					
+					// specifiying line height interfers with correct positioning
+					currentTag.paragraphStyle.minimumLineHeight = 0;
+					currentTag.paragraphStyle.maximumLineHeight = 0;
+					
+					if (needsNewLineBefore || ![currentTag.parent.tagName isEqualToString:@"p"])
 					{
-						[tmpString appendNakedString:@"\n"];
+						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+						{
+							[tmpString appendNakedString:@"\n"];
+						}
+						
+						needsNewLineBefore = NO;
 					}
 					
-					needsNewLineBefore = NO;
-				}
-				
-				// add it to output
-				[tmpString appendAttributedString:[currentTag attributedString]];				
+					// add it to output
+					[tmpString appendAttributedString:[currentTag attributedString]];	
+				}				
 			}
 			else if ([tagName isEqualToString:@"blockquote"] && tagOpen)
 			{
