@@ -69,7 +69,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ frame=%@ %@ '%@'>", [self class], NSStringFromCGRect(self.frame), NSStringFromRange([self stringRange]), [_attributedString string]];
+	return [NSString stringWithFormat:@"<%@ origin=%@ frame=%@ %@ '%@'>", [self class], NSStringFromCGPoint(_baselineOrigin), NSStringFromCGRect(self.frame), NSStringFromRange([self stringRange]), [_attributedString string]];
 }
 
 - (NSRange)stringRange
