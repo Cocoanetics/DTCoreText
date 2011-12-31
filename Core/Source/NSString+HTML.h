@@ -23,7 +23,6 @@
 
 - (NSString *)stringByAddingHTMLEntities;
 - (NSString *)stringByReplacingHTMLEntities;
-- (NSString *)stringByRemovingInvalidTagAttributeCharacters;
 
 // CSS
 - (NSDictionary *)dictionaryOfCSSStyles;

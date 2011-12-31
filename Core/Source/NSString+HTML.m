@@ -722,28 +722,6 @@ static NSDictionary *entityReverseLookup = nil;
 	return [NSString stringWithString:output];
 }
 
-
-// go remove all characters that are not valid in tag attributes
-- (NSString *)stringByRemovingInvalidTagAttributeCharacters
-{
-	NSCharacterSet *validCharset = [NSCharacterSet tagAttributeNameCharacterSet];
-	
-	NSMutableString *tmpString = [NSMutableString string];
-	
-	for (NSUInteger i = 0; i<[self length]; i++)
-	{
-		unichar oneChar = [self characterAtIndex:i];
-		
-		if ([validCharset characterIsMember:oneChar])
-		{
-			[tmpString appendString:[NSString stringWithCharacters:&oneChar length:1]];
-		}
-	}
-	
-	return tmpString;
-}
-
-
 #pragma mark CSS
 
 - (NSDictionary *)dictionaryOfCSSStyles
