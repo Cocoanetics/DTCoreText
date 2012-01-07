@@ -322,11 +322,11 @@ static dispatch_semaphore_t fontLock;
 	
 	NSMutableDictionary *traitsDict = [NSMutableDictionary dictionary];
 	
-	CTFontSymbolicTraits symbolicTraits = [self symbolicTraits];
+	CTFontSymbolicTraits theSymbolicTraits = [self symbolicTraits];
 	
-	if (symbolicTraits)
+	if (theSymbolicTraits)
 	{
-		[traitsDict setObject:[NSNumber numberWithUnsignedInt:symbolicTraits] forKey:(id)kCTFontSymbolicTrait];
+		[traitsDict setObject:[NSNumber numberWithUnsignedInt:theSymbolicTraits] forKey:(id)kCTFontSymbolicTrait];
 	}
 	
 	if ([traitsDict count])
@@ -631,45 +631,45 @@ static dispatch_semaphore_t fontLock;
 	}
 }
 
-- (void)setSymbolicTraits:(CTFontSymbolicTraits)symbolicTraits
+- (void)setSymbolicTraits:(CTFontSymbolicTraits)theSymbolicTraits
 {
-	if (symbolicTraits & kCTFontBoldTrait)
+	if (theSymbolicTraits & kCTFontBoldTrait)
 	{
 		boldTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontItalicTrait)
+	if (theSymbolicTraits & kCTFontItalicTrait)
 	{
 		italicTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontExpandedTrait)
+	if (theSymbolicTraits & kCTFontExpandedTrait)
 	{
 		expandedTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontCondensedTrait)
+	if (theSymbolicTraits & kCTFontCondensedTrait)
 	{
 		condensedTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontMonoSpaceTrait)
+	if (theSymbolicTraits & kCTFontMonoSpaceTrait)
 	{
 		monospaceTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontVerticalTrait)
+	if (theSymbolicTraits & kCTFontVerticalTrait)
 	{
 		verticalTrait = YES;
 	}
 	
-	if (symbolicTraits & kCTFontUIOptimizedTrait)
+	if (theSymbolicTraits & kCTFontUIOptimizedTrait)
 	{
 		UIoptimizedTrait = YES;
 	}
 	
 	// stylistic class is bundled in the traits
-	stylisticClass = symbolicTraits & kCTFontClassMaskTrait;   
+	stylisticClass = theSymbolicTraits & kCTFontClassMaskTrait;   
 }
 
 
