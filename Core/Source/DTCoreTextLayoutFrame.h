@@ -34,7 +34,7 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect; // lines that are intersected, i.e. also incomplete lines
-// unused? - (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
+- (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
 - (NSArray *)stringIndices;

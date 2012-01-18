@@ -125,9 +125,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineOrigin.x += _frame.origin.x;
 		
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
-		
 		[tmpLines addObject:newLine];
-		
 		lineIndex++;
 	}
 	free(origins);
@@ -135,7 +133,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	_lines = tmpLines;
 
 	// line origins are wrong on last line of paragraphs
-	[self correctLineOrigins];
+	//[self correctLineOrigins];
 	
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
@@ -196,7 +194,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
-#if 0 // appears to be unused
+//#if 0 // appears to be unused
 - (NSArray *)linesContainedInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -221,7 +219,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	return tmpArray;
 }
-#endif
+//#endif
 
 - (CGPathRef)path
 {
@@ -780,7 +778,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (previousLine)
 		{
-			currentOrigin.y = previousLineOrigin.y + previousLine.descent + currentLine.ascent + currentLine.leading + [previousLine paragraphSpacing];
+			//currentOrigin.y = previousLineOrigin.y + previousLine.descent + currentLine.ascent + currentLine.leading + [previousLine paragraphSpacing];
+			currentOrigin.y = previousLineOrigin.y + [currentLine lineHeight] + [previousLine paragraphSpacing];
 			
 			currentOrigin.x = currentLine.baselineOrigin.x;
 			

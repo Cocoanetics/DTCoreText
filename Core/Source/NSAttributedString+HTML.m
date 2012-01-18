@@ -48,6 +48,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 
+static NSSet *kUnsupportedTags = nil;
 
 @implementation NSAttributedString (HTML)
 
@@ -258,7 +259,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-	
+		
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -268,6 +269,11 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
+			
+			if ([kUnsupportedTags containsObject:tagName]) {
+				continue;
+			}
+			
 			if ([tagName isEqualToString:@"style"] && tagOpen)
 			{
 				// get contents, there cannot be anything contained in this block
@@ -337,39 +343,36 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				immediatelyClosed = YES;
 				
-				if (![currentTag.parent.tagName isEqualToString:@"p"])
-				{
-					needsNewLineBefore = YES;
-				}
-				
 				// hide contents of recognized tag
 				currentTag.tagContentInvisible = YES;
 				
-				// make appropriate attachment
+				// attempt to make appropriate attachment. may return nil if tag has invalid or missing data
 				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
-				
-				// add it to tag
-				currentTag.textAttachment = attachment;
-				
-				// to avoid much too much space before the image
-				currentTag.paragraphStyle.lineHeightMultiple = 1;
-				
-				// specifiying line height interfers with correct positioning
-				currentTag.paragraphStyle.minimumLineHeight = 0;
-				currentTag.paragraphStyle.maximumLineHeight = 0;
-				
-				if (needsNewLineBefore)
-				{
-					if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+				if (attachment) {
+					
+					// add it to tag
+					currentTag.textAttachment = attachment;
+					
+					// to avoid much too much space before the image
+					currentTag.paragraphStyle.lineHeightMultiple = 1;
+					
+					// specifiying line height interfers with correct positioning
+					currentTag.paragraphStyle.minimumLineHeight = 0;
+					currentTag.paragraphStyle.maximumLineHeight = 0;
+					
+					if (needsNewLineBefore || ![currentTag.parent.tagName isEqualToString:@"p"])
 					{
-						[tmpString appendNakedString:@"\n"];
+						if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+						{
+							[tmpString appendNakedString:@"\n"];
+						}
+						
+						needsNewLineBefore = NO;
 					}
 					
-					needsNewLineBefore = NO;
-				}
-				
-				// add it to output
-				[tmpString appendAttributedString:[currentTag attributedString]];				
+					// add it to output
+					[tmpString appendAttributedString:[currentTag attributedString]];	
+				}				
 			}
 			else if ([tagName isEqualToString:@"blockquote"] && tagOpen)
 			{
@@ -746,8 +749,11 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				immediatelyClosed = YES; 
 				
-				currentTag.text = UNICODE_LINE_FEED;
-				[tmpString appendAttributedString:[currentTag attributedString]];
+				if (![[tmpString string] hasSuffix:@"\n"]) {
+					currentTag.text = UNICODE_LINE_FEED;
+					[tmpString appendAttributedString:[currentTag attributedString]];
+				}
+				
 			}
 			
 			// --------------------- push tag on stack if it's opening
@@ -934,6 +940,16 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	return attrString;
+}
+
+#pragma mark Unsupported Tags
+
++ (NSSet *)unsupportedTags {
+	return kUnsupportedTags;
+}
+
++ (void)setUnsupportedTags:(NSSet *)tags {
+	kUnsupportedTags = tags;
 }
 
 #pragma mark Utlities

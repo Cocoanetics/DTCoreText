@@ -115,7 +115,8 @@
 		}
 	}
 	
-	DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
+	
+	NSURL *hyperLinkURL = nil;
 	
 	// for local images we can get their size by inspecting them
 	if (attachmentType == DTTextAttachmentTypeImage)
@@ -127,6 +128,10 @@
 			if ([contentURL isFileURL])
 			{
 				UIImage *image = [UIImage imageWithContentsOfFile:[contentURL path]];
+				if (!image) {
+					// image is missing, do not generate an attachment
+					return  nil;
+				}
 				originalSize = image.size;
 				
 				if (!displaySize.width || !displaySize.height)
@@ -144,10 +149,14 @@
 		// we copy the link because we might need for it making the custom view
 		if (element.link)
 		{
-			attachment.hyperLinkURL = element.link;
+			hyperLinkURL = element.link;
 		}
 	}
-
+	
+	DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
+	if (hyperLinkURL) {
+		attachment.hyperLinkURL = hyperLinkURL;
+	}
 	
 	// if you have no display size we assume original size
 	if (CGSizeEqualToSize(displaySize, CGSizeZero))
