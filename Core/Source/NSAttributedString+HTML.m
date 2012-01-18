@@ -48,6 +48,7 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 
+static NSSet *kUnsupportedTags = nil;
 
 @implementation NSAttributedString (HTML)
 
@@ -258,7 +259,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	// skip initial whitespace
 	[scanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-	
+		
 	while (![scanner isAtEnd]) 
 	{
 		NSString *tagName = nil;
@@ -268,6 +269,11 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 		
 		if ([scanner scanHTMLTag:&tagName attributes:&tagAttributesDict isOpen:&tagOpen isClosed:&immediatelyClosed] && tagName)
 		{
+			
+			if ([kUnsupportedTags containsObject:tagName]) {
+				continue;
+			}
+			
 			if ([tagName isEqualToString:@"style"] && tagOpen)
 			{
 				// get contents, there cannot be anything contained in this block
@@ -374,23 +380,23 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
 				currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 			}
-//			else if (([tagName isEqualToString:@"iframe"] || [tagName isEqualToString:@"video"] || [tagName isEqualToString:@"object"]) && tagOpen)
-//			{
-//				// hide contents of recognized tag
-//				currentTag.tagContentInvisible = YES;
-//				
-//				// make appropriate attachment
-//				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
-//				
-//				// add it to tag
-//				currentTag.textAttachment = attachment;
-//				
-//				// to avoid much too much space before the image
-//				currentTag.paragraphStyle.lineHeightMultiple = 1;
-//				
-//				// add it to output
-//				[tmpString appendAttributedString:[currentTag attributedString]];
-//			}
+			else if (([tagName isEqualToString:@"iframe"] || [tagName isEqualToString:@"video"] || [tagName isEqualToString:@"object"]) && tagOpen)
+			{
+				// hide contents of recognized tag
+				currentTag.tagContentInvisible = YES;
+				
+				// make appropriate attachment
+				DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:options];
+				
+				// add it to tag
+				currentTag.textAttachment = attachment;
+				
+				// to avoid much too much space before the image
+				currentTag.paragraphStyle.lineHeightMultiple = 1;
+				
+				// add it to output
+				[tmpString appendAttributedString:[currentTag attributedString]];
+			}
 			else if ([tagName isEqualToString:@"a"])
 			{
 				if (tagOpen)
@@ -934,6 +940,16 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
 	
 	return attrString;
+}
+
+#pragma mark Unsupported Tags
+
++ (NSSet *)unsupportedTags {
+	return kUnsupportedTags;
+}
+
++ (void)setUnsupportedTags:(NSSet *)tags {
+	kUnsupportedTags = tags;
 }
 
 #pragma mark Utlities

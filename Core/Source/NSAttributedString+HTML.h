@@ -38,6 +38,10 @@ extern NSString *DTDefaultStyleSheet;
 // utilities
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes;
 
+// Unsupported Tags
++ (NSSet *)unsupportedTags;
++ (void)setUnsupportedTags:(NSSet *)tags;
+
 // attachment handling
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
 
