@@ -120,18 +120,20 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 	
 	// the combined style sheet for entire document
 	DTCSSStylesheet *styleSheet = [[DTCSSStylesheet alloc] init]; 
-	// default list styles
+	
+	// default styles
 	[styleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
 	[styleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
-
+	[styleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"];
+	
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [options objectForKey:DTDefaultStyleSheet];
-	if (defaultStylesheet) {
+	if (defaultStylesheet) 
+	{
 		// merge the default styles to the combined style sheet
 		[styleSheet mergeStylesheet:defaultStylesheet];
 	}
 	
-
 	// for performance we will return this mutable string
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
@@ -168,20 +170,25 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			// convert from string to color
 			defaultLinkColor = [UIColor colorWithHTMLName:defaultLinkColor];
 		}
-	}
-	else
-	{
-		defaultLinkColor = [UIColor colorWithHTMLName:@"#0000EE"];
+
+		// get hex code for the passed color
+		NSString *colorHex = [defaultLinkColor htmlHexString];
+		
+		// overwrite the style
+		NSString *styleBlock = [NSString stringWithFormat:@"a {color:#%@;}", colorHex];
+		[styleSheet parseStyleBlock:styleBlock];
 	}
 	
 	// default is to have A underlined
-	BOOL defaultLinkDecoration = YES;
-	
 	NSNumber *linkDecorationDefault = [options objectForKey:DTDefaultLinkDecoration];
 	
 	if (linkDecorationDefault)
 	{
-		defaultLinkDecoration = [linkDecorationDefault boolValue];
+		if (![linkDecorationDefault boolValue])
+		{
+			// remove default decoration
+			[styleSheet parseStyleBlock:@"a {text-decoration:none;}"];
+		}
 	}
 	
 	// default paragraph style
@@ -289,7 +296,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 				{
 					[currentTag applyStyleDictionary:mergedStyles];
 				}
-
+				
 				if ([tagName isMetaTag])
 				{
 					// we don't care about the other stuff in META tags, but styles are inherited
@@ -388,12 +395,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 			{
 				if (tagOpen)
 				{
-					if (defaultLinkDecoration)
-					{
-						currentTag.underlineStyle = kCTUnderlineStyleSingle;
-					}
-					
- 					if (currentTag.isColorInherited || !currentTag.textColor)
+					if (currentTag.isColorInherited || !currentTag.textColor)
 					{
 						currentTag.textColor = defaultLinkColor;
 						currentTag.isColorInherited = NO;
@@ -896,7 +898,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 								//CFRelease(newParagraphStyle);
 								
 								[tmpString setAttributes:finalAttributes range:effectiveRange];
-
+								
 								nextParagraphAdditionalSpaceBefore = 0;
 							}
 #endif							

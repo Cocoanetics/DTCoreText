@@ -31,6 +31,7 @@ DTCoreText needs a minimum iOS deployment target of 4.3 because of:
 - NSCache
 - GCD-based threading and locking
 - Blocks
+- ARC
 
 These are your options for adding DTCoreText to your project.
 
@@ -38,7 +39,7 @@ These are your options for adding DTCoreText to your project.
 2. Link your project against the libDTCoreText static library. Note that the "Static Library" target does not produce a universal library. You will also need to add all header files contained in the Core/Source folder to your project.
 3. Link your project against the universal static library produced from the "Static Framework". 
 
-When linking you need to add the -ObjC and -all_load to your app target's "Other Linker Flags".
+When linking you need to add the -ObjC and -all_load to your app target's "Other Linker Flags". If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
 
 When building from source it is recommended that you at the ALLOW_IPHONE_SPECIAL_CASES define to your PCH, this setting is "baked into" the library and framework targets.
 
