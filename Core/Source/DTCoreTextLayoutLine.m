@@ -308,6 +308,7 @@
 
 // returns the calculated line height
 // http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
+// Fixed to account for line-height css style, aka Line Height Multiple
 - (CGFloat)lineHeight
 {
 	if (!_didCalculateMetrics)
@@ -315,23 +316,23 @@
 		[self calculateMetrics];
 	}
 	
-	CGFloat tmpLeading = roundf(MAX(0, leading));
+	// take lineHeightMultiple into account
+	NSRange range = NSMakeRange(0, [_attributedString length]);
+	__block float lineMultiplier = 1.;
+	[_attributedString enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+							   usingBlock:^(id value, NSRange range, BOOL *stop) {
+								   CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)value;
+								   								   
+								   CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineMultiplier), &lineMultiplier);
+																
+								   *stop = YES;
+							   }];
 	
-	CGFloat lineHeight = roundf(ascent) + roundf(descent) + leading;
-	CGFloat ascenderDelta = 0;
+
+	if (lineMultiplier == 0.) lineMultiplier = 1.;
+	CGFloat lineHeight = (ascent + descent)*lineMultiplier + leading;
 	
-	if (tmpLeading > 0)
-	{
-		// we have not see a non-zero leading ever before, oh well ...
-		ascenderDelta = 0;
-	}
-	else
-	{
-		// magically add an extra 20%
-		ascenderDelta = roundf(0.2f * lineHeight);
-	}
-	
-	return lineHeight + ascenderDelta;
+	return lineHeight;
 }
 
 
@@ -372,6 +373,7 @@
 	{
 		CFArrayRef runs = CTLineGetGlyphRuns(_line);
 		
+        if (runs) {
 		CGFloat offset = 0;
 		
 		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(runs)];
@@ -387,6 +389,7 @@
 		}
 		
 		_glyphRuns = tmpArray;
+        }
 	}
 	
 	return _glyphRuns;
