@@ -20,7 +20,7 @@
 #import "NSAttributedString+HTML.h"
 #import "NSAttributedStringRunDelegates.h"
 #import "NSCharacterSet+HTML.h"
-#import "NSData+Base64.h"
+#import "NSData+DTBase64.h"
 #import "NSMutableAttributedString+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSString+HTML.h"
