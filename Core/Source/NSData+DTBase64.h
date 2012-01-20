@@ -22,19 +22,18 @@
 //
 
 
-
-void *NewBase64Decode(
+void *NewDTBase64Decode(
 	const char *inputBuffer,
 	size_t length,
 	size_t *outputLength);
 
-char *NewBase64Encode(
+char *NewDTBase64Encode(
 	const void *inputBuffer,
 	size_t length,
 	bool separateLines,
 	size_t *outputLength);
 
-@interface NSData (Base64)
+@interface NSData (DTBase64)
 
 + (NSData *)dataFromBase64String:(NSString *)aString;
 - (NSString *)base64EncodedString;
