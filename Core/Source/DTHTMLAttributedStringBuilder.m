@@ -644,6 +644,11 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
+	if ([elementName isMetaTag])
+	{
+		return;
+	}
+	
 	if (![currentTag isInline])
 	{
 		// next text needs a NL
@@ -706,7 +711,7 @@
 		// nothing to do
 		return;
 	}
-	
+
 	if (currentTag.preserveNewlines)
 	{
 		tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:UNICODE_LINE_FEED];
@@ -794,7 +799,7 @@
 	
 	
 	// we don't want whitespace before first tag to turn into paragraphs
-	if (![currentTag isMeta])
+	if (![currentTag isMeta] && !currentTag.tagContentInvisible)
 	{
 		currentTag.text = tagContents;
 		
