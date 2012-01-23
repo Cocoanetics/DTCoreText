@@ -13,9 +13,6 @@
 @class DTTextAttachment;
 @class DTCSSListStyle;
 
-#import <CoreText/CoreText.h>
-
-
 typedef enum
 {
 	DTHTMLElementFloatStyleNone = 0,
