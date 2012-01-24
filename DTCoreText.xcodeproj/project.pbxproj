@@ -224,7 +224,6 @@
 		A7949A9514CC485D00A8CCDE /* WarAndPeace.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2E14863EF100E1AFD9 /* WarAndPeace.html */; };
 		A7949A9614CC498700A8CCDE /* DTHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */; };
 		A7949A9714CC498700A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
-		A7949A9A14CC539600A8CCDE /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A7949A9914CC539400A8CCDE /* libxml2.dylib */; };
 		A7949A9B14CC562F00A8CCDE /* DTCSSStylesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */; };
 		A7949A9D14CC566100A8CCDE /* DTCoreTextConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */; };
 		A7949A9E14CC566100A8CCDE /* DTCoreTextConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */; };
@@ -379,7 +378,6 @@
 		A7949A6E14CC45B500A8CCDE /* MacUnitTest-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MacUnitTest-Prefix.pch"; sourceTree = "<group>"; };
 		A7949A6F14CC45B500A8CCDE /* MacUnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacUnitTest.h; sourceTree = "<group>"; };
 		A7949A7014CC45B500A8CCDE /* MacUnitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacUnitTest.m; sourceTree = "<group>"; };
-		A7949A9914CC539400A8CCDE /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = SDKs/MacOSX10.7.sdk/usr/lib/libxml2.dylib; sourceTree = DEVELOPER_DIR; };
 		A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextConstants.h; sourceTree = "<group>"; };
 		A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -438,7 +436,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7949A9A14CC539600A8CCDE /* libxml2.dylib in Frameworks */,
 				A7949A5914CC456000A8CCDE /* SenTestingKit.framework in Frameworks */,
 				A7949A5B14CC456000A8CCDE /* Cocoa.framework in Frameworks */,
 			);
@@ -463,7 +460,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				A7949A9914CC539400A8CCDE /* libxml2.dylib */,
 				A70B4C9B1486523400873A4A /* Documentation */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
@@ -1506,6 +1502,7 @@
 				A7949A6C14CC456100A8CCDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */ = {
 			isa = XCConfigurationList;
