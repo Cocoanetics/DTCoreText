@@ -685,7 +685,7 @@ static NSDictionary *entityReverseLookup = nil;
 			{
 				if ([scanner scanString:@";" intoString:NULL])
 				{
-					if ([afterAmpersand hasPrefix:@"#"] && [afterAmpersand length]<6)
+					if ([afterAmpersand hasPrefix:@"#"] && [afterAmpersand length]<=6)
 					{
 						NSInteger i = [[afterAmpersand substringFromIndex:1] integerValue];
 						[output appendFormat:@"%C", i];
