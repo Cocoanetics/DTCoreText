@@ -781,12 +781,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (previousLine)
 		{
 			float paragraphSpacing = [previousLine paragraphSpacing];
-			float lineHeight = 0;
+			float lineHeight = [currentLine lineHeight];
 			if (paragraphSpacing > 0) {
-				lineHeight = MIN([previousLine lineHeight], [currentLine lineHeight]);
-			} else {
-				lineHeight = [previousLine lineHeight];
-			}
+				paragraphSpacing = MIN(paragraphSpacing, [currentLine paragraphSpacing:NO]);
+			} 
 			currentOrigin.y = previousLineOrigin.y + lineHeight + paragraphSpacing;
 			
 			currentOrigin.x = currentLine.baselineOrigin.x;
