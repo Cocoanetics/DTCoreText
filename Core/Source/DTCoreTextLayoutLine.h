@@ -24,7 +24,7 @@
 - (NSArray *)stringIndices;
 - (CGFloat)offsetForStringIndex:(NSInteger)index;
 - (NSInteger)stringIndexForPosition:(CGPoint)position;
-
+- (CGFloat)paragraphSpacing:(BOOL)zeroNonLast;
 - (CGFloat)paragraphSpacing;
 - (CGFloat)lineHeight;
 - (CGFloat)calculatedLeading;
