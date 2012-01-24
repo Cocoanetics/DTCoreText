@@ -13,12 +13,64 @@
 @protocol DTHTMLParserDelegate <NSObject>
 
 @optional
+
+/**
+ Sent by the parser object to the delegate when it begins parsing a document.
+ 
+ @param parser A parser object.
+ */
 - (void)parserDidStartDocument:(DTHTMLParser *)parser;
+
+/**
+ Sent by the parser object to the delegate when it has successfully completed parsing
+ 
+ @param parser A parser object.
+ */
 - (void)parserDidEndDocument:(DTHTMLParser *)parser;
+
+/**
+ Sent by a parser object to its delegate when it encounters a start tag for a given element.
+ 
+ @param parser A parser object.
+ @param elementName A string that is the name of an element (in its start tag).
+ @param attributeDict A dictionary that contains any attributes associated with the element. Keys are the names of attributes, and values are attribute values.
+ */
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict;
+
+/**
+ Sent by a parser object to its delegate when it encounters an end tag for a specific element.
+ 
+ @param parser A parser object.
+ @param elementName A string that is the name of an element (in its end tag).
+ */
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName;
+
+/**
+ Sent by a parser object to provide its delegate with a string representing all or part of the characters of the current element.
+ 
+ The parser object may send the delegate several parser:foundCharacters: messages to report the characters of an element. Because string may be only part of the total character content for the current element, you should append it to the current accumulation of characters until the element changes.
+ 
+ @param parser A parser object.
+ @param A string representing the complete or partial textual content of the current element.
+ */
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string;
+
+/**
+ Sent by a parser object to its delegate when it encounters a comment in the HTML.
+ 
+ @param parser A DTHTMLParser object parsing HTML.
+ @param comment A string that is a the content of a comment in the XML.
+ */
 - (void)parser:(DTHTMLParser *)parser foundComment:(NSString *)comment;
+
+/**
+ Sent by a parser object to its delegate when it encounters a fatal error.
+ 
+ When this method is invoked, parsing is stopped. For further information about the error, you can query parseError or you can send the parser a parserError message. You can also send the parser lineNumber and columnNumber messages to further isolate where the error occurred. Typically you implement this method to display information about the error to the user.
+ 
+ @param parser A parser object.
+ @param parseError An `NSError` object describing the parsing error that occurred.
+ */
 - (void)parser:(DTHTMLParser *)parser parseErrorOccurred:(NSError *)parseError;
 
 @end
