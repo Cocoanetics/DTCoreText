@@ -96,8 +96,6 @@ void _startElement(void *context, const xmlChar *name,const xmlChar **atts)
 	}
 	
 	[myself.delegate parser:myself didStartElement:nameStr attributes:attributes];
-	
-	[myself abortParsing];
 }
 
 void _endElement(void *context, const xmlChar *chars)
