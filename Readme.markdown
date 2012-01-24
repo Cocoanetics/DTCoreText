@@ -3,6 +3,10 @@ DTCoreText
 
 This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS. Previously we referred to it as NSAttributedString+HTML (or NSAS+HTML in short) but this only covers about half of what this framework does. 
 
+Please support us so that we can continue to make DTCoreText even more awesome!
+
+<a href='http://www.pledgie.com/campaigns/16615'><img alt='Click here to lend your support to: Migrate DTCoreText to libxml2 and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/16615.png?skin_name=chrome' border='0' /></a>
+
 The project covers two broad areas:
 
 1. Layouting - Interfacing with CoreText, generating NSAttributedString instances from HTML code

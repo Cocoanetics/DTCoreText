@@ -10,7 +10,7 @@
 #import "DTHTMLElement.h"
 #import "CGUtils.h"
 #import "NSAttributedString+HTML.h"
-#import "NSData+Base64.h"
+#import "NSData+DTBase64.h"
 
 @implementation DTTextAttachment
 {

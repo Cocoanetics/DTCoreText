@@ -101,10 +101,10 @@
 		A788C9D614863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94014863E8700E1AFD9 /* NSCharacterSet+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9D814863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
 		A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
-		A788C9DA14863E8700E1AFD9 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+Base64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C9DB14863E8700E1AFD9 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+Base64.h */; };
-		A788C9DD14863E8700E1AFD9 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+Base64.m */; };
-		A788C9DE14863E8700E1AFD9 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+Base64.m */; };
+		A788C9DA14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A788C9DB14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */; };
+		A788C9DD14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
+		A788C9DE14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		A788C9DF14863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9E014863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9E214863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
@@ -194,7 +194,8 @@
 		A788CA99148648C700E1AFD9 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92F14863E8700E1AFD9 /* DTLinkButton.m */; };
 		A788CA9C148648C700E1AFD9 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93714863E8700E1AFD9 /* DTWebVideoView.m */; };
 		A788CA9D148648C700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
-		A788CA9E148648C700E1AFD9 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+Base64.m */; };
+		A788CA9E148648C700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
+		A788CA9F148648C700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
 		A788CAA0148648C700E1AFD9 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94714863E8700E1AFD9 /* NSScanner+HTML.m */; };
 		A788CAA1148648C700E1AFD9 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94914863E8700E1AFD9 /* NSString+HTML.m */; };
 		A788CAA2148648C700E1AFD9 /* NSString+Paragraphs.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */; };
@@ -303,8 +304,8 @@
 		A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringRunDelegates.m; sourceTree = "<group>"; };
 		A788C94014863E8700E1AFD9 /* NSCharacterSet+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+HTML.h"; sourceTree = "<group>"; };
 		A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+HTML.m"; sourceTree = "<group>"; };
-		A788C94214863E8700E1AFD9 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
-		A788C94314863E8700E1AFD9 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+DTBase64.h"; sourceTree = "<group>"; };
+		A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+DTBase64.m"; sourceTree = "<group>"; };
 		A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString+HTML.h"; sourceTree = "<group>"; };
 		A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+HTML.m"; sourceTree = "<group>"; };
 		A788C94614863E8700E1AFD9 /* NSScanner+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+HTML.h"; sourceTree = "<group>"; };
@@ -665,8 +666,8 @@
 			children = (
 				A788C90E14863E8700E1AFD9 /* CGUtils.h */,
 				A788C90F14863E8700E1AFD9 /* CGUtils.m */,
-				A788C94214863E8700E1AFD9 /* NSData+Base64.h */,
-				A788C94314863E8700E1AFD9 /* NSData+Base64.m */,
+				A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */,
+				A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */,
 				A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */,
 				A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */,
 				A788C94C14863E8700E1AFD9 /* NSString+UTF8Cleaner.h */,
@@ -728,7 +729,7 @@
 				A788C9C614863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
 				A788C9D014863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */,
 				A788C9D514863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */,
-				A788C9DA14863E8700E1AFD9 /* NSData+Base64.h in Headers */,
+				A788C9DA14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */,
 				A788C9DF14863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */,
 				A788C9E414863E8700E1AFD9 /* NSScanner+HTML.h in Headers */,
 				A788C9E914863E8700E1AFD9 /* NSString+HTML.h in Headers */,
@@ -767,7 +768,7 @@
 				A788C9C714863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
 				A788C9D114863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */,
 				A788C9D614863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */,
-				A788C9DB14863E8700E1AFD9 /* NSData+Base64.h in Headers */,
+				A788C9DB14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */,
 				A788C9E014863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */,
 				A788C9E514863E8700E1AFD9 /* NSScanner+HTML.h in Headers */,
 				A788C9EA14863E8700E1AFD9 /* NSString+HTML.h in Headers */,
@@ -1066,7 +1067,7 @@
 				A788C9C914863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D314863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D814863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788C9DD14863E8700E1AFD9 /* NSData+Base64.m in Sources */,
+				A788C9DD14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */,
 				A788C9E214863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E714863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9EC14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -1106,7 +1107,7 @@
 				A788C9CA14863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D414863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788C9DE14863E8700E1AFD9 /* NSData+Base64.m in Sources */,
+				A788C9DE14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */,
 				A788C9E314863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E814863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9ED14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -1149,7 +1150,8 @@
 				A788CA99148648C700E1AFD9 /* DTLinkButton.m in Sources */,
 				A788CA9C148648C700E1AFD9 /* DTWebVideoView.m in Sources */,
 				A788CA9D148648C700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788CA9E148648C700E1AFD9 /* NSData+Base64.m in Sources */,
+				A788CA9E148648C700E1AFD9 /* NSData+DTBase64.m in Sources */,
+				A788CA9F148648C700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788CAA0148648C700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788CAA1148648C700E1AFD9 /* NSString+HTML.m in Sources */,
 				A788CAA2148648C700E1AFD9 /* NSString+Paragraphs.m in Sources */,

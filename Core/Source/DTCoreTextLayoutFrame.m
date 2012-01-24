@@ -773,21 +773,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	previousLineOrigin = [[self.lines objectAtIndex:0] baselineOrigin];
-	
+		
 	for (DTCoreTextLayoutLine *currentLine in self.lines)
 	{
 		CGPoint currentOrigin;
 		
 		if (previousLine)
 		{
-			currentOrigin.y = previousLineOrigin.y + previousLine.descent + currentLine.ascent + currentLine.leading + [previousLine paragraphSpacing];
+			float paragraphSpacing = [previousLine paragraphSpacing];
+			float lineHeight = [currentLine lineHeight];
+			if (paragraphSpacing > 0) {
+				paragraphSpacing = MIN(paragraphSpacing, [currentLine paragraphSpacing:NO]);
+			} 
+			currentOrigin.y = previousLineOrigin.y + lineHeight + paragraphSpacing;
 			
 			currentOrigin.x = currentLine.baselineOrigin.x;
 			
 			previousLineOrigin = currentOrigin;
 			
 			currentOrigin.y = roundf(currentOrigin.y);
-			//	origin.x = roundf(origin.x);
 			
 			currentLine.baselineOrigin = currentOrigin;
 		}
