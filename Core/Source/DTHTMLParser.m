@@ -96,6 +96,8 @@ void _startElement(void *context, const xmlChar *name,const xmlChar **atts)
 	}
 	
 	[myself.delegate parser:myself didStartElement:nameStr attributes:attributes];
+	
+	[myself abortParsing];
 }
 
 void _endElement(void *context, const xmlChar *chars)
@@ -144,8 +146,6 @@ void _error(void *context, const char *msg, ...)
 	myself.parserError = [NSError errorWithDomain:@"DTHTMLParser" code:1 userInfo:userInfo];
 	
 	[myself.delegate parser:myself parseErrorOccurred:myself.parserError];
-	
-	[myself abortParsing];
 }
 
 @implementation DTHTMLParser
@@ -157,11 +157,18 @@ void _error(void *context, const char *msg, ...)
 	
 	__unsafe_unretained id <DTHTMLParserDelegate> _delegate;
 	htmlParserCtxtPtr _parserContext;
+	
+	BOOL _isAborting;
 }
 
 
 - (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding
 {
+	if (!data)
+	{
+		return nil;
+	}
+	
 	self = [super init];
 	if (self)
 	{
@@ -218,7 +225,7 @@ void _error(void *context, const char *msg, ...)
 	// parse!
 	int result = htmlParseDocument(_parserContext);
 	
-	return (result==0);
+	return (result==0 && !_isAborting);
 }
 
 - (void)abortParsing
@@ -229,9 +236,31 @@ void _error(void *context, const char *msg, ...)
 		xmlStopParser(_parserContext);
 		_parserContext = NULL;
 	}
+	
+	_isAborting = YES;
+	
+	// prevent future callbacks
+	_handler.startDocument = NULL;
+	_handler.endDocument = NULL;
+	_handler.startElement = NULL;
+	_handler.endElement = NULL;
+	_handler.characters = NULL;
+	_handler.comment = NULL;
+	_handler.error = NULL;
+	
+	// inform delegate
+	if ([_delegate respondsToSelector:@selector(parser:parseErrorOccurred:)])
+	{
+		[_delegate parser:self parseErrorOccurred:self.parserError];
+	}
 }
 
 #pragma mark Properties
+
+- (__unsafe_unretained id<DTHTMLParserDelegate>)delegate
+{
+	return _delegate;
+}
 
 - (void)setDelegate:(__unsafe_unretained id<DTHTMLParserDelegate>)delegate;
 {
@@ -336,7 +365,6 @@ void _error(void *context, const char *msg, ...)
 }
 
 
-@synthesize delegate = _delegate;
 @synthesize parserError = _parserError;
 
 @end
