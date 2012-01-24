@@ -466,13 +466,9 @@
 	{
 		NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 		
-		if ([lowercaseFontFamily rangeOfString:@"helvetica"].length || [lowercaseFontFamily rangeOfString:@"arial"].length || [lowercaseFontFamily rangeOfString:@"geneva"].length)
+		if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
 		{
 			fontDescriptor.fontFamily = @"Helvetica";
-		}
-		else if ([lowercaseFontFamily rangeOfString:@"courier"].length)
-		{
-			fontDescriptor.fontFamily = @"Courier";
 		}
 		else if ([lowercaseFontFamily rangeOfString:@"cursive"].length)
 		{
