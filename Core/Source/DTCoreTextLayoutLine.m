@@ -280,10 +280,10 @@
 }
 
 // returns the maximum paragraph spacing for this line
-- (CGFloat)paragraphSpacing
+- (CGFloat)paragraphSpacing:(BOOL)zeroNonLast
 {
 	// a paragraph spacing only is effective for last line in paragraph
-	if (![[_attributedString string] hasSuffix:@"\n"])
+	if (![[_attributedString string] hasSuffix:@"\n"] && zeroNonLast)
 	{
 		return 0;
 	}
@@ -305,6 +305,9 @@
 	return retSpacing;
 }
 
+- (CGFloat)paragraphSpacing {
+	return [self paragraphSpacing:YES];
+}
 
 // returns the calculated line height
 // http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
