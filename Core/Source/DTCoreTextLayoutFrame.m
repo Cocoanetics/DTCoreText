@@ -781,8 +781,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (previousLine)
 		{
 			CGFloat lineHeightMultiplier = [previousLine calculatedLineHeightMultiplier];
-			CGFloat spaceAfterPreviousLine = [previousLine paragraphSpacing:YES];
+			// TODO: correct spacing between paragraphs with line height multiplier > 1
 			
+			CGFloat spaceAfterPreviousLine = [previousLine paragraphSpacing:YES]; // already multiplied
 			CGFloat lineHeight = previousLine.descent + currentLine.ascent + currentLine.leading;
 			
 			// apply multiplier
