@@ -335,7 +335,7 @@
 	if (lineMultiplier == 0.) lineMultiplier = 1.;
 	CGFloat lineHeight = (ascent + descent)*lineMultiplier + leading;
 	
-	return lineHeight;
+	return lineHeight * (1. + (leading == 0 ? .2 : 0));
 }
 
 
