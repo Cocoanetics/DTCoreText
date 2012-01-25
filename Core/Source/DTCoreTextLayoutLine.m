@@ -309,10 +309,8 @@
 	return [self paragraphSpacing:YES];
 }
 
-// returns the calculated line height
-// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
-// Fixed to account for line-height css style, aka Line Height Multiple
-- (CGFloat)lineHeight
+// gets the line height multiplier used in this line
+- (CGFloat)calculatedLineHeightMultiplier
 {
 	if (!_didCalculateMetrics)
 	{
@@ -333,40 +331,56 @@
 	
 
 	if (lineMultiplier == 0.) lineMultiplier = 1.;
-	CGFloat lineHeight = (ascent + descent)*lineMultiplier + leading;
-	
-	return lineHeight * (1. + (leading == 0 ? .2 : 0));
+	return lineMultiplier;
 }
 
 
 // calculates the extra space that is before every line even though the leading is zero
+// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
 - (CGFloat)calculatedLeading
 {
-	CGFloat maxAscenderDelta = 0;
+	CGFloat maxLeading = 0;
 	
-	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	NSArray *glyphRuns = self.glyphRuns;
+	DTCoreTextGlyphRun *lastRunInLine = [glyphRuns lastObject];
+	
+	for (DTCoreTextGlyphRun *oneRun in glyphRuns)
 	{
-		CGFloat tmpLeading = roundf(MAX(0, oneRun.leading));
-
-		if (tmpLeading <= 0)
+		CGFloat runLeading = 0;
+		
+		if (oneRun.leading>0)
 		{
-			// we have not see a non-zero leading ever before, oh well ...
+			// take actual leading
+			runLeading = oneRun.leading;
+		}
+		else
+		{
+			// calculate a run leading as 20% from line height
+			
 			// for attachments the ascent equals the image height
 			// so we don't add the 20%
 			if (!oneRun.attachment)
 			{
-				CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent) + tmpLeading;
-				CGFloat ascenderDelta = roundf(0.2f * lineHeight);
-				
-				if (ascenderDelta > maxAscenderDelta)
+				if (oneRun == lastRunInLine && (oneRun.width==self.trailingWhitespaceWidth))
 				{
-					maxAscenderDelta = ascenderDelta;
+					// a whitespace glyph, e.g. \n
+				}
+				else
+				{
+					// calculate a leading as 20% of the line height
+					CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent);
+					runLeading = roundf(0.2f * lineHeight);
 				}
 			}
 		}
+
+		// remember the max
+		maxLeading = MAX(maxLeading, runLeading);
 	}
 	
-	return maxAscenderDelta;
+	NSLog(@"my leading %f, calc %f", self.leading, maxLeading);
+	
+	return maxLeading;
 }
 
 #pragma mark Properties
@@ -446,6 +460,16 @@
 	}
 	
 	return leading;
+}
+
+- (CGFloat)trailingWhitespaceWidth
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return trailingWhitespaceWidth;
 }
 
 

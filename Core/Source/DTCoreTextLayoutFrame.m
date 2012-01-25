@@ -780,20 +780,24 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (previousLine)
 		{
-			float paragraphSpacing = [previousLine paragraphSpacing];
-			float lineHeight = [currentLine lineHeight];
-			if (paragraphSpacing > 0) {
-				paragraphSpacing = MIN(paragraphSpacing, [currentLine paragraphSpacing:NO]);
-			} 
-			currentOrigin.y = previousLineOrigin.y + lineHeight + paragraphSpacing;
+			CGFloat lineHeightMultiplier = [previousLine calculatedLineHeightMultiplier];
+			CGFloat spaceAfterPreviousLine = [previousLine paragraphSpacing:YES];
 			
+			CGFloat lineHeight = previousLine.descent + currentLine.ascent + currentLine.leading;
+			
+			// apply multiplier
+			lineHeight *= lineHeightMultiplier;
+			
+			// this space already contains the multiplier
+			lineHeight +=  spaceAfterPreviousLine;
+			
+			// space the current line baseline lineHeight px from previous line
+			currentOrigin.y = roundf(previousLineOrigin.y + lineHeight); 
 			currentOrigin.x = currentLine.baselineOrigin.x;
 			
-			previousLineOrigin = currentOrigin;
-			
-			currentOrigin.y = roundf(currentOrigin.y);
-			
 			currentLine.baselineOrigin = currentOrigin;
+			
+			previousLineOrigin = currentOrigin;
 		}
 		
 		previousLine = currentLine;
