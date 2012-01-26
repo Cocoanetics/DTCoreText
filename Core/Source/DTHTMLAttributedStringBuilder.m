@@ -23,6 +23,13 @@
 
 #import "NSMutableAttributedString+HTML.h"
 
+@interface DTHTMLAttributedStringBuilder ()
+
+- (void)_registerTagStartHandlers;
+- (void)_registerTagEndHandlers;
+
+@end
+
 
 @implementation DTHTMLAttributedStringBuilder
 {
@@ -37,7 +44,7 @@
 	DTCoreTextFontDescriptor *defaultFontDescriptor;
 	DTCoreTextParagraphStyle *defaultParagraphStyle;
 	
-	// parsing state
+	// parsing state, accessed from inside blocks
 	NSMutableAttributedString *tmpString;
 	
 	DTHTMLElement *currentTag;
@@ -45,6 +52,14 @@
 	BOOL needsListItemStart;
 	BOOL needsNewLineBefore;
 	BOOL immediatelyClosed; 
+	
+	// GCD
+	dispatch_queue_t _stringAssemblyQueue;
+	dispatch_group_t _stringAssemblyGroup;
+	
+	NSMutableDictionary *_tagStartHandlers;
+	NSMutableDictionary *_tagContentHandlers;
+	NSMutableDictionary *_tagEndHandlers;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
@@ -68,6 +83,19 @@
 	{
 		return NO;
 	}
+	
+	if (!_tagStartHandlers)
+	{
+		[self _registerTagStartHandlers];
+	}
+	
+	if (!_tagEndHandlers)
+	{
+		[self _registerTagEndHandlers];
+	}
+	
+	_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
+	_stringAssemblyGroup = dispatch_group_create();
 	
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
@@ -253,48 +281,13 @@
 	return tmpString;
 }
 
-- (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
+#pragma mark GCD
+
+- (void)_registerTagStartHandlers
 {
-	// make new tag as copy of previous tag
-	DTHTMLElement *parent = currentTag;
-	currentTag = [currentTag copy];
-	currentTag.tagName = elementName;
-	currentTag.textScale = textScale;
-	currentTag.attributes = attributeDict;
-	[parent addChild:currentTag];
+	_tagStartHandlers = [[NSMutableDictionary alloc] init];
 	
-	// apply style from merged style sheet
-	NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:currentTag];
-	if (mergedStyles)
-	{
-		[currentTag applyStyleDictionary:mergedStyles];
-	}
-	
-	if ([elementName isMetaTag])
-	{
-		// we don't care about the other stuff in META tags, but styles are inherited
-		return;
-	}
-	
-	// direction
-	NSString *direction = [currentTag attributeForKey:@"dir"];
-	
-	if (direction)
-	{
-		NSString *lowerDirection = [direction lowercaseString];
-		
-		
-		if ([lowerDirection isEqualToString:@"ltr"])
-		{
-			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
-		}
-		else if ([lowerDirection isEqualToString:@"rtl"])
-		{
-			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
-		}
-	}
-	
-	if ([elementName isEqualToString:@"img"])
+	void (^imgBlock)(void) = ^ 
 	{
 		immediatelyClosed = YES;
 		
@@ -330,15 +323,23 @@
 		}
 		
 		// add it to output
-		[tmpString appendAttributedString:[currentTag attributedString]];				
-	}
-	else if ([elementName isEqualToString:@"blockquote"])
+		[tmpString appendAttributedString:[currentTag attributedString]];	
+	};
+	
+	[_tagStartHandlers setObject:imgBlock forKey:@"img"];
+	
+	
+	void (^blockquoteBlock)(void) = ^ 
 	{
 		currentTag.paragraphStyle.headIndent += 25.0 * textScale;
 		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
 		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
-	}
-	else if (([elementName isEqualToString:@"iframe"] || [elementName isEqualToString:@"video"] || [elementName isEqualToString:@"object"]))
+	};
+
+	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
+
+	
+	void (^objectBlock)(void) = ^ 
 	{
 		// hide contents of recognized tag
 		currentTag.tagContentInvisible = YES;
@@ -354,8 +355,15 @@
 		
 		// add it to output
 		[tmpString appendAttributedString:[currentTag attributedString]];
-	}
-	else if ([elementName isEqualToString:@"a"])
+	};
+	
+	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
+	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"video"];
+	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"iframe"];
+	
+	
+	
+	void (^aBlock)(void) = ^ 
 	{
 		if (currentTag.isColorInherited || !currentTag.textColor)
 		{
@@ -391,16 +399,30 @@
 		}
 		
 		currentTag.link = link;
-	}
-	else if ([elementName isEqualToString:@"b"] || [elementName isEqualToString:@"strong"])
+	};
+	
+	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
+	
+	
+	void (^strongBlock)(void) = ^ 
 	{
 		currentTag.fontDescriptor.boldTrait = YES;
-	}
-	else if ([elementName isEqualToString:@"i"] || [elementName isEqualToString:@"em"])
+	};
+	
+	[_tagStartHandlers setObject:[strongBlock copy] forKey:@"b"];
+	[_tagStartHandlers setObject:[strongBlock copy] forKey:@"strong"];
+	
+	
+	void (^emBlock)(void) = ^ 
 	{
 		currentTag.fontDescriptor.italicTrait = YES;
-	}
-	else if ([elementName isEqualToString:@"li"]) 
+	};
+	
+	[_tagStartHandlers setObject:[emBlock copy] forKey:@"i"];
+	[_tagStartHandlers setObject:[emBlock copy] forKey:@"em"];
+	
+
+	void (^liBlock)(void) = ^ 
 	{
 		// have inherited the correct list counter from parent
 		DTHTMLElement *counterElement = currentTag.parent;
@@ -426,24 +448,45 @@
 		
 		// second tab is for the beginning of first line after bullet
 		[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
-	}
-	else if ([elementName isEqualToString:@"left"])
+	};
+	
+	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
+	
+	
+	void (^leftBlock)(void) = ^ 
 	{
 		currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
-	}
-	else if ([elementName isEqualToString:@"center"])
-	{
-		currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
-	}
-	else if ([elementName isEqualToString:@"right"])
+	};
+	
+	[_tagStartHandlers setObject:[leftBlock copy] forKey:@"left"];
+	
+	
+	void (^rightBlock)(void) = ^ 
 	{
 		currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
-	}
-	else if ([elementName isEqualToString:@"del"] || [elementName isEqualToString:@"strike"] ) 
+	};
+	
+	[_tagStartHandlers setObject:[rightBlock copy] forKey:@"right"];
+	
+	
+	void (^centerBlock)(void) = ^ 
+	{
+		currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
+	};
+	
+	[_tagStartHandlers setObject:[centerBlock copy] forKey:@"center"];
+	
+
+	void (^delBlock)(void) = ^ 
 	{
 		currentTag.strikeOut = YES;
-	}
-	else if ([elementName isEqualToString:@"ol"]) 
+	};
+	
+	[_tagStartHandlers setObject:[delBlock copy] forKey:@"del"];
+	[_tagStartHandlers setObject:[delBlock copy] forKey:@"strike"];
+	
+	
+	void (^olBlock)(void) = ^ 
 	{
 		NSString *valueNum = [currentTag attributeForKey:@"start"];
 		if (valueNum)
@@ -457,37 +500,57 @@
 		}
 		
 		needsNewLineBefore = YES;
-	}
-	else if ([elementName isEqualToString:@"ul"]) 
+	};
+	
+	[_tagStartHandlers setObject:[olBlock copy] forKey:@"ol"];
+	
+	
+	void (^ulBlock)(void) = ^ 
 	{
 		needsNewLineBefore = YES;
 		
 		currentTag.listCounter = 0;
-	}
+	};
 	
-	else if ([elementName isEqualToString:@"u"])
+	[_tagStartHandlers setObject:[ulBlock copy] forKey:@"ul"];
+	
+	
+	void (^uBlock)(void) = ^ 
 	{
 		currentTag.underlineStyle = kCTUnderlineStyleSingle;
-	}
-	else if ([elementName isEqualToString:@"sup"])
+	};
+	
+	[_tagStartHandlers setObject:[uBlock copy] forKey:@"u"];
+
+	
+	void (^subBlock)(void) = ^ 
 	{
-		currentTag.superscriptStyle = 1;
+		currentTag.superscriptStyle = +1;
 		currentTag.fontDescriptor.pointSize *= 0.83;
-	}
-	else if ([elementName isEqualToString:@"pre"])
-	{
-		currentTag.preserveNewlines = YES;
-		currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;
-	}
-	else if ([elementName isEqualToString:@"code"]) 
-	{
-	}
-	else if ([elementName isEqualToString:@"sub"])
+	};
+	
+	[_tagStartHandlers setObject:[subBlock copy] forKey:@"sub"];
+
+	
+	void (^supBlock)(void) = ^ 
 	{
 		currentTag.superscriptStyle = -1;
 		currentTag.fontDescriptor.pointSize *= 0.83;
-	}
-	else if ([elementName isEqualToString:@"hr"])
+	};
+	
+	[_tagStartHandlers setObject:[supBlock copy] forKey:@"sup"];
+	
+	
+	void (^preBlock)(void) = ^ 
+	{
+		currentTag.preserveNewlines = YES;
+		currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;	
+	};
+	
+	[_tagStartHandlers setObject:[preBlock copy] forKey:@"pre"];
+
+	
+	void (^hrBlock)(void) = ^ 
 	{
 		immediatelyClosed = YES;
 		
@@ -513,10 +576,14 @@
 		[currentTag addAdditionalAttribute:styleDict forKey:@"DTHorizontalRuleStyle"];
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
-	}
-	else if ([elementName hasPrefix:@"h"])
+	};
+	
+	[_tagStartHandlers setObject:[hrBlock copy] forKey:@"hr"];
+	
+	
+	void (^hBlock)(void) = ^ 
 	{
-		NSString *levelString = [elementName substringFromIndex:1];
+		NSString *levelString = [currentTag.tagName substringFromIndex:1];
 		
 		NSInteger headerLevel = [levelString integerValue];
 		
@@ -572,16 +639,34 @@
 					break;
 			}
 		}
-	}
-	else if ([elementName isEqualToString:@"big"])
+
+	};
+	
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h1"];
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h2"];
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h3"];
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h4"];
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h5"];
+	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h6"];
+	
+	
+	void (^bigBlock)(void) = ^ 
 	{
 		currentTag.fontDescriptor.pointSize *= 1.2;
-	}
-	else if ([elementName isEqualToString:@"small"])
+	};
+	
+	[_tagStartHandlers setObject:[bigBlock copy] forKey:@"big"];
+	
+	
+	void (^smallBlock)(void) = ^ 
 	{
 		currentTag.fontDescriptor.pointSize /= 1.2;
-	}
-	else if ([elementName isEqualToString:@"font"])
+	};
+	
+	[_tagStartHandlers setObject:[smallBlock copy] forKey:@"small"];
+	
+	
+	void (^fontBlock)(void) = ^ 
 	{
 		NSInteger size = [[currentTag attributeForKey:@"size"] intValue];
 		
@@ -627,52 +712,130 @@
 		{
 			currentTag.textColor = [UIColor colorWithHTMLName:color];       
 		}
-	}
-	else if ([elementName isEqualToString:@"p"])
+	};
+	
+	[_tagStartHandlers setObject:[fontBlock copy] forKey:@"font"];
+	
+	
+	void (^pBlock)(void) = ^ 
 	{
 		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineIndent;
-	}
-	else if ([elementName isEqualToString:@"br"])
+	};
+	
+	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
+	
+	
+	void (^brBlock)(void) = ^ 
 	{
 		immediatelyClosed = YES; 
 		
 		currentTag.text = UNICODE_LINE_FEED;
 		[tmpString appendAttributedString:[currentTag attributedString]];
+	};
+	
+	[_tagStartHandlers setObject:[brBlock copy] forKey:@"br"];
+}
+
+- (void)_registerTagEndHandlers
+{
+	_tagEndHandlers = [[NSMutableDictionary alloc] init];
+	
+	void (^liBlock)(void) = ^ 
+	{
+		needsListItemStart = NO;
+	};
+	
+	[_tagEndHandlers setObject:[liBlock copy] forKey:@"li"];
+	
+	
+#if ALLOW_IPHONE_SPECIAL_CASES
+	void (^olBlock)(void) = ^ 
+	{
+		if (currentTag.listDepth < 1)
+			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+	};
+	
+	[_tagEndHandlers setObject:[olBlock copy] forKey:@"ol"];
+
+
+	void (^ulBlock)(void) = ^ 
+	{
+		if (currentTag.listDepth < 1)
+		{
+			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+		}
+	};
+	
+	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ul"];
+#endif
+}
+
+#pragma mark DTHTMLParser Delegate
+
+- (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
+{
+	// TODO: move the following into a block
+	
+	// make new tag as copy of previous tag
+	DTHTMLElement *parent = currentTag;
+	currentTag = [currentTag copy];
+	currentTag.tagName = elementName;
+	currentTag.textScale = textScale;
+	currentTag.attributes = attributeDict;
+	[parent addChild:currentTag];
+	
+	// apply style from merged style sheet
+	NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:currentTag];
+	if (mergedStyles)
+	{
+		[currentTag applyStyleDictionary:mergedStyles];
+	}
+	
+	if ([elementName isMetaTag])
+	{
+		// we don't care about the other stuff in META tags, but styles are inherited
+		return;
+	}
+	
+	// direction
+	NSString *direction = [currentTag attributeForKey:@"dir"];
+	
+	if (direction)
+	{
+		NSString *lowerDirection = [direction lowercaseString];
+		
+		
+		if ([lowerDirection isEqualToString:@"ltr"])
+		{
+			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
+		}
+		else if ([lowerDirection isEqualToString:@"rtl"])
+		{
+			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
+		}
+	}
+	
+	// find block to execute for this tag if any
+	void (^tagBlock)(void) = [_tagStartHandlers objectForKey:currentTag.tagName];
+	
+	if (tagBlock)
+	{
+		tagBlock();
 	}
 }
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
-	if ([elementName isMetaTag])
+	// find block to execute for this tag if any
+	void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
+	
+	if (tagBlock)
 	{
-		return;
+		tagBlock();
 	}
 	
-	if (![currentTag isInline])
-	{
-		// next text needs a NL
-		needsNewLineBefore = YES;
-	}
-	
-	if ([elementName isEqualToString:@"li"])
-	{
-		needsListItemStart = NO;
-	}
-	else if ([elementName isEqualToString:@"ol"]) 
-	{
-#if ALLOW_IPHONE_SPECIAL_CASES
-		if (currentTag.listDepth < 1)
-			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-#endif
-	}
-	else if ([elementName isEqualToString:@"ul"]) 
-	{
-#if ALLOW_IPHONE_SPECIAL_CASES
-		if (currentTag.listDepth < 1)
-			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-#endif
-	}
+	// TODO: move the following into a block
 	
 	// block items have to have a NL at the end.
 	if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
@@ -703,6 +866,8 @@
 
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 {
+	// TODO: Move the following into a block
+	
 	// trim newlines
 	NSString *tagContents = [string stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	
