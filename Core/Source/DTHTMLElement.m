@@ -31,7 +31,7 @@
 
 @implementation DTHTMLElement
 {
-	__unsafe_unretained DTHTMLElement *parent;
+	DTHTMLElement *parent;
 	
     DTCoreTextFontDescriptor *fontDescriptor;
     DTCoreTextParagraphStyle *paragraphStyle;
