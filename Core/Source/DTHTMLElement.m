@@ -708,6 +708,7 @@
 
 - (void)removeChild:(DTHTMLElement *)child
 {
+	child.parent = nil;
 	[self.children removeObject:child];
 }
 
