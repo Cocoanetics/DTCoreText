@@ -56,9 +56,9 @@
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
 	dispatch_group_t _stringAssemblyGroup;
-	
+
+	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
-	NSMutableDictionary *_tagContentHandlers;
 	NSMutableDictionary *_tagEndHandlers;
 }
 
@@ -71,6 +71,14 @@
 		_options = options;
 		
 		// documentAttributes ignored for now
+		
+		// register default handlers
+		[self _registerTagStartHandlers];
+		[self _registerTagEndHandlers];
+		
+		//GCD setup
+		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
+		_stringAssemblyGroup = dispatch_group_create();
 	}
 	
 	return self;	
@@ -83,19 +91,6 @@
 	{
 		return NO;
 	}
-	
-	if (!_tagStartHandlers)
-	{
-		[self _registerTagStartHandlers];
-	}
-	
-	if (!_tagEndHandlers)
-	{
-		[self _registerTagEndHandlers];
-	}
-	
-	_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
-	_stringAssemblyGroup = dispatch_group_create();
 	
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
@@ -273,7 +268,12 @@
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
 	
-	return [parser parse];
+	BOOL result = [parser parse];
+	
+	// wait until all string assembly is complete
+	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
+	
+	return result;
 }
 
 - (NSAttributedString *)generatedAttributedString
@@ -335,9 +335,9 @@
 		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
 		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 	};
-
+	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
-
+	
 	
 	void (^objectBlock)(void) = ^ 
 	{
@@ -421,7 +421,7 @@
 	[_tagStartHandlers setObject:[emBlock copy] forKey:@"i"];
 	[_tagStartHandlers setObject:[emBlock copy] forKey:@"em"];
 	
-
+	
 	void (^liBlock)(void) = ^ 
 	{
 		// have inherited the correct list counter from parent
@@ -476,7 +476,7 @@
 	
 	[_tagStartHandlers setObject:[centerBlock copy] forKey:@"center"];
 	
-
+	
 	void (^delBlock)(void) = ^ 
 	{
 		currentTag.strikeOut = YES;
@@ -521,7 +521,7 @@
 	};
 	
 	[_tagStartHandlers setObject:[uBlock copy] forKey:@"u"];
-
+	
 	
 	void (^subBlock)(void) = ^ 
 	{
@@ -530,7 +530,7 @@
 	};
 	
 	[_tagStartHandlers setObject:[subBlock copy] forKey:@"sub"];
-
+	
 	
 	void (^supBlock)(void) = ^ 
 	{
@@ -548,7 +548,7 @@
 	};
 	
 	[_tagStartHandlers setObject:[preBlock copy] forKey:@"pre"];
-
+	
 	
 	void (^hrBlock)(void) = ^ 
 	{
@@ -639,7 +639,7 @@
 					break;
 			}
 		}
-
+		
 	};
 	
 	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h1"];
@@ -757,8 +757,8 @@
 	};
 	
 	[_tagEndHandlers setObject:[olBlock copy] forKey:@"ol"];
-
-
+	
+	
 	void (^ulBlock)(void) = ^ 
 	{
 		if (currentTag.listDepth < 1)
@@ -771,103 +771,10 @@
 #endif
 }
 
-#pragma mark DTHTMLParser Delegate
-
-- (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
+- (void)_handleTagContent:(NSString *)string
 {
-	// TODO: move the following into a block
-	
-	// make new tag as copy of previous tag
-	DTHTMLElement *parent = currentTag;
-	currentTag = [currentTag copy];
-	currentTag.tagName = elementName;
-	currentTag.textScale = textScale;
-	currentTag.attributes = attributeDict;
-	[parent addChild:currentTag];
-	
-	// apply style from merged style sheet
-	NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:currentTag];
-	if (mergedStyles)
-	{
-		[currentTag applyStyleDictionary:mergedStyles];
-	}
-	
-	if ([elementName isMetaTag])
-	{
-		// we don't care about the other stuff in META tags, but styles are inherited
-		return;
-	}
-	
-	// direction
-	NSString *direction = [currentTag attributeForKey:@"dir"];
-	
-	if (direction)
-	{
-		NSString *lowerDirection = [direction lowercaseString];
-		
-		
-		if ([lowerDirection isEqualToString:@"ltr"])
-		{
-			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
-		}
-		else if ([lowerDirection isEqualToString:@"rtl"])
-		{
-			currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
-		}
-	}
-	
-	// find block to execute for this tag if any
-	void (^tagBlock)(void) = [_tagStartHandlers objectForKey:currentTag.tagName];
-	
-	if (tagBlock)
-	{
-		tagBlock();
-	}
-}
+	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 
-- (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
-{
-	// find block to execute for this tag if any
-	void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
-	
-	if (tagBlock)
-	{
-		tagBlock();
-	}
-	
-	// TODO: move the following into a block
-	
-	// block items have to have a NL at the end.
-	if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
-	{
-		if ([tmpString length])
-		{
-			[tmpString appendString:@"\n"];  // extends attributed area at end
-		}
-		else
-		{
-			currentTag.text = @"\n";
-			[tmpString appendAttributedString:[currentTag attributedString]];
-		}
-	}
-	
-	// check if this tag is indeed closing the currently open one
-	if ([elementName isEqualToString:currentTag.tagName])
-	{
-		DTHTMLElement *popChild = currentTag;
-		currentTag = currentTag.parent;
-		[currentTag removeChild:popChild];
-	}
-	else 
-	{
-		// Ignoring non-open tag
-	}
-}
-
-- (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
-{
-	// TODO: Move the following into a block
-	
 	// trim newlines
 	NSString *tagContents = [string stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	
@@ -876,7 +783,7 @@
 		// nothing to do
 		return;
 	}
-
+	
 	if (currentTag.preserveNewlines)
 	{
 		tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:UNICODE_LINE_FEED];
@@ -916,6 +823,7 @@
 				[tmpString appendNakedString:@"\n"];
 			}
 		}
+		
 		needsNewLineBefore = NO;
 	}
 	else // might be a continuation of a paragraph, then we might need space before it
@@ -970,6 +878,113 @@
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 	}	
+}
+
+#pragma mark DTHTMLParser Delegate
+
+- (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
+{
+	void (^tmpBlock)(void) = ^
+	{
+		// make new tag as copy of previous tag
+		DTHTMLElement *parent = currentTag;
+		currentTag = [currentTag copy];
+		currentTag.tagName = elementName;
+		currentTag.textScale = textScale;
+		currentTag.attributes = attributeDict;
+		[parent addChild:currentTag];
+		
+		// apply style from merged style sheet
+		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:currentTag];
+		if (mergedStyles)
+		{
+			[currentTag applyStyleDictionary:mergedStyles];
+		}
+		
+		if ([elementName isMetaTag])
+		{
+			// we don't care about the other stuff in META tags, but styles are inherited
+			return;
+		}
+		
+		// direction
+		NSString *direction = [currentTag attributeForKey:@"dir"];
+		
+		if (direction)
+		{
+			NSString *lowerDirection = [direction lowercaseString];
+			
+			
+			if ([lowerDirection isEqualToString:@"ltr"])
+			{
+				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
+			}
+			else if ([lowerDirection isEqualToString:@"rtl"])
+			{
+				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
+			}
+		}
+		
+		// find block to execute for this tag if any
+		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:currentTag.tagName];
+		
+		if (tagBlock)
+		{
+			tagBlock();
+		}
+	};
+	
+	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, tmpBlock);
+	
+}
+
+- (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
+{
+	void (^tmpBlock)(void) = ^
+	{
+		// find block to execute for this tag if any
+		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
+		
+		if (tagBlock)
+		{
+			tagBlock();
+		}
+		
+		// block items have to have a NL at the end.
+		if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
+		{
+			if ([tmpString length])
+			{
+				[tmpString appendString:@"\n"];  // extends attributed area at end
+			}
+			else
+			{
+				currentTag.text = @"\n";
+				[tmpString appendAttributedString:[currentTag attributedString]];
+			}
+		}
+		
+		// check if this tag is indeed closing the currently open one
+		if ([elementName isEqualToString:currentTag.tagName])
+		{
+			DTHTMLElement *popChild = currentTag;
+			currentTag = currentTag.parent;
+			[currentTag removeChild:popChild];
+		}
+		else 
+		{
+			// Ignoring non-open tag
+		}
+	};
+	
+	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, tmpBlock);
+}
+
+- (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
+{
+	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue,^{
+		[self _handleTagContent:string];	
+	});
 }
 
 @end
