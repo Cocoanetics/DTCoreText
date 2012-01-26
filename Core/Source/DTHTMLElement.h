@@ -30,7 +30,7 @@ typedef enum
 
 @interface DTHTMLElement : NSObject <NSCopying>
 
-@property (nonatomic, assign) DTHTMLElement *parent;	// subtle simulator bug - use assign not __unsafe_unretained
+@property (nonatomic, strong) DTHTMLElement *parent;
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
 @property (nonatomic, strong) DTTextAttachment *textAttachment;
