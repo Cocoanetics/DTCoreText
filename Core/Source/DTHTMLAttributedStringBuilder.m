@@ -56,6 +56,8 @@
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
 	dispatch_group_t _stringAssemblyGroup;
+	dispatch_queue_t _stringParsingQueue;
+	dispatch_group_t _stringParsingGroup;
 
 	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
@@ -79,9 +81,19 @@
 		//GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
 		_stringAssemblyGroup = dispatch_group_create();
+		_stringParsingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser", 0);
+		_stringParsingGroup = dispatch_group_create();
 	}
 	
 	return self;	
+}
+
+- (void)dealloc 
+{
+	dispatch_release(_stringAssemblyQueue);
+	dispatch_release(_stringAssemblyGroup);
+	dispatch_release(_stringParsingQueue);
+	dispatch_release(_stringParsingGroup);
 }
 
 - (BOOL)buildString
@@ -268,9 +280,11 @@
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
 	
-	BOOL result = [parser parse];
+	__block BOOL result;
+	dispatch_group_async(_stringParsingGroup, _stringParsingQueue, ^{ result = [parser parse]; });
 	
 	// wait until all string assembly is complete
+	dispatch_group_wait(_stringParsingGroup, DISPATCH_TIME_FOREVER);
 	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
 	
 	return result;
@@ -326,7 +340,7 @@
 		[tmpString appendAttributedString:[currentTag attributedString]];	
 	};
 	
-	[_tagStartHandlers setObject:imgBlock forKey:@"img"];
+	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
 	
 	
 	void (^blockquoteBlock)(void) = ^ 
@@ -926,7 +940,7 @@
 		}
 		
 		// find block to execute for this tag if any
-		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:currentTag.tagName];
+		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
 		
 		if (tagBlock)
 		{
