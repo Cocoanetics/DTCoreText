@@ -46,6 +46,7 @@
 	
 	// parsing state, accessed from inside blocks
 	NSMutableAttributedString *tmpString;
+	NSMutableString *_currentTagContents;
 	
 	DTHTMLElement *currentTag;
 	CGFloat nextParagraphAdditionalSpaceBefore;
@@ -789,8 +790,21 @@
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 
+	if (!_currentTagContents)
+	{
+		_currentTagContents = [[NSMutableString alloc] initWithCapacity:1000];
+	}
+	
+	[_currentTagContents appendString:string];
+}
+
+
+- (void)flushCurrentContent:(NSString *)tagContent
+{
+	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
+
 	// trim newlines
-	NSString *tagContents = [string stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	NSString *tagContents = [tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	
 	if (![tagContents length])
 	{
@@ -892,6 +906,8 @@
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 	}	
+	
+	_currentTagContents = nil;
 }
 
 #pragma mark DTHTMLParser Delegate
@@ -900,6 +916,8 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
+		[self flushCurrentContent:_currentTagContents];
+		
 		// make new tag as copy of previous tag
 		DTHTMLElement *parent = currentTag;
 		currentTag = [currentTag copy];
@@ -956,6 +974,8 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
+		[self flushCurrentContent:_currentTagContents];
+		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
 		
@@ -963,6 +983,8 @@
 		{
 			tagBlock();
 		}
+			
+		// NOTE: we are adding the NL (after blocks) here because otherwise we don't deal with <p>bla<b>bold</b></p><p>new para</p>.
 		
 		// block items have to have a NL at the end.
 		if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
@@ -977,7 +999,7 @@
 				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
 		}
-		
+
 		// check if this tag is indeed closing the currently open one
 		if ([elementName isEqualToString:currentTag.tagName])
 		{
