@@ -63,6 +63,8 @@
 	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
 	NSMutableDictionary *_tagEndHandlers;
+	
+	DTHTMLAttributedStringBuilderWillFlushCallback _willFlushCallback;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
@@ -799,7 +801,7 @@
 }
 
 
-- (void)flushCurrentTagContent:(NSString *)tagContent
+- (void)_flushCurrentTagContent:(NSString *)tagContent
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 
@@ -898,11 +900,15 @@
 		needsListItemStart = NO;
 	}
 	
-	
 	// we don't want whitespace before first tag to turn into paragraphs
 	if (![currentTag isMeta] && !currentTag.tagContentInvisible)
 	{
 		currentTag.text = tagContents;
+		
+		if (_willFlushCallback)
+		{
+			_willFlushCallback(currentTag);
+		}
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 	}	
@@ -916,7 +922,7 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		[self flushCurrentTagContent:_currentTagContents];
+		[self _flushCurrentTagContent:_currentTagContents];
 		
 		// make new tag as copy of previous tag
 		DTHTMLElement *parent = currentTag;
@@ -974,7 +980,7 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		[self flushCurrentTagContent:_currentTagContents];
+		[self _flushCurrentTagContent:_currentTagContents];
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
@@ -1022,5 +1028,9 @@
 		[self _handleTagContent:string];	
 	});
 }
+
+#pragma mark Properties
+
+@synthesize willFlushCallback = _willFlushCallback;
 
 @end
