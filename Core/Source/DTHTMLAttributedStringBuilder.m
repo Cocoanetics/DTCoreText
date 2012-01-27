@@ -736,7 +736,6 @@
 	
 	void (^pBlock)(void) = ^ 
 	{
-		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineIndent;
 	};
 	

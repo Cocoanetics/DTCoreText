@@ -85,7 +85,7 @@ static dispatch_semaphore_t selfLock;
 		lineHeightMultiple = 0.0;
 		minimumLineHeight = 0.0;
 		maximumLineHeight = 0.0;
-		paragraphSpacing = 12.0;
+		paragraphSpacing = 0.0;
 		listIndent = SPECIAL_LIST_INDENT;
 	}
 	

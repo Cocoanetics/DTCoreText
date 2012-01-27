@@ -786,12 +786,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CGFloat spaceAfterPreviousLine = [previousLine paragraphSpacing:YES]; // already multiplied
 			CGFloat lineHeight = previousLine.descent + currentLine.ascent + currentLine.leading;
 			
-			// apply multiplier
-			lineHeight *= lineHeightMultiplier;
-			
-			// this space already contains the multiplier
-			lineHeight +=  spaceAfterPreviousLine;
-			
+			if (spaceAfterPreviousLine > 0) {
+				// last paragraph, don't use line multiplier on current line values, use space specified
+				lineHeight += spaceAfterPreviousLine + previousLine.descent * (lineHeightMultiplier-1.);
+			} else {
+				// apply multiplier
+				lineHeight *= lineHeightMultiplier;
+			}
+						
 			// space the current line baseline lineHeight px from previous line
 			currentOrigin.y = roundf(previousLineOrigin.y + lineHeight); 
 			currentOrigin.x = currentLine.baselineOrigin.x;
