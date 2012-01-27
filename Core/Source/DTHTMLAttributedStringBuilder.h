@@ -20,4 +20,8 @@ typedef void(^DTHTMLAttributedStringBuilderElementDidStartCallback)(NSString *el
 
 - (NSAttributedString *)generatedAttributedString;
 
+
+// overrideable method to modify tag contents before writing it to attributed string
+- (void)flushCurrentTagContent:(NSString *)tagContent;
+
 @end

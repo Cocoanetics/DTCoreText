@@ -799,7 +799,7 @@
 }
 
 
-- (void)flushCurrentContent:(NSString *)tagContent
+- (void)flushCurrentTagContent:(NSString *)tagContent
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 
@@ -916,7 +916,7 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		[self flushCurrentContent:_currentTagContents];
+		[self flushCurrentTagContent:_currentTagContents];
 		
 		// make new tag as copy of previous tag
 		DTHTMLElement *parent = currentTag;
@@ -974,7 +974,7 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		[self flushCurrentContent:_currentTagContents];
+		[self flushCurrentTagContent:_currentTagContents];
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
