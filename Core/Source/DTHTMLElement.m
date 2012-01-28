@@ -620,6 +620,27 @@
 		}
 	}
 	
+	NSString *verticalAlignment = [[styles objectForKey:@"vertical-align"] lowercaseString];
+	if (verticalAlignment)
+	{
+		if ([verticalAlignment isEqualToString:@"sub"])
+		{
+			self.superscriptStyle = -1;
+		}
+		else if ([verticalAlignment isEqualToString:@"super"])
+		{
+			self.superscriptStyle = +1;
+		}
+		else if ([verticalAlignment isEqualToString:@"baseline"])
+		{
+			self.superscriptStyle = 0;
+		}
+		else if ([verticalAlignment isEqualToString:@"inherit"])
+		{
+			// nothing to do
+		}
+	}
+	
 	NSString *shadow = [styles objectForKey:@"text-shadow"];
 	if (shadow)
 	{
