@@ -11,8 +11,6 @@
 #import "UIColor+HTML.h"
 #import "NSCharacterSet+HTML.h"
 
-static NSSet *inlineTags = nil;
-static NSSet *metaTags = nil;
 static NSDictionary *entityLookup = nil;
 static NSDictionary *entityReverseLookup = nil;
 
@@ -23,31 +21,6 @@ static NSDictionary *entityReverseLookup = nil;
 	NSUInteger result = 0;
 	sscanf([self UTF8String], "%x", &result);
 	return result;
-}
-
-- (BOOL)isInlineTag
-{
-	static dispatch_once_t predicate;
-	
-	dispatch_once(&predicate, ^{
-		inlineTags = [[NSSet alloc] initWithObjects:@"font", @"b", @"strong", @"em", @"i", @"sub", @"sup",
-					  @"u", @"a", @"img", @"del", @"br", @"span", @"code", nil];
-			
-	});
-	
-	return [inlineTags containsObject:[self lowercaseString]];
-}
-
-- (BOOL)isMetaTag
-{
-	static dispatch_once_t predicate;
-
-	dispatch_once(&predicate, ^{
-		metaTags = [[NSSet alloc] initWithObjects:@"html", @"head", @"meta", @"style", @"#COMMENT#", @"title", nil];
-
-	});
-	
-	return [metaTags containsObject:[self lowercaseString]];
 }
 
 - (BOOL)isNumeric
