@@ -151,7 +151,19 @@
 	_globalStyleSheet = [[DTCSSStylesheet alloc] init]; 
 	
 	// default styles
-	[_globalStyleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
+	[_globalStyleSheet parseStyleBlock:@"html {display: block;}"];
+	[_globalStyleSheet parseStyleBlock:@"head {display: none;}"];
+	[_globalStyleSheet parseStyleBlock:@"title {display: none;}"];
+	[_globalStyleSheet parseStyleBlock:@"style {display: none;}"];
+
+	[_globalStyleSheet parseStyleBlock:@"body {display: block;}"]; // safari has the doc indent here 8px
+	
+	[_globalStyleSheet parseStyleBlock:@"p {display: block;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;}"];
+	
+	[_globalStyleSheet parseStyleBlock:@"ul, menu, dir {display: block;list-style-type: disc;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 40px;}"];
+	[_globalStyleSheet parseStyleBlock:@"li {display:list-item;}"];
+	[_globalStyleSheet parseStyleBlock:@"ol {display: block;list-style-type: decimal;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 40px;}"];
+	
 	[_globalStyleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
 	[_globalStyleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"]; // color:-webkit-link
 	[_globalStyleSheet parseStyleBlock:@"left {text-align:left;}"];
