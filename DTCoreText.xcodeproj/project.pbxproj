@@ -512,8 +512,6 @@
 				A788C92714863E8700E1AFD9 /* DTCSSListStyle.m */,
 				A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */,
 				A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */,
-				A788C92A14863E8700E1AFD9 /* DTHTMLElement.h */,
-				A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */,
 				A788C93414863E8700E1AFD9 /* DTTextAttachment.h */,
 				A788C93514863E8700E1AFD9 /* DTTextAttachment.m */,
 				A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */,
@@ -687,6 +685,8 @@
 				A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */,
 				A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */,
 				A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */,
+				A788C92A14863E8700E1AFD9 /* DTHTMLElement.h */,
+				A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */,
 			);
 			name = Parsing;
 			sourceTree = "<group>";
