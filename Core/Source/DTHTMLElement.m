@@ -33,48 +33,48 @@
 {
 	DTHTMLElement *parent;
 	
-    DTCoreTextFontDescriptor *fontDescriptor;
-    DTCoreTextParagraphStyle *paragraphStyle;
-    DTTextAttachment *textAttachment;
-    NSURL *link;
-    
-    UIColor *_textColor;
+	DTCoreTextFontDescriptor *fontDescriptor;
+	DTCoreTextParagraphStyle *paragraphStyle;
+	DTTextAttachment *textAttachment;
+	NSURL *link;
+	
+	UIColor *_textColor;
 	UIColor *backgroundColor;
-    
-    CTUnderlineStyle underlineStyle;
-    
-    NSString *tagName;
-    NSString *text;
-    
-    BOOL tagContentInvisible;
-    BOOL strikeOut;
-    NSInteger superscriptStyle;
-    
-    NSInteger headerLevel;
-    
-    NSArray *shadows;
-    
-    NSMutableDictionary *_fontCache;
-    
+	
+	CTUnderlineStyle underlineStyle;
+	
+	NSString *tagName;
+	NSString *text;
+	
+	BOOL tagContentInvisible;
+	BOOL strikeOut;
+	NSInteger superscriptStyle;
+	
+	NSInteger headerLevel;
+	
+	NSArray *shadows;
+	
+	NSMutableDictionary *_fontCache;
+	
 	NSMutableDictionary *_additionalAttributes;
 	
 	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle floatStyle;
-    DTCSSListStyle *_listStyle;
-    
+	DTCSSListStyle *_listStyle;
+	
 	BOOL isColorInherited;
 	
 	BOOL preserveNewlines;
 	
 	DTHTMLElementFontVariant fontVariant;
-    
-    CGFloat textScale;
-    CGSize size;
-    
-    NSInteger _listDepth;
-    NSInteger _listCounter;
-    
-    NSMutableArray *_children;
+	
+	CGFloat textScale;
+	CGSize size;
+	
+	NSInteger _listDepth;
+	NSInteger _listCounter;
+	
+	NSMutableArray *_children;
 	NSDictionary *_attributes; // contains all attributes from parsing
 }
 
@@ -660,19 +660,14 @@
 	{
 		self.paragraphStyle.paragraphSpacing = [marginBottom pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
 	}
-
-//	NSString *webkitMarginBefore = [styles objectForKey:@"-webkit-margin-before"];
-//	if (webkitMarginBefore) 
-//	{
-//		self.paragraphStyle.paragraphSpacingBefore = [webkitMarginBefore pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
-//	}
-
-	NSString *webkitMarginAfter = [styles objectForKey:@"-webkit-margin-after"];
-	if (webkitMarginAfter) 
+	else
 	{
-		self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+		NSString *webkitMarginAfter = [styles objectForKey:@"-webkit-margin-after"];
+		if (webkitMarginAfter) 
+		{
+			self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+		}
 	}
-	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
 	if (fontVariantStr)
 	{
