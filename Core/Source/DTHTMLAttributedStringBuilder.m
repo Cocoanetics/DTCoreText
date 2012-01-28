@@ -143,7 +143,26 @@
 	// default styles
 	[_globalStyleSheet parseStyleBlock:@"ul {list-style:disc;} ol {list-style:decimal;}"];
 	[_globalStyleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
-	[_globalStyleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"];
+	[_globalStyleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"]; // color:-webkit-link
+	[_globalStyleSheet parseStyleBlock:@"left {text-align:left;}"];
+	[_globalStyleSheet parseStyleBlock:@"right {text-align:right;}"];
+	[_globalStyleSheet parseStyleBlock:@"center {text-align:center;}"];
+	[_globalStyleSheet parseStyleBlock:@"strong, b {font-weight:bolder;}"];
+	[_globalStyleSheet parseStyleBlock:@"i,em {font-style:italic;}"];
+	[_globalStyleSheet parseStyleBlock:@"u {text-decoration:underline;}"];
+	[_globalStyleSheet parseStyleBlock:@"big {font-size:bigger;}"];
+	[_globalStyleSheet parseStyleBlock:@"small {font-size:smaller;}"];
+	[_globalStyleSheet parseStyleBlock:@"sub {font-size:smaller; vertical-align:sub;}"];
+	[_globalStyleSheet parseStyleBlock:@"sup {font-size:smaller; vertical-align:super;}"];
+	
+	
+	// TODO: wire these up, note that safari uses -webkit-margin-*
+	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h2 {display:block; font-size: 1.5em; -webkit-margin-before: 0.83em; -webkit-margin-after: 0.83em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h3 {display:block; font-size: 1.17em; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h4 {display:block; -webkit-margin-before: 1.33em; -webkit-margin-after: 1.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h5 {display:block; font-size: 0.83em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h6 {display:block; font-size: 0.67em; -webkit-margin-before: 2.33em; -webkit-margin-after: 2.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
 	
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [_options objectForKey:DTDefaultStyleSheet];
@@ -402,26 +421,8 @@
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
-	
-	
-	void (^strongBlock)(void) = ^ 
-	{
-		currentTag.fontDescriptor.boldTrait = YES;
-	};
-	
-	[_tagStartHandlers setObject:[strongBlock copy] forKey:@"b"];
-	[_tagStartHandlers setObject:[strongBlock copy] forKey:@"strong"];
-	
-	
-	void (^emBlock)(void) = ^ 
-	{
-		currentTag.fontDescriptor.italicTrait = YES;
-	};
-	
-	[_tagStartHandlers setObject:[emBlock copy] forKey:@"i"];
-	[_tagStartHandlers setObject:[emBlock copy] forKey:@"em"];
-	
 
+	
 	void (^liBlock)(void) = ^ 
 	{
 		// have inherited the correct list counter from parent
@@ -452,31 +453,6 @@
 	
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
-	
-	void (^leftBlock)(void) = ^ 
-	{
-		currentTag.paragraphStyle.textAlignment = kCTLeftTextAlignment;
-	};
-	
-	[_tagStartHandlers setObject:[leftBlock copy] forKey:@"left"];
-	
-	
-	void (^rightBlock)(void) = ^ 
-	{
-		currentTag.paragraphStyle.textAlignment = kCTRightTextAlignment;
-	};
-	
-	[_tagStartHandlers setObject:[rightBlock copy] forKey:@"right"];
-	
-	
-	void (^centerBlock)(void) = ^ 
-	{
-		currentTag.paragraphStyle.textAlignment = kCTCenterTextAlignment;
-	};
-	
-	[_tagStartHandlers setObject:[centerBlock copy] forKey:@"center"];
-	
-
 	void (^delBlock)(void) = ^ 
 	{
 		currentTag.strikeOut = YES;
@@ -513,32 +489,6 @@
 	};
 	
 	[_tagStartHandlers setObject:[ulBlock copy] forKey:@"ul"];
-	
-	
-	void (^uBlock)(void) = ^ 
-	{
-		currentTag.underlineStyle = kCTUnderlineStyleSingle;
-	};
-	
-	[_tagStartHandlers setObject:[uBlock copy] forKey:@"u"];
-
-	
-	void (^subBlock)(void) = ^ 
-	{
-		currentTag.superscriptStyle = +1;
-		currentTag.fontDescriptor.pointSize *= 0.83;
-	};
-	
-	[_tagStartHandlers setObject:[subBlock copy] forKey:@"sub"];
-
-	
-	void (^supBlock)(void) = ^ 
-	{
-		currentTag.superscriptStyle = -1;
-		currentTag.fontDescriptor.pointSize *= 0.83;
-	};
-	
-	[_tagStartHandlers setObject:[supBlock copy] forKey:@"sup"];
 	
 	
 	void (^preBlock)(void) = ^ 
@@ -648,22 +598,6 @@
 	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h4"];
 	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h5"];
 	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h6"];
-	
-	
-	void (^bigBlock)(void) = ^ 
-	{
-		currentTag.fontDescriptor.pointSize *= 1.2;
-	};
-	
-	[_tagStartHandlers setObject:[bigBlock copy] forKey:@"big"];
-	
-	
-	void (^smallBlock)(void) = ^ 
-	{
-		currentTag.fontDescriptor.pointSize /= 1.2;
-	};
-	
-	[_tagStartHandlers setObject:[smallBlock copy] forKey:@"small"];
 	
 	
 	void (^fontBlock)(void) = ^ 
