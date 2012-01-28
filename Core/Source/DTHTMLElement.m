@@ -185,18 +185,6 @@
 		[tmpDict setObject:(id)[NSNumber numberWithInt:superscriptStyle] forKey:(id)kCTSuperscriptAttributeName];
 	}
 	
-	// correct spacing to match current font size
-	if (self.paragraphStyle.paragraphSpacing == 0)
-	{
-		self.paragraphStyle.paragraphSpacing = self.fontDescriptor.pointSize;
-	}
-	
-	// correct spacing to match current font size
-	if (self.paragraphStyle.paragraphSpacingBefore>0)
-	{
-		self.paragraphStyle.paragraphSpacingBefore = self.fontDescriptor.pointSize;
-	}
-	
 	// add paragraph style
 	if (paragraphStyle)
 	{
@@ -668,8 +656,21 @@
 	}
 	
 	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
-	if (marginBottom) {
-		self.paragraphStyle.paragraphSpacing = [marginBottom intValue];
+	if (marginBottom) 
+	{
+		self.paragraphStyle.paragraphSpacing = [marginBottom pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+	}
+
+//	NSString *webkitMarginBefore = [styles objectForKey:@"-webkit-margin-before"];
+//	if (webkitMarginBefore) 
+//	{
+//		self.paragraphStyle.paragraphSpacingBefore = [webkitMarginBefore pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+//	}
+
+	NSString *webkitMarginAfter = [styles objectForKey:@"-webkit-margin-after"];
+	if (webkitMarginAfter) 
+	{
+		self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
 	}
 	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];

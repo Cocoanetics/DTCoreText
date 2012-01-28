@@ -554,56 +554,7 @@
 		if (headerLevel)
 		{
 			currentTag.headerLevel = headerLevel;
-			currentTag.fontDescriptor.boldTrait = YES;
-			
-			switch (headerLevel) 
-			{
-				case 1:
-				{
-					// H1: 2 em, spacing before 0.67 em, after 0.67 em
-					currentTag.fontDescriptor.pointSize *= 2.0;
-					currentTag.paragraphStyle.paragraphSpacing = 0.67f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				case 2:
-				{
-					// H2: 1.5 em, spacing before 0.83 em, after 0.83 em
-					currentTag.fontDescriptor.pointSize *= 1.5;
-					currentTag.paragraphStyle.paragraphSpacing = 0.83f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				case 3:
-				{
-					// H3: 1.17 em, spacing before 1 em, after 1 em
-					currentTag.fontDescriptor.pointSize *= 1.17;
-					currentTag.paragraphStyle.paragraphSpacing = 1.0f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				case 4:
-				{
-					// H4: 1 em, spacing before 1.33 em, after 1.33 em
-					currentTag.paragraphStyle.paragraphSpacing = 1.33f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				case 5:
-				{
-					// H5: 0.83 em, spacing before 1.67 em, after 1.167 em
-					currentTag.fontDescriptor.pointSize *= 0.83;
-					currentTag.paragraphStyle.paragraphSpacing = 1.67f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				case 6:
-				{
-					// H6: 0.67 em, spacing before 2.33 em, after 2.33 em
-					currentTag.fontDescriptor.pointSize *= 0.67;
-					currentTag.paragraphStyle.paragraphSpacing = 2.33f * currentTag.fontDescriptor.pointSize;
-					break;
-				}
-				default:
-					break;
-			}
 		}
-		
 	};
 	
 	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h1"];
@@ -678,6 +629,8 @@
 		immediatelyClosed = YES; 
 		
 		currentTag.text = UNICODE_LINE_FEED;
+		
+		// TODO: is this extra append necessary?
 		[tmpString appendAttributedString:[currentTag attributedString]];
 	};
 	
