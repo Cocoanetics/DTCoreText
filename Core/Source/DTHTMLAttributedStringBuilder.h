@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "DTHTMLParser.h"
 
+@class DTHTMLElement;
 
-typedef void(^DTHTMLAttributedStringBuilderElementDidStartCallback)(NSString *elementName, NSDictionary *attributeDict);
+typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 
 @interface DTHTMLAttributedStringBuilder : NSObject <DTHTMLParserDelegate>
 
@@ -19,5 +20,9 @@ typedef void(^DTHTMLAttributedStringBuilderElementDidStartCallback)(NSString *el
 - (BOOL)buildString;
 
 - (NSAttributedString *)generatedAttributedString;
+
+
+// this block is called before the element is written to the output attributed string
+@property (nonatomic, copy) DTHTMLAttributedStringBuilderWillFlushCallback willFlushCallback;
 
 @end

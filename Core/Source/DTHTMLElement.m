@@ -31,7 +31,7 @@
 
 @implementation DTHTMLElement
 {
-	__unsafe_unretained DTHTMLElement *parent;
+	DTHTMLElement *parent;
 	
     DTCoreTextFontDescriptor *fontDescriptor;
     DTCoreTextParagraphStyle *paragraphStyle;
@@ -190,7 +190,7 @@
 	}
 	
 	// correct spacing to match current font size
-	if (self.paragraphStyle.paragraphSpacing>0)
+	if (self.paragraphStyle.paragraphSpacing == 0)
 	{
 		self.paragraphStyle.paragraphSpacing = self.fontDescriptor.pointSize;
 	}
@@ -669,6 +669,11 @@
 			self.paragraphStyle.minimumLineHeight = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
 			self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
 		}
+	}
+	
+	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
+	if (marginBottom) {
+		self.paragraphStyle.paragraphSpacing = [marginBottom intValue];
 	}
 	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
