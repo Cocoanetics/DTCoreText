@@ -708,6 +708,16 @@
 	{
 		size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
+	
+	NSString *whitespaceString = [styles objectForKey:@"white-space"];
+	if ([whitespaceString hasPrefix:@"pre"])
+	{
+		preserveNewlines = YES;
+	}
+	else
+	{
+		preserveNewlines = NO;
+	}
 }
 
 - (void)parseStyleString:(NSString *)styleString

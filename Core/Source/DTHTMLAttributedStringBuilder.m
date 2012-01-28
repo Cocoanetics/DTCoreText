@@ -164,7 +164,9 @@
 	[_globalStyleSheet parseStyleBlock:@"small {font-size:smaller;}"];
 	[_globalStyleSheet parseStyleBlock:@"sub {font-size:smaller; vertical-align:sub;}"];
 	[_globalStyleSheet parseStyleBlock:@"sup {font-size:smaller; vertical-align:super;}"];
-	
+	[_globalStyleSheet parseStyleBlock:@"s, strike, del { text-decoration:line-through; }"];
+	[_globalStyleSheet parseStyleBlock:@"tt, code, kbd, samp { font-family: monospace; }"];
+	[_globalStyleSheet parseStyleBlock:@"pre, xmp, plaintext, listing {display: block;font-family:monospace;white-space:pre;margin-top: 1em;margin-right:0px;margin-bottom:1em;margin-left:0px;}"];
 	
 	// TODO: wire these up, note that safari uses -webkit-margin-*
 	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
@@ -471,15 +473,6 @@
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
 
-	void (^delBlock)(void) = ^ 
-	{
-		currentTag.strikeOut = YES;
-	};
-	
-	[_tagStartHandlers setObject:[delBlock copy] forKey:@"del"];
-	[_tagStartHandlers setObject:[delBlock copy] forKey:@"strike"];
-	
-	
 	void (^olBlock)(void) = ^ 
 	{
 		NSString *valueNum = [currentTag attributeForKey:@"start"];
@@ -507,16 +500,6 @@
 	};
 	
 	[_tagStartHandlers setObject:[ulBlock copy] forKey:@"ul"];
-	
-	
-
-	void (^preBlock)(void) = ^ 
-	{
-		currentTag.preserveNewlines = YES;
-		currentTag.paragraphStyle.textAlignment = kCTNaturalTextAlignment;	
-	};
-	
-	[_tagStartHandlers setObject:[preBlock copy] forKey:@"pre"];
 	
 	
 	void (^hrBlock)(void) = ^ 
