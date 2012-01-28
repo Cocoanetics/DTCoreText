@@ -623,7 +623,7 @@
 	{
 		currentTag.text = UNICODE_LINE_FEED;
 		
-		// TODO: is this extra append necessary?
+		// NOTE: cannot use flush because that removes the break
 		[tmpString appendAttributedString:[currentTag attributedString]];
 	};
 	
