@@ -52,7 +52,6 @@
 	CGFloat nextParagraphAdditionalSpaceBefore;
 	BOOL needsListItemStart;
 	BOOL needsNewLineBefore;
-	BOOL immediatelyClosed; 
 	
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
@@ -339,8 +338,6 @@
 	
 	void (^imgBlock)(void) = ^ 
 	{
-		immediatelyClosed = YES;
-		
 		if (![currentTag.parent.tagName isEqualToString:@"p"])
 		{
 			needsNewLineBefore = YES;
@@ -516,8 +513,6 @@
 	
 	void (^hrBlock)(void) = ^ 
 	{
-		immediatelyClosed = YES;
-		
 		// open block needs closing
 		if (needsNewLineBefore)
 		{
@@ -626,8 +621,6 @@
 	
 	void (^brBlock)(void) = ^ 
 	{
-		immediatelyClosed = YES; 
-		
 		currentTag.text = UNICODE_LINE_FEED;
 		
 		// TODO: is this extra append necessary?
