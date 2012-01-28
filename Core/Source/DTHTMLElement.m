@@ -56,11 +56,9 @@
     
     NSMutableDictionary *_fontCache;
     
-    NSInteger _isInline;
-    NSInteger _isMeta;
-	
 	NSMutableDictionary *_additionalAttributes;
 	
+	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle floatStyle;
     DTCSSListStyle *_listStyle;
     
@@ -85,8 +83,6 @@
 	self = [super init];
 	if (self)
 	{
-		_isInline = -1;
-		_isMeta = -1;
 		_listDepth = -1;
 		_listCounter = NSIntegerMin;
 	}
@@ -718,6 +714,31 @@
 	{
 		preserveNewlines = NO;
 	}
+	
+	NSString *displayString = [styles objectForKey:@"display"];
+	if (displayString)
+	{
+		if ([displayString isEqualToString:@"none"])
+		{
+			_displayStyle = DTHTMLElementDisplayStyleNone;
+		}
+		else if ([displayString isEqualToString:@"block"])
+		{
+			_displayStyle = DTHTMLElementDisplayStyleBlock;
+		}
+		else if ([displayString isEqualToString:@"inline"])
+		{
+			_displayStyle = DTHTMLElementDisplayStyleInline;
+		}
+		else if ([displayString isEqualToString:@"list-item"])
+		{
+			_displayStyle = DTHTMLElementDisplayStyleListItem;
+		}
+		else if ([verticalAlignment isEqualToString:@"inherit"])
+		{
+			// nothing to do
+		}
+	}
 }
 
 - (void)parseStyleString:(NSString *)styleString
@@ -760,12 +781,12 @@
 
 - (BOOL)isContainedInBlockElement
 {
-	if (!parent || [parent isMeta] || !parent.tagName) // default tag has no tag name
+	if (!parent || !parent.tagName) // default tag has no tag name
 	{
 		return NO;
 	}
 	
-	if ([self.parent isInline])
+	if (self.parent.displayStyle == DTHTMLElementDisplayStyleInline)
 	{
 		return [self.parent isContainedInBlockElement];
 	}
@@ -876,25 +897,6 @@
 	return _fontCache;
 }
 
-- (BOOL)isInline
-{
-	if (_isInline<0)
-	{
-		_isInline = [tagName isInlineTag];
-	}
-	
-	return _isInline ? YES : NO;
-}
-
-- (BOOL)isMeta
-{
-	if (_isMeta<0)
-	{
-		_isMeta = [tagName isMetaTag];
-	}
-	
-	return _isMeta ? YES : NO;
-}
 - (void)setTextColor:(UIColor *)textColor
 {
 	if (_textColor != textColor)
@@ -1043,10 +1045,10 @@
 @synthesize superscriptStyle;
 @synthesize headerLevel;
 @synthesize shadows;
-@synthesize isInline;
 @synthesize floatStyle;
 @synthesize isColorInherited;
 @synthesize preserveNewlines;
+@synthesize displayStyle = _displayStyle;
 @synthesize fontVariant;
 @synthesize listStyle = _listStyle;
 @synthesize textScale;

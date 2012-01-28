@@ -182,11 +182,11 @@
 	
 	// TODO: wire these up, note that safari uses -webkit-margin-*
 	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
-	[_globalStyleSheet parseStyleBlock:@"h2 {display:block; font-size: 1.5em; -webkit-margin-before: 0.83em; -webkit-margin-after: 0.83em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
-	[_globalStyleSheet parseStyleBlock:@"h3 {display:block; font-size: 1.17em; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
-	[_globalStyleSheet parseStyleBlock:@"h4 {display:block; -webkit-margin-before: 1.33em; -webkit-margin-after: 1.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
-	[_globalStyleSheet parseStyleBlock:@"h5 {display:block; font-size: 0.83em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
-	[_globalStyleSheet parseStyleBlock:@"h6 {display:block; font-size: 0.67em; -webkit-margin-before: 2.33em; -webkit-margin-after: 2.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h2 {display:block; font-size: 1.5em; -webkit-margin-before: 0.83em; -webkit-margin-after: 0.83em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
+	[_globalStyleSheet parseStyleBlock:@"h3 {display:block; font-size: 1.17em; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
+	[_globalStyleSheet parseStyleBlock:@"h4 {display:block; -webkit-margin-before: 1.33em; -webkit-margin-after: 1.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
+	[_globalStyleSheet parseStyleBlock:@"h5 {display:block; font-size: 0.83em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
+	[_globalStyleSheet parseStyleBlock:@"h6 {display:block; font-size: 0.67em; -webkit-margin-before: 2.33em; -webkit-margin-after: 2.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
 	
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [_options objectForKey:DTDefaultStyleSheet];
@@ -754,7 +754,7 @@
 	}
 	
 #if ALLOW_IPHONE_SPECIAL_CASES				
-	if (![currentTag isInline] && ![currentTag.tagName isEqualToString:@"li"])
+	if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && ![currentTag.tagName isEqualToString:@"li"])
 	{
 		if (nextParagraphAdditionalSpaceBefore>0)
 		{
@@ -831,7 +831,7 @@
 	}
 	
 	// we don't want whitespace before first tag to turn into paragraphs
-	if (![currentTag isMeta] && !currentTag.tagContentInvisible)
+	if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !currentTag.tagContentInvisible)
 	{
 		currentTag.text = tagContents;
 		
@@ -923,7 +923,7 @@
 		// NOTE: we are adding the NL (after blocks) here because otherwise we don't deal with <p>bla<b>bold</b></p><p>new para</p>.
 		
 		// block items have to have a NL at the end.
-		if (![currentTag isInline] && ![currentTag isMeta] && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
+		if ((currentTag.displayStyle == DTHTMLElementDisplayStyleBlock) && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
 		{
 			if ([tmpString length])
 			{
