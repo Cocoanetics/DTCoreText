@@ -59,7 +59,7 @@
 	dispatch_group_t _stringAssemblyGroup;
 	dispatch_queue_t _stringParsingQueue;
 	dispatch_group_t _stringParsingGroup;
-
+	
 	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
 	NSMutableDictionary *_tagEndHandlers;
@@ -155,7 +155,7 @@
 	[_globalStyleSheet parseStyleBlock:@"head {display: none;}"];
 	[_globalStyleSheet parseStyleBlock:@"title {display: none;}"];
 	[_globalStyleSheet parseStyleBlock:@"style {display: none;}"];
-
+	
 	[_globalStyleSheet parseStyleBlock:@"body {display: block;}"]; // safari has the doc indent here 8px
 	
 	[_globalStyleSheet parseStyleBlock:@"p {display: block;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;}"];
@@ -181,7 +181,7 @@
 	[_globalStyleSheet parseStyleBlock:@"pre, xmp, plaintext, listing {display: block;font-family:monospace;white-space:pre;margin-top: 1em;margin-right:0px;margin-bottom:1em;margin-left:0px;}"];
 	
 	// TODO: wire these up, note that safari uses -webkit-margin-*
-	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;"];
+	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
 	[_globalStyleSheet parseStyleBlock:@"h2 {display:block; font-size: 1.5em; -webkit-margin-before: 0.83em; -webkit-margin-after: 0.83em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
 	[_globalStyleSheet parseStyleBlock:@"h3 {display:block; font-size: 1.17em; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
 	[_globalStyleSheet parseStyleBlock:@"h4 {display:block; -webkit-margin-before: 1.33em; -webkit-margin-after: 1.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
@@ -452,7 +452,7 @@
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
-
+	
 	
 	void (^liBlock)(void) = ^ 
 	{
@@ -484,7 +484,7 @@
 	
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
-
+	
 	void (^olBlock)(void) = ^ 
 	{
 		NSString *valueNum = [currentTag attributeForKey:@"start"];
@@ -721,7 +721,7 @@
 - (void)_handleTagContent:(NSString *)string
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
-
+	
 	if (!_currentTagContents)
 	{
 		_currentTagContents = [[NSMutableString alloc] initWithCapacity:1000];
@@ -734,7 +734,7 @@
 - (void)_flushCurrentTagContent:(NSString *)tagContent
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
-
+	
 	// trim newlines
 	NSString *tagContents = [tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	
@@ -869,7 +869,7 @@
 			[currentTag applyStyleDictionary:mergedStyles];
 		}
 		
-		if ([elementName isMetaTag])
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleNone)
 		{
 			// we don't care about the other stuff in META tags, but styles are inherited
 			return;
@@ -903,7 +903,6 @@
 	};
 	
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, tmpBlock);
-	
 }
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
@@ -919,11 +918,11 @@
 		{
 			tagBlock();
 		}
-			
+		
 		// NOTE: we are adding the NL (after blocks) here because otherwise we don't deal with <p>bla<b>bold</b></p><p>new para</p>.
 		
 		// block items have to have a NL at the end.
-		if ((currentTag.displayStyle == DTHTMLElementDisplayStyleBlock) && ![[tmpString string] hasSuffix:@"\n"] /* && ![[tmpString string] hasSuffix:UNICODE_OBJECT_PLACEHOLDER] */)
+		if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && ![[tmpString string] hasSuffix:@"\n"])
 		{
 			if ([tmpString length])
 			{
@@ -935,7 +934,7 @@
 				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
 		}
-
+		
 		// check if this tag is indeed closing the currently open one
 		if ([elementName isEqualToString:currentTag.tagName])
 		{
