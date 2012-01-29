@@ -540,25 +540,47 @@
 	[_tagStartHandlers setObject:[hrBlock copy] forKey:@"hr"];
 	
 	
-	void (^hBlock)(void) = ^ 
+	void (^h1Block)(void) = ^ 
 	{
-		NSString *levelString = [currentTag.tagName substringFromIndex:1];
-		
-		NSInteger headerLevel = [levelString integerValue];
-		
-		if (headerLevel)
-		{
-			currentTag.headerLevel = headerLevel;
-		}
+			currentTag.headerLevel = 1;
 	};
+	[_tagStartHandlers setObject:[h1Block copy] forKey:@"h1"];
+
 	
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h1"];
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h2"];
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h3"];
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h4"];
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h5"];
-	[_tagStartHandlers setObject:[hBlock copy] forKey:@"h6"];
+	void (^h2Block)(void) = ^ 
+	{
+		currentTag.headerLevel = 2;
+	};
+	[_tagStartHandlers setObject:[h2Block copy] forKey:@"h2"];
+
 	
+	void (^h3Block)(void) = ^ 
+	{
+		currentTag.headerLevel = 3;
+	};
+	[_tagStartHandlers setObject:[h3Block copy] forKey:@"h3"];
+	
+	
+	void (^h4Block)(void) = ^ 
+	{
+		currentTag.headerLevel = 4;
+	};
+	[_tagStartHandlers setObject:[h4Block copy] forKey:@"h4"];
+
+	
+	void (^h5Block)(void) = ^ 
+	{
+		currentTag.headerLevel = 5;
+	};
+	[_tagStartHandlers setObject:[h5Block copy] forKey:@"h5"];
+	
+	
+	void (^h6Block)(void) = ^ 
+	{
+		currentTag.headerLevel = 6;
+	};
+	[_tagStartHandlers setObject:[h6Block copy] forKey:@"h6"];
+
 	
 	void (^fontBlock)(void) = ^ 
 	{
