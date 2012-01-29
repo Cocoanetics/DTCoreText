@@ -218,7 +218,7 @@ void _error(void *context, const char *msg, ...)
 	_parserContext = htmlCreatePushParserCtxt(&_handler, (__bridge void *)self, dataBytes, (int)dataSize, NULL, charEnc);
 	
 	// set some options
-	htmlCtxtUseOptions(_parserContext, HTML_PARSE_RECOVER | HTML_PARSE_NONET | HTML_PARSE_COMPACT | 8192);
+	htmlCtxtUseOptions(_parserContext, HTML_PARSE_RECOVER | HTML_PARSE_NONET | HTML_PARSE_COMPACT | HTML_PARSE_NOBLANKS);
 	
 	// parse!
 	int result = htmlParseDocument(_parserContext);
