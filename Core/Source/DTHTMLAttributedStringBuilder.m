@@ -52,6 +52,7 @@
 	CGFloat nextParagraphAdditionalSpaceBefore;
 	BOOL needsListItemStart;
 	BOOL needsNewLineBefore;
+	BOOL outputHasNewline;
 	
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
@@ -359,9 +360,10 @@
 		
 		if (needsNewLineBefore)
 		{
-			if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+			if ([tmpString length] && !outputHasNewline)
 			{
 				[tmpString appendNakedString:@"\n"];
+				outputHasNewline = YES;
 			}
 			
 			needsNewLineBefore = NO;
@@ -400,6 +402,7 @@
 		
 		// add it to output
 		[tmpString appendAttributedString:[currentTag attributedString]];
+		outputHasNewline = NO;
 	};
 	
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
@@ -514,9 +517,10 @@
 		// open block needs closing
 		if (needsNewLineBefore)
 		{
-			if ([tmpString length] && ![[tmpString string] hasSuffix:@"\n"])
+			if ([tmpString length] && !outputHasNewline)
 			{
 				[tmpString appendNakedString:@"\n"];
+				outputHasNewline = YES;
 			}
 			
 			needsNewLineBefore = NO;
@@ -533,6 +537,7 @@
 		[currentTag addAdditionalAttribute:styleDict forKey:@"DTHorizontalRuleStyle"];
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
+		outputHasNewline = YES;
 	};
 	
 	[_tagStartHandlers setObject:[hrBlock copy] forKey:@"hr"];
@@ -645,6 +650,7 @@
 		
 		// NOTE: cannot use flush because that removes the break
 		[tmpString appendAttributedString:[currentTag attributedString]];
+		outputHasNewline = NO;
 	};
 	
 	[_tagStartHandlers setObject:[brBlock copy] forKey:@"br"];
@@ -702,7 +708,7 @@
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 	
 	// trim newlines
-	NSString *tagContents = [tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	NSString *tagContents = tagContent;
 	
 	if (![tagContents length])
 	{
@@ -712,11 +718,47 @@
 	
 	if (currentTag.preserveNewlines)
 	{
+		[tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		
 		tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:UNICODE_LINE_FEED];
 	}
 	else
 	{
 		tagContents = [tagContents stringByNormalizingWhitespace];
+		
+		if ([tagContents isEqualToString:@" "])
+		{
+			return;
+		}
+	}
+	
+	if (needsNewLineBefore)
+	{
+		if ([tagContents hasPrefix:@" "])
+		{
+			tagContents = [tagContents substringFromIndex:1];
+		}
+		
+		if ([tmpString length])
+		{
+			if (!outputHasNewline)
+			{
+				[tmpString appendString:@"\n"];
+				outputHasNewline = YES;
+			}
+		}
+		
+		needsNewLineBefore = NO;
+	}
+	else // might be a continuation of a paragraph, then we might need space before it
+	{
+		NSString *stringSoFar = [tmpString string];
+		
+		// prevent double spacing
+		if ([stringSoFar hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] && [tagContents hasPrefix:@" "])
+		{
+			tagContents = [tagContents substringFromIndex:1];
+		}
 	}
 	
 #if ALLOW_IPHONE_SPECIAL_CASES				
@@ -734,34 +776,6 @@
 		}
 	}
 #endif
-	
-	if (needsNewLineBefore)
-	{
-		if ([tagContents hasPrefix:@" "])
-		{
-			tagContents = [tagContents substringFromIndex:1];
-		}
-		
-		if ([tmpString length])
-		{
-			if (![[tmpString string] hasSuffix:@"\n"])
-			{
-				[tmpString appendNakedString:@"\n"];
-			}
-		}
-		
-		needsNewLineBefore = NO;
-	}
-	else // might be a continuation of a paragraph, then we might need space before it
-	{
-		NSString *stringSoFar = [tmpString string];
-		
-		// prevent double spacing
-		if ([stringSoFar hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] && [tagContents hasPrefix:@" "])
-		{
-			tagContents = [tagContents substringFromIndex:1];
-		}
-	}
 	
 	// if we start a list, then we wait until we have actual text
 	if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
@@ -791,6 +805,7 @@
 			}
 #endif							
 			[tmpString appendAttributedString:prefixString]; 
+			outputHasNewline = NO;
 		}
 		
 		needsListItemStart = NO;
@@ -807,6 +822,7 @@
 		}
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
+		outputHasNewline = NO;
 	}	
 	
 	_currentTagContents = nil;
@@ -818,12 +834,10 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		if (_currentTagContents)
 		{
-			needsNewLineBefore = YES;
+			[self _flushCurrentTagContent:_currentTagContents];
 		}
-		
-		[self _flushCurrentTagContent:_currentTagContents];
 		
 		// make new tag as copy of previous tag
 		DTHTMLElement *parent = currentTag;
@@ -844,6 +858,12 @@
 		{
 			// we don't care about the other stuff in META tags, but styles are inherited
 			return;
+		}
+		
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		{
+			// make sure that we have a NL before text in this block
+			needsNewLineBefore = YES;
 		}
 		
 		// direction
@@ -880,7 +900,10 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
-		[self _flushCurrentTagContent:_currentTagContents];
+		if (_currentTagContents)
+		{
+			[self _flushCurrentTagContent:_currentTagContents];
+		}
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
@@ -893,7 +916,7 @@
 		// NOTE: we are adding the NL (after blocks) here because otherwise we don't deal with <p>bla<b>bold</b></p><p>new para</p>.
 		
 		// block items have to have a NL at the end.
-		if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && ![[tmpString string] hasSuffix:@"\n"])
+		if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !outputHasNewline)
 		{
 			if ([tmpString length])
 			{
@@ -904,6 +927,9 @@
 				currentTag.text = @"\n";
 				[tmpString appendAttributedString:[currentTag attributedString]];
 			}
+			
+			outputHasNewline = YES;
+			needsNewLineBefore = NO;
 		}
 		
 		// check if this tag is indeed closing the currently open one
