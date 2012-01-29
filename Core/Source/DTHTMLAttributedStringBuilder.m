@@ -165,9 +165,7 @@
 	
 	[_globalStyleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
 	[_globalStyleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"]; // color:-webkit-link
-	[_globalStyleSheet parseStyleBlock:@"left {text-align:left;}"];
-	[_globalStyleSheet parseStyleBlock:@"right {text-align:right;}"];
-	[_globalStyleSheet parseStyleBlock:@"center {text-align:center;}"];
+	[_globalStyleSheet parseStyleBlock:@"center {text-align:center;display:block;}"];
 	[_globalStyleSheet parseStyleBlock:@"strong, b {font-weight:bolder;}"];
 	[_globalStyleSheet parseStyleBlock:@"i,em {font-style:italic;}"];
 	[_globalStyleSheet parseStyleBlock:@"u {text-decoration:underline;}"];
@@ -820,6 +818,11 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		{
+			needsNewLineBefore = YES;
+		}
+		
 		[self _flushCurrentTagContent:_currentTagContents];
 		
 		// make new tag as copy of previous tag
