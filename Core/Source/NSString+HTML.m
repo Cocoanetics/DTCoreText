@@ -51,14 +51,18 @@ static NSDictionary *entityReverseLookup = nil;
 	NSInteger stringLength = [self length];
 	
 	// reserve buffer, same size as input
-	unichar *buf = malloc((stringLength) * sizeof(unichar));
+	unichar *_characters = calloc(stringLength, sizeof(unichar));
+	[self getCharacters:_characters range:NSMakeRange(0, stringLength)];
 	
 	NSInteger outputLength = 0;
 	BOOL inWhite = NO;
 	
+	
+	// we output to the same buffer as the input was
 	for (NSInteger i = 0; i<stringLength; i++)
 	{
-		unichar oneChar = [self characterAtIndex:i];
+		// c-array access is faster because it saves objc calls
+		unichar oneChar = _characters[i]; // [self characterAtIndex:i];
 		
 		// of whitespace chars only output one space for first
 		if (oneChar == 32 ||    // space
@@ -71,7 +75,7 @@ static NSDictionary *entityReverseLookup = nil;
 		{
 			if (!inWhite)
 			{
-				buf[outputLength] = 32;
+				_characters[outputLength] = 32;
 				outputLength++;
 				
 				inWhite = YES;
@@ -80,7 +84,7 @@ static NSDictionary *entityReverseLookup = nil;
 		else
 		{
 			// all other characters we simply copy
-			buf[outputLength] = oneChar;
+			_characters[outputLength] = oneChar;
 			outputLength++;
 			
 			inWhite = NO;
@@ -88,10 +92,10 @@ static NSDictionary *entityReverseLookup = nil;
 	}
 	
 	// convert to objC-String
-	NSString *retString = [NSString stringWithCharacters:buf length:outputLength];
+	NSString *retString = [NSString stringWithCharacters:_characters length:outputLength];
 	
 	// free buffers
-	free(buf);
+	free(_characters);
 	
 	return retString;
 }
