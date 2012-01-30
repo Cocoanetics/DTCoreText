@@ -52,7 +52,7 @@ typedef enum
 @property (nonatomic, assign) BOOL strikeOut;
 @property (nonatomic, assign) NSInteger superscriptStyle;
 @property (nonatomic, assign) NSInteger headerLevel;
-@property (nonatomic, readonly) DTHTMLElementDisplayStyle displayStyle;
+@property (nonatomic, assign) DTHTMLElementDisplayStyle displayStyle;
 @property (nonatomic, readonly) DTHTMLElementFloatStyle floatStyle;
 @property (nonatomic, assign) BOOL isColorInherited;
 @property (nonatomic, assign) BOOL preserveNewlines;

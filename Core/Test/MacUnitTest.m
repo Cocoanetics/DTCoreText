@@ -45,7 +45,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		
 		NSString *testFile = nil;
 		while ((testFile = [enumerator nextObject]) != nil) {
-			if (![testFile hasSuffix:@".html"])
+			if (![testFile hasSuffix:@"CurrentTest.html"])
 			{
 				// ignore other files, e.g. custom parameters in plist
 				continue;
@@ -93,15 +93,27 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	NSString *macString = [macAttributedString string];
 
-	// our own builder
-	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
+//	// our own builder
+//	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
+//
+//	[doc buildString];
+//	
+//	NSString *iosString = [doc generatedAttributedString];
+	
+	// Create characters view
+	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
+	NSData *dump = [macString dataUsingEncoding:NSUTF8StringEncoding];
+	for (NSInteger i = 0; i < [dump length]; i++)
+	{
+		char *bytes = (char *)[dump bytes];
+		char b = bytes[i];
+		
+		[dumpOutput appendFormat:@"%x %c\n", b, b];
+	}
 
-	[doc buildString];
 	
-	NSString *iosString = [doc generatedAttributedString];
-	
-	NSLog(@"%@", macString);
-	NSLog(@"%@", iosString);
+	NSLog(@"%@", dumpOutput);
+//	NSLog(@"%@", iosString);
 }
 
 @end

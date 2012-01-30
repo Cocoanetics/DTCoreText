@@ -62,6 +62,17 @@
 	}
 	
 	DTHTMLAttributedStringBuilder	*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:dict];
+
+	// example for setting a willFlushCallback, that gets called before elements are written to the generated attributed string
+	
+//	[stringBuilder setWillFlushCallback:^(DTHTMLElement *element) 
+//	{
+//		// if an element is larger than twice the font size put it in it's own block
+//		if (element.floatStyle || (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize) )
+//		{
+//			element.displayStyle = DTHTMLElementDisplayStyleBlock;
+//		}
+//	} ];
 	
 	[stringBuilder buildString];
 	
@@ -443,8 +454,6 @@
 		
 		[retString appendFormat:@"</%@>\n", blockElement];
 	}
-	
-	//NSLog(@"%@", retString);
 	
 	return retString;
 }

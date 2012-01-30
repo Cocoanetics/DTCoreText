@@ -222,21 +222,6 @@
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
 		
-		BOOL needsNewLineAfter = ![self isContainedInBlockElement];
-		
-#if ALLOW_IPHONE_SPECIAL_CASES
-		// workaround, make float images blocks because we have no float
-		if (floatStyle || textAttachment.displaySize.height > 2.0 * fontDescriptor.pointSize)
-		{
-			needsNewLineAfter = YES;
-		}
-#endif
-		
-		if (needsNewLineAfter)
-		{
-			[tmpString appendNakedString:@"\n"];
-		}
-		
 		return tmpString;
 	}
 	else

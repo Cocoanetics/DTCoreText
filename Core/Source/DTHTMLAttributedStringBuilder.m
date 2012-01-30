@@ -49,7 +49,6 @@
 	NSMutableString *_currentTagContents;
 	
 	DTHTMLElement *currentTag;
-	CGFloat nextParagraphAdditionalSpaceBefore;
 	BOOL needsListItemStart;
 	BOOL needsNewLineBefore;
 	BOOL outputHasNewline;
@@ -197,9 +196,6 @@
 	// for performance we will return this mutable string
 	tmpString = [[NSMutableAttributedString alloc] init];
 	
-#if ALLOW_IPHONE_SPECIAL_CASES
-	nextParagraphAdditionalSpaceBefore = 0.0;
-#endif
 	needsListItemStart = NO;
 	needsNewLineBefore = NO;
 	
@@ -339,7 +335,7 @@
 	{
 		if (![currentTag.parent.tagName isEqualToString:@"p"])
 		{
-			needsNewLineBefore = YES;
+			currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
 		}
 		
 		// hide contents of recognized tag
@@ -358,6 +354,18 @@
 		currentTag.paragraphStyle.minimumLineHeight = 0;
 		currentTag.paragraphStyle.maximumLineHeight = 0;
 		
+		// caller gets opportunity to modify image tag before it is written
+		if (_willFlushCallback)
+		{
+			_willFlushCallback(currentTag);
+		}
+		
+		// maybe the image is forced to show as block, then we want a newline before and after
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		{
+			needsNewLineBefore = YES;
+		}
+		
 		if (needsNewLineBefore)
 		{
 			if ([tmpString length] && !outputHasNewline)
@@ -371,6 +379,12 @@
 		
 		// add it to output
 		[tmpString appendAttributedString:[currentTag attributedString]];	
+		outputHasNewline = NO;
+		
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		{
+			needsNewLineBefore = YES;
+		}
 	};
 	
 	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
@@ -660,6 +674,24 @@
 {
 	_tagEndHandlers = [[NSMutableDictionary alloc] init];
 	
+	void (^bodyBlock)(void) = ^ 
+	{
+		// if the last child was a block we need an extra \n
+		if (needsNewLineBefore)
+		{
+			if ([tmpString length] && !outputHasNewline)
+			{
+				[tmpString appendNakedString:@"\n"];
+				outputHasNewline = YES;
+			}
+			
+			needsNewLineBefore = NO;
+		}
+	};
+	
+	[_tagEndHandlers setObject:[bodyBlock copy] forKey:@"body"];
+	
+	
 	void (^liBlock)(void) = ^ 
 	{
 		needsListItemStart = NO;
@@ -667,27 +699,33 @@
 	
 	[_tagEndHandlers setObject:[liBlock copy] forKey:@"li"];
 	
-	
-#if ALLOW_IPHONE_SPECIAL_CASES
-	void (^olBlock)(void) = ^ 
-	{
-		if (currentTag.listDepth < 1)
-			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
-	};
-	
-	[_tagEndHandlers setObject:[olBlock copy] forKey:@"ol"];
-	
-	
+
 	void (^ulBlock)(void) = ^ 
 	{
 		if (currentTag.listDepth < 1)
 		{
-			nextParagraphAdditionalSpaceBefore = defaultFontDescriptor.pointSize;
+			// adjust spacing after last li to be the one defined for ol/ul
+			NSRange effectiveRange;
+			
+			NSMutableDictionary *finalAttributes = [[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy];
+			CTParagraphStyleRef style = (__bridge CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+			DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
+			
+			if (paragraphStyle.paragraphSpacing != currentTag.paragraphStyle.paragraphSpacing)
+			{
+				paragraphStyle.paragraphSpacing = currentTag.paragraphStyle.paragraphSpacing;
+			
+				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+				[finalAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+			
+				[tmpString setAttributes:finalAttributes range:effectiveRange];
+			}
 		}
+
 	};
 	
 	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ul"];
-#endif
+	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ol"];
 }
 
 - (void)_handleTagContent:(NSString *)string
@@ -761,22 +799,6 @@
 		}
 	}
 	
-#if ALLOW_IPHONE_SPECIAL_CASES				
-	if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && ![currentTag.tagName isEqualToString:@"li"])
-	{
-		if (nextParagraphAdditionalSpaceBefore>0)
-		{
-			// FIXME: add extra space properly
-			// this also works, but breaks UnitTest for lists
-			tagContents = [UNICODE_LINE_FEED stringByAppendingString:tagContents];
-			
-			// this causes problems on the paragraph after a List
-			//paragraphSpacingBefore += nextParagraphAdditionalSpaceBefore;
-			nextParagraphAdditionalSpaceBefore = 0;
-		}
-	}
-#endif
-	
 	// if we start a list, then we wait until we have actual text
 	if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 	{
@@ -784,26 +806,6 @@
 		
 		if (prefixString)
 		{
-#if ALLOW_IPHONE_SPECIAL_CASES							
-			// need to add paragraph space after previous paragraph
-			if (nextParagraphAdditionalSpaceBefore>0)
-			{
-				NSRange effectiveRange;
-				
-				NSMutableDictionary *finalAttributes = [[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy];
-				CTParagraphStyleRef style = (__bridge CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
-				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
-				paragraphStyle.paragraphSpacing += nextParagraphAdditionalSpaceBefore;
-				
-				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-				[finalAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-				//CFRelease(newParagraphStyle);
-				
-				[tmpString setAttributes:finalAttributes range:effectiveRange];
-				
-				nextParagraphAdditionalSpaceBefore = 0;
-			}
-#endif							
 			[tmpString appendAttributedString:prefixString]; 
 			outputHasNewline = NO;
 		}
@@ -860,7 +862,7 @@
 			return;
 		}
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock || currentTag.displayStyle == DTHTMLElementDisplayStyleListItem)
 		{
 			// make sure that we have a NL before text in this block
 			needsNewLineBefore = YES;
@@ -883,6 +885,19 @@
 				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
 			}
 		}
+		
+		
+//		// block items need a break before
+//		if ([tmpString length])
+//		{
+//			if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !outputHasNewline)
+//			{
+//				[tmpString appendString:@"\n"];
+//
+//				outputHasNewline = YES;
+//				needsNewLineBefore = NO;
+//			}
+//		}
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
@@ -913,23 +928,9 @@
 			tagBlock();
 		}
 		
-		// NOTE: we are adding the NL (after blocks) here because otherwise we don't deal with <p>bla<b>bold</b></p><p>new para</p>.
-		
-		// block items have to have a NL at the end.
-		if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !outputHasNewline)
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 		{
-			if ([tmpString length])
-			{
-				[tmpString appendString:@"\n"];  // extends attributed area at end
-			}
-			else
-			{
-				currentTag.text = @"\n";
-				[tmpString appendAttributedString:[currentTag attributedString]];
-			}
-			
-			outputHasNewline = YES;
-			needsNewLineBefore = NO;
+			needsNewLineBefore = YES;
 		}
 		
 		// check if this tag is indeed closing the currently open one

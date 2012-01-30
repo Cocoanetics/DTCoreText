@@ -452,7 +452,6 @@ static dispatch_semaphore_t fontLock;
 			}
 			else 
 			{
-				//NSLog(@"No matches for %@", (__bridge id)fontDesc);
 				matchingFont = nil;
 			}
 		}
