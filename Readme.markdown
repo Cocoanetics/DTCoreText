@@ -47,7 +47,7 @@ When linking you need to add the -ObjC and -all_load to your app target's "Other
 
 When building from source it is recommended that you at the ALLOW_IPHONE_SPECIAL_CASES define to your PCH, this setting is "baked into" the library and framework targets.
 
-The project has been changed to use libxml2 for parsing HTML, so you need to link in the libxml2.dylib as well.
+The project has been changed to use libxml2 for parsing HTML, so you need to link in the libxml2.dylib, and, if you're copying all files from Core/Source, you must add the path "/usr/include/libxml2" to your header search paths as well.
 
 Known Issues
 ------------
