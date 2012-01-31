@@ -93,12 +93,12 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	NSString *macString = [macAttributedString string];
 
-//	// our own builder
-//	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
-//
-//	[doc buildString];
-//	
-//	NSString *iosString = [doc generatedAttributedString];
+	// our own builder
+	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
+
+	[doc buildString];
+	
+	NSAttributedString *iosString = [doc generatedAttributedString];
 	
 	// Create characters view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
@@ -111,8 +111,25 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		[dumpOutput appendFormat:@"%x %c\n", b, b];
 	}
 
+	NSDictionary *attributes = nil;
+	NSRange effectiveRange = NSMakeRange(0, 0);
+	
+		while ((attributes = [macAttributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
+		{
+			[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+			effectiveRange.location += effectiveRange.length;
+			
+			if (effectiveRange.location >= [macString length])
+			{
+				break;
+			}
+		}
+	
 	
 	NSLog(@"%@", dumpOutput);
+	
+	
+	
 //	NSLog(@"%@", iosString);
 }
 

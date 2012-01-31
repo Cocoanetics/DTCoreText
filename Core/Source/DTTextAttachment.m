@@ -11,6 +11,7 @@
 #import "CGUtils.h"
 #import "NSAttributedString+HTML.h"
 #import "NSData+DTBase64.h"
+#import "DTImage+HTML.h"
 
 @implementation DTTextAttachment
 {
@@ -71,7 +72,7 @@
 	NSString *src = [element attributeForKey:@"src"];
 	
 	NSURL *contentURL = nil;
-	UIImage *decodedImage = nil;
+	DTImage *decodedImage = nil;
 	
 	
 	// decode content URL
@@ -84,7 +85,7 @@
 			NSString *encodedData = [src substringFromIndex:range.location + range.length];
 			NSData *decodedData = [NSData dataFromBase64String:encodedData];
 			
-			decodedImage = [UIImage imageWithData:decodedData];
+			decodedImage = [[DTImage alloc] initWithData:decodedData];
 			
 			if (!displaySize.width || !displaySize.height)
 			{
@@ -126,7 +127,7 @@
 			// inspect local file
 			if ([contentURL isFileURL])
 			{
-				UIImage *image = [UIImage imageWithContentsOfFile:[contentURL path]];
+				DTImage *image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
 				originalSize = image.size;
 				
 				if (!displaySize.width || !displaySize.height)
@@ -186,12 +187,13 @@
 // makes a data URL of the image
 - (NSString *)dataURLRepresentation
 {
-	if (!contents || contentType != DTTextAttachmentTypeImage)
+	if ((contents==nil) || contentType != DTTextAttachmentTypeImage)
 	{
 		return nil;
 	}
 	
-	NSData *data = UIImagePNGRepresentation(contents);
+	DTImage *image = (DTImage *)contents;
+	NSData *data = [image dataForPNGRepresentation];
 	NSString *encoded = [data base64EncodedString];
 	
 	return [@"data:image/png;base64," stringByAppendingString:encoded];
@@ -212,7 +214,7 @@
 	{
 		if (contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
 		{
-			UIImage *image = [UIImage imageWithContentsOfFile:[_contentURL path]];
+			DTImage *image = [[DTImage alloc] initWithContentsOfFile:[_contentURL path]];
 			
 			return image;
 		}

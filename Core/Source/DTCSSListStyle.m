@@ -7,8 +7,11 @@
 //
 
 #import "DTCSSListStyle.h"
+
+#import "DTCoreTextConstants.h"
+
 #import "NSScanner+HTML.h"
-#import "NSString+HTML.h"
+//#import "NSString+HTML.h"
 
 
 
@@ -81,7 +84,7 @@
 {
 	if (!string)
 	{
-		return NSNotFound;
+		return DTCSSListStyleTypeNone;
 	}
 	
 	// always compare lower case
@@ -129,7 +132,7 @@
 	}  
 	else
 	{
-		return NSNotFound;
+		return DTCSSListStyleTypeNone;
 	}
 }
 
@@ -137,7 +140,7 @@
 {
 	if (!string)
 	{
-		return NSNotFound;
+		return DTCSSListStylePositionInherit;
 	}
 	
 	// always compare lower case
@@ -157,7 +160,7 @@
 	}		
 	else
 	{
-		return NSNotFound;
+		return DTCSSListStylePositionInherit;
 	}
 }
 

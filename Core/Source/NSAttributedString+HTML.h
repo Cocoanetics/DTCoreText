@@ -19,9 +19,6 @@
 // convenience methods
 + (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options;
 
-// utilities
-+ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes;
-
 // attachment handling
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
 

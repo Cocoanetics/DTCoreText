@@ -9,7 +9,7 @@
 #import "DTAttributedTextView.h"
 #import "DTAttributedTextContentView.h"
 
-#import "UIColor+HTML.h"
+#import "DTColor+HTML.h"
 
 @interface DTAttributedTextView ()
 
@@ -63,12 +63,12 @@
 {
 	if (!self.backgroundColor)
 	{
-		self.backgroundColor = [UIColor whiteColor];
+		self.backgroundColor = [DTColor whiteColor];
 		self.opaque = YES;
 		return;
 	}
 	
-	CGFloat alpha = [self.backgroundColor alpha];
+	CGFloat alpha = [self.backgroundColor alphaComponent];
 	
 	if (alpha < 1.0)
 	{
@@ -124,12 +124,12 @@
 	return contentView;
 }
 
-- (void)setBackgroundColor:(UIColor *)newColor
+- (void)setBackgroundColor:(DTColor *)newColor
 {
-	if ([newColor alpha]<1.0)
+	if ([newColor alphaComponent]<1.0)
 	{
 		super.backgroundColor = newColor;
-		contentView.backgroundColor = [UIColor clearColor];
+		contentView.backgroundColor = [DTColor clearColor];
 		self.opaque = NO;
 	}
 	else 
@@ -148,7 +148,7 @@
 	if (!backgroundView)
 	{
 		backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-		backgroundView.backgroundColor	= [UIColor whiteColor];
+		backgroundView.backgroundColor	= [DTColor whiteColor];
 		
 		// default is no interaction because background should have no interaction
 		backgroundView.userInteractionEnabled = NO;
@@ -156,7 +156,7 @@
 		[self insertSubview:backgroundView belowSubview:self.contentView];
 		
 		// make content transparent so that we see the background
-		contentView.backgroundColor = [UIColor clearColor];
+		contentView.backgroundColor = [DTColor clearColor];
 		contentView.opaque = NO;
 	}		
 	
@@ -175,12 +175,12 @@
 		if (backgroundView)
 		{
 			// make content transparent so that we see the background
-			contentView.backgroundColor = [UIColor clearColor];
+			contentView.backgroundColor = [DTColor clearColor];
 			contentView.opaque = NO;
 		}
 		else 
 		{
-			contentView.backgroundColor = [UIColor whiteColor];
+			contentView.backgroundColor = [DTColor whiteColor];
 			contentView.opaque = YES;
 		}
 	}

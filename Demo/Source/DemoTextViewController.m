@@ -267,7 +267,7 @@
 		
 		// we could customize the view that shows before playback starts
 		UIView *grayView = [[UIView alloc] initWithFrame:frame];
-		grayView.backgroundColor = [UIColor blackColor];
+		grayView.backgroundColor = [DTColor blackColor];
 		
 		// find a player for this URL if we already got one
 		MPMoviePlayerController *player = nil;
