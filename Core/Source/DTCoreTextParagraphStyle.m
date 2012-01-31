@@ -85,7 +85,7 @@ static dispatch_semaphore_t selfLock;
 		lineHeightMultiple = 0.0;
 		minimumLineHeight = 0.0;
 		maximumLineHeight = 0.0;
-		paragraphSpacing = 12.0;
+		paragraphSpacing = 0.0;
 		listIndent = SPECIAL_LIST_INDENT;
 	}
 	
@@ -104,7 +104,7 @@ static dispatch_semaphore_t selfLock;
 		
 		__unsafe_unretained NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
 		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
-		if(stops) {
+		{
 			self.tabStops = stops;
 		}
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paragraphSpacing), &paragraphSpacing);

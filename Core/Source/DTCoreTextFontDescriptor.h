@@ -6,10 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-
-#import <CoreText/CoreText.h>
-
-
 @interface DTCoreTextFontDescriptor : NSObject <NSCopying, NSCoding>
 
 // sets the font face name to use for a specific font family

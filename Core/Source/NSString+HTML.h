@@ -13,8 +13,6 @@
 @interface NSString (HTML)
 
 - (NSUInteger)integerValueFromHex;
-- (BOOL)isInlineTag;
-- (BOOL)isMetaTag;
 - (BOOL)isNumeric;
 - (float)percentValue;
 - (NSString *)stringByNormalizingWhitespace;
@@ -23,7 +21,6 @@
 
 - (NSString *)stringByAddingHTMLEntities;
 - (NSString *)stringByReplacingHTMLEntities;
-- (NSString *)stringByRemovingInvalidTagAttributeCharacters;
 
 // CSS
 - (NSDictionary *)dictionaryOfCSSStyles;

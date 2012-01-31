@@ -69,7 +69,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ frame=%@ %@ '%@'>", [self class], NSStringFromCGRect(self.frame), NSStringFromRange([self stringRange]), [_attributedString string]];
+	return [NSString stringWithFormat:@"<%@ origin=%@ frame=%@ %@ '%@'>", [self class], NSStringFromCGPoint(_baselineOrigin), NSStringFromCGRect(self.frame), NSStringFromRange([self stringRange]), [_attributedString string]];
 }
 
 - (NSRange)stringRange
@@ -280,10 +280,10 @@
 }
 
 // returns the maximum paragraph spacing for this line
-- (CGFloat)paragraphSpacing
+- (CGFloat)paragraphSpacing:(BOOL)zeroNonLast
 {
 	// a paragraph spacing only is effective for last line in paragraph
-	if (![[_attributedString string] hasSuffix:@"\n"])
+	if (![[_attributedString string] hasSuffix:@"\n"] && zeroNonLast)
 	{
 		return 0;
 	}
@@ -305,64 +305,80 @@
 	return retSpacing;
 }
 
+- (CGFloat)paragraphSpacing {
+	return [self paragraphSpacing:YES];
+}
 
-// returns the calculated line height
-// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
-- (CGFloat)lineHeight
+// gets the line height multiplier used in this line
+- (CGFloat)calculatedLineHeightMultiplier
 {
 	if (!_didCalculateMetrics)
 	{
 		[self calculateMetrics];
 	}
 	
-	CGFloat tmpLeading = roundf(MAX(0, leading));
+	// take lineHeightMultiple into account
+	NSRange range = NSMakeRange(0, [_attributedString length]);
+	__block float lineMultiplier = 1.;
+	[_attributedString enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+							   usingBlock:^(id value, NSRange range, BOOL *stop) {
+								   CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)value;
+								   								   
+								   CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineMultiplier), &lineMultiplier);
+																
+								   *stop = YES;
+							   }];
 	
-	CGFloat lineHeight = roundf(ascent) + roundf(descent) + leading;
-	CGFloat ascenderDelta = 0;
-	
-	if (tmpLeading > 0)
-	{
-		// we have not see a non-zero leading ever before, oh well ...
-		ascenderDelta = 0;
-	}
-	else
-	{
-		// magically add an extra 20%
-		ascenderDelta = roundf(0.2f * lineHeight);
-	}
-	
-	return lineHeight + ascenderDelta;
+
+	if (lineMultiplier == 0.) lineMultiplier = 1.;
+	return lineMultiplier;
 }
 
 
 // calculates the extra space that is before every line even though the leading is zero
+// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
 - (CGFloat)calculatedLeading
 {
-	CGFloat maxAscenderDelta = 0;
+	CGFloat maxLeading = 0;
 	
-	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	NSArray *glyphRuns = self.glyphRuns;
+	DTCoreTextGlyphRun *lastRunInLine = [glyphRuns lastObject];
+	
+	for (DTCoreTextGlyphRun *oneRun in glyphRuns)
 	{
-		CGFloat tmpLeading = roundf(MAX(0, oneRun.leading));
-
-		if (tmpLeading <= 0)
+		CGFloat runLeading = 0;
+		
+		if (oneRun.leading>0)
 		{
-			// we have not see a non-zero leading ever before, oh well ...
+			// take actual leading
+			runLeading = oneRun.leading;
+		}
+		else
+		{
+			// calculate a run leading as 20% from line height
+			
 			// for attachments the ascent equals the image height
 			// so we don't add the 20%
 			if (!oneRun.attachment)
 			{
-				CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent) + tmpLeading;
-				CGFloat ascenderDelta = roundf(0.2f * lineHeight);
-				
-				if (ascenderDelta > maxAscenderDelta)
+				if (oneRun == lastRunInLine && (oneRun.width==self.trailingWhitespaceWidth))
 				{
-					maxAscenderDelta = ascenderDelta;
+					// a whitespace glyph, e.g. \n
+				}
+				else
+				{
+					// calculate a leading as 20% of the line height
+					CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent);
+					runLeading = roundf(0.2f * lineHeight);
 				}
 			}
 		}
+
+		// remember the max
+		maxLeading = MAX(maxLeading, runLeading);
 	}
 	
-	return maxAscenderDelta;
+	return maxLeading;
 }
 
 #pragma mark Properties
@@ -372,6 +388,7 @@
 	{
 		CFArrayRef runs = CTLineGetGlyphRuns(_line);
 		
+        if (runs) {
 		CGFloat offset = 0;
 		
 		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(runs)];
@@ -387,6 +404,7 @@
 		}
 		
 		_glyphRuns = tmpArray;
+        }
 	}
 	
 	return _glyphRuns;
@@ -440,6 +458,16 @@
 	}
 	
 	return leading;
+}
+
+- (CGFloat)trailingWhitespaceWidth
+{
+	if (!_didCalculateMetrics)
+	{
+		[self calculateMetrics];
+	}
+	
+	return trailingWhitespaceWidth;
 }
 
 

@@ -12,41 +12,6 @@
 
 @implementation NSScanner (HTML)
 
-- (NSString *)peekNextTagSkippingClosingTags:(BOOL)skipClosingTags
-{
-	NSScanner *scanner = [self copy];
-	
-	do
-	{
-		NSString *textUpToNextTag = nil;
-		
-		if ([scanner scanUpToString:@"<" intoString:&textUpToNextTag])
-		{
-			// Check if there are alpha chars after the end tag
-			NSScanner *subScanner = [NSScanner scannerWithString:textUpToNextTag];
-			[subScanner scanUpToString:@">" intoString:NULL];
-			[subScanner scanString:@">" intoString:NULL];
-			
-			// Rest might be alpha
-			NSString *rest = [[textUpToNextTag substringFromIndex:subScanner.scanLocation] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			
-			// We don't want a newline in this case so we send back any inline character
-			if ([rest length])
-			{
-				return @"b";
-			}
-		}
-		
-		[scanner scanString:@"<" intoString:NULL];
-	} while (skipClosingTags&&[scanner scanString:@"/" intoString:NULL]);
-	
-	NSString *nextTag = nil;
-	
-	[scanner scanCharactersFromSet:[NSCharacterSet tagNameCharacterSet] intoString:&nextTag];
-	
-	return [nextTag lowercaseString];
-}
-
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
 {
 	NSInteger initialScanLocation = [self scanLocation];

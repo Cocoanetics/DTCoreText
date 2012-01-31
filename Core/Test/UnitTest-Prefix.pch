@@ -6,4 +6,5 @@
 	#import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
 	#import <SenTestingKit/SenTestingKit.h>
+	#import <CoreText/CoreText.h>
 #endif
