@@ -267,6 +267,9 @@
 		A7F5672F14D8514E00D1F167 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
 		A7F5673014D8539A00D1F167 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94914863E8700E1AFD9 /* NSString+HTML.m */; };
 		A7F5673114D853BF00D1F167 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
+		A7F5673E14D8744600D1F167 /* DTColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+HTML.m */; };
+		A7F5673F14D8744600D1F167 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
+		A7F5674014D8755300D1F167 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 /* End PBXBuildFile section */
 
@@ -1265,6 +1268,9 @@
 				A7F5672F14D8514E00D1F167 /* NSCharacterSet+HTML.m in Sources */,
 				A7F5673014D8539A00D1F167 /* NSString+HTML.m in Sources */,
 				A7F5673114D853BF00D1F167 /* NSMutableAttributedString+HTML.m in Sources */,
+				A7F5673E14D8744600D1F167 /* DTColor+HTML.m in Sources */,
+				A7F5673F14D8744600D1F167 /* DTImage+HTML.m in Sources */,
+				A7F5674014D8755300D1F167 /* NSData+DTBase64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

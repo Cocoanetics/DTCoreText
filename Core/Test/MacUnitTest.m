@@ -45,11 +45,18 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		
 		NSString *testFile = nil;
 		while ((testFile = [enumerator nextObject]) != nil) {
-			if (![testFile hasSuffix:@"CurrentTest.html"])
+			if (![testFile hasSuffix:@".html"])
 			{
 				// ignore other files, e.g. custom parameters in plist
 				continue;
 			}
+			
+			if ([testFile hasSuffix:@"WarAndPeace.html"])
+			{
+				// too large, skip that
+				continue;
+			}
+			
 			NSString *path = [testcasePath stringByAppendingPathComponent:testFile];
 			NSURL *URL = [NSURL fileURLWithPath:path];
 			
@@ -98,8 +105,10 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	[doc buildString];
 	
-	NSAttributedString *iosString = [doc generatedAttributedString];
+	NSAttributedString *iosAttributedString = [doc generatedAttributedString];
+	NSString *iosString = [iosAttributedString string];
 	
+/*	
 	// Create characters view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
 	NSData *dump = [macString dataUsingEncoding:NSUTF8StringEncoding];
@@ -124,13 +133,12 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				break;
 			}
 		}
+	*/
 	
-	
-	NSLog(@"%@", dumpOutput);
-	
-	
-	
-//	NSLog(@"%@", iosString);
+	//NSLog(@"%@", dumpOutput);
+
+	STAssertEquals(macString, iosString, @"String differs");
+
 }
 
 @end

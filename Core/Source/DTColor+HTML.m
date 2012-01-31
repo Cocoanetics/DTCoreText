@@ -478,6 +478,18 @@ static NSDictionary *colorLookup = nil;
 	return [NSColor colorWithHexString:hexString];
 }
 
+- (NSString *)htmlHexString
+{
+	CGFloat red = self.redComponent;
+	CGFloat blue = self.blueComponent;
+	CGFloat green = self.greenComponent;
+	
+	static NSString *stringFormat = @"%02x%02x%02x";
+
+	return [NSString stringWithFormat:stringFormat, (NSUInteger)(red * (CGFloat)255),
+				  (NSUInteger)(green * (CGFloat)255), (NSUInteger)(blue * (CGFloat)255)];
+}
+
 // pass through
 - (NSColor *)CGColor
 {
