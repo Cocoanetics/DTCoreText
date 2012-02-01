@@ -101,7 +101,7 @@
 				// check if valid type
 				listStyleType = [DTCSSListStyle listStyleTypeFromString:oneComponent];
 				
-				if (listStyleType != NSNotFound)
+				if (listStyleType != DTCSSListStyleTypeInvalid)
 				{
 					[styles setObject:oneComponent forKey:@"list-style-type"];
 					
@@ -115,7 +115,7 @@
 				// check if valid position
 				listStylePosition = [DTCSSListStyle listStylePositionFromString:oneComponent];
 				
-				if (listStylePosition != NSNotFound)
+				if (listStylePosition != DTCSSListStylePositionInvalid)
 				{
 					[styles setObject:oneComponent forKey:@"list-style-position"];
 

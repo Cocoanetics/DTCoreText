@@ -84,7 +84,7 @@
 {
 	if (!string)
 	{
-		return DTCSSListStyleTypeNone;
+		return DTCSSListStyleTypeInvalid;
 	}
 	
 	// always compare lower case
@@ -140,7 +140,7 @@
 {
 	if (!string)
 	{
-		return DTCSSListStylePositionInherit;
+		return DTCSSListStylePositionInvalid;
 	}
 	
 	// always compare lower case
@@ -168,13 +168,13 @@
 - (BOOL)setTypeWithString:(NSString *)string
 {
 	DTCSSListStyleType type = [DTCSSListStyle listStyleTypeFromString:string];
-	
-	if (type == NSNotFound)
+	if (type == DTCSSListStyleTypeInvalid)
 	{
 		return NO;
 	}
 
 	_type = type;
+	
 	return YES;
 }
 
@@ -183,7 +183,7 @@
 {
 	DTCSSListStylePosition position = [DTCSSListStyle listStylePositionFromString:string];
 	
-	if (position == NSNotFound)
+	if (position == DTCSSListStylePositionInvalid)
 	{
 		return NO;
 	}
@@ -297,6 +297,7 @@
 	{
 		case DTCSSListStyleTypeNone:
 		case DTCSSListStyleTypeInherit:  // should never be called with inherit
+		case DTCSSListStyleTypeInvalid:  
 		{
 			return nil;
 		}
