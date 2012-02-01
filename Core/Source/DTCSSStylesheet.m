@@ -10,8 +10,8 @@
 #import "DTCSSListStyle.h"
 
 #import "DTHTMLElement.h"
-#import "NSString+HTML.h"
 #import "NSScanner+HTML.h"
+#import "NSString+CSS.h"
 
 
 @interface DTCSSStylesheet ()
@@ -78,8 +78,8 @@
 		BOOL typeWasSet = NO;
 		BOOL positionWasSet = NO;
 		
-		DTCSSListStyleType listStyleType = NSNotFound;
-		DTCSSListStylePosition listStylePosition = NSNotFound;
+		DTCSSListStyleType listStyleType = DTCSSListStyleTypeNone;
+		DTCSSListStylePosition listStylePosition = DTCSSListStylePositionInherit;
 		
 		for (NSString *oneComponent in components)
 		{
@@ -101,7 +101,7 @@
 				// check if valid type
 				listStyleType = [DTCSSListStyle listStyleTypeFromString:oneComponent];
 				
-				if (listStyleType != NSNotFound)
+				if (listStyleType != DTCSSListStyleTypeInvalid)
 				{
 					[styles setObject:oneComponent forKey:@"list-style-type"];
 					
@@ -115,7 +115,7 @@
 				// check if valid position
 				listStylePosition = [DTCSSListStyle listStylePositionFromString:oneComponent];
 				
-				if (listStylePosition != NSNotFound)
+				if (listStylePosition != DTCSSListStylePositionInvalid)
 				{
 					[styles setObject:oneComponent forKey:@"list-style-position"];
 
@@ -164,11 +164,11 @@
 
 - (void)parseStyleBlock:(NSString*)css
 {
-	int braceLevel = 0, braceMarker = 0;
+	NSUInteger braceLevel = 0, braceMarker = 0;
 	
 	NSString* selector;
 	
-	for (int i = 0, l = [css length]; i < l; i++) {
+	for (NSUInteger i = 0, l = [css length]; i < l; i++) {
 		
 		unichar c = [css characterAtIndex:i];
 		

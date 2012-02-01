@@ -9,15 +9,22 @@
 #import "DTHTMLElement.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFontDescriptor.h"
-#import "NSAttributedStringRunDelegates.h"
 #import "NSString+HTML.h"
-#import "UIColor+HTML.h"
+#import "DTColor+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "DTTextAttachment.h"
 #import "NSAttributedString+HTML.h"
 #import "NSMutableAttributedString+HTML.h"
 
 #import "DTCSSListStyle.h"
+
+#import "DTCoreTextConstants.h"
+#import "DTImage+HTML.h"
+#import "DTColor+HTML.h"
+
+#if TARGET_OS_IPHONE
+#import "NSAttributedStringRunDelegates.h"
+#endif
 
 @interface DTHTMLElement ()
 
@@ -38,8 +45,8 @@
 	DTTextAttachment *textAttachment;
 	NSURL *link;
 	
-	UIColor *_textColor;
-	UIColor *backgroundColor;
+	DTColor *_textColor;
+	DTColor *backgroundColor;
 	
 	CTUnderlineStyle underlineStyle;
 	
@@ -105,11 +112,12 @@
 	// add text attachment
 	if (textAttachment)
 	{
-		// need run delegate for sizing
+#if TARGET_OS_IPHONE
+		// need run delegate for sizing (only supported on iOS)
 		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(textAttachment);
 		[tmpDict setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
-		//CFRelease(embeddedObjectRunDelegate);
-		
+#endif		
+	
 		// add attachment
 		[tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
 		
@@ -126,7 +134,7 @@
 	if (shouldAddFont)
 	{
 		// try font cache first
-		NSNumber *key = [NSNumber numberWithInt:[fontDescriptor hash]];
+		NSNumber *key = [NSNumber numberWithUnsignedInteger:[fontDescriptor hash]];
 		CTFontRef font = (__bridge CTFontRef)[self.fontCache objectForKey:key];
 		
 		if (!font)
@@ -167,7 +175,7 @@
 		[tmpDict setObject:[NSNumber numberWithInteger:underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
 		
 		// we could set an underline color as well if we wanted, but not supported by HTML
-		//      [attributes setObject:(id)[UIColor redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
+		//      [attributes setObject:(id)[DTImage redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
 	}
 	
 	if (_textColor)
@@ -182,7 +190,7 @@
 	
 	if (superscriptStyle)
 	{
-		[tmpDict setObject:(id)[NSNumber numberWithInt:superscriptStyle] forKey:(id)kCTSuperscriptAttributeName];
+		[tmpDict setObject:(id)[NSNumber numberWithInteger:superscriptStyle] forKey:(id)kCTSuperscriptAttributeName];
 	}
 	
 	// add paragraph style
@@ -290,11 +298,11 @@
 	
 	if (prefix)
 	{
-		UIImage *image = nil;
+		DTImage *image = nil;
 		
 		if (calculatedListStyle.imageName)
 		{
-			image = [UIImage imageNamed:calculatedListStyle.imageName];
+			image = [DTImage imageNamed:calculatedListStyle.imageName];
 			
 			if (!image)
 			{
@@ -316,10 +324,11 @@
 			attachment.contentType = DTTextAttachmentTypeImage;
 			attachment.displaySize = image.size;
 			
+#if TARGET_OS_IPHONE
 			// need run delegate for sizing
 			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 			[attributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
-			//CFRelease(embeddedObjectRunDelegate);
+#endif
 			
 			// add attachment
 			[attributes setObject:attachment forKey:@"DTTextAttachment"];				
@@ -402,13 +411,13 @@
 	NSString *color = [styles objectForKey:@"color"];
 	if (color)
 	{
-		self.textColor = [UIColor colorWithHTMLName:color];       
+		self.textColor = [DTColor colorWithHTMLName:color];       
 	}
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];
 	if (bgColor)
 	{
-		self.backgroundColor = [UIColor colorWithHTMLName:bgColor];       
+		self.backgroundColor = [DTColor colorWithHTMLName:bgColor];       
 	}
 	
 	NSString *floatString = [styles objectForKey:@"float"];
@@ -878,7 +887,7 @@
 	return _fontCache;
 }
 
-- (void)setTextColor:(UIColor *)textColor
+- (void)setTextColor:(DTColor *)textColor
 {
 	if (_textColor != textColor)
 	{

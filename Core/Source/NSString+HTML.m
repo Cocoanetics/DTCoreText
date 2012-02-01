@@ -7,14 +7,11 @@
 //
 
 #import "NSString+HTML.h"
-#import "NSScanner+HTML.h"
-#import "UIColor+HTML.h"
-#import "NSCharacterSet+HTML.h"
+#import "DTCoreText.h"
+
 
 static NSDictionary *entityLookup = nil;
 static NSDictionary *entityReverseLookup = nil;
-
-#define IS_WHITESPACE(_c) (_c == ' ' || _c == '\t' || _c == 0xA || _c == 0xB || _c == 0xC || _c == 0xD || _c == 0x85)
 
 @implementation NSString (HTML)
 
@@ -245,28 +242,42 @@ static NSDictionary *entityReverseLookup = nil;
 									  @"&Psi;", [NSNumber numberWithInteger:0x03a8],
 									  @"&Omega;", [NSNumber numberWithInteger:0x03a9],
 									  @"&alpha;", [NSNumber numberWithInteger:0x03b1],
+									  @"&Alpha;", [NSNumber numberWithInteger:0x0391],
 									  @"&beta;", [NSNumber numberWithInteger:0x03b2],
+									  @"&Beta;", [NSNumber numberWithInteger:0x0392],
 									  @"&gamma;", [NSNumber numberWithInteger:0x03b3],
 									  @"&delta;", [NSNumber numberWithInteger:0x03b4],
 									  @"&epsilon;", [NSNumber numberWithInteger:0x03b5],
+									  @"&Epsilon;", [NSNumber numberWithInteger:0x0395],
 									  @"&zeta;", [NSNumber numberWithInteger:0x03b6],
+									  @"&Zeta;", [NSNumber numberWithInteger:0x0396],
 									  @"&eta;", [NSNumber numberWithInteger:0x03b7],
+									  @"&Eta;", [NSNumber numberWithInteger:0x0397],
 									  @"&theta;", [NSNumber numberWithInteger:0x03b8],
 									  @"&iota;", [NSNumber numberWithInteger:0x03b9],
+									  @"&Iota;", [NSNumber numberWithInteger:0x0399],
 									  @"&kappa;", [NSNumber numberWithInteger:0x03ba],
+									  @"&Kappa;", [NSNumber numberWithInteger:0x039a],
 									  @"&lambda;", [NSNumber numberWithInteger:0x03bb],
 									  @"&mu;", [NSNumber numberWithInteger:0x03bc],
+									  @"&Mu;", [NSNumber numberWithInteger:0x039c],
 									  @"&nu;", [NSNumber numberWithInteger:0x03bd],
+									  @"&Nu;", [NSNumber numberWithInteger:0x039d],
 									  @"&xi;", [NSNumber numberWithInteger:0x03be],
 									  @"&omicron;", [NSNumber numberWithInteger:0x03bf],
+									  @"&Omicron;", [NSNumber numberWithInteger:0x039f],
 									  @"&pi;", [NSNumber numberWithInteger:0x03c0],
+									  @"&Pi;", [NSNumber numberWithInteger:0x03a0],
 									  @"&rho;", [NSNumber numberWithInteger:0x03c1],
+									  @"&Rho;", [NSNumber numberWithInteger:0x03a1],
 									  @"&sigmaf;", [NSNumber numberWithInteger:0x03c2],
 									  @"&sigma;", [NSNumber numberWithInteger:0x03c3],
 									  @"&tau;", [NSNumber numberWithInteger:0x03c4],
+									  @"&Tau;", [NSNumber numberWithInteger:0x03a4],
 									  @"&upsilon;", [NSNumber numberWithInteger:0x03c5],
 									  @"&phi;", [NSNumber numberWithInteger:0x03c6],
 									  @"&chi;", [NSNumber numberWithInteger:0x03c7],
+									  @"&Chi;", [NSNumber numberWithInteger:0x03a7],
 									  @"&psi;", [NSNumber numberWithInteger:0x03c8],
 									  @"&omega;", [NSNumber numberWithInteger:0x03c9],
 									  @"&thetasym;", [NSNumber numberWithInteger:0x03d1],
@@ -517,28 +528,42 @@ static NSDictionary *entityReverseLookup = nil;
 							 @"\u03a8", @"Psi",
 							 @"\u03a9", @"Omega",
 							 @"\u03b1", @"alpha",
+							 @"\u0391", @"Alpha",
 							 @"\u03b2", @"beta",
+							 @"\u0392", @"Beta",
 							 @"\u03b3", @"gamma",
 							 @"\u03b4", @"delta",
 							 @"\u03b5", @"epsilon",
+							 @"\u0395", @"Epsilon",
 							 @"\u03b6", @"zeta",
+							 @"\u0396", @"Zeta",
 							 @"\u03b7", @"eta",
+							 @"\u0397", @"Eta",
 							 @"\u03b8", @"theta",
 							 @"\u03b9", @"iota",
+							 @"\u0399", @"Iota",
 							 @"\u03ba", @"kappa",
+							 @"\u039a", @"Kappa",
 							 @"\u03bb", @"lambda",
 							 @"\u03bc", @"mu",
+							 @"\u039c", @"Mu",
 							 @"\u03bd", @"nu",
+							 @"\u039d", @"Nu",
 							 @"\u03be", @"xi",
 							 @"\u03bf", @"omicron",
+							 @"\u039f", @"Omicron",
 							 @"\u03c0", @"pi",
+							 @"\u03a0", @"Pi",
 							 @"\u03c1", @"rho",
+							 @"\u03a1", @"Rho",
 							 @"\u03c2", @"sigmaf",
 							 @"\u03c3", @"sigma",
 							 @"\u03c4", @"tau",
+							 @"\u03a4", @"Tau",
 							 @"\u03c5", @"upsilon",
 							 @"\u03c6", @"phi",
 							 @"\u03c7", @"chi",
+							 @"\u03a7", @"Chi",
 							 @"\u03c8", @"psi",
 							 @"\u03c9", @"omega",
 							 @"\u03d1", @"thetasym",
@@ -693,218 +718,6 @@ static NSDictionary *entityReverseLookup = nil;
 	
 	
 	return [NSString stringWithString:output];
-}
-
-#pragma mark CSS
-
-- (NSDictionary *)dictionaryOfCSSStyles
-{
-	// font-size:14px;
-	NSScanner *scanner = [NSScanner scannerWithString:self];
-	
-	NSString *name = nil;
-	NSString *value = nil;
-	
-	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
-	
-	while ([scanner scanCSSAttribute:&name value:&value]) 
-	{
-		[tmpDict setObject:value forKey:name];
-	}
-	
-	// converting to non-mutable costs 37.5% of method	
-	//	return [NSDictionary dictionaryWithDictionary:tmpDict];
-	return tmpDict;
-}
-
-- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize
-{
-	NSUInteger stringLength = [self length];
-	unichar *_characters = calloc(stringLength, sizeof(unichar));
-	[self getCharacters:_characters range:NSMakeRange(0, stringLength)];
-	
-	CGFloat value = 0;
-	
-	BOOL commaSeen = NO;
-	NSUInteger digitsPastComma = 0;
-	
-	NSUInteger i=0;
-	
-	for (; i<stringLength; i++)
-	{
-		unichar ch = _characters[i];
-		
-		if (ch>='0' && ch<='9')
-		{
-			float digit = (float)(ch-'0');
-			value *= 10.0f;
-			value += digit;
-			
-			if (commaSeen)
-			{
-				digitsPastComma++;
-			}
-		}
-		else if (ch=='.')
-		{
-			commaSeen = YES;
-		}
-		else
-		{
-			// non-numeric character
-			break;
-		}
-	}
-	
-	if (commaSeen)
-	{
-		value /= powf(10.0f, digitsPastComma);
-	}
-	
-	// skip whitespace
-	while (i<stringLength && IS_WHITESPACE(_characters[i])) 
-	{
-		i++;
-	}
-	
-	if (i<stringLength)
-	{
-		unichar ch = _characters[i++];
-		
-		if (ch == '%')
-		{
-			// percent value
-			value *= textSize / 100.0f;
-		}
-		else if (ch == 'e')
-		{
-			if (i<stringLength)
-			{
-				if (_characters[i] == 'm')
-				{
-					// em value
-					value *= textSize;
-				}
-			}
-		}
-	}
-	
-	free(_characters);
-	return value;
-}
-
-- (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(UIColor *)color
-{
-	NSArray *shadows = [self componentsSeparatedByString:@","];
-	
-	NSMutableArray *tmpArray = [NSMutableArray array];
-	
-	for (NSString *oneShadow in shadows)
-	{
-		NSScanner *scanner = [NSScanner scannerWithString:oneShadow];
-		
-		
-		NSString *element = nil;
-		
-		if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&element])
-		{
-			// check if first element is a color
-			
-			UIColor *shadowColor = [UIColor colorWithHTMLName:element];
-			
-			NSString *offsetXString = nil;
-			NSString *offsetYString = nil;
-			NSString *blurString = nil;
-			NSString *colorString = nil;
-			
-			if (shadowColor)
-			{
-				// format: <color> <length> <length> <length>?
-				
-				if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetXString])
-				{
-					if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetYString])
-					{
-						// blur is optional
-						[scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&blurString];
-						
-						
-						CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						CGSize offset = CGSizeMake(offset_x, offset_y);
-						CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						
-						NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
-															 [NSNumber numberWithFloat:blur], @"Blur",
-															 shadowColor, @"Color", nil];
-						
-						[tmpArray addObject:shadowDict];
-					}
-				}
-			}
-			else 
-			{
-				// format: <length> <length> <length>? <color>?
-				
-				offsetXString = element;
-				
-				if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetYString])
-				{
-					// blur is optional
-					if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&blurString])
-					{
-						// check if it's a color
-						shadowColor = [UIColor colorWithHTMLName:blurString];
-						
-						if (shadowColor)
-						{
-							blurString = nil;
-						}
-					}
-					
-					// color is optional, or we might already have one from the blur position
-					if (!shadowColor && [scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&colorString])
-					{
-						shadowColor = [UIColor colorWithHTMLName:colorString];
-					}
-					
-					// if we still don't have a color, it's the current color attributed
-					if (!shadowColor) 
-					{
-						// color is same as color attribute of style
-						shadowColor = color;
-					}
-					
-					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-					CGSize offset = CGSizeMake(offset_x, offset_y);
-					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-					
-					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
-														 shadowColor, @"Color", nil];
-					
-					[tmpArray addObject:shadowDict];
-					
-					
-				}
-				
-			}
-		}
-	}		
-	
-	
-	return [NSArray arrayWithArray:tmpArray];
-}
-
-- (CGFloat)CSSpixelSize
-{
-	if ([self hasSuffix:@"px"])
-	{
-		return [self floatValue];
-	}
-	
-	return [self floatValue];
 }
 
 #pragma mark Utility

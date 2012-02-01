@@ -8,15 +8,25 @@
 
 #import "NSAttributedStringHTMLTest.h"
 #import "NSAttributedString+HTML.h"
+#import "DTHTMLAttributedStringBuilder.h"
 
 @implementation NSAttributedStringHTMLTest
+
+- (NSAttributedString *)attributedStringFromHTML:(NSString *)html
+{
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	DTHTMLAttributedStringBuilder	*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+
+	[stringBuilder buildString];
+	
+	return [stringBuilder generatedAttributedString];
+}
 
 - (void)testParagraphs
 {
 	NSString *html = @"Prefix<p>One\ntwo\n<br>three</p><p>New Paragraph</p>Suffix";
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -29,9 +39,8 @@
 - (void)testHeaderParagraphs
 {
 	NSString *html = @"Prefix<h1>One</h1><h2>One</h2><h3>One</h3><h4>One</h4><h5>One</h5><p>New Paragraph</p>Suffix";
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -44,10 +53,8 @@
 - (void)testListParagraphs
 {
 	NSString *html = @"<p>Before</p><ul><li>One</li><li>Two</li></ul><p>After</p>";	
+	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -59,10 +66,8 @@
 - (void)testImageParagraphs
 {
 	NSString *html = @"<p>Before</p><img src=\"Oliver.jpg\"><h1>Header</h2><p>after</p><p>Some inline <img src=\"Oliver.jpg\"> text.</p>";	
-	
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
+
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -74,10 +79,8 @@
 - (void)testSpaceNormalization
 {
 	NSString *html = @"<p>Now there is some <b>bold</b>\ntext and  spaces\n    should be normalized.</p>";	
-	
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
+
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -89,10 +92,8 @@
 - (void)testSpaceAndNewlines
 {
 	NSString *html = @"<a>bla</a>\nfollows\n<font color=\"blue\">NSString</font> <font color=\"purple\">*</font>str <font color=\"#000000\">=</font> @<font color=\"#E40000\">\"The Quick Brown Fox Brown\"</font>;";
-	
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
+
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -104,10 +105,8 @@
 - (void)testMissingClosingTagAndSpacing
 {
 	NSString *html = @"<div> image \n <a href=\"http://sv.wikipedia.org/wiki/Fil:V%C3%A4dersoltavlan_cropped.JPG\"\n late</a> last</div>";
-	
-	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTML:data documentAttributes:NULL];
+	NSAttributedString *string = [self attributedStringFromHTML:html];
+
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *resultOnIOS = [dump description];
 	
@@ -116,8 +115,5 @@
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
 	
 }
-
-
-
 
 @end

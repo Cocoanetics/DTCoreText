@@ -8,7 +8,7 @@
 
 #import "DTLinkButton.h"
 #import "CGUtils.h"
-#import "UIColor+HTML.h"
+#import "DTColor+HTML.h"
 
 @interface DTLinkButton ()
 

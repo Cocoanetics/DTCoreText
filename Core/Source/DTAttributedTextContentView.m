@@ -12,7 +12,7 @@
 
 #import "DTTextAttachment.h"
 #import "NSString+HTML.h"
-#import "UIColor+HTML.h"
+#import "DTColor+HTML.h"
 
 #import "DTLinkButton.h"
 
@@ -104,7 +104,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// possibly already set in NIB
 	if (!self.backgroundColor)
 	{
-		self.backgroundColor = [UIColor whiteColor];
+		self.backgroundColor = [DTColor whiteColor];
 	}
 	
 	// set tile size if applicable
@@ -596,11 +596,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
-- (void)setBackgroundColor:(UIColor *)newColor
+- (void)setBackgroundColor:(DTColor *)newColor
 {
 	super.backgroundColor = newColor;
 	
-	if ([newColor alpha]<1.0)
+	if ([newColor alphaComponent]<1.0)
 	{
 		self.opaque = NO;
 	}

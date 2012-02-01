@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 typedef enum
 {
     DTCSSListStyleTypeInherit = 0,
@@ -20,14 +22,16 @@ typedef enum
     DTCSSListStyleTypeLowerLatin,
     DTCSSListStyleTypePlus,
     DTCSSListStyleTypeUnderscore,
-	DTCSSListStyleTypeImage
+	DTCSSListStyleTypeImage, 
+	DTCSSListStyleTypeInvalid = NSIntegerMax
 } DTCSSListStyleType;
 
 typedef enum
 {
 	DTCSSListStylePositionInherit = 0,
 	DTCSSListStylePositionInside,
-	DTCSSListStylePositionOutside
+	DTCSSListStylePositionOutside,
+	DTCSSListStylePositionInvalid = NSIntegerMax
 } DTCSSListStylePosition;
 
 @interface DTCSSListStyle : NSObject

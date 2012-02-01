@@ -8,6 +8,7 @@
 
 #import "DTAttributedTextCell.h"
 #import "DTAttributedTextContentView.h"
+#import "DTColor+HTML.h"
 
 @implementation DTAttributedTextCell
 {
@@ -54,7 +55,7 @@
 	if (tableView.style == UITableViewStyleGrouped)
 	{
 		// need no background because otherwise this would overlap the rounded corners
-		_attributedTextContextView.backgroundColor = [UIColor clearColor];
+		_attributedTextContextView.backgroundColor = [DTColor clearColor];
 	}
 	
 	[super willMoveToSuperview:newSuperview];

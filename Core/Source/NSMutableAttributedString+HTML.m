@@ -8,11 +8,7 @@
 
 #import "NSMutableAttributedString+HTML.h"
 
-#import <CoreText/CoreText.h>
-#import "DTCoreTextParagraphStyle.h"
-
-//#import "DTRangedAttributesOptimizer.h"
-
+#import "DTCoreText.h"
 
 @implementation NSMutableAttributedString (HTML)
 

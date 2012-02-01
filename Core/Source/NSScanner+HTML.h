@@ -16,3 +16,4 @@
 - (void)logPosition;
 
 @end
+

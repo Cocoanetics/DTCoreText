@@ -6,12 +6,14 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-
+#import "DTCoreText.h"
+#import "DTColor+HTML.h"
 
 @class DTCoreTextParagraphStyle;
 @class DTCoreTextFontDescriptor;
 @class DTTextAttachment;
 @class DTCSSListStyle;
+
 
 typedef enum
 {
@@ -42,8 +44,8 @@ typedef enum
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
 @property (nonatomic, strong) DTTextAttachment *textAttachment;
 @property (nonatomic, copy) NSURL *link;
-@property (nonatomic, strong) UIColor *textColor;
-@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) DTColor *textColor;
+@property (nonatomic, strong) DTColor *backgroundColor;
 @property (nonatomic, copy) NSString *tagName;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSArray *shadows;

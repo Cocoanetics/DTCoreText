@@ -1,5 +1,5 @@
 //
-//  DTHTMLDocument.m
+//  DTHTMLAttributedStringBuilder.m
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 21.01.12.
@@ -7,21 +7,19 @@
 //
 
 #import "DTHTMLAttributedStringBuilder.h"
-#import "DTHTMLParser.h"
-
-#import "NSString+UTF8Cleaner.h"
-#import "NSString+HTML.h"
-#import "UIColor+HTML.h"
-#import "DTCSSStylesheet.h"
 
 #import "DTCoreTextConstants.h"
-
+#import "DTCSSStylesheet.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
-#import "DTHTMLElement.h"
-#import "DTTextAttachment.h"
 
-#import "NSMutableAttributedString+HTML.h"
+#import "DTColor+HTML.h"
+#import "DTImage+HTML.h"
+
+#import "NSString+HTML.h"
+#import "NSString+CSS.h"
+#import "NSMutableString+HTML.h"
+
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -38,7 +36,7 @@
 	
 	// settings for parsing
 	CGFloat textScale;
-	UIColor *defaultLinkColor;
+	DTColor *defaultLinkColor;
 	DTCSSStylesheet *_globalStyleSheet;
 	NSURL *baseURL;
 	DTCoreTextFontDescriptor *defaultFontDescriptor;
@@ -224,10 +222,10 @@
 		if ([defaultLinkColor isKindOfClass:[NSString class]])
 		{
 			// convert from string to color
-			defaultLinkColor = [UIColor colorWithHTMLName:(NSString *)defaultLinkColor];
+			defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkColor];
 		}
 		
-		// get hex code for the passed color
+		// get hex code for t   he passed color
 		NSString *colorHex = [defaultLinkColor htmlHexString];
 		
 		// overwrite the style
@@ -291,15 +289,15 @@
 	id defaultColor = [_options objectForKey:DTDefaultTextColor];
 	if (defaultColor)
 	{
-		if ([defaultColor isKindOfClass:[UIColor class]])
+		if ([defaultColor isKindOfClass:[DTImage class]])
 		{
-			// already a UIColor
+			// already a DTColor
 			defaultTag.textColor = defaultColor;
 		}
 		else
 		{
 			// need to convert first
-			defaultTag.textColor = [UIColor colorWithHTMLName:defaultColor];
+			defaultTag.textColor = [DTColor colorWithHTMLName:defaultColor];
 		}
 	}
 	
@@ -333,7 +331,8 @@
 	
 	void (^imgBlock)(void) = ^ 
 	{
-		if (![currentTag.parent.tagName isEqualToString:@"p"])
+		// float causes the image to be its own block
+		if (currentTag.floatStyle != DTHTMLElementFloatStyleNone)
 		{
 			currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
 		}
@@ -381,10 +380,10 @@
 		[tmpString appendAttributedString:[currentTag attributedString]];	
 		outputHasNewline = NO;
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
-		{
-			needsNewLineBefore = YES;
-		}
+//		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+//		{
+//			needsNewLineBefore = YES;
+//		}
 	};
 	
 	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
@@ -643,7 +642,7 @@
 		
 		if (color)
 		{
-			currentTag.textColor = [UIColor colorWithHTMLName:color];       
+			currentTag.textColor = [DTColor colorWithHTMLName:color];       
 		}
 	};
 	
@@ -681,7 +680,7 @@
 		{
 			if ([tmpString length] && !outputHasNewline)
 			{
-				[tmpString appendNakedString:@"\n"];
+				[tmpString appendString:@"\n"];
 				outputHasNewline = YES;
 			}
 			
@@ -917,6 +916,12 @@
 	{
 		if (_currentTagContents)
 		{
+			// trim off white space at end if block
+			if (currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+			{
+				[_currentTagContents removeWhitespaceSuffix];
+			}
+			
 			[self _flushCurrentTagContent:_currentTagContents];
 		}
 		

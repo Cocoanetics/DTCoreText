@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 Drobnik.com. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 
 
 @class DTHTMLElement;

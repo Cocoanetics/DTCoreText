@@ -15,6 +15,9 @@
 #import "UIDevice+DTVersion.h"
 
 #import "NSString+Paragraphs.h"
+#import "DTColor+HTML.h"
+#import "DTImage+HTML.h"
+
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -230,7 +233,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
 {
-	UIColor *color = [dictionary objectForKey:@"Color"];
+	DTColor *color = [dictionary objectForKey:@"Color"];
 	CGSize offset = [[dictionary objectForKey:@"Offset"] CGSizeValue];
 	CGFloat blur = [[dictionary objectForKey:@"Blur"] floatValue];
 	
@@ -491,7 +494,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					{
 						if (attachment.contentType == DTTextAttachmentTypeImage)
 						{
-							UIImage *image = (id)attachment.contents;
+							DTImage *image = (id)attachment.contents;
 							
 							CGPoint origin = oneRun.frame.origin;
 							origin.y = self.frame.size.height - origin.y - oneRun.ascent;

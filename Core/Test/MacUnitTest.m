@@ -45,11 +45,18 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		
 		NSString *testFile = nil;
 		while ((testFile = [enumerator nextObject]) != nil) {
-			if (![testFile hasSuffix:@"CurrentTest.html"])
+			if (![testFile hasSuffix:@".html"])
 			{
 				// ignore other files, e.g. custom parameters in plist
 				continue;
 			}
+			
+			if ([testFile hasSuffix:@"WarAndPeace.html"])
+			{
+				// too large, skip that
+				continue;
+			}
+			
 			NSString *path = [testcasePath stringByAppendingPathComponent:testFile];
 			NSURL *URL = [NSURL fileURLWithPath:path];
 			
@@ -93,13 +100,18 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	NSString *macString = [macAttributedString string];
 
-//	// our own builder
-//	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
-//
-//	[doc buildString];
-//	
-//	NSString *iosString = [doc generatedAttributedString];
+	// our own builder
+	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
+
+	[doc buildString];
 	
+	NSAttributedString *iosAttributedString = [doc generatedAttributedString];
+	NSString *iosString = [iosAttributedString string];
+	
+	
+	
+	/*
+
 	// Create characters view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
 	NSData *dump = [macString dataUsingEncoding:NSUTF8StringEncoding];
@@ -110,10 +122,39 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		
 		[dumpOutput appendFormat:@"%x %c\n", b, b];
 	}
+	
+	dump = [iosString dataUsingEncoding:NSUTF8StringEncoding];
+	for (NSInteger i = 0; i < [dump length]; i++)
+	{
+		char *bytes = (char *)[dump bytes];
+		char b = bytes[i];
+		
+		[dumpOutput appendFormat:@"%x %c\n", b, b];
+	}
+	
+	NSLog(@"%@\n\n", dumpOutput);
 
 	
-	NSLog(@"%@", dumpOutput);
-//	NSLog(@"%@", iosString);
+	NSDictionary *attributes = nil;
+	NSRange effectiveRange = NSMakeRange(0, 0);
+	
+		while ((attributes = [macAttributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
+		{
+			[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+			effectiveRange.location += effectiveRange.length;
+			
+			if (effectiveRange.location >= [macString length])
+			{
+				break;
+			}
+		}
+	*/
+	
+	//NSLog(@"%@", dumpOutput);
+
+	STAssertEquals([macString length], [iosString length], @"String output has different length");
+	
+	STAssertEqualObjects(macString, iosString, @"String output differs");
 }
 
 @end

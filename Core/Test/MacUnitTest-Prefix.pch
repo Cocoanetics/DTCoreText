@@ -4,4 +4,10 @@
 
 #ifdef __OBJC__
 	#import <Cocoa/Cocoa.h>
+	#import <Foundation/Foundation.h>
+	#import <AppKit/AppKit.h>
+#import "DTCoreText.h"
 #endif
+
+#define CGSizeValue sizeValue
+#define valueWithCGSize valueWithSize

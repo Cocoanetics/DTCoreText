@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-
+#import <Foundation/Foundation.h>
 
 
 @interface NSCharacterSet (HTML)

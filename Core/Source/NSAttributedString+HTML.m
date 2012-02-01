@@ -13,7 +13,7 @@
 #import "NSMutableAttributedString+HTML.h"
 
 #import "NSString+HTML.h"
-#import "UIColor+HTML.h"
+#import "DTColor+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSAttributedStringRunDelegates.h"
@@ -65,14 +65,14 @@
 
 	// example for setting a willFlushCallback, that gets called before elements are written to the generated attributed string
 	
-//	[stringBuilder setWillFlushCallback:^(DTHTMLElement *element) 
-//	{
-//		// if an element is larger than twice the font size put it in it's own block
-//		if (element.floatStyle || (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize) )
-//		{
-//			element.displayStyle = DTHTMLElementDisplayStyleBlock;
-//		}
-//	} ];
+	[stringBuilder setWillFlushCallback:^(DTHTMLElement *element) 
+	{
+		// if an element is larger than twice the font size put it in it's own block
+		if (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize)
+		{
+			element.displayStyle = DTHTMLElementDisplayStyleBlock;
+		}
+	} ];
 	
 	[stringBuilder buildString];
 	
@@ -89,47 +89,6 @@
 }
 
 #pragma mark Utlities
-
-+ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
-{
-	CTFontRef normalFont = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
-	
-	DTCoreTextFontDescriptor *smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:normalFont];
-	smallerFontDesc.pointSize *= 0.7;
-	CTFontRef smallerFont = [smallerFontDesc newMatchingFont];
-	
-	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-	[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
-	//CFRelease(smallerFont);
-	
-	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
-	NSScanner *scanner = [NSScanner scannerWithString:text];
-	[scanner setCharactersToBeSkipped:nil];
-	
-	NSCharacterSet *lowerCaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
-	
-	while (![scanner isAtEnd])
-	{
-		NSString *part;
-		
-		if ([scanner scanCharactersFromSet:lowerCaseChars intoString:&part])
-		{
-			part = [part uppercaseString];
-			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:smallAttributes];
-			[tmpString appendAttributedString:partString];
-		}
-		
-		if ([scanner scanUpToCharactersFromSet:lowerCaseChars intoString:&part])
-		{
-			NSAttributedString *partString = [[NSAttributedString alloc] initWithString:part attributes:attributes];
-			[tmpString appendAttributedString:partString];
-		}
-	}
-	
-	
-	return 	tmpString;
-}
-
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
 {
 	NSMutableArray *tmpArray = [NSMutableArray array];
@@ -397,7 +356,7 @@
 			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 			if (textColor)
 			{
-				UIColor *color = [UIColor colorWithCGColor:textColor];
+				DTColor *color = [DTColor colorWithCGColor:textColor];
 				
 				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
 			}
@@ -405,7 +364,7 @@
 			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
 			if (backgroundColor)
 			{
-				UIColor *color = [UIColor colorWithCGColor:backgroundColor];
+				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
 				
 				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", [color htmlHexString]];
 			}

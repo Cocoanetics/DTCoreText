@@ -16,8 +16,7 @@
 - (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size;
 @end
 
-@interface DTLazyImageView : UIImageView 
-
+@interface DTLazyImageView : UIImageView
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
 
