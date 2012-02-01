@@ -289,7 +289,7 @@
 	id defaultColor = [_options objectForKey:DTDefaultTextColor];
 	if (defaultColor)
 	{
-		if ([defaultColor isKindOfClass:[DTImage class]])
+		if ([defaultColor isKindOfClass:[DTColor class]])
 		{
 			// already a DTColor
 			defaultTag.textColor = defaultColor;
