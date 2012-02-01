@@ -331,7 +331,8 @@
 	
 	void (^imgBlock)(void) = ^ 
 	{
-		if (![currentTag.parent.tagName isEqualToString:@"p"])
+		// float causes the image to be its own block
+		if (currentTag.floatStyle != DTHTMLElementFloatStyleNone)
 		{
 			currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
 		}
@@ -379,10 +380,10 @@
 		[tmpString appendAttributedString:[currentTag attributedString]];	
 		outputHasNewline = NO;
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
-		{
-			needsNewLineBefore = YES;
-		}
+//		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+//		{
+//			needsNewLineBefore = YES;
+//		}
 	};
 	
 	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
