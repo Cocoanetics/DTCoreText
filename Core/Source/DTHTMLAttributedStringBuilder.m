@@ -50,6 +50,7 @@
 	BOOL needsListItemStart;
 	BOOL needsNewLineBefore;
 	BOOL outputHasNewline;
+	BOOL currentTagIsEmpty; // YES for each opened tag, NO for anything flushed including hr, br, img -> adds an extra NL for <p></p>
 	
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
@@ -379,6 +380,7 @@
 		// add it to output
 		[tmpString appendAttributedString:[currentTag attributedString]];	
 		outputHasNewline = NO;
+		currentTagIsEmpty = NO;
 		
 //		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 //		{
@@ -421,7 +423,6 @@
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"video"];
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"iframe"];
-	
 	
 	
 	void (^aBlock)(void) = ^ 
@@ -551,6 +552,7 @@
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 		outputHasNewline = YES;
+		currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[hrBlock copy] forKey:@"hr"];
@@ -664,6 +666,7 @@
 		// NOTE: cannot use flush because that removes the break
 		[tmpString appendAttributedString:[currentTag attributedString]];
 		outputHasNewline = NO;
+		currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[brBlock copy] forKey:@"br"];
@@ -725,6 +728,18 @@
 	
 	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ul"];
 	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ol"];
+	
+	void (^pBlock)(void) = ^ 
+	{
+		// we need to output something for <p></p>
+		if (currentTagIsEmpty)
+		{
+			[tmpString appendString:@"\n"];
+			outputHasNewline = NO;  // NO: otherwise a following needed NL is cancelled
+		}
+	};
+	
+	[_tagEndHandlers setObject:[pBlock copy] forKey:@"p"];
 }
 
 - (void)_handleTagContent:(NSString *)string
@@ -824,6 +839,9 @@
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 		outputHasNewline = NO;
+		
+		// we've written something
+		currentTagIsEmpty = NO;
 	}	
 	
 	_currentTagContents = nil;
@@ -839,6 +857,9 @@
 		{
 			[self _flushCurrentTagContent:_currentTagContents];
 		}
+		
+		// keep track of something was flushed for this tag
+		currentTagIsEmpty = YES;
 		
 		// make new tag as copy of previous tag
 		DTHTMLElement *parent = currentTag;
