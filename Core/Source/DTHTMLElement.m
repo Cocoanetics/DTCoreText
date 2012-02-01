@@ -357,7 +357,6 @@
 		return;
 	}
 	
-	NSLog(@"tag: %@ %@", tagName, styles);
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)
 	{
