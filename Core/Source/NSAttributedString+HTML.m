@@ -68,7 +68,7 @@
 	[stringBuilder setWillFlushCallback:^(DTHTMLElement *element) 
 	{
 		// if an element is larger than twice the font size put it in it's own block
-		if (element.floatStyle || (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize) )
+		if (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize)
 		{
 			element.displayStyle = DTHTMLElementDisplayStyleBlock;
 		}
