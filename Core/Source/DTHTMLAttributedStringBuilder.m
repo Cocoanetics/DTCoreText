@@ -7,10 +7,18 @@
 //
 
 #import "DTHTMLAttributedStringBuilder.h"
-#import "DTCoreText.h"
+
+#import "DTCoreTextConstants.h"
+#import "DTCSSStylesheet.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "DTCoreTextParagraphStyle.h"
 
 #import "DTColor+HTML.h"
 #import "DTImage+HTML.h"
+
+#import "NSString+HTML.h"
+#import "NSString+CSS.h"
+#import "NSMutableString+HTML.h"
 
 
 @interface DTHTMLAttributedStringBuilder ()
@@ -907,6 +915,12 @@
 	{
 		if (_currentTagContents)
 		{
+			// trim off white space at end if block
+			if (currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+			{
+				[_currentTagContents removeWhitespaceSuffix];
+			}
+			
 			[self _flushCurrentTagContent:_currentTagContents];
 		}
 		

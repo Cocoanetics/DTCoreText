@@ -112,7 +112,7 @@
 	// add text attachment
 	if (textAttachment)
 	{
-#ifndef TARGET_OS_MAC
+#ifdef TARGET_OS_IPHONE
 		// need run delegate for sizing (only supported on iOS)
 		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(textAttachment);
 		[tmpDict setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
@@ -324,7 +324,7 @@
 			attachment.contentType = DTTextAttachmentTypeImage;
 			attachment.displaySize = image.size;
 			
-#ifndef TARGET_OS_MAC
+#ifdef TARGET_OS_IPHONE
 			// need run delegate for sizing
 			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 			[attributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
