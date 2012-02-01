@@ -16,14 +16,4 @@
 - (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict;
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict;
 
-// convenience methods
-+ (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options;
-
-// attachment handling
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
-
-// encoding back to HTML
-- (NSString *)htmlString;
-- (NSString *)plainTextString;
-
 @end

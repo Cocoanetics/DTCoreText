@@ -92,11 +92,16 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 - (void)internalTestCaseWithURL:(NSURL *)URL withTempPath:(NSString *)tempPath
 {
-	NSData *testData = [NSData dataWithContentsOfURL:URL];
+	// use utf16 internally, otherwise the MAC version chokes on the ArabicTest
+	NSStringEncoding encoding = 0;
+	NSString *testString = [NSString stringWithContentsOfURL:URL usedEncoding:&encoding error:NULL];
+	NSData *testData = [testString dataUsingEncoding:NSUTF16StringEncoding];
 	
 	// built in HTML parsing
-	NSAttributedString *macAttributedString = [[NSAttributedString alloc] initWithHTML:testData 
-																										options:nil documentAttributes:nil];
+	NSError *error = nil;
+	NSDictionary *docAttributes;
+	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:NSHTMLTextDocumentType, NSDocumentTypeDocumentOption, @"utf16", NSTextEncodingNameDocumentOption, nil];
+	NSAttributedString *macAttributedString = [[NSAttributedString alloc] initWithData:testData options:options documentAttributes:&docAttributes error:&error];
 
 	NSString *macString = [macAttributedString string];
 
@@ -107,8 +112,6 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	
 	NSAttributedString *iosAttributedString = [doc generatedAttributedString];
 	NSString *iosString = [iosAttributedString string];
-	
-	
 	
 	/*
 

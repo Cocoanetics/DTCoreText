@@ -490,12 +490,33 @@ static NSDictionary *colorLookup = nil;
 				  (NSUInteger)(green * (CGFloat)255), (NSUInteger)(blue * (CGFloat)255)];
 }
 
+
++ (NSColor *)colorWithCGColor:(CGColorRef)cgColor
+{
+	size_t count = CGColorGetNumberOfComponents(cgColor);
+	const CGFloat *components = CGColorGetComponents(cgColor);
+	
+	// Grayscale
+	if (count == 2)
+	{
+		return [NSColor colorWithDeviceWhite:components[0] alpha:components[1]];
+	}
+	
+	// RGB
+	else if (count == 4)
+	{
+		return [NSColor colorWithDeviceRed:components[0] green:components[1] blue:components[2] alpha:components[3]];
+	}
+	
+	// neigher grayscale nor rgba
+	return nil;
+}
+
 // pass through
 - (NSColor *)CGColor
 {
 	return self;
 }
-
 
 @end
 

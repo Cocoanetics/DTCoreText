@@ -30,6 +30,8 @@ typedef NSColor DTColor;
 + (NSColor *)colorWithHTMLName:(NSString *)name;
 - (NSString *)htmlHexString;
 
++ (NSColor *)colorWithCGColor:(CGColorRef)cgColor;
+
 // pass through
 - (NSColor *)CGColor;
 

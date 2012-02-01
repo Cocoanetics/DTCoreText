@@ -23,6 +23,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "NSMutableAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
+#import "NSAttributedString+DTCoreText.h"
 
 // DTColor is UIColor on iOS, NSColor on Mac
 #import "DTColor+HTML.h"
