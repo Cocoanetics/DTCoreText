@@ -201,7 +201,7 @@
 				char *bytes = (char *)[dump bytes];
 				char b = bytes[i];
 				
-				[dumpOutput appendFormat:@"%x %c\n", b, b];
+				[dumpOutput appendFormat:@"%i: %x %c\n", i, b, b];
 			}
 			_charsView.text = dumpOutput;
 			
