@@ -259,6 +259,12 @@
 		A7C7ACD814D924B1005A9C69 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
 		A7C7ACD914D924B1005A9C69 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
 		A7C7ACDA14D924B1005A9C69 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
+		A7C7ACEF14DA62BA005A9C69 /* CustomFont.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */; };
+		A7C7ACF014DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */; };
+		A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */; };
+		A7C7AD0114DA6955005A9C69 /* NSString+SlashEscaping.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0014DA6955005A9C69 /* NSString+SlashEscaping.m */; };
+		A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0214DA6EB2005A9C69 /* Video.plist */; };
+		A7C7AD0514DA782D005A9C69 /* ListTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0414DA782D005A9C69 /* ListTest.plist */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
 		A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; };
@@ -433,6 +439,13 @@
 		A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DTImage+HTML.m"; sourceTree = "<group>"; };
 		A7C7ACD314D924B1005A9C69 /* NSMutableString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableString+HTML.h"; sourceTree = "<group>"; };
 		A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableString+HTML.m"; sourceTree = "<group>"; };
+		A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CustomFont.plist; sourceTree = "<group>"; };
+		A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Empty_and_Unclosed_Paragraphs.html; sourceTree = "<group>"; };
+		A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = WarAndPeace.plist; sourceTree = "<group>"; };
+		A7C7ACFF14DA6955005A9C69 /* NSString+SlashEscaping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SlashEscaping.h"; sourceTree = "<group>"; };
+		A7C7AD0014DA6955005A9C69 /* NSString+SlashEscaping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SlashEscaping.m"; sourceTree = "<group>"; };
+		A7C7AD0214DA6EB2005A9C69 /* Video.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Video.plist; sourceTree = "<group>"; };
+		A7C7AD0414DA782D005A9C69 /* ListTest.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ListTest.plist; sourceTree = "<group>"; };
 		A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		A7F5671214D841E900D1F167 /* NSString+CSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+CSS.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -637,6 +650,8 @@
 		A788CA1114863E9D00E1AFD9 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				A7C7ACF814DA68CE005A9C69 /* Source */,
+				A7C7ACEB14DA62BA005A9C69 /* Resources */,
 				A7949A6D14CC45B400A8CCDE /* MacUnitTest-Info.plist */,
 				A7949A6E14CC45B500A8CCDE /* MacUnitTest-Prefix.pch */,
 				A7949A6F14CC45B500A8CCDE /* MacUnitTest.h */,
@@ -787,6 +802,27 @@
 				A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */,
 			);
 			name = "Dual Platform";
+			sourceTree = "<group>";
+		};
+		A7C7ACEB14DA62BA005A9C69 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */,
+				A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */,
+				A7C7AD0414DA782D005A9C69 /* ListTest.plist */,
+				A7C7AD0214DA6EB2005A9C69 /* Video.plist */,
+				A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A7C7ACF814DA68CE005A9C69 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				A7C7ACFF14DA6955005A9C69 /* NSString+SlashEscaping.h */,
+				A7C7AD0014DA6955005A9C69 /* NSString+SlashEscaping.m */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1066,6 +1102,11 @@
 				A7949A9314CC485600A8CCDE /* Subviews.html in Resources */,
 				A7949A9414CC485A00A8CCDE /* Video.html in Resources */,
 				A7949A9514CC485D00A8CCDE /* WarAndPeace.html in Resources */,
+				A7C7ACEF14DA62BA005A9C69 /* CustomFont.plist in Resources */,
+				A7C7ACF014DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html in Resources */,
+				A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */,
+				A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */,
+				A7C7AD0514DA782D005A9C69 /* ListTest.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1303,6 +1344,7 @@
 				A7F5674014D8755300D1F167 /* NSData+DTBase64.m in Sources */,
 				A7C7ACDA14D924B1005A9C69 /* NSMutableString+HTML.m in Sources */,
 				A7B0B56D14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */,
+				A7C7AD0114DA6955005A9C69 /* NSString+SlashEscaping.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
