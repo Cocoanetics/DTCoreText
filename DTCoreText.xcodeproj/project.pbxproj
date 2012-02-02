@@ -299,6 +299,20 @@
 			remoteGlobalIDString = A70F11DD148632CD009202BF;
 			remoteInfo = "Static Library";
 		};
+		A7C7AD1214DA7C95005A9C69 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A788CA671486456100E1AFD9;
+			remoteInfo = UnitTest;
+		};
+		A7C7AD1414DA7C99005A9C69 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A7949A5714CC456000A8CCDE;
+			remoteInfo = MacUnitTest;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -967,6 +981,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				A7C7AD1514DA7C99005A9C69 /* PBXTargetDependency */,
+				A7C7AD1314DA7C95005A9C69 /* PBXTargetDependency */,
 			);
 			name = "Static Library";
 			productName = DTCoreText;
@@ -1356,6 +1372,16 @@
 			target = A70F11DD148632CD009202BF /* Static Library */;
 			targetProxy = A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */;
 		};
+		A7C7AD1314DA7C95005A9C69 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A788CA671486456100E1AFD9 /* UnitTest */;
+			targetProxy = A7C7AD1214DA7C95005A9C69 /* PBXContainerItemProxy */;
+		};
+		A7C7AD1514DA7C99005A9C69 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
+			targetProxy = A7C7AD1414DA7C99005A9C69 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -1518,6 +1544,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -1537,6 +1564,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_AFTER_BUILD = YES;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = octest;
 			};
@@ -1567,6 +1595,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -1589,6 +1618,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
