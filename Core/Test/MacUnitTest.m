@@ -8,8 +8,12 @@
 
 #import "MacUnitTest.h"
 #import "DTHTMLAttributedStringBuilder.h"
+#import "NSString+SlashEscaping.h"
 
 #import </usr/include/objc/objc-class.h>
+
+#define TESTCASE_FILE_EXTENSION @"html"
+//#define ONLY_TEST_CURRENT 1
 
 
 @implementation MacUnitTest
@@ -44,16 +48,20 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath:testcasePath];
 		
 		NSString *testFile = nil;
-		while ((testFile = [enumerator nextObject]) != nil) {
-			if (![testFile hasSuffix:@".html"])
+		while ((testFile = [enumerator nextObject]) != nil) 
+		{
+			
+			NSLog(@"%@", [testFile lastPathComponent]);
+#if ONLY_TEST_CURRENT
+		if (![[testFile lastPathComponent] isEqualToString:@"CurrentTest.html"])
+		{
+			continue;
+		}
+#endif
+			
+			if (![[testFile pathExtension] isEqualToString:TESTCASE_FILE_EXTENSION])
 			{
 				// ignore other files, e.g. custom parameters in plist
-				continue;
-			}
-			
-			if ([testFile hasSuffix:@"WarAndPeace.html"])
-			{
-				// too large, skip that
 				continue;
 			}
 			
@@ -92,6 +100,15 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 - (void)internalTestCaseWithURL:(NSURL *)URL withTempPath:(NSString *)tempPath
 {
+	// get optional test case parameters
+	NSString *parameterFile = [[[URL path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"plist"];
+	NSDictionary *testParameters = [NSDictionary dictionaryWithContentsOfFile:parameterFile];
+	
+	if ([[testParameters objectForKey:@"SkipUnitTest"] boolValue])
+	{
+		return;
+	}
+	
 	// use utf16 internally, otherwise the MAC version chokes on the ArabicTest
 	NSStringEncoding encoding = 0;
 	NSString *testString = [NSString stringWithContentsOfURL:URL usedEncoding:&encoding error:NULL];
@@ -114,8 +131,6 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	NSString *iosString = [iosAttributedString string];
 	
 	/*
-
-	// Create characters view
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
 	NSData *dump = [macString dataUsingEncoding:NSUTF8StringEncoding];
 	for (NSInteger i = 0; i < [dump length]; i++)
@@ -123,7 +138,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		char *bytes = (char *)[dump bytes];
 		char b = bytes[i];
 		
-		[dumpOutput appendFormat:@"%x %c\n", b, b];
+		[dumpOutput appendFormat:@"%d: %x %c\n", i, b, b];
 	}
 	
 	dump = [iosString dataUsingEncoding:NSUTF8StringEncoding];
@@ -132,7 +147,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		char *bytes = (char *)[dump bytes];
 		char b = bytes[i];
 		
-		[dumpOutput appendFormat:@"%x %c\n", b, b];
+		[dumpOutput appendFormat:@"%d: %x %c\n", i, b, b];
 	}
 	
 	NSLog(@"%@\n\n", dumpOutput);
@@ -157,7 +172,53 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	STAssertEquals([macString length], [iosString length], @"String output has different length");
 	
-	STAssertEqualObjects(macString, iosString, @"String output differs");
+	
+	BOOL ignoreCase = [[testParameters objectForKey:@"IgnoreCase"] boolValue];
+	BOOL ignoreNonAlphanumericCharacters = [[testParameters objectForKey:@"IgnoreNonAlphanumericCharacters"] boolValue];
+	
+	
+	if (![macString isEqualToString:iosString])
+	{
+		NSInteger shorterLength =  MIN([macString length], [iosString length]);
+		
+		for (NSInteger i=0; i<shorterLength; i++)
+		{
+			NSRange range = NSMakeRange(i, 1);
+
+			NSString *ios = [iosString substringWithRange:range];			
+			NSString *mac = [macString substringWithRange:range];			
+
+			BOOL isSame = NO;
+			
+			if (ignoreCase)
+			{
+				isSame = ([ios caseInsensitiveCompare:mac] == NSOrderedSame);
+			}
+			else
+			{
+				isSame = ([ios isEqualToString:mac]);
+			}
+			
+			if (!isSame)
+			{
+				if (ignoreNonAlphanumericCharacters)
+				{
+					NSCharacterSet *charSet = [NSCharacterSet alphanumericCharacterSet];
+					
+					if (![charSet characterIsMember:[ios characterAtIndex:0]] && ![charSet characterIsMember:[mac characterAtIndex:0]])
+					{
+						isSame = YES;
+					}
+				}
+				
+				if (!isSame)
+				{
+					STFail(@"First differing haracter at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
+				}
+				break;
+			}
+		}
+	}
 }
 
 @end
