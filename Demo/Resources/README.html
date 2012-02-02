@@ -16,6 +16,15 @@ This is useful for drawing simple rich text - like this document - without havin
 <li>Unordered Lists <b>LI</b></li>
 <li>Ordered Lists <b>OL</b></li></ul>
 <p>Currently attributes are inherited from enclosed tags via brute force. I don't know if this is accurate.</p>
+<h3>Known Differences</h3>
+	<p>In many aspects DTCoreText is superior to the Mac version of generating NSAttributedStrings from HTML. These become apparent in the MacUnitTest where the output from both is directly compared. I am summarizing them here for references.</p>
+	<p>In the following "Mac" means the initWithHTML: methods there, "DTCoreText" means DTCoreText's initWithHTML and/or DTHTMLAttributedStringBuilder</p>
+	<ul>
+		<li>Mac does not support the video tag, DTCoreText does.</li>
+		<li>DTCoreText is able to synthesize small caps by putting all characters in upper case and using a second smaller font for lowercase characters.</li>
+		<li>I suspect that Mac makes use of the -webkit-margin-* CSS styles for spacing the paragraphs, DTCoreText only uses the -webkit-margin-bottom and margin-bottom at present.</li>
+		<li>Mac supports CSS following addresses, e.g. "ul ul" to change the list style for stacked lists. DTCoreText does not support that and so list bullets stay the same for multiple levels.</li>
+	</ul>
 
 <h3>Please Help!</h3>
 <p>If you find brief test cases where the created <font face="Courier" color="blue">NSAttributedString</font> differs from the version on OSX please send them to us!</p>

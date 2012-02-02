@@ -59,4 +59,13 @@ CoreText has a problem prior to iOS 5 where it takes around a second on device t
 
 Some combinations of fonts and unusual list types cause an extra space to appear. e.g. 20 px Courier + Circle
 
+In many aspects DTCoreText is superior to the Mac version of generating NSAttributedStrings from HTML. These become apparent in the MacUnitTest where the output from both is directly compared. I am summarizing them here for references.
+
+In the following "Mac" means the initWithHTML: methods there, "DTCoreText" means DTCoreText's initWithHTML and/or DTHTMLAttributedStringBuilder.
+
+- Mac does not support the video tag, DTCoreText does.
+- DTCoreText is able to synthesize small caps by putting all characters in upper case and using a second smaller font for lowercase characters.
+- I suspect that Mac makes use of the -webkit-margin-* CSS styles for spacing the paragraphs, DTCoreText only uses the -webkit-margin-bottom and margin-bottom at present.
+- Mac supports CSS following addresses, e.g. "ul ul" to change the list style for stacked lists. DTCoreText does not support that and so list bullets stay the same for multiple levels.
+
 If you find an issue then you are welcome to fix it and contribute your fix via a GitHub pull request.
