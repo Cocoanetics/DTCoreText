@@ -94,19 +94,19 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Arabic Ligation</string>
+		<key>File</key>
+		<string>ArabicTest.html</string>
+		<key>Title</key>
+		<string>Arabic Ligation</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>
 		<key>Title</key>
 		<string>Never mind this file ...</string>
-	</dict>
-	<dict>
-		<key>Description</key>
-		<string>Arabic Ligation</string>
-		<key>File</key>
-		<string>ArabicTest.html</string>
-		<key>Title</key>
-		<string>Never mind this file too...</string>
 	</dict>
 </array>
 </plist>
