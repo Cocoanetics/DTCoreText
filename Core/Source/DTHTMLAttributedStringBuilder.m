@@ -853,28 +853,40 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
+		DTHTMLElement *parent = currentTag;
+		DTHTMLElement *nextTag = [currentTag copy];
+		nextTag.tagName = elementName;
+		nextTag.textScale = textScale;
+		nextTag.attributes = attributeDict;
+		[parent addChild:nextTag];
+		
+		// apply style from merged style sheet
+		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:nextTag];
+		if (mergedStyles)
+		{
+			[nextTag applyStyleDictionary:mergedStyles];
+		}
+
+		// keep currentTag, might be used in flush
 		if (_currentTagContents)
 		{
+			// remove whitespace suffix in current non-block item
+			if (nextTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+			{
+				if (currentTag.displayStyle != DTHTMLElementDisplayStyleBlock)
+				{
+					[_currentTagContents removeWhitespaceSuffix];
+				}
+			}
+
 			[self _flushCurrentTagContent:_currentTagContents];
 		}
 		
 		// keep track of something was flushed for this tag
 		currentTagIsEmpty = YES;
 		
-		// make new tag as copy of previous tag
-		DTHTMLElement *parent = currentTag;
-		currentTag = [currentTag copy];
-		currentTag.tagName = elementName;
-		currentTag.textScale = textScale;
-		currentTag.attributes = attributeDict;
-		[parent addChild:currentTag];
-		
-		// apply style from merged style sheet
-		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:currentTag];
-		if (mergedStyles)
-		{
-			[currentTag applyStyleDictionary:mergedStyles];
-		}
+		// switch to new tag
+		currentTag = nextTag;
 		
 		if (currentTag.displayStyle == DTHTMLElementDisplayStyleNone)
 		{
