@@ -1,3 +1,5 @@
+/* this file is processed with xxd via a build rule and embedded in library */
+
 /* these styles come from Safari */
 
 /* note that comments are only permitted before selectors and before the styles */
@@ -167,7 +169,6 @@ h1
 
 h2
 {
-color:red;
 	display:block;
 	font-size:1.5em;
 	-webkit-margin-before:.83em;
