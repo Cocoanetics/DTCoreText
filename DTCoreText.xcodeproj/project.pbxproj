@@ -15,7 +15,12 @@
 		A70B4CA01486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
+		A758FC9614DBC7A2007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
+		A758FC9814DBCF20007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
+		A758FCA014DBD7A5007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
+		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
+		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95914863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; };
@@ -291,27 +296,74 @@
 		DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A70F11DD148632CD009202BF;
-			remoteInfo = "Static Library";
+/* Begin PBXBuildRule section */
+		A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.css";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.css.c",
+			);
+			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
 		};
-		A7C7AD1214DA7C95005A9C69 /* PBXContainerItemProxy */ = {
+		A758FC9D14DBD76E007DF8B2 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.css";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.css.c",
+			);
+			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
+		};
+		A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.css";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.css.c",
+			);
+			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
+		};
+		A76994FD14DBB7380047CC8D /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.css";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.css.c",
+			);
+			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		A758FCA214DBD824007DF8B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A788CA671486456100E1AFD9;
 			remoteInfo = UnitTest;
 		};
-		A7C7AD1414DA7C99005A9C69 /* PBXContainerItemProxy */ = {
+		A758FCA414DBD826007DF8B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A7949A5714CC456000A8CCDE;
 			remoteInfo = MacUnitTest;
+		};
+		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A70F11DD148632CD009202BF;
+			remoteInfo = "Static Library";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -328,6 +380,8 @@
 		A70F11DE148632CD009202BF /* libDTCoreText.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
+		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A788C90E14863E8700E1AFD9 /* CGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtils.h; sourceTree = "<group>"; };
 		A788C90F14863E8700E1AFD9 /* CGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGUtils.m; sourceTree = "<group>"; };
@@ -778,6 +832,7 @@
 				A788C92514863E8700E1AFD9 /* DTCoreTextParagraphStyle.m */,
 				A788C90E14863E8700E1AFD9 /* CGUtils.h */,
 				A788C90F14863E8700E1AFD9 /* CGUtils.m */,
+				A76994F914DBB5F70047CC8D /* default.css */,
 			);
 			name = Parsing;
 			sourceTree = "<group>";
@@ -818,6 +873,7 @@
 				A7C7AD0414DA782D005A9C69 /* ListTest.plist */,
 				A7C7AD0214DA6EB2005A9C69 /* Video.plist */,
 				A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */,
+				A76994F614DBB3DD0047CC8D /* NavTag.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -962,6 +1018,7 @@
 				A70F119914863198009202BF /* ShellScript */,
 			);
 			buildRules = (
+				A76994FD14DBB7380047CC8D /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -979,10 +1036,11 @@
 				A70F11DC148632CD009202BF /* Headers */,
 			);
 			buildRules = (
+				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A7C7AD1514DA7C99005A9C69 /* PBXTargetDependency */,
-				A7C7AD1314DA7C95005A9C69 /* PBXTargetDependency */,
+				A758FCA514DBD826007DF8B2 /* PBXTargetDependency */,
+				A758FCA314DBD824007DF8B2 /* PBXTargetDependency */,
 			);
 			name = "Static Library";
 			productName = DTCoreText;
@@ -999,6 +1057,7 @@
 				A788CA661486456100E1AFD9 /* ShellScript */,
 			);
 			buildRules = (
+				A758FC9D14DBD76E007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -1017,6 +1076,7 @@
 				A7949A5614CC456000A8CCDE /* ShellScript */,
 			);
 			buildRules = (
+				A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -1123,6 +1183,7 @@
 				A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */,
 				A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */,
 				A7C7AD0514DA782D005A9C69 /* ListTest.plist in Resources */,
+				A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1199,6 +1260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758FC9614DBC7A2007DF8B2 /* default.css in Sources */,
 				A788C95B14863E8700E1AFD9 /* CGUtils.m in Sources */,
 				A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96514863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
@@ -1244,6 +1306,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758FC9814DBCF20007DF8B2 /* default.css in Sources */,
 				A788C95C14863E8700E1AFD9 /* CGUtils.m in Sources */,
 				A788C96114863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96614863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
@@ -1289,6 +1352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758FCA014DBD7A5007DF8B2 /* default.css in Sources */,
 				A788CA7F1486474D00E1AFD9 /* DTColor+HTML.m in Sources */,
 				A788CA861486481000E1AFD9 /* DTCoreTextFontDescriptor.m in Sources */,
 				A788CA871486481300E1AFD9 /* DTCoreTextFontCollection.m in Sources */,
@@ -1337,6 +1401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758FCA114DBD7AF007DF8B2 /* default.css in Sources */,
 				A7C5D00114D7D95200AF1D75 /* DTCoreTextConstants.m in Sources */,
 				A7C5D00214D7D95200AF1D75 /* DTHTMLParser.m in Sources */,
 				A7C5D00314D7D95200AF1D75 /* DTHTMLAttributedStringBuilder.m in Sources */,
@@ -1367,20 +1432,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A758FCA314DBD824007DF8B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A788CA671486456100E1AFD9 /* UnitTest */;
+			targetProxy = A758FCA214DBD824007DF8B2 /* PBXContainerItemProxy */;
+		};
+		A758FCA514DBD826007DF8B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
+			targetProxy = A758FCA414DBD826007DF8B2 /* PBXContainerItemProxy */;
+		};
 		A788CA621486428F00E1AFD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A70F11DD148632CD009202BF /* Static Library */;
 			targetProxy = A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */;
-		};
-		A7C7AD1314DA7C95005A9C69 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A788CA671486456100E1AFD9 /* UnitTest */;
-			targetProxy = A7C7AD1214DA7C95005A9C69 /* PBXContainerItemProxy */;
-		};
-		A7C7AD1514DA7C99005A9C69 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
-			targetProxy = A7C7AD1414DA7C99005A9C69 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -146,43 +146,7 @@
 	}
 	
 	// the combined style sheet for entire document
-	_globalStyleSheet = [[DTCSSStylesheet alloc] init]; 
-	
-	// default styles
-	[_globalStyleSheet parseStyleBlock:@"html {display: block;}"];
-	[_globalStyleSheet parseStyleBlock:@"head {display: none;}"];
-	[_globalStyleSheet parseStyleBlock:@"title {display: none;}"];
-	[_globalStyleSheet parseStyleBlock:@"style {display: none;}"];
-	
-	[_globalStyleSheet parseStyleBlock:@"body {display: block;}"]; // safari has the doc indent here 8px
-	
-	[_globalStyleSheet parseStyleBlock:@"p {display: block;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;}"];
-	
-	[_globalStyleSheet parseStyleBlock:@"ul, menu, dir {display: block;list-style-type: disc;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 40px;}"];
-	[_globalStyleSheet parseStyleBlock:@"li {display:list-item;}"];
-	[_globalStyleSheet parseStyleBlock:@"ol {display: block;list-style-type: decimal;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 40px;}"];
-	
-	[_globalStyleSheet parseStyleBlock:@"code {font-family: Courier;} pre {font-family: Courier;}"];
-	[_globalStyleSheet parseStyleBlock:@"a {color:#0000EE;text-decoration:underline;}"]; // color:-webkit-link
-	[_globalStyleSheet parseStyleBlock:@"center {text-align:center;display:block;}"];
-	[_globalStyleSheet parseStyleBlock:@"strong, b {font-weight:bolder;}"];
-	[_globalStyleSheet parseStyleBlock:@"i,em {font-style:italic;}"];
-	[_globalStyleSheet parseStyleBlock:@"u {text-decoration:underline;}"];
-	[_globalStyleSheet parseStyleBlock:@"big {font-size:bigger;}"];
-	[_globalStyleSheet parseStyleBlock:@"small {font-size:smaller;}"];
-	[_globalStyleSheet parseStyleBlock:@"sub {font-size:smaller; vertical-align:sub;}"];
-	[_globalStyleSheet parseStyleBlock:@"sup {font-size:smaller; vertical-align:super;}"];
-	[_globalStyleSheet parseStyleBlock:@"s, strike, del { text-decoration:line-through; }"];
-	[_globalStyleSheet parseStyleBlock:@"tt, code, kbd, samp { font-family: monospace; }"];
-	[_globalStyleSheet parseStyleBlock:@"pre, xmp, plaintext, listing {display: block;font-family:monospace;white-space:pre;margin-top: 1em;margin-right:0px;margin-bottom:1em;margin-left:0px;}"];
-	
-	// TODO: wire these up, note that safari uses -webkit-margin-*
-	[_globalStyleSheet parseStyleBlock:@"h1 {display:block; font-size: 2em; -webkit-margin-before: 0.67em; -webkit-margin-after: 0.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
-	[_globalStyleSheet parseStyleBlock:@"h2 {display:block; font-size: 1.5em; -webkit-margin-before: 0.83em; -webkit-margin-after: 0.83em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
-	[_globalStyleSheet parseStyleBlock:@"h3 {display:block; font-size: 1.17em; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
-	[_globalStyleSheet parseStyleBlock:@"h4 {display:block; -webkit-margin-before: 1.33em; -webkit-margin-after: 1.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
-	[_globalStyleSheet parseStyleBlock:@"h5 {display:block; font-size: 0.83em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
-	[_globalStyleSheet parseStyleBlock:@"h6 {display:block; font-size: 0.67em; -webkit-margin-before: 2.33em; -webkit-margin-after: 2.33em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; font-weight: bold;}"];
+	_globalStyleSheet = [DTCSSStylesheet defaultStyleSheet]; 
 	
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [_options objectForKey:DTDefaultStyleSheet];

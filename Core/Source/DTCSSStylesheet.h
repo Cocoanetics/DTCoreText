@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-
 @class DTHTMLElement;
 
 @interface DTCSSStylesheet : NSObject
+
+
+// stylesheet initialized with default styles
++ (DTCSSStylesheet *)defaultStyleSheet;
 
 - (id)initWithStyleBlock:(NSString *)css;
 - (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet;
