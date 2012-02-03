@@ -220,3 +220,19 @@ h6
 	-webkit-margin-end:0;
 	font-weight:bold;
 }
+
+div {
+	display: block;
+}
+
+link {
+	display: none;
+}
+
+meta {
+	display: none;
+}
+
+script {
+	display: none;
+}
