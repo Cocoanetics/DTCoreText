@@ -104,7 +104,7 @@
 
 - (void)testMissingClosingTagAndSpacing
 {
-	NSString *html = @"<div> image \n <a href=\"http://sv.wikipedia.org/wiki/Fil:V%C3%A4dersoltavlan_cropped.JPG\"\n late</a> last</div>";
+	NSString *html = @"<span>image \n <a href=\"http://sv.wikipedia.org/wiki/Fil:V%C3%A4dersoltavlan_cropped.JPG\"\n late</a> last</span>";
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
