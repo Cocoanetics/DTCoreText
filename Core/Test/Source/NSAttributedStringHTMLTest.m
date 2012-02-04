@@ -8,6 +8,9 @@
 
 #import "NSAttributedStringHTMLTest.h"
 #import "NSAttributedString+HTML.h"
+
+#import "NSAttributedString+DTCoreText.h"
+
 #import "DTHTMLAttributedStringBuilder.h"
 
 @implementation NSAttributedStringHTMLTest
@@ -114,6 +117,20 @@
 	
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
 	
+}
+
+
+- (void)testAttributedStringColorToHTML {
+	NSMutableAttributedString *string = [[NSMutableAttributedString alloc]initWithString: @"test"];
+	
+	UIColor *color = [ UIColor colorWithRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0 ];
+
+	[ string setAttributes: [ NSDictionary dictionaryWithObject: (id)color.CGColor forKey: (id)kCTForegroundColorAttributeName ] range: NSMakeRange(0, 2) ];	
+	
+	NSString *expected = @"<span><span style=\"color:#ff0000;\">te</span>st</span>\n";
+
+	STAssertEqualObjects([ string htmlString ], expected, @"Output on HTML string color test differs");
+
 }
 
 @end
