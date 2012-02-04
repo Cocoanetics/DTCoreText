@@ -343,7 +343,7 @@
 			{
 				if ([fontStyle length])
 				{
-					[retString appendFormat:@"<span style=\"%@\">%@</span>\n", fontStyle, subString];
+					[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
 				}
 				else
 				{
