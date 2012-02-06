@@ -356,6 +356,18 @@
 		
 		return videoView;
 	}
+	else if (attachment.contentType == DTTextAttachmentTypeObject)
+	{
+		// somecolorparameter has a HTML color
+		UIColor *someColor = [UIColor colorWithHTMLName:[attachment.attributes objectForKey:@"somecolorparameter"]];
+		
+		UIView *someView = [[UIView alloc] initWithFrame:frame];
+		someView.backgroundColor = someColor;
+		someView.layer.borderWidth = 1;
+		someView.layer.borderColor = [UIColor blackColor].CGColor;
+		
+		return someView;
+	}
 	
 	return nil;
 }
