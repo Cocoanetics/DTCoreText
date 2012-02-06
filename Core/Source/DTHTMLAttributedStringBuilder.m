@@ -379,9 +379,33 @@
 		// to avoid much too much space before the image
 		currentTag.paragraphStyle.lineHeightMultiple = 1;
 		
+		// caller gets opportunity to modify object tag before it is written
+		if (_willFlushCallback)
+		{
+			_willFlushCallback(currentTag);
+		}
+		
+		// maybe the image is forced to show as block, then we want a newline before and after
+		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		{
+			needsNewLineBefore = YES;
+		}
+		
+		if (needsNewLineBefore)
+		{
+			if ([tmpString length] && !outputHasNewline)
+			{
+				[tmpString appendNakedString:@"\n"];
+				outputHasNewline = YES;
+			}
+			
+			needsNewLineBefore = NO;
+		}
+		
 		// add it to output
 		[tmpString appendAttributedString:[currentTag attributedString]];
 		outputHasNewline = NO;
+		currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
@@ -955,6 +979,17 @@
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue,^{
 		[self _handleTagContent:string];	
+	});
+}
+
+- (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
+{
+	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue,^{
+		if ([currentTag.tagName isEqualToString:@"style"])
+		{
+			NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
+			[_globalStyleSheet parseStyleBlock:styleBlock];
+		}
 	});
 }
 
