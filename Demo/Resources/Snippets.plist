@@ -102,6 +102,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>This demonstrates how adding an object with a given width and height can be replaced with a custom view.</string>
+		<key>File</key>
+		<string>Objects.html</string>
+		<key>Title</key>
+		<string>Custom Objects</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>
