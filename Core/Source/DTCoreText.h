@@ -53,3 +53,6 @@
 #import "DTCoreTextLayouter.h"
 
 #endif
+
+
+#define DT_ADD_FONT_ON_ATTACHMENTS

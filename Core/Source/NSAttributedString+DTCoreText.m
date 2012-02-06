@@ -41,7 +41,7 @@
 		NSRange range;
 		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&range];
 		
-		DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+		DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
 		
 		if (attachment)
 		{
@@ -185,7 +185,7 @@
 				continue;
 			}
 			
-			DTTextAttachment *attachment = [attributes objectForKey:@"DTTextAttachment"];
+			DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
 			
 			
 			if (attachment)

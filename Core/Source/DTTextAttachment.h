@@ -19,6 +19,14 @@ typedef enum
 	DTTextAttachmentTypeGeneric
 }  DTTextAttachmentType;
 
+typedef enum
+{
+	DTTextAttachmentVerticalAlignmentBaseline = 0,
+	DTTextAttachmentVerticalAlignmentTop,
+	DTTextAttachmentVerticalAlignmentCenter,
+	DTTextAttachmentVerticalAlignmentBottom
+} DTTextAttachmentVerticalAlignment;
+
 
 @interface DTTextAttachment : NSObject 
 
@@ -29,10 +37,17 @@ typedef enum
 @property (nonatomic, strong) NSURL *contentURL;
 @property (nonatomic, strong) NSURL *hyperLinkURL;
 @property (nonatomic, strong) NSDictionary *attributes;
+@property (nonatomic, assign) DTTextAttachmentVerticalAlignment verticalAlignment;
 
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
 - (NSString *)dataURLRepresentation;
+
+- (void)adjustVerticalAlignmentForFont:(CTFontRef)font;
+
+// customized ascend and descent for the run delegates
+- (CGFloat)ascentForLayout;
+- (CGFloat)descentForLayout;
 
 @end

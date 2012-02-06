@@ -42,7 +42,8 @@
 	
 	DTCoreTextFontDescriptor *fontDescriptor;
 	DTCoreTextParagraphStyle *paragraphStyle;
-	DTTextAttachment *textAttachment;
+	DTTextAttachment *_textAttachment;
+	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
 	NSURL *link;
 	
 	DTColor *_textColor;
@@ -110,16 +111,16 @@
 	}
 	
 	// add text attachment
-	if (textAttachment)
+	if (_textAttachment)
 	{
 #if TARGET_OS_IPHONE
 		// need run delegate for sizing (only supported on iOS)
-		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(textAttachment);
+		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(_textAttachment);
 		[tmpDict setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
 #endif		
 	
 		// add attachment
-		[tmpDict setObject:textAttachment forKey:@"DTTextAttachment"];
+		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
@@ -225,7 +226,7 @@
 {
 	NSDictionary *attributes = [self attributesDictionary];
 	
-	if (textAttachment)
+	if (_textAttachment)
 	{
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
@@ -331,7 +332,7 @@
 #endif
 			
 			// add attachment
-			[attributes setObject:attachment forKey:@"DTTextAttachment"];				
+			[attributes setObject:attachment forKey:NSAttachmentAttributeName];				
 			
 			if (calculatedListStyle.position == DTCSSListStylePositionInside)
 			{
@@ -729,6 +730,28 @@
 			// nothing to do
 		}
 	}
+	
+	// only works for objects!
+	NSString *verticalAlignString = [styles objectForKey:@"vertical-align"];
+	if (verticalAlignString)
+	{
+		if ([verticalAlignString isEqualToString:@"text-top"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentTop;
+		}
+		else if ([verticalAlignString isEqualToString:@"middle"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentCenter;
+		}
+		else if ([verticalAlignString isEqualToString:@"text-bottom"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBottom;
+		}
+		else if ([verticalAlignString isEqualToString:@"baseline"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
+		}
+	}
 }
 
 - (void)parseStyleString:(NSString *)styleString
@@ -1019,6 +1042,12 @@
 	}
 }
 
+- (void)setTextAttachment:(DTTextAttachment *)textAttachment
+{
+	textAttachment.verticalAlignment = _textAttachmentAlignment;
+	_textAttachment = textAttachment;
+}
+
 
 @synthesize parent;
 @synthesize fontDescriptor;
@@ -1029,7 +1058,7 @@
 @synthesize text;
 @synthesize link;
 @synthesize underlineStyle;
-@synthesize textAttachment;
+@synthesize textAttachment = _textAttachment;
 @synthesize tagContentInvisible;
 @synthesize strikeOut;
 @synthesize superscriptStyle;

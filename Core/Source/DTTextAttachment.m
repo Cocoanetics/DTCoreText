@@ -12,11 +12,13 @@
 #import "NSAttributedString+HTML.h"
 #import "NSData+DTBase64.h"
 #import "DTImage+HTML.h"
+#import "DTCoreTextConstants.h"
 
 @implementation DTTextAttachment
 {
 	CGSize _originalSize;
 	CGSize _displaySize;
+	DTTextAttachmentVerticalAlignment _verticalAlignment;
 	id contents;
     NSDictionary *_attributes;
     
@@ -24,6 +26,10 @@
 	
 	NSURL *_contentURL;
 	NSURL *_hyperLinkURL;
+	
+	CGFloat _fontLeading;
+	CGFloat _fontAscent;
+	CGFloat _fontDescent;
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
@@ -199,6 +205,62 @@
 	return [@"data:image/png;base64," stringByAppendingString:encoded];
 }
 
+- (void)adjustVerticalAlignmentForFont:(CTFontRef)font
+{
+	_fontLeading = CTFontGetLeading(font);
+	_fontAscent = CTFontGetAscent(font);
+	_fontDescent = CTFontGetDescent(font);
+}
+
+- (CGFloat)ascentForLayout
+{
+	switch (_verticalAlignment) 
+	{
+		case DTTextAttachmentVerticalAlignmentBaseline:
+		{
+			return _displaySize.height;
+		}
+		case DTTextAttachmentVerticalAlignmentTop:
+		{
+			return _fontAscent;
+		}	
+		case DTTextAttachmentVerticalAlignmentCenter:
+		{
+			CGFloat halfHeight = (_fontAscent + _fontDescent) / 2.0f;
+			
+			return halfHeight - _fontDescent + _displaySize.height/2.0f;
+		}
+		case DTTextAttachmentVerticalAlignmentBottom:
+		{
+			return _displaySize.height - _fontDescent;
+		}
+	}
+}
+
+- (CGFloat)descentForLayout
+{
+	switch (_verticalAlignment) 
+	{
+		case DTTextAttachmentVerticalAlignmentBaseline:
+		{
+			return 0;
+		}	
+		case DTTextAttachmentVerticalAlignmentTop:
+		{
+			return _displaySize.height - _fontAscent;
+		}	
+		case DTTextAttachmentVerticalAlignmentCenter:
+		{
+			CGFloat halfHeight = (_fontAscent + _fontDescent) / 2.0f;
+			
+			return halfHeight - _fontAscent + _displaySize.height/2.0f;
+		}	
+		case DTTextAttachmentVerticalAlignmentBottom:
+		{
+			return _fontDescent;
+		}
+	}
+}
 
 #pragma mark Properties
 
@@ -230,5 +292,6 @@
 @synthesize contentURL = _contentURL;
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;
+@synthesize verticalAlignment = _verticalAlignment;
 
 @end

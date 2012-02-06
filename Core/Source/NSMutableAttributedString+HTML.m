@@ -27,11 +27,11 @@
 	}
 	
 	// need to remove image placeholder to prevent duplication
-	if ([previousAttributes objectForKey:@"DTTextAttachment"])
+	if ([previousAttributes objectForKey:NSAttachmentAttributeName])
 	{
 		NSMutableDictionary *tmpDict = [previousAttributes mutableCopy];
 		
-		[tmpDict removeObjectForKey:@"DTTextAttachment"];
+		[tmpDict removeObjectForKey:NSAttachmentAttributeName];
 		[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
 		
 		 previousAttributes = tmpDict;
