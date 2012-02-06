@@ -152,6 +152,9 @@
 		{
 			// __bridge since its already retained elsewhere
 			[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+			
+			// use this font to adjust the values needed for the run delegate during layout time
+			[_textAttachment adjustVerticalAlignmentForFont:font];
 		}
 	}
 	

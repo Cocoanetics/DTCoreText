@@ -281,23 +281,6 @@
 	dispatch_group_wait(_stringParsingGroup, DISPATCH_TIME_FOREVER);
 	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
 	
-	
-	
-	// walk through attachments and tell them about their surrounding font
-	[tmpString enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, [tmpString length]) 
-						  options:0 
-					   usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
-						   if (attachment)
-						   {
-							   CTFontRef usedFont = (__bridge CTFontRef)[tmpString attribute:(id)kCTFontAttributeName atIndex:range.location effectiveRange:NULL];
-							   
-							   if (usedFont)
-							   {
-								   [attachment adjustVerticalAlignmentForFont:usedFont];
-							   }
-						   }
-					   }];
-	
 	return result;
 }
 
