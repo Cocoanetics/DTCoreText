@@ -4,6 +4,7 @@
 extern NSString *NSBaseURLDocumentOption;
 extern NSString *NSTextEncodingNameDocumentOption;
 extern NSString *NSTextSizeMultiplierDocumentOption;
+extern NSString *NSAttachmentAttributeName; 
 
 extern NSString *DTMaxImageSize;
 extern NSString *DTDefaultFontFamily;

@@ -1,7 +1,10 @@
+#import "DTCoreTextConstants.h"
+
 // standard options
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
 NSString *NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
 NSString *NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
+NSString *NSAttachmentAttributeName = @"NSAttachmentAttributeName";
 
 // custom options
 NSString *DTMaxImageSize = @"DTMaxImageSize";
