@@ -150,6 +150,15 @@ void _error(void *context, const char *msg, ...)
 	[myself.delegate parser:myself parseErrorOccurred:myself.parserError];
 }
 
+void _cdataBlock(void *context, const xmlChar *value, int len)
+{
+	DTHTMLParser *myself = (__bridge DTHTMLParser *)context;
+	
+	NSData *data = [NSData dataWithBytes:(const void *)value length:len];
+	
+	[myself.delegate parser:myself foundCDATA:data];
+}
+
 @implementation DTHTMLParser
 {
 	htmlSAXHandler _handler;
@@ -330,6 +339,17 @@ void _error(void *context, const char *msg, ...)
 	{
 		_handler.error = NULL;
 	} 
+
+	if ([delegate respondsToSelector:@selector(parser:foundCDATA:)])
+	{
+		_handler.cdataBlock = _cdataBlock;
+	}
+	else
+	{
+		_handler.cdataBlock = NULL;
+	} 
+	
+	_handler.cdataBlock = _cdataBlock;
 }
 
 - (NSInteger)lineNumber

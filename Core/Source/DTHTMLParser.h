@@ -64,6 +64,16 @@
 - (void)parser:(DTHTMLParser *)parser foundComment:(NSString *)comment;
 
 /**
+ Sent by a parser object to its delegate when it encounters a CDATA block. 
+ 
+ Through this method the parser object passes the contents of the block to its delegate in an NSData object. The CDATA block is character data that is ignored by the parser. The encoding of the character data is UTF-8. To convert the data object to a string object, use the NSString method initWithData:encoding:. Note: CSS style blocks are returned as CDATA.
+ 
+ @param parser A DTHTMLParser object parsing HTML.
+ @param comment A data object containing a block of CDATA.
+ */
+- (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock;
+
+/**
  Sent by a parser object to its delegate when it encounters a fatal error.
  
  When this method is invoked, parsing is stopped. For further information about the error, you can query parseError or you can send the parser a parserError message. You can also send the parser lineNumber and columnNumber messages to further isolate where the error occurred. Typically you implement this method to display information about the error to the user.
