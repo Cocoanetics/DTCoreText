@@ -738,7 +738,7 @@
 	{
 		_currentTagContents = [[NSMutableString alloc] initWithCapacity:1000];
 	}
-	
+
 	[_currentTagContents appendString:string];
 }
 
@@ -758,7 +758,7 @@
 	
 	if (currentTag.preserveNewlines)
 	{
-		[tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		tagContents = [tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 		
 		tagContents = [tagContents stringByReplacingOccurrencesOfString:@"\n" withString:UNICODE_LINE_FEED];
 	}
@@ -854,6 +854,8 @@
 		{
 			[nextTag applyStyleDictionary:mergedStyles];
 		}
+		
+		BOOL removeUnflushedWhitespace = NO;
 
 		// keep currentTag, might be used in flush
 		if (_currentTagContents)
@@ -865,11 +867,19 @@
 				{
 					[_currentTagContents removeWhitespaceSuffix];
 				}
+				
+				removeUnflushedWhitespace = YES;
 			}
-
-			[self _flushCurrentTagContent:_currentTagContents];
 		}
+
+		[self _flushCurrentTagContent:_currentTagContents];
 		
+		// avoid transfering space from parent tag
+		if (removeUnflushedWhitespace)
+		{
+			_currentTagContents = nil;
+		}
+
 		// keep track of something was flushed for this tag
 		currentTagIsEmpty = YES;
 		
@@ -905,19 +915,6 @@
 				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
 			}
 		}
-		
-		
-//		// block items need a break before
-//		if ([tmpString length])
-//		{
-//			if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleInline) && !(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !outputHasNewline)
-//			{
-//				[tmpString appendString:@"\n"];
-//
-//				outputHasNewline = YES;
-//				needsNewLineBefore = NO;
-//			}
-//		}
 		
 		// find block to execute for this tag if any
 		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];

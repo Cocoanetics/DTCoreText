@@ -14,6 +14,8 @@
 		A70B4C9F1486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70B4CA01486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		A71B927114E0165000360C30 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
+		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
 		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
@@ -272,6 +274,7 @@
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */; };
+		A7D54EA514E003190063E78B /* Objects.html in Resources */ = {isa = PBXBuildFile; fileRef = A7D54EA414E003190063E78B /* Objects.html */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
 		A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; };
@@ -346,19 +349,19 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		A71B926E14E013AA00360C30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A7949A5714CC456000A8CCDE;
+			remoteInfo = MacUnitTest;
+		};
 		A74C953114DC0847002B5A45 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A788CA671486456100E1AFD9;
 			remoteInfo = UnitTest;
-		};
-		A74C953914DC10EC002B5A45 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A7949A5714CC456000A8CCDE;
-			remoteInfo = MacUnitTest;
 		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -380,6 +383,8 @@
 		A70B4C9E1486558200873A4A /* DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = DTCoreText.h; path = Core/Source/DTCoreText.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A70F119B14863198009202BF /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A70F11DE148632CD009202BF /* libDTCoreText.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A71B927014E0165000360C30 /* PreWhitespace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PreWhitespace.html; sourceTree = "<group>"; };
+		A71B927214E016A300360C30 /* PreWhitespace.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PreWhitespace.plist; sourceTree = "<group>"; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
@@ -518,6 +523,7 @@
 		A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringHTMLTest.m; sourceTree = "<group>"; };
 		A7C7AD0D14DA7C2C005A9C69 /* UIColorHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorHTMLTest.h; sourceTree = "<group>"; };
 		A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorHTMLTest.m; sourceTree = "<group>"; };
+		A7D54EA414E003190063E78B /* Objects.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Objects.html; sourceTree = "<group>"; };
 		A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		A7F5671214D841E900D1F167 /* NSString+CSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+CSS.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -620,19 +626,19 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A7F5671C14D8469000D1F167 /* Cocoa.framework */,
-				A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */,
 				A79499FF14C6256B00A8CCDE /* libxml2.dylib */,
-				A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */,
-				A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */,
-				A704C93913901FDB0045CFC6 /* ImageIO.framework */,
-				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
-				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */,
+				A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */,
+				A7F5671C14D8469000D1F167 /* Cocoa.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 				A73BC42812DA014300F064C6 /* CoreText.framework */,
-				A76E5B4812DD9AF500711782 /* QuartzCore.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				A704C93913901FDB0045CFC6 /* ImageIO.framework */,
 				A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */,
-				A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */,
+				A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */,
+				A76E5B4812DD9AF500711782 /* QuartzCore.framework */,
+				A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				A7949A5C14CC456000A8CCDE /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -736,6 +742,7 @@
 		A788CA1A14863EF100E1AFD9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A788CA2A14863EF100E1AFD9 /* Snippets.plist */,
 				A788CA1B14863EF100E1AFD9 /* Alignment.html */,
 				A788CA1C14863EF100E1AFD9 /* APOD.html */,
 				A788CA1D14863EF100E1AFD9 /* ArabicTest.html */,
@@ -750,13 +757,13 @@
 				A788CA2714863EF100E1AFD9 /* LoremIpsum.html */,
 				A788CA2814863EF100E1AFD9 /* Oliver.jpg */,
 				A788CA2914863EF100E1AFD9 /* README.html */,
-				A788CA2A14863EF100E1AFD9 /* Snippets.plist */,
 				A788CA2B14863EF100E1AFD9 /* styles.html */,
 				A788CA2C14863EF100E1AFD9 /* Subviews.html */,
 				A788CA2D14863EF100E1AFD9 /* Video.html */,
 				A788CA2E14863EF100E1AFD9 /* WarAndPeace.html */,
 				A788CA2F14863EF100E1AFD9 /* XB Niloofar.ttf */,
 				A788CA3014863EF100E1AFD9 /* XB NiloofarBd.ttf */,
+				A7D54EA414E003190063E78B /* Objects.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -880,6 +887,8 @@
 				A76994F614DBB3DD0047CC8D /* NavTag.html */,
 				A74C953514DC0C69002B5A45 /* MalformedURL.html */,
 				A74C973D14DC5294002B5A45 /* Emoji.html */,
+				A71B927014E0165000360C30 /* PreWhitespace.html */,
+				A71B927214E016A300360C30 /* PreWhitespace.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1045,7 +1054,7 @@
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A74C953A14DC10EC002B5A45 /* PBXTargetDependency */,
+				A71B926F14E013AA00360C30 /* PBXTargetDependency */,
 				A74C953214DC0847002B5A45 /* PBXTargetDependency */,
 			);
 			name = "Static Library";
@@ -1150,6 +1159,7 @@
 				A788CA4D14863EF100E1AFD9 /* WarAndPeace.html in Resources */,
 				A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */,
 				A788CA4F14863EF100E1AFD9 /* XB NiloofarBd.ttf in Resources */,
+				A7D54EA514E003190063E78B /* Objects.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1192,6 +1202,8 @@
 				A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */,
 				A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */,
 				A74C973E14DC5294002B5A45 /* Emoji.html in Resources */,
+				A71B927114E0165000360C30 /* PreWhitespace.html in Resources */,
+				A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1440,15 +1452,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A71B926F14E013AA00360C30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
+			targetProxy = A71B926E14E013AA00360C30 /* PBXContainerItemProxy */;
+		};
 		A74C953214DC0847002B5A45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A788CA671486456100E1AFD9 /* UnitTest */;
 			targetProxy = A74C953114DC0847002B5A45 /* PBXContainerItemProxy */;
-		};
-		A74C953A14DC10EC002B5A45 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
-			targetProxy = A74C953914DC10EC002B5A45 /* PBXContainerItemProxy */;
 		};
 		A788CA621486428F00E1AFD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
