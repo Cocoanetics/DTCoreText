@@ -252,6 +252,33 @@
 					[styleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
 				}
 				
+				if (attachment.verticalAlignment != DTTextAttachmentVerticalAlignmentBaseline)
+				{
+					switch (attachment.verticalAlignment) 
+					{
+						case DTTextAttachmentVerticalAlignmentBaseline:
+						{
+							[styleString appendString:@"vertical-align:baseline;"];
+							break;
+						}
+						case DTTextAttachmentVerticalAlignmentTop:
+						{
+							[styleString appendString:@"vertical-align:text-top;"];
+							break;
+						}	
+						case DTTextAttachmentVerticalAlignmentCenter:
+						{
+							[styleString appendString:@"vertical-align:middle;"];
+							break;
+						}
+						case DTTextAttachmentVerticalAlignmentBottom:
+						{
+							[styleString appendString:@"vertical-align:text-bottom;"];
+							break;
+						}
+					}
+				}
+				
 				if ([styleString length])
 				{
 					[retString appendFormat:@" style=\"%@\"", styleString];
