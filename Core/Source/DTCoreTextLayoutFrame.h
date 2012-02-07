@@ -18,6 +18,20 @@
 @class DTCoreTextLayouter;
 
 @interface DTCoreTextLayoutFrame : NSObject 
+{
+	CGRect _frame;
+//	CTFrameRef _textFrame;
+//    CTFramesetterRef _framesetter;
+//    
+	NSArray *_lines;
+	NSArray *_paragraphRanges;
+//	
+//    NSInteger tag;
+//	
+	NSArray *_textAttachments;
+	NSAttributedString *_attributedStringFragment;
+}
+
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
 
@@ -34,7 +48,6 @@
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect; // lines that are intersected, i.e. also incomplete lines
-// unused? - (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index; // line that contains the string index
 
 - (NSArray *)stringIndices;
@@ -48,9 +61,13 @@
 - (NSAttributedString *)attributedStringFragment;
 
 // working with Paragraphs
-// unused? - (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
 - (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
+
+// used by DTRichTextEditor
+- (NSArray *)linesContainedInRect:(CGRect)rect; // lines that are fully contained inside of rect
+- (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
+
 
 @property (nonatomic, assign, readonly) CGRect frame;
 

@@ -349,20 +349,6 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		A71B926E14E013AA00360C30 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A7949A5714CC456000A8CCDE;
-			remoteInfo = MacUnitTest;
-		};
-		A74C953114DC0847002B5A45 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A788CA671486456100E1AFD9;
-			remoteInfo = UnitTest;
-		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1054,8 +1040,6 @@
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A71B926F14E013AA00360C30 /* PBXTargetDependency */,
-				A74C953214DC0847002B5A45 /* PBXTargetDependency */,
 			);
 			name = "Static Library";
 			productName = DTCoreText;
@@ -1452,16 +1436,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A71B926F14E013AA00360C30 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A7949A5714CC456000A8CCDE /* MacUnitTest */;
-			targetProxy = A71B926E14E013AA00360C30 /* PBXContainerItemProxy */;
-		};
-		A74C953214DC0847002B5A45 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A788CA671486456100E1AFD9 /* UnitTest */;
-			targetProxy = A74C953114DC0847002B5A45 /* PBXContainerItemProxy */;
-		};
 		A788CA621486428F00E1AFD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A70F11DD148632CD009202BF /* Static Library */;

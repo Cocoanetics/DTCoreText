@@ -1,4 +1,8 @@
 
+#if TARGET_OS_IPHONE
+#import <CoreText/CoreText.h>
+#endif
+
 // global constants
 #import "DTCoreTextConstants.h"
 

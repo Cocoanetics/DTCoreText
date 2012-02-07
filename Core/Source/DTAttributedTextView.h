@@ -11,6 +11,10 @@
 @class DTAttributedTextView;
 
 @interface DTAttributedTextView : UIScrollView
+{
+	DTAttributedTextContentView *contentView;
+	UIView *backgroundView;
+}
 
 @property (nonatomic, strong) NSAttributedString *attributedString;
 

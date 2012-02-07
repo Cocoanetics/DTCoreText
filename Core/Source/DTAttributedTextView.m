@@ -20,10 +20,6 @@
 
 
 @implementation DTAttributedTextView
-{
-	DTAttributedTextContentView *contentView;
-	UIView *backgroundView;
-}
 
 - (id)initWithFrame:(CGRect)frame
 {

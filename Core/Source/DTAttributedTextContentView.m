@@ -28,20 +28,16 @@
 
 @interface DTAttributedTextContentView ()
 {
-	NSAttributedString *_attributedString;
-	UIEdgeInsets edgeInsets;
 	BOOL drawDebugFrames;
 	BOOL shouldDrawImages;
 	BOOL shouldLayoutCustomSubviews;
 	
 	NSMutableSet *customViews;
 	NSMutableDictionary *customViewsForLinksIndex;
-	NSMutableDictionary *customViewsForAttachmentsIndex;
     
 	BOOL _isTiling;
 	
 	DTCoreTextLayouter *_layouter;
-	DTCoreTextLayoutFrame *_layoutFrame;
 	
 	CGPoint _layoutOffset;
     CGSize _backgroundOffset;

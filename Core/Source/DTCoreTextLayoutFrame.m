@@ -25,17 +25,17 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 @implementation DTCoreTextLayoutFrame
 {
-	CGRect _frame;
+//	CGRect _frame;
 	CTFrameRef _textFrame;
     CTFramesetterRef _framesetter;
     
-	NSArray *_lines;
-	NSArray *_paragraphRanges;
+//	NSArray *_lines;
+//	NSArray *_paragraphRanges;
 	
     NSInteger tag;
 	
-	NSArray *_textAttachments;
-	NSAttributedString *_attributedStringFragment;
+//	NSArray *_textAttachments;
+//	NSAttributedString *_attributedStringFragment;
 }
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
@@ -199,7 +199,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
-#if 0 // appears to be unused
 - (NSArray *)linesContainedInRect:(CGRect)rect
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
@@ -224,7 +223,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	return tmpArray;
 }
-#endif
 
 - (CGPathRef)path
 {
@@ -657,7 +655,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return nil;
 }
 
-#if 0 // apparently unused
 - (NSArray *)linesInParagraphAtIndex:(NSUInteger)index
 {
 	NSArray *paragraphRanges = self.paragraphRanges;
@@ -700,7 +697,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return nil;
 	}
 }
-#endif
 
 #pragma mark Paragraphs
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex

@@ -51,9 +51,8 @@
 	DTTextAttachment *_attachment;
 	BOOL _didCheckForAttachmentInAttributes;
 	BOOL _didCalculateMetrics;
-	
-	NSRange _stringRange;
 }
+
 @synthesize runLock;
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset

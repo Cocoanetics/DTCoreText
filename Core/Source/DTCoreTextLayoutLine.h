@@ -12,6 +12,9 @@
 @class DTCoreTextLayoutFrame;
 
 @interface DTCoreTextLayoutLine : NSObject 
+{
+	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
+}
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
 

@@ -37,6 +37,15 @@
 
 
 @interface DTAttributedTextContentView : UIView 
+{
+	NSAttributedString *_attributedString;
+	DTCoreTextLayoutFrame *_layoutFrame;
+	
+	UIEdgeInsets edgeInsets;
+	
+	NSMutableDictionary *customViewsForAttachmentsIndex;
+}
+
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
 
 - (void)layoutSubviewsInRect:(CGRect)rect;

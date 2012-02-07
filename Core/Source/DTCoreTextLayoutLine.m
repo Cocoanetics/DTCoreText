@@ -40,8 +40,8 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
-	NSInteger _stringLocationOffset;
 }
+
 @synthesize layoutLock;
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;

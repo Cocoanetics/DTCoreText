@@ -14,6 +14,9 @@
 @class DTTextAttachment;
 
 @interface DTCoreTextGlyphRun : NSObject 
+{
+	NSRange _stringRange;
+}
 
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset;
 
