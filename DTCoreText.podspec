@@ -1,5 +1,7 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
+  spec.version      = '1.0.0'
+  spec.platform     = :ios
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :commit => 'origin/master' }
   spec.source_files = 'Core/Source/*.{h,m,c}'
