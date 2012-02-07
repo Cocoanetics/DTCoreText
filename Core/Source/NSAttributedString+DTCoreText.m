@@ -8,6 +8,8 @@
 
 #import "NSAttributedString+DTCoreText.h"
 
+#import "DTCoreTextConstants.h"
+
 #import "DTColor+HTML.h"
 #import "NSString+HTML.h"
 #import "DTTextAttachment.h"
