@@ -43,6 +43,7 @@
 	CGFloat value = 0;
 	
 	BOOL commaSeen = NO;
+	BOOL negative = NO;
 	NSUInteger digitsPastComma = 0;
 	
 	NSUInteger i=0;
@@ -65,6 +66,10 @@
 		else if (ch=='.')
 		{
 			commaSeen = YES;
+		}
+		else if (ch=='-') 
+		{
+			negative = YES;
 		}
 		else
 		{
@@ -104,6 +109,11 @@
 				}
 			}
 		}
+	}
+	
+	if (negative)
+	{
+		value *= -1;
 	}
 	
 	free(_characters);
