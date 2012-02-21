@@ -34,11 +34,9 @@ static dispatch_queue_t _fontQueue;
 
 		_fontQueue = dispatch_queue_create("DTCoreTextFontDescriptor", 0);
 		
-		// force init/load of overrides
+		// init/load of overrides
 		_fontOverrides = [[NSMutableDictionary alloc] init];
 		
-		
-		// see if there is an overrides table to preload
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
 		NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
 		
