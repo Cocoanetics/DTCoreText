@@ -16,7 +16,7 @@
 	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
-- (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
+- (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame;
 
 - (NSRange)stringRange;
 - (NSInteger)numberOfGlyphs;
@@ -29,11 +29,32 @@
 - (NSInteger)stringIndexForPosition:(CGPoint)position;
 - (CGFloat)paragraphSpacing:(BOOL)zeroNonLast;
 - (CGFloat)paragraphSpacing;
+
+
 - (CGFloat)calculatedLineHeightMultiplier;
+
+/** Calculates the leading size which is the space before this current line. 
+ 
+ @returns The leading for this line.
+ */
 - (CGFloat)calculatedLeading;
+
+
+/** Calculates the line height for the entire line from going through the paragraph styles and finding minimum and maximum. 
+ 
+ @returns The overall line height for this line or zero if no line height is specified.
+ */
+- (CGFloat)calculatedLineHeight;
 
 - (void)drawInContext:(CGContextRef)context;
 
+
+/** Adjust the baselines of all lines in this layout frame to fit the heights of text attachments. 
+ 
+ This is used to work around a CoreText bug that was fixed in iOS 4.2
+ 
+ @returns `YES` if the line needed an adjustment, `NO` if no adjustment was carried out
+ */
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
 
 @property (nonatomic, assign) CGRect frame;

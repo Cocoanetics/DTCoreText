@@ -247,6 +247,8 @@
 		A7949AA314CC5BDF00A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
 		A7949AA514CD3C5D00A8CCDE /* DTHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */; };
 		A7949AA614CD3C5E00A8CCDE /* DTHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */; };
+		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
+		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
 		A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
 		A7B0B56A14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
@@ -501,6 +503,7 @@
 		A7949A6D14CC45B400A8CCDE /* MacUnitTest-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MacUnitTest-Info.plist"; sourceTree = "<group>"; };
 		A7949A6E14CC45B500A8CCDE /* MacUnitTest-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MacUnitTest-Prefix.pch"; sourceTree = "<group>"; };
 		A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DTCoreTextConstants.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		A7A95D9414F3F45E002E3F7E /* LineHeight.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineHeight.html; sourceTree = "<group>"; };
 		A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTCoreText.h"; sourceTree = "<group>"; };
 		A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTCoreText.m"; sourceTree = "<group>"; };
 		A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -764,6 +767,7 @@
 				A788CA2F14863EF100E1AFD9 /* XB Niloofar.ttf */,
 				A788CA3014863EF100E1AFD9 /* XB NiloofarBd.ttf */,
 				A7D54EA414E003190063E78B /* Objects.html */,
+				A7A95D9414F3F45E002E3F7E /* LineHeight.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1159,6 +1163,7 @@
 				A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */,
 				A788CA4F14863EF100E1AFD9 /* XB NiloofarBd.ttf in Resources */,
 				A7D54EA514E003190063E78B /* Objects.html in Resources */,
+				A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1203,6 +1208,7 @@
 				A74C973E14DC5294002B5A45 /* Emoji.html in Resources */,
 				A71B927114E0165000360C30 /* PreWhitespace.html in Resources */,
 				A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */,
+				A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1246,7 +1252,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--ignore \"LoadableCategory.h\" \\\n--ignore \"*Test.h\" \\\n--ignore \"Demo*.h\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}\"";
+			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}/Core/Source\"";
 		};
 		A788CA661486456100E1AFD9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

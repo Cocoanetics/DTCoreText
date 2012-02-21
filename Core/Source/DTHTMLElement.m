@@ -635,6 +635,8 @@
 		if ([lineHeight isEqualToString:@"normal"])
 		{
 			self.paragraphStyle.lineHeightMultiple = 0.0; // default
+			self.paragraphStyle.minimumLineHeight = 0.0; // default
+			self.paragraphStyle.maximumLineHeight = 0.0; // default
 		}
 		else if ([lineHeight isEqualToString:@"inherit"])
 		{
@@ -642,9 +644,9 @@
 		}
 		else if ([lineHeight isNumeric])
 		{
-			self.paragraphStyle.lineHeightMultiple = [lineHeight floatValue];
-			//            self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
-			//            self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
+			//self.paragraphStyle.lineHeightMultiple = [lineHeight floatValue];
+			self.paragraphStyle.minimumLineHeight = fontDescriptor.pointSize * (CGFloat)[lineHeight intValue];
+			self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
 		}
 		else // interpret as length
 		{
