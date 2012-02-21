@@ -8,6 +8,7 @@
 
 #import <CoreText/CoreText.h>
 
+#import "DTCoreTextConstants.h"
 
 #import "NSAttributedString+HTML.h"
 #import "NSMutableAttributedString+HTML.h"

@@ -8,8 +8,6 @@
 
 @class NSAttributedString;
 
-#import "DTCoreTextConstants.h"
-
 @interface NSAttributedString (HTML)
 
 - (id)initWithHTML:(NSData *)data documentAttributes:(NSDictionary **)dict;

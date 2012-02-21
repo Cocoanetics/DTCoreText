@@ -10,15 +10,7 @@
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
-
-static dispatch_semaphore_t fontLock;
-
-@interface DTCoreTextFontDescriptor ()
-
-// generated fonts are cached
-+ (NSCache *)fontCache;
-
-@end
+static dispatch_queue_t _fontQueue;
 
 @implementation DTCoreTextFontDescriptor
 {
@@ -35,29 +27,15 @@ static dispatch_semaphore_t fontLock;
 
 + (void)initialize
 {
-	if(self == [DTCoreTextFontDescriptor class]) {
-		fontLock = dispatch_semaphore_create(1);
-	}
-}
-
-+ (NSCache *)fontCache
-{
-	if (!_fontCache)
+	// only this class (and not subclasses) do this
+	if (self == [DTCoreTextFontDescriptor class]) 
 	{
 		_fontCache = [[NSCache alloc] init];
-	}
 
-	return _fontCache;
-}
-
-+ (NSMutableDictionary *)fontOverrides
-{
-	if (!_fontOverrides)
-	{
+		_fontQueue = dispatch_queue_create("DTCoreTextFontDescriptor", 0);
+		
+		// init/load of overrides
 		_fontOverrides = [[NSMutableDictionary alloc] init];
-		
-		
-		// see if there is an overrides table to preload
 		
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
 		NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
@@ -80,37 +58,33 @@ static dispatch_semaphore_t fontLock;
 			}
 		}
 	}
-	
-	return _fontOverrides;
 }
 
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
-	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
-	
-	[[DTCoreTextFontDescriptor fontOverrides] setObject:fontName forKey:key];
+		NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
+		[_fontOverrides setObject:fontName forKey:key];
 }
 
 + (NSString *)smallCapsFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
-	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
-	
-	return [[DTCoreTextFontDescriptor fontOverrides] objectForKey:key];
+		NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
+		return [_fontOverrides objectForKey:key];
 }
 
 + (void)setOverrideFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
-	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
-	
-	[[DTCoreTextFontDescriptor fontOverrides] setObject:fontName forKey:key];
+		NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
+		[_fontOverrides setObject:fontName forKey:key];
 }
 
 + (NSString *)overrideFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
-	NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
-	
-	return [[DTCoreTextFontDescriptor fontOverrides] objectForKey:key];
+		NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", fontFamily, bold, italic];
+	return [_fontOverrides objectForKey:key];
 }
+
+#pragma mark Initializing
 
 + (DTCoreTextFontDescriptor *)fontDescriptorWithFontAttributes:(NSDictionary *)attributes
 {
@@ -370,21 +344,16 @@ static dispatch_semaphore_t fontLock;
 
 #pragma mark Finding Font
 
-- (CTFontRef)newMatchingFont
+- (CTFontRef)_findOrMakeMatchingFont
 {
-	dispatch_semaphore_wait(fontLock, DISPATCH_TIME_FOREVER);
-
 	NSDictionary *attributes = [self fontAttributes];
 	
-	NSCache *fontCache = [DTCoreTextFontDescriptor fontCache];
 	NSString *cacheKey = [attributes description];
 	
-	CTFontRef cachedFont = (__bridge CTFontRef)[fontCache objectForKey:cacheKey];
+	CTFontRef cachedFont = (__bridge_retained CTFontRef)[_fontCache objectForKey:cacheKey];
 	
 	if (cachedFont)
 	{
-		CFRetain(cachedFont);
-		dispatch_semaphore_signal(fontLock);
 		return cachedFont;
 	}
 	
@@ -406,7 +375,7 @@ static dispatch_semaphore_t fontLock;
 		{
 			overrideFontName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:fontFamily bold:self.boldTrait italic:self.italicTrait];
 		}
-    
+		
 		if (overrideFontName)
 		{
 			usedName = overrideFontName;
@@ -462,10 +431,22 @@ static dispatch_semaphore_t fontLock;
 	if (matchingFont)
 	{
 		// cache it
-		[fontCache setObject:(__bridge id)(matchingFont) forKey:cacheKey];	// if you CFBridgeRelease you get a crash
+		[_fontCache setObject:(__bridge id)(matchingFont) forKey:cacheKey];
 	}
-	dispatch_semaphore_signal(fontLock);
-	return matchingFont;
+	
+	return matchingFont;	// returns a +1 reference
+}
+
+- (CTFontRef)newMatchingFont
+{
+	__block CTFontRef retFont;
+	
+	// all calls get queued
+	dispatch_sync(_fontQueue, ^{
+		retFont = [self _findOrMakeMatchingFont];
+	});
+	
+	return retFont;
 }
 
 // two font descriptors are equal if their attributes has identical hash codes
