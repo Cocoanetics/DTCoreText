@@ -77,7 +77,11 @@
 	
 	[stringBuilder buildString];
 	
-	return [stringBuilder generatedAttributedString];
+	// This needs to be on a seprate line so that ARC can handle releasing the object properly
+	// return [stringBuilder generatedAttributedString]; shows leak in instruments
+	id string = [stringBuilder generatedAttributedString];
+	
+	return string;
 }
 
 @end

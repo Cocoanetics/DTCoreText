@@ -23,9 +23,14 @@ If you find brief test cases where the created `NSAttributedString` differs from
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter.
 
 License
-------- 
- 
+-------
+
 It is open source and covered by a standard BSD license. That means you have to mention *Cocoanetics* as the original author of this code. You can purchase a Non-Attribution-License from us.
+
+Documentation
+-------------
+
+Documentation can be [browsed online](http://cocoanetics.github.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](http://cocoanetics.github.com/DTCoreText/DTCoreText.atom).
 
 Usage
 -----
@@ -37,13 +42,38 @@ DTCoreText needs a minimum iOS deployment target of 4.3 because of:
 - Blocks
 - ARC
 
-These are your options for adding DTCoreText to your project.
+The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproject of your project with the following steps.
 
-1. Copy all classes and headers from the Core/Source folder to your project.
-2. Link your project against the libDTCoreText static library. Note that the "Static Library" target does not produce a universal library. You will also need to add all header files contained in the Core/Source folder to your project.
-3. Link your project against the universal static library produced from the "Static Framework". 
+1. Download DTCoreText as a subfolder of your project folder
+2. Open the destination project and drag `DTCoreText.xcodeproj` as a subordinate item in the Project Navigator
+3. In your prefix.pch file add:
+	
+		#import "DTCoreText.h"
+		#import <SenTestingKit/SenTestingKit.h>
+		#define ALLOW_IPHONE_SPECIAL_CASES 1
 
-When linking you need to add the -ObjC and -all_load to your app target's "Other Linker Flags". If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
+4. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
+
+		libDTCoreText.a 
+		CoreText.framework
+		ImageIO.framework
+		QuartzCore.framework
+		libxml2.dylib
+		SenTestingKit.framework
+
+5. Go to File: Project Settings… and change the derived data location to project-relative.
+6. Add the DerivedData folder to your git ignore. 
+6. In your application's target Build Settings set the "User Header Search Paths" to the directory containing your project with recrusive set to YES. Set the Header Search Paths to `/usr/include/libxml2`. Set "Always Search User Paths" to YES.
+
+If you do not want to deal with Git submodules simply add DTCoreText to your project's git ignore file and pull updates to DTCoreText as its own independent Git repository. Otherwise you are free to add DTCoreText as a submodule.
+
+*You also have these other installation options instead:*
+
+- Copy all classes and headers from the Core/Source folder to your project.
+- Link your project against the libDTCoreText static library. Note that the "Static Library" target does not produce a universal library. You will also need to add all header files contained in the Core/Source folder to your project.
+- Link your project against the universal static library produced from the "Static Framework". 
+
+When linking you need` to add the -ObjC and -all_load to your app target's "Other Linker Flags". If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
 
 When building from source it is recommended that you at the ALLOW_IPHONE_SPECIAL_CASES define to your PCH, this setting is "baked into" the library and framework targets.
 
