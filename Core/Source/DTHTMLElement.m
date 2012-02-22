@@ -582,19 +582,19 @@
 	{
 		if ([alignment isEqualToString:@"left"])
 		{
-			self.paragraphStyle.textAlignment = kCTLeftTextAlignment;
+			self.paragraphStyle.alignment = kCTLeftTextAlignment;
 		}
 		else if ([alignment isEqualToString:@"right"])
 		{
-			self.paragraphStyle.textAlignment = kCTRightTextAlignment;
+			self.paragraphStyle.alignment = kCTRightTextAlignment;
 		}
 		else if ([alignment isEqualToString:@"center"])
 		{
-			self.paragraphStyle.textAlignment = kCTCenterTextAlignment;
+			self.paragraphStyle.alignment = kCTCenterTextAlignment;
 		}
 		else if ([alignment isEqualToString:@"justify"])
 		{
-			self.paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+			self.paragraphStyle.alignment = kCTJustifiedTextAlignment;
 		}
 		else if ([alignment isEqualToString:@"inherit"])
 		{

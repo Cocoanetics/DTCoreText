@@ -226,13 +226,13 @@
 	
 	if (defaultTextAlignmentNum)
 	{
-		defaultParagraphStyle.textAlignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
+		defaultParagraphStyle.alignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
 	}
 	
 	NSNumber *defaultFirstLineHeadIndent = [_options objectForKey:DTDefaultFirstLineHeadIndent];
 	if (defaultFirstLineHeadIndent)
 	{
-		defaultParagraphStyle.firstLineIndent = [defaultFirstLineHeadIndent integerValue];
+		defaultParagraphStyle.firstLineHeadIndent = [defaultFirstLineHeadIndent integerValue];
 	}
 	
 	NSNumber *defaultHeadIndent = [_options objectForKey:DTDefaultHeadIndent];
@@ -359,7 +359,7 @@
 	void (^blockquoteBlock)(void) = ^ 
 	{
 		currentTag.paragraphStyle.headIndent += 25.0 * textScale;
-		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
 		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
 	};
 	
@@ -472,7 +472,7 @@
 		
 		needsListItemStart = YES;
 		currentTag.paragraphStyle.paragraphSpacing = 0;
-		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent;
+		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
 		currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
 		
 		// first tab is to right-align bullet, numbering against
@@ -642,7 +642,7 @@
 	
 	void (^pBlock)(void) = ^ 
 	{
-		currentTag.paragraphStyle.firstLineIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineIndent;
+		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineHeadIndent;
 	};
 	
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
@@ -909,11 +909,11 @@
 			
 			if ([lowerDirection isEqualToString:@"ltr"])
 			{
-				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionLeftToRight;
+				currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionLeftToRight;
 			}
 			else if ([lowerDirection isEqualToString:@"rtl"])
 			{
-				currentTag.paragraphStyle.writingDirection = kCTWritingDirectionRightToLeft;
+				currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionRightToLeft;
 			}
 		}
 		
