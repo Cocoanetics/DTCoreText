@@ -44,7 +44,7 @@
 
 @synthesize layoutLock;
 
-- (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame origin:(CGPoint)origin;
+- (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
 	if ((self = [super init]))
 	{
@@ -54,7 +54,6 @@
 		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
 		_attributedString = [[globalString attributedSubstringFromRange:[self stringRange]] copy];
 		
-		_baselineOrigin = origin;
 		layoutLock = dispatch_semaphore_create(1);
 	}
 	return self;
@@ -379,6 +378,37 @@
 	}
 	
 	return maxLeading;
+}
+
+
+// returns line height if it is specified in any paragraph style in this line, zero if not specified
+- (CGFloat)calculatedLineHeight
+{
+	NSRange range = NSMakeRange(0, [_attributedString length]);
+	
+	__block float lineHeight = 0;
+	
+	[_attributedString enumerateAttribute:(id)kCTParagraphStyleAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+							   usingBlock:^(id value, NSRange range, BOOL *stop) {
+								   CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)value;
+								   
+								   CGFloat minimumLineHeight = 0;
+								   CGFloat maximumLineHeight = 0;
+								   
+								   CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minimumLineHeight), &minimumLineHeight);
+								   CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maximumLineHeight), &maximumLineHeight);
+								   
+								   if (lineHeight<minimumLineHeight)
+								   {
+									   lineHeight = minimumLineHeight;
+								   }
+								   
+								   if (maximumLineHeight>0 && lineHeight>maximumLineHeight)
+								   {
+									   lineHeight = maximumLineHeight;
+								   }
+							   }];	
+	return lineHeight;
 }
 
 #pragma mark Properties

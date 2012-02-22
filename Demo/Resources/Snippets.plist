@@ -20,6 +20,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Demonstrates setting of Line Height</string>
+		<key>File</key>
+		<string>LineHeight.html</string>
+		<key>Title</key>
+		<string>Line Height</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>Demonstrates really long text. Definitely longer than this meager description.</string>
 		<key>File</key>
 		<string>LoremIpsum.html</string>

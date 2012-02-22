@@ -102,8 +102,142 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return [self.lines description];
 }
 
-- (void)buildLines
+#pragma mark Building the Lines
+
+// returns the head indent for this line, firstLine = YES for the first line in a paragraph, NO for subsequent lines
+- (CGFloat)_calculatedIndentAtIndex:(NSUInteger)index isFirstLineInParagraph:(BOOL)firstLine
 {
+	CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:index effectiveRange:NULL];
+	
+	CGFloat indent = 0;
+	
+	if (firstLine)
+	{
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(indent), &indent);
+	}
+	else 
+	{
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(indent), &indent);
+	}
+	
+	return indent;
+}
+
+
+
+/* Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place.
+ */
+- (void)_buildLinesWithTypesetter
+{
+	// only build lines if frame is legal
+	if (_frame.size.width<=0)
+	{
+		return;
+	}
+	
+	// framesetter keeps internal reference, no need to retain
+	CTTypesetterRef typesetter = CTFramesetterGetTypesetter(_framesetter);
+
+	CFIndex lastIndex = [_attributedStringFragment length];
+	
+	CFRange lineRange = CFRangeMake(0, 0);
+	NSMutableArray *typesetLines = [NSMutableArray array];
+	
+	CGPoint lineOrigin = _frame.origin;
+	
+	DTCoreTextLayoutLine *previousLine = nil;
+	
+	// need the paragraph ranges to know if a line is at the beginning of paragraph
+	NSMutableArray *paragraphRanges = [[self paragraphRanges] mutableCopy];
+
+	NSRange currentParagraphRange = [[paragraphRanges objectAtIndex:0] rangeValue];
+	
+	do 
+	{
+		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
+		{
+			// we are outside of this paragraph, so we go to the next
+			[paragraphRanges removeObjectAtIndex:0];
+			
+			currentParagraphRange = [[paragraphRanges objectAtIndex:0] rangeValue];
+		}
+		
+		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
+		
+		
+		CGFloat offset = [self _calculatedIndentAtIndex:lineRange.location isFirstLineInParagraph:isAtBeginOfParagraph];
+		lineOrigin.x = offset + _frame.origin.x;
+		
+		// find how many characters we get into this line
+		lineRange.length = CTTypesetterSuggestLineBreakWithOffset(typesetter, lineRange.location, _frame.size.width - offset, offset);
+
+		// create a line to fit
+		CTLineRef line = CTTypesetterCreateLine(typesetter, lineRange);
+		
+		// wrap it
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
+		CFRelease(line);
+		
+		// get line height in px if it is specified for this line
+		CGFloat lineHeight = [newLine calculatedLineHeight];
+		
+		// get the correct baseline origin
+		if (previousLine)
+		{
+			if (lineHeight==0)
+			{
+				lineHeight = previousLine.descent + newLine.ascent;
+			}
+			
+			lineHeight += [previousLine paragraphSpacing:YES] + [newLine calculatedLeading];
+		}
+		else 
+		{
+			if (lineHeight>0)
+			{
+				if (lineHeight<newLine.ascent)
+				{
+					// special case, we fake it to look like CoreText
+					lineHeight -= newLine.descent;
+				}
+			}
+			else 
+			{
+				lineHeight = newLine.ascent;
+			}
+		}
+
+		lineOrigin.y += lineHeight;
+
+		newLine.baselineOrigin = lineOrigin;
+		[typesetLines addObject:newLine];
+	
+		lineRange.location += lineRange.length;
+		
+		previousLine = newLine;
+	} 
+	while (lineRange.location < lastIndex);
+	
+	_lines = typesetLines;
+	
+	// at this point we can correct the frame if it is open-ended
+	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	{
+		// actual frame is spanned between first and last lines
+		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+		
+		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
+	}
+}
+
+
+
+- (void)_buildLines
+{
+	// replaced previous approach with manual type setting
+	[self _buildLinesWithTypesetter];
+	return;
+/*	
 	// get lines (don't own it so no release)
 	CFArrayRef cflines = CTFrameGetLines(_textFrame);
 	
@@ -127,7 +261,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
 		lineOrigin.x += _frame.origin.x;
 		
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self origin:lineOrigin];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self];
+		newLine.baselineOrigin = lineOrigin;
 		
 		[tmpLines addObject:newLine];
 		
@@ -138,7 +273,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	_lines = tmpLines;
 
 	// line origins are wrong on last line of paragraphs
-	[self correctLineOrigins];
+	//[self correctLineOrigins];
 	
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
@@ -157,13 +292,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
 	}
+ */
 }
 
 - (NSArray *)lines
 {
 	if (!_lines)
 	{
-		[self buildLines];
+		[self _buildLines];
 	}
 	
 	return _lines;
@@ -622,7 +758,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT && !_lines)
 	{
-		[self buildLines]; // corrects frame if open-ended
+		[self _buildLines]; // corrects frame if open-ended
 	}
 	
 	if (![self.lines count])
@@ -631,15 +767,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	return _frame;
-	//	
-	//    // actual frame is spanned between first and last lines
-	//    DTCoreTextLayoutLine *firstLine = [self.lines objectAtIndex:0];
-	//    DTCoreTextLayoutLine *lastLine = [self.lines lastObject];
-	//    
-	//    CGPoint origin = CGPointMake(roundf(firstLine.frame.origin.x), roundf(firstLine.frame.origin.y));
-	//    CGSize size = CGSizeMake(_frame.size.width, roundf(CGRectGetMaxY(lastLine.frame) - firstLine.frame.origin.y + 1));
-	//    
-	//    return (CGRect){origin, size};
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
