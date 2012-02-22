@@ -6,7 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
+#endif
 
 @class DTHTMLElement;
 
