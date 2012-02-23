@@ -21,7 +21,6 @@
 	
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 	[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
-	//CFRelease(smallerFont);
 	
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	NSScanner *scanner = [NSScanner scannerWithString:text];
@@ -46,7 +45,6 @@
 			[tmpString appendAttributedString:partString];
 		}
 	}
-	
 	
 	return 	tmpString;
 }

@@ -26,8 +26,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 // two correction methods used by the deprecated way of layouting to work around Core Text bugs
 @interface DTCoreTextLayoutFrame ()
 
-- (void)correctAttachmentHeights;
-- (void)correctLineOrigins;
+- (void)_correctAttachmentHeights;
+- (void)_correctLineOrigins;
 
 @end
 
@@ -40,11 +40,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSRange _stringRange;
     
     NSInteger tag;
-}
-
-+ (void)setShouldDrawDebugFrames:(BOOL)debugFrames
-{
-	_DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
 }
 
 // makes a frame for a specific part of the attributed string of the layouter
@@ -320,14 +315,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	_stringRange.length = fittingRange.length;
 	
 	// line origins are wrong on last line of paragraphs
-	[self correctLineOrigins];
+	[self _correctLineOrigins];
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
 	DTVersion version = [[UIDevice currentDevice] osVersion];
 	
 	if (version.major<4 || (version.major==4 && version.minor < 2))
 	{
-		[self correctAttachmentHeights];
+		[self _correctAttachmentHeights];
 	}
 	
 	// at this point we can correct the frame if it is open-ended
@@ -419,7 +414,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
-- (void)setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
+#pragma mark Drawing
+
+- (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
 {
 	DTColor *color = [dictionary objectForKey:@"Color"];
 	CGSize offset = [[dictionary objectForKey:@"Offset"] CGSizeValue];
@@ -664,7 +661,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				for (NSDictionary *shadowDict in shadows)
 				{
-					[self setShadowInContext:context fromDictionary:shadowDict];
+					[self _setShadowInContext:context fromDictionary:shadowDict];
 					
 					// draw once per shadow
 					[oneRun drawInContext:context];
@@ -710,22 +707,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGContextRestoreGState(context);
 }
 
-// assume we want to draw images statically
-- (void)drawInContext:(CGContextRef)context
-{
-	[self drawInContext:context drawImages:YES];
-}
-
-
-- (NSRange)visibleStringRange
-{
-	if (!_textFrame)
-	{
-		return NSMakeRange(0, 0);
-	}
-
-	return _stringRange;
-}
+#pragma mark Text Attachments
 
 - (NSArray *)textAttachments
 {
@@ -759,11 +741,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Calculations
-- (NSArray *)stringIndices {
+
+- (NSRange)visibleStringRange
+{
+	if (!_textFrame)
+	{
+		return NSMakeRange(0, 0);
+	}
+	
+	return _stringRange;
+}
+
+- (NSArray *)stringIndices 
+{
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self.lines count]];
-	for (DTCoreTextLayoutLine *oneLine in self.lines) {
+	
+	for (DTCoreTextLayoutLine *oneLine in self.lines) 
+	{
 		[array addObjectsFromArray:[oneLine stringIndices]];
 	}
+	
 	return array;
 }
 
@@ -911,8 +908,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return NSMakeRange(firstParagraphIndex, lastParagraphIndex - firstParagraphIndex + 1);
 }
 
+#pragma mark Debugging
++ (void)setShouldDrawDebugFrames:(BOOL)debugFrames
+{
+	_DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
+}
+
 #pragma mark Corrections
-- (void)correctAttachmentHeights
+- (void)_correctAttachmentHeights
 {
 	CGFloat downShiftSoFar = 0;
 	
@@ -939,7 +942,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
 // a bug in CoreText shifts the last line of paragraphs slightly down
-- (void)correctLineOrigins
+- (void)_correctLineOrigins
 {
 	DTCoreTextLayoutLine *previousLine = nil;
 	
