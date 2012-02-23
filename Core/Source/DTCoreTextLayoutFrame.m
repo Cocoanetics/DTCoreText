@@ -25,17 +25,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 @implementation DTCoreTextLayoutFrame
 {
-//	CGRect _frame;
 	CTFrameRef _textFrame;
     CTFramesetterRef _framesetter;
+	
+	NSRange _requestedStringRange;
+	NSRange _stringRange;
     
-//	NSArray *_lines;
-//	NSArray *_paragraphRanges;
-	
     NSInteger tag;
-	
-//	NSArray *_textAttachments;
-//	NSAttributedString *_attributedStringFragment;
 }
 
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
@@ -53,7 +49,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		_attributedStringFragment = [layouter.attributedString mutableCopy];
 		
-		CFRange cfRange = CFRangeMake(range.location, range.length);
+		// determine correct target range
+		_requestedStringRange = range;
+		NSUInteger stringLength = [_attributedStringFragment length];
+		
+		if (_requestedStringRange.length==0 || NSMaxRange(_requestedStringRange) > stringLength)
+		{
+			_requestedStringRange.length = stringLength - _requestedStringRange.location;
+		}
+		
+		CFRange cfRange = CFRangeMake(_requestedStringRange.location, _requestedStringRange.length);
 		_framesetter = layouter.framesetter;
 		
 		if (_framesetter)
@@ -72,7 +77,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// Strange, should have gotten a valid framesetter
 			return nil;
 		}
-		
 	}
 	
 	return self;
@@ -129,18 +133,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
  */
 - (void)_buildLinesWithTypesetter
 {
-	// only build lines if frame is legal
-	if (_frame.size.width<=0)
-	{
-		return;
-	}
-	
 	// framesetter keeps internal reference, no need to retain
 	CTTypesetterRef typesetter = CTFramesetterGetTypesetter(_framesetter);
 
-	CFIndex lastIndex = [_attributedStringFragment length];
+	NSUInteger stringLength = [_attributedStringFragment length];
 	
-	CFRange lineRange = CFRangeMake(0, 0);
+
 	NSMutableArray *typesetLines = [NSMutableArray array];
 	
 	CGPoint lineOrigin = _frame.origin;
@@ -151,6 +149,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSMutableArray *paragraphRanges = [[self paragraphRanges] mutableCopy];
 
 	NSRange currentParagraphRange = [[paragraphRanges objectAtIndex:0] rangeValue];
+	
+	// we start out in the requested range, length will be set by the suggested line break function
+	NSRange lineRange = _requestedStringRange;
+	
+	// maximum values for abort of loop
+	CGFloat maxY = CGRectGetMaxY(_frame);
+	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
 	
 	do 
 	{
@@ -172,7 +177,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineRange.length = CTTypesetterSuggestLineBreakWithOffset(typesetter, lineRange.location, _frame.size.width - offset, offset);
 
 		// create a line to fit
-		CTLineRef line = CTTypesetterCreateLine(typesetter, lineRange);
+		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
@@ -210,15 +215,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineOrigin.y += lineHeight;
 
 		newLine.baselineOrigin = lineOrigin;
+		
+		
+		// abort layout if we left the configured frame
+		if (CGRectGetMaxY(newLine.frame)>maxY)
+		{
+			// doesn't fit any more
+			break;
+		}
+		
 		[typesetLines addObject:newLine];
 	
 		lineRange.location += lineRange.length;
 		
 		previousLine = newLine;
 	} 
-	while (lineRange.location < lastIndex);
+	while (lineRange.location < maxIndex);
 	
 	_lines = typesetLines;
+	
+	// now we know how many characters fit
+	_stringRange.length = lineRange.location-_stringRange.location;
 	
 	// at this point we can correct the frame if it is open-ended
 	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
@@ -230,14 +247,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+/**
+ DEPRECATED: this was the original way of getting the lines
+ */
 
-
-- (void)_buildLines
+- (void)_buildLinesWithStandardFramesetter
 {
-	// replaced previous approach with manual type setting
-	[self _buildLinesWithTypesetter];
-	return;
-/*	
 	// get lines (don't own it so no release)
 	CFArrayRef cflines = CTFrameGetLines(_textFrame);
 	
@@ -269,12 +284,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineIndex++;
 	}
 	free(origins);
-
+	
 	_lines = tmpLines;
 
-	// line origins are wrong on last line of paragraphs
-	//[self correctLineOrigins];
+	// need to get the visible range here
+	CFRange fittingRange = CTFrameGetStringRange(_textFrame);
+	_stringRange.location = fittingRange.location;
+	_stringRange.length = fittingRange.length;
 	
+	// line origins are wrong on last line of paragraphs
+	[self correctLineOrigins];
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
 	DTVersion version = [[UIDevice currentDevice] osVersion];
@@ -292,7 +311,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
 	}
- */
+}
+
+- (void)_buildLines
+{
+	// only build lines if frame is legal
+	if (_frame.size.width<=0)
+	{
+		return;
+	}
+
+	// note: building line by line with typesetter
+	[self _buildLinesWithTypesetter];
+	
+//	[self _buildLinesWithStandardFramesetter];
 }
 
 - (NSArray *)lines
@@ -669,10 +701,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		return NSMakeRange(0, 0);
 	}
-	
-	CFRange range = CTFrameGetVisibleStringRange(_textFrame);
-	
-	return NSMakeRange(range.location, range.length);
+
+	return _stringRange;
 }
 
 - (NSArray *)textAttachments
