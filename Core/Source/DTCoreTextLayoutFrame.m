@@ -61,6 +61,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		_requestedStringRange = range;
 		NSUInteger stringLength = [_attributedStringFragment length];
 		
+		if (_requestedStringRange.location >= stringLength)
+		{
+			return nil;
+		}
+		
 		if (_requestedStringRange.length==0 || NSMaxRange(_requestedStringRange) > stringLength)
 		{
 			_requestedStringRange.length = stringLength - _requestedStringRange.location;
@@ -161,6 +166,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// maximum values for abort of loop
 	CGFloat maxY = CGRectGetMaxY(_frame);
 	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
+	NSUInteger fittingLength = 0;
 	
 	do 
 	{
@@ -180,6 +186,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// find how many characters we get into this line
 		lineRange.length = CTTypesetterSuggestLineBreakWithOffset(typesetter, lineRange.location, _frame.size.width - offset, offset);
+		
+		if (NSMaxRange(lineRange) > maxIndex)
+		{
+			// only layout as much as was requested
+			lineRange.length = maxIndex - lineRange.location;
+		}
 
 		// create a line to fit
 		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
@@ -230,6 +242,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		[typesetLines addObject:newLine];
+		fittingLength += lineRange.length;
 	
 		lineRange.location += lineRange.length;
 		
@@ -239,11 +252,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	_lines = typesetLines;
 	
+	if (![_lines count])
+	{
+		// no lines fit
+		_stringRange = NSMakeRange(0, 0);
+		
+		return;
+	}
+	
 	// now we know how many characters fit
-	_stringRange.length = lineRange.location-_stringRange.location;
+	_stringRange.location = _requestedStringRange.location;
+	_stringRange.length = fittingLength;
 	
 	// at this point we can correct the frame if it is open-ended
-	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
 	{
 		// actual frame is spanned between first and last lines
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
