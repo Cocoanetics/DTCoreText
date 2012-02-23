@@ -6,6 +6,11 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+/**
+ Constant for highlighting notification
+ */
+
+extern NSString *DTLinkButtonDidHighlightNotification;
 
 /**
  A button that corresponds to a hyperlink.

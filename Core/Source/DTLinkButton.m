@@ -10,6 +10,10 @@
 #import "CGUtils.h"
 #import "DTColor+HTML.h"
 
+// constant for notification
+NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotification";
+
+
 @interface DTLinkButton ()
 
 - (void)highlightNotification:(NSNotification *)notification;
@@ -34,7 +38,7 @@
 		self.enabled = YES;
 		self.opaque = NO;
 		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:@"DTLinkButtonDidHighlight" object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:DTLinkButtonDidHighlightNotification object:nil];
 	}
 	
 	
@@ -128,7 +132,7 @@
 	{
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:highlighted], @"Highlighted", _GUID, @"GUID", nil];
 		
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"DTLinkButtonDidHighlight" object:self userInfo:userInfo];
+		[[NSNotificationCenter defaultCenter] postNotificationName:DTLinkButtonDidHighlightNotification object:self userInfo:userInfo];
 	}
 }
 
