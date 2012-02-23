@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreTextConstants.h"
+
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayouter.h"
 #import "DTCoreTextLayoutLine.h"
@@ -551,10 +553,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 			
 			
-			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:@"DTBackgroundColor"];
+			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
 			
 			
-			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:@"DTHorizontalRuleStyle"];
+			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:DTHorizontalRuleStyleAttribute];
 			
 			if (ruleStyle)
 			{
@@ -589,7 +591,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// -------------- Line-Out, Underline, Background-Color
 			BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
 			
-			BOOL drawStrikeOut = [[oneRun.attributes objectForKey:@"DTStrikeOut"] boolValue];
+			BOOL drawStrikeOut = [[oneRun.attributes objectForKey:DTStrikeOutAttribute] boolValue];
 			BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
 			
 			if (drawStrikeOut||drawUnderline||backgroundColor)
@@ -694,7 +696,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 			
-			NSArray *shadows = [oneRun.attributes objectForKey:@"DTShadows"];
+			NSArray *shadows = [oneRun.attributes objectForKey:DTShadowsAttribute];
 			
 			if (shadows)
 			{

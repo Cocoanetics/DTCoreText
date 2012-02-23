@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreTextConstants.h"
+
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
 #import "DTCoreTextLayoutFrame.h"
@@ -200,7 +202,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					// see if it's a link
 					NSRange effectiveRange;
 					
-					NSURL *linkURL = [layoutString attribute:@"DTLink" atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
+					NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
 					
 					if (linkURL)
 					{
@@ -317,7 +319,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							{
 								NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
 								
-								NSString *guid = [attributes objectForKey:@"DTGUID"];
+								NSString *guid = [attributes objectForKey:DTGUIDAttribute];
 								newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
 							}
 							else if (_delegateFlags.delegateSupportsGenericCustomViews)

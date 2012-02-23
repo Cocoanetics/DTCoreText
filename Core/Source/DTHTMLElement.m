@@ -123,7 +123,7 @@
 		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
 		
 		// remember original paragraphSpacing
-		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:@"DTAttachmentParagraphSpacing"];
+		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:DTAttachmentParagraphSpacingAttribute];
 		
 #ifndef DT_ADD_FONT_ON_ATTACHMENTS
 		// omit adding a font unless we need it also on attachments, e.g. for editing
@@ -161,16 +161,16 @@
 	// add hyperlink
 	if (link)
 	{
-		[tmpDict setObject:link forKey:@"DTLink"];
+		[tmpDict setObject:link forKey:DTLinkAttribute];
 		
 		// add a GUID to group multiple glyph runs belonging to same link
-		[tmpDict setObject:[NSString guid] forKey:@"DTGUID"];
+		[tmpDict setObject:[NSString guid] forKey:DTGUIDAttribute];
 	}
 	
 	// add strikout if applicable
 	if (strikeOut)
 	{
-		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"DTStrikeOut"];
+		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
 	}
 	
 	// set underline style
@@ -189,7 +189,7 @@
 	
 	if (backgroundColor)
 	{
-		[tmpDict setObject:(id)[backgroundColor CGColor] forKey:@"DTBackgroundColor"];
+		[tmpDict setObject:(id)[backgroundColor CGColor] forKey:DTBackgroundColorAttribute];
 	}
 	
 	if (superscriptStyle)
@@ -208,18 +208,23 @@
 	// add shadow array if applicable
 	if (shadows)
 	{
-		[tmpDict setObject:shadows forKey:@"DTShadows"];
+		[tmpDict setObject:shadows forKey:DTShadowsAttribute];
 	}
 	
 	// add tag for PRE so that we can omit changing this font if we override fonts
 	if (preserveNewlines)
 	{
-		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:@"DTPreserveNewlines"];
+		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTPreserveNewlinesAttribute];
 	}
 	
 	if (headerLevel)
 	{
-		[tmpDict setObject:[NSNumber numberWithInteger:headerLevel] forKey:@"DTHeaderLevel"];
+		[tmpDict setObject:[NSNumber numberWithInteger:headerLevel] forKey:DTHeaderLevelAttribute];
+	}
+	
+	if (_listStyle)
+	{
+		[tmpDict setObject:[NSArray arrayWithObject:_listStyle] forKey:DTTextListsAttribute];
 	}
 	
 	return tmpDict;

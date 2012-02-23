@@ -1,12 +1,14 @@
 #import "DTCoreTextConstants.h"
 
 // standard options
+
 NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
 NSString *NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
 NSString *NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
 NSString *NSAttachmentAttributeName = @"NSAttachmentAttributeName";
 
 // custom options
+
 NSString *DTMaxImageSize = @"DTMaxImageSize";
 NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString *DTDefaultTextColor = @"DTDefaultTextColor";
@@ -20,4 +22,15 @@ NSString *DTDefaultListIndent = @"DTDefaultListIndent";
 
 NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 
+// attributed string attribute constants
 
+NSString *DTTextListsAttribute = @"DTTextLists";
+NSString *DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
+NSString *DTLinkAttribute = @"DTLink";
+NSString *DTGUIDAttribute = @"DTGUID";
+NSString *DTHeaderLevelAttribute = @"DTHeaderLevel";
+NSString *DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
+NSString *DTStrikeOutAttribute = @"DTStrikeOut";
+NSString *DTBackgroundColorAttribute = @"DTBackgroundColor";
+NSString *DTShadowsAttribute = @"DTShadows";
+NSString *DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";

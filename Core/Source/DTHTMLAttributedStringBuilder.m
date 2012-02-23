@@ -537,7 +537,7 @@
 		{
 			[styleDict setObject:currentTag.backgroundColor forKey:@"BackgroundColor"];
 		}
-		[currentTag addAdditionalAttribute:styleDict forKey:@"DTHorizontalRuleStyle"];
+		[currentTag addAdditionalAttribute:styleDict forKey:DTHorizontalRuleStyleAttribute];
 		
 		[tmpString appendAttributedString:[currentTag attributedString]];
 		outputHasNewline = YES;

@@ -138,7 +138,7 @@
 		
 		NSString *blockElement;
 		
-		NSNumber *headerLevel = [paraAttributes objectForKey:@"DTHeaderLevel"];
+		NSNumber *headerLevel = [paraAttributes objectForKey:DTHeaderLevelAttribute];
 		
 		if (headerLevel)
 		{
@@ -331,7 +331,7 @@
 				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
 			}
 			
-			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:@"DTBackgroundColor"];
+			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
 			if (backgroundColor)
 			{
 				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
@@ -347,7 +347,7 @@
 			else
 			{
 				// there can be no underline and strike-through at the same time
-				NSNumber *strikout = [attributes objectForKey:@"DTStrikeOut"];
+				NSNumber *strikout = [attributes objectForKey:DTStrikeOutAttribute];
 				if ([strikout boolValue])
 				{
 					fontStyle = [fontStyle stringByAppendingString:@"text-decoration:line-through;"];
@@ -355,7 +355,7 @@
 			}
 			
 			
-			NSURL *url = [attributes objectForKey:@"DTLink"];
+			NSURL *url = [attributes objectForKey:DTLinkAttribute];
 			
 			if (url)
 			{
