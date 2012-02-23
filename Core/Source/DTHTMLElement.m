@@ -258,8 +258,6 @@
 				
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 				[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
-				//CFRelease(smallerFont);
-				
 				
 				return [[NSAttributedString alloc] initWithString:text attributes:smallAttributes];
 			}
@@ -284,7 +282,6 @@
 		CTFontRef font = [fontDesc newMatchingFont];
 		
 		[attributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
-		//CFRelease(font);
 	}
 	
 	// text color for bullet same as text
@@ -297,11 +294,15 @@
 	{
 		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
 		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-		//CFRelease(newParagraphStyle);
 	}
 	
 	// get calculated list style
 	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
+	
+	if (_listStyle)
+	{
+		[attributes setObject:[NSArray arrayWithObject:_listStyle] forKey:DTTextListsAttribute];
+	}
 	
 	NSString *prefix = [calculatedListStyle prefixWithCounter:_listCounter];
 	

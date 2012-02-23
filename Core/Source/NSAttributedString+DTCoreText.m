@@ -15,6 +15,7 @@
 #import "DTTextAttachment.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFontDescriptor.h"
+#import "DTCSSListStyle.h"
 
 #if TARGET_OS_IPHONE
 #import "NSAttributedString+HTML.h"
@@ -66,6 +67,121 @@
 
 #pragma mark HTML Encoding
 
+
+- (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag
+{
+	BOOL isOrdered = NO;
+	
+	NSString *typeString = nil;
+	
+	switch (listStyle.type) 
+	{
+		case DTCSSListStyleTypeInherit:
+		case DTCSSListStyleTypeDisc:
+		{
+			typeString = @"disc";
+			isOrdered = NO;
+			break;
+		}
+			
+		case DTCSSListStyleTypeCircle:
+		{
+			typeString = @"circle";
+			isOrdered = NO;
+			break;
+		}
+			
+		case DTCSSListStyleTypePlus:
+		{
+			typeString = @"plus";
+			isOrdered = NO;
+			break;
+		}
+		
+		case DTCSSListStyleTypeUnderscore:
+		{
+			typeString = @"underscore";
+			isOrdered = NO;
+			break;
+		}
+			
+		case DTCSSListStyleTypeImage: 
+		{
+			typeString = @"image";
+			isOrdered = NO;
+			break;
+		}
+			
+		case DTCSSListStyleTypeDecimal:
+		{
+			typeString = @"decimal";
+			isOrdered = YES;
+			break;
+		}
+
+		case DTCSSListStyleTypeDecimalLeadingZero:
+		{
+			typeString = @"decimal-leading-zero";
+			isOrdered = YES;
+			break;
+		}
+
+		case DTCSSListStyleTypeUpperAlpha:
+		{
+			typeString = @"upper-alpha";
+			isOrdered = YES;
+			break;
+		}
+			
+		case DTCSSListStyleTypeUpperLatin:
+		{
+			typeString = @"upper-latin";
+			isOrdered = YES;
+			break;
+		}
+			
+		case DTCSSListStyleTypeLowerAlpha:
+		{
+			typeString = @"lower-alpha";
+			isOrdered = YES;
+			break;
+		}
+			
+		case DTCSSListStyleTypeLowerLatin:
+		{
+			typeString = @"lower-latin";
+			isOrdered = YES;
+			break;
+		}
+			
+		default:
+			break;
+	}
+	
+	if (closingTag)
+	{
+		if (isOrdered)
+		{
+			return @"</ol>";
+		}
+		else
+		{
+			return @"</ul>";
+		}
+	}
+	else
+	{
+		if (isOrdered)
+		{
+			return [NSString stringWithFormat:@"<ol style=\"list-type='%@';\">", typeString];
+		}
+		else
+		{
+			return [NSString stringWithFormat:@"<ul style=\"list-type='%@';\">", typeString];
+		}
+	}
+}
+
 // TO DO: aggregate common styles (like font) into one span
 // TO DO: correctly encode LI/OL/UL
 // TO DO: correctly encode shadows
@@ -80,6 +196,8 @@
 	NSMutableString *retString = [NSMutableString string];
 	
 	NSInteger location = 0;
+	
+	DTCSSListStyle *previousListStyle = nil;
 	
 	for (NSString *oneParagraph in paragraphs)
 	{
@@ -106,7 +224,10 @@
 		location = location + paragraphRange.length + 1;
 		
 		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
-		
+
+		// lets see if we have a list style
+		DTCSSListStyle *listStyle = [[paraAttributes objectForKey:DTTextListsAttribute] lastObject];
+
 		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 		NSString *paraStyleString = nil;
 		
@@ -146,7 +267,26 @@
 		}
 		else
 		{
-			blockElement = @"p";
+			if (listStyle)
+			{
+				if (!previousListStyle)
+				{
+					// beginning of a list block
+					[retString appendString:[self _tagRepresentationForListStyle:listStyle closingTag:NO]];
+				}
+				
+				blockElement = @"li";
+			}
+			else
+			{
+				if (previousListStyle)
+				{
+					// need closing of previous list block
+					[retString appendString:[self _tagRepresentationForListStyle:previousListStyle closingTag:YES]];
+				}
+				
+				blockElement = @"p";
+			}
 			
 			if ([paragraphs lastObject] == oneParagraph)
 			{
@@ -382,6 +522,17 @@
 		}
 		
 		[retString appendFormat:@"</%@>\n", blockElement];
+		
+		
+		// end of paragraph loop
+		previousListStyle = listStyle;
+	}
+	
+	// close list if still open
+	if (previousListStyle)
+	{
+		// need closing of previous list block
+		[retString appendString:[self _tagRepresentationForListStyle:previousListStyle closingTag:YES]];
 	}
 	
 	return retString;
