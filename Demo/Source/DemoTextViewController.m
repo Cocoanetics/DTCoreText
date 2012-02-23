@@ -245,9 +245,9 @@
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame
 {
 	DTLinkButton *button = [[DTLinkButton alloc] initWithFrame:frame];
-	button.url = url;
+	button.URL = url;
 	button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
-	button.guid = identifier;
+	button.GUID = identifier;
 	
 	// use normal push action for opening URL
 	[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
@@ -377,7 +377,7 @@
 
 - (void)linkPushed:(DTLinkButton *)button
 {
-	[[UIApplication sharedApplication] openURL:[button.url absoluteURL]];
+	[[UIApplication sharedApplication] openURL:[button.URL absoluteURL]];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -394,11 +394,11 @@
 	{
 		DTLinkButton *button = (id)[gesture view];
 		button.highlighted = NO;
-		self.lastActionLink = button.url;
+		self.lastActionLink = button.URL;
 		
-		if ([[UIApplication sharedApplication] canOpenURL:[button.url absoluteURL]])
+		if ([[UIApplication sharedApplication] canOpenURL:[button.URL absoluteURL]])
 		{
-			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.url absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
+			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.URL absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
 	}

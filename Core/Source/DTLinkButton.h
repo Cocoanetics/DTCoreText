@@ -7,13 +7,29 @@
 //
 
 
-
-
+/**
+ A button that corresponds to a hyperlink.
+ 
+ Multiple parts of the same hyperlink synchronize their looks through the guid.
+ */
 @interface DTLinkButton : UIButton 
 
-@property (nonatomic, copy) NSURL *url;
-@property (nonatomic, copy) NSString *guid;
 
+/**
+ The URL that this button corresponds to.
+ */
+@property (nonatomic, copy) NSURL *URL;
+
+
+/**
+ The unique identifier (GUID) that all parts of the same hyperlink have in common.
+ */
+@property (nonatomic, copy) NSString *GUID;
+
+
+/**
+ The minimum size that the receiver should respond on hits with. Adjusts the bounds if they are smaller than the passed size.
+ */
 @property (nonatomic, assign) CGSize minimumHitSize;
 
 @end
