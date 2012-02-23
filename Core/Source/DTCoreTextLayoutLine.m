@@ -35,8 +35,7 @@
 	
 	NSArray *_glyphRuns;
 
-	BOOL _didCalculateMetrics;
-	dispatch_once_t _onceToken;
+	dispatch_once_t _didCalculateMetrics;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
@@ -273,10 +272,9 @@
 
 - (void)calculateMetrics
 {
-	dispatch_once(&_onceToken, ^{
+	dispatch_once(&_didCalculateMetrics, ^{
 		width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
 		trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
-		_didCalculateMetrics = YES;
 	});
 }
 
