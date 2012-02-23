@@ -151,6 +151,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat width;
 		CGFloat leading;
 		CGFloat trailingWhitespaceWidth;
+		CGFloat paragraphSpacing;
 	} lineMetrics;
 	
 	lineMetrics currentLineMetrics;
@@ -192,6 +193,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// only layout as much as was requested
 			lineRange.length = maxIndex - lineRange.location;
 		}
+		
+		if (NSMaxRange(lineRange) == NSMaxRange(currentParagraphRange))
+		{
+			// at end of paragraph, record the spacing
+			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentLineMetrics.paragraphSpacing), &currentLineMetrics.paragraphSpacing);
+
+		}
 
 		// create a line to fit
 		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
@@ -199,12 +207,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// we need all metrics so get the at once
 		currentLineMetrics.width = CTLineGetTypographicBounds(line, &currentLineMetrics.ascent, &currentLineMetrics.descent, &currentLineMetrics.leading);
 		
-		// wrap it
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
-		CFRelease(line);
-		
 		// get line height in px if it is specified for this line
-		CGFloat lineHeight = [newLine calculatedLineHeight];
+		CGFloat lineHeight = 0;
+		CGFloat minLineHeight;
+		CGFloat maxLineHeight;
+		
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight);
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight);
+		
+		if (lineHeight<minLineHeight)
+		{
+			lineHeight = minLineHeight;
+		}
+		
+		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		{
+			lineHeight = maxLineHeight;
+		}
+		
+//		CGFloat lineHeight = [newLine calculatedLineHeight];
 		
 		// get the correct baseline origin
 		if (previousLine)
@@ -214,7 +235,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				lineHeight = previousLineMetrics.descent + currentLineMetrics.ascent;
 			}
 			
-			lineHeight += [previousLine paragraphSpacing:YES];
+			if (isAtBeginOfParagraph)
+			{
+				lineHeight += previousLineMetrics.paragraphSpacing;
+				
+//				lineHeight += [previousLine paragraphSpacing:YES];
+			}
 			lineHeight += currentLineMetrics.leading;
 		}
 		else 
@@ -234,7 +260,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 
 		lineOrigin.y += lineHeight;
-		
 		
 		// adjust lineOrigin based on paragraph text alignment
 		CTTextAlignment textAlignment;
@@ -284,7 +309,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				// only justify if the line widht is longer than 60% of the frame to avoid over-stretching
 				if (currentLineMetrics.width > 0.6 * _frame.size.width)
 				{
-					newLine = [newLine justifiedLineWithFactor:1.0f justificationWidth:_frame.size.width-offset];
+					// create a justified line and replace the current one with it
+					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, _frame.size.width-offset);
+					CFRelease(line);
+					line = justifiedLine;
+//					
+//					newLine = [newLine justifiedLineWithFactor:1.0f justificationWidth:_frame.size.width-offset];
 				}
 				
 				lineOrigin.x = _frame.origin.x + offset;
@@ -302,6 +332,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			break;
 		}
 
+		// wrap it
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
+		CFRelease(line);
+
+		
 		newLine.baselineOrigin = lineOrigin;
 		
 		[typesetLines addObject:newLine];
