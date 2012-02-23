@@ -15,6 +15,7 @@
 @interface DTCoreTextLayoutLine ()
 
 @property (nonatomic, strong) NSArray *glyphRuns;
+@property (nonatomic, copy) NSAttributedString *attributedString;
 
 @end
 
@@ -46,7 +47,7 @@
 		CFRetain(_line);
 
 		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
-		_attributedString = [[globalString attributedSubstringFromRange:[self stringRange]] copy];
+		self.attributedString = [globalString attributedSubstringFromRange:[self stringRange]];
 	}
 	return self;
 }
@@ -80,6 +81,23 @@
 	}
 	
 	return ret;
+}
+
+#pragma mark Creating Variants
+
+- (DTCoreTextLayoutLine *)justifiedLineWithFactor:(CGFloat)justificationFactor justificationWidth:(CGFloat)justificationWidth
+{
+	// make this line justified
+	CTLineRef justifiedLine = CTLineCreateJustifiedLine(_line, justificationFactor, justificationWidth);
+
+	DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:justifiedLine layoutFrame:nil];
+	
+	// we don't need the layout frame because we directly transfer a copy of the string
+	newLine.attributedString = _attributedString;
+	
+	CFRelease(justifiedLine);
+	
+	return newLine;
 }
 
 
@@ -494,5 +512,6 @@
 @synthesize trailingWhitespaceWidth;
 
 @synthesize baselineOrigin = _baselineOrigin;
+@synthesize attributedString = _attributedString;
 
 @end

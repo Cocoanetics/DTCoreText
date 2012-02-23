@@ -10,6 +10,7 @@
 #import "DTCoreTextLayouter.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextGlyphRun.h"
+#import "DTCoreTextParagraphStyle.h"
 
 #import "DTTextAttachment.h"
 #import "UIDevice+DTVersion.h"
@@ -115,29 +116,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Building the Lines
-
-// returns the head indent for this line, firstLine = YES for the first line in a paragraph, NO for subsequent lines
-- (CGFloat)_calculatedIndentAtIndex:(NSUInteger)index isFirstLineInParagraph:(BOOL)firstLine
-{
-	CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:index effectiveRange:NULL];
-	
-	CGFloat indent = 0;
-	
-	if (firstLine)
-	{
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(indent), &indent);
-	}
-	else 
-	{
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(indent), &indent);
-	}
-	
-	return indent;
-}
-
-
-
-/* Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place.
+/* 
+ Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place.
  */
 - (void)_buildLinesWithTypesetter
 {
@@ -175,12 +155,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
 		
+		// get the paragraph style at this index
+		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
+		DTCoreTextParagraphStyle *style = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyle];
 		
-		CGFloat offset = [self _calculatedIndentAtIndex:lineRange.location isFirstLineInParagraph:isAtBeginOfParagraph];
+		CGFloat offset = 0;
+		
+		if (isAtBeginOfParagraph)
+		{
+			offset = style.firstLineHeadIndent;
+		}
+		else
+		{
+			offset = style.headIndent;
+		}
+		
 		lineOrigin.x = offset + _frame.origin.x;
 		
 		// find how many characters we get into this line
-		lineRange.length = CTTypesetterSuggestLineBreakWithOffset(typesetter, lineRange.location, _frame.size.width - offset, offset);
+		lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, _frame.size.width - offset);
 		
 		if (NSMaxRange(lineRange) > maxIndex)
 		{
@@ -225,6 +218,54 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 
 		lineOrigin.y += lineHeight;
+		
+		
+		// adjust lineOrigin based on paragraph text alignment
+		switch (style.alignment) 
+		{
+			case kCTLeftTextAlignment:
+			{
+				lineOrigin.x = _frame.origin.x + offset;
+				// nothing to do
+				break;
+			}
+				
+			case kCTNaturalTextAlignment:
+			{
+				// depends on the text direction
+				if (style.baseWritingDirection != kCTWritingDirectionRightToLeft)
+				{
+					break;
+				}
+				
+				// right alignment falls through
+			}
+				
+			case kCTRightTextAlignment:
+			{
+				lineOrigin.x = _frame.origin.x + _frame.size.width - newLine.frame.size.width + newLine.trailingWhitespaceWidth;
+				break;
+			}
+				
+			case kCTCenterTextAlignment:
+			{
+				lineOrigin.x = _frame.origin.x + offset + (_frame.size.width - newLine.frame.size.width - newLine.trailingWhitespaceWidth) /2.0f;
+				break;
+			}
+				
+			case kCTJustifiedTextAlignment:
+			{
+				// only justify if the line widht is longer than 60% of the frame to avoid over-stretching
+				if (newLine.frame.size.width > 0.6 * _frame.size.width)
+				{
+					newLine = [newLine justifiedLineWithFactor:1.0f justificationWidth:_frame.size.width-offset];
+				}
+				
+				lineOrigin.x = _frame.origin.x + offset;
+				
+				break;
+			}
+		}
 
 		newLine.baselineOrigin = lineOrigin;
 		
