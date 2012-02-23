@@ -52,8 +52,7 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 
 4. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
 
-		libDTCoreText.a 
-		CoreText.framework
+		The "Static Library" target from the DTCoreText sub-project
 		ImageIO.framework
 		QuartzCore.framework
 		libxml2.dylib
