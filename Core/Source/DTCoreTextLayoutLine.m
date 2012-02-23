@@ -15,13 +15,8 @@
 @interface DTCoreTextLayoutLine ()
 
 @property (nonatomic, strong) NSArray *glyphRuns;
-@property (nonatomic, assign) dispatch_semaphore_t layoutLock;
 
 @end
-
-#define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(layoutLock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(layoutLock);
-
 
 @implementation DTCoreTextLayoutLine
 {
@@ -40,9 +35,8 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
+	dispatch_once_t _onceToken;
 }
-
-@synthesize layoutLock;
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
 {
@@ -53,8 +47,6 @@
 
 		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
 		_attributedString = [[globalString attributedSubstringFromRange:[self stringRange]] copy];
-		
-		layoutLock = dispatch_semaphore_create(1);
 	}
 	return self;
 }
@@ -62,8 +54,6 @@
 - (void)dealloc
 {
 	CFRelease(_line);
-	
-	dispatch_release(layoutLock);
 }
 
 - (NSString *)description
@@ -94,7 +84,8 @@
 
 
 #pragma mark Calculations
-- (NSArray *)stringIndices {
+- (NSArray *)stringIndices 
+{
 	NSMutableArray *array = [NSMutableArray array];
 	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
 		[array addObjectsFromArray:[oneRun stringIndices]];
@@ -264,18 +255,11 @@
 
 - (void)calculateMetrics
 {
-	// calculate metrics
-	SYNCHRONIZE_START(self)
-	{
-		if (!_didCalculateMetrics)
-		{
-			width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
-			trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
-			
-			_didCalculateMetrics = YES;
-		}
-	}
-	SYNCHRONIZE_END(self);
+	dispatch_once(&_onceToken, ^{
+		width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
+		trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
+		_didCalculateMetrics = YES;
+	});
 }
 
 // returns the maximum paragraph spacing for this line
