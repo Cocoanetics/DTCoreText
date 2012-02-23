@@ -18,7 +18,6 @@
 	DTAttributedTextView *_textView;
 	UITextView *_rangeView;
 	UITextView *_charsView;
-	UITextView *_dataView;
 	UITextView *_htmlView;
 
 	NSURL *baseURL;

@@ -68,12 +68,6 @@
 	
 	CGRect frame = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height);
 	
-	// Create data view
-	_dataView = [[UITextView alloc] initWithFrame:frame];
-	_dataView.editable = NO;
-	_dataView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	[self.view addSubview:_dataView];
-	
 	// Create chars view
 	_charsView = [[UITextView alloc] initWithFrame:frame];
 	_charsView.editable = NO;
@@ -120,10 +114,6 @@
 	// Display string
 	_textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.attributedString = string;
-	
-	// Data view
-	_dataView.text = [data description];
-	
 }
 
 
