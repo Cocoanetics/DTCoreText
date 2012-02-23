@@ -12,7 +12,6 @@
 #import "DTCoreTextLayouter.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextGlyphRun.h"
-#import "DTCoreTextParagraphStyle.h"
 
 #import "DTTextAttachment.h"
 #import "UIDevice+DTVersion.h"
@@ -145,6 +144,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
 	NSUInteger fittingLength = 0;
 	
+	typedef struct 
+	{
+		CGFloat ascent;
+		CGFloat descent;
+		CGFloat width;
+		CGFloat leading;
+		CGFloat trailingWhitespaceWidth;
+	} lineMetrics;
+	
+	lineMetrics currentLineMetrics;
+	lineMetrics previousLineMetrics;
+	
 	do 
 	{
 		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
@@ -159,17 +170,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// get the paragraph style at this index
 		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
-		DTCoreTextParagraphStyle *style = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyle];
 		
 		CGFloat offset = 0;
 		
 		if (isAtBeginOfParagraph)
 		{
-			offset = style.firstLineHeadIndent;
+			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(offset), &offset);
 		}
 		else
 		{
-			offset = style.headIndent;
+			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(offset), &offset);
 		}
 		
 		lineOrigin.x = offset + _frame.origin.x;
@@ -186,6 +196,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// create a line to fit
 		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 		
+		// we need all metrics so get the at once
+		currentLineMetrics.width = CTLineGetTypographicBounds(line, &currentLineMetrics.ascent, &currentLineMetrics.descent, &currentLineMetrics.leading);
+		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
 		CFRelease(line);
@@ -198,24 +211,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			if (lineHeight==0)
 			{
-				lineHeight = previousLine.descent + newLine.ascent;
+				lineHeight = previousLineMetrics.descent + currentLineMetrics.ascent;
 			}
 			
-			lineHeight += [previousLine paragraphSpacing:YES] + [newLine calculatedLeading];
+			lineHeight += [previousLine paragraphSpacing:YES];
+			lineHeight += currentLineMetrics.leading;
 		}
 		else 
 		{
 			if (lineHeight>0)
 			{
-				if (lineHeight<newLine.ascent)
+				if (lineHeight<currentLineMetrics.ascent)
 				{
 					// special case, we fake it to look like CoreText
-					lineHeight -= newLine.descent;
+					lineHeight -= currentLineMetrics.descent; 
 				}
 			}
 			else 
 			{
-				lineHeight = newLine.ascent;
+				lineHeight = currentLineMetrics.ascent;
 			}
 		}
 
@@ -223,7 +237,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		
 		// adjust lineOrigin based on paragraph text alignment
-		switch (style.alignment) 
+		CTTextAlignment textAlignment;
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment);
+
+		
+		switch (textAlignment) 
 		{
 			case kCTLeftTextAlignment:
 			{
@@ -235,7 +253,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			case kCTNaturalTextAlignment:
 			{
 				// depends on the text direction
-				if (style.baseWritingDirection != kCTWritingDirectionRightToLeft)
+				CTWritingDirection baseWritingDirection;
+				CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection);
+				
+				if (baseWritingDirection != kCTWritingDirectionRightToLeft)
 				{
 					break;
 				}
@@ -245,20 +266,23 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTRightTextAlignment:
 			{
-				lineOrigin.x = _frame.origin.x + _frame.size.width - newLine.frame.size.width + newLine.trailingWhitespaceWidth;
+				currentLineMetrics.trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
+				lineOrigin.x = _frame.origin.x + _frame.size.width - currentLineMetrics.width + currentLineMetrics.trailingWhitespaceWidth;
 				break;
 			}
 				
 			case kCTCenterTextAlignment:
 			{
-				lineOrigin.x = _frame.origin.x + offset + (_frame.size.width - newLine.frame.size.width - newLine.trailingWhitespaceWidth) /2.0f;
+				currentLineMetrics.trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
+
+				lineOrigin.x = _frame.origin.x + offset + (_frame.size.width - currentLineMetrics.width - currentLineMetrics.trailingWhitespaceWidth) /2.0f;
 				break;
 			}
 				
 			case kCTJustifiedTextAlignment:
 			{
 				// only justify if the line widht is longer than 60% of the frame to avoid over-stretching
-				if (newLine.frame.size.width > 0.6 * _frame.size.width)
+				if (currentLineMetrics.width > 0.6 * _frame.size.width)
 				{
 					newLine = [newLine justifiedLineWithFactor:1.0f justificationWidth:_frame.size.width-offset];
 				}
@@ -269,15 +293,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 		}
 
-		newLine.baselineOrigin = lineOrigin;
-		
+		CGFloat lineBottom = lineOrigin.y + currentLineMetrics.descent;
 		
 		// abort layout if we left the configured frame
-		if (CGRectGetMaxY(newLine.frame)>maxY)
+		if (lineBottom>maxY)
 		{
 			// doesn't fit any more
 			break;
 		}
+
+		newLine.baselineOrigin = lineOrigin;
 		
 		[typesetLines addObject:newLine];
 		fittingLength += lineRange.length;
@@ -285,6 +310,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineRange.location += lineRange.length;
 		
 		previousLine = newLine;
+		previousLineMetrics = currentLineMetrics;
 	} 
 	while (lineRange.location < maxIndex);
 	

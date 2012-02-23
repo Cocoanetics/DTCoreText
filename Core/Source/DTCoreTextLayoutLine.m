@@ -35,7 +35,7 @@
 	
 	NSArray *_glyphRuns;
 
-	dispatch_once_t _didCalculateMetrics;
+	BOOL _didCalculateMetrics;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
@@ -270,12 +270,12 @@
 	return didShift;
 }
 
-- (void)calculateMetrics
+- (void)_calculateMetrics
 {
-	dispatch_once(&_didCalculateMetrics, ^{
-		width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
-		trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
-	});
+	width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
+	trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
+	
+	_didCalculateMetrics = YES;
 }
 
 // returns the maximum paragraph spacing for this line
@@ -313,7 +313,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	// take lineHeightMultiple into account
@@ -444,7 +444,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return CGRectMake(_baselineOrigin.x, _baselineOrigin.y - ascent, width, ascent + descent);
@@ -454,7 +454,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return width;
@@ -464,7 +464,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return ascent;
@@ -474,7 +474,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return descent;
@@ -484,7 +484,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return leading;
@@ -494,7 +494,7 @@
 {
 	if (!_didCalculateMetrics)
 	{
-		[self calculateMetrics];
+		[self _calculateMetrics];
 	}
 	
 	return trailingWhitespaceWidth;
