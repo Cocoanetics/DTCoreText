@@ -275,7 +275,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 								{
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
 								}
-								else
+								else if (_delegateFlags.delegateSupportsGenericCustomViews)
 								{
 									NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];

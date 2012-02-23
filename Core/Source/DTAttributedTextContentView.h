@@ -16,20 +16,67 @@
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
 
+/**
+ Protocol to provide custom views for elements in an DTAttributedTextContentView. Also the delegate gets notified once the text view has been drawn.
+ */
 @protocol DTAttributedTextContentViewDelegate <NSObject>
 
 @optional
 
-// called after a layout frame or a part of it is drawn
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+/**
+ @name Notifications
+ */
 
-// provide custom view for an attachment, e.g. an imageView for images
+
+/**
+ Called after a layout frame or a part of it is drawn. 
+ 
+ @param attributedTextContentView The content view that drew a layout frame
+ @param layoutFrame The layout frame that was drawn for
+ @param context The graphics context that was drawn into
+ */
+- (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+
+
+/**
+ @name Providing Custom Views for Content
+ */
+
+
+/**
+ Provide custom view for an attachment, e.g. an imageView for images
+ 
+ @param attributedTextContentView The content view asking for a custom view
+ @param attachment The <DTTextAttachment> that this view should represent
+ @param frame The frame that the view should use to fit on top of the space reserved for the attachment
+ @returns The view that should represent the given attachment
+ */
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame;
 
-// provide button to be placed over links, the identifier is used to link multiple parts of the same A tag
+
+/**
+ Provide button to be placed over links, the identifier is used to link multiple parts of the same A tag
+
+ @param attributedTextContentView The content view asking for a custom view
+ @param url The `NSURL` of the hyperlink
+ @param identifier An identifier that uniquely identifies the hyperlink within the document
+ @param frame The frame that the view should use to fit on top of the space reserved for the attachment
+ @returns The view that should represent the given hyperlink
+ */
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
-// old style
+
+/** 
+ Provide generic views for all attachments.
+ 
+ This is only called if the more specific delegate methods are not implemented.
+ 
+ @param attributedTextContentView The content view asking for a custom view
+ @param string The attributed sub-string containing this element
+ @param frame The frame that the view should use to fit on top of the space reserved for the attachment
+ @returns The view that should represent the given hyperlink or text attachment
+ @see attributedTextContentView:viewForAttachment:frame: and attributedTextContentView:viewForAttachment:frame:
+ */
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
 
 @end
