@@ -38,6 +38,8 @@
 		A758FCA014DBD7A5007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
+		A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -250,7 +252,7 @@
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
-		A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
+		A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B0B56A14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B0B56B14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B0B56C14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
@@ -957,6 +959,7 @@
 				A7F5672714D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */,
 				A7C7ACD514D924B1005A9C69 /* NSMutableString+HTML.h in Headers */,
 				A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
+				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -993,14 +996,15 @@
 				A7F5671514D841EA00D1F167 /* NSString+CSS.h in Headers */,
 				A7F5672814D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */,
 				A7C7ACD614D924B1005A9C69 /* NSMutableString+HTML.h in Headers */,
-				A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
 				A788C9D614863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */,
 				A788C9E014863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */,
 				A788C9E514863E8700E1AFD9 /* NSScanner+HTML.h in Headers */,
+				A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
 				A788C9EA14863E8700E1AFD9 /* NSString+HTML.h in Headers */,
 				A788C9FE14863E8700E1AFD9 /* NSURL+HTML.h in Headers */,
 				A788CA0314863E8700E1AFD9 /* DTColor+HTML.h in Headers */,
 				A70B4CA01486558200873A4A /* DTCoreText.h in Headers */,
+				A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
