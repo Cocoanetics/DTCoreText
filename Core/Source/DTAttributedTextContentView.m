@@ -394,7 +394,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	[self.layoutFrame drawInContext:context];
+	[self.layoutFrame drawInContext:context drawImages:YES];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size

@@ -10,10 +10,11 @@
 
 static NSCache *_paragraphStyleCache;
 
-#if ALLOW_IPHONE_SPECIAL_CASES
+// use smaller list indent on iPhone OS
+#if TARGET_OS_IPHONE
 #define SPECIAL_LIST_INDENT		27.0f
 #else
-#define SPECIAL_LIST_INDENT		36.0
+#define SPECIAL_LIST_INDENT		36.0f
 #endif
 
 static dispatch_semaphore_t selfLock;

@@ -9,12 +9,3 @@
 #import <CoreText/CoreText.h>
     
 #endif
-
-
-// Allows variations to cater for different behavior on iOS than OSX to have similar visual output
-#define ALLOW_IPHONE_SPECIAL_CASES 1
-
-/* Known Differences:
- - OSX has an entire attributes block for an UL block
- - OSX does not add extra space after UL block
- */

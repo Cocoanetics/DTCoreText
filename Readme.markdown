@@ -49,8 +49,6 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 3. In your prefix.pch file add:
 	
 		#import "DTCoreText.h"
-		#import <SenTestingKit/SenTestingKit.h>
-		#define ALLOW_IPHONE_SPECIAL_CASES 1
 
 4. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
 
@@ -59,7 +57,6 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 		ImageIO.framework
 		QuartzCore.framework
 		libxml2.dylib
-		SenTestingKit.framework
 
 5. Go to File: Project Settings… and change the derived data location to project-relative.
 6. Add the DerivedData folder to your git ignore. 
@@ -74,8 +71,6 @@ If you do not want to deal with Git submodules simply add DTCoreText to your pro
 - Link your project against the universal static library produced from the "Static Framework". 
 
 When linking you need` to add the -ObjC and -all_load to your app target's "Other Linker Flags". If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
-
-When building from source it is recommended that you at the ALLOW_IPHONE_SPECIAL_CASES define to your PCH, this setting is "baked into" the library and framework targets.
 
 The project has been changed to use libxml2 for parsing HTML, so you need to link in the libxml2.dylib, and, if you're copying all files from Core/Source, you must add the path "/usr/include/libxml2" to your header search paths as well.
 
