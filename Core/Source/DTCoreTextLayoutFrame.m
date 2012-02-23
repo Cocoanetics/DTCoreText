@@ -136,9 +136,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// framesetter keeps internal reference, no need to retain
 	CTTypesetterRef typesetter = CTFramesetterGetTypesetter(_framesetter);
 
-	NSUInteger stringLength = [_attributedStringFragment length];
-	
-
 	NSMutableArray *typesetLines = [NSMutableArray array];
 	
 	CGPoint lineOrigin = _frame.origin;
