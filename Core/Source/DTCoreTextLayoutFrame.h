@@ -36,6 +36,7 @@
 	NSAttributedString *_attributedStringFragment;
 }
 
+
 /**
  @name Creating Layout Frames
  */
@@ -64,6 +65,7 @@
  @name Getting Information
  */
 
+
 /**
  The string range that is visible i.e. fits into the given rectangle. For open-ended frames this is typically the entire string. For frame-contrained layout frames it is the substring that fits.
   */
@@ -71,14 +73,16 @@
 
 
 /**
- This is a reference to the entire attributed string owned by the layouter of the receiver.
+ This is a copy of the attributed string owned by the layouter of the receiver.
 */
 - (NSAttributedString *)attributedStringFragment;
+
 
 /**
  An array that maps glyphs with string indices.
  */
 - (NSArray *)stringIndices;
+
 
 /**
  The frame rectangle for the layout frame.
@@ -90,11 +94,12 @@
  @name Drawing
  */
 
+
 /**
  Draws the entire layout frame into the given graphics context.
  
  @param context A graphics context to draw into
- @param drawImages Whether images should be drawin together with the text. If you specify `NO` then space is left blank where images would go and you have to add your own views to display these images.
+ @param drawImages Whether images should be draw together with the text. If you specify `NO` then space is left blank where images would go and you have to add your own views to display these images.
  */
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages;
 
@@ -102,6 +107,7 @@
 /**
  @name Working with Glyphs
  */
+
 
 /**
  Retrieves the index of the text line that contains the given glyph index.
@@ -125,10 +131,12 @@
  @name Working with Text Lines
  */
 
+
 /**
  The text lines that belong to the receiver.
  */
 @property (nonatomic, strong, readonly) NSArray *lines;
+
 
 /**
  The text lines that are visible inside the given rectangle. Also incomplete lines are included.
@@ -138,6 +146,7 @@
  */
 - (NSArray *)linesVisibleInRect:(CGRect)rect; 
 
+
 /**
  The text lines that are visible inside the given rectangle. Only fully visible lines are included.
  
@@ -145,6 +154,7 @@
  @returns An array, sorted from top to bottom, of lines fully visible
  */
 - (NSArray *)linesContainedInRect:(CGRect)rect;
+
 
 /**
  The layout line that contains the given string index.
@@ -154,15 +164,18 @@
  */
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index;
 
+
 /**
  @name Text Attachments
  */
+
 
 /**
  The array of all <DTTextAttachment> instances that belong to the receiver.
  @returns All text attachments of the receiver.
  */
 - (NSArray *)textAttachments;
+
 
 /**
  The array of all DTTextAttachment instances that belong to the receiver which also match the specified predicate.
@@ -177,6 +190,7 @@
  @name Getting Paragraph Info
  */
 
+
 /** 
  Finding which paragraph a given string index belongs to.
  
@@ -184,6 +198,7 @@
  @returns The index of the paragraph, numbered from 0
  */
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
+
 
 /** 
  Determines the paragraph range (of paragraph indexes) that encompass the entire given string Range.
@@ -193,6 +208,7 @@
  */
 - (NSRange)paragraphRangeContainingStringRange:(NSRange)stringRange;
 
+
 /**
  The text lines that belong to the specified paragraph.
  
@@ -201,14 +217,17 @@
  */
 - (NSArray *)linesInParagraphAtIndex:(NSUInteger)index;
 
+
 /**
  An array of `NSRange` values encapsulated in `NSValue` instances. Each range is the string range contained in the corresponding paragraph.
 */
 @property (nonatomic, strong, readonly) NSArray *paragraphRanges;
 
+
 /**
  @name Debugging
  */
+
 
 /**
  Switches on the debug drawing mode where individual glph runs, baselines, et ceter get individually marked.
