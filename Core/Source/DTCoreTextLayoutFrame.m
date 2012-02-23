@@ -23,6 +23,14 @@
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
+// two correction methods used by the deprecated way of layouting to work around Core Text bugs
+@interface DTCoreTextLayoutFrame ()
+
+- (void)correctAttachmentHeights;
+- (void)correctLineOrigins;
+
+@end
+
 @implementation DTCoreTextLayoutFrame
 {
 	CTFrameRef _textFrame;
@@ -387,11 +395,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	return tmpArray;
-}
-
-- (CGPathRef)path
-{
-	return CTFrameGetPath(_textFrame);
 }
 
 - (void)setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
@@ -1002,6 +1005,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 @synthesize frame = _frame;
 @synthesize lines = _lines;
 @synthesize paragraphRanges = _paragraphRanges;
-@synthesize tag;
+//@synthesize tag;
 
 @end
