@@ -20,6 +20,8 @@
 
 - (void)updateFromStyleDictionary:(NSDictionary *)styles;
 
+@property (nonatomic, assign) NSInteger startingItemNumber;
+
 @end
 
 
@@ -32,6 +34,7 @@
 	DTCSSListStylePosition _position;
 	
 	NSString *_imageName;
+	NSInteger _startingItemNumber;
 }
 
 + (DTCSSListStyle *)listStyleWithStyles:(NSDictionary *)styles
@@ -71,6 +74,7 @@
 	{
 		// default
 		_position = DTCSSListStylePositionOutside; 
+		_startingItemNumber = 1;
 		
 		[self updateFromStyleDictionary:styles];
 	}
@@ -264,7 +268,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ type=%d position=%d>", NSStringFromClass([self class]), _type, _position];
+	return [NSString stringWithFormat:@"<%@ 0x%x type=%d position=%d>", NSStringFromClass([self class]), self, _type, _position];
 }
 
 #pragma mark Copying
@@ -368,6 +372,7 @@
 @synthesize type = _type;
 @synthesize position = _position;
 @synthesize imageName = _imageName;
+@synthesize startingItemNumber = _startingItemNumber;
 
 @end
 

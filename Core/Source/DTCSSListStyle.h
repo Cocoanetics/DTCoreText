@@ -53,4 +53,28 @@ typedef enum
 
 - (NSString *)prefixWithCounter:(NSInteger)counter;
 
+/**
+ @name Managing Item Numbering
+ */
+
+
+/**
+ Sets the starting item number for the text list.
+ 
+ The default value is `1`. This value will be used only for ordered lists, and ignored in other cases.
+ @param itemNum The item number.
+ */
+- (void)setStartingItemNumber:(NSInteger)itemNum;
+
+
+/**
+ Returns the starting item number for the text list.
+ 
+ The default value is `1`. This value will be used only for ordered lists, and ignored in other cases.
+ @returns The item number.
+ */
+- (NSInteger)startingItemNumber;
+
+
+
 @end

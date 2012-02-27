@@ -68,7 +68,6 @@
 	
 	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle floatStyle;
-	DTCSSListStyle *_listStyle;
 	
 	BOOL isColorInherited;
 	
@@ -79,11 +78,10 @@
 	CGFloat textScale;
 	CGSize size;
 	
-	NSInteger _listDepth;
-	NSInteger _listCounter;
-	
 	NSMutableArray *_children;
 	NSDictionary *_attributes; // contains all attributes from parsing
+	
+	NSDictionary *_styles;
 }
 
 - (id)init
@@ -91,8 +89,6 @@
 	self = [super init];
 	if (self)
 	{
-		_listDepth = -1;
-		_listCounter = NSIntegerMin;
 	}
 	
 	return self;
@@ -222,9 +218,9 @@
 		[tmpDict setObject:[NSNumber numberWithInteger:headerLevel] forKey:DTHeaderLevelAttribute];
 	}
 	
-	if (_listStyle)
+	if (paragraphStyle.textLists)
 	{
-		[tmpDict setObject:[NSArray arrayWithObject:_listStyle] forKey:DTTextListsAttribute];
+		[tmpDict setObject:paragraphStyle.textLists forKey:DTTextListsAttribute];
 	}
 	
 	return tmpDict;
@@ -267,7 +263,7 @@
 	}
 }
 
-- (NSAttributedString *)prefixForListItem
+- (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter
 {
 	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 	
@@ -297,14 +293,14 @@
 	}
 	
 	// get calculated list style
-	DTCSSListStyle *calculatedListStyle = [self calculatedListStyle];
+	DTCSSListStyle *calculatedListStyle = [self.paragraphStyle.textLists lastObject];// [self calculatedListStyle];
 	
-	if (_listStyle)
+	if (calculatedListStyle)
 	{
-		[attributes setObject:[NSArray arrayWithObject:_listStyle] forKey:DTTextListsAttribute];
+		[attributes setObject:self.paragraphStyle.textLists forKey:DTTextListsAttribute];
 	}
 	
-	NSString *prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+	NSString *prefix = [calculatedListStyle prefixWithCounter:listCounter];
 	
 	if (prefix)
 	{
@@ -319,7 +315,7 @@
 				// image invalid
 				calculatedListStyle.imageName = nil;
 				
-				prefix = [calculatedListStyle prefixWithCounter:_listCounter];
+				prefix = [calculatedListStyle prefixWithCounter:listCounter];
 			}
 		}
 		
@@ -366,6 +362,9 @@
 	{
 		return;
 	}
+	
+	// keep that for later lookup
+	_styles = styles;
 	
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)
@@ -691,8 +690,8 @@
 		}
 	}
 	
-	// list style became it's own object
-	self.listStyle = [DTCSSListStyle listStyleWithStyles:styles];
+//	// list style became it's own object
+//	self.listStyle = [DTCSSListStyle listStyleWithStyles:styles];
 	
 	
 	NSString *widthString = [styles objectForKey:@"width"];
@@ -763,6 +762,11 @@
 			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
 		}
 	}
+}
+
+- (NSDictionary *)styles
+{
+	return _styles;
 }
 
 - (void)parseStyleString:(NSString *)styleString
@@ -904,7 +908,7 @@
 	newObject.preserveNewlines = self.preserveNewlines;
 	
 	newObject.fontCache = self.fontCache; // reference
-	newObject.listCounter = self.listCounter;
+	//newObject.listCounter = self.listCounter;
 	
 	return newObject;
 }
@@ -961,77 +965,6 @@
 	return @"root";
 }
 
-- (NSInteger)listDepth
-{
-	if (_listDepth < 0)
-	{
-		// See if this is a list related element.
-		if ([tagName isEqualToString:@"ol"] || [tagName isEqualToString:@"ul"] || [tagName isEqualToString:@"li"])
-		{
-			// Walk up the tree to the root. Increment the count every time we hit an OL or UL tag
-			// so we have our nesting count correct.
-			DTHTMLElement *elem = self;
-			_listDepth = 0;
-			while (elem.parent) {
-				NSString *tag = elem.parent.tagName;
-				if ([tag isEqualToString:@"ol"] || [tag isEqualToString:@"ul"])
-				{
-					_listDepth++;
-				}
-				elem = elem.parent;
-			}
-		}
-		else {
-			// We're not a list element, so set the depth to zero.
-			_listDepth = 0;
-		}
-	}
-	return _listDepth;
-}
-
-- (NSInteger)listCounter
-{
-	// If the counter is set to NSIntegerMin, it hasn't been calculated or manually set.
-	// Calculate it on demand.
-	if (_listCounter == NSIntegerMin)
-	{
-		// See if this is an LI. No other elements get a counter.
-		if ([tagName isEqualToString:@"li"])
-		{
-			// Count the number of LI elements in the parent until we reach self. That's our counter.
-			NSInteger counter = 1;
-			NSUInteger numChildren = [parent.children count];
-			for (NSUInteger i = 0; i < numChildren; i++)
-			{
-				// We walk through the children and check for LI elements just in case someone
-				// slipped us some bad HTML.
-				DTHTMLElement *child = [parent.children objectAtIndex:i];
-				if (child != self && [child.tagName isEqualToString:@"li"])
-				{
-					// Add one to the last LI's value just in case its listCounter property got overridden and
-					// set to something other than its natural order in the elements list.
-					counter = child.listCounter + 1;
-				}
-				else
-				{
-					break;
-				}
-			}
-			_listCounter = counter;
-		}
-		else
-		{
-			_listCounter = 0;
-		}
-	}
-	return _listCounter;
-}
-
-- (void)setListCounter:(NSInteger)count
-{
-	_listCounter = count;
-}
-
 - (NSMutableArray *)children
 {
 	if (!_children)
@@ -1080,7 +1013,7 @@
 @synthesize preserveNewlines;
 @synthesize displayStyle = _displayStyle;
 @synthesize fontVariant;
-@synthesize listStyle = _listStyle;
+//@synthesize listStyle = _listStyle;
 @synthesize textScale;
 @synthesize size;
 

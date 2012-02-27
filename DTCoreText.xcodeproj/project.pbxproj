@@ -25,6 +25,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
+		A70A737A14FBC9060043E932 /* NSString+Paragraphs.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */; };
 		A70B4C9F1486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70B4CA01486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -1468,6 +1469,7 @@
 				A7B0B56D14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */,
 				A7C7AD0114DA6955005A9C69 /* NSString+SlashEscaping.m in Sources */,
 				A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */,
+				A70A737A14FBC9060043E932 /* NSString+Paragraphs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1708,7 +1710,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -1731,7 +1732,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;

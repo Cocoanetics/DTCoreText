@@ -26,6 +26,8 @@
 
 - (void)_registerTagStartHandlers;
 - (void)_registerTagEndHandlers;
+- (void)_flushCurrentTagContent:(NSString *)tagContent;
+- (void)_flushEmptyListItem;
 
 @end
 
@@ -458,17 +460,17 @@
 	void (^liBlock)(void) = ^ 
 	{
 		// have inherited the correct list counter from parent
-		DTHTMLElement *counterElement = currentTag.parent;
+//		DTHTMLElement *counterElement = currentTag.parent;
 		
-		NSString *valueNum = [currentTag attributeForKey:@"value"];
-		if (valueNum)
-		{
-			NSInteger value = [valueNum integerValue];
-			counterElement.listCounter = value;
-			currentTag.listCounter = value;
-		}
-		
-		counterElement.listCounter++;
+//		NSString *valueNum = [currentTag attributeForKey:@"value"];
+//		if (valueNum)
+//		{
+//			NSInteger value = [valueNum integerValue];
+//			counterElement.listCounter = value;
+//			currentTag.listCounter = value;
+//		}
+//		
+//		counterElement.listCounter++;
 		
 		needsListItemStart = YES;
 		currentTag.paragraphStyle.paragraphSpacing = 0;
@@ -488,17 +490,41 @@
 	
 	void (^olBlock)(void) = ^ 
 	{
+		if (needsListItemStart)
+		{
+			// we have an opening but not have flushed text since
+			needsNewLineBefore = YES;
+			
+			
+			currentTag.paragraphStyle.paragraphSpacing = 0;
+			
+			// output the prefix
+			[self _flushEmptyListItem];
+		}
+		
+		// create the appropriate list style from CSS
+		NSDictionary *styles = [currentTag styles];
+		DTCSSListStyle *newListStyle = [[DTCSSListStyle alloc] initWithStyles:styles];
+		
+		// set a different starting value if set
 		NSString *valueNum = [currentTag attributeForKey:@"start"];
 		if (valueNum)
 		{
 			NSInteger value = [valueNum integerValue];
-			currentTag.listCounter = value;
-		}
-		else
-		{
-			currentTag.listCounter = 1;
+			newListStyle.startingItemNumber = value;
 		}
 		
+		// append this list style to the current paragraph style text lists
+		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
+		if (!textLists)
+		{
+			textLists = [NSMutableArray array];
+		}
+
+		[textLists addObject:newListStyle];
+		currentTag.paragraphStyle.textLists = textLists;
+		
+		// next text needs a NL before it
 		needsNewLineBefore = YES;
 	};
 	
@@ -507,9 +533,33 @@
 	
 	void (^ulBlock)(void) = ^ 
 	{
+		if (needsListItemStart)
+		{
+			// we have an opening but not have flushed text since
+			NSLog(@"open!");
+			needsNewLineBefore = YES;
+			
+			[self _flushEmptyListItem];
+		}
+
+		
 		needsNewLineBefore = YES;
 		
-		currentTag.listCounter = 0;
+		// create the appropriate list style from CSS
+		NSDictionary *styles = [currentTag styles];
+		DTCSSListStyle *newListStyle = [[DTCSSListStyle alloc] initWithStyles:styles];
+		
+		// append this list style to the current paragraph style text lists
+		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
+		if (!textLists)
+		{
+			textLists = [NSMutableArray array];
+		}
+		[textLists addObject:newListStyle];
+		currentTag.paragraphStyle.textLists = textLists;
+		
+		// next text needs a NL before it
+		needsNewLineBefore = YES;
 	};
 	
 	[_tagStartHandlers setObject:[ulBlock copy] forKey:@"ul"];
@@ -693,26 +743,43 @@
 
 	void (^ulBlock)(void) = ^ 
 	{
-		if (currentTag.listDepth < 1)
+		// pop the current list style from the paragraph style text lists
+		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
+		[textLists removeLastObject];
+		currentTag.paragraphStyle.textLists = textLists;
+		
+		// if this was the last active list
+		if ([textLists count]==0) 
 		{
 			// adjust spacing after last li to be the one defined for ol/ul
-			NSRange effectiveRange;
+			NSInteger index = [tmpString length];
 			
-			NSMutableDictionary *finalAttributes = [[tmpString attributesAtIndex:[tmpString length]-1 effectiveRange:&effectiveRange] mutableCopy];
-			CTParagraphStyleRef style = (__bridge CTParagraphStyleRef)[finalAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
-			DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:style];
-			
-			if (paragraphStyle.paragraphSpacing != currentTag.paragraphStyle.paragraphSpacing)
+			if (index)
 			{
-				paragraphStyle.paragraphSpacing = currentTag.paragraphStyle.paragraphSpacing;
-			
-				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-				[finalAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-			
-				[tmpString setAttributes:finalAttributes range:effectiveRange];
+				index--;
+				
+				// get the paragraph style for the previous paragraph
+				NSRange effectiveRange;
+				CTParagraphStyleRef prevParagraphStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName
+																									atIndex:index 
+																							 effectiveRange:&effectiveRange];
+				
+				// convert it to DTCoreText
+				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:prevParagraphStyle];
+				
+				if (paragraphStyle.paragraphSpacing != currentTag.paragraphStyle.paragraphSpacing)
+				{
+					paragraphStyle.paragraphSpacing = currentTag.paragraphStyle.paragraphSpacing;
+					
+					CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+					
+					// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
+					NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
+					
+					[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
+				}
 			}
 		}
-
 	};
 	
 	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ul"];
@@ -743,6 +810,64 @@
 	[_currentTagContents appendString:string];
 }
 
+
+- (void)_flushEmptyListItem
+{
+	if (needsNewLineBefore)
+	{
+			if (!outputHasNewline)
+			{
+				[tmpString appendString:UNICODE_LINE_FEED];
+				outputHasNewline = YES;
+			}
+		
+		needsNewLineBefore = NO;
+	}
+	
+	// if we start a list, then we wait until we have actual text
+	if (needsListItemStart)
+	{
+		DTCSSListStyle *effectiveList = [currentTag.paragraphStyle.textLists lastObject];
+		
+		NSInteger index = [tmpString length]-1;
+		NSInteger counter = 0;
+		
+		if (index>=0)
+		{
+			// check if there was a list item before this one
+			index--;
+			
+			NSRange prevListRange;
+			NSArray *prevLists = [tmpString attribute:DTTextListsAttribute atIndex:index effectiveRange:&prevListRange];
+			
+			if ([prevLists containsObject:effectiveList])
+			{
+				NSInteger prevItemIndex = [tmpString itemNumberInTextList:effectiveList atIndex:index];
+				counter = prevItemIndex + 1;
+			}
+			else
+			{
+				// new list start
+				counter = [effectiveList startingItemNumber];
+			}
+		}
+		else
+		{
+			// new list start at beginning of string
+			counter = [effectiveList startingItemNumber];
+		}
+		
+		NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:counter];
+		
+		if (prefixString)
+		{
+			[tmpString appendAttributedString:prefixString]; 
+			outputHasNewline = NO;
+		}
+		
+		needsListItemStart = NO;
+	}
+}
 
 - (void)_flushCurrentTagContent:(NSString *)tagContent
 {
@@ -805,7 +930,37 @@
 	// if we start a list, then we wait until we have actual text
 	if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 	{
-		NSAttributedString *prefixString = [currentTag prefixForListItem];
+		DTCSSListStyle *effectiveList = [currentTag.paragraphStyle.textLists lastObject];
+		
+		NSInteger index = [tmpString length]-1;
+		NSInteger counter = 0;
+		
+		if (index>=0)
+		{
+			// check if there was a list item before this one
+			index--;
+			
+			NSRange prevListRange;
+			NSArray *prevLists = [tmpString attribute:DTTextListsAttribute atIndex:index effectiveRange:&prevListRange];
+			
+			if ([prevLists containsObject:effectiveList])
+			{
+				NSInteger prevItemIndex = [tmpString itemNumberInTextList:effectiveList atIndex:index];
+				counter = prevItemIndex + 1;
+			}
+			else
+			{
+				// new list start
+				counter = [effectiveList startingItemNumber];
+			}
+		}
+		else
+		{
+			// new list start at beginning of string
+			counter = [effectiveList startingItemNumber];
+		}
+		
+		NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:counter];
 		
 		if (prefixString)
 		{

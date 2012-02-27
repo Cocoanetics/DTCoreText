@@ -13,7 +13,7 @@
 #import </usr/include/objc/objc-class.h>
 
 #define TESTCASE_FILE_EXTENSION @"html"
-//#define ONLY_TEST_CURRENT 1
+#define ONLY_TEST_CURRENT 1
 
 
 @implementation MacUnitTest
@@ -130,7 +130,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	NSAttributedString *iosAttributedString = [doc generatedAttributedString];
 	NSString *iosString = [iosAttributedString string];
 	
-	/*
+	
 	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
 	NSData *dump = [macString dataUsingEncoding:NSUTF8StringEncoding];
 	for (NSInteger i = 0; i < [dump length]; i++)
@@ -166,9 +166,14 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				break;
 			}
 		}
-	*/
 	
-	//NSLog(@"%@", dumpOutput);
+	
+	NSLog(@"%@", dumpOutput);
+	
+	NSParagraphStyle *para = [macAttributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:NULL];
+	NSTextList *list = [para.textLists lastObject];
+	
+	
 
 	STAssertEquals([macString length], [iosString length], @"String output has different length");
 	
@@ -213,7 +218,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				
 				if (!isSame)
 				{
-					STFail(@"First differing haracter at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
+					STFail(@"First differing character at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
 				}
 				break;
 			}
