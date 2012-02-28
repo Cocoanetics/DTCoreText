@@ -37,35 +37,6 @@
 	NSInteger _startingItemNumber;
 }
 
-+ (DTCSSListStyle *)listStyleWithStyles:(NSDictionary *)styles
-{
-	return [[DTCSSListStyle alloc] initWithStyles:styles];
-}
-
-+ (DTCSSListStyle *)decimalListStyle
-{
-	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
-	style.type = DTCSSListStyleTypeDecimal;
-	style.position = DTCSSListStylePositionOutside;
-	return style;
-}
-
-+ (DTCSSListStyle *)discListStyle
-{
-	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
-	style.type = DTCSSListStyleTypeDisc;
-	style.position = DTCSSListStylePositionOutside;
-	return style;
-}
-
-+ (DTCSSListStyle *)inheritedListStyle
-{
-	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
-	style.inherit = YES;
-	return style;
-}
-
-
 - (id)initWithStyles:(NSDictionary *)styles
 {
 	self = [super init];
@@ -105,7 +76,11 @@
 	else if ([string isEqualToString:@"circle"])
 	{
 		return DTCSSListStyleTypeCircle;
-	}		
+	}	
+	else if ([string isEqualToString:@"square"])
+	{
+		return DTCSSListStyleTypeSquare;
+	}	
 	else if ([string isEqualToString:@"decimal"])
 	{
 		return DTCSSListStyleTypeDecimal;
@@ -315,6 +290,11 @@
 			token = @"\u25e6";
 			break;
 		}
+		case DTCSSListStyleTypeSquare:
+		{
+			token = @"\u25aa";
+			break;
+		}
 		case DTCSSListStyleTypeDecimal:
 		{
 			token = [NSString stringWithFormat:@"%d.", counter];
@@ -365,6 +345,22 @@
 	}
 }
 
+- (BOOL)isOrdered
+{
+	switch (_type) 
+	{
+		case DTCSSListStyleTypeDecimal:
+		case DTCSSListStyleTypeDecimalLeadingZero:
+		case DTCSSListStyleTypeUpperAlpha:
+		case DTCSSListStyleTypeUpperLatin:
+		case DTCSSListStyleTypeLowerAlpha:
+		case DTCSSListStyleTypeLowerLatin:
+			return YES;
+			
+		default:
+			return NO;
+	}
+}
 
 #pragma mark Properties
 
