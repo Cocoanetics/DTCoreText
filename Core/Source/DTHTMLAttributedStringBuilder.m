@@ -27,7 +27,7 @@
 - (void)_registerTagStartHandlers;
 - (void)_registerTagEndHandlers;
 - (void)_flushCurrentTagContent:(NSString *)tagContent;
-- (void)_flushEmptyListItem;
+- (void)_flushListPrefix;
 
 @end
 
@@ -348,11 +348,6 @@
 		[tmpString appendAttributedString:[currentTag attributedString]];	
 		outputHasNewline = NO;
 		currentTagIsEmpty = NO;
-		
-//		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
-//		{
-//			needsNewLineBefore = YES;
-//		}
 	};
 	
 	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
@@ -459,19 +454,6 @@
 	
 	void (^liBlock)(void) = ^ 
 	{
-		// have inherited the correct list counter from parent
-//		DTHTMLElement *counterElement = currentTag.parent;
-		
-//		NSString *valueNum = [currentTag attributeForKey:@"value"];
-//		if (valueNum)
-//		{
-//			NSInteger value = [valueNum integerValue];
-//			counterElement.listCounter = value;
-//			currentTag.listCounter = value;
-//		}
-//		
-//		counterElement.listCounter++;
-		
 		needsListItemStart = YES;
 		currentTag.paragraphStyle.paragraphSpacing = 0;
 		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
@@ -487,61 +469,30 @@
 	
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
-	
-	void (^olBlock)(void) = ^ 
+
+	void (^listBlock)(void) = ^ 
 	{
 		if (needsListItemStart)
 		{
 			// we have an opening but not have flushed text since
 			needsNewLineBefore = YES;
-			
 			
 			currentTag.paragraphStyle.paragraphSpacing = 0;
 			
-			// output the prefix
-			[self _flushEmptyListItem];
-		}
-		
-		// create the appropriate list style from CSS
-		NSDictionary *styles = [currentTag styles];
-		DTCSSListStyle *newListStyle = [[DTCSSListStyle alloc] initWithStyles:styles];
-		
-		// set a different starting value if set
-		NSString *valueNum = [currentTag attributeForKey:@"start"];
-		if (valueNum)
-		{
-			NSInteger value = [valueNum integerValue];
-			newListStyle.startingItemNumber = value;
-		}
-		
-		// append this list style to the current paragraph style text lists
-		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
-		if (!textLists)
-		{
-			textLists = [NSMutableArray array];
-		}
-
-		[textLists addObject:newListStyle];
-		currentTag.paragraphStyle.textLists = textLists;
-		
-		// next text needs a NL before it
-		needsNewLineBefore = YES;
-	};
-	
-	[_tagStartHandlers setObject:[olBlock copy] forKey:@"ol"];
-	
-	
-	void (^ulBlock)(void) = ^ 
-	{
-		if (needsListItemStart)
-		{
-			// we have an opening but not have flushed text since
-			NSLog(@"open!");
-			needsNewLineBefore = YES;
+			if (needsNewLineBefore)
+			{
+				if (!outputHasNewline)
+				{
+					[tmpString appendString:@"\n"];
+					outputHasNewline = YES;
+				}
+				
+				needsNewLineBefore = NO;
+			}
 			
-			[self _flushEmptyListItem];
+			// output the prefix
+			[self _flushListPrefix];
 		}
-
 		
 		needsNewLineBefore = YES;
 		
@@ -555,14 +506,47 @@
 		{
 			textLists = [NSMutableArray array];
 		}
+		
 		[textLists addObject:newListStyle];
+		
+		// workaround for different styles on stacked lists
+		if ([textLists count]>1) // not necessary for first
+		{
+			// find out if each list is ordered or unordered
+			NSMutableArray *tmpArray = [NSMutableArray array];
+			for (DTCSSListStyle *oneList in textLists)
+			{
+				if ([oneList isOrdered])
+				{
+					[tmpArray addObject:@"ol"];
+				}
+				else
+				{
+					[tmpArray addObject:@"ul"];
+				}
+			}
+			
+			// build a CSS selector
+			NSString *selector = [tmpArray componentsJoinedByString:@" "];
+			
+			// find style
+			NSDictionary *style = [[_globalStyleSheet styles] objectForKey:selector];
+			
+			if (style)
+			{
+				[newListStyle updateFromStyleDictionary:style];
+			}
+		}
+		
 		currentTag.paragraphStyle.textLists = textLists;
 		
 		// next text needs a NL before it
 		needsNewLineBefore = YES;
 	};
 	
-	[_tagStartHandlers setObject:[ulBlock copy] forKey:@"ul"];
+	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
+	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ol"];
+	
 	
 	
 	void (^hrBlock)(void) = ^ 
@@ -599,17 +583,17 @@
 	
 	void (^h1Block)(void) = ^ 
 	{
-			currentTag.headerLevel = 1;
+		currentTag.headerLevel = 1;
 	};
 	[_tagStartHandlers setObject:[h1Block copy] forKey:@"h1"];
-
+	
 	
 	void (^h2Block)(void) = ^ 
 	{
 		currentTag.headerLevel = 2;
 	};
 	[_tagStartHandlers setObject:[h2Block copy] forKey:@"h2"];
-
+	
 	
 	void (^h3Block)(void) = ^ 
 	{
@@ -623,7 +607,7 @@
 		currentTag.headerLevel = 4;
 	};
 	[_tagStartHandlers setObject:[h4Block copy] forKey:@"h4"];
-
+	
 	
 	void (^h5Block)(void) = ^ 
 	{
@@ -637,7 +621,7 @@
 		currentTag.headerLevel = 6;
 	};
 	[_tagStartHandlers setObject:[h6Block copy] forKey:@"h6"];
-
+	
 	
 	void (^fontBlock)(void) = ^ 
 	{
@@ -740,7 +724,7 @@
 	
 	[_tagEndHandlers setObject:[liBlock copy] forKey:@"li"];
 	
-
+	
 	void (^ulBlock)(void) = ^ 
 	{
 		// pop the current list style from the paragraph style text lists
@@ -806,24 +790,13 @@
 	{
 		_currentTagContents = [[NSMutableString alloc] initWithCapacity:1000];
 	}
-
+	
 	[_currentTagContents appendString:string];
 }
 
 
-- (void)_flushEmptyListItem
+- (void)_flushListPrefix
 {
-	if (needsNewLineBefore)
-	{
-			if (!outputHasNewline)
-			{
-				[tmpString appendString:UNICODE_LINE_FEED];
-				outputHasNewline = YES;
-			}
-		
-		needsNewLineBefore = NO;
-	}
-	
 	// if we start a list, then we wait until we have actual text
 	if (needsListItemStart)
 	{
@@ -832,7 +805,7 @@
 		NSInteger index = [tmpString length]-1;
 		NSInteger counter = 0;
 		
-		if (index>=0)
+		if (index>0)
 		{
 			// check if there was a list item before this one
 			index--;
@@ -930,45 +903,7 @@
 	// if we start a list, then we wait until we have actual text
 	if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 	{
-		DTCSSListStyle *effectiveList = [currentTag.paragraphStyle.textLists lastObject];
-		
-		NSInteger index = [tmpString length]-1;
-		NSInteger counter = 0;
-		
-		if (index>=0)
-		{
-			// check if there was a list item before this one
-			index--;
-			
-			NSRange prevListRange;
-			NSArray *prevLists = [tmpString attribute:DTTextListsAttribute atIndex:index effectiveRange:&prevListRange];
-			
-			if ([prevLists containsObject:effectiveList])
-			{
-				NSInteger prevItemIndex = [tmpString itemNumberInTextList:effectiveList atIndex:index];
-				counter = prevItemIndex + 1;
-			}
-			else
-			{
-				// new list start
-				counter = [effectiveList startingItemNumber];
-			}
-		}
-		else
-		{
-			// new list start at beginning of string
-			counter = [effectiveList startingItemNumber];
-		}
-		
-		NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:counter];
-		
-		if (prefixString)
-		{
-			[tmpString appendAttributedString:prefixString]; 
-			outputHasNewline = NO;
-		}
-		
-		needsListItemStart = NO;
+		[self _flushListPrefix];
 	}
 	
 	// we don't want whitespace before first tag to turn into paragraphs
@@ -1012,7 +947,7 @@
 		}
 		
 		BOOL removeUnflushedWhitespace = NO;
-
+		
 		// keep currentTag, might be used in flush
 		if (_currentTagContents)
 		{
@@ -1027,7 +962,7 @@
 				removeUnflushedWhitespace = YES;
 			}
 		}
-
+		
 		[self _flushCurrentTagContent:_currentTagContents];
 		
 		// avoid transfering space from parent tag
@@ -1035,7 +970,7 @@
 		{
 			_currentTagContents = nil;
 		}
-
+		
 		// keep track of something was flushed for this tag
 		currentTagIsEmpty = YES;
 		
