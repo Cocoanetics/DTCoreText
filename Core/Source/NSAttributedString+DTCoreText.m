@@ -23,16 +23,7 @@
 
 @implementation NSAttributedString (DTCoreText)
 
-#pragma mark Convenience Methods
-
-+ (NSAttributedString *)attributedStringWithHTML:(NSData *)data options:(NSDictionary *)options
-{
-	NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTML:data options:options documentAttributes:NULL];
-	
-	return attrString;
-}
-
-#pragma mark Utlities
+#pragma mark Text Attachments
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
 {
 	NSMutableArray *tmpArray = [NSMutableArray array];
