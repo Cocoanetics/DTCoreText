@@ -335,8 +335,6 @@
 	
 	for (NSString *oneParagraph in paragraphs)
 	{
-		
-		
 		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
 		
 		BOOL needsToRemovePrefix = NO;
@@ -344,7 +342,7 @@
 		// skip empty paragraph at end
 		if (oneParagraph == [paragraphs lastObject] && !paragraphRange.length)
 		{
-			break;
+			continue;
 		}
 		
 		BOOL fontIsBlockLevel = NO;
@@ -363,8 +361,6 @@
 		
 		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
 
-		NSLog(@"%@", paraAttributes);
-		
 		// lets see if we have a list style
 		NSArray *currentListStyles = [paraAttributes objectForKey:DTTextListsAttribute];
 		
