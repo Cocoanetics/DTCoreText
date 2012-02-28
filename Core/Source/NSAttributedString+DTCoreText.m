@@ -96,9 +96,9 @@
 		 
 		 NSNumber *key = [NSNumber numberWithInteger:[currentEffectiveList hash]]; // hash defaults to address
 		 NSNumber *currentCounterNum = [countersPerList objectForKey:key];
-
+		 
 		 NSInteger currentCounter=0;
-		
+		 
 		 if (!currentCounterNum)
 		 {
 			 currentCounter = currentEffectiveList.startingItemNumber;
@@ -117,7 +117,7 @@
 		 }
      }
      ];
-
+	
 	NSNumber *key = [NSNumber numberWithInteger:[list hash]]; // hash defaults to address
 	NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 	
@@ -182,7 +182,7 @@
 		}
 		
 		searchIndex = NSMaxRange(effectiveRange);
-			
+		
 		minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
 		maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
 	}
@@ -222,7 +222,7 @@
 			isOrdered = NO;
 			break;
 		}
-		
+			
 		case DTCSSListStyleTypeUnderscore:
 		{
 			typeString = @"underscore";
@@ -243,14 +243,14 @@
 			isOrdered = YES;
 			break;
 		}
-
+			
 		case DTCSSListStyleTypeDecimalLeadingZero:
 		{
 			typeString = @"decimal-leading-zero";
 			isOrdered = YES;
 			break;
 		}
-
+			
 		case DTCSSListStyleTypeUpperAlpha:
 		{
 			typeString = @"upper-alpha";
@@ -360,12 +360,12 @@
 		location = location + paragraphRange.length + 1;
 		
 		NSDictionary *paraAttributes = [self attributesAtIndex:paragraphRange.location effectiveRange:NULL];
-
+		
 		// lets see if we have a list style
 		NSArray *currentListStyles = [paraAttributes objectForKey:DTTextListsAttribute];
 		
 		DTCSSListStyle *effectiveListStyle = [currentListStyles lastObject];
-
+		
 		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
 		NSString *paraStyleString = nil;
 		
@@ -397,71 +397,67 @@
 		
 		NSString *blockElement;
 		
+		// close until we are at current or nil
+		if ([previousListStyles count]>[currentListStyles count])
+		{
+			NSMutableArray *closingStyles = [previousListStyles mutableCopy];
+			
+			do 
+			{
+				DTCSSListStyle *closingStyle = [closingStyles lastObject];
+				
+				if (closingStyle == effectiveListStyle)
+				{
+					break;
+				}
+				
+				// end of a list block
+				[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES]];
+				[retString appendString:@"\n"];
+				
+				[closingStyles removeLastObject];
+				
+				previousListStyles = closingStyles;
+			}
+			while ([closingStyles count]);
+		}
+		
+		if (effectiveListStyle)
+		{
+			// next text needs to have list prefix removed
+			needsToRemovePrefix = YES;
+			
+			if (![previousListStyles containsObject:effectiveListStyle])
+			{
+				// beginning of a list block
+				[retString appendString:[self _tagRepresentationForListStyle:effectiveListStyle closingTag:NO]];
+				[retString appendString:@"\n"];
+			}
+			
+			blockElement = @"li";
+		}
+		else
+		{
+			blockElement = @"p";
+		}
+		
 		NSNumber *headerLevel = [paraAttributes objectForKey:DTHeaderLevelAttribute];
 		
 		if (headerLevel)
 		{
 			blockElement = [NSString stringWithFormat:@"h%d", [headerLevel integerValue]];
 		}
-
-		NSLog(@"string: '%@' range: %@", [plainString substringWithRange:paragraphRange], NSStringFromRange(paragraphRange));
-
 		
-		// close until we are at current or nil
-			if ([previousListStyles count]>[currentListStyles count])
-			{
-				NSMutableArray *closingStyles = [previousListStyles mutableCopy];
-				
-				do 
-				{
-					DTCSSListStyle *closingStyle = [closingStyles lastObject];
-					
-					if (closingStyle == effectiveListStyle)
-					{
-						break;
-					}
-					
-					// end of a list block
-					[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES]];
-					[retString appendString:@"\n"];
-
-					[closingStyles removeLastObject];
-					
-					previousListStyles = closingStyles;
-				}
-				while ([closingStyles count]);
-			}
+		if ([paragraphs lastObject] == oneParagraph)
+		{
+			// last paragraph in string
 			
-			if (effectiveListStyle)
+			if (![plainString hasSuffix:@"\n"])
 			{
-				// next text needs to have list prefix removed
-				needsToRemovePrefix = YES;
-				
-				if (![previousListStyles containsObject:effectiveListStyle])
-				{
-					// beginning of a list block
-					[retString appendString:[self _tagRepresentationForListStyle:effectiveListStyle closingTag:NO]];
-					[retString appendString:@"\n"];
-				}
-				
-				blockElement = @"li";
+				// not a whole paragraph, so we don't put it in P
+				blockElement = @"span";
 			}
-			else
-			{
-				blockElement = @"p";
-			}
-			
-			if ([paragraphs lastObject] == oneParagraph)
-			{
-				// last paragraph in string
-				
-				if (![plainString hasSuffix:@"\n"])
-				{
-					// not a whole paragraph, so we don't put it in P
-					blockElement = @"span";
-				}
-			}
-		
+		}
 		
 		if ([paraStyleString length])
 		{
@@ -494,9 +490,9 @@
 				
 				needsToRemovePrefix = NO;
 			}
-
+			
 			index += effectiveRange.length;
-
+			
 			NSString *subString = [plainSubString stringByAddingHTMLEntities];
 			
 			if (!subString)
