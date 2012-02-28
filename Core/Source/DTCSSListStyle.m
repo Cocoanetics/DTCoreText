@@ -337,7 +337,12 @@
 	
 	if (_position == DTCSSListStylePositionInside)
 	{
+		// iOS needs second tab, Mac ignores position outside
+#if TARGET_OS_IPHONE		
 		return [NSString stringWithFormat:@"\x09\x09%@", token];
+#else
+		return [NSString stringWithFormat:@"\x09%@\x09", token];
+#endif
 	}
 	else
 	{

@@ -472,6 +472,7 @@
 
 	void (^listBlock)(void) = ^ 
 	{
+#if TARGET_OS_IPHONE		
 		if (needsListItemStart)
 		{
 			// we have an opening but not have flushed text since
@@ -493,7 +494,7 @@
 			// output the prefix
 			[self _flushListPrefix];
 		}
-		
+#endif		
 		needsNewLineBefore = YES;
 		
 		// create the appropriate list style from CSS
