@@ -296,13 +296,22 @@
 	}
 	else
 	{
+		if (listStyle.position == DTCSSListStylePositionInside)
+		{
+			typeString = [typeString stringByAppendingString:@" inside"];
+		}
+		else if (listStyle.position == DTCSSListStylePositionOutside)
+		{
+			typeString = [typeString stringByAppendingString:@" outside"];
+		}
+		
 		if (isOrdered)
 		{
-			return [NSString stringWithFormat:@"<ol style=\"list-type='%@';\">", typeString];
+			return [NSString stringWithFormat:@"<ol style=\"list-style='%@';\">", typeString];
 		}
 		else
 		{
-			return [NSString stringWithFormat:@"<ul style=\"list-type='%@';\">", typeString];
+			return [NSString stringWithFormat:@"<ul style=\"list-style='%@';\">", typeString];
 		}
 	}
 }
