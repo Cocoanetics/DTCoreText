@@ -209,24 +209,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// get line height in px if it is specified for this line
 		CGFloat lineHeight = 0;
-		CGFloat minLineHeight;
-		CGFloat maxLineHeight;
+		CGFloat minLineHeight = 0;
+		CGFloat maxLineHeight = 0;
 		
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight);
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight);
-		
-		if (lineHeight<minLineHeight)
+		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
 		{
-			lineHeight = minLineHeight;
+			if (lineHeight<minLineHeight)
+			{
+				lineHeight = minLineHeight;
+			}
 		}
 		
-		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
 		{
-			lineHeight = maxLineHeight;
+			if (maxLineHeight>0 && lineHeight>maxLineHeight)
+			{
+				lineHeight = maxLineHeight;
+			}
 		}
-		
-//		CGFloat lineHeight = [newLine calculatedLineHeight];
-		
+				
 		// get the correct baseline origin
 		if (previousLine)
 		{
