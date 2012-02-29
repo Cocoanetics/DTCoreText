@@ -36,6 +36,7 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
+	dispatch_queue_t _syncQueue;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
@@ -47,6 +48,9 @@
 
 		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
 		self.attributedString = [globalString attributedSubstringFromRange:[self stringRange]];
+		
+		// get a global queue
+		_syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	}
 	return self;
 }
@@ -272,10 +276,15 @@
 
 - (void)_calculateMetrics
 {
-	width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
-	trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
-	
-	_didCalculateMetrics = YES;
+	dispatch_sync(_syncQueue, ^{
+		if (!_didCalculateMetrics)
+		{
+			width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
+			trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
+			
+			_didCalculateMetrics = YES;
+		}
+	});
 }
 
 // returns the maximum paragraph spacing for this line
