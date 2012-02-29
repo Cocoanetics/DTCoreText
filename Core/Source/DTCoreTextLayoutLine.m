@@ -36,6 +36,7 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
+	dispatch_queue_t _syncQueue;
 }
 
 - (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
@@ -47,6 +48,9 @@
 
 		NSAttributedString *globalString = [layoutFrame attributedStringFragment];
 		self.attributedString = [globalString attributedSubstringFromRange:[self stringRange]];
+		
+		// get a global queue
+		_syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	}
 	return self;
 }
@@ -272,10 +276,15 @@
 
 - (void)_calculateMetrics
 {
-	width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
-	trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
-	
-	_didCalculateMetrics = YES;
+	dispatch_sync(_syncQueue, ^{
+		if (!_didCalculateMetrics)
+		{
+			width = (CGFloat)CTLineGetTypographicBounds(_line, &ascent, &descent, &leading);
+			trailingWhitespaceWidth = (CGFloat)CTLineGetTrailingWhitespaceWidth(_line);
+			
+			_didCalculateMetrics = YES;
+		}
+	});
 }
 
 // returns the maximum paragraph spacing for this line
@@ -409,6 +418,53 @@
 								   }
 							   }];	
 	return lineHeight;
+}
+
+
+- (CGPoint)baselineOriginToPositionAfterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	CGPoint lineOrigin = previousLine.baselineOrigin;
+
+	CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedString 
+																		attribute:(id)kCTParagraphStyleAttributeName
+																		atIndex:0 effectiveRange:NULL];
+	
+	// get line height in px if it is specified for this line
+	CGFloat lineHeight = 0;
+	CGFloat minLineHeight = 0;
+	CGFloat maxLineHeight = 0;
+	
+	if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
+	{
+		if (lineHeight<minLineHeight)
+		{
+			lineHeight = minLineHeight;
+		}
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
+	{
+		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		{
+			lineHeight = maxLineHeight;
+		}
+	}
+	
+	// get the correct baseline origin
+	if (lineHeight==0)
+	{
+		lineHeight = previousLine.descent + self.ascent;
+	}
+	
+	lineHeight += [previousLine paragraphSpacing:YES];
+	lineHeight += self.leading;
+	
+	lineOrigin.y += lineHeight;
+
+	// preserve own baseline x
+	lineOrigin.x = _baselineOrigin.x;
+	
+	return lineOrigin;
 }
 
 #pragma mark Properties
