@@ -19,8 +19,6 @@
 		NSString* versionString = [self systemVersion];
 		NSArray *parts = [versionString componentsSeparatedByString:@"."];
 		
-		DTVersion retVersion;
-		
 		NSUInteger partCount = [parts count];
 		
 		retVersion.major = (partCount>0)?[[parts objectAtIndex:0] intValue]:0;
