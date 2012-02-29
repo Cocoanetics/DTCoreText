@@ -291,16 +291,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTRightTextAlignment:
 			{
-				currentLineMetrics.trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
-				lineOrigin.x = _frame.origin.x + _frame.size.width - currentLineMetrics.width + currentLineMetrics.trailingWhitespaceWidth;
+				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 1.0, _frame.size.width - offset);
+
 				break;
 			}
 				
 			case kCTCenterTextAlignment:
 			{
-				currentLineMetrics.trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
-
-				lineOrigin.x = _frame.origin.x + offset + (_frame.size.width - currentLineMetrics.width - currentLineMetrics.trailingWhitespaceWidth) /2.0f;
+				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 0.5, _frame.size.width - offset);
+				
 				break;
 			}
 				
@@ -574,6 +573,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat dashes[] = {10.0, 2.0};
 		CGContextSetLineDash(context, 0, dashes, 2);
 		CGContextStrokeRect(context, self.frame);
+
+		// draw center line
+		CGContextMoveToPoint(context, CGRectGetMidX(self.frame), self.frame.origin.y);
+		CGContextAddLineToPoint(context, CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+		CGContextStrokePath(context);
+		
 		CGContextRestoreGState(context);
 	}
 	
