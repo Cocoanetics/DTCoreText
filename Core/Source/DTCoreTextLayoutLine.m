@@ -420,6 +420,53 @@
 	return lineHeight;
 }
 
+
+- (CGPoint)baselineOriginToPositionAfterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	CGPoint lineOrigin = previousLine.baselineOrigin;
+
+	CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedString 
+																		attribute:(id)kCTParagraphStyleAttributeName
+																		atIndex:0 effectiveRange:NULL];
+	
+	// get line height in px if it is specified for this line
+	CGFloat lineHeight = 0;
+	CGFloat minLineHeight = 0;
+	CGFloat maxLineHeight = 0;
+	
+	if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
+	{
+		if (lineHeight<minLineHeight)
+		{
+			lineHeight = minLineHeight;
+		}
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
+	{
+		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		{
+			lineHeight = maxLineHeight;
+		}
+	}
+	
+	// get the correct baseline origin
+	if (lineHeight==0)
+	{
+		lineHeight = previousLine.descent + self.ascent;
+	}
+	
+	lineHeight += [previousLine paragraphSpacing:YES];
+	lineHeight += self.leading;
+	
+	lineOrigin.y += lineHeight;
+
+	// preserve own baseline x
+	lineOrigin.x = _baselineOrigin.x;
+	
+	return lineOrigin;
+}
+
 #pragma mark Properties
 - (NSArray *)glyphRuns
 {

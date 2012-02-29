@@ -49,4 +49,14 @@
 	return NO;
 }
 
+- (NSRange)rangeOfParagraphAtIndex:(NSUInteger)index
+{
+	NSUInteger start;
+	NSUInteger end;
+	
+	[self rangeOfParagraphsContainingRange:NSMakeRange(index, 1) parBegIndex:&start parEndIndex:&end];
+	
+	return NSMakeRange(start, end-start);
+}
+
 @end

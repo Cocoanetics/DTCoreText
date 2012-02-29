@@ -13,4 +13,6 @@
 - (NSRange)rangeOfParagraphsContainingRange:(NSRange)range parBegIndex:(NSUInteger *)parBegIndex parEndIndex:(NSUInteger *)parEndIndex;
 - (BOOL)indexIsAtBeginningOfParagraph:(NSUInteger)index;
 
+- (NSRange)rangeOfParagraphAtIndex:(NSUInteger)index;
+
 @end

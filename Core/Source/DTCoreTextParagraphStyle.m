@@ -265,6 +265,7 @@ static dispatch_semaphore_t selfLock;
 	newObject.alignment = self.alignment;
 	newObject.baseWritingDirection = self.baseWritingDirection;
 	newObject.tabStops = self.tabStops; // copy
+	newObject.textLists = self.textLists; //copy
 	
 	return newObject;
 }

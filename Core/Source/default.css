@@ -75,6 +75,16 @@ ol
 	-webkit-padding-start:40px;
 }
 
+ul ul, ol ul 
+{
+	list-style-type: circle;
+}
+
+ol ol ul, ol ul ul, ul ol ul, ul ul ul 
+{
+	list-style-type: square;
+}
+
 code
 {
 	font-family:Courier;

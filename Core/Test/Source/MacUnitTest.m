@@ -166,9 +166,14 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				break;
 			}
 		}
-	*/
 	
-	//NSLog(@"%@", dumpOutput);
+	
+	NSLog(@"%@", dumpOutput);
+	
+	NSParagraphStyle *para = [macAttributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:NULL];
+	NSTextList *list = [para.textLists lastObject];
+	
+	*/
 
 	STAssertEquals([macString length], [iosString length], @"String output has different length");
 	
@@ -213,7 +218,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				
 				if (!isSame)
 				{
-					STFail(@"First differing haracter at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
+					STFail(@"First differing character at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
 				}
 				break;
 			}

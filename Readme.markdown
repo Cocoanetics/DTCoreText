@@ -92,5 +92,7 @@ In the following "Mac" means the initWithHTML: methods there, "DTCoreText" means
 - I suspect that Mac makes use of the -webkit-margin-* CSS styles for spacing the paragraphs, DTCoreText only uses the -webkit-margin-bottom and margin-bottom at present.
 - Mac supports CSS following addresses, e.g. "ul ul" to change the list style for stacked lists. DTCoreText does not support that and so list bullets stay the same for multiple levels.
 - Mac outputs newlines in PRE tags as \n, iOS replaces these with Unicode Line Feed characters so that the paragraph spacing is applied at the end of the PRE tag, not after each line. (iOS wraps code lines when layouting)
+- Mac does not properly encode a double list start. iOS prints the empty list prefix.
+- Mac seems to ignore list-style-position:outside, iOS does the right thing.
 
 If you find an issue then you are welcome to fix it and contribute your fix via a GitHub pull request.

@@ -30,4 +30,7 @@
 // merge styles from given stylesheet into this stylesheet
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet;
 
+// dictionary of styles
+- (NSDictionary *)styles;
+
 @end

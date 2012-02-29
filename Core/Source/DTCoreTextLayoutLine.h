@@ -70,6 +70,10 @@
  */
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
 
+
+// sets the line baseline origin such that it follows the given line
+- (CGPoint)baselineOriginToPositionAfterLine:(DTCoreTextLayoutLine *)previousLine;
+
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, strong, readonly) NSArray *glyphRuns;
 
