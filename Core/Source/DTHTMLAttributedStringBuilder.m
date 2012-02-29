@@ -772,12 +772,19 @@
 	
 	void (^pBlock)(void) = ^ 
 	{
-		// we need to output something for <p></p>
 		if (currentTagIsEmpty)
 		{
-			[tmpString appendString:@"\n"];
-			outputHasNewline = NO;  // NO: otherwise a following needed NL is cancelled
+			// empty paragraph
+			
+			// end of P we always add a newline
+			[tmpString appendString:@"\n" withParagraphStyle:currentTag.paragraphStyle fontDescriptor:currentTag.fontDescriptor];
 		}
+		else
+		{
+			// extend previous tag contents
+			[tmpString appendString:@"\n"];
+		}
+		outputHasNewline = YES;
 	};
 	
 	[_tagEndHandlers setObject:[pBlock copy] forKey:@"p"];

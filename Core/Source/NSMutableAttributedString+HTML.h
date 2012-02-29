@@ -8,15 +8,15 @@
 
 
 
-@class DTCoreTextParagraphStyle;
+@class DTCoreTextParagraphStyle, DTCoreTextFontDescriptor;
 
 @interface NSMutableAttributedString (HTML)
 
 // appends a string with the same attributes as the suffix
 - (void)appendString:(NSString *)string;
 
-// appends a string with a different paragraph style
-- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle;
+// appends a string with a given paragraph style and font
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor;
 
 // appends a string without any attributes
 - (void)appendNakedString:(NSString *)string;

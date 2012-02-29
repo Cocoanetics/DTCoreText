@@ -41,16 +41,20 @@
 	[self appendAttributedString:tmpString];
 }
 
-- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
 {
-	NSMutableDictionary *attributes = nil;
-	
+	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+
 	if (paragraphStyle)
 	{
-		attributes = [NSMutableDictionary dictionary];
 		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
 		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-		//CFRelease(newParagraphStyle);
+	}
+	
+	if (fontDescriptor)
+	{
+		CTFontRef newFont = [fontDescriptor newMatchingFont];
+		[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
 	}
 	
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
@@ -60,7 +64,7 @@
 // appends a string without any attributes
 - (void)appendNakedString:(NSString *)string
 {
-	[self appendString:string withParagraphStyle:nil];
+	[self appendString:string withParagraphStyle:nil fontDescriptor:nil];
 }
 
 @end
