@@ -198,7 +198,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			// at end of paragraph, record the spacing
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentLineMetrics.paragraphSpacing), &currentLineMetrics.paragraphSpacing);
-
 		}
 
 		// create a line to fit
@@ -211,6 +210,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat lineHeight = 0;
 		CGFloat minLineHeight = 0;
 		CGFloat maxLineHeight = 0;
+		
+		if (currentLineMetrics.leading == 0.0f)
+		{
+			// font has no leading, so we fake one (e.g. Helvetica)
+			CGFloat tmpHeight = currentLineMetrics.ascent + currentLineMetrics.descent;
+			currentLineMetrics.leading = ceilf(0.2f * tmpHeight);
+		}
+		else
+		{
+			// make sure that we don't have less than 10% of line height as leading
+			currentLineMetrics.leading = ceilf(MAX((currentLineMetrics.ascent + currentLineMetrics.descent)*0.1f, currentLineMetrics.leading));
+		}
 		
 		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
 		{
@@ -239,9 +250,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			if (isAtBeginOfParagraph)
 			{
 				lineHeight += previousLineMetrics.paragraphSpacing;
-				
-//				lineHeight += [previousLine paragraphSpacing:YES];
 			}
+			
 			lineHeight += currentLineMetrics.leading;
 		}
 		else 
@@ -256,10 +266,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 			else 
 			{
-				lineHeight = currentLineMetrics.ascent;
+				lineHeight = currentLineMetrics.ascent + currentLineMetrics.leading;
 			}
 		}
-
+		
 		lineOrigin.y += lineHeight;
 		
 		// adjust lineOrigin based on paragraph text alignment
@@ -313,8 +323,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, _frame.size.width-offset);
 					CFRelease(line);
 					line = justifiedLine;
-//					
-//					newLine = [newLine justifiedLineWithFactor:1.0f justificationWidth:_frame.size.width-offset];
 				}
 				
 				lineOrigin.x = _frame.origin.x + offset;
@@ -335,7 +343,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
 		CFRelease(line);
-
+		
+		// baseline origin is rounded
+		lineOrigin.y = roundf(lineOrigin.y);
 		
 		newLine.baselineOrigin = lineOrigin;
 		
@@ -407,6 +417,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		[tmpLines addObject:newLine];
 		
+		NSLog(@"%@ - %f %f %f", newLine, newLine.ascent, newLine.descent, newLine.leading);
+		
 		lineIndex++;
 	}
 	free(origins);
@@ -419,7 +431,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	_stringRange.length = fittingRange.length;
 	
 	// line origins are wrong on last line of paragraphs
-	[self _correctLineOrigins];
+	//[self _correctLineOrigins];
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
 	DTVersion version = [[UIDevice currentDevice] osVersion];
@@ -450,7 +462,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// note: building line by line with typesetter
 	[self _buildLinesWithTypesetter];
 	
-//	[self _buildLinesWithStandardFramesetter];
+	//[self _buildLinesWithStandardFramesetter];
 }
 
 - (NSArray *)lines

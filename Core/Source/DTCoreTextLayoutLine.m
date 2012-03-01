@@ -434,6 +434,20 @@
 	CGFloat minLineHeight = 0;
 	CGFloat maxLineHeight = 0;
 	
+	CGFloat usedLeading = self.leading;
+	
+	if (usedLeading == 0.0f)
+	{
+		// font has no leading, so we fake one (e.g. Helvetica)
+		CGFloat tmpHeight = self.ascent + self.descent;
+		usedLeading = ceilf(0.2f * tmpHeight);
+	}
+	else
+	{
+		// make sure that we don't have less than 10% of line height as leading
+		usedLeading = ceilf(MAX((self.ascent + self.descent)*0.1f, usedLeading));
+	}
+	
 	if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
 	{
 		if (lineHeight<minLineHeight)
@@ -457,12 +471,15 @@
 	}
 	
 	lineHeight += [previousLine paragraphSpacing:YES];
-	lineHeight += self.leading;
+	lineHeight += usedLeading;
 	
 	lineOrigin.y += lineHeight;
 
 	// preserve own baseline x
 	lineOrigin.x = _baselineOrigin.x;
+	
+	// origins are rounded
+	lineOrigin.y = roundf(lineOrigin.y);
 	
 	return lineOrigin;
 }
