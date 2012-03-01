@@ -10,6 +10,7 @@
 #import "NSCharacterSet+HTML.h"
 #import "NSString+HTML.h"
 
+
 @implementation NSScanner (HTML)
 
 - (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed
@@ -333,6 +334,53 @@
 	return YES;
 	
 	
+}
+
+- (BOOL)scanHTMLColor:(DTColor **)color
+{
+	NSUInteger indexBefore = [self scanLocation];
+	
+	NSString *colorName = nil;
+	
+	NSMutableCharacterSet *tokenEndSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
+	[tokenEndSet addCharactersInString:@","];
+	
+	if ([self scanString:@"#" intoString:NULL])
+	{
+		self.scanLocation = indexBefore;
+		
+		[self scanUpToCharactersFromSet:tokenEndSet intoString:&colorName];
+	}
+	else if ([self scanString:@"rgb" intoString:NULL])
+	{
+		if ([self scanUpToString:@")" intoString:NULL])
+		{
+			self.scanLocation++;
+			colorName = [[self string] substringWithRange:NSMakeRange(indexBefore, self.scanLocation - indexBefore)];
+			
+			colorName = [colorName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		}
+	}
+	
+	DTColor *foundColor = nil;
+	
+	if (colorName)
+	{
+		foundColor = [DTColor colorWithHTMLName:colorName];
+	}
+	
+	if (!foundColor)
+	{
+		self.scanLocation = indexBefore;
+		return NO;
+	}
+	
+	if (color)
+	{
+		*color = foundColor;
+	}
+	
+	return YES;
 }
 
 // for debugging scanner

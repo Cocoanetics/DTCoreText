@@ -122,80 +122,67 @@
 
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(DTColor *)color
 {
-	NSArray *shadows = [self componentsSeparatedByString:@","];
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	
+	NSMutableCharacterSet *tokenEndSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
+	[tokenEndSet addCharactersInString:@","];
+	
 	
 	NSMutableArray *tmpArray = [NSMutableArray array];
 	
-	for (NSString *oneShadow in shadows)
+	while (![scanner isAtEnd]) 
 	{
-		NSScanner *scanner = [NSScanner scannerWithString:oneShadow];
+		DTColor *shadowColor = nil;
 		
+		NSString *offsetXString = nil;
+		NSString *offsetYString = nil;
+		NSString *blurString = nil;
 		
-		NSString *element = nil;
-		
-		if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&element])
+		if ([scanner scanHTMLColor:&shadowColor])
 		{
-			// check if first element is a color
+			// format: <color> <length> <length> <length>?
 			
-			DTColor *shadowColor = [DTColor colorWithHTMLName:element];
-			
-			NSString *offsetXString = nil;
-			NSString *offsetYString = nil;
-			NSString *blurString = nil;
-			NSString *colorString = nil;
-			
-			if (shadowColor)
+			if ([scanner scanUpToCharactersFromSet:tokenEndSet intoString:&offsetXString])
 			{
-				// format: <color> <length> <length> <length>?
-				
-				if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetXString])
-				{
-					if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetYString])
-					{
-						// blur is optional
-						[scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&blurString];
-						
-						
-						CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						CGSize offset = CGSizeMake(offset_x, offset_y);
-						CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-						
-						NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
-															 [NSNumber numberWithFloat:blur], @"Blur",
-															 shadowColor, @"Color", nil];
-						
-						[tmpArray addObject:shadowDict];
-					}
-				}
-			}
-			else 
-			{
-				// format: <length> <length> <length>? <color>?
-				
-				offsetXString = element;
-				
-				if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&offsetYString])
+				if ([scanner scanUpToCharactersFromSet:tokenEndSet intoString:&offsetYString])
 				{
 					// blur is optional
-					if ([scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&blurString])
+					[scanner scanUpToCharactersFromSet:tokenEndSet intoString:&blurString];
+					
+					
+					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGSize offset = CGSizeMake(offset_x, offset_y);
+					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					
+					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
+												[NSNumber numberWithFloat:blur], @"Blur",
+												shadowColor, @"Color", nil];
+					
+					[tmpArray addObject:shadowDict];
+				}
+			}
+		}
+		else
+		{
+			// format: <length> <length> <length>? <color>?
+			
+			if ([scanner scanUpToCharactersFromSet:tokenEndSet intoString:&offsetXString])
+			{
+				if ([scanner scanUpToCharactersFromSet:tokenEndSet intoString:&offsetYString])
+				{
+					// blur is optional
+					if (![scanner scanHTMLColor:&shadowColor])
 					{
-						// check if it's a color
-						shadowColor = [DTColor colorWithHTMLName:blurString];
-						
-						if (shadowColor)
+						if ([scanner scanUpToCharactersFromSet:tokenEndSet intoString:&blurString])
 						{
-							blurString = nil;
+							if (![scanner scanHTMLColor:&shadowColor])
+							{
+								
+							}
 						}
 					}
 					
-					// color is optional, or we might already have one from the blur position
-					if (!shadowColor && [scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&colorString])
-					{
-						shadowColor = [DTColor colorWithHTMLName:colorString];
-					}
-					
-					// if we still don't have a color, it's the current color attributed
 					if (!shadowColor) 
 					{
 						// color is same as color attribute of style
@@ -208,20 +195,23 @@
 					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
-														 shadowColor, @"Color", nil];
+												[NSNumber numberWithFloat:blur], @"Blur",
+												shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
-					
-					
-				}
-				
+				}	
 			}
+		}
+		
+		// now there should be a comma
+		if (![scanner scanString:@"," intoString:NULL])
+		{
+			break;
 		}
 	}		
 	
 	
-	return [NSArray arrayWithArray:tmpArray];
+	return tmpArray;
 }
 
 - (CGFloat)CSSpixelSize
