@@ -19,18 +19,12 @@ extern unsigned char default_css[];
 extern unsigned int default_css_len;
 
 
-@interface DTCSSStylesheet ()
-
-@property (nonatomic, strong) NSMutableDictionary *styles;
-
-@end
-
-
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
-	
 }
+
+#pragma mark Creating Stylesheets
 
 + (DTCSSStylesheet *)defaultStyleSheet
 {
@@ -61,6 +55,8 @@ extern unsigned int default_css_len;
 	
 	if (self)
 	{
+		_styles	= [[NSMutableDictionary alloc] init];	
+
 		[self mergeStylesheet:stylesheet];
 	}
 	
@@ -72,7 +68,9 @@ extern unsigned int default_css_len;
 	return [_styles description];
 }
 
-- (void)uncompressShorthands:(NSMutableDictionary *)styles
+#pragma mark Working with Style Blocks
+
+- (void)_uncompressShorthands:(NSMutableDictionary *)styles
 {
 	NSString *shortHand = [[styles objectForKey:@"list-style"] lowercaseString];
 	
@@ -143,7 +141,7 @@ extern unsigned int default_css_len;
 	}
 }
 
-- (void)addStyleRule:(NSString *)rule withSelector:(NSString*)selectors
+- (void)_addStyleRule:(NSString *)rule withSelector:(NSString*)selectors
 {
 	NSArray *split = [selectors componentsSeparatedByString:@","];
 	
@@ -154,9 +152,9 @@ extern unsigned int default_css_len;
 		NSMutableDictionary *ruleDictionary = [[rule dictionaryOfCSSStyles] mutableCopy];
 
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
-		[self uncompressShorthands:ruleDictionary];
+		[self _uncompressShorthands:ruleDictionary];
 		
-		NSDictionary *existingRulesForSelector = [self.styles objectForKey:cleanSelector];
+		NSDictionary *existingRulesForSelector = [_styles objectForKey:cleanSelector];
 		
 		if (existingRulesForSelector) 
 		{
@@ -167,17 +165,16 @@ extern unsigned int default_css_len;
 			[tmpDict addEntriesFromDictionary:ruleDictionary];
 
 			// save it
-			[self.styles setObject:tmpDict forKey:cleanSelector];
+			[_styles setObject:tmpDict forKey:cleanSelector];
 		}
 		else 
 		{
-			[self.styles setObject:ruleDictionary forKey:cleanSelector];
+			[_styles setObject:ruleDictionary forKey:cleanSelector];
 		}
 	}
 }
 
 
-// TODO: make parsing more robust, deal with comments properly
 - (void)parseStyleBlock:(NSString*)css
 {
 	NSUInteger braceLevel = 0, braceMarker = 0;
@@ -242,7 +239,7 @@ extern unsigned int default_css_len;
 			{
 				NSString *rule = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
 				
-				[self addStyleRule:rule withSelector: selector];
+				[self _addStyleRule:rule withSelector: selector];
 				
 				braceMarker = i + 1;
 			}
@@ -252,12 +249,20 @@ extern unsigned int default_css_len;
 	}
 }
 
+
+- (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
+{
+	[_styles addEntriesFromDictionary:[stylesheet styles]];
+}
+
+#pragma mark Accessing Style Information
+
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,
 	//  so the order in which we grab them matters!)
-
+	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
 	// Get based on element
@@ -308,8 +313,8 @@ extern unsigned int default_css_len;
 		NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
 		
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
-		[self uncompressShorthands:localStyles];
-	
+		[self _uncompressShorthands:localStyles];
+		
 		[tmpDict addEntriesFromDictionary:localStyles];
 	}
 	
@@ -323,24 +328,9 @@ extern unsigned int default_css_len;
 	}
 }
 
-- (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
+- (NSDictionary *)styles
 {
-	[self.styles addEntriesFromDictionary:stylesheet.styles];
-}
-
-
-#pragma mark Properties
-
-- (NSMutableDictionary *)styles
-{
-	if (!_styles)
-	{
-		_styles = [[NSMutableDictionary alloc] init];
-	}
-	
 	return _styles;
 }
-
-@synthesize styles = _styles;
 
 @end
