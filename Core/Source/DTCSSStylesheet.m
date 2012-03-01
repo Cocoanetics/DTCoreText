@@ -19,17 +19,9 @@ extern unsigned char default_css[];
 extern unsigned int default_css_len;
 
 
-@interface DTCSSStylesheet ()
-
-@property (nonatomic, strong) NSMutableDictionary *styles;
-
-@end
-
-
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
-	
 }
 
 + (DTCSSStylesheet *)defaultStyleSheet
@@ -61,6 +53,8 @@ extern unsigned int default_css_len;
 	
 	if (self)
 	{
+		_styles	= [[NSMutableDictionary alloc] init];	
+
 		[self mergeStylesheet:stylesheet];
 	}
 	
@@ -156,7 +150,7 @@ extern unsigned int default_css_len;
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
 		[self uncompressShorthands:ruleDictionary];
 		
-		NSDictionary *existingRulesForSelector = [self.styles objectForKey:cleanSelector];
+		NSDictionary *existingRulesForSelector = [_styles objectForKey:cleanSelector];
 		
 		if (existingRulesForSelector) 
 		{
@@ -167,11 +161,11 @@ extern unsigned int default_css_len;
 			[tmpDict addEntriesFromDictionary:ruleDictionary];
 
 			// save it
-			[self.styles setObject:tmpDict forKey:cleanSelector];
+			[_styles setObject:tmpDict forKey:cleanSelector];
 		}
 		else 
 		{
-			[self.styles setObject:ruleDictionary forKey:cleanSelector];
+			[_styles setObject:ruleDictionary forKey:cleanSelector];
 		}
 	}
 }
@@ -325,22 +319,15 @@ extern unsigned int default_css_len;
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	[self.styles addEntriesFromDictionary:stylesheet.styles];
+	[_styles addEntriesFromDictionary:[stylesheet styles]];
 }
 
 
 #pragma mark Properties
 
-- (NSMutableDictionary *)styles
+- (NSDictionary *)styles
 {
-	if (!_styles)
-	{
-		_styles = [[NSMutableDictionary alloc] init];
-	}
-	
 	return _styles;
 }
-
-@synthesize styles = _styles;
 
 @end
