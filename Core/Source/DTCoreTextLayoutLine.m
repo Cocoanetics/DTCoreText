@@ -470,28 +470,30 @@
 #pragma mark Properties
 - (NSArray *)glyphRuns
 {
-	if (!_glyphRuns)
-	{
-		CFArrayRef runs = CTLineGetGlyphRuns(_line);
-		
-        if (runs) {
-		CGFloat offset = 0;
-		
-		NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:CFArrayGetCount(runs)];
-		
-		for (id oneRun in (__bridge NSArray *)runs)
+	dispatch_sync(_syncQueue, ^{
+		if (!_glyphRuns)
 		{
-			//CGPoint runOrigin = CGPointMake(_baselineOrigin.x + offset, _baselineOrigin.y);
+			// run array is owned by line
+			NSArray *runs = (__bridge NSArray *)CTLineGetGlyphRuns(_line);
 			
-			DTCoreTextGlyphRun *glyphRun = [[DTCoreTextGlyphRun alloc] initWithRun:(__bridge CTRunRef)oneRun layoutLine:self offset:offset];
-			[tmpArray addObject:glyphRun];
-			
-			offset += glyphRun.frame.size.width;
+			if (runs) 
+			{
+				CGFloat offset = 0;
+				
+				NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:[runs count]];
+				
+				for (id oneRun in runs)
+				{
+					DTCoreTextGlyphRun *glyphRun = [[DTCoreTextGlyphRun alloc] initWithRun:(__bridge CTRunRef)oneRun layoutLine:self offset:offset];
+					[tmpArray addObject:glyphRun];
+					
+					offset += glyphRun.frame.size.width;
+				}
+				
+				_glyphRuns = tmpArray;
+			}
 		}
-		
-		_glyphRuns = tmpArray;
-        }
-	}
+	});
 	
 	return _glyphRuns;
 }
