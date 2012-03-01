@@ -10,27 +10,71 @@
 
 @class DTHTMLElement;
 
+/**
+ This class represents a CSS style sheet used for specifying formatting for certain CSS selectors.
+ 
+ It supports matching styles by class, by id or by tag name. Hierarchy matching is not supported yet.
+ */
 @interface DTCSSStylesheet : NSObject
 
 
-// stylesheet initialized with default styles
+/**
+ @name Creating Stylesheets
+ */
+
+/**
+ Creates the default stylesheet.
+ 
+ This stylesheet is based on the standard styles that Webkit provides for these tags. This stylesheet is loaded from an embedded copy of default.css.
+ */
 + (DTCSSStylesheet *)defaultStyleSheet;
 
+
+/**
+ Creates a stylesheet with a given style block
+ 
+ @param css The CSS string for the style block
+ */
 - (id)initWithStyleBlock:(NSString *)css;
-- (id)initWithStylesheet:(DTCSSStylesheet *)stylesheet;
 
 
-// adds styles contained in block to sheet
+/**
+ @name Working with CSS Style Blocks
+ */
+
+
+/**
+ Parses a style block string and adds the found style rules to the receiver.
+ 
+ @param css The CSS string for the style block
+*/ 
 - (void)parseStyleBlock:(NSString *)css;
 
 
-// returns merged style for a tag
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element;
-
-// merge styles from given stylesheet into this stylesheet
+/**
+ Merges styles from given stylesheet into the receiver
+ 
+ @param stylesheet the stylesheet to merge
+ */
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet;
 
-// dictionary of styles
+
+/**
+ @name Accessing Style Information
+ */
+
+/**
+ Returns a dictionary that contains the merged style for a given element and the applicable style rules from the receiver.
+ 
+ @param element The HTML element.
+ @returns The merged style dictionary containing only styles which selector matches the element
+ */
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element;
+
+
+/**
+ Returns a dictionary of the styles of the receiver
+ */
 - (NSDictionary *)styles;
 
 @end
