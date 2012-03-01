@@ -78,10 +78,6 @@
 		
 		// documentAttributes ignored for now
 		
-		// register default handlers
-		[self _registerTagStartHandlers];
-		[self _registerTagEndHandlers];
-		
 		//GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
 		_stringAssemblyGroup = dispatch_group_create();
@@ -107,6 +103,10 @@
 	{
 		return NO;
 	}
+	
+	// register default handlers
+	[self _registerTagStartHandlers];
+	[self _registerTagEndHandlers];
 	
  	// Specify the appropriate text encoding for the passed data, default is UTF8 
 	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
@@ -283,6 +283,10 @@
 	dispatch_group_wait(_stringParsingGroup, DISPATCH_TIME_FOREVER);
 	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
 	
+	// clean up handlers because they retained self
+	_tagStartHandlers = nil;
+	_tagEndHandlers = nil;
+	
 	return result;
 }
 
@@ -295,6 +299,11 @@
 
 - (void)_registerTagStartHandlers
 {
+	if (_tagStartHandlers)
+	{
+		return;
+	}
+	
 	_tagStartHandlers = [[NSMutableDictionary alloc] init];
 	
 	void (^imgBlock)(void) = ^ 
@@ -698,6 +707,11 @@
 
 - (void)_registerTagEndHandlers
 {
+	if (_tagEndHandlers)
+	{
+		return;
+	}
+
 	_tagEndHandlers = [[NSMutableDictionary alloc] init];
 	
 	void (^bodyBlock)(void) = ^ 
