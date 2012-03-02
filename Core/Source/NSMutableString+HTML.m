@@ -13,7 +13,7 @@
 
 @implementation NSMutableString (HTML)
 
-- (void)removeWhitespaceSuffix
+- (void)removeTrailingWhitespace
 {
 	NSUInteger length = self.length;
 	

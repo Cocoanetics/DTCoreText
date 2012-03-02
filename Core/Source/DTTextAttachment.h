@@ -14,8 +14,8 @@
 
 typedef enum
 {
-    DTTextAttachmentTypeImage,
-    DTTextAttachmentTypeVideoURL,
+	DTTextAttachmentTypeImage,
+	DTTextAttachmentTypeVideoURL,
 	DTTextAttachmentTypeIframe,
 	DTTextAttachmentTypeObject,
 	DTTextAttachmentTypeGeneric
@@ -29,7 +29,7 @@ typedef enum
 	DTTextAttachmentVerticalAlignmentBottom
 } DTTextAttachmentVerticalAlignment;
 
-
+/** An object to represent an attachment in an HTML/rich text view.  */
 @interface DTTextAttachment : NSObject 
 
 @property (nonatomic, assign) CGSize originalSize;
@@ -41,9 +41,15 @@ typedef enum
 @property (nonatomic, strong) NSDictionary *attributes;
 @property (nonatomic, assign) DTTextAttachmentVerticalAlignment verticalAlignment;
 
-
+/** Initialize and return a DTTextAttachment with the specified DTHTMLElement and options. Convenience initializer. 
+	The element must have a valid tagName. The size of the returned text attachment is determined by the element, constrained by the option's key for DTMaxImageSize. Any valid image resource included in the element (denoted by the method attributeForKey: "src") is loaded and determines the text attachment size if it was not known before. If a size is too large the image is downsampled with sizeThatFitsKeepingAspectRatio() which preserves the aspect ratio. 
+ @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements. 
+ @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize. 
+ @return Returns an initialized DTTextAttachment built using the element and options parameters. */
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
+/** Retrieves a string which is in the format "data:image/png;base64,%@" with this DTTextAttachment's content's data representation encoded in Base64 string encoding. For image contents only.  
+ @return A Base64 encoded string of the png data representation of this text attachment's image contents. */
 - (NSString *)dataURLRepresentation;
 
 - (void)adjustVerticalAlignmentForFont:(CTFontRef)font;
