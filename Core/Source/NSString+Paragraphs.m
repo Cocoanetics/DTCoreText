@@ -28,7 +28,7 @@
 		*parEndIndex = endIndex;
 	}
 	
-	return NSMakeRange(beginIndex, endIndex - beginIndex );
+	return NSMakeRange(beginIndex, endIndex - beginIndex);
 }
 
 - (BOOL)indexIsAtBeginningOfParagraph:(NSUInteger)index
