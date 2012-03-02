@@ -23,7 +23,6 @@
 #import "NSString+HTML.h"
 #import "NSString+Paragraphs.h"
 #import "NSString+UTF8Cleaner.h"
-#import "NSURL+HTML.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "NSMutableAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
