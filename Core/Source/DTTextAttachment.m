@@ -263,13 +263,16 @@
 }
 
 #pragma mark Properties
-
+/** Mutator for originalSize. Sets displaySize to the same value as originalSize. 
+ @param The CGSize to store in originalSize. */
 - (void)setOriginalSize:(CGSize)originalSize
 {
 	_originalSize = originalSize;
 	self.displaySize = _originalSize;
 }
 
+/** Accessor for the contents instance variable. If the content type is DTTextAttachmentTypeImage this returns a DTImage instance of the contents.
+ @return Contents. If it is an image, a DTImage instance is returned. Otherwise it is returned as is. */
 - (id)contents
 {
 	if (!contents)
