@@ -280,7 +280,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// adjust lineOrigin based on paragraph text alignment
 		CTTextAlignment textAlignment;
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment);
+		
+		if (!CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment))
+		{
+			textAlignment = kCTNaturalTextAlignment;
+		}
 
 		
 		switch (textAlignment) 
