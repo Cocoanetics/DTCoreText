@@ -978,7 +978,7 @@
 			{
 				if (currentTag.displayStyle != DTHTMLElementDisplayStyleBlock)
 				{
-					[_currentTagContents removeWhitespaceSuffix];
+					[_currentTagContents removeTrailingWhitespace];
 				}
 				
 				removeUnflushedWhitespace = YES;
@@ -1050,7 +1050,7 @@
 			// trim off white space at end if block
 			if (currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
 			{
-				[_currentTagContents removeWhitespaceSuffix];
+				[_currentTagContents removeTrailingWhitespace];
 			}
 			
 			[self _flushCurrentTagContent:_currentTagContents];

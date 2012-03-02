@@ -10,6 +10,7 @@
 
 @interface NSMutableString (HTML)
 
-- (void)removeWhitespaceSuffix;
+/** Removes the trailing whitespace from this NSMutableString instance.  */
+- (void)removeTrailingWhitespace;
 
 @end
