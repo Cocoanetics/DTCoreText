@@ -62,8 +62,8 @@ typedef enum
 
 - (void)adjustVerticalAlignmentForFont:(CTFontRef)font;
 
-/**
- Customized ascend and descent for the run delegates
+
+// Customized ascend and descent for the run delegates
 - (CGFloat)ascentForLayout;
 - (CGFloat)descentForLayout;
 
