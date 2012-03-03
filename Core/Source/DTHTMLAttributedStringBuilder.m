@@ -128,26 +128,6 @@
 	// use baseURL from options if present
 	baseURL = [_options objectForKey:NSBaseURLDocumentOption];
 	
-	
-	// Make it a string
-	NSString *htmlString;
-	
-	if (encoding == NSUTF8StringEncoding)
-	{
-		// this method can fix malformed UTF8
-		htmlString = [[NSString alloc] initWithPotentiallyMalformedUTF8Data:_data];
-	}
-	else
-	{
-		// use the specified encoding
-		htmlString = [[NSString alloc] initWithData:_data encoding:encoding];
-	}
-	
-	if (!htmlString)
-	{
-		return NO;
-	}
-	
 	// the combined style sheet for entire document
 	_globalStyleSheet = [DTCSSStylesheet defaultStyleSheet]; 
 	
@@ -164,10 +144,6 @@
 	
 	needsListItemStart = NO;
 	needsNewLineBefore = NO;
-	
-	// we cannot skip any characters, NLs turn into spaces and multi-spaces get compressed to singles
-	NSScanner *scanner = [NSScanner scannerWithString:htmlString];
-	scanner.charactersToBeSkipped = nil;
 	
 	// base tag with font defaults
 	defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
