@@ -20,8 +20,9 @@ typedef struct
  */
 @interface UIDevice (DTVersion)
 
-/**  
- @return Returns a DTVersion struct with three fields each of type NSInteger storing the major, minor, and point numbers identifying this OS version. */
+/**
+ Returns the current OS version of the device.
+ @returns A DTVersion struct with three fields each of type NSInteger storing the major, minor, and point numbers identifying this OS version. */
 - (DTVersion) osVersion;
 
 @end
