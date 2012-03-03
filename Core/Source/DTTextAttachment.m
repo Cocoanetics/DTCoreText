@@ -271,8 +271,10 @@
 	self.displaySize = _originalSize;
 }
 
-/** Accessor for the contents instance variable. If the content type is DTTextAttachmentTypeImage this returns a DTImage instance of the contents.
- @return Contents. If it is an image, a DTImage instance is returned. Otherwise it is returned as is. */
+/** 
+ Accessor for the contents instance variable. If the content type is DTTextAttachmentTypeImage this returns a DTImage instance of the contents.
+ @returns Contents. If it is an image, a DTImage instance is returned. Otherwise it is returned as is. 
+ */
 - (id)contents
 {
 	if (!contents)
