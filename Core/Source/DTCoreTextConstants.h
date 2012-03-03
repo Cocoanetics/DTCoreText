@@ -37,6 +37,7 @@ extern NSString *DTStrikeOutAttribute;
 extern NSString *DTBackgroundColorAttribute;
 extern NSString *DTShadowsAttribute;
 extern NSString *DTHorizontalRuleStyleAttribute;
+extern NSString *DTPaddingAttribute;
 
 // macros
 

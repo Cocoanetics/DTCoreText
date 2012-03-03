@@ -151,11 +151,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat width;
 		CGFloat leading;
 		CGFloat trailingWhitespaceWidth;
-		CGFloat paragraphSpacing;
 	} lineMetrics;
-	
+
+	typedef struct
+	{
+		CGFloat paragraphSpacing;
+		UIEdgeInsets padding;
+	} paragraphMetrics;
+
 	lineMetrics currentLineMetrics;
 	lineMetrics previousLineMetrics;
+	
+	paragraphMetrics currentParaMetrics;
+	paragraphMetrics previousParaMetrics;
 	
 	do 
 	{
@@ -169,24 +177,43 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
 		
-		// get the paragraph style at this index
-		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
-		
 		CGFloat offset = 0;
 		
+		// get the paragraph style at this index
+		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
+
 		if (isAtBeginOfParagraph)
 		{
+			// save paragraph metrics
+			previousParaMetrics = currentParaMetrics;
+
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(offset), &offset);
+
+			
+			NSValue *paddingValue = [_attributedStringFragment attribute:DTPaddingAttribute atIndex:lineRange.location effectiveRange:NULL];
+			if (paddingValue)
+			{
+				currentParaMetrics.padding = [paddingValue UIEdgeInsetsValue];
+			}
+			else
+			{
+				currentParaMetrics.padding = UIEdgeInsetsMake(0, 0, 0, 0);
+			}
 		}
 		else
 		{
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(offset), &offset);
 		}
 		
+		// add left padding to offset
+		offset += currentParaMetrics.padding.left;
+		
 		lineOrigin.x = offset + _frame.origin.x;
 		
+		CGFloat availableSpace = _frame.size.width - offset - currentParaMetrics.padding.right;
+		
 		// find how many characters we get into this line
-		lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, _frame.size.width - offset);
+		lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, availableSpace);
 		
 		if (NSMaxRange(lineRange) > maxIndex)
 		{
@@ -197,7 +224,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (NSMaxRange(lineRange) == NSMaxRange(currentParagraphRange))
 		{
 			// at end of paragraph, record the spacing
-			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentLineMetrics.paragraphSpacing), &currentLineMetrics.paragraphSpacing);
+			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentParaMetrics.paragraphSpacing), &currentParaMetrics.paragraphSpacing);
 		}
 
 		// create a line to fit
@@ -255,7 +282,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			if (isAtBeginOfParagraph)
 			{
-				lineHeight += previousLineMetrics.paragraphSpacing;
+				lineHeight += currentParaMetrics.paragraphSpacing;
 			}
 			
 			lineHeight += currentLineMetrics.leading;
@@ -285,7 +312,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			textAlignment = kCTNaturalTextAlignment;
 		}
-
 		
 		switch (textAlignment) 
 		{
@@ -312,14 +338,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTRightTextAlignment:
 			{
-				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 1.0, _frame.size.width - offset);
+				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 1.0, availableSpace);
 
 				break;
 			}
 				
 			case kCTCenterTextAlignment:
 			{
-				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 0.5, _frame.size.width - offset);
+				lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 0.5, availableSpace);
 				
 				break;
 			}
@@ -330,7 +356,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				if (currentLineMetrics.width > 0.6 * _frame.size.width)
 				{
 					// create a justified line and replace the current one with it
-					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, _frame.size.width-offset);
+					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
 					CFRelease(line);
 					line = justifiedLine;
 				}
@@ -356,6 +382,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// baseline origin is rounded
 		lineOrigin.y = roundf(lineOrigin.y);
+		
+		if (isAtBeginOfParagraph)
+		{
+			lineOrigin.y += currentParaMetrics.padding.top + previousParaMetrics.padding.bottom;
+		}
 		
 		newLine.baselineOrigin = lineOrigin;
 		

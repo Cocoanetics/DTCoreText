@@ -49,6 +49,8 @@
 	DTColor *_textColor;
 	DTColor *backgroundColor;
 	
+	UIEdgeInsets _padding;
+	
 	CTUnderlineStyle underlineStyle;
 	
 	NSString *tagName;
@@ -221,6 +223,12 @@
 	if (paragraphStyle.textLists)
 	{
 		[tmpDict setObject:paragraphStyle.textLists forKey:DTTextListsAttribute];
+	}
+	
+	if (_padding.left!=0 || _padding.top!=0 || _padding.right!=0 || _padding.bottom!=0)
+	{
+		NSValue *paddingValue = [NSValue valueWithUIEdgeInsets:_padding];
+		[tmpDict setObject:paddingValue forKey:DTPaddingAttribute];
 	}
 	
 	return tmpDict;
@@ -762,6 +770,13 @@
 			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
 		}
 	}
+	
+	NSString *paddingString = [styles objectForKey:@"padding"];
+	if (paddingString)
+	{
+		CGFloat padding = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+		_padding = UIEdgeInsetsMake(padding, padding, padding, padding);
+	}
 }
 
 - (NSDictionary *)styles
@@ -1020,7 +1035,7 @@
 @synthesize fontCache = _fontCache;
 @synthesize children = _children;
 @synthesize attributes = _attributes;
-
+@synthesize padding = _padding;
 
 
 @end

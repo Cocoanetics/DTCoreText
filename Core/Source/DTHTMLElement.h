@@ -62,6 +62,7 @@ typedef enum
 @property (nonatomic, assign) CGFloat textScale;
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, strong) NSDictionary *attributes;
+@property (nonatomic, assign) UIEdgeInsets padding;
 
 
 - (NSAttributedString *)attributedString;
