@@ -21,20 +21,20 @@ static dispatch_semaphore_t selfLock;
 
 @implementation DTCoreTextParagraphStyle
 {
-    CGFloat firstLineHeadIndent;
+	CGFloat firstLineHeadIndent;
 	CGFloat defaultTabInterval;
-    CGFloat paragraphSpacingBefore;
-    CGFloat paragraphSpacing;
-    CGFloat headIndent;
-    CGFloat listIndent;
-    CGFloat lineHeightMultiple;
-    CGFloat minimumLineHeight;
-    CGFloat maximumLineHeight;
-    
-    CTTextAlignment _alignment;
-    CTWritingDirection baseWritingDirection;
-    
-    NSMutableArray *_tabStops;
+	CGFloat paragraphSpacingBefore;
+	CGFloat paragraphSpacing;
+	CGFloat headIndent;
+	CGFloat listIndent;
+	CGFloat lineHeightMultiple;
+	CGFloat minimumLineHeight;
+	CGFloat maximumLineHeight;
+	
+	CTTextAlignment _alignment;
+	CTWritingDirection baseWritingDirection;
+	
+	NSMutableArray *_tabStops;
 }
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle
@@ -46,15 +46,15 @@ static dispatch_semaphore_t selfLock;
 {
 	DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
 	static dispatch_once_t predicate;
-  
+	
 	dispatch_once(&predicate, ^{
 		
 		_paragraphStyleCache = [[NSCache alloc] init];
 		selfLock = dispatch_semaphore_create(1);
 	});
-
+	
 	// synchronize class-wide
-
+	
 	dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
 	{
 		
@@ -101,7 +101,7 @@ static dispatch_semaphore_t selfLock;
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierAlignment,sizeof(_alignment), &_alignment);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(firstLineHeadIndent), &firstLineHeadIndent);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(defaultTabInterval), &defaultTabInterval);
-
+		
 		
 		__unsafe_unretained NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
 		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
@@ -152,7 +152,7 @@ static dispatch_semaphore_t selfLock;
 	
 	// This just makes it that much easier to track down memory issues with tabstops
 	CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
-
+	
 	CTParagraphStyleSetting settings[] = 
 	{
 		{kCTParagraphStyleSpecifierAlignment, sizeof(_alignment), &_alignment},
@@ -174,7 +174,7 @@ static dispatch_semaphore_t selfLock;
 	
 	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 11);
 	if (stops) CFRelease(stops);
-
+	
 	return ret;
 }
 
@@ -222,7 +222,7 @@ static dispatch_semaphore_t selfLock;
 	{
 		[retString appendFormat:@"line-height:%.2fem;", lineHeightMultiple];
 	}
-
+	
 	switch (baseWritingDirection) 
 	{
 		case kCTWritingDirectionRightToLeft:
@@ -266,6 +266,7 @@ static dispatch_semaphore_t selfLock;
 	newObject.baseWritingDirection = self.baseWritingDirection;
 	newObject.tabStops = self.tabStops; // copy
 	newObject.textLists = self.textLists; //copy
+	newObject.textBlocks = self.textBlocks; //copy
 	
 	return newObject;
 }
@@ -291,6 +292,7 @@ static dispatch_semaphore_t selfLock;
 @synthesize listIndent;
 @synthesize alignment = _alignment;
 @synthesize textLists;
+@synthesize textBlocks;
 @synthesize baseWritingDirection;
 @synthesize tabStops = _tabStops;
 

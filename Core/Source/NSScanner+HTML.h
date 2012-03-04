@@ -6,7 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTColor+HTML.h"
+//#import "DTColor+HTML.h"
+
+@class DTColor;
 
 @interface NSScanner (HTML)
 

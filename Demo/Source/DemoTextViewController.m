@@ -362,6 +362,25 @@
 	return nil;
 }
 
+- (BOOL)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame
+{
+	UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:10];
+
+	CGColorRef color = [textBlock.backgroundColor CGColor];
+	if (color)
+	{
+		CGContextSetFillColorWithColor(context, color);
+	}
+	CGContextAddPath(context, [roundedRect CGPath]);
+	CGContextFillPath(context);
+	
+	CGContextAddPath(context, [roundedRect CGPath]);
+	CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
+	CGContextStrokePath(context);
+	
+	return NO; // draw standard background
+}
+
 
 #pragma mark Actions
 

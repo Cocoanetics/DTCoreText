@@ -6,6 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSString+HTML.h"

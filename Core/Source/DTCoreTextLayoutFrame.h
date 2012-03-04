@@ -10,10 +10,13 @@
 #import <CoreText/CoreText.h>
 
 @class DTCoreTextLayoutLine;
+@class DTTextBlock;
 
 
 // the value to use if the height is unknown
 #define CGFLOAT_OPEN_HEIGHT 16777215.0f
+
+typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground); 
 
 
 @class DTCoreTextLayouter;
@@ -102,6 +105,14 @@
  @param drawImages Whether images should be draw together with the text. If you specify `NO` then space is left blank where images would go and you have to add your own views to display these images.
  */
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages;
+
+
+/**
+ Set a custom handler to be executed before text belonging to a text block is drawn.
+ 
+ @param handler A DTCoreTextLayoutFrameTextBlockHandler block.
+*/
+@property (nonatomic, copy) DTCoreTextLayoutFrameTextBlockHandler textBlockHandler;
 
 
 /**

@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
-#import "DTColor+HTML.h"
+@class DTColor;
 
 /** 
  Methods to make dealing with CSS strings easier. Extract shadows from this string, extract CSS styles found in this string, extract the pixel size of a CSS measurement relative to the current text size, and extract the CSS pixel measurement of this string.

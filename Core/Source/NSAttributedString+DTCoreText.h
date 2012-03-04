@@ -7,6 +7,7 @@
 //
 
 @class DTCSSListStyle;
+@class DTTextBlock;
 
 /**
  Convenience Methods that mimick similar methods available on Mac
@@ -53,6 +54,15 @@
  */
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location;
 
+
+/**
+ Returns the range of the given text block that contains the given location.
+ 
+ @param list The text block.
+ @param location The location in the text.
+ @returns The range of the given text block containing the location.
+ */
+- (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location;
 
 /**
  @name Converting to Other Representations

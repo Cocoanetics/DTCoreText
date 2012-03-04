@@ -51,6 +51,7 @@
 		unsigned int delegateSupportsCustomViewsForLinks:1;
 		unsigned int delegateSupportsGenericCustomViews:1;
 		unsigned int delegateSupportsNotificationAfterDrawing:1;
+		unsigned int delegateSupportsNotificationBeforeTextBoxDrawing:1;
 	} _delegateFlags;
 	
 	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
@@ -657,6 +658,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
 					
 					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+					
+					if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
+					{
+						DTAttributedTextContentView *weakself = self;
+						
+						[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
+							BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];
+							
+							if (shouldDrawDefaultBackground)
+							{
+								*shouldDrawDefaultBackground = result;
+							}
+							
+						}];
+					}
 				}
 			}
 		}
@@ -723,6 +739,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
 	_delegateFlags.delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
 	_delegateFlags.delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
+	_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:shouldDrawBackgroundForTextBlock:frame:context:forLayoutFrame:)];
 	
 	if (!_delegateFlags.delegateSupportsCustomViewsForLinks && !_delegateFlags.delegateSupportsGenericCustomViews)
 	{

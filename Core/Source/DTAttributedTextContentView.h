@@ -15,6 +15,7 @@
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
+@class DTTextBlock;
 
 /**
  Protocol to provide custom views for elements in an DTAttributedTextContentView. Also the delegate gets notified once the text view has been drawn.
@@ -37,6 +38,20 @@
  */
 - (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
 
+
+/**
+ Called before the text belonging to a text block is drawn.
+ 
+ This gives the developer an opportunity to draw a custom background below a text block.
+ 
+ @param attributedTextContentView The content view that drew a layout frame
+ @param textBlock The text block
+ @param rect The frame within the content view's coordinate system that will be drawn into
+ @param context The graphics context that will be drawn into
+ @param layoutFrame The layout frame that will be drawn for
+ @param returns `YES` is the standard fill of the text block should be drawn, `NO` if it should not
+ */
+- (BOOL)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame; 
 
 /**
  @name Providing Custom Views for Content

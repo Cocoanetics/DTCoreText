@@ -6,25 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "DTHTMLElement.h"
-#import "DTCoreTextParagraphStyle.h"
-#import "DTCoreTextFontDescriptor.h"
-#import "NSString+HTML.h"
-#import "DTColor+HTML.h"
-#import "NSCharacterSet+HTML.h"
-#import "DTTextAttachment.h"
-#import "NSAttributedString+HTML.h"
-#import "NSMutableAttributedString+HTML.h"
-
-#import "DTCSSListStyle.h"
-
-#import "DTCoreTextConstants.h"
-#import "DTImage+HTML.h"
-#import "DTColor+HTML.h"
-
-#if TARGET_OS_IPHONE
-#import "NSAttributedStringRunDelegates.h"
-#endif
 
 @interface DTHTMLElement ()
 
@@ -48,8 +31,6 @@
 	
 	DTColor *_textColor;
 	DTColor *backgroundColor;
-	
-	UIEdgeInsets _padding;
 	
 	CTUnderlineStyle underlineStyle;
 	
@@ -224,13 +205,11 @@
 	{
 		[tmpDict setObject:paragraphStyle.textLists forKey:DTTextListsAttribute];
 	}
-	
-	if (_padding.left!=0 || _padding.top!=0 || _padding.right!=0 || _padding.bottom!=0)
+
+	if (paragraphStyle.textBlocks)
 	{
-		NSValue *paddingValue = [NSValue valueWithUIEdgeInsets:_padding];
-		[tmpDict setObject:paddingValue forKey:DTPaddingAttribute];
+		[tmpDict setObject:paragraphStyle.textBlocks forKey:DTTextBlocksAttribute];
 	}
-	
 	return tmpDict;
 }
 
@@ -771,11 +750,28 @@
 		}
 	}
 	
-	NSString *paddingString = [styles objectForKey:@"padding"];
-	if (paddingString)
+	if (_displayStyle == DTHTMLElementDisplayStyleBlock)
 	{
-		CGFloat padding = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-		_padding = UIEdgeInsetsMake(padding, padding, padding, padding);
+		NSString *paddingString = [styles objectForKey:@"padding"];
+		
+		if (paddingString || backgroundColor)
+		{
+			// need a block
+			DTTextBlock *newBlock = [[DTTextBlock alloc] init];
+			
+			if (paddingString)
+			{
+				CGFloat padding = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				
+				newBlock.padding = DTEdgeInsetsMake(padding, padding, padding, padding);
+			}
+			
+			// transfer background color to block
+			newBlock.backgroundColor = backgroundColor;
+			backgroundColor = nil;
+			
+			self.paragraphStyle.textBlocks = [NSArray arrayWithObject:newBlock];
+		}
 	}
 }
 
@@ -1028,15 +1024,12 @@
 @synthesize preserveNewlines;
 @synthesize displayStyle = _displayStyle;
 @synthesize fontVariant;
-//@synthesize listStyle = _listStyle;
 @synthesize textScale;
 @synthesize size;
 
 @synthesize fontCache = _fontCache;
 @synthesize children = _children;
 @synthesize attributes = _attributes;
-@synthesize padding = _padding;
-
 
 @end
 

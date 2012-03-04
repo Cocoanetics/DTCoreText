@@ -6,7 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-
 /**
  `DTCoreTextParagraphStyle` encapsulates the paragraph or ruler attributes used by the NSAttributedString classes on iOS. It is a replacement for `NSParagraphStyle` which is not implemented on iOS. 
  
@@ -172,6 +171,17 @@
  The amount by which each list level is indented from the previous. NOTE: about to be replaced by textLists property.
  */
 @property (nonatomic, assign) CGFloat listIndent;
+
+
+/**-------------------------------------------------------------------------------------
+ @name Setting Text Blocks
+ ---------------------------------------------------------------------------------------
+ */
+
+/** 
+ Text lists containing the paragraph, nested from outermost to innermost, to array.
+ */
+@property (nonatomic, copy) NSArray *textBlocks;
 
 
 @end

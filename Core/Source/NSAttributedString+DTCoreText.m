@@ -6,20 +6,8 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "NSAttributedString+DTCoreText.h"
-
-#import "DTCoreTextConstants.h"
-
-#import "DTColor+HTML.h"
-#import "NSString+HTML.h"
-#import "DTTextAttachment.h"
-#import "DTCoreTextParagraphStyle.h"
-#import "DTCoreTextFontDescriptor.h"
-#import "DTCSSListStyle.h"
-
-#if TARGET_OS_IPHONE
-#import "NSAttributedString+HTML.h"
-#endif
 
 @implementation NSAttributedString (DTCoreText)
 
@@ -124,11 +112,12 @@
 	return [currentCounterNum integerValue];
 }
 
-- (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
+
+- (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
 	NSInteger searchIndex = location;
 	
-	NSArray *textListsAtIndex;
+	NSArray *arrayAtIndex;
 	NSInteger minFoundIndex = NSIntegerMax;
 	NSInteger maxFoundIndex = 0;
 	
@@ -137,9 +126,9 @@
 	do 
 	{
 		NSRange effectiveRange;
-		textListsAtIndex = [self attribute:DTTextListsAttribute atIndex:searchIndex effectiveRange:&effectiveRange];
+		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 		
-		if([textListsAtIndex containsObject:list])
+		if([arrayAtIndex containsObject:object])
 		{
 			foundList = YES;
 			
@@ -172,9 +161,9 @@
 	while (searchIndex < [self length])
 	{
 		NSRange effectiveRange;
-		textListsAtIndex = [self attribute:DTTextListsAttribute atIndex:searchIndex effectiveRange:&effectiveRange];
+		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 		
-		foundList = [textListsAtIndex containsObject:list];
+		foundList = [arrayAtIndex containsObject:object];
 		
 		if (!foundList)
 		{
@@ -188,6 +177,16 @@
 	}
 	
 	return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+}
+
+- (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
+{
+	return [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+}
+
+- (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
+{
+	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
 #pragma mark HTML Encoding
