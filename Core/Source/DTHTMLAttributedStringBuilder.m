@@ -9,11 +9,6 @@
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
-//#import "NSString+HTML.h"
-//#import "NSString+CSS.h"
-//#import "NSMutableString+HTML.h"
-
-
 @interface DTHTMLAttributedStringBuilder ()
 
 - (void)_registerTagStartHandlers;
@@ -161,7 +156,7 @@
 			defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkColor];
 		}
 		
-		// get hex code for t   he passed color
+		// get hex code for the passed color
 		NSString *colorHex = [defaultLinkColor htmlHexString];
 		
 		// overwrite the style
