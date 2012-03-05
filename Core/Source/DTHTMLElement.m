@@ -754,17 +754,85 @@
 	{
 		NSString *paddingString = [styles objectForKey:@"padding"];
 		
-		if (paddingString || backgroundColor)
+		BOOL needsTextBlock = (backgroundColor!=nil);
+		
+		DTEdgeInsets padding = {0,0,0,0};
+		
+		if (paddingString)
+		{
+			// maybe it's using the short style
+			NSArray *parts = [paddingString componentsSeparatedByString:@" "];
+			
+			if ([parts count] == 4)
+			{
+				padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.left = [[parts objectAtIndex:3] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			}
+			else if ([parts count] == 3)
+			{
+				padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.left = padding.right;
+			}
+			else if ([parts count] == 2)
+			{
+				padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding.bottom = padding.top;
+				padding.left = padding.right;
+			}
+			else 
+			{
+				CGFloat paddingAmount = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				padding = DTEdgeInsetsMake(paddingAmount, paddingAmount, paddingAmount, paddingAmount);
+			}
+			
+			needsTextBlock = YES;
+		}
+		else
+		{
+			paddingString = [styles objectForKey:@"padding-left"];
+			
+			if (paddingString)
+			{
+				padding.left = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				needsTextBlock = YES;
+			}
+
+			paddingString = [styles objectForKey:@"padding-top"];
+			
+			if (paddingString)
+			{
+				padding.top = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				needsTextBlock = YES;
+			}
+
+			paddingString = [styles objectForKey:@"padding-right"];
+			
+			if (paddingString)
+			{
+				padding.right = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				needsTextBlock = YES;
+			}
+
+			paddingString = [styles objectForKey:@"padding-bottom"];
+			
+			if (paddingString)
+			{
+				padding.bottom = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+				needsTextBlock = YES;
+			}
+		}
+		
+		if (needsTextBlock)
 		{
 			// need a block
 			DTTextBlock *newBlock = [[DTTextBlock alloc] init];
 			
-			if (paddingString)
-			{
-				CGFloat padding = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-				
-				newBlock.padding = DTEdgeInsetsMake(padding, padding, padding, padding);
-			}
+			newBlock.padding = padding;
 			
 			// transfer background color to block
 			newBlock.backgroundColor = backgroundColor;
