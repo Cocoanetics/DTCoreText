@@ -123,7 +123,8 @@ static NSDictionary *entityReverseLookup = nil;
 	static dispatch_once_t predicate;
 	
 	dispatch_once(&predicate, ^{
-		entityReverseLookup = [[NSDictionary alloc] initWithObjectsAndKeys:@"&quot;", [NSNumber numberWithInteger:0x22],
+		entityReverseLookup = [[NSDictionary alloc] initWithObjectsAndKeys:
+									  @"&quot;", [NSNumber numberWithInteger:0x22],
 									  @"&amp;", [NSNumber numberWithInteger:0x26],
 									  @"&apos;", [NSNumber numberWithInteger:0x27],
 									  @"&lt;", [NSNumber numberWithInteger:0x3c],
