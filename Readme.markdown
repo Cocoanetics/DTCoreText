@@ -5,7 +5,12 @@ This project aims to duplicate the methods present on Mac OSX which allow creati
 
 Please support us so that we can continue to make DTCoreText even more awesome!
 
-<a href='http://www.pledgie.com/campaigns/16615'><img alt='Click here to lend your support to: Migrate DTCoreText to libxml2 and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/16615.png?skin_name=chrome' border='0' /></a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="M5DZ3PAN7NW8J">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+</form>
 
 The project covers two broad areas:
 
