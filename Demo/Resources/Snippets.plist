@@ -118,6 +118,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Block-level elements can have a background color and padding.</string>
+		<key>File</key>
+		<string>TextBoxes.html</string>
+		<key>Title</key>
+		<string>Text Boxes</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>
