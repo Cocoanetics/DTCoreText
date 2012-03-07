@@ -160,11 +160,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	typedef struct
 	{
 		CGFloat paragraphSpacing;
-		UIEdgeInsets padding;
 	} paragraphMetrics;
 
-	paragraphMetrics currentParaMetrics;
-//	paragraphMetrics previousParaMetrics;
+	paragraphMetrics currentParaMetrics = {0};
+	paragraphMetrics previousParaMetrics = {0};
 
 	lineMetrics currentLineMetrics;
 	lineMetrics previousLineMetrics;
@@ -202,6 +201,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (isAtBeginOfParagraph)
 		{
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(offset), &offset);
+			
+			// save prev paragraph
+			previousParaMetrics = currentParaMetrics;
 		}
 		else
 		{
@@ -285,7 +287,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			if (isAtBeginOfParagraph)
 			{
-				lineHeight += currentParaMetrics.paragraphSpacing;
+				lineHeight += previousParaMetrics.paragraphSpacing;
 			}
 			
 			lineHeight += currentLineMetrics.leading;
@@ -385,11 +387,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// baseline origin is rounded
 		lineOrigin.y = roundf(lineOrigin.y);
-		
-//		if (isAtBeginOfParagraph)
-//		{
-//			lineOrigin.y += currentParaMetrics.padding.top + previousParaMetrics.padding.bottom;
-//		}
 		
 		newLine.baselineOrigin = lineOrigin;
 		
