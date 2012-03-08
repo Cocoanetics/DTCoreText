@@ -16,7 +16,7 @@
 	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
-- (id)initWithLine:(CTLineRef)line layoutFrame:(DTCoreTextLayoutFrame *)layoutFrame;
+- (id)initWithLine:(CTLineRef)line;
 
 - (NSRange)stringRange;
 - (NSInteger)numberOfGlyphs;
@@ -27,8 +27,6 @@
 - (NSArray *)stringIndices;
 - (CGFloat)offsetForStringIndex:(NSInteger)index;
 - (NSInteger)stringIndexForPosition:(CGPoint)position;
-- (CGFloat)paragraphSpacing:(BOOL)zeroNonLast;
-- (CGFloat)paragraphSpacing;
 
 
 /**
@@ -44,20 +42,6 @@
 - (DTCoreTextLayoutLine *)justifiedLineWithFactor:(CGFloat)justificationFactor justificationWidth:(CGFloat)justificationWidth;
 
 
-- (CGFloat)calculatedLineHeightMultiplier;
-
-/** Calculates the leading size which is the space before this current line. 
- 
- @returns The leading for this line.
- */
-- (CGFloat)calculatedLeading;
-
-
-/** Calculates the line height for the entire line from going through the paragraph styles and finding minimum and maximum. 
- 
- @returns The overall line height for this line or zero if no line height is specified.
- */
-- (CGFloat)calculatedLineHeight;
 
 - (void)drawInContext:(CGContextRef)context;
 
@@ -70,9 +54,6 @@
  */
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
 
-
-// sets the line baseline origin such that it follows the given line
-- (CGPoint)baselineOriginToPositionAfterLine:(DTCoreTextLayoutLine *)previousLine;
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, strong, readonly) NSArray *glyphRuns;

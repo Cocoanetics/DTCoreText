@@ -382,7 +382,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 
 		// wrap it
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line layoutFrame:self];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
 		CFRelease(line);
 		
 		// baseline origin is rounded
@@ -455,8 +455,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		lineOrigin.y = _frame.size.height - lineOrigin.y + _frame.origin.y;
 		lineOrigin.x += _frame.origin.x;
 		
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine layoutFrame:self];
-		newLine.baselineOrigin = lineOrigin;
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:(__bridge CTLineRef)oneLine];		newLine.baselineOrigin = lineOrigin;
 		
 		[tmpLines addObject:newLine];
 		
@@ -1124,6 +1123,106 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+// returns YES if the given line is the last in a paragraph
+- (BOOL)isLineLastInParagraph:(DTCoreTextLayoutLine *)line
+{
+	NSString *lineString = [[_attributedStringFragment string] substringWithRange:line.stringRange];
+	
+	if ([lineString hasSuffix:@"\n"])
+	{
+		return YES;
+	}
+	
+	return NO;
+}
+
+// finds the appropriate baseline origin for a line to position it at the correct distance from a previous line
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	CGPoint lineOrigin = previousLine.baselineOrigin;
+	
+	NSInteger lineStartIndex = line.stringRange.location;
+	
+	CTParagraphStyleRef lineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
+																		attribute:(id)kCTParagraphStyleAttributeName
+																		atIndex:lineStartIndex effectiveRange:NULL];
+
+	// get line height in px if it is specified for this line
+	CGFloat lineHeight = 0;
+	CGFloat minLineHeight = 0;
+	CGFloat maxLineHeight = 0;
+	
+	CGFloat usedLeading = line.leading;
+	
+	if (usedLeading == 0.0f)
+	{
+		// font has no leading, so we fake one (e.g. Helvetica)
+		CGFloat tmpHeight = line.ascent + line.descent;
+		usedLeading = ceilf(0.2f * tmpHeight);
+		
+		if (usedLeading>20)
+		{
+			// we have a large image increasing the ascender too much for this calc to work
+			usedLeading = 0;
+		}
+	}
+	else
+	{
+		// make sure that we don't have less than 10% of line height as leading
+		usedLeading = ceilf(MAX((line.ascent + line.descent)*0.1f, usedLeading));
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
+	{
+		if (lineHeight<minLineHeight)
+		{
+			lineHeight = minLineHeight;
+		}
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
+	{
+		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		{
+			lineHeight = maxLineHeight;
+		}
+	}
+	
+	// get the correct baseline origin
+	if (lineHeight==0)
+	{
+		lineHeight = previousLine.descent + line.ascent;
+	}
+	
+	if ([self isLineLastInParagraph:previousLine])
+	{
+		// need to get paragraph spacing
+		CTParagraphStyleRef previousLineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
+																				attribute:(id)kCTParagraphStyleAttributeName
+																				atIndex:previousLine.stringRange.location effectiveRange:NULL];
+
+		CGFloat paraSpacing;
+		
+		if (CTParagraphStyleGetValueForSpecifier(previousLineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paraSpacing), &paraSpacing))
+		{
+			lineHeight += paraSpacing;
+		}
+		
+	}
+	
+	lineHeight += usedLeading;
+	
+	lineOrigin.y += lineHeight;
+	
+	// preserve own baseline x
+	lineOrigin.x = line.baselineOrigin.x;
+	
+	// origins are rounded
+	lineOrigin.y = roundf(lineOrigin.y);
+	
+	return lineOrigin;
+}
+
 #pragma mark Paragraphs
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex
 {
@@ -1195,43 +1294,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)_correctLineOrigins
 {
 	DTCoreTextLayoutLine *previousLine = nil;
-	
-	CGPoint previousLineOrigin = CGPointZero;
-
-	if (![self.lines count])
-	{
-		return;
-	}
-	
-	previousLineOrigin = [[self.lines objectAtIndex:0] baselineOrigin];
-		
 	for (DTCoreTextLayoutLine *currentLine in self.lines)
 	{
-		CGPoint currentOrigin;
-		
 		if (previousLine)
 		{
-			CGFloat lineHeightMultiplier = [previousLine calculatedLineHeightMultiplier];
-			// TODO: correct spacing between paragraphs with line height multiplier > 1
-			
-			CGFloat spaceAfterPreviousLine = [previousLine paragraphSpacing:YES]; // already multiplied
-			CGFloat lineHeight = previousLine.descent + currentLine.ascent + currentLine.leading;
-			
-			if (spaceAfterPreviousLine > 0) {
-				// last paragraph, don't use line multiplier on current line values, use space specified
-				lineHeight += spaceAfterPreviousLine + previousLine.descent * (lineHeightMultiplier-1.);
-			} else {
-				// apply multiplier
-				lineHeight *= lineHeightMultiplier;
-			}
-						
-			// space the current line baseline lineHeight px from previous line
-			currentOrigin.y = roundf(previousLineOrigin.y + lineHeight); 
-			currentOrigin.x = currentLine.baselineOrigin.x;
-			
-			currentLine.baselineOrigin = currentOrigin;
-			
-			previousLineOrigin = currentOrigin;
+			currentLine.baselineOrigin = [self baselineOriginToPositionLine:currentLine afterLine:previousLine];
 		}
 		
 		previousLine = currentLine;
