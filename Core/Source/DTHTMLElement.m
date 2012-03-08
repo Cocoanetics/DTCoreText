@@ -279,6 +279,9 @@
 		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
 	}
 	
+	// add a marker so that we know that this is a field/prefix
+	[attributes setObject:@"{listprefix}" forKey:DTFieldAttribute];
+	
 	// get calculated list style
 	DTCSSListStyle *calculatedListStyle = [self.paragraphStyle.textLists lastObject];// [self calculatedListStyle];
 	
