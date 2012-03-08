@@ -9,6 +9,13 @@
 #import "DTCoreText.h"
 #import "NSAttributedString+DTCoreText.h"
 
+// use smaller list indent on iPhone OS
+#if TARGET_OS_IPHONE
+#define SPECIAL_LIST_INDENT		27.0f
+#else
+#define SPECIAL_LIST_INDENT		36.0f
+#endif
+
 @implementation NSAttributedString (DTCoreText)
 
 #pragma mark Text Attachments
@@ -727,6 +734,130 @@
 	NSString *tmpString = [self string];
 	
 	return [tmpString stringByReplacingOccurrencesOfString:UNICODE_OBJECT_PLACEHOLDER withString:@""];
+}
+
+#pragma Generating Special Attributed Strings
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle attributes:(NSDictionary *)attributes
+{
+	// get existing values from attributes
+	CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
+	CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+	CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+	
+	DTCoreTextFontDescriptor *fontDescriptor = nil;
+	DTCoreTextParagraphStyle *paragraphStyle = nil;
+	
+	if (paraStyle)
+	{
+		paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+		
+		paragraphStyle.tabStops = nil;
+		
+		paragraphStyle.headIndent = SPECIAL_LIST_INDENT;
+		paragraphStyle.paragraphSpacing = 0;
+		
+		// first tab is to right-align bullet, numbering against
+		CGFloat tabOffset = paragraphStyle.headIndent - 5.0f*1.0; // TODO: change with font size
+		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+		
+		// second tab is for the beginning of first line after bullet
+		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];	
+	}
+	
+	if (font)
+	{
+		fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	}
+	
+	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
+	
+	if (fontDescriptor)
+	{
+		// make a font without italic or bold
+		DTCoreTextFontDescriptor *fontDesc = [fontDescriptor copy];
+		
+		fontDesc.boldTrait = NO;
+		fontDesc.italicTrait = NO;
+		
+		CTFontRef font = [fontDesc newMatchingFont];
+		
+		[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+	}
+	
+	// text color for bullet same as text
+	if (textColor)
+	{
+		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
+	}
+	
+	// add paragraph style (this has the tabs)
+	if (paragraphStyle)
+	{
+		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+		[newAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+	}
+	
+	if (listStyle)
+	{
+		[newAttributes setObject:[NSArray arrayWithObject:listStyle] forKey:DTTextListsAttribute];
+	}
+	
+	// add a marker so that we know that this is a field/prefix
+	[newAttributes setObject:@"{listprefix}" forKey:DTFieldAttribute];
+	
+	NSString *prefix = [listStyle prefixWithCounter:listCounter];
+	
+	if (prefix)
+	{
+		DTImage *image = nil;
+		
+		if (listStyle.imageName)
+		{
+			image = [DTImage imageNamed:listStyle.imageName];
+			
+			if (!image)
+			{
+				// image invalid
+				listStyle.imageName = nil;
+				
+				prefix = [listStyle prefixWithCounter:listCounter];
+			}
+		}
+		
+		NSMutableAttributedString *tmpStr = [[NSMutableAttributedString alloc] initWithString:prefix attributes:newAttributes];
+		
+		
+		if (image)
+		{
+			// make an attachment for the image
+			DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
+			attachment.contents = image;
+			attachment.contentType = DTTextAttachmentTypeImage;
+			attachment.displaySize = image.size;
+			
+#if TARGET_OS_IPHONE
+			// need run delegate for sizing
+			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
+			[newAttributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
+#endif
+			
+			// add attachment
+			[newAttributes setObject:attachment forKey:NSAttachmentAttributeName];				
+			
+			if (listStyle.position == DTCSSListStylePositionInside)
+			{
+				[tmpStr setAttributes:newAttributes range:NSMakeRange(2, 1)];
+			}
+			else
+			{
+				[tmpStr setAttributes:newAttributes range:NSMakeRange(1, 1)];
+			}
+		}
+		
+		return tmpStr;
+	}
+	
+	return nil;
 }
 
 @end

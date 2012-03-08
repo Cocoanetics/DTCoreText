@@ -8,7 +8,7 @@
 
 @class DemoTextViewController;
 
-@interface DemoAppDelegate : NSObject <UIApplicationDelegate> 
+@interface CoreTextDemoAppDelegate : NSObject <UIApplicationDelegate> 
 {
     UIWindow *_window;
 	UINavigationController *_navigationController;

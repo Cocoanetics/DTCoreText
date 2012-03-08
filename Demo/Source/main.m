@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
     
     @autoreleasepool {
-        int retVal = UIApplicationMain(argc, argv, nil, @"DemoAppDelegate");
+        int retVal = UIApplicationMain(argc, argv, nil, @"CoreTextDemoAppDelegate");
         return retVal;
     }
 }

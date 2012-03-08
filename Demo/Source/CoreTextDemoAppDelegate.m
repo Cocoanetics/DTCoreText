@@ -6,10 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DemoAppDelegate.h"
+#import "CoreTextDemoAppDelegate.h"
 #import "DemoSnippetsViewController.h"
 
-@implementation DemoAppDelegate
+@implementation CoreTextDemoAppDelegate
 
 @synthesize window = _window;
 

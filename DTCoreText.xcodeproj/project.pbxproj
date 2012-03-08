@@ -186,7 +186,7 @@
 		A788CA4D14863EF100E1AFD9 /* WarAndPeace.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2E14863EF100E1AFD9 /* WarAndPeace.html */; };
 		A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2F14863EF100E1AFD9 /* XB Niloofar.ttf */; };
 		A788CA4F14863EF100E1AFD9 /* XB NiloofarBd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A788CA3014863EF100E1AFD9 /* XB NiloofarBd.ttf */; };
-		A788CA5014863EF100E1AFD9 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3414863EF100E1AFD9 /* DemoAppDelegate.m */; };
+		A788CA5014863EF100E1AFD9 /* CoreTextDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3414863EF100E1AFD9 /* CoreTextDemoAppDelegate.m */; };
 		A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3614863EF100E1AFD9 /* DemoSnippetsViewController.m */; };
 		A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3814863EF100E1AFD9 /* DemoTextViewController.m */; };
 		A788CA5314863EF100E1AFD9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3914863EF100E1AFD9 /* main.m */; };
@@ -484,8 +484,8 @@
 		A788CA2E14863EF100E1AFD9 /* WarAndPeace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WarAndPeace.html; sourceTree = "<group>"; };
 		A788CA2F14863EF100E1AFD9 /* XB Niloofar.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "XB Niloofar.ttf"; sourceTree = "<group>"; };
 		A788CA3014863EF100E1AFD9 /* XB NiloofarBd.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "XB NiloofarBd.ttf"; sourceTree = "<group>"; };
-		A788CA3314863EF100E1AFD9 /* DemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoAppDelegate.h; sourceTree = "<group>"; };
-		A788CA3414863EF100E1AFD9 /* DemoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoAppDelegate.m; sourceTree = "<group>"; };
+		A788CA3314863EF100E1AFD9 /* CoreTextDemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextDemoAppDelegate.h; sourceTree = "<group>"; };
+		A788CA3414863EF100E1AFD9 /* CoreTextDemoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreTextDemoAppDelegate.m; sourceTree = "<group>"; };
 		A788CA3514863EF100E1AFD9 /* DemoSnippetsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoSnippetsViewController.h; sourceTree = "<group>"; };
 		A788CA3614863EF100E1AFD9 /* DemoSnippetsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DemoSnippetsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788CA3714863EF100E1AFD9 /* DemoTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoTextViewController.h; sourceTree = "<group>"; };
@@ -782,8 +782,8 @@
 		A788CA3114863EF100E1AFD9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				A788CA3314863EF100E1AFD9 /* DemoAppDelegate.h */,
-				A788CA3414863EF100E1AFD9 /* DemoAppDelegate.m */,
+				A788CA3314863EF100E1AFD9 /* CoreTextDemoAppDelegate.h */,
+				A788CA3414863EF100E1AFD9 /* CoreTextDemoAppDelegate.m */,
 				A788CA3514863EF100E1AFD9 /* DemoSnippetsViewController.h */,
 				A788CA3614863EF100E1AFD9 /* DemoSnippetsViewController.m */,
 				A788CA3714863EF100E1AFD9 /* DemoTextViewController.h */,
@@ -1297,7 +1297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A788CA5014863EF100E1AFD9 /* DemoAppDelegate.m in Sources */,
+				A788CA5014863EF100E1AFD9 /* CoreTextDemoAppDelegate.m in Sources */,
 				A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */,
 				A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */,
 				A788CA5314863EF100E1AFD9 /* main.m in Sources */,

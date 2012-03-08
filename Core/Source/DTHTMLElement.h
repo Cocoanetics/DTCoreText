@@ -61,7 +61,6 @@ typedef enum
 @property (nonatomic, strong) NSDictionary *attributes;
 
 - (NSAttributedString *)attributedString;
-- (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter;
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;

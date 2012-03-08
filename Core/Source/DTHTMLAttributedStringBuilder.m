@@ -820,7 +820,8 @@
 			counter = [effectiveList startingItemNumber];
 		}
 		
-		NSAttributedString *prefixString = [currentTag prefixForListItemWithCounter:counter];
+		NSDictionary *tagAttributes = [currentTag attributesDictionary];
+		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList attributes:tagAttributes];
 		
 		if (prefixString)
 		{

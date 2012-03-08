@@ -86,4 +86,22 @@
  */
 - (NSString *)plainTextString;
 
+
+/**
+ @name Creating Special Attributed Strings
+ */
+
+
+/**
+ Create a prefix for a paragraph in a list
+ 
+ @param listCounter The value for the list item.
+ @param listStyle The list style
+ @param attributes The attribute dictionary for the text to be prefixed
+ @returns An attributed string with the list prefix
+ */
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle attributes:(NSDictionary *)attributes;
+
+
+
 @end
