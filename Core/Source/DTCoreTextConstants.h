@@ -38,6 +38,7 @@ extern NSString *DTBackgroundColorAttribute;
 extern NSString *DTShadowsAttribute;
 extern NSString *DTHorizontalRuleStyleAttribute;
 extern NSString *DTTextBlocksAttribute;
+extern NSString *DTFieldAttribute;
 
 // macros
 
