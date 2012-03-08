@@ -71,12 +71,9 @@
 	
 	NSMutableDictionary *countersPerList = [NSMutableDictionary dictionary];
 	
-	
+	// enumerating through the paragraphs in the plain text string
     [string enumerateSubstringsInRange:range options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)
      {
-		 NSRange actualRange = substringRange;
-		 actualRange.location += totalRange.location;
-		 
 		 NSRange paragraphListRange;
 		 NSArray *textLists = [self attribute:DTTextListsAttribute atIndex:substringRange.location + totalRange.location effectiveRange:&paragraphListRange];
 		 
@@ -99,6 +96,10 @@
 		 currentCounterNum = [NSNumber numberWithInteger:currentCounter];
 		 [countersPerList setObject:currentCounterNum forKey:key];
 		 
+		 // calculate the actual range
+		 NSRange actualRange = enclosingRange;  // includes a potential \n
+		 actualRange.location += totalRange.location;
+
 		 if (NSLocationInRange(location, actualRange))
 		 {
 			 *stop = YES;
