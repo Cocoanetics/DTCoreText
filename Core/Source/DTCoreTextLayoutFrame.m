@@ -598,7 +598,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	CGRect frame;
 	frame.origin = firstBlockLine.frame.origin;
-	frame.origin.x -= textBlock.padding.left;
+	frame.origin.x = _frame.origin.x; // currently all boxes are full with
 	frame.origin.y -= textBlock.padding.top;
 	
 	CGFloat maxWidth = 0;
