@@ -69,9 +69,9 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 
 If you do not want to deal with Git submodules simply add DTCoreText to your project's git ignore file and pull updates to DTCoreText as its own independent Git repository. Otherwise you are free to add DTCoreText as a submodule.
 
-LINKER SETTINGS: 
-  - add the -ObjC and -all_load to your app target's "Other Linker Flags". This is needed whenever you link in any static library that contains Objective-C classes and categories.
-  - If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
+LINKER SETTINGS:
+   - add the -ObjC and -all_load to your app target's "Other Linker Flags". This is needed whenever you link in any static library that contains Objective-C classes and categories.
+   - If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
 
 *Other Options (only mentioned for completeness)*
 
