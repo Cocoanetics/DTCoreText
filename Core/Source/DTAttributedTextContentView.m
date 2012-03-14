@@ -110,7 +110,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	CATiledLayer *layer = (id)self.layer;
 	if ([layer isKindOfClass:[CATiledLayer class]])
 	{
-		CGSize tileSize = CGSizeMake(1024, 1024); // tiled layer reduzes with to fit
+		// get larger dimension and multiply by scale
+		UIScreen *mainScreen = [UIScreen mainScreen];
+		CGFloat largerDimension = MAX(mainScreen.applicationFrame.size.width, mainScreen.applicationFrame.size.height);
+		CGFloat scale = mainScreen.scale;
+		
+		// this way tiles cover entire screen regardless of orientation or scale
+		CGSize tileSize = CGSizeMake(largerDimension * scale, largerDimension * scale);
 		layer.tileSize = tileSize;
 		
 		_isTiling = YES;
