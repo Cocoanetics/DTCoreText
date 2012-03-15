@@ -173,7 +173,27 @@
 		return;
 	}
 	
-	CTRunDraw(_run, context, CFRangeMake(0, 0));
+	CGAffineTransform textMatrix = CTRunGetTextMatrix(_run);
+	
+	if (CGAffineTransformIsIdentity(textMatrix))
+	{
+		CTRunDraw(_run, context, CFRangeMake(0, 0));
+	}
+	else 
+	{
+		CGPoint pos = CGContextGetTextPosition(context);
+		
+		// set tx and ty to current text pos according to docs
+		textMatrix.tx = pos.x;
+		textMatrix.ty = pos.y;
+		
+		CGContextSetTextMatrix(context, textMatrix);
+		
+		CTRunDraw(_run, context, CFRangeMake(0, 0));
+
+		// restore identity
+		CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+	}
 }
 
 - (void)fixMetricsFromAttachment

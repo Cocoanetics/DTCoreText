@@ -424,8 +424,27 @@ static dispatch_queue_t _fontQueue;
 				matchingFont = nil;
 			}
 		}
-		CFRelease(fontDesc);
 		
+		// check if we indeed got an oblique font if we wanted one
+		
+		if (matchingFont)
+		{
+			if (self.italicTrait)
+			{
+				CGFloat angle = CTFontGetSlantAngle(matchingFont);
+				
+				if (angle==0.0f)
+				{
+					// need to synthesize slant
+					CGAffineTransform slantMatrix = { 1, 0, 0.25, 1, 0, 0 };
+					
+					CFRelease(matchingFont);
+					matchingFont = CTFontCreateWithFontDescriptor(fontDesc, _pointSize, &slantMatrix);
+				}
+			}
+		}
+		
+		CFRelease(fontDesc);
 	}
 	
 	if (matchingFont)
