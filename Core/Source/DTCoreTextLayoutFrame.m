@@ -506,26 +506,34 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
 	
-	BOOL earlyBreakPossible = NO;
+	CGFloat minY = CGRectGetMinY(rect);
+	CGFloat maxY = CGRectGetMaxY(rect);
 	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
 		CGRect lineFrame = oneLine.frame;
+		
+		// lines before the rect
+		if (CGRectGetMaxY(lineFrame)<minY)
+		{
+			// skip
+			continue;
+		}
+		
+		// line is after the rect
+		if (lineFrame.origin.x > maxY)
+		{
+			break;
+		}
+
 		// CGRectIntersectsRect returns false if the frame has 0 width, which
 		// lines that consist only of line-breaks have. Set the min-width
 		// to one to work-around.
 		lineFrame.size.width = lineFrame.size.width>1?lineFrame.size.width:1;
+		
 		if (CGRectIntersectsRect(rect, lineFrame))
 		{
 			[tmpArray addObject:oneLine];
-			earlyBreakPossible = YES;
-		}
-		else
-		{
-			if (earlyBreakPossible)
-			{
-				break;
-			}
 		}
 	}
 	
@@ -655,6 +663,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	NSArray *visibleLines = [self linesVisibleInRect:rect];
+	
+	NSLog(@"%@ - %@", NSStringFromCGRect(rect), visibleLines);
 	
 	if (![visibleLines count])
 	{
