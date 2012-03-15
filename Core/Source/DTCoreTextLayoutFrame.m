@@ -667,8 +667,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	NSArray *visibleLines = [self linesVisibleInRect:rect];
 	
-	NSLog(@"%@ - %@", NSStringFromCGRect(rect), visibleLines);
-	
 	if (![visibleLines count])
 	{
 		return;
@@ -733,6 +731,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
+			if (!CGRectIntersectsRect(rect, oneRun.frame))
+			{
+				continue;
+			}
+
+			
 			if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 			{
 				if (runIndex%2)
@@ -870,10 +874,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
-//			if (!CGRectIntersectsRect(rect, oneRun.frame))
-//			{
-//				continue;
-//			}
+			if (!CGRectIntersectsRect(rect, oneRun.frame))
+			{
+				continue;
+			}
 			
 			CGPoint textPosition = CGPointMake(oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
 			
