@@ -521,7 +521,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		// line is after the rect
-		if (lineFrame.origin.x > maxY)
+		if (lineFrame.origin.y > maxY)
 		{
 			break;
 		}
@@ -660,6 +660,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGContextStrokePath(context);
 		
 		CGContextRestoreGState(context);
+		
+		CGContextSetRGBStrokeColor(context, 1, 0, 0, 0.5);
+		CGContextStrokeRect(context, rect);
 	}
 	
 	NSArray *visibleLines = [self linesVisibleInRect:rect];
@@ -674,14 +677,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// text block handling
 	if (_textBlockHandler)
 	{
-		//		DTCoreTextLayoutLine *firstLine = [visibleLines objectAtIndex:0];
-		//		DTCoreTextLayoutLine *lastLine = [visibleLines lastObject];
-		//		
-		//		// find visible range
-		//		NSUInteger startIndex = firstLine.stringRange.location;
-		//		NSUInteger endIndex = NSMaxRange(lastLine.stringRange);
-		//		NSRange visibleRange = NSMakeRange(startIndex, endIndex - startIndex);
-		
 		__block NSMutableSet *handledBlocks = [NSMutableSet set];
 		
 		// enumerate all text blocks in this range
@@ -875,6 +870,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
+//			if (!CGRectIntersectsRect(rect, oneRun.frame))
+//			{
+//				continue;
+//			}
+			
 			CGPoint textPosition = CGPointMake(oneLine.frame.origin.x, self.frame.size.height - oneRun.frame.origin.y - oneRun.ascent);
 			
 			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
