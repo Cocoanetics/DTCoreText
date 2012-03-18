@@ -745,7 +745,15 @@
 			newBlock.backgroundColor = backgroundColor;
 			backgroundColor = nil;
 			
-			self.paragraphStyle.textBlocks = [NSArray arrayWithObject:newBlock];
+			NSArray *newBlocks = [self.paragraphStyle.textBlocks mutableCopy];
+			
+			if (!newBlocks)
+			{
+				// need an array, this is the first block
+				newBlocks = [NSArray arrayWithObject:newBlock];
+			}
+			
+			self.paragraphStyle.textBlocks = newBlocks;
 		}
 	}
 }

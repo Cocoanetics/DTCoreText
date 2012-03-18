@@ -774,6 +774,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				nrect.size.height = oneRun.frame.size.height;
 				nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
 				
+				DTTextBlock *textBlock = [[oneRun.attributes objectForKey:DTTextBlocksAttribute] lastObject];
+				
+				if (textBlock)
+				{
+					// apply horizontal padding
+					nrect.size.width = _frame.size.width - textBlock.padding.left - textBlock.padding.right;
+				}
+				
 				CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
 				CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
 				
