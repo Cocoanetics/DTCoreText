@@ -265,7 +265,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			if (lineHeight==0)
 			{
-				lineHeight = previousLineMetrics.descent + currentLineMetrics.ascent;
+				lineHeight = currentLineMetrics.descent + currentLineMetrics.ascent;
 			}
 			
 			if (isAtBeginOfParagraph)
@@ -1210,7 +1210,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// is absolute line height set?
 	if (lineHeight==0)
 	{
-		lineHeight = previousLine.descent + line.ascent + usedLeading;
+		lineHeight = line.descent + line.ascent + usedLeading;
 	}
 	
 	if ([self isLineLastInParagraph:previousLine])
