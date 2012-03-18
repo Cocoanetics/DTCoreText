@@ -529,7 +529,7 @@
 		{
 			if ([tmpString length] && !outputHasNewline)
 			{
-				[tmpString appendNakedString:@"\n"];
+				[tmpString appendString:@"\n"];
 				outputHasNewline = YES;
 			}
 			
