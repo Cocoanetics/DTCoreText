@@ -9,11 +9,6 @@
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
-//#import "NSString+HTML.h"
-//#import "NSString+CSS.h"
-//#import "NSMutableString+HTML.h"
-
-
 @interface DTHTMLAttributedStringBuilder ()
 
 - (void)_registerTagStartHandlers;
