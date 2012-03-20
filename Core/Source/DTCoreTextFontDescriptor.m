@@ -344,6 +344,22 @@ static dispatch_queue_t _fontQueue;
 
 #pragma mark Finding Font
 
+- (BOOL)_fontIsOblique:(CTFontRef)font
+{
+	NSDictionary *traits = (__bridge_transfer NSDictionary *)CTFontCopyTraits(font);
+	
+	CGFloat slant = [[traits objectForKey:(id)kCTFontSlantTrait] floatValue];
+	BOOL hasItalicTrait = ([[traits objectForKey:(id)kCTFontSymbolicTrait] unsignedIntValue] & kCTFontItalicTrait) ==kCTFontItalicTrait;
+
+	if (hasItalicTrait || slant!=0) 
+	{
+		return YES;
+	}
+
+	return NO;
+	
+}
+
 - (CTFontRef)_findOrMakeMatchingFont
 {
 	NSDictionary *attributes = [self fontAttributes];
@@ -431,9 +447,7 @@ static dispatch_queue_t _fontQueue;
 		{
 			if (self.italicTrait)
 			{
-				CGFloat angle = CTFontGetSlantAngle(matchingFont);
-				
-				if (angle==0.0f)
+				if (![self _fontIsOblique:matchingFont])
 				{
 					// need to synthesize slant
 					CGAffineTransform slantMatrix = { 1, 0, 0.25, 1, 0, 0 };
