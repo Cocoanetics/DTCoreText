@@ -243,7 +243,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ 0x%x type=%d position=%d>", NSStringFromClass([self class]), self, _type, _position];
+	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, _type, _position];
 }
 
 #pragma mark Copying
