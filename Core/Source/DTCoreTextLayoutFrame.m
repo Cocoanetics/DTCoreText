@@ -1025,6 +1025,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return NSMakeRange(0, 0);
 	}
 	
+	// need to build lines to know range
+	if (!_lines)
+	{
+		[self _buildLines];
+	}
+	
 	return _stringRange;
 }
 
