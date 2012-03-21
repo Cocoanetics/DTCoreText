@@ -13,8 +13,6 @@
  */
 @interface UIColor (HTML)
 
-typedef UIColor DTColor;
-
 /** 
  Takes a CSS color string ('333', 'F9FFF9'), determines the RGB values used, and returns a UIColor object of that color. 
  For each part of the RGB color those numbers for that color are converted to a number using a category on NSString. Then that number is divided by the maximum value, 15 for 3 character strings and 255 for 6 character strings, making the color a percentage and within the range 0.0 and 1.0 that UIColor uses. 
@@ -48,8 +46,6 @@ typedef UIColor DTColor;
 @end
 
 #else
-
-typedef NSColor DTColor;
 
 /**
  Methods used to work with HTML representations of colors.

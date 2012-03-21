@@ -6,9 +6,21 @@
 #import "DTCoreTextConstants.h"
 
 // DTColor is UIColor on iOS, NSColor on Mac
+#if TARGET_OS_IPHONE
+@compatibility_alias DTColor UIColor;
+#else
+@compatibility_alias DTColor NSColor;
+#endif
+
 #import "DTColor+HTML.h"
 
 // DTImage is UIImage on iOS, NSImage on Mac
+#if TARGET_OS_IPHONE
+@compatibility_alias DTImage UIImage;
+#else
+@compatibility_alias DTImage NSImage;
+#endif
+
 #import "DTImage+HTML.h"
 
 // DTEdgeInsets is UIEdgeInsets on iOS, NSEdgeInsets on Mac

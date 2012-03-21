@@ -6,18 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreTextConstants.h"
-
 #import "DTAttributedTextContentView.h"
-#import "DTAttributedTextView.h"
-#import "DTCoreTextLayoutFrame.h"
-
-#import "DTTextAttachment.h"
-#import "NSString+HTML.h"
-#import "DTColor+HTML.h"
-
-#import "DTLinkButton.h"
-
+#import "DTCoreText.h"
 #import <QuartzCore/QuartzCore.h>
 
 #if !__has_feature(objc_arc)

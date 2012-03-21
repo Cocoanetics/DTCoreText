@@ -6,9 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
-#import "DTAttributedTextContentView.h"
-#import "DTColor+HTML.h"
 
 @implementation DTAttributedTextCell
 {

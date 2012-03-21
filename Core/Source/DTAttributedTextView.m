@@ -7,9 +7,7 @@
 //
 
 #import "DTAttributedTextView.h"
-#import "DTAttributedTextContentView.h"
-
-#import "DTColor+HTML.h"
+#import "DTCoreText.h"
 
 @interface DTAttributedTextView ()
 

@@ -1,8 +1,12 @@
-
+//
+//  DTImage+HTML.h
+//  CoreTextExtensions
+//
+//  Created by Oliver Drobnik on 1/9/11.
+//  Copyright 2011 Drobnik.com. All rights reserved.
+//
 
 #if TARGET_OS_IPHONE
-
-typedef UIImage DTImage;
 
 /**
  Category used to have the same method available for unit testing on Mac on iOS.
@@ -19,8 +23,6 @@ typedef UIImage DTImage;
 @end
 
 #else
-
-typedef NSImage DTImage;
 
 /**
  Category used to have the same method available for unit testing on Mac on iOS.
