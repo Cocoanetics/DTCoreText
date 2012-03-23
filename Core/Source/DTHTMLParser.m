@@ -347,9 +347,7 @@ void _cdataBlock(void *context, const xmlChar *value, int len)
 	else
 	{
 		_handler.cdataBlock = NULL;
-	} 
-	
-	_handler.cdataBlock = _cdataBlock;
+	}
 }
 
 - (NSInteger)lineNumber
