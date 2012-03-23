@@ -149,8 +149,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat lineHeightMultiplier;
 	} paragraphMetrics;
 	
-	paragraphMetrics currentParaMetrics = {0};
-	paragraphMetrics previousParaMetrics = {0};
+	paragraphMetrics currentParaMetrics = {0,0};
+	paragraphMetrics previousParaMetrics = {0,0};
 	
 	lineMetrics currentLineMetrics;
 	lineMetrics previousLineMetrics;
