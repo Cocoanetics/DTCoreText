@@ -145,12 +145,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	typedef struct
 	{
+		CGFloat paragraphSpacingBefore;
 		CGFloat paragraphSpacing;
 		CGFloat lineHeightMultiplier;
 	} paragraphMetrics;
 	
-	paragraphMetrics currentParaMetrics = {0,0};
-	paragraphMetrics previousParaMetrics = {0,0};
+	paragraphMetrics currentParaMetrics = {0,0,0};
+	paragraphMetrics previousParaMetrics = {0,0,0};
 	
 	lineMetrics currentLineMetrics;
 	lineMetrics previousLineMetrics;
@@ -191,6 +192,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			// save prev paragraph
 			previousParaMetrics = currentParaMetrics;
+			
+			// Save the paragraphSpacingBefore to currentParaMetrics. This should be done after saving previousParaMetrics.
+			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(currentParaMetrics.paragraphSpacingBefore), &currentParaMetrics.paragraphSpacingBefore);
 		}
 		else
 		{
@@ -271,6 +275,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			if (isAtBeginOfParagraph)
 			{
 				lineOrigin.y += previousParaMetrics.paragraphSpacing;
+				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
 			}
 			
 			if (usesSyntheticLeading)
@@ -297,6 +302,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			// leading is included in the lineHeight
 			lineHeight += currentLineMetrics.leading;
+			
+			if (isAtBeginOfParagraph)
+			{
+				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
+			}
 		}
 		
 		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(currentParaMetrics.lineHeightMultiplier), &currentParaMetrics.lineHeightMultiplier))
