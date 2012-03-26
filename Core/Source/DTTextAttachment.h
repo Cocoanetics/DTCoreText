@@ -40,6 +40,7 @@ typedef enum
 @property (nonatomic, assign) DTTextAttachmentType contentType;
 @property (nonatomic, strong) NSURL *contentURL;
 @property (nonatomic, strong) NSURL *hyperLinkURL;
+@property (nonatomic, strong) NSString *hyperLinkGUID; // identifies hyperlink this is a part of
 @property (nonatomic, strong) NSDictionary *attributes;
 @property (nonatomic, assign) DTTextAttachmentVerticalAlignment verticalAlignment;
 

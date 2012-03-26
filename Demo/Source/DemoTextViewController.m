@@ -337,6 +337,16 @@
 		// url for deferred loading
 		imageView.url = attachment.contentURL;
 		
+		// if there is a hyperlink then add a link button on top of this image
+		if (attachment.hyperLinkURL)
+		{
+			// NOTE: this is a hack, you probably want to use your own image view and touch handling
+			// also, this treats an image with a hyperlink by itself because we don't have the GUID of the link parts
+			imageView.userInteractionEnabled = YES;
+			DTLinkButton *button = (DTLinkButton *)[self attributedTextContentView:attributedTextContentView viewForLink:attachment.hyperLinkURL identifier:attachment.hyperLinkGUID frame:imageView.bounds];
+			[imageView addSubview:button];
+		}
+		
 		return imageView;
 	}
 	else if (attachment.contentType == DTTextAttachmentTypeIframe)

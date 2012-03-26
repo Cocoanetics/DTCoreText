@@ -294,5 +294,6 @@
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;
 @synthesize verticalAlignment = _verticalAlignment;
+@synthesize hyperLinkGUID;
 
 @end

@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary *fontCache;
 @property (nonatomic, strong) NSMutableArray *children;
+@property (nonatomic, strong) NSString *linkGUID;
 
 - (DTCSSListStyle *)calculatedListStyle;
 
@@ -27,7 +28,7 @@
 	DTCoreTextParagraphStyle *paragraphStyle;
 	DTTextAttachment *_textAttachment;
 	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
-	NSURL *link;
+	NSURL *_link;
 	
 	DTColor *_textColor;
 	DTColor *backgroundColor;
@@ -36,6 +37,8 @@
 	
 	NSString *tagName;
 	NSString *text;
+	
+	NSString *_linkGUID;
 	
 	BOOL tagContentInvisible;
 	BOOL strikeOut;
@@ -138,12 +141,12 @@
 	}
 	
 	// add hyperlink
-	if (link)
+	if (_link)
 	{
-		[tmpDict setObject:link forKey:DTLinkAttribute];
+		[tmpDict setObject:_link forKey:DTLinkAttribute];
 		
 		// add a GUID to group multiple glyph runs belonging to same link
-		[tmpDict setObject:[NSString guid] forKey:DTGUIDAttribute];
+		[tmpDict setObject:_linkGUID forKey:DTGUIDAttribute];
 	}
 	
 	// add strikout if applicable
@@ -896,6 +899,7 @@
 	newObject.shadows = self.shadows;
 	
 	newObject.link = self.link; // copy
+	newObject.linkGUID = _linkGUID; // transfer the GUID
 	
 	newObject.preserveNewlines = self.preserveNewlines;
 	
@@ -982,8 +986,21 @@
 {
 	textAttachment.verticalAlignment = _textAttachmentAlignment;
 	_textAttachment = textAttachment;
+	
+	// transfer link GUID
+	_textAttachment.hyperLinkGUID = _linkGUID;
 }
 
+- (void)setLink:(NSURL *)link
+{
+	_linkGUID = [NSString guid];
+	_link = [link copy];
+	
+	if (_textAttachment)
+	{
+		_textAttachment.hyperLinkGUID = _linkGUID;
+	}
+}
 
 @synthesize parent;
 @synthesize fontDescriptor;
@@ -992,7 +1009,7 @@
 @synthesize backgroundColor;
 @synthesize tagName;
 @synthesize text;
-@synthesize link;
+@synthesize link = _link;
 @synthesize underlineStyle;
 @synthesize textAttachment = _textAttachment;
 @synthesize tagContentInvisible;
@@ -1011,6 +1028,7 @@
 @synthesize fontCache = _fontCache;
 @synthesize children = _children;
 @synthesize attributes = _attributes;
+@synthesize linkGUID = _linkGUID;
 
 @end
 

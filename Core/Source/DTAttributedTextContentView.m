@@ -162,7 +162,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[CATransaction setDisableActions:YES];
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame;
-
+	
 	SYNCHRONIZE_START(selfLock)
 	{
 		NSAttributedString *layoutString = [theLayoutFrame attributedStringFragment];
@@ -191,25 +191,30 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 			{
 				// add custom views if necessary
-				NSRange stringRange = [oneRun stringRange];
+				NSRange runRange = [oneRun stringRange];
 				CGRect frameForSubview = CGRectZero;
 				
-				if (stringRange.location>=skipRunsBeforeLocation)
+				if (runRange.location>=skipRunsBeforeLocation)
 				{
 					// see if it's a link
-					NSRange effectiveRange;
+					NSRange effectiveRangeOfLink;
+					NSRange effectiveRangeOfAttachment;
 					
-					NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:stringRange.location longestEffectiveRange:&effectiveRange inRange:lineRange];
+					// make sure that a link is only as long as the area to the next attachment or the current attachment itself
+					DTTextAttachment *attachment = [layoutString attribute:NSAttachmentAttributeName atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfAttachment inRange:lineRange];
 					
-					if (linkURL)
+					// if there is no attachment then the effectiveRangeOfAttachment contains the range until the next attachment
+					NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfLink inRange:effectiveRangeOfAttachment];
+					
+					// avoid chaining together glyph runs for an attachment
+					if (linkURL && !attachment)
 					{
 						// compute bounding frame over potentially multiple (chinese) glyphs
+						skipRunsBeforeLocation = effectiveRangeOfLink.location+effectiveRangeOfLink.length;
 						
 						// make one link view for all glyphruns in this line
-						frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRange];
-						stringRange = effectiveRange;
-						
-						skipRunsBeforeLocation = effectiveRange.location+effectiveRange.length;
+						frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRangeOfLink];
+						runRange = effectiveRangeOfLink;
 					}
 					else
 					{
@@ -222,7 +227,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						continue;
 					}
 					
-					NSNumber *indexKey = [NSNumber numberWithInteger:stringRange.location];
+					NSNumber *indexKey = [NSNumber numberWithInteger:runRange.location];
 					
 					// offset layout if necessary
 					if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
@@ -246,8 +251,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (_delegateFlags.delegateSupportsCustomViewsForAttachments || _delegateFlags.delegateSupportsGenericCustomViews)
 					{
-						DTTextAttachment *attachment = oneRun.attachment;
-						
 						if (attachment)
 						{
 							indexKey = [NSNumber numberWithInteger:[attachment hash]];
@@ -276,7 +279,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 								}
 								else if (_delegateFlags.delegateSupportsGenericCustomViews)
 								{
-									NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
+									NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange]; 
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
 								}
 								
@@ -314,21 +317,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							
 							if (_delegateFlags.delegateSupportsCustomViewsForLinks)
 							{
-								NSDictionary *attributes = [layoutString attributesAtIndex:stringRange.location effectiveRange:NULL];
+								NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
 								
 								NSString *guid = [attributes objectForKey:DTGUIDAttribute];
 								newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
 							}
 							else if (_delegateFlags.delegateSupportsGenericCustomViews)
 							{
-								NSAttributedString *string = [layoutString attributedSubstringFromRange:stringRange]; 
+								NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange]; 
 								newCustomLinkView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
 							}
 							
 							// delegate responsible to set frame
 							if (newCustomLinkView)
 							{
-								newCustomLinkView.tag = stringRange.location;
+								newCustomLinkView.tag = runRange.location;
 								[self addSubview:newCustomLinkView];
 								
 								[self.customViews addObject:newCustomLinkView];
@@ -414,7 +417,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		width = self.bounds.size.width;
 	}
-
+	
 	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
 	
 	// add vertical insets
