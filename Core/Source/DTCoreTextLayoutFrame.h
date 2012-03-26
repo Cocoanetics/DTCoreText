@@ -177,6 +177,16 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 
 /**
+ Determins if the given line is the first in a paragraph.
+ 
+ This is needed for example to determine whether paragraphSpaceBefore needs to be applied before it.
+ @param line The Line
+ @returns `YES` if the given line is the first in a paragraph
+ */
+- (BOOL)isLineFirstInParagraph:(DTCoreTextLayoutLine *)line;
+
+
+/**
  Determins if the given line is the last in a paragraph.
  
  This is needed for example to determine whether paragraph spacing needs to be applied after it.
