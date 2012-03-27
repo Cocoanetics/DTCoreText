@@ -7,10 +7,14 @@
 //
 
 #import "DTCoreTextFontDescriptor.h"
+#import "UIDevice+DTVersion.h"
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 static dispatch_queue_t _fontQueue;
+
+// adds "STHeitiSC-Light" font for cascading fix on iOS 5
+static BOOL _needsChineseFontCascadeFix = NO;
 
 @implementation DTCoreTextFontDescriptor
 {
@@ -57,6 +61,14 @@ static dispatch_queue_t _fontQueue;
 				[DTCoreTextFontDescriptor setOverrideFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
 			}
 		}
+	}
+	
+	// workaround for iOS 5.0 bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
+	DTVersion version = [[UIDevice currentDevice] osVersion];
+	
+	if (version.major==5 && version.minor == 0)
+	{
+		_needsChineseFontCascadeFix = YES;
 	}
 }
 
@@ -121,13 +133,11 @@ static dispatch_queue_t _fontQueue;
 		self.symbolicTraits = traitsValue;
 		
 		[self setFontAttributes:CFBridgingRelease(dict)];
-		//CFRelease(dict);
 		
 		// also get family name
 		
 		CFStringRef familyName = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontFamilyNameAttribute);
 		self.fontFamily = CFBridgingRelease(familyName);
-		//CFRelease(familyName);
 	}
 	
 	return self;
@@ -287,10 +297,29 @@ static dispatch_queue_t _fontQueue;
 		[tmpDict setObject:featureSettings forKey:(id)kCTFontFeatureSettingsAttribute];
 	}
 	
-	//return [NSDictionary dictionaryWithDictionary:tmpDict];
+	if (!self.boldTrait && _needsChineseFontCascadeFix)
+	{
+		CTFontDescriptorRef desc = CTFontDescriptorCreateWithNameAndSize(CFSTR("STHeitiSC-Light"), self.pointSize);
+		
+		[tmpDict setObject:[NSArray arrayWithObject:(__bridge_transfer id) desc] forKey:(id)kCTFontCascadeListAttribute];
+	}
 	
+	//return [NSDictionary dictionaryWithDictionary:tmpDict];
 	// converting to non-mutable costs 42% of entire method
 	return tmpDict;
+}
+
+- (NSDictionary *)fontAttributesWithOverrideFontName:(NSString *)overrideFontName
+{
+	NSMutableDictionary *tmpAttributes = [[self fontAttributes] mutableCopy];
+	
+	// remove family
+	[tmpAttributes removeObjectForKey:(id)kCTFontFamilyNameAttribute];
+	
+	// replace font name
+	[tmpAttributes setObject:overrideFontName forKey:(id)kCTFontNameAttribute];
+	
+	return tmpAttributes;
 }
 
 - (BOOL)supportsNativeSmallCaps
@@ -362,9 +391,7 @@ static dispatch_queue_t _fontQueue;
 
 - (CTFontRef)_findOrMakeMatchingFont
 {
-	NSDictionary *attributes = [self fontAttributes];
-	
-	NSString *cacheKey = [attributes description];
+	NSNumber *cacheKey = [NSNumber numberWithUnsignedInteger:[self hash]];
 	
 	CTFontRef cachedFont = (__bridge_retained CTFontRef)[_fontCache objectForKey:cacheKey];
 	
@@ -377,36 +404,47 @@ static dispatch_queue_t _fontQueue;
 	
 	CTFontRef matchingFont;
 	
-	NSString *usedName = fontName;
+	NSString *overrideName = nil;
 	
 	// override fontName if a small caps or regular override is registered
 	if (fontFamily)
 	{
-		NSString *overrideFontName = nil;
 		if (smallCapsFeature)
 		{
-			overrideFontName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:fontFamily bold:self.boldTrait italic:self.italicTrait];
+			overrideName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:fontFamily bold:self.boldTrait italic:self.italicTrait];
 		}
 		else
 		{
-			overrideFontName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:fontFamily bold:self.boldTrait italic:self.italicTrait];
-		}
-		
-		if (overrideFontName)
-		{
-			usedName = overrideFontName;
+			overrideName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:fontFamily bold:self.boldTrait italic:self.italicTrait];
 		}
 	}
 	
-	if (usedName)
+	// if we use the chinese font cascade fix we cannot use fast method as it does not allow specifying the custom cascade list
+	BOOL useFastFontCreation = !(_needsChineseFontCascadeFix && !self.boldTrait);
+	
+	if (useFastFontCreation && (fontName || overrideName))
 	{
+		NSString *usedName = overrideName?overrideName:fontName;
+		
 		matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, _pointSize, NULL);
 	}
 	else
 	{
+		NSDictionary *attributes;
+		
+		if (overrideName)
+		{
+			attributes = [self fontAttributesWithOverrideFontName:overrideName];
+		}
+		else 
+		{
+			attributes = [self fontAttributes];
+		}
+		
 		fontDesc = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)attributes);
 		
-		if (fontFamily)
+		// we need font family, font name or an overridden font name for fast font creation
+		if (fontFamily||fontName||overrideName)
 		{
 			// fast font creation
 			matchingFont = CTFontCreateWithFontDescriptor(fontDesc, _pointSize, NULL);
