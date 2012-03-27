@@ -574,21 +574,29 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	NSMutableArray *tmpArray = [NSMutableArray arrayWithCapacity:[self.lines count]];
 	
-	BOOL earlyBreakPossible = NO;
+	CGFloat minY = CGRectGetMinY(rect);
+	CGFloat maxY = CGRectGetMaxY(rect);
 	
 	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
-		if (CGRectContainsRect(rect, oneLine.frame))
+		CGRect lineFrame = oneLine.frame;
+		
+		// lines before the rect
+		if (CGRectGetMaxY(lineFrame)<minY)
+		{
+			// skip
+			continue;
+		}
+		
+		// line is after the rect
+		if (lineFrame.origin.y > maxY)
+		{
+			break;
+		}
+		
+		if (CGRectContainsRect(rect, lineFrame))
 		{
 			[tmpArray addObject:oneLine];
-			earlyBreakPossible = YES;
-		}
-		else
-		{
-			if (earlyBreakPossible)
-			{
-				break;
-			}
 		}
 	}
 	
