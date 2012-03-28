@@ -568,6 +568,20 @@
 			self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
 		}
 	}
+	NSString *marginTop = [styles objectForKey:@"margin-top"];
+	if (marginTop) 
+	{
+		self.paragraphStyle.paragraphSpacingBefore = [marginTop pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+	}
+	else
+	{
+		NSString *webkitMarginBefore = [styles objectForKey:@"-webkit-margin-before"];
+		if (webkitMarginBefore) 
+		{
+			self.paragraphStyle.paragraphSpacingBefore = [webkitMarginBefore pixelSizeOfCSSMeasureRelativeToCurrentTextSize:fontDescriptor.pointSize];
+		}
+	}
+	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
 	if (fontVariantStr)
 	{

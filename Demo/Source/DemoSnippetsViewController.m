@@ -53,7 +53,7 @@
 	NSString *title = [snippet objectForKey:@"Title"];
 	NSString *description = [snippet objectForKey:@"Description"];
 	
-	NSString *html = [NSString stringWithFormat:@"<h3>%@</h3><p><font color=\"gray\">%@</font></p>", title, description];
+	NSString *html = [NSString stringWithFormat:@"<h3 style='margin-top: 0;'>%@</h3><p style='color: gray;'>%@</p>", title, description];
 	
 	[cell setHTMLString:html];
 	
