@@ -7,7 +7,7 @@
 //
 
 #import "UIColorHTMLTest.h"
-#import "DTColor+HTML.h"
+#import "DTCoreText.h"
 
 @implementation UIColorHTMLTest
 

@@ -7,7 +7,10 @@
 //
 
 #import "DTCoreTextFontDescriptor.h"
+
+#if TARGET_OS_IPHONE
 #import "UIDevice+DTVersion.h"
+#endif
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
@@ -63,6 +66,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		}
 	}
 	
+#if TARGET_OS_IPHONE
 	// workaround for iOS 5.0 bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
 	DTVersion version = [[UIDevice currentDevice] osVersion];
 	
@@ -70,6 +74,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	{
 		_needsChineseFontCascadeFix = YES;
 	}
+#endif
 }
 
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
