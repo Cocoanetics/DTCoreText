@@ -340,11 +340,19 @@
 	
 	NSArray *previousListStyles = nil;
 
-	// one empty paragraph at end we don't care about
-	for (int i=0; i<[paragraphs count]-1; i++)
+	for (int i=0; i<[paragraphs count]; i++)
 	{
 		NSString *oneParagraph = [paragraphs objectAtIndex:i];
 		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
+		
+		// skip empty paragraph at the end
+		if (i==[paragraphs count]-1)
+		{
+			if (!paragraphRange.length)
+			{
+				continue;
+			}
+		}
 		
 		BOOL needsToRemovePrefix = NO;
 		
