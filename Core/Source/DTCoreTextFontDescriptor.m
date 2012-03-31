@@ -67,10 +67,10 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 	
 #if TARGET_OS_IPHONE
-	// workaround for iOS 5.0 bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
+	// workaround for iOS 5.x bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
 	DTVersion version = [[UIDevice currentDevice] osVersion];
 	
-	if (version.major==5 && version.minor == 0)
+	if (version.major>4)
 	{
 		_needsChineseFontCascadeFix = YES;
 	}
