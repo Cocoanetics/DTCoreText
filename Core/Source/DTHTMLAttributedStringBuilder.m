@@ -738,6 +738,9 @@
 					// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
 					NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
 					
+					// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
+					[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+					
 					[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
 				}
 			}
