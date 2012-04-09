@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
+#import "DTCompatibility.h"
 
 /**
  Class that represents a block of text with attributes like padding or a background color.
