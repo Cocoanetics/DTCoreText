@@ -660,7 +660,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 					{
-						__weak DTAttributedTextContentView *weakself = self;
+						__block __weak DTAttributedTextContentView *weakself = self;
 						
 						[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
 							BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];
