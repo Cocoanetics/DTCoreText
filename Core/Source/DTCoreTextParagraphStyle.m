@@ -60,7 +60,11 @@ static dispatch_semaphore_t selfLock;
 		
 		// this is naughty: CTParagraphStyle has a description
 		NSString *key = [(__bridge id)ctParagraphStyle description];
-		
+		// a trick to remove "<CFArray 0x7ea2e50 [0x20eab48]>" from key 
+		NSRange firstLessThan = [key rangeOfString:@"<"];
+		if (firstLessThan.location != NSNotFound) {
+			key = [key substringToIndex:firstLessThan.location];
+		}
 		returnParagraphStyle = [_paragraphStyleCache objectForKey:key];
 		
 		if (!returnParagraphStyle) 
