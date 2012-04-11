@@ -28,11 +28,21 @@ extern unsigned int default_css_len;
 
 + (DTCSSStylesheet *)defaultStyleSheet
 {
-	// get the data from the external symbol
-	NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
-	NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	static DTCSSStylesheet *defaultDTCSSStylesheet = nil;
+	if (defaultDTCSSStylesheet != nil) {
+		return defaultDTCSSStylesheet;
+	}
 	
-	return [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
+	@synchronized(self) {
+		if (defaultDTCSSStylesheet == nil) {
+			// get the data from the external symbol
+			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
+			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+			
+			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
+		}
+	}
+	return defaultDTCSSStylesheet;
 }
 
 - (id)initWithStyleBlock:(NSString *)css
