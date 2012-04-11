@@ -274,8 +274,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			if (isAtBeginOfParagraph)
 			{
-				lineOrigin.y += previousParaMetrics.paragraphSpacing;
-				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
+				// Margins should overlap.
+				lineOrigin.y += MAX(currentParaMetrics.paragraphSpacingBefore, previousParaMetrics.paragraphSpacing);
 			}
 			
 			if (usesSyntheticLeading)
