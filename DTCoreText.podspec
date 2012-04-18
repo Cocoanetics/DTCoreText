@@ -1,9 +1,9 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.0.0'
+  spec.version      = '1.0.1'
   spec.platform     = :ios
   spec.license      = 'BSD'
-  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => '1.0.0' }
+  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => '1.0.1' }
   spec.source_files = 'Core/Source/*.{h,m,c}'
   spec.clean_paths  = 'Core/Test/', 'Core/DTCoreText-Info.plist', 'Core/DTCoreText-Prefix.pch', 'DTCoreText.xcodeproj/', 'Demo/', '.gitignore'
   spec.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
