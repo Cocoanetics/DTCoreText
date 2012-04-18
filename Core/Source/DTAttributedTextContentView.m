@@ -219,7 +219,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					else
 					{
 						// individual glyph run
-						frameForSubview = oneRun.frame;
+						
+						if (attachment)
+						{
+							// frame might be different due to image vertical alignment
+							CGFloat ascender = [attachment ascentForLayout];
+							CGFloat descender = [attachment descentForLayout];
+							
+							frameForSubview = CGRectMake(oneRun.frame.origin.x, oneLine.baselineOrigin.y - ascender, oneRun.frame.size.width, ascender+descender);
+						}
+						else 
+						{
+							frameForSubview = oneRun.frame;
+						}
 					}
 					
 					if (CGRectIsEmpty(frameForSubview))
