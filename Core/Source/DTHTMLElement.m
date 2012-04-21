@@ -29,6 +29,7 @@
 	DTTextAttachment *_textAttachment;
 	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
 	NSURL *_link;
+	NSString *_anchorName;
 	
 	DTColor *_textColor;
 	DTColor *backgroundColor;
@@ -147,6 +148,12 @@
 		
 		// add a GUID to group multiple glyph runs belonging to same link
 		[tmpDict setObject:_linkGUID forKey:DTGUIDAttribute];
+	}
+	
+	// add anchor
+	if (_anchorName)
+	{
+		[tmpDict setObject:_anchorName forKey:DTAnchorAttribute];
 	}
 	
 	// add strikout if applicable
@@ -899,6 +906,7 @@
 	newObject.shadows = self.shadows;
 	
 	newObject.link = self.link; // copy
+	newObject.anchorName = self.anchorName; // copy
 	newObject.linkGUID = _linkGUID; // transfer the GUID
 	
 	newObject.preserveNewlines = self.preserveNewlines;
@@ -1010,6 +1018,7 @@
 @synthesize tagName;
 @synthesize text;
 @synthesize link = _link;
+@synthesize anchorName = _anchorName;
 @synthesize underlineStyle;
 @synthesize textAttachment = _textAttachment;
 @synthesize tagContentInvisible;

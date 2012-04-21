@@ -23,4 +23,12 @@
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
+
+/**
+ Scrolls the receiver to the anchor with the given name to the top.
+ @param anchorName The name of the href anchor.
+ @param animated `YES` if the movement should be animated.
+ */
+- (void)scrollToAnchorNamed:(NSString *)anchorName animated:(BOOL)animated;
+
 @end

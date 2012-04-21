@@ -65,9 +65,17 @@
 - (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location;
 
 /**
+ Returns the range of the given href anchor.
+ 
+ @param list The text block.
+ @param anchorName The name of the anchor.
+ @returns The range of the given anchor.
+ */
+- (NSRange)rangeOfAnchorNamed:(NSString *)anchorName;
+
+/**
  @name Converting to Other Representations
  */
-
 
 /**
  Encodes the receiver into a generic HTML prepresentation.

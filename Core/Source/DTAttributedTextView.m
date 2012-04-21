@@ -85,6 +85,25 @@
 	return [DTAttributedTextContentView class];
 }
 
+#pragma mark External Methods
+- (void)scrollToAnchorNamed:(NSString *)anchorName animated:(BOOL)animated
+{
+	NSRange range = [self.contentView.attributedString rangeOfAnchorNamed:anchorName];
+	
+	if (range.length != NSNotFound)
+	{
+		// get the line of the first index of the anchor range
+		DTCoreTextLayoutLine *line = [self.contentView.layoutFrame lineContainingIndex:range.location];
+		
+		// make sure we don't scroll too far
+		CGFloat maxScrollPos = self.contentSize.height - self.bounds.size.height + self.contentInset.bottom + self.contentInset.top;
+		CGFloat scrollPos = MIN(line.frame.origin.y, maxScrollPos);
+		
+		// scroll
+		[self setContentOffset:CGPointMake(0, scrollPos) animated:animated];
+	}
+}
+
 #pragma mark Notifications
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -94,7 +113,6 @@
 		self.contentSize = newFrame.size;
 	}
 }
-
 
 #pragma mark Properties
 - (DTAttributedTextContentView *)contentView

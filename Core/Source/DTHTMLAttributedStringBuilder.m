@@ -419,6 +419,10 @@
 		}
 		
 		currentTag.link = link;
+		
+		
+		// the name attribute of A becomes an anchor
+		currentTag.anchorName = [currentTag attributeForKey:@"name"];
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];

@@ -197,6 +197,21 @@
 	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
+- (NSRange)rangeOfAnchorNamed:(NSString *)anchorName
+{
+	__block NSRange foundRange = NSMakeRange(0, NSNotFound);
+	
+	[self enumerateAttribute:DTAnchorAttribute inRange:NSMakeRange(0, [self length]) options:0 usingBlock:^(NSString *value, NSRange range, BOOL *stop) {
+		if ([value isEqualToString:anchorName])
+		{
+			*stop = YES;
+			foundRange = range;
+		}
+	}];
+	
+	return foundRange;
+}
+
 #pragma mark HTML Encoding
 
 

@@ -30,6 +30,7 @@ extern NSString *DTDefaultStyleSheet;
 extern NSString *DTTextListsAttribute;
 extern NSString *DTAttachmentParagraphSpacingAttribute;
 extern NSString *DTLinkAttribute;
+extern NSString *DTAnchorAttribute;
 extern NSString *DTGUIDAttribute;
 extern NSString *DTHeaderLevelAttribute;
 extern NSString *DTPreserveNewlinesAttribute;
