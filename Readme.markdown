@@ -52,16 +52,18 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 	
 		#import "DTCoreText.h"
 
-4. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
+4. In your application target's Build Phases add the "Static Library" from the DTCoreText sub-project as a dependency.
+
+5. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
 
 		The "Static Library" target from the DTCoreText sub-project
 		ImageIO.framework
 		QuartzCore.framework
 		libxml2.dylib
 
-5. Go to File: Project Settings… and change the derived data location to project-relative.
-6. Add the DerivedData folder to your git ignore. 
-7. In your application's target Build Settings:
+6. Go to File: Project Settings… and change the derived data location to project-relative.
+7. Add the DerivedData folder to your git ignore. 
+8. In your application's target Build Settings:
 	- Set the "User Header Search Paths" to the directory containing your project with recrusive set to YES.
    - Set the Header Search Paths to /usr/include/libxml2.
 	- Set "Always Search User Paths" to YES.
@@ -71,7 +73,8 @@ If you do not want to deal with Git submodules simply add DTCoreText to your pro
 
 LINKER SETTINGS:
 
-   - add the -ObjC and -all_load to your app target's "Other Linker Flags". This is needed whenever you link in any static library that contains Objective-C classes and categories.
+   - add the -ObjC to your app target's "Other Linker Flags". This is needed whenever you link in any static library that contains Objective-C classes and categories.
+   - if you find that your app crashes with an unrecognized selector from one of this library's categories, you might also need the -all_load linker flag. Alternatively you can use -force-load with the full path to the static library. This causes the linker to load all categories from the static library.
    - If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
 
 *Other Options (only mentioned for completeness)*

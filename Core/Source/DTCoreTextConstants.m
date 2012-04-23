@@ -27,6 +27,7 @@ NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 NSString *DTTextListsAttribute = @"DTTextLists";
 NSString *DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
 NSString *DTLinkAttribute = @"DTLink";
+NSString *DTAnchorAttribute = @"DTAnchor";
 NSString *DTGUIDAttribute = @"DTGUID";
 NSString *DTHeaderLevelAttribute = @"DTHeaderLevel";
 NSString *DTPreserveNewlinesAttribute = @"DTPreserveNewlines";

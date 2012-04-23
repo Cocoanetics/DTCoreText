@@ -219,7 +219,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					else
 					{
 						// individual glyph run
-						frameForSubview = oneRun.frame;
+						
+						if (attachment)
+						{
+							// frame might be different due to image vertical alignment
+							CGFloat ascender = [attachment ascentForLayout];
+							CGFloat descender = [attachment descentForLayout];
+							
+							frameForSubview = CGRectMake(oneRun.frame.origin.x, oneLine.baselineOrigin.y - ascender, oneRun.frame.size.width, ascender+descender);
+						}
+						else 
+						{
+							frameForSubview = oneRun.frame;
+						}
 					}
 					
 					if (CGRectIsEmpty(frameForSubview))
@@ -660,7 +672,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 					{
-						DTAttributedTextContentView *weakself = self;
+						__unsafe_unretained DTAttributedTextContentView *weakself = self;
 						
 						[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
 							BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];

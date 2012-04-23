@@ -975,8 +975,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						{
 							DTImage *image = (id)attachment.contents;
 							
+							// frame might be different due to image vertical alignment
+							CGFloat ascender = [attachment ascentForLayout];
+							CGFloat descender = [attachment descentForLayout];
+							 
 							CGPoint origin = oneRun.frame.origin;
-							origin.y = self.frame.size.height - origin.y - oneRun.ascent;
+							origin.y = self.frame.size.height - origin.y - ascender - descender;
 							CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
 							
 							CGContextDrawImage(context, flippedRect, image.CGImage);

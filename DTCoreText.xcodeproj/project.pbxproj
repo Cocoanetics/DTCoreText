@@ -252,6 +252,8 @@
 		A7949AA314CC5BDF00A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
 		A7949AA514CD3C5D00A8CCDE /* DTHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */; };
 		A7949AA614CD3C5E00A8CCDE /* DTHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4914CAF5A300A8CCDE /* DTHTMLParser.m */; };
+		A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; };
+		A7A672BB1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; };
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
@@ -509,6 +511,7 @@
 		A7949A6D14CC45B400A8CCDE /* MacUnitTest-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MacUnitTest-Info.plist"; sourceTree = "<group>"; };
 		A7949A6E14CC45B500A8CCDE /* MacUnitTest-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MacUnitTest-Prefix.pch"; sourceTree = "<group>"; };
 		A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DTCoreTextConstants.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		A7A672B91532F2D100920A18 /* DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTCompatibility.h; path = Core/Source/DTCompatibility.h; sourceTree = "<group>"; };
 		A7A95D9414F3F45E002E3F7E /* LineHeight.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineHeight.html; sourceTree = "<group>"; };
 		A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTCoreText.h"; sourceTree = "<group>"; };
 		A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTCoreText.m"; sourceTree = "<group>"; };
@@ -715,6 +718,7 @@
 			isa = PBXGroup;
 			children = (
 				A70B4C9E1486558200873A4A /* DTCoreText.h */,
+				A7A672B91532F2D100920A18 /* DTCompatibility.h */,
 				A788CA1514863EC600E1AFD9 /* DTCoreText-Prefix.pch */,
 				A788CA1614863EC600E1AFD9 /* DTCoreText-Info.plist */,
 				A788C90D14863E8700E1AFD9 /* Source */,
@@ -965,6 +969,7 @@
 				A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
 				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 				A7081EA315036460002987F1 /* DTTextBlock.h in Headers */,
+				A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1010,6 +1015,7 @@
 				A70B4CA01486558200873A4A /* DTCoreText.h in Headers */,
 				A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */,
 				A7081EA415036460002987F1 /* DTTextBlock.h in Headers */,
+				A7A672BB1532F2D100920A18 /* DTCompatibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1117,7 +1123,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = Drobnik.com;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
@@ -1499,6 +1505,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Demo/DemoApp-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Demo/DemoApp-Info.plist";
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -1516,6 +1523,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Demo/DemoApp-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Demo/DemoApp-Info.plist";
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -1548,6 +1556,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INFOPLIST_PATH = "$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Info.plist";
@@ -1575,6 +1584,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INFOPLIST_PATH = "$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Info.plist";
@@ -1593,6 +1603,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					"$(ARCHS_STANDARD_32_BIT)",
+					armv6,
+				);
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1605,6 +1619,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_THUMB_SUPPORT = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
@@ -1616,11 +1631,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					"$(ARCHS_STANDARD_32_BIT)",
+					armv6,
+				);
 				COPY_PHASE_STRIP = YES;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
@@ -1632,6 +1652,7 @@
 		A7174BC614F288F900C57464 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THUMB_SUPPORT = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1639,6 +1660,7 @@
 		A7174BC714F288F900C57464 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THUMB_SUPPORT = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1662,6 +1684,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1682,6 +1705,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Core/Test/UnitTest-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1752,11 +1776,12 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1771,11 +1796,12 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 			};

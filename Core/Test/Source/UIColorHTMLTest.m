@@ -6,8 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "UIColorHTMLTest.h"
-#import "DTColor+HTML.h"
+#import "DTCoreText.h"
 
 @implementation UIColorHTMLTest
 

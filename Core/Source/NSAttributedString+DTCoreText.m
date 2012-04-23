@@ -197,6 +197,21 @@
 	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
+- (NSRange)rangeOfAnchorNamed:(NSString *)anchorName
+{
+	__block NSRange foundRange = NSMakeRange(0, NSNotFound);
+	
+	[self enumerateAttribute:DTAnchorAttribute inRange:NSMakeRange(0, [self length]) options:0 usingBlock:^(NSString *value, NSRange range, BOOL *stop) {
+		if ([value isEqualToString:anchorName])
+		{
+			*stop = YES;
+			foundRange = range;
+		}
+	}];
+	
+	return foundRange;
+}
+
 #pragma mark HTML Encoding
 
 
@@ -339,18 +354,22 @@
 	NSInteger location = 0;
 	
 	NSArray *previousListStyles = nil;
-	
-	for (NSString *oneParagraph in paragraphs)
+
+	for (int i=0; i<[paragraphs count]; i++)
 	{
+		NSString *oneParagraph = [paragraphs objectAtIndex:i];
 		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
 		
-		BOOL needsToRemovePrefix = NO;
-		
-		// skip empty paragraph at end
-		if (oneParagraph == [paragraphs lastObject] && !paragraphRange.length)
+		// skip empty paragraph at the end
+		if (i==[paragraphs count]-1)
 		{
-			continue;
+			if (!paragraphRange.length)
+			{
+				continue;
+			}
 		}
+		
+		BOOL needsToRemovePrefix = NO;
 		
 		BOOL fontIsBlockLevel = NO;
 		

@@ -396,7 +396,26 @@
 
 - (void)linkPushed:(DTLinkButton *)button
 {
-	[[UIApplication sharedApplication] openURL:[button.URL absoluteURL]];
+	NSURL *URL = button.URL;
+	
+	if ([[UIApplication sharedApplication] canOpenURL:[URL absoluteURL]])
+	{
+		[[UIApplication sharedApplication] openURL:[URL absoluteURL]];
+	}
+	else 
+	{
+		if (![URL host] && ![URL path])
+		{
+		
+			// possibly a local anchor link
+			NSString *fragment = [URL fragment];
+			
+			if (fragment)
+			{
+				[_textView scrollToAnchorNamed:fragment animated:NO];
+			}
+		}
+	}
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
