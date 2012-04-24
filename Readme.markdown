@@ -60,6 +60,7 @@ The best way to use DTCoreText with Xcode 4.2 is to add it in Xcode as a subproj
 		ImageIO.framework
 		QuartzCore.framework
 		libxml2.dylib
+		CoreText.framework (DOH!)
 
 6. Go to File: Project Settings… and change the derived data location to project-relative.
 7. Add the DerivedData folder to your git ignore. 
