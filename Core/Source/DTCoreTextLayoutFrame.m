@@ -170,6 +170,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
+		BOOL isAtEndOfParagrap    = (currentParagraphRange.location+currentParagraphRange.length == lineRange.location-1);
 		
 		CGFloat offset = 0;
 		
@@ -374,8 +375,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTJustifiedTextAlignment:
 			{
-				// only justify if the line widht is longer than 60% of the frame to avoid over-stretching
-				if (currentLineMetrics.width > 0.6 * _frame.size.width)
+				// only justify if not last line and if the line widht is longer than 60% of the frame to avoid over-stretching
+				if( !isAtEndOfParagraph && (currentLineMetrics.width > 0.60 * _frame.size.width) ) 
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
