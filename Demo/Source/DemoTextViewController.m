@@ -380,15 +380,16 @@
 	if (color)
 	{
 		CGContextSetFillColorWithColor(context, color);
+		CGContextAddPath(context, [roundedRect CGPath]);
+		CGContextFillPath(context);
+		
+		CGContextAddPath(context, [roundedRect CGPath]);
+		CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
+		CGContextStrokePath(context);
+		return NO;
 	}
-	CGContextAddPath(context, [roundedRect CGPath]);
-	CGContextFillPath(context);
 	
-	CGContextAddPath(context, [roundedRect CGPath]);
-	CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
-	CGContextStrokePath(context);
-	
-	return NO; // draw standard background
+	return YES; // draw standard background
 }
 
 
