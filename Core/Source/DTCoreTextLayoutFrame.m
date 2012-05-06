@@ -170,7 +170,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
-		BOOL isAtEndOfParagrap    = (currentParagraphRange.location+currentParagraphRange.length == lineRange.location-1);
+		BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length == lineRange.location-1);
 		
 		CGFloat offset = 0;
 		
