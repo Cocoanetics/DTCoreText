@@ -12,6 +12,7 @@
 #import "DTHTMLElement.h"
 #import "NSScanner+HTML.h"
 #import "NSString+CSS.h"
+#import "NSString+HTML.h"
 
 
 // external symbols generated via custom build rule and xxd
@@ -163,6 +164,36 @@ extern unsigned int default_css_len;
 
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
 		[self _uncompressShorthands:ruleDictionary];
+
+		// check if there is a pseudo selector
+		NSRange colonRange = [cleanSelector rangeOfString:@":"];
+		NSString *pseudoSelector = nil;
+		
+		if (colonRange.length==1)
+		{
+			pseudoSelector = [cleanSelector substringFromIndex:colonRange.location+1];
+			cleanSelector = [cleanSelector substringToIndex:colonRange.location];
+			
+			// prefix all rules with the pseudo-selector
+			for (NSString *oneRuleKey in [ruleDictionary allKeys])
+			{
+				// remove double quotes 
+				NSString *value = [ruleDictionary objectForKey:oneRuleKey];
+				
+				if ([value hasPrefix:@"\""] && [value hasSuffix:@"\""])
+				{
+					// treat as HTML string, remove quotes
+					NSRange range = NSMakeRange(1, [value length]-2);
+					
+					value = [[value substringWithRange:range] stringByAddingHTMLEntities];
+				}
+				
+				// prefix key with the pseudo selector
+				NSString *prefixedKey = [NSString stringWithFormat:@"%@:%@", pseudoSelector, oneRuleKey];
+				[ruleDictionary setObject:value forKey:prefixedKey];
+				[ruleDictionary removeObjectForKey:oneRuleKey];
+			}
+		}
 		
 		NSDictionary *existingRulesForSelector = [_styles objectForKey:cleanSelector];
 		
