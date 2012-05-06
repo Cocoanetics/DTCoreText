@@ -264,6 +264,8 @@
 		
 		// skip whitespace
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
+		
+		//TODO: decode unicode sequences like "\2022"
 	}
 	else
 	{
