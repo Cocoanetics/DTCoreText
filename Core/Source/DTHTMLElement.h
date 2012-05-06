@@ -45,6 +45,7 @@ typedef enum
 @property (nonatomic, strong) DTColor *textColor;
 @property (nonatomic, strong) DTColor *backgroundColor;
 @property (nonatomic, copy) NSString *tagName;
+@property (nonatomic, copy) NSString *beforeContent;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSArray *shadows;
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;

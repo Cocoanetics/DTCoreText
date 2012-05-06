@@ -37,6 +37,8 @@
 	CTUnderlineStyle underlineStyle;
 	
 	NSString *tagName;
+	
+	NSString *beforeContent;
 	NSString *text;
 	
 	NSString *_linkGUID;
@@ -269,6 +271,9 @@
 	
 	// keep that for later lookup
 	_styles = styles;
+	
+	// register pseudo-selector contents
+	self.beforeContent = [_styles objectForKey:@"before:content"];
 	
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)
@@ -1016,6 +1021,7 @@
 @synthesize textColor = _textColor;
 @synthesize backgroundColor;
 @synthesize tagName;
+@synthesize beforeContent;
 @synthesize text;
 @synthesize link = _link;
 @synthesize anchorName = _anchorName;

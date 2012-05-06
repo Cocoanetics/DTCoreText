@@ -440,7 +440,7 @@
 		[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 		
 		// second tab is for the beginning of first line after bullet
-		[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];			
+		[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
 	};
 	
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
@@ -1006,6 +1006,12 @@
 		if (tagBlock)
 		{
 			tagBlock();
+		}
+		
+		// output tag content with before pseudo-selector
+		if (currentTag.beforeContent)
+		{
+			[self _flushCurrentTagContent:currentTag.beforeContent];
 		}
 	};
 	
