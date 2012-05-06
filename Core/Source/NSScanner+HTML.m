@@ -9,8 +9,6 @@
 #import "DTCoreText.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
-#import "NSString+HTML.h"
-
 
 @implementation NSScanner (HTML)
 
@@ -266,9 +264,6 @@
 		
 		// skip whitespace
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-		
-		// convert HTML entities
-		attrValue = [attrValue stringByReplacingHTMLEntities];
 	}
 	else
 	{
