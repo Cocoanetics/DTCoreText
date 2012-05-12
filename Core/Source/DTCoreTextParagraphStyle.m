@@ -10,13 +10,6 @@
 
 static NSCache *_paragraphStyleCache;
 
-// use smaller list indent on iPhone OS
-#if TARGET_OS_IPHONE
-#define SPECIAL_LIST_INDENT		27.0f
-#else
-#define SPECIAL_LIST_INDENT		36.0f
-#endif
-
 static dispatch_semaphore_t selfLock;
 
 @implementation DTCoreTextParagraphStyle
@@ -102,7 +95,7 @@ static dispatch_semaphore_t selfLock;
 		minimumLineHeight = 0.0;
 		maximumLineHeight = 0.0;
 		paragraphSpacing = 0.0;
-		listIndent = SPECIAL_LIST_INDENT;
+		listIndent = 0;
 	}
 	
 	return self;

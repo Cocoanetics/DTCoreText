@@ -105,11 +105,10 @@
  
  @param listCounter The value for the list item.
  @param listStyle The list style
+ @param listIndent The amount in px to indent the list
  @param attributes The attribute dictionary for the text to be prefixed
  @returns An attributed string with the list prefix
  */
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle attributes:(NSDictionary *)attributes;
-
-
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes;
 
 @end

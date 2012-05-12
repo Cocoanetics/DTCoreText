@@ -9,13 +9,6 @@
 #import "DTCoreText.h"
 #import "NSAttributedString+DTCoreText.h"
 
-// use smaller list indent on iPhone OS
-#if TARGET_OS_IPHONE
-#define SPECIAL_LIST_INDENT		27.0f
-#else
-#define SPECIAL_LIST_INDENT		36.0f
-#endif
-
 @implementation NSAttributedString (DTCoreText)
 
 #pragma mark Text Attachments
@@ -756,7 +749,7 @@
 }
 
 #pragma Generating Special Attributed Strings
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle attributes:(NSDictionary *)attributes
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
 {
 	// get existing values from attributes
 	CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
@@ -772,7 +765,7 @@
 		
 		paragraphStyle.tabStops = nil;
 		
-		paragraphStyle.headIndent = SPECIAL_LIST_INDENT;
+		paragraphStyle.headIndent = listIndent;
 		paragraphStyle.paragraphSpacing = 0;
 		
 		// first tab is to right-align bullet, numbering against
