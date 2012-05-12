@@ -15,7 +15,7 @@
  
  It supports matching styles by class, by id or by tag name. Hierarchy matching is not supported yet.
  */
-@interface DTCSSStylesheet : NSObject
+@interface DTCSSStylesheet : NSObject <NSCopying>
 
 
 /**

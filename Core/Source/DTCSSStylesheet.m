@@ -374,4 +374,13 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
+#pragma mark NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+	DTCSSStylesheet *newStylesheet = [[DTCSSStylesheet allocWithZone:zone] initWithStylesheet:self];
+	
+	return newStylesheet;
+}
+
 @end
