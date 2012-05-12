@@ -262,7 +262,7 @@ extern unsigned int default_css_len;
 			if (braceLevel == 0) 
 			{
 				// Grab the selector (we'll process it in a moment)
-				selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker-1)];
+				selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
 				
 				// And mark our position so we can grab the rule's CSS when it is closed
 				braceMarker = i + 1;
