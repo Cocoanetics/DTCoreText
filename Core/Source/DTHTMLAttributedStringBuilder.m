@@ -116,7 +116,7 @@
 	baseURL = [_options objectForKey:NSBaseURLDocumentOption];
 	
 	// the combined style sheet for entire document
-	_globalStyleSheet = [DTCSSStylesheet defaultStyleSheet]; 
+	_globalStyleSheet = [[DTCSSStylesheet defaultStyleSheet] copy]; 
 	
 	// do we have a default style sheet passed as option?
 	DTCSSStylesheet *defaultStylesheet = [_options objectForKey:DTDefaultStyleSheet];
@@ -823,7 +823,7 @@
 		}
 		
 		NSDictionary *tagAttributes = [currentTag attributesDictionary];
-		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList attributes:tagAttributes];
+		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:currentTag.paragraphStyle.listIndent attributes:tagAttributes];
 		
 		if (prefixString)
 		{
