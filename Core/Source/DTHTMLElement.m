@@ -676,10 +676,7 @@
 	{
 		padding.left = [webkitPaddingStart pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 		self.paragraphStyle.listIndent = padding.left;
-		
-		NSLog(@"padding : %f %@", padding.left, webkitPaddingStart);
 	}
-	
 	
 	BOOL needsTextBlock = (backgroundColor!=nil);
 	
