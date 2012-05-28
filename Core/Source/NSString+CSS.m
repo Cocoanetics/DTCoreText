@@ -223,4 +223,99 @@
 	return [self floatValue];
 }
 
+- (NSString *)stringByDecodingCSSContentAttribute
+{
+	NSUInteger length = [self length];
+	
+	unichar *characters = calloc(length, sizeof(unichar));
+	unichar *final = calloc(length, sizeof(unichar));
+	
+	[self getCharacters:characters range:NSMakeRange(0, length)];
+	
+	NSUInteger outChars = 0;
+	
+	BOOL inEscapedSequence = NO;
+	unichar decodedChar = 0;
+	NSUInteger escapedCharacterCount = 0;
+	
+	for (NSUInteger idx=0; idx<length;idx++)
+	{
+		unichar character = characters[idx];
+		
+		if (inEscapedSequence && (escapedCharacterCount<4))
+		{
+			if (character=='\\')
+			{
+				// escaped backslash
+				final[outChars++] = '\\';
+				inEscapedSequence = NO;
+			}
+			else if ((character>='0' && character<='9') || (character>='A' && character<='F') || (character>='a' && character<='f'))
+			{
+				// hex digit
+				decodedChar *= 16;
+				
+				if (character>='0' && character<='9')
+				{
+					decodedChar += (character - '0');
+				}
+				else if (character>='A' && character<='F')
+				{
+					decodedChar += (character - 'A' + 10);
+				}
+				else if (character>='a' && character<='f')
+				{
+					decodedChar += (character - 'a' + 10);
+				}
+				
+				escapedCharacterCount++;
+			}
+			else 
+			{
+				// illegal character following slash
+				final[outChars++] = '\\';
+				final[outChars++] = character;
+				
+				inEscapedSequence = NO;
+			}
+		}
+		else 
+		{
+			if (character == '\\')
+			{
+				// begin of escape sequence
+				decodedChar = 0;
+				escapedCharacterCount = 0;
+				inEscapedSequence = YES;
+			}
+			else
+			{
+				if (inEscapedSequence)
+				{
+					// output what we have decoded so far
+					final[outChars++] = decodedChar;
+				}
+				
+				inEscapedSequence = NO;
+				
+				// just copy
+				final[outChars++] = character;
+			}
+		}
+	}
+	
+	// if string ended in escaped sequence we still need to output
+	if (inEscapedSequence)
+	{
+		// output what we have decoded so far
+		final[outChars++] = decodedChar;
+	}
+
+	free(characters);
+	NSString *clean = [[NSString alloc] initWithCharacters:final length:outChars];
+	free(final);
+	
+	return clean;
+}
+
 @end

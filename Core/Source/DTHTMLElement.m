@@ -273,7 +273,7 @@
 	_styles = styles;
 	
 	// register pseudo-selector contents
-	self.beforeContent = [_styles objectForKey:@"before:content"];
+	self.beforeContent = [[_styles objectForKey:@"before:content"] stringByDecodingCSSContentAttribute];
 	
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	if (fontSize)

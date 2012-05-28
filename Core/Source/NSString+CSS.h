@@ -43,4 +43,9 @@
  */
 - (CGFloat)CSSpixelSize;
 
+/**
+ Decodes a content attribute which might contained unicode sequences.
+ */
+- (NSString *)stringByDecodingCSSContentAttribute;
+
 @end
