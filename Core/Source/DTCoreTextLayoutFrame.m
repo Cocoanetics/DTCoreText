@@ -492,7 +492,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	//[self _correctLineOrigins];
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
-	DTVersion version = [[UIDevice currentDevice] osVersion];
+	DTSimpleVersion version = [[UIDevice currentDevice] osVersion];
 	
 	if (version.major<4 || (version.major==4 && version.minor < 2))
 	{

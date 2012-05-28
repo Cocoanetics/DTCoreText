@@ -44,7 +44,7 @@
 #import "DTWebVideoView.h"
 #import "NSAttributedStringRunDelegates.h"
 
-#import "UIDevice+DTVersion.h"
+#import "UIDevice+DTSimpleVersion.h"
 
 #import "DTAttributedTextCell.h"
 #import "DTAttributedTextContentView.h"

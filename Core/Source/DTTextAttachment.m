@@ -165,7 +165,7 @@
 	{
 		if (maxImageSize.width < displaySize.width || maxImageSize.height < displaySize.height)
 		{
-			adjustedSize = sizeThatFitsKeepingAspectRatio(displaySize, maxImageSize);
+			adjustedSize = sizeThatFitsKeepingAspectRatio2(displaySize, maxImageSize);
 		}
 		
 		// still no display size? use max size

@@ -75,7 +75,7 @@
 //	return retPath;
 //}
 
-CGSize sizeThatFitsKeepingAspectRatio(CGSize originalSize, CGSize sizeToFit)
+CGSize sizeThatFitsKeepingAspectRatio2(CGSize originalSize, CGSize sizeToFit)
 {
 	if (originalSize.width <= sizeToFit.width && originalSize.height <= sizeToFit.height)
 	{
