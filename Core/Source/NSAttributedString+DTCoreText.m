@@ -768,9 +768,12 @@
 		paragraphStyle.headIndent = listIndent;
 		paragraphStyle.paragraphSpacing = 0;
 		
-		// first tab is to right-align bullet, numbering against
-		CGFloat tabOffset = paragraphStyle.headIndent - 5.0f*1.0; // TODO: change with font size
-		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+		if (listStyle.type != DTCSSListStyleTypeNone)
+		{
+			// first tab is to right-align bullet, numbering against
+			CGFloat tabOffset = paragraphStyle.headIndent - 5.0f*1.0; // TODO: change with font size
+			[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+		}
 		
 		// second tab is for the beginning of first line after bullet
 		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];	

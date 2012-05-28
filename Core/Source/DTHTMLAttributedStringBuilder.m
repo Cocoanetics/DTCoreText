@@ -13,7 +13,7 @@
 
 - (void)_registerTagStartHandlers;
 - (void)_registerTagEndHandlers;
-- (void)_flushCurrentTagContent:(NSString *)tagContent;
+- (void)_flushCurrentTagContent:(NSString *)tagContent normalizeWhitespace:(BOOL)normalizeWhitespace;
 - (void)_flushListPrefix;
 
 @end
@@ -434,10 +434,15 @@
 		currentTag.paragraphStyle.paragraphSpacing = 0;
 		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
 		currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
+
+		DTCSSListStyle *listStyle = [currentTag.paragraphStyle.textLists lastObject];
 		
-		// first tab is to right-align bullet, numbering against
-		CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0f*textScale;
-		[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+		if (listStyle.type != DTCSSListStyleTypeNone)
+		{
+			// first tab is to right-align bullet, numbering against
+			CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0f*textScale;
+			[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+		}
 		
 		// second tab is for the beginning of first line after bullet
 		[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
@@ -835,7 +840,7 @@
 	}
 }
 
-- (void)_flushCurrentTagContent:(NSString *)tagContent
+- (void)_flushCurrentTagContent:(NSString *)tagContent normalizeWhitespace:(BOOL)normalizeWhitespace
 {
 	NSAssert(dispatch_get_current_queue() == _stringAssemblyQueue, @"method called from invalid queue");
 	
@@ -856,11 +861,14 @@
 	}
 	else
 	{
-		tagContents = [tagContents stringByNormalizingWhitespace];
-		
-		if ([tagContents isEqualToString:@" "])
+		if (normalizeWhitespace)
 		{
-			return;
+			tagContents = [tagContents stringByNormalizingWhitespace];
+		
+			if ([tagContents isEqualToString:@" "])
+			{
+				return;
+			}
 		}
 	}
 	
@@ -956,7 +964,7 @@
 			}
 		}
 		
-		[self _flushCurrentTagContent:_currentTagContents];
+		[self _flushCurrentTagContent:_currentTagContents normalizeWhitespace:YES];
 		
 		// avoid transfering space from parent tag
 		if (removeUnflushedWhitespace)
@@ -1011,7 +1019,7 @@
 		// output tag content with before pseudo-selector
 		if (currentTag.beforeContent)
 		{
-			[self _flushCurrentTagContent:currentTag.beforeContent];
+			[self _flushCurrentTagContent:currentTag.beforeContent normalizeWhitespace:NO];
 		}
 	};
 	
@@ -1030,7 +1038,7 @@
 				[_currentTagContents removeTrailingWhitespace];
 			}
 			
-			[self _flushCurrentTagContent:_currentTagContents];
+			[self _flushCurrentTagContent:_currentTagContents normalizeWhitespace:YES];
 		}
 		
 		// find block to execute for this tag if any
