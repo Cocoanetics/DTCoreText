@@ -281,6 +281,12 @@
 		}
 		else 
 		{
+			if (inEscapedSequence)
+			{
+				// output what we have decoded so far
+				final[outChars++] = decodedChar;
+			}
+			
 			if (character == '\\')
 			{
 				// begin of escape sequence
@@ -290,12 +296,6 @@
 			}
 			else
 			{
-				if (inEscapedSequence)
-				{
-					// output what we have decoded so far
-					final[outChars++] = decodedChar;
-				}
-				
 				inEscapedSequence = NO;
 				
 				// just copy
