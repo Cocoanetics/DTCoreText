@@ -116,11 +116,11 @@
 
 - (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
-	NSInteger searchIndex = location;
+	NSUInteger searchIndex = location;
 	
 	NSArray *arrayAtIndex;
-	NSInteger minFoundIndex = NSIntegerMax;
-	NSInteger maxFoundIndex = 0;
+	NSUInteger minFoundIndex = NSUIntegerMax;
+	NSUInteger maxFoundIndex = 0;
 	
 	BOOL foundList = NO;
 	
@@ -348,7 +348,7 @@
 	
 	NSArray *previousListStyles = nil;
 
-	for (int i=0; i<[paragraphs count]; i++)
+	for (NSUInteger i=0; i<[paragraphs count]; i++)
 	{
 		NSString *oneParagraph = [paragraphs objectAtIndex:i];
 		NSRange paragraphRange = NSMakeRange(location, [oneParagraph length]);
@@ -748,7 +748,7 @@
 	return [tmpString stringByReplacingOccurrencesOfString:UNICODE_OBJECT_PLACEHOLDER withString:@""];
 }
 
-#pragma Generating Special Attributed Strings
+#pragma mark Generating Special Attributed Strings
 + (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
 {
 	// get existing values from attributes
@@ -794,7 +794,7 @@
 		fontDesc.boldTrait = NO;
 		fontDesc.italicTrait = NO;
 		
-		CTFontRef font = [fontDesc newMatchingFont];
+		font = [fontDesc newMatchingFont];
 		
 		[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
 	}

@@ -6,7 +6,11 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
+#elif TARGET_OS_MAC
+#import <ApplicationServices/ApplicationServices.h>
+#endif
 
 #import "DTCoreTextConstants.h"
 
@@ -17,7 +21,6 @@
 #import "DTColor+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
-#import "NSAttributedStringRunDelegates.h"
 #import "DTTextAttachment.h"
 
 #import "DTHTMLElement.h"
