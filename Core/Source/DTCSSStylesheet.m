@@ -222,7 +222,7 @@ extern unsigned int default_css_len;
 	
 	NSString* selector;
 	
-	NSInteger length = [css length];
+	NSUInteger length = [css length];
 	
 	for (NSUInteger i = 0; i < length; i++) {
 		
@@ -285,7 +285,7 @@ extern unsigned int default_css_len;
 				braceMarker = i + 1;
 			}
 			
-			braceLevel = MAX(braceLevel-1, 0);
+			braceLevel = MAX(braceLevel-1, 0ul);
 		}
 	}
 }
