@@ -7,7 +7,11 @@
 //
 
 
+#if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
+#elif TARGET_OS_MAC
+#import <ApplicationServices/ApplicationServices.h>
+#endif
 
 @class DTCoreTextLayoutFrame;
 
