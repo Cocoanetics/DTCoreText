@@ -30,6 +30,7 @@
 #import "NSString+UTF8Cleaner.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "NSMutableAttributedString+HTML.h"
+#import "NSAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
 #import "NSAttributedString+DTCoreText.h"
 
@@ -37,7 +38,6 @@
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
 
-#import "NSAttributedString+HTML.h"
 
 #import "DTLazyImageView.h"
 #import "DTLinkButton.h"
