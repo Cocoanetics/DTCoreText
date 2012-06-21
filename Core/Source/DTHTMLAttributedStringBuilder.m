@@ -55,7 +55,7 @@
 	DTHTMLAttributedStringBuilderWillFlushCallback _willFlushCallback;
 }
 
-- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
+- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
 {
 	self = [super init];
 	if (self)
@@ -83,7 +83,7 @@
 	dispatch_release(_stringParsingGroup);
 }
 
-- (BOOL)buildString
+- (BOOL)_buildString
 {
 	// only with valid data
 	if (![_data length])
@@ -255,6 +255,11 @@
 
 - (NSAttributedString *)generatedAttributedString
 {
+	if (!tmpString)
+	{
+		[self _buildString];
+	}
+	
 	return tmpString;
 }
 
