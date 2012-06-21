@@ -58,7 +58,7 @@
 /**
  Returns the range of the given text block that contains the given location.
  
- @param list The text block.
+ @param textBlock The text block.
  @param location The location in the text.
  @returns The range of the given text block containing the location.
  */
@@ -67,7 +67,6 @@
 /**
  Returns the range of the given href anchor.
  
- @param list The text block.
  @param anchorName The name of the anchor.
  @returns The range of the given anchor.
  */
@@ -85,7 +84,7 @@
 - (NSString *)htmlString;
 
 
-/*
+/**
  Converts the receiver into plain text.
  
  This is different from the `string` method of `NSAttributedString` by also erasing placeholders for text attachments.
