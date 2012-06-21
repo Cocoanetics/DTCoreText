@@ -12,39 +12,16 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
-#import "DTCoreTextConstants.h"
-
-#import "NSAttributedString+HTML.h"
-#import "NSMutableAttributedString+HTML.h"
-
-#import "NSString+HTML.h"
-#import "DTColor+HTML.h"
-#import "NSScanner+HTML.h"
-#import "NSCharacterSet+HTML.h"
-#import "DTTextAttachment.h"
-
-#import "DTHTMLElement.h"
-#import "DTCSSListStyle.h"
-#import "DTCSSStylesheet.h"
-
-#import "DTCoreTextFontDescriptor.h"
-#import "DTCoreTextParagraphStyle.h"
-
-#import "CGUtils.h"
-#import "NSString+UTF8Cleaner.h"
-#import "DTCoreTextConstants.h"
-#import "DTHTMLAttributedStringBuilder.h"
-
-
+#import "DTCoreText.h"
 
 @implementation NSAttributedString (HTML)
 
-- (id)initWithHTML:(NSData *)data documentAttributes:(NSDictionary **)dict
+- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary **)docAttributes
 {
-	return [self initWithHTML:data options:nil documentAttributes:dict];
+	return [self initWithHTMLData:data options:nil documentAttributes:docAttributes];
 }
 
-- (id)initWithHTML:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)dict
+- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)docAttributes
 {
 	NSDictionary *optionsDict = nil;
 	
@@ -53,30 +30,25 @@
 		optionsDict = [NSDictionary dictionaryWithObject:base forKey:NSBaseURLDocumentOption];
 	}
 	
-	return [self initWithHTML:data options:optionsDict documentAttributes:dict];
+	return [self initWithHTMLData:data options:optionsDict documentAttributes:docAttributes];
 }
 
-- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)dict
+- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
 {
 	// only with valid data
 	if (![data length])
 	{
-		
 		return nil;
 	}
 	
-	DTHTMLAttributedStringBuilder	*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:dict];
+	DTHTMLAttributedStringBuilder *stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:docAttributes];
 
-	// example for setting a willFlushCallback, that gets called before elements are written to the generated attributed string
+	void (^callBackBlock)(DTHTMLElement *element) = [options objectForKey:DTWillFlushBlockCallBack];
 	
-	[stringBuilder setWillFlushCallback:^(DTHTMLElement *element) 
+	if (callBackBlock)
 	{
-		// if an element is larger than twice the font size put it in it's own block
-		if (element.displayStyle == DTHTMLElementDisplayStyleInline && element.textAttachment.displaySize.height > 2.0 * element.fontDescriptor.pointSize)
-		{
-			element.displayStyle = DTHTMLElementDisplayStyleBlock;
-		}
-	} ];
+		[stringBuilder setWillFlushCallback:callBackBlock];
+	}
 	
 	[stringBuilder buildString];
 	

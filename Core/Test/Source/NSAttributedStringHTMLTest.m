@@ -18,7 +18,7 @@
 - (NSAttributedString *)attributedStringFromHTML:(NSString *)html
 {
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	DTHTMLAttributedStringBuilder	*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	DTHTMLAttributedStringBuilder*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
 
 	[stringBuilder buildString];
 	

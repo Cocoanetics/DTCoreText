@@ -5,10 +5,12 @@
 
 // standard options
 
+#if TARGET_OS_IPHONE
 extern NSString * const NSBaseURLDocumentOption;
 extern NSString * const NSTextEncodingNameDocumentOption;
 extern NSString * const NSTextSizeMultiplierDocumentOption;
 extern NSString * const NSAttachmentAttributeName; 
+#endif
 
 // custom options
 
