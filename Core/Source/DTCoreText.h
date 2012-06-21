@@ -35,6 +35,7 @@
 #import "NSAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
 #import "NSAttributedString+DTCoreText.h"
+#import "DTHTMLAttributedStringBuilder.h"
 
 
 // These classes only work with UIKit on iOS
