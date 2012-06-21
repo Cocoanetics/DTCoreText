@@ -2,38 +2,38 @@
 
 // standard options
 
-NSString *NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
-NSString *NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
-NSString *NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
-NSString *NSAttachmentAttributeName = @"NSAttachmentAttributeName";
+NSString * const NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
+NSString * const NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
+NSString * const NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
+NSString * const NSAttachmentAttributeName = @"NSAttachmentAttributeName";
 
 // custom options
 
-NSString *DTMaxImageSize = @"DTMaxImageSize";
-NSString *DTDefaultFontFamily = @"DTDefaultFontFamily";
-NSString *DTDefaultTextColor = @"DTDefaultTextColor";
-NSString *DTDefaultLinkColor = @"DTDefaultLinkColor";
-NSString *DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
-NSString *DTDefaultTextAlignment = @"DTDefaultTextAlignment";
-NSString *DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
-NSString *DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
-NSString *DTDefaultHeadIndent = @"DTDefaultHeadIndent";
-NSString *DTDefaultListIndent = @"DTDefaultListIndent";
-
-NSString *DTDefaultStyleSheet = @"DTDefaultStyleSheet";
+NSString * const DTMaxImageSize = @"DTMaxImageSize";
+NSString * const DTDefaultFontFamily = @"DTDefaultFontFamily";
+NSString * const DTDefaultTextColor = @"DTDefaultTextColor";
+NSString * const DTDefaultLinkColor = @"DTDefaultLinkColor";
+NSString * const DTDefaultLinkDecoration = @"DTDefaultLinkDecoration";
+NSString * const DTDefaultTextAlignment = @"DTDefaultTextAlignment";
+NSString * const DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
+NSString * const DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
+NSString * const DTDefaultHeadIndent = @"DTDefaultHeadIndent";
+NSString * const DTDefaultListIndent = @"DTDefaultListIndent";
+NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
+NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 
 // attributed string attribute constants
 
-NSString *DTTextListsAttribute = @"DTTextLists";
-NSString *DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
-NSString *DTLinkAttribute = @"DTLink";
-NSString *DTAnchorAttribute = @"DTAnchor";
-NSString *DTGUIDAttribute = @"DTGUID";
-NSString *DTHeaderLevelAttribute = @"DTHeaderLevel";
-NSString *DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
-NSString *DTStrikeOutAttribute = @"DTStrikeOut";
-NSString *DTBackgroundColorAttribute = @"DTBackgroundColor";
-NSString *DTShadowsAttribute = @"DTShadows";
-NSString *DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
-NSString *DTTextBlocksAttribute = @"DTTextBlocks";
-NSString *DTFieldAttribute = @"DTField";
+NSString * const DTTextListsAttribute = @"DTTextLists";
+NSString * const DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
+NSString * const DTLinkAttribute = @"DTLink";
+NSString * const DTAnchorAttribute = @"DTAnchor";
+NSString * const DTGUIDAttribute = @"DTGUID";
+NSString * const DTHeaderLevelAttribute = @"DTHeaderLevel";
+NSString * const DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
+NSString * const DTStrikeOutAttribute = @"DTStrikeOut";
+NSString * const DTBackgroundColorAttribute = @"DTBackgroundColor";
+NSString * const DTShadowsAttribute = @"DTShadows";
+NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
+NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
+NSString * const DTFieldAttribute = @"DTField";
