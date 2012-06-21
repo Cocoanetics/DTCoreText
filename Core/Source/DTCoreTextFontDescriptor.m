@@ -70,7 +70,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	// workaround for iOS 5.x bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
 	DTSimpleVersion version = [[UIDevice currentDevice] osVersion];
 	
-	if (version.major>4)
+	// seems to be fixed in iOS 6
+	if (version.major<6)
 	{
 		_needsChineseFontCascadeFix = YES;
 	}

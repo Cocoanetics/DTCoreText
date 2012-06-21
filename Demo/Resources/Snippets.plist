@@ -126,6 +126,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Test Cases for known issues in CoreText</string>
+		<key>File</key>
+		<string>CoreTextIssues.html</string>
+		<key>Title</key>
+		<string>Known CoreText Issues</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This is whatever Oliver is currently playing with. Don&apos;t touch that! &lt;img src=&quot;icon_smile.gif&quot;&gt;</string>
 		<key>File</key>
 		<string>CurrentTest.html</string>
