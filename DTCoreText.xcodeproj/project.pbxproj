@@ -26,6 +26,12 @@
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		36F8CE961593590500E9599C /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CE971593590800E9599C /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		36F8CED01593AA5900E9599C /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4814CAF5A300A8CCDE /* DTHTMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36F8CED11593AA5A00E9599C /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4814CAF5A300A8CCDE /* DTHTMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36F8CED21593AA5B00E9599C /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4814CAF5A300A8CCDE /* DTHTMLParser.h */; };
 		A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
 		A7081EA415036460002987F1 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7081EA515036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
@@ -1072,6 +1078,8 @@
 				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 				A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */,
 				36F8CE971593590800E9599C /* DTTextBlock.h in Headers */,
+				36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
+				36F8CED01593AA5900E9599C /* DTHTMLParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1118,6 +1126,8 @@
 				A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */,
 				A7081EA415036460002987F1 /* DTTextBlock.h in Headers */,
 				A7A672BB1532F2D100920A18 /* DTCompatibility.h in Headers */,
+				36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
+				36F8CED11593AA5A00E9599C /* DTHTMLParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1164,6 +1174,8 @@
 				A7F7EFC61573603100F5A4D0 /* DTImage+HTML.h in Headers */,
 				A7F7EFC81573603100F5A4D0 /* DTCompatibility.h in Headers */,
 				36F8CE961593590500E9599C /* DTTextBlock.h in Headers */,
+				36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
+				36F8CED21593AA5B00E9599C /* DTHTMLParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
