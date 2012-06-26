@@ -396,6 +396,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (lineBottom>maxY)
 		{
 			// doesn't fit any more
+			CFRelease(line);
 			break;
 		}
 		
