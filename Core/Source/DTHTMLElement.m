@@ -674,8 +674,7 @@
 	
 	if (webkitPaddingStart)
 	{
-		padding.left = [webkitPaddingStart pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-		self.paragraphStyle.listIndent = padding.left;
+		self.paragraphStyle.listIndent = [webkitPaddingStart pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
 	}
 	
 	BOOL needsTextBlock = (backgroundColor!=nil);

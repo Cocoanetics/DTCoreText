@@ -812,6 +812,14 @@
 		[newAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
 	}
 	
+	// add textBlock if there's one (this has padding and background color)
+	NSArray *textBlocks = [attributes objectForKey:DTTextBlocksAttribute];
+	if (textBlocks)
+	{
+		[newAttributes setObject:textBlocks forKey:DTTextBlocksAttribute];
+	}
+	
+	// transfer list style to new attributes
 	if (listStyle)
 	{
 		[newAttributes setObject:[NSArray arrayWithObject:listStyle] forKey:DTTextListsAttribute];
@@ -840,7 +848,6 @@
 		}
 		
 		NSMutableAttributedString *tmpStr = [[NSMutableAttributedString alloc] initWithString:prefix attributes:newAttributes];
-		
 		
 		if (image)
 		{
