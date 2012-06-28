@@ -170,7 +170,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
-		BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length == lineRange.location-1);
 		
 		CGFloat offset = 0;
 		
@@ -375,7 +374,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTJustifiedTextAlignment:
 			{
-				// only justify if not last line and if the line widht is longer than 60% of the frame to avoid over-stretching
+				BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length || 		// JTL 28/June/2012
+					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);									// JTL 28/June/2012
+
+				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
+				// avoids over-stretching
 				if( !isAtEndOfParagraph && (currentLineMetrics.width > 0.60 * _frame.size.width) ) 
 				{
 					// create a justified line and replace the current one with it
