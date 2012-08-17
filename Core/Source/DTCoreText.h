@@ -29,7 +29,6 @@
 #import "NSString+CSS.h"
 #import "NSString+HTML.h"
 #import "NSString+Paragraphs.h"
-#import "NSString+UTF8Cleaner.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "NSMutableAttributedString+HTML.h"
 #import "NSAttributedString+HTML.h"
