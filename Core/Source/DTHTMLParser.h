@@ -6,10 +6,11 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 
 @class DTHTMLParser;
 /** The DTHTMLParserDelegate protocol defines the optional methods implemented by delegates of DTHTMLParser objects. 
+ 
+ Dependencies: libxml2.dylib
  */
 @protocol DTHTMLParserDelegate <NSObject>
 
@@ -75,6 +76,15 @@
 - (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock;
 
 /**
+ Sent by a parser object to its delegate when it encounters a processing instruction.
+ 
+ @param parser A DTHTMLParser object parsing HTML.
+ @param target A string representing the target of a processing instruction.
+ @param data A string representing the data for a processing instruction.
+ */
+- (void)parser:(DTHTMLParser *)parser foundProcessingInstructionWithTarget:(NSString *)target data:(NSString *)data;
+
+/**
  Sent by a parser object to its delegate when it encounters a fatal error.
  
  When this method is invoked, parsing is stopped. For further information about the error, you can query parseError or you can send the parser a parserError message. You can also send the parser lineNumber and columnNumber messages to further isolate where the error occurred. Typically you implement this method to display information about the error to the user.
@@ -129,7 +139,7 @@
 /**
  Sets the receiver’s delegate.
  
- @param delegate An object that is the new delegate. It is not retained. The delegate must conform to the `DTHTMLParserDelegate` Protocol protocol.
+ @param delegate An object that is the new delegate. It is not retained. The delegate must conform to the DTHTMLParserDelegate Protocol protocol.
  
  @see delegate
  */

@@ -1,3 +1,17 @@
-<p style="font-family:Helvetica"><i>italic</i></p>
-<p style="font-size:20px;">东方盖饭</p>
-<p style="font-size:20px;font-style:italic;">东方盖饭</p>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<h2>Core Text Bugs</h2>
+<h3>Bold for Chinese Glyphs</h3>
+<p>This is a bug that was present before iOS 6, the Chinese glyphs in the following line would be bold if the locale was set to Chinese due to an incorrect entry in the global font cascade table. Filed as rdar://11262229</p>
+<p style='font-size:25.0pt'>English and 中文 -- Chinese characters </p>
+
+<h3>Italic for Chinese Glyphs in Fallback</h3>
+<p style="font-size:25px;">东方盖饭</p>
+<p style="font-size:25px;font-style:italic;">东方盖饭</p>
+
+<h3>Extra space above lines with whitespace glyphs</h3>
+<p style="font-family:Helvetica;font-size:30px;">Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla </p>
+<p style="font-family:Helvetica;font-size:30px;">Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla </p>

@@ -3,19 +3,17 @@
 //  DTFoundation
 //
 //  Created by Oliver Drobnik on 1/18/12.
-//  Copyright (c) 2012 Drobnik.com. All rights reserved.
+//  Copyright (c) 2012 Cocoanetics. All rights reserved.
 //
 
 #import "DTHTMLParser.h"
 #import <libxml/HTMLparser.h>
 
-#if !__has_feature(objc_arc)
-#error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
-#endif
 
 @interface DTHTMLParser()
 
 @property (nonatomic, strong) NSError *parserError;
+@property (nonatomic, assign) NSStringEncoding encoding;
 
 @end
 
@@ -29,10 +27,8 @@ void _endElement(void *context, const xmlChar *name);
 void _characters(void *context, const xmlChar *ch, int len);
 void _comment(void *context, const xmlChar *value);
 void _dterror(void *context, const char *msg, ...);
-
 void _cdataBlock(void *context, const xmlChar *value, int len);
-
-void _ignorableWhitespace (void *context, const xmlChar *ch, int len);
+void _processingInstruction (void *context, const xmlChar *target, const xmlChar *data);
 
 #pragma mark Event functions
 void _startDocument(void *context)
@@ -117,7 +113,7 @@ void _characters(void *context, const xmlChar *chars, int len)
 {
 	DTHTMLParser *myself = (__bridge DTHTMLParser *)context;
 	
-	NSString *string = [[NSString alloc] initWithBytes:chars length:len encoding:NSUTF8StringEncoding];
+	NSString *string = [[NSString alloc] initWithBytes:chars length:len encoding:myself.encoding];
 	
 	[myself.delegate parser:myself foundCharacters:string];
 }
@@ -126,7 +122,7 @@ void _comment(void *context, const xmlChar *chars)
 {
 	DTHTMLParser *myself = (__bridge DTHTMLParser *)context;
 	
-	NSString *string = [NSString stringWithUTF8String:(char *)chars];
+	NSString *string = [NSString stringWithCString:(const char *)chars encoding:myself.encoding];
 	
 	[myself.delegate parser:myself foundComment:string];
 }
@@ -159,11 +155,22 @@ void _cdataBlock(void *context, const xmlChar *value, int len)
 	[myself.delegate parser:myself foundCDATA:data];
 }
 
+void _processingInstruction (void *context, const xmlChar *target, const xmlChar *data)
+{
+	DTHTMLParser *myself = (__bridge DTHTMLParser *)context;
+
+	NSStringEncoding encoding = myself.encoding;
+	
+	NSString *targetStr = [NSString stringWithCString:(const char *)target encoding:encoding];
+	NSString *dataStr = [NSString stringWithCString:(const char *)data encoding:encoding];
+	
+	[myself.delegate parser:myself foundProcessingInstructionWithTarget:targetStr data:dataStr];
+}
+
 @implementation DTHTMLParser
 {
 	htmlSAXHandler _handler;
 	
-	NSStringEncoding _encoding;
 	NSData *_data;
 	
 	__unsafe_unretained id <DTHTMLParserDelegate> _delegate;
@@ -258,6 +265,7 @@ void _cdataBlock(void *context, const xmlChar *value, int len)
 	_handler.characters = NULL;
 	_handler.comment = NULL;
 	_handler.error = NULL;
+	_handler.processingInstruction = NULL;
 	
 	// inform delegate
 	if ([_delegate respondsToSelector:@selector(parser:parseErrorOccurred:)])
@@ -339,7 +347,7 @@ void _cdataBlock(void *context, const xmlChar *value, int len)
 	{
 		_handler.error = NULL;
 	} 
-
+	
 	if ([delegate respondsToSelector:@selector(parser:foundCDATA:)])
 	{
 		_handler.cdataBlock = _cdataBlock;
@@ -347,6 +355,15 @@ void _cdataBlock(void *context, const xmlChar *value, int len)
 	else
 	{
 		_handler.cdataBlock = NULL;
+	}
+	
+	if ([delegate respondsToSelector:@selector(parser:foundProcessingInstructionWithTarget:data:)])
+	{
+		_handler.processingInstruction = _processingInstruction;
+	}
+	else
+	{
+		_handler.processingInstruction = NULL;
 	}
 }
 
