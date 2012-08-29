@@ -122,7 +122,7 @@
 	
 	// Display string
 	_textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-	_textView.contentView.shouldDrawImages = NO; // we draw them in DTLinkButton
+	_textView.contentView.shouldDrawLinks = NO; // we draw them in DTLinkButton
 	_textView.attributedString = string;
 }
 
