@@ -22,6 +22,7 @@
 {
 	BOOL drawDebugFrames;
 	BOOL shouldDrawImages;
+	BOOL _shouldDrawLinks;
 	BOOL shouldLayoutCustomSubviews;
 	
 	NSMutableSet *customViews;
@@ -395,7 +396,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// need to prevent updating of string and drawing at the same time
 	SYNCHRONIZE_START(selfLock)
 	{
-		[theLayoutFrame drawInContext:ctx drawImages:shouldDrawImages];
+		[theLayoutFrame drawInContext:ctx drawImages:shouldDrawImages drawLinks:_shouldDrawLinks];
 		
 		if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
 		{
@@ -408,7 +409,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	[self.layoutFrame drawInContext:context drawImages:YES];
+	[self.layoutFrame drawInContext:context drawImages:YES drawLinks:YES];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -788,6 +789,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize edgeInsets;
 @synthesize drawDebugFrames;
 @synthesize shouldDrawImages;
+@synthesize shouldDrawLinks = _shouldDrawLinks;
 @synthesize shouldLayoutCustomSubviews;
 @synthesize layoutOffset = _layoutOffset;
 @synthesize backgroundOffset = _backgroundOffset;
