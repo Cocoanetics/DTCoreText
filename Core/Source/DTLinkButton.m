@@ -171,7 +171,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 			CGContextSetGrayStrokeColor(context, 0, 1.0);
 		}
 		
-		CGRect runStrokeBounds = self.bounds;
+		CGRect runStrokeBounds = UIEdgeInsetsInsetRect(self.bounds, self.contentEdgeInsets);
 		
 		NSInteger superscriptStyle = [[glyphRunToDraw.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 		
@@ -227,7 +227,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
-	CGContextTranslateCTM(context, 0, -self.bounds.size.height+ceilf(glyphRunToDraw.descent));
+	CGContextTranslateCTM(context, 0, -self.bounds.size.height+ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
 
 	[glyphRunToDraw drawInContext:context];
 	
