@@ -32,6 +32,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
     NSString *_GUID;
 	
 	CGSize _minimumHitSize;
+	BOOL _showsTouchWhenHighlighted;
 	
 	// normal text
 	NSAttributedString *_attributedString;
@@ -52,6 +53,8 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		self.userInteractionEnabled = YES;
 		self.enabled = YES;
 		self.opaque = NO;
+		
+		_showsTouchWhenHighlighted = YES;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(highlightNotification:) name:DTLinkButtonDidHighlightNotification object:nil];
 	}
@@ -244,11 +247,14 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	{
 		[self drawTextInContext:ctx highlighted:YES];
 		
-		CGRect imageRect = [self contentRectForBounds:self.bounds];
+		if (_showsTouchWhenHighlighted)
+		{
+			CGRect imageRect = [self contentRectForBounds:self.bounds];
 		
-		UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0f];
-		CGContextSetGrayFillColor(ctx, 0.73f, 0.4f);
-		[roundedPath fill];
+			UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0f];
+			CGContextSetGrayFillColor(ctx, 0.73f, 0.4f);
+			[roundedPath fill];
+		}
 	}
 	else
 	{
@@ -356,6 +362,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 @synthesize GUID = _GUID;
 
 @synthesize minimumHitSize = _minimumHitSize;
+@synthesize showsTouchWhenHighlighted = _showsTouchWhenHighlighted;
 
 @synthesize attributedString = _attributedString;
 @synthesize highlightedAttributedString = _highlightedAttributedString;
