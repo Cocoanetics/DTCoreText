@@ -682,7 +682,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return frame;
 }
 
-- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages
+- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks
 {
 	CGContextSaveGState(context);
 	
@@ -805,6 +805,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				runIndex ++;
 			}
 			
+			if (!drawLinks && oneRun.isHyperlink)
+			{
+				continue;
+			}
 			
 			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
 			
@@ -936,6 +940,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
 		{
 			if (!CGRectIntersectsRect(rect, oneRun.frame))
+			{
+				continue;
+			}
+			
+			if (!drawLinks && oneRun.isHyperlink)
 			{
 				continue;
 			}
