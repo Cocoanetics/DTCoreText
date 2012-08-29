@@ -20,10 +20,10 @@
 
 @interface DTAttributedTextContentView ()
 {
-	BOOL drawDebugFrames;
-	BOOL shouldDrawImages;
+	BOOL _drawDebugFrames;
+	BOOL _shouldDrawImages;
 	BOOL _shouldDrawLinks;
-	BOOL shouldLayoutCustomSubviews;
+	BOOL _shouldLayoutCustomSubviews;
 	
 	NSMutableSet *customViews;
 	NSMutableDictionary *customViewsForLinksIndex;
@@ -85,11 +85,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)setup
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
-	shouldLayoutCustomSubviews = YES;
+	_shouldLayoutCustomSubviews = YES;
 	
 	// by default we draw images, if custom views are supported (by setting delegate) this is disabled
 	// if you still want images to be drawn together with text then set it back to YES after setting delegate
-	shouldDrawImages = YES;
+	_shouldDrawImages = YES;
+	
+	// by default we draw links. If you don't want that because you want to highlight the text in
+	// DTLinkButton set this property to NO and create a highlighted version of the attributed string
+	_shouldDrawLinks = YES;
 	
 	// possibly already set in NIB
 	if (!self.backgroundColor)
@@ -365,7 +369,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	[super layoutSubviews];
 	
-	if (shouldLayoutCustomSubviews)
+	if (_shouldLayoutCustomSubviews)
 	{
 		[self layoutSubviewsInRect:CGRectInfinite];
 	}
@@ -396,7 +400,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// need to prevent updating of string and drawing at the same time
 	SYNCHRONIZE_START(selfLock)
 	{
-		[theLayoutFrame drawInContext:ctx drawImages:shouldDrawImages drawLinks:_shouldDrawLinks];
+		[theLayoutFrame drawInContext:ctx drawImages:_shouldDrawImages drawLinks:_shouldDrawLinks];
 		
 		if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
 		{
@@ -419,7 +423,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		size.width = self.bounds.size.width;
 	}
 	
-	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + edgeInsets.bottom);
+	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + _edgeInsets.bottom);
 	
 	return neededSize;
 }
@@ -431,10 +435,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		width = self.bounds.size.width;
 	}
 	
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
 	
 	// add vertical insets
-	neededSize.height += edgeInsets.top + edgeInsets.bottom;
+	neededSize.height += _edgeInsets.top + _edgeInsets.bottom;
 	
 	return neededSize;
 }
@@ -447,7 +451,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-edgeInsets.left-edgeInsets.right];
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
 	return neededSize;
 }
 
@@ -537,11 +541,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 }
 
 #pragma mark Properties
-- (void)setEdgeInsets:(UIEdgeInsets)newEdgeInsets
+- (void)setEdgeInsets:(UIEdgeInsets)edgeInsets
 {
-	if (!UIEdgeInsetsEqualToEdgeInsets(newEdgeInsets, edgeInsets))
+	if (!UIEdgeInsetsEqualToEdgeInsets(edgeInsets, _edgeInsets))
 	{
-		edgeInsets = newEdgeInsets;
+		_edgeInsets = edgeInsets;
 		
 		[self relayoutText];
 	}
@@ -587,21 +591,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 //	[self setFrame:frame relayoutText:_relayoutTextOnFrameChange];
 //}
 
-- (void)setDrawDebugFrames:(BOOL)newSetting
+- (void)setDrawDebugFrames:(BOOL)drawDebugFrames
 {
-	if (drawDebugFrames != newSetting)
+	if (_drawDebugFrames != drawDebugFrames)
 	{
-		drawDebugFrames = newSetting;
+		_drawDebugFrames = drawDebugFrames;
 		
 		[self setNeedsDisplay];
 	}
 }
 
-- (void)setShouldDrawImages:(BOOL)newSetting
+- (void)setShouldDrawImages:(BOOL)shouldDrawImages
 {
-	if (shouldDrawImages != newSetting)
+	if (_shouldDrawImages != shouldDrawImages)
 	{
-		shouldDrawImages = newSetting;
+		_shouldDrawImages = shouldDrawImages;
 		
 		[self setNeedsDisplay];
 	}
@@ -666,7 +670,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				// we can only layout if we have our own layouter
 				if (theLayouter)
 				{
-					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, _edgeInsets);
 					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
 					
 					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
@@ -762,11 +766,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// if you want images to be drawn even though you use custom views, set it back to YES after setting delegate
 	if (_delegateFlags.delegateSupportsGenericCustomViews || _delegateFlags.delegateSupportsCustomViewsForAttachments)
 	{
-		shouldDrawImages = NO;
+		_shouldDrawImages = NO;
 	}
 	else
 	{
-		shouldDrawImages = YES;
+		_shouldDrawImages = YES;
 	}
 }
 
@@ -786,11 +790,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize layoutFrame = _layoutFrame;
 @synthesize attributedString = _attributedString;
 @synthesize delegate = _delegate;
-@synthesize edgeInsets;
-@synthesize drawDebugFrames;
-@synthesize shouldDrawImages;
+@synthesize edgeInsets = _edgeInsets;
+@synthesize drawDebugFrames = _drawDebugFrames;
+@synthesize shouldDrawImages = _shouldDrawImages;
 @synthesize shouldDrawLinks = _shouldDrawLinks;
-@synthesize shouldLayoutCustomSubviews;
+@synthesize shouldLayoutCustomSubviews = _shouldLayoutCustomSubviews;
 @synthesize layoutOffset = _layoutOffset;
 @synthesize backgroundOffset = _backgroundOffset;
 

@@ -100,7 +100,7 @@
 	NSAttributedString *_attributedString;
 	DTCoreTextLayoutFrame *_layoutFrame;
 	
-	UIEdgeInsets edgeInsets;
+	UIEdgeInsets _edgeInsets;
 	
 	NSMutableDictionary *customViewsForAttachmentsIndex;
 }
