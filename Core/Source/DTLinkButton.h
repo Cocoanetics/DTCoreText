@@ -37,4 +37,16 @@ extern NSString *DTLinkButtonDidHighlightNotification;
  */
 @property (nonatomic, assign) CGSize minimumHitSize;
 
+
+/**
+ The attributed string to be drawn for the link button.
+ */
+@property (nonatomic, retain) NSAttributedString *attributedString;
+
+
+/**
+ The attributed string to be drawn for the link button while it is highlighted.
+ */
+@property (nonatomic, retain) NSAttributedString *highlightedAttributedString;
+
 @end
