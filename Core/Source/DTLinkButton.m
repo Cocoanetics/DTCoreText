@@ -230,7 +230,9 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	// Flip the coordinate system
 	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextScaleCTM(context, 1.0, -1.0);
-	CGContextTranslateCTM(context, 0, -self.bounds.size.height+ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
+	CGContextTranslateCTM(context, 0, -self.bounds.size.height);
+	
+	CGContextSetTextPosition(context, 0, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
 
 	[glyphRunToDraw drawInContext:context];
 	
