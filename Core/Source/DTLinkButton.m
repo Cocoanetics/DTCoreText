@@ -35,10 +35,12 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	
 	// normal text
 	NSAttributedString *_attributedString;
+	DTCoreTextLayoutLine *_normalLine;
 	DTCoreTextGlyphRun *_normalGlyphRun;
 	
 	// highlighted text
 	NSAttributedString *_highlightedAttributedString;
+	DTCoreTextLayoutLine *_highlightedLine;
 	DTCoreTextGlyphRun *_highlightedGlyphRun;
 }
 
@@ -82,15 +84,15 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		}
 		
 		// get the line
-		DTCoreTextLayoutLine *line = [frame.lines objectAtIndex:0];
+		_normalLine = [frame.lines objectAtIndex:0];
 		
-		if (![line.glyphRuns count])
+		if (![_normalLine.glyphRuns count])
 		{
 			return nil;
 		}
 		
 		// get the glyph run
-		_normalGlyphRun	= [line.glyphRuns objectAtIndex:0];
+		_normalGlyphRun	= [_normalLine.glyphRuns objectAtIndex:0];
 	}
 	
 	return _normalGlyphRun;
@@ -111,15 +113,15 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		}
 		
 		// get the line
-		DTCoreTextLayoutLine *line = [frame.lines objectAtIndex:0];
+		_highlightedLine = [frame.lines objectAtIndex:0];
 		
-		if (![line.glyphRuns count])
+		if (![_highlightedLine.glyphRuns count])
 		{
 			return nil;
 		}
 		
 		// get the glyph run
-		_highlightedGlyphRun	= [line.glyphRuns objectAtIndex:0];
+		_highlightedGlyphRun	= [_highlightedLine.glyphRuns objectAtIndex:0];
 	}
 	
 	return _highlightedGlyphRun;
