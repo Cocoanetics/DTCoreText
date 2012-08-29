@@ -54,7 +54,7 @@
 		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
 		A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; };
+		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -262,7 +262,7 @@
 		A7A672BB1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
-		A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; };
+		A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B0B56A14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B0B56B14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
@@ -1074,10 +1074,10 @@
 				A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */,
 				A7F5672714D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */,
 				A7C7ACD514D924B1005A9C69 /* NSMutableString+HTML.h in Headers */,
-				A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
-				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 				A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */,
 				36F8CE971593590800E9599C /* DTTextBlock.h in Headers */,
+				A7B0B56814D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
+				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 				36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
 				36F8CED01593AA5900E9599C /* DTHTMLParser.h in Headers */,
 			);
