@@ -49,7 +49,10 @@
     NSArray *stringIndices;
 	
 	DTTextAttachment *_attachment;
+	BOOL _hyperlink;
+	
 	BOOL _didCheckForAttachmentInAttributes;
+	BOOL _didCheckForHyperlinkInAttributes;
 	BOOL _didCalculateMetrics;
 }
 
@@ -246,6 +249,21 @@
 	return _attachment;
 }
 
+- (BOOL)isHyperlink
+{
+	if (!_hyperlink)
+	{
+		if (!_didCheckForHyperlinkInAttributes)
+		{
+			_hyperlink = [self.attributes objectForKey:DTLinkAttribute]!=nil;
+			
+			_didCheckForHyperlinkInAttributes = YES;
+		}
+	}
+	
+	return _hyperlink;
+}
+
 - (CGRect)frame
 {
 	if (!_didCalculateMetrics)
@@ -295,7 +313,6 @@
 	
 	return leading;
 }
-
 
 @synthesize frame = _frame;
 @synthesize numberOfGlyphs;
