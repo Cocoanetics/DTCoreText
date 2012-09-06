@@ -766,8 +766,6 @@
 		while ([closingStyles count]);
 	}
 	
-	NSLog(@"%@", retString);
-	
 	return retString;
 }
 
