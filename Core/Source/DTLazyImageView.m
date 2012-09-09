@@ -72,7 +72,7 @@ static NSCache *_imageCache = nil;
 {
 	[super didMoveToSuperview];
 	
-	if (!self.image && _url && !_connection && self.superview)
+	if (!self.image && (_url || _urlRequest) && !_connection && self.superview)
 	{
 		UIImage *image = [_imageCache objectForKey:_url];
 		
@@ -283,5 +283,10 @@ static NSCache *_imageCache = nil;
 @synthesize url = _url;
 @synthesize shouldShowProgressiveDownload;
 @synthesize urlRequest = _urlRequest;
+
+- (void) setUrlRequest:(NSMutableURLRequest *)request {
+	_urlRequest = request;
+	self.url = [_urlRequest URL];
+}
 
 @end
