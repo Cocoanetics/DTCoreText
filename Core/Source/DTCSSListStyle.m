@@ -243,7 +243,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, _type, _position];
+	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, (int)_type, (int)_position];
 }
 
 #pragma mark Copying
@@ -297,12 +297,12 @@
 		}
 		case DTCSSListStyleTypeDecimal:
 		{
-			token = [NSString stringWithFormat:@"%d.", counter];
+			token = [NSString stringWithFormat:@"%d.", (int)counter];
 			break;
 		}
 		case DTCSSListStyleTypeDecimalLeadingZero:
 		{
-			token = [NSString stringWithFormat:@"%02d.", counter];
+			token = [NSString stringWithFormat:@"%02d.", (int)counter];
 			break;
 		}
 		case DTCSSListStyleTypeDisc:

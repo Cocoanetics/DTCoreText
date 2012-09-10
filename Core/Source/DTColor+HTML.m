@@ -490,7 +490,7 @@ static NSDictionary *colorLookup = nil;
 				  (NSUInteger)(green * (CGFloat)255), (NSUInteger)(blue * (CGFloat)255)];
 }
 
-
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
 + (NSColor *)colorWithCGColor:(CGColorRef)cgColor
 {
 	size_t count = CGColorGetNumberOfComponents(cgColor);
@@ -517,6 +517,7 @@ static NSDictionary *colorLookup = nil;
 {
 	return self;
 }
+#endif
 
 @end
 

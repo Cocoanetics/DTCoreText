@@ -20,8 +20,6 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	DTHTMLAttributedStringBuilder*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
 
-	[stringBuilder buildString];
-	
 	return [stringBuilder generatedAttributedString];
 }
 
