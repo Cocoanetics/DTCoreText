@@ -18,6 +18,7 @@
 
 @interface DTLazyImageView : UIImageView
 @property (nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSMutableURLRequest *urlRequest;
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
 
 @property (nonatomic, assign) id<DTLazyImageViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
