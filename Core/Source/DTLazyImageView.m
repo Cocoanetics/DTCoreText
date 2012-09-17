@@ -19,6 +19,7 @@ static NSCache *_imageCache = nil;
 @implementation DTLazyImageView
 {
 	NSURL *_url;
+	NSMutableURLRequest *_urlRequest;
 	
 	NSURLConnection *_connection;
 	NSMutableData *_receivedData;
@@ -280,13 +281,13 @@ static NSCache *_imageCache = nil;
 
 #pragma mark Properties
 
-@synthesize url = _url;
-@synthesize shouldShowProgressiveDownload;
-@synthesize urlRequest = _urlRequest;
-
 - (void) setUrlRequest:(NSMutableURLRequest *)request {
 	_urlRequest = request;
 	self.url = [_urlRequest URL];
 }
+
+@synthesize url = _url;
+@synthesize shouldShowProgressiveDownload;
+@synthesize urlRequest = _urlRequest;
 
 @end
