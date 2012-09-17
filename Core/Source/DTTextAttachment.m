@@ -78,41 +78,43 @@
 	
 	
 	// decode content URL
-	if ([src hasPrefix:@"data:"])
-	{
-		NSRange range = [src rangeOfString:@"base64,"];
-		
-		if (range.length)
+	if (src != nil) { // guard against img with no src
+		if ([src hasPrefix:@"data:"])
 		{
-			NSString *encodedData = [src substringFromIndex:range.location + range.length];
-			NSData *decodedData = [NSData dataFromBase64String:encodedData];
+			NSRange range = [src rangeOfString:@"base64,"];
 			
-			decodedImage = [[DTImage alloc] initWithData:decodedData];
-			
-			if (!displaySize.width || !displaySize.height)
+			if (range.length)
 			{
-				displaySize = decodedImage.size;
+				NSString *encodedData = [src substringFromIndex:range.location + range.length];
+				NSData *decodedData = [NSData dataFromBase64String:encodedData];
+				
+				decodedImage = [[DTImage alloc] initWithData:decodedData];
+				
+				if (!displaySize.width || !displaySize.height)
+				{
+					displaySize = decodedImage.size;
+				}
 			}
 		}
-	}
-	else // normal URL
-	{
-		contentURL = [NSURL URLWithString:src];
-		
-		if (![contentURL scheme])
+		else // normal URL
 		{
-			// possibly a relative url
-			if (baseURL)
+			contentURL = [NSURL URLWithString:src];
+			
+			if (![contentURL scheme])
 			{
-				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
-			}
-			else
-			{
-				// file in app bundle
-				NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-				if (path) {
-					// Prevent a crash if path turns up nil.
-					contentURL = [NSURL fileURLWithPath:path];   
+				// possibly a relative url
+				if (baseURL)
+				{
+					contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
+				}
+				else
+				{
+					// file in app bundle
+					NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
+					if (path) {
+						// Prevent a crash if path turns up nil.
+						contentURL = [NSURL fileURLWithPath:path];   
+					}
 				}
 			}
 		}
