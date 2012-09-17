@@ -23,7 +23,7 @@
 	_navigationController = [[UINavigationController alloc] initWithRootViewController:snippetsViewController];
 	
 	// Display the window
-	[_window addSubview:_navigationController.view];
+	_window.rootViewController = _navigationController;
 	[_window makeKeyAndVisible];
 	
 	return YES;
