@@ -45,6 +45,7 @@
 		A71B927114E0165000360C30 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
 		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
 		A72C15C71592FAF70064A67F /* CoreTextIssues.html in Resources */ = {isa = PBXBuildFile; fileRef = A72C15C61592FAF70064A67F /* CoreTextIssues.html */; };
+		A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A73885A41606E9B2001D60C4 /* EmojiTest.html */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
 		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
@@ -493,6 +494,7 @@
 		A71B927014E0165000360C30 /* PreWhitespace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PreWhitespace.html; sourceTree = "<group>"; };
 		A71B927214E016A300360C30 /* PreWhitespace.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PreWhitespace.plist; sourceTree = "<group>"; };
 		A72C15C61592FAF70064A67F /* CoreTextIssues.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CoreTextIssues.html; sourceTree = "<group>"; };
+		A73885A41606E9B2001D60C4 /* EmojiTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EmojiTest.html; sourceTree = "<group>"; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
@@ -887,6 +889,7 @@
 				A7A95D9414F3F45E002E3F7E /* LineHeight.html */,
 				A78C241015073BC50045651E /* TextBoxes.html */,
 				A72C15C61592FAF70064A67F /* CoreTextIssues.html */,
+				A73885A41606E9B2001D60C4 /* EmojiTest.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1360,6 +1363,7 @@
 				A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */,
 				A78C241115073BC50045651E /* TextBoxes.html in Resources */,
 				A72C15C71592FAF70064A67F /* CoreTextIssues.html in Resources */,
+				A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

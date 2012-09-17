@@ -126,6 +126,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Test Cases for Emoji</string>
+		<key>File</key>
+		<string>EmojiTest.html</string>
+		<key>Title</key>
+		<string>Emoji Test</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>Test Cases for known issues in CoreText</string>
 		<key>File</key>
 		<string>CoreTextIssues.html</string>
