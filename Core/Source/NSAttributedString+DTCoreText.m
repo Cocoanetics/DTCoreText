@@ -464,7 +464,7 @@
 		
 		if (headerLevel)
 		{
-			blockElement = [NSString stringWithFormat:@"h%d", [headerLevel integerValue]];
+			blockElement = [NSString stringWithFormat:@"h%d", (int)[headerLevel integerValue]];
 		}
 		
 		if ([paragraphs lastObject] == oneParagraph)
@@ -686,6 +686,34 @@
 				}
 			}
 			
+			NSNumber *superscript = [attributes objectForKey:(id)kCTSuperscriptAttributeName];
+			if (superscript)
+			{
+				NSInteger style = [superscript integerValue];
+				
+				switch (style)
+				{
+					case 1:
+					{
+						fontStyle = [fontStyle stringByAppendingString:@"vertical-align:super;"];
+						break;
+					}
+						
+					case -1:
+					{
+						fontStyle = [fontStyle stringByAppendingString:@"vertical-align:sub;"];
+						break;
+					}
+						
+					default:
+					{
+						// all other are baseline because we don't support anything else for text
+						fontStyle = [fontStyle stringByAppendingString:@"vertical-align:baseline;"];
+						
+						break;
+					}
+				}
+			}
 			
 			NSURL *url = [attributes objectForKey:DTLinkAttribute];
 			

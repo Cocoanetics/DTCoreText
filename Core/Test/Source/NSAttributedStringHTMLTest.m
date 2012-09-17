@@ -20,8 +20,6 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	DTHTMLAttributedStringBuilder*stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
 
-	[stringBuilder buildString];
-	
 	return [stringBuilder generatedAttributedString];
 }
 
@@ -120,7 +118,8 @@
 }
 
 
-- (void)testAttributedStringColorToHTML {
+- (void)testAttributedStringColorToHTML
+{
 	NSMutableAttributedString *string = [[NSMutableAttributedString alloc]initWithString: @"test"];
 	
 	UIColor *color = [ UIColor colorWithRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0 ];
@@ -130,7 +129,6 @@
 	NSString *expected = @"<span><span style=\"color:#ff0000;\">te</span>st</span>\n";
 
 	STAssertEqualObjects([ string htmlString ], expected, @"Output on HTML string color test differs");
-
 }
 
 @end

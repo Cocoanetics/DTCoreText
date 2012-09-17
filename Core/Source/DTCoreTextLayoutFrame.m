@@ -532,9 +532,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	// note: building line by line with typesetter
-	[self _buildLinesWithTypesetter];
+	//[self _buildLinesWithTypesetter];
 	
-	//[self _buildLinesWithStandardFramesetter];
+	[self _buildLinesWithStandardFramesetter];
 }
 
 - (NSArray *)lines

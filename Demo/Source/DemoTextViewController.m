@@ -383,6 +383,7 @@
 	}
 	else if (attachment.contentType == DTTextAttachmentTypeIframe)
 	{
+		frame.origin.x += 50;
 		DTWebVideoView *videoView = [[DTWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
 		
