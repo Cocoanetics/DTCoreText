@@ -37,7 +37,7 @@ Documentation can be [browsed online](http://cocoanetics.github.com/DTCoreText) 
 Usage
 -----
 
-DTCoreText needs a minimum iOS deployment target of 4.3 because of:
+DTCoreText needs a minimum iOS deployment target of iOS 4.2 because of:
 
 - NSCache
 - GCD-based threading and locking
