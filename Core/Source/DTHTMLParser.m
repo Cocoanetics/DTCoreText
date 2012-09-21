@@ -172,6 +172,7 @@ void _processingInstruction (void *context, const xmlChar *target, const xmlChar
 	htmlSAXHandler _handler;
 	
 	NSData *_data;
+	NSStringEncoding _encoding;
 	
 	__unsafe_unretained id <DTHTMLParserDelegate> _delegate;
 	htmlParserCtxtPtr _parserContext;
@@ -403,5 +404,7 @@ void _processingInstruction (void *context, const xmlChar *target, const xmlChar
 
 
 @synthesize parserError = _parserError;
+@synthesize encoding = _encoding;
+
 
 @end
