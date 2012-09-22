@@ -8,6 +8,7 @@
 
 #import "DTCoreText.h"
 #import "DTCoreTextLayoutFrame.h"
+#import "DTVersion.h"
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -506,9 +507,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	//[self _correctLineOrigins];
 	
 	// --- begin workaround for image squishing bug in iOS < 4.2
-	DTSimpleVersion version = [[UIDevice currentDevice] osVersion];
+	DTVersion *version = [DTVersion osVersion];
 	
-	if (version.major<4 || (version.major==4 && version.minor < 2))
+	if (version.majorVersion<4 || (version.majorVersion==4 && version.minorVersion < 2))
 	{
 		[self _correctAttachmentHeights];
 	}
