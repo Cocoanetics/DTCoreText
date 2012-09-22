@@ -938,12 +938,19 @@
 {
 	void (^tmpBlock)(void) = ^
 	{
+		// this brute-force inherits the nextTags attributes from the previous tag
 		DTHTMLElement *parent = currentTag;
 		DTHTMLElement *nextTag = [currentTag copy];
 		nextTag.tagName = elementName;
 		nextTag.textScale = textScale;
 		nextTag.attributes = attributeDict;
 		[parent addChild:nextTag];
+		
+		// only inherit background-color from inline elements
+		if (parent.displayStyle == DTHTMLElementDisplayStyleInline)
+		{
+			nextTag.backgroundColor = currentTag.backgroundColor;
+		}
 		
 		// apply style from merged style sheet
 		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:nextTag];

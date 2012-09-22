@@ -638,6 +638,10 @@
 		{
 			_displayStyle = DTHTMLElementDisplayStyleListItem;
 		}
+		else if ([displayString isEqualToString:@"table"])
+		{
+			_displayStyle = DTHTMLElementDisplayStyleTable;
+		}
 		else if ([verticalAlignment isEqualToString:@"inherit"])
 		{
 			// nothing to do
@@ -916,7 +920,7 @@
 	newObject.tagContentInvisible = self.tagContentInvisible;
 	newObject.textColor = self.textColor;
 	newObject.isColorInherited = YES;
-	newObject.backgroundColor = self.backgroundColor;
+	
 	newObject.strikeOut = self.strikeOut;
 	newObject.superscriptStyle = self.superscriptStyle;
 	newObject.shadows = self.shadows;

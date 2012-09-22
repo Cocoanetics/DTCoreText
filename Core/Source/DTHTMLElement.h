@@ -17,7 +17,8 @@ typedef enum
 	DTHTMLElementDisplayStyleInline = 0, // default
 	DTHTMLElementDisplayStyleNone,
 	DTHTMLElementDisplayStyleBlock,
-	DTHTMLElementDisplayStyleListItem
+	DTHTMLElementDisplayStyleListItem,
+	DTHTMLElementDisplayStyleTable,
 } DTHTMLElementDisplayStyle;
 
 typedef enum
