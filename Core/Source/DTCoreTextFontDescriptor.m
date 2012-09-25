@@ -70,7 +70,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	DTVersion *version = [DTVersion osVersion];
 	
 	// seems to be fixed in iOS 6
-	if (version.majorVersion<6)
+	if (version.major<6)
 	{
 		_needsChineseFontCascadeFix = YES;
 	}
