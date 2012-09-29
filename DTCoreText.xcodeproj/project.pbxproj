@@ -458,6 +458,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		A7335CC91616DA8300482C19 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FAE5B92D1610A38200CA0D99;
+			remoteInfo = PDFDemo;
+		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1096,6 +1103,7 @@
 				A7E383D4160DFF2600CF72D6 /* libDTHTMLParser.a */,
 				A7E383EB160DFFDE00CF72D6 /* libDTZipArchive.a */,
 				A7E38402160E007A00CF72D6 /* libDTDownloadCache.a */,
+				A7335CCA1616DA8300482C19 /* PDFDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1409,6 +1417,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A7335CCA1616DA8300482C19 /* PDFDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = PDFDemo.app;
+			remoteRef = A7335CC91616DA8300482C19 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A7E383B7160DFEA800CF72D6 /* DTFoundation.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1873,7 +1888,6 @@
 				PRODUCT_NAME = DemoApp;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" Core/Externals/**";
-				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -1894,7 +1908,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" Core/Externals/**";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};
