@@ -139,10 +139,6 @@
 		A788C9D614863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94014863E8700E1AFD9 /* NSCharacterSet+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9D814863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
 		A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
-		A788C9DA14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C9DB14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C9DD14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
-		A788C9DE14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		A788C9DF14863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9E014863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9E214863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
@@ -222,7 +218,6 @@
 		A788CA99148648C700E1AFD9 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92F14863E8700E1AFD9 /* DTLinkButton.m */; };
 		A788CA9C148648C700E1AFD9 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93714863E8700E1AFD9 /* DTWebVideoView.m */; };
 		A788CA9D148648C700E1AFD9 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
-		A788CA9E148648C700E1AFD9 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		A788CA9F148648C700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
 		A788CAA0148648C700E1AFD9 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94714863E8700E1AFD9 /* NSScanner+HTML.m */; };
 		A788CAA1148648C700E1AFD9 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94914863E8700E1AFD9 /* NSString+HTML.m */; };
@@ -320,7 +315,6 @@
 		A7F5673114D853BF00D1F167 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
 		A7F5673E14D8744600D1F167 /* DTColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+HTML.m */; };
 		A7F5673F14D8744600D1F167 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
-		A7F5674014D8755300D1F167 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		A7F7EF781573603100F5A4D0 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A7F7EF791573603100F5A4D0 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
 		A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -343,7 +337,6 @@
 		A7F7EF8B1573603100F5A4D0 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */; };
 		A7F7EF8C1573603100F5A4D0 /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
 		A7F7EF8D1573603100F5A4D0 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
-		A7F7EF8E1573603100F5A4D0 /* NSData+DTBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */; };
 		A7F7EF8F1573603100F5A4D0 /* NSMutableAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */; };
 		A7F7EF901573603100F5A4D0 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94714863E8700E1AFD9 /* NSScanner+HTML.m */; };
 		A7F7EF911573603100F5A4D0 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94914863E8700E1AFD9 /* NSString+HTML.m */; };
@@ -379,7 +372,6 @@
 		A7F7EFB31573603100F5A4D0 /* DTLazyImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB41573603100F5A4D0 /* DTLinkButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92E14863E8700E1AFD9 /* DTLinkButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB51573603100F5A4D0 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93614863E8700E1AFD9 /* DTWebVideoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7F7EFB61573603100F5A4D0 /* NSData+DTBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB71573603100F5A4D0 /* NSString+Paragraphs.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB81573603100F5A4D0 /* NSString+UTF8Cleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94C14863E8700E1AFD9 /* NSString+UTF8Cleaner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFBA1573603100F5A4D0 /* DTCoreText-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = A788CA1514863EC600E1AFD9 /* DTCoreText-Prefix.pch */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -603,8 +595,6 @@
 		A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringRunDelegates.m; sourceTree = "<group>"; };
 		A788C94014863E8700E1AFD9 /* NSCharacterSet+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+HTML.h"; sourceTree = "<group>"; };
 		A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+HTML.m"; sourceTree = "<group>"; };
-		A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+DTBase64.h"; sourceTree = "<group>"; };
-		A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+DTBase64.m"; sourceTree = "<group>"; };
 		A788C94414863E8700E1AFD9 /* NSMutableAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString+HTML.h"; sourceTree = "<group>"; };
 		A788C94514863E8700E1AFD9 /* NSMutableAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+HTML.m"; sourceTree = "<group>"; };
 		A788C94614863E8700E1AFD9 /* NSScanner+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+HTML.h"; sourceTree = "<group>"; };
@@ -991,8 +981,6 @@
 		A788CAA81486492200E1AFD9 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				A788C94214863E8700E1AFD9 /* NSData+DTBase64.h */,
-				A788C94314863E8700E1AFD9 /* NSData+DTBase64.m */,
 				A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */,
 				A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */,
 			);
@@ -1145,7 +1133,6 @@
 				A788C9C614863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
 				A788C9D014863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */,
 				A788C9D514863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */,
-				A788C9DA14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */,
 				A788C9DF14863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */,
 				A788C9E414863E8700E1AFD9 /* NSScanner+HTML.h in Headers */,
 				A788C9E914863E8700E1AFD9 /* NSString+HTML.h in Headers */,
@@ -1189,7 +1176,6 @@
 				A788C9A414863E8700E1AFD9 /* DTLazyImageView.h in Headers */,
 				A788C9A914863E8700E1AFD9 /* DTLinkButton.h in Headers */,
 				A788C9BD14863E8700E1AFD9 /* DTWebVideoView.h in Headers */,
-				A788C9DB14863E8700E1AFD9 /* NSData+DTBase64.h in Headers */,
 				A788C9EF14863E8700E1AFD9 /* NSString+Paragraphs.h in Headers */,
 				A788C9F414863E8700E1AFD9 /* NSString+UTF8Cleaner.h in Headers */,
 				A788CA1814863EC600E1AFD9 /* DTCoreText-Prefix.pch in Headers */,
@@ -1235,7 +1221,6 @@
 				A7F7EFB31573603100F5A4D0 /* DTLazyImageView.h in Headers */,
 				A7F7EFB41573603100F5A4D0 /* DTLinkButton.h in Headers */,
 				A7F7EFB51573603100F5A4D0 /* DTWebVideoView.h in Headers */,
-				A7F7EFB61573603100F5A4D0 /* NSData+DTBase64.h in Headers */,
 				A7F7EFB71573603100F5A4D0 /* NSString+Paragraphs.h in Headers */,
 				A7F7EFB81573603100F5A4D0 /* NSString+UTF8Cleaner.h in Headers */,
 				A7F7EFBA1573603100F5A4D0 /* DTCoreText-Prefix.pch in Headers */,
@@ -1663,7 +1648,6 @@
 				A788C9C914863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D314863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D814863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788C9DD14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */,
 				A788C9E214863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E714863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9EC14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -1707,7 +1691,6 @@
 				A788C9CA14863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D414863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788C9DE14863E8700E1AFD9 /* NSData+DTBase64.m in Sources */,
 				A788C9E314863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E814863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9ED14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -1752,7 +1735,6 @@
 				A788CA99148648C700E1AFD9 /* DTLinkButton.m in Sources */,
 				A788CA9C148648C700E1AFD9 /* DTWebVideoView.m in Sources */,
 				A788CA9D148648C700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
-				A788CA9E148648C700E1AFD9 /* NSData+DTBase64.m in Sources */,
 				A788CA9F148648C700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788CAA0148648C700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788CAA1148648C700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -1795,7 +1777,6 @@
 				A7F5673114D853BF00D1F167 /* NSMutableAttributedString+HTML.m in Sources */,
 				A7F5673E14D8744600D1F167 /* DTColor+HTML.m in Sources */,
 				A7F5673F14D8744600D1F167 /* DTImage+HTML.m in Sources */,
-				A7F5674014D8755300D1F167 /* NSData+DTBase64.m in Sources */,
 				A7C7ACDA14D924B1005A9C69 /* NSMutableString+HTML.m in Sources */,
 				A7B0B56D14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */,
 				A7C7AD0114DA6955005A9C69 /* NSString+SlashEscaping.m in Sources */,
@@ -1831,7 +1812,6 @@
 				A7F7EF8B1573603100F5A4D0 /* NSAttributedString+HTML.m in Sources */,
 				A7F7EF8C1573603100F5A4D0 /* NSAttributedStringRunDelegates.m in Sources */,
 				A7F7EF8D1573603100F5A4D0 /* NSCharacterSet+HTML.m in Sources */,
-				A7F7EF8E1573603100F5A4D0 /* NSData+DTBase64.m in Sources */,
 				A7F7EF8F1573603100F5A4D0 /* NSMutableAttributedString+HTML.m in Sources */,
 				A7F7EF901573603100F5A4D0 /* NSScanner+HTML.m in Sources */,
 				A7F7EF911573603100F5A4D0 /* NSString+HTML.m in Sources */,

@@ -4,6 +4,9 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
+// DTFoundation
+#import "DTFoundation.h"
+
 // global constants
 #import "DTCoreTextConstants.h"
 #import "DTCompatibility.h"
@@ -23,7 +26,6 @@
 #import "DTHTMLElement.h"
 #import "DTTextAttachment.h"
 #import "NSCharacterSet+HTML.h"
-#import "NSData+DTBase64.h"
 #import "NSScanner+HTML.h"
 #import "NSMutableString+HTML.h"
 #import "NSString+CSS.h"

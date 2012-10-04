@@ -8,7 +8,6 @@
 
 #import "DTTextAttachment.h"
 #import "DTCoreText.h"
-#import "NSData+DTBase64.h"
 
 @implementation DTTextAttachment
 {
