@@ -55,6 +55,8 @@
 		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
+		A780D1031626A19B00D61229 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383D4160DFF2600CF72D6 /* libDTHTMLParser.a */; };
+		A780D1071626A24F00D61229 /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383BD160DFEA800CF72D6 /* libDTFoundation_Mac.a */; };
 		A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95914863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95B14863E8700E1AFD9 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
@@ -457,6 +459,20 @@
 			remoteGlobalIDString = FAE5B92D1610A38200CA0D99;
 			remoteInfo = PDFDemo;
 		};
+		A780D1001626A18A00D61229 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
+			remoteInfo = DTHTMLParser;
+		};
+		A780D1051626A24A00D61229 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A710A4FF1607556000437D36;
+			remoteInfo = "Static Library (Mac)";
+		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -748,6 +764,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A780D1071626A24F00D61229 /* libDTFoundation_Mac.a in Frameworks */,
+				A780D1031626A19B00D61229 /* libDTHTMLParser.a in Frameworks */,
 				A7F5671D14D8469000D1F167 /* Cocoa.framework in Frameworks */,
 				A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */,
 				A7949A5914CC456000A8CCDE /* SenTestingKit.framework in Frameworks */,
@@ -1336,6 +1354,8 @@
 				A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
+				A780D1061626A24A00D61229 /* PBXTargetDependency */,
+				A780D1011626A18A00D61229 /* PBXTargetDependency */,
 			);
 			name = MacUnitTest;
 			productName = MacUnitTest;
@@ -1832,6 +1852,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A780D1011626A18A00D61229 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DTHTMLParser;
+			targetProxy = A780D1001626A18A00D61229 /* PBXContainerItemProxy */;
+		};
+		A780D1061626A24A00D61229 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library (Mac)";
+			targetProxy = A780D1051626A24A00D61229 /* PBXContainerItemProxy */;
+		};
 		A788CA621486428F00E1AFD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A70F11DD148632CD009202BF /* Static Library */;
@@ -1977,7 +2007,6 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
@@ -2000,7 +2029,6 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
@@ -2078,7 +2106,6 @@
 		A7949A6B14CC456100A8CCDE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -2096,11 +2123,20 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Core/Externals\"/**",
+				);
 				INFOPLIST_FILE = "Core/Test/MacUnitTest-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -2108,7 +2144,6 @@
 		A7949A6C14CC456100A8CCDE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -2120,10 +2155,19 @@
 				GCC_PREFIX_HEADER = "Core/Test/MacUnitTest-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Core/Externals\"/**",
+				);
 				INFOPLIST_FILE = "Core/Test/MacUnitTest-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
