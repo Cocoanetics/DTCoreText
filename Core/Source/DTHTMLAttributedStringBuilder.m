@@ -77,10 +77,14 @@
 
 - (void)dealloc 
 {
-	dispatch_release(_stringAssemblyQueue);
-	dispatch_release(_stringAssemblyGroup);
-	dispatch_release(_stringParsingQueue);
-	dispatch_release(_stringParsingGroup);
+	#if TARGET_API_MAC_OSX
+		#if MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+			dispatch_release(_stringAssemblyQueue);
+			dispatch_release(_stringAssemblyGroup);
+			dispatch_release(_stringParsingQueue);
+			dispatch_release(_stringParsingGroup);
+		#endif
+	#endif
 }
 
 - (BOOL)_buildString
