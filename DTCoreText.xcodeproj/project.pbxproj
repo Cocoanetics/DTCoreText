@@ -439,6 +439,7 @@
 		E2262E09163834DD00BFDAD7 /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383BD160DFEA800CF72D6 /* libDTFoundation_Mac.a */; };
 		E2262E0A163834E300BFDAD7 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383D4160DFF2600CF72D6 /* libDTHTMLParser.a */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
+		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1371,6 +1372,7 @@
 				E2262DFA163833AD00BFDAD7 /* NSString+HTML.h in Headers */,
 				E2262DFC163833AD00BFDAD7 /* NSMutableString+HTML.h in Headers */,
 				E2262DFE163833AD00BFDAD7 /* DTTextBlock.h in Headers */,
+				E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2599,6 +2601,7 @@
 				E2262DD41638331500BFDAD7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
