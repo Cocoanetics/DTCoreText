@@ -154,7 +154,14 @@
 					CGSize offset = CGSizeMake(offset_x, offset_y);
 					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
 					
-					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
+					NSValue *offsetValue;
+#if TARGET_OS_IPHONE
+					offsetValue = [NSValue valueWithCGSize:offset];
+#else
+					offsetValue = [NSValue valueWithSize:offset];
+#endif
+					
+					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
 												[NSNumber numberWithFloat:blur], @"Blur",
 												shadowColor, @"Color", nil];
 					
@@ -193,7 +200,14 @@
 					CGSize offset = CGSizeMake(offset_x, offset_y);
 					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
 					
-					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithCGSize:offset], @"Offset",
+					NSValue *offsetValue;
+#if TARGET_OS_IPHONE
+					offsetValue = [NSValue valueWithCGSize:offset];
+#else
+					offsetValue = [NSValue valueWithSize:offset];
+#endif
+					
+					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
 												[NSNumber numberWithFloat:blur], @"Blur",
 												shadowColor, @"Color", nil];
 					

@@ -59,7 +59,11 @@
 	NSValue *maxImageSizeValue =[options objectForKey:DTMaxImageSize];
 	if (maxImageSizeValue)
 	{
+#if TARGET_OS_IPHONE
 		maxImageSize = [maxImageSizeValue CGSizeValue];
+#else
+		maxImageSize = [maxImageSizeValue sizeValue];
+#endif
 	}
 	
 	// width, height from tag
