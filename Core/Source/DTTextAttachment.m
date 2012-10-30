@@ -137,9 +137,20 @@
 				DTImage *image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
 				originalSize = image.size;
 				
-				if (!displaySize.width || !displaySize.height)
+				// width and/or height missing
+				if (displaySize.width==0 && displaySize.height==0)
 				{
 					displaySize = originalSize;
+				}
+				else if (!displaySize.width && displaySize.height)
+				{
+					CGFloat factor = image.size.height / displaySize.height;
+					displaySize.width = roundf(image.size.width / factor);
+				}
+				else if (displaySize.width>0 && displaySize.height==0)
+				{
+					CGFloat factor = image.size.width / displaySize.width;
+					displaySize.height = roundf(image.size.height / factor);
 				}
 			}
 			else
