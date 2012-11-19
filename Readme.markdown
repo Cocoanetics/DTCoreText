@@ -59,11 +59,11 @@ The best way to use DTCoreText is to add it in Xcode as a subproject of your pro
 
    `git submodule update --init --recursive`
 
-3. Open the destination project and create an 'Externals' group.
+3. Open the destination project and create an "Externals" group.
 
-4. 'Add files..' or drag `DTCoreText.xcodeproj` to the 'Externals' group
+4. Add files… or drag `DTCoreText.xcodeproj` to the Externals group
 
-5. In your application target's Build Phases: Target Dependencies add the "Static Library" from the DTCoreText sub project
+5. In your application target's Build Phases: Target Dependencies add the `Static Library` from the DTCoreText sub project
 
 6. In your application target's Build Phases: Link Binary With Libraries phase add the following:
 
