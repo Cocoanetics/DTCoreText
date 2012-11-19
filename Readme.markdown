@@ -53,19 +53,19 @@ The best way to use DTCoreText is to add it in Xcode as a subproject of your pro
 
 1. Make DTCoreText a git submodule of your project
 
-   git submodule add https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
+   `git submodule add https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText`
 	
-2. DTCoreText uses DTHTMLParser and DTVersion from DTFoundation which is set up as a git submodule too in Core/Externals/DTFoundation, so you need to get these files as well
+2. DTCoreText uses DTHTMLParser and DTVersion from DTFoundation which is set up as a git submodule in Core/Externals/DTFoundation, so you need to get these files as well
 
-   git submodule update --init --recursive
+   `git submodule update --init --recursive`
 
 3. Open the destination project and create an 'Externals' group.
 
 4. 'Add files..' or drag `DTCoreText.xcodeproj` to the 'Externals' group
 
-5. In your application target's Build Phases add the "Static Library" from the DTCoreText sub-project as a dependency.
+5. In your application target's Build Phases: Target Dependencies add the "Static Library" from the DTCoreText sub project
 
-6. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
+6. In your application target's Build Phases: Link Binary With Libraries phase add the following:
 
 		libDTCoreText.a (target from the DTCoreText sub-project)
 		libxml2.dylib
@@ -79,13 +79,13 @@ The best way to use DTCoreText is to add it in Xcode as a subproject of your pro
 8. Add the DerivedData folder to your git ignore. 
 
 9. In your application's target Build Settings:
-	- Add '$(PROJECT_DIR)' to User Header Search Paths, set recursive to yes
-	- Set "Always Search User Paths" to YES.
-	- Add the -ObjC flag to your app target's "Other Linker Flags"
+	- Add `$(PROJECT_DIR)` to `User Header Search Paths`, set to `recursive`
+	- Set `Always Search User Paths` to `Yes`.
+	- Add the `-ObjC` flag to your app target's `Other Linker Flags`
 
 OPTIONAL LINKER SETTINGS:
-   - If you find that your app crashes with an unrecognized selector from one of this library's categories, you might also need the -all_load linker flag. Alternatively you can use -force-load with the full path to the static library. This causes the linker to load all categories from the static library.
-   - If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
+   - If you find that your app crashes with an unrecognized selector from one of this library's categories, you might also need the `-all_load linker` flag. Alternatively you can use `-force-load` with the full path to the static library. This causes the linker to load all categories from the static library.
+   - If your app does not use ARC yet (but DTCoreText does) then you also need the `-fobjc-arc` linker flag.
 
 Known Issues
 ------------
