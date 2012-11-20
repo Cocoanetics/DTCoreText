@@ -560,7 +560,7 @@
 		
 		if (currentTag.backgroundColor)
 		{
-			[styleDict setObject:currentTag.backgroundColor forKey:@"BackgroundColor"];
+			[styleDict setObject:currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
 		}
 		[currentTag addAdditionalAttribute:styleDict forKey:DTHorizontalRuleStyleAttribute];
 		
