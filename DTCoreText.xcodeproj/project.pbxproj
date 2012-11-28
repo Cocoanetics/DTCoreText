@@ -29,6 +29,8 @@
 		36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		3D710A1716662DF8008EFC73 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383D4160DFF2600CF72D6 /* libDTHTMLParser.a */; };
+		3D710A1816662DFD008EFC73 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
 		3D7CE54D166613F90028D339 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D7CE54A166613E10028D339 /* libDTHTMLParser.a */; };
 		A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
 		A7081EA415036460002987F1 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -533,6 +535,20 @@
 			remoteGlobalIDString = A7787A0D16441B1800AF5830;
 			remoteInfo = DTBonjour;
 		};
+		3D7CE5A91666253A0028D339 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A70B4CE61486637E00873A4A;
+			remoteInfo = "Static Library";
+		};
+		3D7CE5AB166625420028D339 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
+			remoteInfo = DTHTMLParser;
+		};
 		A7335CC91616DA8300482C19 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
@@ -837,6 +853,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D710A1816662DFD008EFC73 /* libDTFoundation.a in Frameworks */,
+				3D710A1716662DF8008EFC73 /* libDTHTMLParser.a in Frameworks */,
 				A788CA7C148645A600E1AFD9 /* SenTestingKit.framework in Frameworks */,
 				A788CA6B1486456100E1AFD9 /* UIKit.framework in Frameworks */,
 				A788CA6C1486456100E1AFD9 /* Foundation.framework in Frameworks */,
@@ -1467,6 +1485,8 @@
 				A758FC9D14DBD76E007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
+				3D7CE5AC166625420028D339 /* PBXTargetDependency */,
+				3D7CE5AA1666253A0028D339 /* PBXTargetDependency */,
 			);
 			name = UnitTest;
 			productName = UnitTests;
@@ -2062,6 +2082,16 @@
 			name = "DTHTMLParser (Mac)";
 			targetProxy = 3D7CE54B166613E70028D339 /* PBXContainerItemProxy */;
 		};
+		3D7CE5AA1666253A0028D339 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library";
+			targetProxy = 3D7CE5A91666253A0028D339 /* PBXContainerItemProxy */;
+		};
+		3D7CE5AC166625420028D339 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DTHTMLParser;
+			targetProxy = 3D7CE5AB166625420028D339 /* PBXContainerItemProxy */;
+		};
 		A780D1061626A24A00D61229 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Static Library (Mac)";
@@ -2225,7 +2255,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" Core/Externals/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 			};
 			name = Debug;
 		};
@@ -2247,7 +2277,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" Core/Externals/**";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -2289,6 +2319,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Core/Externals\"/**",
+				);
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_AFTER_BUILD = YES;
@@ -2310,6 +2344,10 @@
 				GCC_PREFIX_HEADER = "Core/Test/UnitTest-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"\"$(SRCROOT)/Core/Externals\"/**",
+				);
 				INFOPLIST_FILE = "Core/Test/UnitTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_AFTER_BUILD = YES;
@@ -2440,7 +2478,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -2451,7 +2488,7 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = "";
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"";
 			};
 			name = Debug;
@@ -2459,7 +2496,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -2471,7 +2507,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				SDKROOT = "";
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\"";
 			};
 			name = Release;
@@ -2510,7 +2546,7 @@
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = DTCoreText;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -2543,7 +2579,7 @@
 				);
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				PRODUCT_NAME = DTCoreText;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 				WRAPPER_EXTENSION = framework;
 			};
