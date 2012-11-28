@@ -130,7 +130,7 @@
 		[_globalStyleSheet mergeStylesheet:defaultStylesheet];
 	}
 	
-	// for performance we will return this mutable string
+	// for performance reasons we will return this mutable string
 	tmpString = [[NSMutableAttributedString alloc] init];
 	
 	needsListItemStart = NO;
@@ -160,7 +160,7 @@
 			defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkColor];
 		}
 		
-		// get hex code for t   he passed color
+		// get hex code for the passed color
 		NSString *colorHex = [defaultLinkColor htmlHexString];
 		
 		// overwrite the style
@@ -465,7 +465,7 @@
 #if TARGET_OS_IPHONE		
 		if (needsListItemStart)
 		{
-			// we have an opening but not have flushed text since
+			// we have an opening tag, but haven’t flushed the text since
 			needsNewLineBefore = YES;
 			
 			currentTag.paragraphStyle.paragraphSpacing = 0;
@@ -531,7 +531,7 @@
 		
 		currentTag.paragraphStyle.textLists = textLists;
 		
-		// next text needs a NL before it
+		// next text needs a NL inserted before it
 		needsNewLineBefore = YES;
 	};
 	
@@ -803,7 +803,7 @@
 
 - (void)_flushListPrefix
 {
-	// if we start a list, then we wait until we have actual text
+	// if we start a list, we need to wait until we have the actual text
 	if (needsListItemStart)
 	{
 		DTCSSListStyle *effectiveList = [currentTag.paragraphStyle.textLists lastObject];
