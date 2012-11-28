@@ -78,8 +78,8 @@
  */
 - (NSString *)htmlHexString;
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
-/** 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7
+/**
  Converts a CGColorRef into an NSColor by placing each component into an NSColor and pending on the component count to return a grayscale or rgb color. If there are not 2 (grayscale) or 4 (rgba) components the color is from an unsupported color space and nil is returned.
  @param cgColor The CGColorRef to convert
  @returns An NSColor of this CGColorRef 
@@ -87,10 +87,10 @@
 + (NSColor *)colorWithCGColor:(CGColorRef)cgColor;
 
 /** 
- Pass through method. This is used for unit testing
- @returns This color. Returns self. 
- */
-- (NSColor *)CGColor;
+ Converts an NSColor into a CGColorRef. 
+ @returns A CGColorRef of this NSColor 
+*/
+- (CGColorRef)CGColor;
 #endif
 
 @end
