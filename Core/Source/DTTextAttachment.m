@@ -103,6 +103,11 @@
 		{
 			contentURL = [NSURL URLWithString:src];
 			
+			if(!contentURL){
+				src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
+			}
+			
 			if (![contentURL scheme])
 			{
 				// possibly a relative url
