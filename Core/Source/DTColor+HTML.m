@@ -490,7 +490,7 @@ static NSDictionary *colorLookup = nil;
 				  (NSUInteger)(green * (CGFloat)255), (NSUInteger)(blue * (CGFloat)255)];
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7
 + (NSColor *)colorWithCGColor:(CGColorRef)cgColor
 {
 	size_t count = CGColorGetNumberOfComponents(cgColor);
@@ -512,10 +512,21 @@ static NSDictionary *colorLookup = nil;
 	return nil;
 }
 
-// pass through
-- (NSColor *)CGColor
+// From https://gist.github.com/1593255
+- (CGColorRef)CGColor
 {
-	return self;
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	
+	NSColor *selfCopy = [self colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	
+	CGFloat colorValues[4];
+	[selfCopy getRed:&colorValues[0] green:&colorValues[1] blue:&colorValues[2] alpha:&colorValues[3]];
+	
+	CGColorRef color = CGColorCreate(colorSpace, colorValues);
+	
+	CGColorSpaceRelease(colorSpace);
+	
+	return color;
 }
 #endif
 

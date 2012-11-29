@@ -80,7 +80,13 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				[test internalTestCaseWithURL:URL withTempPath:tempPath];
 			};
 			
-			IMP myIMP = imp_implementationWithBlock((__bridge id)((__bridge void *)impBlock));
+			// See http://stackoverflow.com/questions/6357663/casting-a-block-to-a-void-for-dynamic-class-method-resolution
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7
+			void *impBlockForIMP = (void *)objc_unretainedPointer(impBlock);
+#else
+			id impBlockForIMP = (__bridge id)objc_unretainedPointer(impBlock);
+#endif
+			IMP myIMP = imp_implementationWithBlock(impBlockForIMP);
 			
 			SEL selector = NSSelectorFromString(selectorName);
 			

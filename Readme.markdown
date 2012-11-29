@@ -51,44 +51,41 @@ Setup
 
 The best way to use DTCoreText is to add it in Xcode as a subproject of your project with the following steps.
 
-1. Clone DTCoreText into a subfolder of your project folder or make it a git submodule
+1. Make DTCoreText a git submodule of your project
 
-   git clone https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
+   `git submodule add https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText`
 	
-2. DTCoreText uses DTHTMLParser and DTVersion from DTFoundation which is set up as a git submodule too in Core/Externals/DTFoundation, so you need to get these files as well
+2. DTCoreText uses DTHTMLParser and DTVersion from DTFoundation which is set up as a git submodule in Core/Externals/DTFoundation, so you need to get these files as well
 
-   git submodule update --init --recursive
+   `git submodule update --init --recursive`
 
-3. Open the destination project and drag `DTCoreText.xcodeproj` as a subordinate item in the Project Navigator
-4. In your prefix.pch file add:
-	
-		#import "DTCoreText.h"
+3. Open the destination project and create an "Externals" group.
 
-5. In your application target's Build Phases add the "Static Library" from the DTCoreText sub-project as a dependency.
+4. Add files… or drag `DTCoreText.xcodeproj` to the Externals group
 
-6. In your application target's Build Phases add all of the below to the Link Binary With Libraries phase (you can also do this from the Target's Summary view in the Linked Frameworks and Libraries):
+5. In your application target's Build Phases: Target Dependencies add the `Static Library` from the DTCoreText sub project
 
-		The "Static Library" target from the DTCoreText sub-project
+6. In your application target's Build Phases: Link Binary With Libraries phase add the following:
+
+		libDTCoreText.a (target from the DTCoreText sub-project)
+		libxml2.dylib
 		ImageIO.framework
 		QuartzCore.framework
-		libxml2.dylib
-		CoreText.framework (DOH!)
+		CoreText.framework
+		MobileCoreServices.framework
 
 7. Go to File: Project Settings… and change the derived data location to project-relative.
+
 8. Add the DerivedData folder to your git ignore. 
+
 9. In your application's target Build Settings:
-	- Set the "User Header Search Paths" to the directory containing your project with recrusive set to YES.
-   - Set the Header Search Paths to /usr/include/libxml2.
-	- Set "Always Search User Paths" to YES.
-	- Set the "Other Linker Flags" below
+	- Add `$(PROJECT_DIR)` to `User Header Search Paths`, set to `recursive`
+	- Set `Always Search User Paths` to `Yes`.
+	- Add the `-ObjC` flag to your app target's `Other Linker Flags`
 
-If you do not want to deal with Git submodules simply add DTCoreText to your project's git ignore file and pull updates to DTCoreText as its own independent Git repository. Otherwise you are free to add DTCoreText as a submodule.
-
-LINKER SETTINGS:
-
-   - add the -ObjC to your app target's "Other Linker Flags". This is needed whenever you link in any static library that contains Objective-C classes and categories.
-   - if you find that your app crashes with an unrecognized selector from one of this library's categories, you might also need the -all_load linker flag. Alternatively you can use -force-load with the full path to the static library. This causes the linker to load all categories from the static library.
-   - If your app does not use ARC yet (but DTCoreText does) then you also need the -fobjc-arc linker flag.
+OPTIONAL LINKER SETTINGS:
+   - If you find that your app crashes with an unrecognized selector from one of this library's categories, you might also need the `-all_load linker` flag. Alternatively you can use `-force-load` with the full path to the static library. This causes the linker to load all categories from the static library.
+   - If your app does not use ARC yet (but DTCoreText does) then you also need the `-fobjc-arc` linker flag.
 
 Known Issues
 ------------
