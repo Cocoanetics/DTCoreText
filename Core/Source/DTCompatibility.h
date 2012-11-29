@@ -27,4 +27,21 @@
 #else
 #define DTEdgeInsets NSEdgeInsets
 #define DTEdgeInsetsMake(a, b, c, d) NSEdgeInsetsMake(a, b, c, d)
+
+// These may be out of place here. Feel free to move them!
+// Sourced from https://github.com/andrep/RMModelObject
+static inline NSString* NSStringFromCGRect(const CGRect rect)
+{
+	return NSStringFromRect(NSRectFromCGRect(rect));
+}
+
+static inline NSString* NSStringFromCGSize(const CGSize size)
+{
+	return NSStringFromSize(NSSizeFromCGSize(size));
+}
+
+static inline NSString* NSStringFromCGPoint(const CGPoint point)
+{
+	return NSStringFromPoint(NSPointFromCGPoint(point));
+}
 #endif
