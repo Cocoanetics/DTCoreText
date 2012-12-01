@@ -25,22 +25,22 @@
 	NSDictionary *_options;
 	
 	// settings for parsing
-	CGFloat textScale;
-	DTColor *defaultLinkColor;
+	CGFloat _textScale;
+	DTColor *_defaultLinkColor;
 	DTCSSStylesheet *_globalStyleSheet;
-	NSURL *baseURL;
-	DTCoreTextFontDescriptor *defaultFontDescriptor;
-	DTCoreTextParagraphStyle *defaultParagraphStyle;
+	NSURL *_baseURL;
+	DTCoreTextFontDescriptor *_defaultFontDescriptor;
+	DTCoreTextParagraphStyle *_defaultParagraphStyle;
 	
 	// parsing state, accessed from inside blocks
-	NSMutableAttributedString *tmpString;
+	NSMutableAttributedString *_tmpString;
 	NSMutableString *_currentTagContents;
 	
-	DTHTMLElement *currentTag;
-	BOOL needsListItemStart;
-	BOOL needsNewLineBefore;
-	BOOL outputHasNewline;
-	BOOL currentTagIsEmpty; // YES for each opened tag, NO for anything flushed including hr, br, img -> adds an extra NL for <p></p>
+	DTHTMLElement *_currentTag;
+	BOOL _needsListItemStart;
+	BOOL _needsNewLineBefore;
+	BOOL _outputHasNewline;
+	BOOL _currentTagIsEmpty; // YES for each opened tag, NO for anything flushed including hr, br, img -> adds an extra NL for <p></p>
 	
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
@@ -110,14 +110,14 @@
 	}
 	
 	// custom option to scale text
-	textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
-	if (!textScale)
+	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
+	if (!_textScale)
 	{
-		textScale = 1.0f;
+		_textScale = 1.0f;
 	}
 	
 	// use baseURL from options if present
-	baseURL = [_options objectForKey:NSBaseURLDocumentOption];
+	_baseURL = [_options objectForKey:NSBaseURLDocumentOption];
 	
 	// the combined style sheet for entire document
 	_globalStyleSheet = [[DTCSSStylesheet defaultStyleSheet] copy]; 
@@ -131,37 +131,37 @@
 	}
 	
 	// for performance reasons we will return this mutable string
-	tmpString = [[NSMutableAttributedString alloc] init];
+	_tmpString = [[NSMutableAttributedString alloc] init];
 	
-	needsListItemStart = NO;
-	needsNewLineBefore = NO;
+	_needsListItemStart = NO;
+	_needsNewLineBefore = NO;
 	
 	// base tag with font defaults
-	defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
-	defaultFontDescriptor.pointSize = 12.0f * textScale;
+	_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
+	_defaultFontDescriptor.pointSize = 12.0f * _textScale;
 	
 	NSString *defaultFontFamily = [_options objectForKey:DTDefaultFontFamily];
 	if (defaultFontFamily)
 	{
-		defaultFontDescriptor.fontFamily = defaultFontFamily;
+		_defaultFontDescriptor.fontFamily = defaultFontFamily;
 	}
 	else
 	{
-		defaultFontDescriptor.fontFamily = @"Times New Roman";
+		_defaultFontDescriptor.fontFamily = @"Times New Roman";
 	}
 	
-	defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
+	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
-	if (defaultLinkColor)
+	if (_defaultLinkColor)
 	{
-		if ([defaultLinkColor isKindOfClass:[NSString class]])
+		if ([_defaultLinkColor isKindOfClass:[NSString class]])
 		{
 			// convert from string to color
-			defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkColor];
+			_defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)_defaultLinkColor];
 		}
 		
 		// get hex code for the passed color
-		NSString *colorHex = [defaultLinkColor htmlHexString];
+		NSString *colorHex = [_defaultLinkColor htmlHexString];
 		
 		// overwrite the style
 		NSString *styleBlock = [NSString stringWithFormat:@"a {color:#%@;}", colorHex];
@@ -181,45 +181,45 @@
 	}
 	
 	// default paragraph style
-	defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+	_defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
 	
 	NSNumber *defaultLineHeightMultiplierNum = [_options objectForKey:DTDefaultLineHeightMultiplier];
 	
 	if (defaultLineHeightMultiplierNum)
 	{
 		CGFloat defaultLineHeightMultiplier = [defaultLineHeightMultiplierNum floatValue];
-		defaultParagraphStyle.lineHeightMultiple = defaultLineHeightMultiplier;
+		_defaultParagraphStyle.lineHeightMultiple = defaultLineHeightMultiplier;
 	}
 	
 	NSNumber *defaultTextAlignmentNum = [_options objectForKey:DTDefaultTextAlignment];
 	
 	if (defaultTextAlignmentNum)
 	{
-		defaultParagraphStyle.alignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
+		_defaultParagraphStyle.alignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
 	}
 	
 	NSNumber *defaultFirstLineHeadIndent = [_options objectForKey:DTDefaultFirstLineHeadIndent];
 	if (defaultFirstLineHeadIndent)
 	{
-		defaultParagraphStyle.firstLineHeadIndent = [defaultFirstLineHeadIndent integerValue];
+		_defaultParagraphStyle.firstLineHeadIndent = [defaultFirstLineHeadIndent integerValue];
 	}
 	
 	NSNumber *defaultHeadIndent = [_options objectForKey:DTDefaultHeadIndent];
 	if (defaultHeadIndent)
 	{
-		defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
 	}
 	
 	NSNumber *defaultListIndent = [_options objectForKey:DTDefaultListIndent];
 	if (defaultListIndent)
 	{
-		defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
+		_defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
 	}
 	
 	DTHTMLElement *defaultTag = [[DTHTMLElement alloc] init];
-	defaultTag.fontDescriptor = defaultFontDescriptor;
-	defaultTag.paragraphStyle = defaultParagraphStyle;
-	defaultTag.textScale = textScale;
+	defaultTag.fontDescriptor = _defaultFontDescriptor;
+	defaultTag.paragraphStyle = _defaultParagraphStyle;
+	defaultTag.textScale = _textScale;
 	
 	id defaultColor = [_options objectForKey:DTDefaultTextColor];
 	if (defaultColor)
@@ -237,7 +237,7 @@
 	}
 	
 	
-	currentTag = defaultTag; // our defaults are the root
+	_currentTag = defaultTag; // our defaults are the root
 	
 	// create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
@@ -259,12 +259,12 @@
 
 - (NSAttributedString *)generatedAttributedString
 {
-	if (!tmpString)
+	if (!_tmpString)
 	{
 		[self _buildString];
 	}
 	
-	return tmpString;
+	return _tmpString;
 }
 
 #pragma mark GCD
@@ -281,54 +281,54 @@
 	void (^imgBlock)(void) = ^ 
 	{
 		// float causes the image to be its own block
-		if (currentTag.floatStyle != DTHTMLElementFloatStyleNone)
+		if (_currentTag.floatStyle != DTHTMLElementFloatStyleNone)
 		{
-			currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
+			_currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
 		}
 		
 		// hide contents of recognized tag
-		currentTag.tagContentInvisible = YES;
+		_currentTag.tagContentInvisible = YES;
 		
 		// make appropriate attachment
-		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:_options];
+		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:_currentTag options:_options];
 		
 		// add it to tag
-		currentTag.textAttachment = attachment;
+		_currentTag.textAttachment = attachment;
 		
 		// to avoid much too much space before the image
-		currentTag.paragraphStyle.lineHeightMultiple = 1;
+		_currentTag.paragraphStyle.lineHeightMultiple = 1;
 		
 		// specifiying line height interfers with correct positioning
-		currentTag.paragraphStyle.minimumLineHeight = 0;
-		currentTag.paragraphStyle.maximumLineHeight = 0;
+		_currentTag.paragraphStyle.minimumLineHeight = 0;
+		_currentTag.paragraphStyle.maximumLineHeight = 0;
 		
 		// caller gets opportunity to modify image tag before it is written
 		if (_willFlushCallback)
 		{
-			_willFlushCallback(currentTag);
+			_willFlushCallback(_currentTag);
 		}
 		
 		// maybe the image is forced to show as block, then we want a newline before and after
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		if (_currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 		{
-			needsNewLineBefore = YES;
+			_needsNewLineBefore = YES;
 		}
 		
-		if (needsNewLineBefore)
+		if (_needsNewLineBefore)
 		{
-			if ([tmpString length] && !outputHasNewline)
+			if ([_tmpString length] && !_outputHasNewline)
 			{
-				[tmpString appendNakedString:@"\n"];
-				outputHasNewline = YES;
+				[_tmpString appendNakedString:@"\n"];
+				_outputHasNewline = YES;
 			}
 			
-			needsNewLineBefore = NO;
+			_needsNewLineBefore = NO;
 		}
 		
 		// add it to output
-		[tmpString appendAttributedString:[currentTag attributedString]];	
-		outputHasNewline = NO;
-		currentTagIsEmpty = NO;
+		[_tmpString appendAttributedString:[_currentTag attributedString]];	
+		_outputHasNewline = NO;
+		_currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
@@ -336,9 +336,9 @@
 	
 	void (^blockquoteBlock)(void) = ^ 
 	{
-		currentTag.paragraphStyle.headIndent += 25.0 * textScale;
-		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
-		currentTag.paragraphStyle.paragraphSpacing = defaultFontDescriptor.pointSize;
+		_currentTag.paragraphStyle.headIndent += 25.0 * _textScale;
+		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
+		_currentTag.paragraphStyle.paragraphSpacing = _defaultFontDescriptor.pointSize;
 	};
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
@@ -347,44 +347,44 @@
 	void (^objectBlock)(void) = ^ 
 	{
 		// hide contents of recognized tag
-		currentTag.tagContentInvisible = YES;
+		_currentTag.tagContentInvisible = YES;
 		
 		// make appropriate attachment
-		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:currentTag options:_options];
+		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:_currentTag options:_options];
 		
 		// add it to tag
-		currentTag.textAttachment = attachment;
+		_currentTag.textAttachment = attachment;
 		
 		// to avoid much too much space before the image
-		currentTag.paragraphStyle.lineHeightMultiple = 1;
+		_currentTag.paragraphStyle.lineHeightMultiple = 1;
 		
 		// caller gets opportunity to modify object tag before it is written
 		if (_willFlushCallback)
 		{
-			_willFlushCallback(currentTag);
+			_willFlushCallback(_currentTag);
 		}
 		
 		// maybe the image is forced to show as block, then we want a newline before and after
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		if (_currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 		{
-			needsNewLineBefore = YES;
+			_needsNewLineBefore = YES;
 		}
 		
-		if (needsNewLineBefore)
+		if (_needsNewLineBefore)
 		{
-			if ([tmpString length] && !outputHasNewline)
+			if ([_tmpString length] && !_outputHasNewline)
 			{
-				[tmpString appendNakedString:@"\n"];
-				outputHasNewline = YES;
+				[_tmpString appendNakedString:@"\n"];
+				_outputHasNewline = YES;
 			}
 			
-			needsNewLineBefore = NO;
+			_needsNewLineBefore = NO;
 		}
 		
 		// add it to output
-		[tmpString appendAttributedString:[currentTag attributedString]];
-		outputHasNewline = NO;
-		currentTagIsEmpty = NO;
+		[_tmpString appendAttributedString:[_currentTag attributedString]];
+		_outputHasNewline = NO;
+		_currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
@@ -394,14 +394,14 @@
 	
 	void (^aBlock)(void) = ^ 
 	{
-		if (currentTag.isColorInherited || !currentTag.textColor)
+		if (_currentTag.isColorInherited || !_currentTag.textColor)
 		{
-			currentTag.textColor = defaultLinkColor;
-			currentTag.isColorInherited = NO;
+			_currentTag.textColor = _defaultLinkColor;
+			_currentTag.isColorInherited = NO;
 		}
 		
 		// remove line breaks and whitespace in links
-		NSString *cleanString = [[currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+		NSString *cleanString = [[_currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 		cleanString = [cleanString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
@@ -411,27 +411,27 @@
 		{
 			if ([cleanString length])
 			{
-				link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+				link = [NSURL URLWithString:cleanString relativeToURL:_baseURL];
 				
 				if (!link)
 				{
 					// NSURL did not like the link, so let's encode it
 					cleanString = [cleanString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 					
-					link = [NSURL URLWithString:cleanString relativeToURL:baseURL];
+					link = [NSURL URLWithString:cleanString relativeToURL:_baseURL];
 				}
 			}
 			else
 			{
-				link = baseURL;
+				link = _baseURL;
 			}
 		}
 		
-		currentTag.link = link;
+		_currentTag.link = link;
 		
 		
 		// the name attribute of A becomes an anchor
-		currentTag.anchorName = [currentTag attributeForKey:@"name"];
+		_currentTag.anchorName = [_currentTag attributeForKey:@"name"];
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
@@ -439,22 +439,22 @@
 	
 	void (^liBlock)(void) = ^ 
 	{
-		needsListItemStart = YES;
-		currentTag.paragraphStyle.paragraphSpacing = 0;
-		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent;
-		currentTag.paragraphStyle.headIndent += currentTag.paragraphStyle.listIndent;
+		_needsListItemStart = YES;
+		_currentTag.paragraphStyle.paragraphSpacing = 0;
+		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
+		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
 
-		DTCSSListStyle *listStyle = [currentTag.paragraphStyle.textLists lastObject];
+		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
 		
 		if (listStyle.type != DTCSSListStyleTypeNone)
 		{
 			// first tab is to right-align bullet, numbering against
-			CGFloat tabOffset = currentTag.paragraphStyle.headIndent - 5.0f*textScale;
-			[currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
+			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 		}
 		
 		// second tab is for the beginning of first line after bullet
-		[currentTag.paragraphStyle addTabStopAtPosition:currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
+		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
 	};
 	
 	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
@@ -463,36 +463,36 @@
 	void (^listBlock)(void) = ^ 
 	{
 #if TARGET_OS_IPHONE		
-		if (needsListItemStart)
+		if (_needsListItemStart)
 		{
 			// we have an opening tag, but haven’t flushed the text since
-			needsNewLineBefore = YES;
+			_needsNewLineBefore = YES;
 			
-			currentTag.paragraphStyle.paragraphSpacing = 0;
+			_currentTag.paragraphStyle.paragraphSpacing = 0;
 			
-			if (needsNewLineBefore)
+			if (_needsNewLineBefore)
 			{
-				if (!outputHasNewline)
+				if (!_outputHasNewline)
 				{
-					[tmpString appendString:@"\n"];
-					outputHasNewline = YES;
+					[_tmpString appendString:@"\n"];
+					_outputHasNewline = YES;
 				}
 				
-				needsNewLineBefore = NO;
+				_needsNewLineBefore = NO;
 			}
 			
 			// output the prefix
 			[self _flushListPrefix];
 		}
 #endif		
-		needsNewLineBefore = YES;
+		_needsNewLineBefore = YES;
 		
 		// create the appropriate list style from CSS
-		NSDictionary *styles = [currentTag styles];
+		NSDictionary *styles = [_currentTag styles];
 		DTCSSListStyle *newListStyle = [[DTCSSListStyle alloc] initWithStyles:styles];
 		
 		// append this list style to the current paragraph style text lists
-		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
+		NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];
 		if (!textLists)
 		{
 			textLists = [NSMutableArray array];
@@ -529,10 +529,10 @@
 			}
 		}
 		
-		currentTag.paragraphStyle.textLists = textLists;
+		_currentTag.paragraphStyle.textLists = textLists;
 		
 		// next text needs a NL inserted before it
-		needsNewLineBefore = YES;
+		_needsNewLineBefore = YES;
 	};
 	
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
@@ -543,30 +543,30 @@
 	void (^hrBlock)(void) = ^ 
 	{
 		// open block needs closing
-		if (needsNewLineBefore)
+		if (_needsNewLineBefore)
 		{
-			if ([tmpString length] && !outputHasNewline)
+			if ([_tmpString length] && !_outputHasNewline)
 			{
-				[tmpString appendString:@"\n"];
-				outputHasNewline = YES;
+				[_tmpString appendString:@"\n"];
+				_outputHasNewline = YES;
 			}
 			
-			needsNewLineBefore = NO;
+			_needsNewLineBefore = NO;
 		}
 		
-		currentTag.text = @"\n";
+		_currentTag.text = @"\n";
 		
 		NSMutableDictionary *styleDict = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"Dummy"];
 		
-		if (currentTag.backgroundColor)
+		if (_currentTag.backgroundColor)
 		{
-			[styleDict setObject:currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
+			[styleDict setObject:_currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
 		}
-		[currentTag addAdditionalAttribute:styleDict forKey:DTHorizontalRuleStyleAttribute];
+		[_currentTag addAdditionalAttribute:styleDict forKey:DTHorizontalRuleStyleAttribute];
 		
-		[tmpString appendAttributedString:[currentTag attributedString]];
-		outputHasNewline = YES;
-		currentTagIsEmpty = NO;
+		[_tmpString appendAttributedString:[_currentTag attributedString]];
+		_outputHasNewline = YES;
+		_currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[hrBlock copy] forKey:@"hr"];
@@ -574,91 +574,91 @@
 	
 	void (^h1Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 1;
+		_currentTag.headerLevel = 1;
 	};
 	[_tagStartHandlers setObject:[h1Block copy] forKey:@"h1"];
 	
 	
 	void (^h2Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 2;
+		_currentTag.headerLevel = 2;
 	};
 	[_tagStartHandlers setObject:[h2Block copy] forKey:@"h2"];
 	
 	
 	void (^h3Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 3;
+		_currentTag.headerLevel = 3;
 	};
 	[_tagStartHandlers setObject:[h3Block copy] forKey:@"h3"];
 	
 	
 	void (^h4Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 4;
+		_currentTag.headerLevel = 4;
 	};
 	[_tagStartHandlers setObject:[h4Block copy] forKey:@"h4"];
 	
 	
 	void (^h5Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 5;
+		_currentTag.headerLevel = 5;
 	};
 	[_tagStartHandlers setObject:[h5Block copy] forKey:@"h5"];
 	
 	
 	void (^h6Block)(void) = ^ 
 	{
-		currentTag.headerLevel = 6;
+		_currentTag.headerLevel = 6;
 	};
 	[_tagStartHandlers setObject:[h6Block copy] forKey:@"h6"];
 	
 	
 	void (^fontBlock)(void) = ^ 
 	{
-		NSInteger size = [[currentTag attributeForKey:@"size"] intValue];
+		NSInteger size = [[_currentTag attributeForKey:@"size"] intValue];
 		
 		switch (size) 
 		{
 			case 1:
-				currentTag.fontDescriptor.pointSize = textScale * 9.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 9.0f;
 				break;
 			case 2:
-				currentTag.fontDescriptor.pointSize = textScale * 10.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 10.0f;
 				break;
 			case 4:
-				currentTag.fontDescriptor.pointSize = textScale * 14.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 14.0f;
 				break;
 			case 5:
-				currentTag.fontDescriptor.pointSize = textScale * 18.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 18.0f;
 				break;
 			case 6:
-				currentTag.fontDescriptor.pointSize = textScale * 24.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 24.0f;
 				break;
 			case 7:
-				currentTag.fontDescriptor.pointSize = textScale * 37.0f;
+				_currentTag.fontDescriptor.pointSize = _textScale * 37.0f;
 				break;	
 			case 3:
 			default:
-				currentTag.fontDescriptor.pointSize = defaultFontDescriptor.pointSize;
+				_currentTag.fontDescriptor.pointSize = _defaultFontDescriptor.pointSize;
 				break;
 		}
 		
-		NSString *face = [currentTag attributeForKey:@"face"];
+		NSString *face = [_currentTag attributeForKey:@"face"];
 		
 		if (face)
 		{
-			currentTag.fontDescriptor.fontName = face;
+			_currentTag.fontDescriptor.fontName = face;
 			
 			// face usually invalidates family
-			currentTag.fontDescriptor.fontFamily = nil; 
+			_currentTag.fontDescriptor.fontFamily = nil; 
 		}
 		
-		NSString *color = [currentTag attributeForKey:@"color"];
+		NSString *color = [_currentTag attributeForKey:@"color"];
 		
 		if (color)
 		{
-			currentTag.textColor = [DTColor colorWithHTMLName:color];       
+			_currentTag.textColor = [DTColor colorWithHTMLName:color];       
 		}
 	};
 	
@@ -667,7 +667,7 @@
 	
 	void (^pBlock)(void) = ^ 
 	{
-		currentTag.paragraphStyle.firstLineHeadIndent = currentTag.paragraphStyle.headIndent + defaultParagraphStyle.firstLineHeadIndent;
+		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
 	};
 	
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
@@ -675,12 +675,12 @@
 	
 	void (^brBlock)(void) = ^ 
 	{
-		currentTag.text = UNICODE_LINE_FEED;
+		_currentTag.text = UNICODE_LINE_FEED;
 		
 		// NOTE: cannot use flush because that removes the break
-		[tmpString appendAttributedString:[currentTag attributedString]];
-		outputHasNewline = NO;
-		currentTagIsEmpty = NO;
+		[_tmpString appendAttributedString:[_currentTag attributedString]];
+		_outputHasNewline = NO;
+		_currentTagIsEmpty = NO;
 	};
 	
 	[_tagStartHandlers setObject:[brBlock copy] forKey:@"br"];
@@ -698,15 +698,15 @@
 	void (^bodyBlock)(void) = ^ 
 	{
 		// if the last child was a block we need an extra \n
-		if (needsNewLineBefore)
+		if (_needsNewLineBefore)
 		{
-			if ([tmpString length] && !outputHasNewline)
+			if ([_tmpString length] && !_outputHasNewline)
 			{
-				[tmpString appendString:@"\n"];
-				outputHasNewline = YES;
+				[_tmpString appendString:@"\n"];
+				_outputHasNewline = YES;
 			}
 			
-			needsNewLineBefore = NO;
+			_needsNewLineBefore = NO;
 		}
 	};
 	
@@ -715,7 +715,7 @@
 	
 	void (^liBlock)(void) = ^ 
 	{
-		needsListItemStart = NO;
+		_needsListItemStart = NO;
 	};
 	
 	[_tagEndHandlers setObject:[liBlock copy] forKey:@"li"];
@@ -724,15 +724,15 @@
 	void (^ulBlock)(void) = ^ 
 	{
 		// pop the current list style from the paragraph style text lists
-		NSMutableArray *textLists = [currentTag.paragraphStyle.textLists mutableCopy];
+		NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];
 		[textLists removeLastObject];
-		currentTag.paragraphStyle.textLists = textLists;
+		_currentTag.paragraphStyle.textLists = textLists;
 		
 		// if this was the last active list
 		if ([textLists count]==0) 
 		{
 			// adjust spacing after last li to be the one defined for ol/ul
-			NSInteger index = [tmpString length];
+			NSInteger index = [_tmpString length];
 			
 			if (index)
 			{
@@ -740,26 +740,26 @@
 				
 				// get the paragraph style for the previous paragraph
 				NSRange effectiveRange;
-				CTParagraphStyleRef prevParagraphStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName
+				CTParagraphStyleRef prevParagraphStyle = (__bridge CTParagraphStyleRef)[_tmpString attribute:(id)kCTParagraphStyleAttributeName
 																									atIndex:index 
 																							 effectiveRange:&effectiveRange];
 				
 				// convert it to DTCoreText
 				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:prevParagraphStyle];
 				
-				if (paragraphStyle.paragraphSpacing != currentTag.paragraphStyle.paragraphSpacing)
+				if (paragraphStyle.paragraphSpacing != _currentTag.paragraphStyle.paragraphSpacing)
 				{
-					paragraphStyle.paragraphSpacing = currentTag.paragraphStyle.paragraphSpacing;
+					paragraphStyle.paragraphSpacing = _currentTag.paragraphStyle.paragraphSpacing;
 					
 					CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
 					
 					// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
-					NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
+					NSRange paragraphRange = [[_tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
 					
 					// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
-					[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+					[_tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
 					
-					[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
+					[_tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
 				}
 			}
 		}
@@ -770,19 +770,19 @@
 	
 	void (^pBlock)(void) = ^ 
 	{
-		if (currentTagIsEmpty)
+		if (_currentTagIsEmpty)
 		{
 			// empty paragraph
 			
 			// end of P we always add a newline
-			[tmpString appendString:@"\n" withParagraphStyle:currentTag.paragraphStyle fontDescriptor:currentTag.fontDescriptor];
+			[_tmpString appendString:@"\n" withParagraphStyle:_currentTag.paragraphStyle fontDescriptor:_currentTag.fontDescriptor];
 		}
 		else
 		{
 			// extend previous tag contents
-			[tmpString appendString:@"\n"];
+			[_tmpString appendString:@"\n"];
 		}
-		outputHasNewline = YES;
+		_outputHasNewline = YES;
 	};
 	
 	[_tagEndHandlers setObject:[pBlock copy] forKey:@"p"];
@@ -804,11 +804,11 @@
 - (void)_flushListPrefix
 {
 	// if we start a list, we need to wait until we have the actual text
-	if (needsListItemStart)
+	if (_needsListItemStart)
 	{
-		DTCSSListStyle *effectiveList = [currentTag.paragraphStyle.textLists lastObject];
+		DTCSSListStyle *effectiveList = [_currentTag.paragraphStyle.textLists lastObject];
 		
-		NSInteger index = [tmpString length]-1;
+		NSInteger index = [_tmpString length]-1;
 		NSInteger counter = 0;
 		
 		if (index>0)
@@ -817,11 +817,11 @@
 			index--;
 			
 			NSRange prevListRange;
-			NSArray *prevLists = [tmpString attribute:DTTextListsAttribute atIndex:index effectiveRange:&prevListRange];
+			NSArray *prevLists = [_tmpString attribute:DTTextListsAttribute atIndex:index effectiveRange:&prevListRange];
 			
 			if ([prevLists containsObject:effectiveList])
 			{
-				NSInteger prevItemIndex = [tmpString itemNumberInTextList:effectiveList atIndex:index];
+				NSInteger prevItemIndex = [_tmpString itemNumberInTextList:effectiveList atIndex:index];
 				counter = prevItemIndex + 1;
 			}
 			else
@@ -836,16 +836,16 @@
 			counter = [effectiveList startingItemNumber];
 		}
 		
-		NSDictionary *tagAttributes = [currentTag attributesDictionary];
-		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:currentTag.paragraphStyle.listIndent attributes:tagAttributes];
+		NSDictionary *tagAttributes = [_currentTag attributesDictionary];
+		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:_currentTag.paragraphStyle.listIndent attributes:tagAttributes];
 		
 		if (prefixString)
 		{
-			[tmpString appendAttributedString:prefixString]; 
-			outputHasNewline = NO;
+			[_tmpString appendAttributedString:prefixString]; 
+			_outputHasNewline = NO;
 		}
 		
-		needsListItemStart = NO;
+		_needsListItemStart = NO;
 	}
 }
 
@@ -862,7 +862,7 @@
 		return;
 	}
 	
-	if (currentTag.preserveNewlines)
+	if (_currentTag.preserveNewlines)
 	{
 		tagContents = [tagContent stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 		
@@ -881,27 +881,27 @@
 		}
 	}
 	
-	if (needsNewLineBefore)
+	if (_needsNewLineBefore)
 	{
 		if ([tagContents hasPrefix:@" "])
 		{
 			tagContents = [tagContents substringFromIndex:1];
 		}
 		
-		if ([tmpString length])
+		if ([_tmpString length])
 		{
-			if (!outputHasNewline)
+			if (!_outputHasNewline)
 			{
-				[tmpString appendString:@"\n"];
-				outputHasNewline = YES;
+				[_tmpString appendString:@"\n"];
+				_outputHasNewline = YES;
 			}
 		}
 		
-		needsNewLineBefore = NO;
+		_needsNewLineBefore = NO;
 	}
 	else // might be a continuation of a paragraph, then we might need space before it
 	{
-		NSString *stringSoFar = [tmpString string];
+		NSString *stringSoFar = [_tmpString string];
 		
 		// prevent double spacing
 		if ([stringSoFar hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] && [tagContents hasPrefix:@" "])
@@ -911,26 +911,26 @@
 	}
 	
 	// if we start a list, then we wait until we have actual text
-	if (needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
+	if (_needsListItemStart && [tagContents length] > 0 && ![tagContents isEqualToString:@" "])
 	{
 		[self _flushListPrefix];
 	}
 	
 	// we don't want whitespace before first tag to turn into paragraphs
-	if (!(currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !currentTag.tagContentInvisible)
+	if (!(_currentTag.displayStyle == DTHTMLElementDisplayStyleNone) && !_currentTag.tagContentInvisible)
 	{
-		currentTag.text = tagContents;
+		_currentTag.text = tagContents;
 		
 		if (_willFlushCallback)
 		{
-			_willFlushCallback(currentTag);
+			_willFlushCallback(_currentTag);
 		}
 		
-		[tmpString appendAttributedString:[currentTag attributedString]];
-		outputHasNewline = NO;
+		[_tmpString appendAttributedString:[_currentTag attributedString]];
+		_outputHasNewline = NO;
 		
 		// we've written something
-		currentTagIsEmpty = NO;
+		_currentTagIsEmpty = NO;
 	}	
 	
 	_currentTagContents = nil;
@@ -943,17 +943,17 @@
 	void (^tmpBlock)(void) = ^
 	{
 		// this brute-force inherits the nextTags attributes from the previous tag
-		DTHTMLElement *parent = currentTag;
-		DTHTMLElement *nextTag = [currentTag copy];
+		DTHTMLElement *parent = _currentTag;
+		DTHTMLElement *nextTag = [_currentTag copy];
 		nextTag.tagName = elementName;
-		nextTag.textScale = textScale;
+		nextTag.textScale = _textScale;
 		nextTag.attributes = attributeDict;
 		[parent addChild:nextTag];
 		
 		// only inherit background-color from inline elements
 		if (parent.displayStyle == DTHTMLElementDisplayStyleInline)
 		{
-			nextTag.backgroundColor = currentTag.backgroundColor;
+			nextTag.backgroundColor = _currentTag.backgroundColor;
 		}
 		
 		// apply style from merged style sheet
@@ -971,7 +971,7 @@
 			// remove whitespace suffix in current non-block item
 			if (nextTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 			{
-				if (currentTag.displayStyle != DTHTMLElementDisplayStyleBlock)
+				if (_currentTag.displayStyle != DTHTMLElementDisplayStyleBlock)
 				{
 					[_currentTagContents removeTrailingWhitespace];
 				}
@@ -988,26 +988,26 @@
 			_currentTagContents = nil;
 		}
 		
-		// keep track of something was flushed for this tag
-		currentTagIsEmpty = YES;
+		// keep track if something was flushed for this tag
+		_currentTagIsEmpty = YES;
 		
 		// switch to new tag
-		currentTag = nextTag;
+		_currentTag = nextTag;
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleNone)
+		if (_currentTag.displayStyle == DTHTMLElementDisplayStyleNone)
 		{
 			// we don't care about the other stuff in META tags, but styles are inherited
 			return;
 		}
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock || currentTag.displayStyle == DTHTMLElementDisplayStyleListItem)
+		if (_currentTag.displayStyle == DTHTMLElementDisplayStyleBlock || _currentTag.displayStyle == DTHTMLElementDisplayStyleListItem)
 		{
 			// make sure that we have a NL before text in this block
-			needsNewLineBefore = YES;
+			_needsNewLineBefore = YES;
 		}
 		
 		// direction
-		NSString *direction = [currentTag attributeForKey:@"dir"];
+		NSString *direction = [_currentTag attributeForKey:@"dir"];
 		
 		if (direction)
 		{
@@ -1016,11 +1016,11 @@
 			
 			if ([lowerDirection isEqualToString:@"ltr"])
 			{
-				currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionLeftToRight;
+				_currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionLeftToRight;
 			}
 			else if ([lowerDirection isEqualToString:@"rtl"])
 			{
-				currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionRightToLeft;
+				_currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionRightToLeft;
 			}
 		}
 		
@@ -1032,10 +1032,10 @@
 			tagBlock();
 		}
 		
-		// output tag content with before pseudo-selector
-		if (currentTag.beforeContent)
+		// output tag content before pseudo-selector
+		if (_currentTag.beforeContent)
 		{
-			[self _flushCurrentTagContent:currentTag.beforeContent normalizeWhitespace:NO];
+			[self _flushCurrentTagContent:_currentTag.beforeContent normalizeWhitespace:NO];
 		}
 	};
 	
@@ -1049,7 +1049,7 @@
 		if (_currentTagContents)
 		{
 			// trim off white space at end if block
-			if (currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+			if (_currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
 			{
 				[_currentTagContents removeTrailingWhitespace];
 			}
@@ -1065,17 +1065,17 @@
 			tagBlock();
 		}
 		
-		if (currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
+		if (_currentTag.displayStyle == DTHTMLElementDisplayStyleBlock)
 		{
-			needsNewLineBefore = YES;
+			_needsNewLineBefore = YES;
 		}
 		
 		// check if this tag is indeed closing the currently open one
-		if ([elementName isEqualToString:currentTag.tagName])
+		if ([elementName isEqualToString:_currentTag.tagName])
 		{
-			DTHTMLElement *popChild = currentTag;
-			currentTag = currentTag.parent;
-			[currentTag removeChild:popChild];
+			DTHTMLElement *popChild = _currentTag;
+			_currentTag = _currentTag.parent;
+			[_currentTag removeChild:popChild];
 		}
 		else 
 		{
@@ -1096,7 +1096,7 @@
 - (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue,^{
-		if ([currentTag.tagName isEqualToString:@"style"])
+		if ([_currentTag.tagName isEqualToString:@"style"])
 		{
 			NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
 			[_globalStyleSheet parseStyleBlock:styleBlock];
