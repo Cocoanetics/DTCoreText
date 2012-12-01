@@ -988,7 +988,7 @@
 			_currentTagContents = nil;
 		}
 		
-		// keep track of something was flushed for this tag
+		// keep track if something was flushed for this tag
 		currentTagIsEmpty = YES;
 		
 		// switch to new tag
@@ -1032,7 +1032,7 @@
 			tagBlock();
 		}
 		
-		// output tag content with before pseudo-selector
+		// output tag content before pseudo-selector
 		if (currentTag.beforeContent)
 		{
 			[self _flushCurrentTagContent:currentTag.beforeContent normalizeWhitespace:NO];
