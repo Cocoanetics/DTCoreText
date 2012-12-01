@@ -256,8 +256,10 @@
 				
 				return [[NSAttributedString alloc] initWithString:text attributes:smallAttributes];
 			}
-			
-			return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:text attributes:attributes];
+			else
+			{
+				return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:text attributes:attributes];
+			}
 		}
 	}
 }
