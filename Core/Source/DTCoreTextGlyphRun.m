@@ -34,19 +34,19 @@
 	CGRect _frame;
 	
 	CGFloat _offset; // x distance from line origin 
-	CGFloat ascent;
-	CGFloat descent;
-	CGFloat leading;
-	CGFloat width;
+	CGFloat _ascent;
+	CGFloat _descent;
+	CGFloat _leading;
+	CGFloat _width;
 	
-	NSInteger numberOfGlyphs;
+	NSInteger _numberOfGlyphs;
 	
-	const CGPoint *glyphPositionPoints;
-	BOOL needToFreeGlyphPositionPoints;
+	const CGPoint *_glyphPositionPoints;
+	//BOOL needToFreeGlyphPositionPoints;
 	
 	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
-	__unsafe_unretained NSDictionary *attributes;
-    NSArray *stringIndices;
+	__unsafe_unretained NSDictionary *_attributes;
+    NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;
 	BOOL _hyperlink;
@@ -98,7 +98,7 @@
 	{
 		if (!_didCalculateMetrics)
 		{
-			width = (CGFloat)CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+			_width = (CGFloat)CTRunGetTypographicBounds((CTRunRef)_run, CFRangeMake(0, 0), &_ascent, &_descent, &_leading);
 			_didCalculateMetrics = YES;
 		}
 	}
@@ -110,23 +110,23 @@
 	if (!_didCalculateMetrics) {
 		[self calculateMetrics];
 	}
-	if (!glyphPositionPoints)
+	if (!_glyphPositionPoints)
 	{
 		// this is a pointer to the points inside the run, thus no retain necessary
-		glyphPositionPoints = CTRunGetPositionsPtr(_run);
+		_glyphPositionPoints = CTRunGetPositionsPtr(_run);
 	}
 	
-	if (!glyphPositionPoints || index >= self.numberOfGlyphs)
+	if (!_glyphPositionPoints || index >= self.numberOfGlyphs)
 	{
 		return CGRectNull;
 	}
 	
-	CGPoint glyphPosition = glyphPositionPoints[index];
+	CGPoint glyphPosition = _glyphPositionPoints[index];
 	
-	CGRect rect = CGRectMake(_line.baselineOrigin.x + glyphPosition.x, _line.baselineOrigin.y - ascent, _offset + width - glyphPosition.x, ascent + descent);
+	CGRect rect = CGRectMake(_line.baselineOrigin.x + glyphPosition.x, _line.baselineOrigin.y - _ascent, _offset + _width - glyphPosition.x, _ascent + _descent);
 	if (index < self.numberOfGlyphs-1)
 	{
-		rect.size.width = glyphPositionPoints[index+1].x - glyphPosition.x;
+		rect.size.width = _glyphPositionPoints[index+1].x - glyphPosition.x;
 	}
 	
 	return rect;
@@ -135,7 +135,7 @@
 // TODO: fix indices if the stringRange is modified
 - (NSArray *)stringIndices 
 {
-	if (!stringIndices) 
+	if (!_stringIndices) 
 	{
 		const CFIndex *indices = CTRunGetStringIndicesPtr(_run);
 		NSInteger count = self.numberOfGlyphs;
@@ -145,9 +145,9 @@
 		{
 			[array addObject:[NSNumber numberWithInteger:indices[i]]];
 		}
-		stringIndices = array;
+		_stringIndices = array;
 	}
-	return stringIndices;
+	return _stringIndices;
 }
 
 // bounds of an image encompassing the entire run
@@ -208,30 +208,30 @@
 			[self calculateMetrics];
 		}
 		
-		descent = 0;
-		ascent = self.attachment.displaySize.height;
+		_descent = 0;
+		_ascent = self.attachment.displaySize.height;
 	}
 }
 
 #pragma mark Properites
 - (NSInteger)numberOfGlyphs
 {
-	if (!numberOfGlyphs)
+	if (!_numberOfGlyphs)
 	{
-		numberOfGlyphs = CTRunGetGlyphCount(_run);
+		_numberOfGlyphs = CTRunGetGlyphCount(_run);
 	}
 	
-	return numberOfGlyphs;
+	return _numberOfGlyphs;
 }
 
 - (NSDictionary *)attributes
 {
-	if (!attributes)
+	if (!_attributes)
 	{
-		attributes = (__bridge NSDictionary *)CTRunGetAttributes(_run);
+		_attributes = (__bridge NSDictionary *)CTRunGetAttributes(_run);
 	}
 	
-	return attributes;
+	return _attributes;
 }
 
 - (DTTextAttachment *)attachment
@@ -271,7 +271,7 @@
 		[self calculateMetrics];
 	}
 	
-	return CGRectMake(_line.baselineOrigin.x + _offset, _line.baselineOrigin.y - ascent, width, ascent + descent);
+	return CGRectMake(_line.baselineOrigin.x + _offset, _line.baselineOrigin.y - _ascent, _width, _ascent + _descent);
 }
 
 - (CGFloat)width
@@ -281,7 +281,7 @@
 		[self calculateMetrics];
 	}
 	
-	return width;
+	return _width;
 }
 
 - (CGFloat)ascent
@@ -291,7 +291,7 @@
 		[self calculateMetrics];
 	}
 	
-	return ascent;
+	return _ascent;
 }
 
 - (CGFloat)descent
@@ -301,7 +301,7 @@
 		[self calculateMetrics];
 	}
 	
-	return descent;
+	return _descent;
 }
 
 - (CGFloat)leading
@@ -311,16 +311,16 @@
 		[self calculateMetrics];
 	}
 	
-	return leading;
+	return _leading;
 }
 
 @synthesize frame = _frame;
-@synthesize numberOfGlyphs;
-@synthesize attributes;
+@synthesize numberOfGlyphs = _numberOfGlyphs;
+@synthesize attributes = _attributes;
 
-@synthesize ascent;
-@synthesize descent;
-@synthesize leading;
+@synthesize ascent = _ascent;
+@synthesize descent = _descent;
+@synthesize leading = _leading;
 @synthesize attachment = _attachment;
 
 @end

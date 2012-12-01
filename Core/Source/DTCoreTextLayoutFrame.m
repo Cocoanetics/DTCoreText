@@ -30,7 +30,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSRange _requestedStringRange;
 	NSRange _stringRange;
 	
-	NSInteger tag;
+	//NSInteger _tag;
 	
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
 }
