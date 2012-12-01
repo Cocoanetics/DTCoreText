@@ -21,7 +21,6 @@
 #import "DTCSSListStyle.h"
 #import "DTTextBlock.h"
 #import "DTCSSStylesheet.h"
-#import "DTCoreText.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTHTMLElement.h"
 #import "DTTextAttachment.h"
