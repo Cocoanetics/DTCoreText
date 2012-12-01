@@ -14,10 +14,10 @@
 	CGSize _originalSize;
 	CGSize _displaySize;
 	DTTextAttachmentVerticalAlignment _verticalAlignment;
-	id contents;
+	id _contents;
     NSDictionary *_attributes;
     
-    DTTextAttachmentType contentType;
+    DTTextAttachmentType _contentType;
 	
 	NSURL *_contentURL;
 	NSURL *_hyperLinkURL;
@@ -205,12 +205,12 @@
 // makes a data URL of the image
 - (NSString *)dataURLRepresentation
 {
-	if ((contents==nil) || contentType != DTTextAttachmentTypeImage)
+	if ((_contents==nil) || _contentType != DTTextAttachmentTypeImage)
 	{
 		return nil;
 	}
 	
-	DTImage *image = (DTImage *)contents;
+	DTImage *image = (DTImage *)_contents;
 	NSData *data = [image dataForPNGRepresentation];
 	NSString *encoded = [data base64EncodedString];
 	
@@ -289,9 +289,9 @@
  */
 - (id)contents
 {
-	if (!contents)
+	if (!_contents)
 	{
-		if (contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
+		if (_contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
 		{
 			DTImage *image = [[DTImage alloc] initWithContentsOfFile:[_contentURL path]];
 			
@@ -299,13 +299,13 @@
 		}
 	}
 	
-	return contents;
+	return _contents;
 }
 
 @synthesize originalSize = _originalSize;
 @synthesize displaySize = _displaySize;
-@synthesize contents;
-@synthesize contentType;
+@synthesize contents = _contents;
+@synthesize contentType = _contentType;
 @synthesize contentURL = _contentURL;
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;

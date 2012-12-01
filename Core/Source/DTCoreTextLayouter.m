@@ -23,7 +23,7 @@
 
 @implementation DTCoreTextLayouter
 {
-	CTFramesetterRef framesetter;
+	CTFramesetterRef _framesetter;
 	
 	NSAttributedString *_attributedString;
 	
@@ -107,18 +107,18 @@
 #pragma mark Properties
 - (CTFramesetterRef)framesetter
 {
-	if (!framesetter) // Race condition, could be null now but set when we get into the SYNCHRONIZE block - so do the test twice
+	if (!_framesetter) // Race condition, could be null now but set when we get into the SYNCHRONIZE block - so do the test twice
 	{
 		SYNCHRONIZE_START(self)
 		{
-			if (!framesetter)
+			if (!_framesetter)
 			{
-				framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
+				_framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
 			}
 		}
 		SYNCHRONIZE_END(self)
 	}
-	return framesetter;
+	return _framesetter;
 }
 
 
@@ -126,10 +126,10 @@
 {
 	{
 		// framesetter needs to go
-		if (framesetter)
+		if (_framesetter)
 		{
-			CFRelease(framesetter);
-			framesetter = NULL;
+			CFRelease(_framesetter);
+			_framesetter = NULL;
 		}
 	}
 }
@@ -166,7 +166,7 @@
 
 
 @synthesize attributedString = _attributedString;
-@synthesize frames;
-@synthesize framesetter;
+@synthesize frames = _frames;
+@synthesize framesetter = _framesetter;
 
 @end
