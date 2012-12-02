@@ -339,7 +339,7 @@
 {
 	NSString *plainString = [self string];
 	
-	// divide the string into it's blocks, we assume that these are the P
+	// divide the string into it's blocks (we assume that these are the P)
 	NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
 	
 	NSMutableString *retString = [NSMutableString string];
@@ -366,7 +366,7 @@
 		
 		BOOL fontIsBlockLevel = NO;
 		
-		// check if font is same in all paragraph
+		// check if font is same in the entire paragraph
 		NSRange fontEffectiveRange;
 		CTFontRef paragraphFont = (__bridge CTFontRef)[self attribute:(id)kCTFontAttributeName atIndex:paragraphRange.location longestEffectiveRange:&fontEffectiveRange inRange:paragraphRange];
 		

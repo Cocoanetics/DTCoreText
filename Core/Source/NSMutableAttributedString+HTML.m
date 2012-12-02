@@ -13,7 +13,7 @@
 @implementation NSMutableAttributedString (HTML)
 
 
-// apends a plain string extending the attributes at this position
+// appends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
 {
 	NSInteger length = [self length];
@@ -22,11 +22,12 @@
 	
 	if (length)
 	{
-		// get attributes from last character
+		// get attributes from the last character
 		previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
 	}
 	
-	// need to remove image placeholder to prevent duplication
+	// we need to remove the image placeholder to prevent duplication
+	// without this, we could just append directly to self.mutableString
 	if ([previousAttributes objectForKey:NSAttachmentAttributeName])
 	{
 		NSMutableDictionary *tmpDict = [previousAttributes mutableCopy];
