@@ -16,50 +16,48 @@
 // appends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
 {
-	NSInteger length = [self length];
+	NSUInteger selfLengthBefore = [self length];
 	
-	NSDictionary *previousAttributes = nil;
+	[self.mutableString appendString:string];
 	
-	if (length)
-	{
-		// get attributes from the last character
-		previousAttributes = [self attributesAtIndex:length-1 effectiveRange:NULL];
-	}
+	NSRange appendedStringRange = NSMakeRange(selfLengthBefore, [string length]);
 	
-	// we need to remove the image placeholder to prevent duplication
-	// without this, we could just append directly to self.mutableString
-	if ([previousAttributes objectForKey:NSAttachmentAttributeName])
-	{
-		NSMutableDictionary *tmpDict = [previousAttributes mutableCopy];
-		
-		[tmpDict removeObjectForKey:NSAttachmentAttributeName];
-		[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
-		
-		previousAttributes = tmpDict;
-	}
-	
-	NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
-	[self appendAttributedString:tmpString];
+	// we need to remove the image placeholder (if any) to prevent duplication
+	[self removeAttribute:NSAttachmentAttributeName range:appendedStringRange];
+	[self removeAttribute:(id)kCTRunDelegateAttributeName range:appendedStringRange];
 }
 
 - (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
 {
-	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+	NSUInteger selfLengthBefore = [self length];
+	
+	[self.mutableString appendString:string];
+	
+	NSRange appendedStringRange = NSMakeRange(selfLengthBefore, [string length]);
 
-	if (paragraphStyle)
+	if (paragraphStyle || fontDescriptor)
 	{
-		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-		[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+		
+		if (paragraphStyle)
+		{
+			CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+			[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		}
+		
+		if (fontDescriptor)
+		{
+			CTFontRef newFont = [fontDescriptor newMatchingFont];
+			[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+		}
+		
+		// Replace attributes
+		[self setAttributes:attributes range:appendedStringRange];
 	}
-	
-	if (fontDescriptor)
-	{
-		CTFontRef newFont = [fontDescriptor newMatchingFont];
-		[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+	else {
+		// Remove attributes
+		[self setAttributes:[NSDictionary dictionary] range:appendedStringRange];
 	}
-	
-	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
-	[self appendAttributedString:attributedString];
 }
 
 // appends a string without any attributes
