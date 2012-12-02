@@ -35,7 +35,7 @@
 		[tmpDict removeObjectForKey:NSAttachmentAttributeName];
 		[tmpDict removeObjectForKey:(id)kCTRunDelegateAttributeName];
 		
-		 previousAttributes = tmpDict;
+		previousAttributes = tmpDict;
 	}
 	
 	NSAttributedString *tmpString = [[NSAttributedString alloc] initWithString:string attributes:previousAttributes];
