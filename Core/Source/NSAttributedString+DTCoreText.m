@@ -491,7 +491,9 @@
 		NSRange effectiveRange;
 		NSUInteger index = paragraphRange.location;
 		
-		while (index < NSMaxRange(paragraphRange))
+		NSUInteger paragraphRangeEnd = NSMaxRange(paragraphRange);
+		
+		while (index < paragraphRangeEnd)
 		{
 			NSDictionary *attributes = [self attributesAtIndex:index longestEffectiveRange:&effectiveRange inRange:paragraphRange];
 			
