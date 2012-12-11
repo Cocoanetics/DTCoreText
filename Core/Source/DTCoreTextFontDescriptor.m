@@ -247,16 +247,6 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	return string;
 }
 
-- (CTFontSymbolicTraits)symbolicTraits
-{
-	CTFontSymbolicTraits retValue = _stylisticTraits;
-	
-	// bundle in class
-	retValue |= _stylisticClass;
-	
-	return retValue;
-}
-
 - (NSDictionary *)fontAttributes
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
@@ -636,14 +626,18 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 }
 
-- (void)setSymbolicTraits:(CTFontSymbolicTraits)theSymbolicTraits
+- (CTFontSymbolicTraits)symbolicTraits
 {
-	_stylisticTraits = theSymbolicTraits;
-	
-	// stylistic class is bundled in the traits
-	_stylisticClass = theSymbolicTraits & kCTFontClassMaskTrait;   
+	// symbolic traits include both stylistic traits as well as stylistic class
+	return _stylisticTraits | _stylisticClass;
 }
 
+- (void)setSymbolicTraits:(CTFontSymbolicTraits)theSymbolicTraits
+{
+	// symbolic traits include both stylistic traits as well as stylistic class
+	_stylisticTraits = theSymbolicTraits & ~kCTFontClassMaskTrait;
+	_stylisticClass = theSymbolicTraits & kCTFontClassMaskTrait;
+}
 
 // a representation of this font in CSS style
 - (NSString *)cssStyleRepresentation
