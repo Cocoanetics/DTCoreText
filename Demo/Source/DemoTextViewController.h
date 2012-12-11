@@ -10,22 +10,6 @@
 #import "DTLazyImageView.h"
 
 @interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate, DTLazyImageViewDelegate>
-{
-
-	NSString *_fileName;
-	
-	UISegmentedControl *_segmentedControl;
-	DTAttributedTextView *_textView;
-	UITextView *_rangeView;
-	UITextView *_charsView;
-	UITextView *_htmlView;
-
-	NSURL *baseURL;
-	
-	// private
-	NSURL *lastActionLink;
-	NSMutableSet *mediaPlayers;
-}
 
 @property (nonatomic, strong) NSString *fileName;
 

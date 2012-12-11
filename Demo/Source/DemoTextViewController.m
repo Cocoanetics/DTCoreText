@@ -23,12 +23,38 @@
 
 
 @implementation DemoTextViewController
+{
+	NSString *_fileName;
+	
+	UISegmentedControl *_segmentedControl;
+	DTAttributedTextView *_textView;
+	UITextView *_rangeView;
+	UITextView *_charsView;
+	UITextView *_htmlView;
+	UITextView *_iOS6View;
+	
+	NSURL *baseURL;
+	
+	// private
+	NSURL *lastActionLink;
+	NSMutableSet *mediaPlayers;
+}
+
 
 #pragma mark NSObject
 
-- (id)init {
-	if ((self = [super init])) {
-		NSArray *items = [[NSArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
+- (id)init
+{
+	self = [super init];
+	if (self)
+	{
+		NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
+		
+		if (![DTVersion osVersionIsLessThen:@"6.0"])
+		{
+			[items addObject:@"iOS 6"];
+		}
+		
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
@@ -92,6 +118,13 @@
 	_textView.textDelegate = self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
+	
+	// create a text view to for testing iOS 6 compatibility
+	// Create html view
+	_iOS6View = [[UITextView alloc] initWithFrame:frame];
+	_iOS6View.editable = NO;
+	_iOS6View.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	[self.view addSubview:_iOS6View];
 }
 
 
@@ -212,7 +245,10 @@
 			_htmlView.text = [_textView.attributedString htmlString];
 			break;
 		}
-
+		case 4:
+		{
+			_iOS6View.attributedText = _textView.attributedString;
+		}
 	}
 }
 
