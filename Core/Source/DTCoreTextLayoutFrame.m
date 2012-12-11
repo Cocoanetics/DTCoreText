@@ -683,8 +683,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks
 {
-	CGContextSaveGState(context);
-	
 	CGRect rect = CGContextGetClipBoundingBox(context);
 	
 	if (!context)
@@ -700,6 +698,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
+		CGContextSaveGState(context);
+
 		// stroke the frame because the layout frame might be open ended
 		CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
@@ -715,6 +715,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		CGContextSetRGBStrokeColor(context, 1, 0, 0, 0.5);
 		CGContextStrokeRect(context, rect);
+		
+		CGContextRestoreGState(context);
 	}
 	
 	NSArray *visibleLines = [self linesVisibleInRect:rect];
@@ -723,6 +725,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		return;
 	}
+	
+	
+	CGContextSaveGState(context);
+	
+	// need to push the CG context so that the UI* based colors can be set
+	UIGraphicsPushContext(context);
 	
 	// text block handling
 	if (_textBlockHandler)
@@ -1025,6 +1033,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRelease(_textFrame);
 	}
 	
+	UIGraphicsPopContext();
 	CGContextRestoreGState(context);
 }
 
