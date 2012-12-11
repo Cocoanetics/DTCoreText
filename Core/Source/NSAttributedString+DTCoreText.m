@@ -666,6 +666,17 @@
 			}
 			
 			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
+			
+			if (!backgroundColor)
+			{
+				if (___useiOS6Attributes)
+				{
+					// could also be the iOS 6 background color
+					DTColor *color = [attributes objectForKey:NSBackgroundColorAttributeName];
+					backgroundColor = color.CGColor;
+				}
+			}
+			
 			if (backgroundColor)
 			{
 				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
@@ -784,7 +795,6 @@
 	// get existing values from attributes
 	CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
 	CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
-	CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 	
 	DTCoreTextFontDescriptor *fontDescriptor = nil;
 	DTCoreTextParagraphStyle *paragraphStyle = nil;
@@ -826,20 +836,48 @@
 		
 		font = [fontDesc newMatchingFont];
 		
-		[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+		if (___useiOS6Attributes)
+		{
+			UIFont *uiFont = [UIFont fontWithCTFont:font];
+			[newAttributes setObject:uiFont forKey:NSFontAttributeName];
+			
+			CFRelease(font);
+		}
+		else
+		{
+			[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+		}
 	}
 	
-	// text color for bullet same as text
+	CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+	
 	if (textColor)
 	{
 		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
+	}
+	else if (___useiOS6Attributes)
+	{
+		UIColor *uiColor = [attributes objectForKey:NSForegroundColorAttributeName];
+		
+		if (uiColor)
+		{
+			[newAttributes setObject:uiColor forKey:NSForegroundColorAttributeName];
+		}
 	}
 	
 	// add paragraph style (this has the tabs)
 	if (paragraphStyle)
 	{
-		CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-		[newAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		if (___useiOS6Attributes)
+		{
+			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
+			[newAttributes setObject:style forKey:NSParagraphStyleAttributeName];
+		}
+		else
+		{
+			CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+			[newAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		}
 	}
 	
 	// add textBlock if there's one (this has padding and background color)

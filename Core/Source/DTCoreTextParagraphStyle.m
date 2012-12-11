@@ -40,14 +40,9 @@ static dispatch_semaphore_t selfLock;
 	// this is naughty: CTParagraphStyle has a description
 	NSString *key = [(__bridge id)ctParagraphStyle description];
 	
-	NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"0x[0123456789abcdef]{1,8}"
-																																				 options:NSRegularExpressionCaseInsensitive
-																																					 error:nil];
+	NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"0x[0123456789abcdef]{1,8}" options:NSRegularExpressionCaseInsensitive error:nil];
 	
-	NSString *newKey = [regex stringByReplacingMatchesInString:key 
-																										 options:0 
-																											 range:NSMakeRange(0, [key length]) 
-																								withTemplate:@""];
+	NSString *newKey = [regex stringByReplacingMatchesInString:key  options:0  range:NSMakeRange(0, [key length]) withTemplate:@""];
 	
 	return newKey;	
 }
@@ -80,6 +75,55 @@ static dispatch_semaphore_t selfLock;
 	dispatch_semaphore_signal(selfLock);
 	
 	return returnParagraphStyle;
+}
+
++ (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
+{
+	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
+	
+	retStyle.firstLineHeadIndent = paragraphStyle.firstLineHeadIndent;
+	retStyle.headIndent = paragraphStyle.headIndent;
+	
+	retStyle.paragraphSpacing = paragraphStyle.paragraphSpacing;
+	retStyle.paragraphSpacingBefore = paragraphStyle.paragraphSpacingBefore;
+	
+	retStyle.lineHeightMultiple = paragraphStyle.lineHeightMultiple;
+	retStyle.minimumLineHeight = paragraphStyle.minimumLineHeight;
+	retStyle.maximumLineHeight = paragraphStyle.maximumLineHeight;
+	
+	switch(paragraphStyle.alignment)
+	{
+		case NSTextAlignmentLeft:
+			retStyle.alignment = kCTLeftTextAlignment;
+			break;
+		case NSTextAlignmentRight:
+			retStyle.alignment = kCTRightTextAlignment;
+			break;
+		case NSTextAlignmentCenter:
+			retStyle.alignment = kCTCenterTextAlignment;
+			break;
+		case NSTextAlignmentJustified:
+			retStyle.alignment = kCTJustifiedTextAlignment;
+			break;
+		case NSTextAlignmentNatural:
+			retStyle.alignment = kCTNaturalTextAlignment;
+			break;
+	}
+	
+	switch (paragraphStyle.baseWritingDirection)
+	{
+		case NSWritingDirectionNatural:
+			retStyle.baseWritingDirection = kCTWritingDirectionNatural;
+			break;
+		case NSWritingDirectionLeftToRight:
+			retStyle.baseWritingDirection = kCTWritingDirectionLeftToRight;
+			break;
+		case NSWritingDirectionRightToLeft:
+			retStyle.baseWritingDirection = kCTWritingDirectionRightToLeft;
+			break;
+	}
+	
+	return retStyle;
 }
 
 - (id)init
@@ -144,8 +188,6 @@ static dispatch_semaphore_t selfLock;
 	return self;
 }
 
-
-
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
 	// need to multiple paragraph spacing with line height multiplier
@@ -186,6 +228,60 @@ static dispatch_semaphore_t selfLock;
 	return ret;
 }
 
+- (NSParagraphStyle *)NSParagraphStyle
+{
+	NSMutableParagraphStyle *mps = [[NSMutableParagraphStyle alloc] init];
+
+	[mps setFirstLineHeadIndent:_firstLineHeadIndent];
+
+	// _defaultTabInterval not supported
+
+	[mps setParagraphSpacing:_paragraphSpacing];
+	[mps setParagraphSpacingBefore:_paragraphSpacingBefore];
+	
+	[mps setHeadIndent:_headIndent];
+
+	// _listIndent not supported
+	//	[mps setTailIndent:_tailIndent]; // new
+	
+	[mps setMinimumLineHeight:_minimumLineHeight];
+	[mps setMaximumLineHeight:_maximumLineHeight];
+	
+	switch(_alignment)
+	{
+		case kCTLeftTextAlignment:
+			[mps setAlignment:NSTextAlignmentLeft];
+			break;
+		case kCTRightTextAlignment:
+			[mps setAlignment:NSTextAlignmentRight];
+			break;
+		case kCTCenterTextAlignment:
+			[mps setAlignment:NSTextAlignmentCenter];
+			break;
+		case kCTJustifiedTextAlignment:
+			[mps setAlignment:NSTextAlignmentJustified];
+			break;
+		case kCTNaturalTextAlignment:
+			[mps setAlignment:NSTextAlignmentNatural];
+			break;
+	}
+	
+	switch (_baseWritingDirection) {
+		case  kCTWritingDirectionNatural:
+			[mps setBaseWritingDirection:NSWritingDirectionNatural];
+			break;
+		case  kCTWritingDirectionLeftToRight:
+			[mps setBaseWritingDirection:NSWritingDirectionLeftToRight];
+			break;
+		case  kCTWritingDirectionRightToLeft:
+			[mps setBaseWritingDirection:NSWritingDirectionRightToLeft];
+			break;
+	}
+
+	// _tap stops not supported
+	return (NSParagraphStyle *)mps;
+}
+
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
 {
 	CTTextTabRef tab = CTTextTabCreate(alignment, position, NULL);
@@ -196,7 +292,6 @@ static dispatch_semaphore_t selfLock;
 			_tabStops = [[NSMutableArray alloc] init];
 		}
 		[_tabStops addObject:CFBridgingRelease(tab)];
-		//CFRelease(tab);
 	}
 }
 

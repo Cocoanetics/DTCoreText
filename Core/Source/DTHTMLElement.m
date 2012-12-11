@@ -19,6 +19,7 @@
 
 @end
 
+BOOL ___shouldUseiOS6Attributes = NO;
 
 @implementation DTHTMLElement
 {
@@ -134,8 +135,17 @@
 		
 		if (font)
 		{
-			// __bridge since its already retained elsewhere
-			[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+			if (___useiOS6Attributes)
+			{
+				UIFont *uiFont = [UIFont fontWithCTFont:font];
+				[tmpDict setObject:uiFont forKey:NSFontAttributeName];
+			}
+			else
+			{
+				// __bridge since its already retained elsewhere
+				[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+			}
+			
 			
 			// use this font to adjust the values needed for the run delegate during layout time
 			[_textAttachment adjustVerticalAlignmentForFont:font];
@@ -174,12 +184,26 @@
 	
 	if (_textColor)
 	{
-		[tmpDict setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:_textColor forKey:NSForegroundColorAttributeName];
+		}
+		else
+		{
+			[tmpDict setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+		}
 	}
 	
 	if (_backgroundColor)
 	{
-		[tmpDict setObject:(id)[_backgroundColor CGColor] forKey:DTBackgroundColorAttribute];
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:_backgroundColor forKey:NSBackgroundColorAttributeName];
+		}
+		else
+		{
+			[tmpDict setObject:(id)[_backgroundColor CGColor] forKey:DTBackgroundColorAttribute];
+		}
 	}
 	
 	if (_superscriptStyle)
@@ -190,9 +214,16 @@
 	// add paragraph style
 	if (_paragraphStyle)
 	{
-		CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
-		[tmpDict setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-		//CFRelease(newParagraphStyle);
+		if (___useiOS6Attributes)
+		{
+			NSParagraphStyle *style = [self.paragraphStyle NSParagraphStyle];
+			[tmpDict setObject:style forKey:NSParagraphStyleAttributeName];
+		}
+		else
+		{
+			CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
+			[tmpDict setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		}
 	}
 	
 	// add shadow array if applicable
@@ -249,9 +280,19 @@
 				smallDesc.smallCapsFeature = YES;
 				
 				CTFontRef smallerFont = [smallDesc newMatchingFont];
-				
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-				[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+				
+				if (___useiOS6Attributes)
+				{
+					UIFont *font = [UIFont fontWithCTFont:smallerFont];
+					
+					[smallAttributes setObject:font forKey:NSFontAttributeName];
+					CFRelease(smallerFont);
+				}
+				else
+				{
+					[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+				}
 				
 				return [[NSAttributedString alloc] initWithString:_text attributes:smallAttributes];
 			}

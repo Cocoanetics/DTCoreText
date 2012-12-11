@@ -41,14 +41,34 @@
 		
 		if (paragraphStyle)
 		{
-			CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-			[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+			if (___useiOS6Attributes)
+			{
+				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
+				[attributes setObject:style forKey:NSParagraphStyleAttributeName];
+			}
+			else
+			{
+				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+				[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+			}
 		}
 		
 		if (fontDescriptor)
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
-			[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+			
+			if (___useiOS6Attributes)
+			{
+				// convert to UIFont
+				UIFont *uiFont = [UIFont fontWithCTFont:newFont];
+				[attributes setObject:uiFont forKey:NSFontAttributeName];
+			
+				CFRelease(newFont);
+			}
+			else
+			{
+				[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+			}
 		}
 		
 		// Replace attributes

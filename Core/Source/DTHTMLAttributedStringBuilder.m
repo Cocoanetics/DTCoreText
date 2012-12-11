@@ -109,6 +109,19 @@
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
 	
+	// custom option to use iOS 6 attributes if running on iOS 6
+	if ([[_options objectForKey:DTUseiOS6Attributes] boolValue])
+	{
+		if (![DTVersion osVersionIsLessThen:@"6.0"])
+		{
+			___useiOS6Attributes = YES;
+		}
+		else
+		{
+			___useiOS6Attributes = NO;
+		}
+	}
+	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
 	if (!_textScale)
@@ -560,7 +573,14 @@
 		
 		if (_currentTag.backgroundColor)
 		{
-			[styleDict setObject:_currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
+			if (___useiOS6Attributes)
+			{
+				[styleDict setObject:_currentTag.backgroundColor forKey:NSBackgroundColorAttributeName];
+			}
+			else
+			{
+				[styleDict setObject:_currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
+			}
 		}
 		[_currentTag addAdditionalAttribute:styleDict forKey:DTHorizontalRuleStyleAttribute];
 		
@@ -740,26 +760,49 @@
 				
 				// get the paragraph style for the previous paragraph
 				NSRange effectiveRange;
-				CTParagraphStyleRef prevParagraphStyle = (__bridge CTParagraphStyleRef)[_tmpString attribute:(id)kCTParagraphStyleAttributeName
-																									atIndex:index 
-																							 effectiveRange:&effectiveRange];
+				id prevParagraphStyle = [_tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:index effectiveRange:&effectiveRange];
 				
-				// convert it to DTCoreText
-				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:prevParagraphStyle];
-				
-				if (paragraphStyle.paragraphSpacing != _currentTag.paragraphStyle.paragraphSpacing)
+				if (prevParagraphStyle)
 				{
-					paragraphStyle.paragraphSpacing = _currentTag.paragraphStyle.paragraphSpacing;
+					DTCoreTextParagraphStyle *paragraphStyle = nil;
 					
-					CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+					// convert it to DTCoreText
+					if ([prevParagraphStyle isKindOfClass:[NSParagraphStyle class]])
+					{
+						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:prevParagraphStyle];
+					}
+					else
+					{
+						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:(__bridge CTParagraphStyleRef)prevParagraphStyle];
+					}
 					
-					// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
-					NSRange paragraphRange = [[_tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
 					
-					// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
-					[_tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
-					
-					[_tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
+					if (paragraphStyle.paragraphSpacing != _currentTag.paragraphStyle.paragraphSpacing)
+					{
+						paragraphStyle.paragraphSpacing = _currentTag.paragraphStyle.paragraphSpacing;
+						
+						// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
+						NSRange paragraphRange = [[_tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
+
+						if (___useiOS6Attributes)
+						{
+							NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
+							
+							// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
+							[_tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+							
+							[_tmpString addAttribute:NSParagraphStyleAttributeName value:style range:paragraphRange];
+						}
+						else
+						{
+							CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
+							
+							// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
+							[_tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+							
+							[_tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
+						}
+					}
 				}
 			}
 		}

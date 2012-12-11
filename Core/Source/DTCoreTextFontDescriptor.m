@@ -172,14 +172,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		if (cfStr)
 		{
 			self.fontFamily = CFBridgingRelease(cfStr);
-			//CFRelease(cfStr);
 		}
 	}
 	
 	return self;
 }
-
-
 
 - (NSString *)description
 {

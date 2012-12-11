@@ -44,11 +44,32 @@
 - (id)initWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle;
 
 /**
- Create a new `CTParagraphStyle` from the receiver for use as attributed in `NSAttributedString`
+ Create a new `CTParagraphStyle` from the receiver for use as attribute in `NSAttributedString`
  
  @returns The `CTParagraphStyle` based on the receiver's attributes.
  */
 - (CTParagraphStyleRef)createCTParagraphStyle;
+
+/**
+ @name Bridging to and from NSParagraphStyle
+ */
+
+/**
+ Create a new paragraph style instance from an `NSParagraphStyle`.
+ 
+ Note: on iOS no tab stops are supported.
+ @param paragraphStyle the `NSParagraphStyle` from which to copy this new style's attributes.
+ */
++ (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle;
+
+/**
+ Create a new `NSParagraphStyle` from the receiver for use as attribute in `NSAttributedString`. 
+ 
+ Note: This method is requires iOS 6 or greater. This does not support tab stops.
+ 
+ @returns The `NSParagraphStyle` based on the receiver's attributes.
+ */
+- (NSParagraphStyle *)NSParagraphStyle;
 
 
 /**-------------------------------------------------------------------------------------

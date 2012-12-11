@@ -116,14 +116,14 @@
 	// Create html view
 	_iOS6View = [[UITextView alloc] initWithFrame:frame];
 	_iOS6View.editable = NO;
+	_iOS6View.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
 	_iOS6View.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_iOS6View];
 }
 
 
-- (void)viewDidLoad {
-	[super viewDidLoad];
-	
+- (NSAttributedString *)_attributedStringForSnippetUsingiOS6Attributes:(BOOL)useiOS6Attributes
+{
 	// Load HTML data
 	NSString *readmePath = [[NSBundle mainBundle] pathForResource:_fileName ofType:nil];
 	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
@@ -141,19 +141,32 @@
 		}
 	};
 	
-	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
-													 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, callBackBlock, DTWillFlushBlockCallBack, nil]; 
+	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
+							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, callBackBlock, DTWillFlushBlockCallBack, nil];
+	
+	if (useiOS6Attributes)
+	{
+		[options setObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
+	}
 	
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
+	
+	return string;
+}
+
+
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
 	
 	// Display string
 	_textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 	_textView.contentView.shouldDrawLinks = NO; // we draw them in DTLinkButton
-	_textView.attributedString = string;
+	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
 }
 
 
-- (void)viewWillAppear:(BOOL)animated 
+- (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
 	
@@ -240,7 +253,10 @@
 		}
 		case 4:
 		{
-			_iOS6View.attributedText = _textView.attributedString;
+			if (![_iOS6View.attributedText length])
+			{
+				_iOS6View.attributedText = [self _attributedStringForSnippetUsingiOS6Attributes:YES];
+			}
 		}
 	}
 }
@@ -516,38 +532,6 @@
 	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:_textView.contentView.drawDebugFrames];
 	[self.view setNeedsDisplay];
 }
-
-#if 0 // DTWebArchive split out late 2011
-- (void)paste:(id)sender
-{
-	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-	
-	DTWebArchive *webArchive = [pasteboard webArchive];
-	
-	if (webArchive)
-	{
-		CGSize maxImageSize = CGSizeMake(self.view.bounds.size.width - 20.0, self.view.bounds.size.height - 20.0);
-		
-		NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
-								 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, baseURL, NSBaseURLDocumentOption, nil];
-		
-		NSAttributedString *attrString = [[[NSAttributedString alloc] initWithWebArchive:webArchive options:options documentAttributes:NULL] autorelease];
-		
-		_textView.attributedString = attrString;
-	}
-}
-
-- (void)copy:(id)sender
-{
-	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-	
-	// web archive contains rich text
-	DTWebArchive *webArchive = [_textView.attributedString webArchive];
-	[pasteboard setWebArchive:webArchive];
-	
-	// PS: in real life you also want to put put a plain text copy in pasteboard for apps that don't take rich text
-}
-#endif
 
 #pragma mark DTLazyImageViewDelegate
 

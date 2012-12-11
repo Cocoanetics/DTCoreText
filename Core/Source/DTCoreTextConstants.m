@@ -22,6 +22,7 @@ NSString * const DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
 NSString * const DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 NSString * const DTDefaultListIndent = @"DTDefaultListIndent";
 NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
+NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 
 // attributed string attribute constants
@@ -39,3 +40,7 @@ NSString * const DTShadowsAttribute = @"DTShadows";
 NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
+
+// iOS 6 compatibility
+
+BOOL ___useiOS6Attributes = NO; // this gets set globally by DTHTMLAttributedStringBuilder

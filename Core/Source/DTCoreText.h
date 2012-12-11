@@ -41,7 +41,6 @@
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
 
-
 #import "DTLazyImageView.h"
 #import "DTLinkButton.h"
 #import "DTWebVideoView.h"
@@ -55,6 +54,8 @@
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayouter.h"
+
+#import "UIFont+DTCoreText.h"
 
 #endif
 

@@ -26,6 +26,7 @@ extern NSString * const DTDefaultFirstLineHeadIndent;
 extern NSString * const DTDefaultHeadIndent;
 extern NSString * const DTDefaultListIndent;
 extern NSString * const DTDefaultStyleSheet;
+extern NSString * const DTUseiOS6Attributes;
 extern NSString * const DTWillFlushBlockCallBack;
 
 // attributed string attribute constants
@@ -43,6 +44,9 @@ extern NSString * const DTShadowsAttribute;
 extern NSString * const DTHorizontalRuleStyleAttribute;
 extern NSString * const DTTextBlocksAttribute;
 extern NSString * const DTFieldAttribute;
+
+// iOS 6 compatibility
+extern BOOL ___useiOS6Attributes;
 
 // macros
 
