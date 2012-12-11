@@ -56,20 +56,13 @@
 		}
 		
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
-		
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
 		self.navigationItem.titleView = _segmentedControl;	
 		
-		// toolbar
-#if 0 // DTWebArchive moved to separate project late 2011
-		UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
-		UIBarButtonItem *paste = [[[UIBarButtonItem alloc] initWithTitle:@"Paste" style:UIBarButtonItemStyleBordered target:self action:@selector(paste:)] autorelease];
-		UIBarButtonItem *copy = [[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStyleBordered target:self action:@selector(copy:)] autorelease];
-#endif		
 		UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
-		NSArray *toolbarItems = [NSArray arrayWithObjects:/*paste, copy, spacer, */debug, nil];
+		NSArray *toolbarItems = [NSArray arrayWithObject:debug];
 		[self setToolbarItems:toolbarItems];
 	}
 	return self;
