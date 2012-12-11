@@ -54,7 +54,8 @@
 		// Replace attributes
 		[self setAttributes:attributes range:appendedStringRange];
 	}
-	else {
+	else
+	{
 		// Remove attributes
 		[self setAttributes:[NSDictionary dictionary] range:appendedStringRange];
 	}
