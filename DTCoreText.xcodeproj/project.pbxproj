@@ -2255,7 +2255,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
+				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/**";
 			};
 			name = Debug;
 		};
@@ -2277,7 +2277,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
+				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
