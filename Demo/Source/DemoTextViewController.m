@@ -260,6 +260,11 @@
 			selectedView = _htmlView;
 			break;
 		}
+		case 4:
+		{
+			selectedView = _iOS6View;
+			break;
+		}
 	}
 
 	// refresh only this tab
