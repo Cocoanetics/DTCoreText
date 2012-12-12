@@ -1,9 +1,18 @@
-<p style="font-size:25px;line-height:15px">Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg Xg</p>
+<body style="font-family:Helvetica;">
+<h3>UITextView (iOS 6)</h3>
+<p>You can generate attributed strings that work in UIKit, primarily UITextView and UILabel. You have to pass the <span style="font-family:Courier;">DTUseiOS6Attributes</span> option to the initWithHTMLData: method to enable iOS 6 compatible attributes. Note that these will only be used if actually running on a device with iOS 6 or higher.</p>
+<p>In the demo app the first tap displays the attributed string with the traditional CoreText and custom attributes in a DTCoreTextAttributedTextView. The new "iOS 6" tab on the right (only visible on iOS 6 or higher) displays the attributed string with iOS 6 compatible attributes in a UITextView."
 
-<p>
-Lorem ipsum dolor <span style="background-color:green;">sit amet, consectetur</span> adipiscing elit. <span style="color:red">Donec ut</span> adipiscing massa. Aliquam vitae nibh ac dui lobortis congue in non dui. Duis hendrerit metus ut neque sodales sodales. Duis a elit nibh. Praesent risus tortor, rutrum ac lobortis in, malesuada ac turpis. Fusce rhoncus adipiscing eleifend. Nulla sed arcu erat. Cras aliquam turpis a purus vestibulum vehicula. Pellentesque at sapien id eros ornare rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi quis ipsum a ante porta sodales nec nec arcu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Etiam ac massa diam. Nullam vehicula consequat lectus in fermentum. Praesent tortor leo, facilisis ut sagittis suscipit, consequat quis dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-</p>
-<hr style="background-color:red" />
-<p>
-Proin lectus nisl, volutpat non aliquet id, suscipit sed est. Maecenas vitae metus eget nulla mattis bibendum a a dolor. Fusce vestibulum velit hendrerit nunc egestas non ullamcorper ipsum sagittis. Praesent dui sapien, egestas sed tincidunt vitae, posuere eu neque. Donec faucibus felis sed magna cursus in faucibus odio aliquam. Curabitur elit urna, ullamcorper ut placerat vitae, posuere sed nisl. Maecenas ac tellus nulla, a commodo purus. Suspendisse porta vulputate volutpat. Integer sodales turpis vitae ante sodales tempor. Cras iaculis accumsan ante, sed interdum sem faucibus vel. Aenean tincidunt eleifend elit at porta. Aenean sodales lacus quis lacus gravida consectetur. Sed at ligula ut diam porta auctor. Nunc libero mauris, feugiat id gravida sed, blandit non neque. Suspendisse ac mauris urna. Vivamus lacus ipsum, tincidunt nec laoreet quis, convallis id purus. Ut vehicula lobortis erat in viverra. Ut ut tellus eget ipsum malesuada dignissim. Donec quis dolor erat, id adipiscing ipsum. Donec vitae sagittis turpis.
-</p>
+<h3>Working Features<h3>
+<p>Normal Text, <del>Strike Out</del>, <u>Underlined</u>, <b>Bold</b>, <em>Italic</em>, <span style="font-variant:small-caps">SmallCapps</span></p>
+<p>Setting a <span style="background-color:yellow;">background color</span> or changing the <span style="color:red">text color</span>.</p>
+	
+<h3>Known Issues</h3>
+<p>Support for changing the line height is broken in iOS 6. As soon as you have more than one font in the attributed string the minimum and maximum line height attributes of the paragraph style are being ignored.</p>
+
+<h3>Not Supported</h3>
+<p>Since there is no way to reserve extra space on a glyph there is no way to display custom views or inline images</p>
+<p>Horizontal Rule (hr) is not supported.</p>
+<p>Native lists and text boxes are private to NSParagraphStyle</p>
+
+</body>

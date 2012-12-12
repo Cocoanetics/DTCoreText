@@ -170,13 +170,27 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// add strikout if applicable
 	if (_strikeOut)
 	{
-		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+		}
+		else
+		{
+			[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
+		}
 	}
 	
 	// set underline style
 	if (_underlineStyle)
 	{
-		[tmpDict setObject:[NSNumber numberWithInteger:_underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+		}
+		else
+		{
+			[tmpDict setObject:[NSNumber numberWithInteger:_underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
+		}
 		
 		// we could set an underline color as well if we wanted, but not supported by HTML
 		//      [attributes setObject:(id)[DTImage redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
