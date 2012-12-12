@@ -1,0 +1,39 @@
+<body style="font-family:Helvetica;">
+<h3>UITextView (iOS 6)</h3>
+<p>You can generate attributed strings that work in UIKit, primarily UITextView and UILabel. You have to pass the <span style="font-family:Courier;">DTUseiOS6Attributes</span> option to the initWithHTMLData: method to enable iOS 6 compatible attributes. Note that these will only be used if actually running on a device with iOS 6 or higher.</p>
+<p>In the demo app the first tap displays the attributed string with the traditional CoreText and custom attributes in a DTCoreTextAttributedTextView. The new "iOS 6" tab on the right (only visible on iOS 6 or higher) displays the attributed string with iOS 6 compatible attributes in a UITextView."
+
+<h3>Working Features<h3>
+<p>Normal Text, <del>Strike Out</del>, <u>Underlined</u>, <b>Bold</b>, <em>Italic</em>, <span style="font-variant:small-caps">SmallCapps</span></p>
+<p>Setting a <span style="background-color:yellow;">background color</span> or changing the <span style="color:red">text color</span>.</p>
+	<p>The text-shadow property is supported. Only a single shadow is supported. If multiple shadows are set via CSS then only the first is used.</p>
+	<p style="color:blue;font-size:30px; text-shadow: 0.15em 0.15em #AAA">Text with Shadow</p>
+	<p style="font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE">Embossed</p>
+	<p style="font-size:30px;color:red; text-shadow: 0px 0px 3px red;">Glowing</p>
+	<p style="font-size:30px; font-weight:bold; text-shadow:0.2em 0.5em 0.1em #600,
+	-0.3em 0.1em 0.1em #060,
+	0.4em -0.3em 0.1em #006">Multiple Shadows</p>
+<p>Lists work partially, because we have no access to the private tab stops property of NSParagraphStyle</p>
+	<ul>
+		<li>First item</li>
+		<li>Second item
+				<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar sollicitudin tellus, vitae congue arcu condimentum ut. Fusce sagittis iaculis sem ut bibendum. Sed a ipsum purus, sit amet elementum diam. Fusce sapien sapien, cursus sit amet auctor sit amet, ultricies et lorem.</li>
+				</li>
+		<li>You can also nest lists
+		<ul>
+			<li>First nested item</li>
+		<li>Second nested item</li>
+			<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar sollicitudin tellus, vitae congue arcu condimentum ut. Fusce sagittis iaculis sem ut bibendum. Sed a ipsum purus, sit amet elementum diam. Fusce sapien sapien, cursus sit amet auctor sit amet, ultricies et lorem.</li>
+		</ul>
+			</li>
+	</ul>
+<h3>Known Issues</h3>
+<p>Support for changing the line height is broken in iOS 6. As soon as you have more than one font in the attributed string the minimum and maximum line height attributes of the paragraph style are being ignored.</p>
+
+<h3>Not Supported</h3>
+<p>Since there is no way to reserve extra space on a glyph there is no way to display custom views or inline images</p>
+<p>Horizontal Rule (hr) is not supported.</p>
+<p>Native lists and text boxes are private to NSParagraphStyle</p>
+<p>The tab stops list is also private in NSParagraphStyle, lists only work by using the first standard tab stop as list indent.</p>
+
+</body>

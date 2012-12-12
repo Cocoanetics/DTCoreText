@@ -243,7 +243,21 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// add shadow array if applicable
 	if (_shadows)
 	{
-		[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
+		if (___useiOS6Attributes)
+		{
+			// only a single shadow supported
+			NSDictionary *firstShadow = [_shadows objectAtIndex:0];
+			
+			NSShadow *shadow = [[NSShadow alloc] init];
+			shadow.shadowOffset = [[firstShadow objectForKey:@"Offset"] CGSizeValue];
+			shadow.shadowColor = [firstShadow objectForKey:@"Color"];
+			shadow.shadowBlurRadius = [[firstShadow objectForKey:@"Blur"] floatValue];
+			[tmpDict setObject:shadow forKey:NSShadowAttributeName];
+		}
+		else
+		{
+			[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
+		}
 	}
 	
 	// add tag for PRE so that we can omit changing this font if we override fonts
