@@ -35,18 +35,6 @@ static dispatch_semaphore_t selfLock;
 	return [[DTCoreTextParagraphStyle alloc] init];
 }
 
-+ (NSString *)niceKeyFromParagraghStyle:(CTParagraphStyleRef)ctParagraphStyle {
-	
-	// this is naughty: CTParagraphStyle has a description
-	NSString *key = [(__bridge id)ctParagraphStyle description];
-	
-	NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"0x[0123456789abcdef]{1,8}" options:NSRegularExpressionCaseInsensitive error:nil];
-	
-	NSString *newKey = [regex stringByReplacingMatchesInString:key  options:0  range:NSMakeRange(0, [key length]) withTemplate:@""];
-	
-	return newKey;	
-}
-
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
 {
 	DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
@@ -63,13 +51,13 @@ static dispatch_semaphore_t selfLock;
 	dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
 	{
 		
-		NSString *key = [self niceKeyFromParagraghStyle:ctParagraphStyle];
-		returnParagraphStyle = [_paragraphStyleCache objectForKey:key];
+		NSNumber *cacheKey = [NSNumber numberWithInteger:(NSInteger)ctParagraphStyle];
+		returnParagraphStyle = [_paragraphStyleCache objectForKey:cacheKey];
 		
 		if (!returnParagraphStyle) 
 		{
 			returnParagraphStyle = [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
-			[_paragraphStyleCache setObject:returnParagraphStyle forKey:key];
+			[_paragraphStyleCache setObject:returnParagraphStyle forKey:cacheKey];
 		}
 	}
 	dispatch_semaphore_signal(selfLock);
