@@ -121,6 +121,11 @@
 			___useiOS6Attributes = NO;
 		}
 	}
+	else
+	{
+		// default is not to use them because many features are not supported
+		___useiOS6Attributes = NO;
+	}
 	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
