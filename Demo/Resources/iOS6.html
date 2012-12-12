@@ -13,7 +13,7 @@
 	<p style="font-size:30px; font-weight:bold; text-shadow:0.2em 0.5em 0.1em #600,
 	-0.3em 0.1em 0.1em #060,
 	0.4em -0.3em 0.1em #006">Multiple Shadows</p>
-<p>Lists work partially, because we have no access to the private tab stops property of NSParagraphStyle</p>
+<p>Lists work partially, because we have no access to the private tab stops property of NSParagraphStyle. This is causing some trouble on aligning "hanging" lines.</p>
 	<ul>
 		<li>First item</li>
 		<li>Second item
@@ -31,6 +31,7 @@
 <p>Support for changing the line height is broken in iOS 6. As soon as you have more than one font in the attributed string the minimum and maximum line height attributes of the paragraph style are being ignored.</p>
 
 <h3>Not Supported</h3>
+<p>Hyperlinks are not supported. UITextView does not have the NSLink attribute Mac has and there is no delegate protocol to deal with clicking on links.</p>
 <p>Since there is no way to reserve extra space on a glyph there is no way to display custom views or inline images</p>
 <p>Horizontal Rule (hr) is not supported.</p>
 <p>Native lists and text boxes are private to NSParagraphStyle</p>
