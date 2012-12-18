@@ -10,6 +10,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <MediaPlayer/MediaPlayer.h>
 
+#import "DTVersion.h"
+
 @interface DemoTextViewController ()
 - (void)_segmentedControlChanged:(id)sender;
 
