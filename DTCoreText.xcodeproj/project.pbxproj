@@ -46,6 +46,8 @@
 		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
 		A72418171678BACE001362C4 /* iOS6.html in Resources */ = {isa = PBXBuildFile; fileRef = A72418161678BACE001362C4 /* iOS6.html */; };
 		A72C15C71592FAF70064A67F /* CoreTextIssues.html in Resources */ = {isa = PBXBuildFile; fileRef = A72C15C61592FAF70064A67F /* CoreTextIssues.html */; };
+		A7358D6F1680F2A9005F1352 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383D4160DFF2600CF72D6 /* libDTHTMLParser.a */; };
+		A7358D701680F2B0005F1352 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
 		A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A73885A41606E9B2001D60C4 /* EmojiTest.html */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
@@ -554,12 +556,26 @@
 			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
 			remoteInfo = DTHTMLParser;
 		};
-		A7335CC91616DA8300482C19 /* PBXContainerItemProxy */ = {
+		A7358D681680F0D0005F1352 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = FAE5B92D1610A38200CA0D99;
-			remoteInfo = PDFDemo;
+			remoteGlobalIDString = A78220BA168060CA005B602D;
+			remoteInfo = DTUTI;
+		};
+		A7358D6B1680F1BB005F1352 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A70B4CE61486637E00873A4A;
+			remoteInfo = "Static Library";
+		};
+		A7358D6D1680F1BB005F1352 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
+			remoteInfo = DTHTMLParser;
 		};
 		A780D1051626A24A00D61229 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -844,6 +860,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7358D701680F2B0005F1352 /* libDTFoundation.a in Frameworks */,
+				A7358D6F1680F2A9005F1352 /* libDTHTMLParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1241,8 +1259,8 @@
 				3D7CE54A166613E10028D339 /* libDTHTMLParser.a */,
 				A7E383EB160DFFDE00CF72D6 /* libDTZipArchive.a */,
 				A7E38402160E007A00CF72D6 /* libDTDownloadCache.a */,
-				A7335CCA1616DA8300482C19 /* PDFDemo.app */,
 				3D7CE563166620C70028D339 /* libDTBonjour.a */,
+				A7358D691680F0D0005F1352 /* libDTUTI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1459,6 +1477,8 @@
 				A76994FD14DBB7380047CC8D /* PBXBuildRule */,
 			);
 			dependencies = (
+				A7358D6C1680F1BB005F1352 /* PBXTargetDependency */,
+				A7358D6E1680F1BB005F1352 /* PBXTargetDependency */,
 			);
 			name = "Static Framework";
 			productName = DTCoreText;
@@ -1623,11 +1643,11 @@
 			remoteRef = 3D7CE562166620C70028D339 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A7335CCA1616DA8300482C19 /* PDFDemo.app */ = {
+		A7358D691680F0D0005F1352 /* libDTUTI.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = PDFDemo.app;
-			remoteRef = A7335CC91616DA8300482C19 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libDTUTI.a;
+			remoteRef = A7358D681680F0D0005F1352 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A7E383B7160DFEA800CF72D6 /* DTFoundation.framework */ = {
@@ -2108,6 +2128,16 @@
 			name = DTHTMLParser;
 			targetProxy = 3D7CE5AB166625420028D339 /* PBXContainerItemProxy */;
 		};
+		A7358D6C1680F1BB005F1352 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library";
+			targetProxy = A7358D6B1680F1BB005F1352 /* PBXContainerItemProxy */;
+		};
+		A7358D6E1680F1BB005F1352 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DTHTMLParser;
+			targetProxy = A7358D6D1680F1BB005F1352 /* PBXContainerItemProxy */;
+		};
 		A780D1061626A24A00D61229 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Static Library (Mac)";
@@ -2185,7 +2215,7 @@
 		A70F11A414863198009202BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CONTENTS_FOLDER_PATH = "$(WRAPPER_NAME)/Versions/$(FRAMEWORK_VERSION)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
@@ -2213,6 +2243,7 @@
 				PRODUCT_NAME = DTCoreText;
 				SKIP_INSTALL = YES;
 				UNLOCALIZED_RESOURCES_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Resources";
+				USER_HEADER_SEARCH_PATHS = "Core/Source/** Core/Externals/DTFoundation/Core/Source/** Core/Externals/**";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2220,7 +2251,7 @@
 		A70F11A514863198009202BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CONTENTS_FOLDER_PATH = "$(WRAPPER_NAME)/Versions/$(FRAMEWORK_VERSION)";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
@@ -2241,6 +2272,7 @@
 				PRODUCT_NAME = DTCoreText;
 				SKIP_INSTALL = YES;
 				UNLOCALIZED_RESOURCES_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Resources";
+				USER_HEADER_SEARCH_PATHS = "Core/Source/** Core/Externals/DTFoundation/Core/Source/** Core/Externals/**";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -2271,7 +2303,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/**";
+				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/** Core/Externals/DTFoundation/Core/Source/**";
 			};
 			name = Debug;
 		};
@@ -2293,7 +2325,7 @@
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/**";
+				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/** Core/Externals/DTFoundation/Core/Source/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
