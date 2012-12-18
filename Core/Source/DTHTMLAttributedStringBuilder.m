@@ -8,6 +8,7 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
+#import "DTFoundation.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 

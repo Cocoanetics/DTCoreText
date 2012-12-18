@@ -4,9 +4,6 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
-// DTFoundation
-#import "DTFoundation.h"
-
 // global constants
 #import "DTCoreTextConstants.h"
 #import "DTCompatibility.h"
