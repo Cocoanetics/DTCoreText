@@ -672,7 +672,7 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A704C93913901FDB0045CFC6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -932,7 +932,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* DemoApp.app */,
+				1D6058910D05DD3D006BFB54 /* RTDemoApp.app */,
 				A70F119B14863198009202BF /* DTCoreText.framework */,
 				A70F11DE148632CD009202BF /* libDTCoreText.a */,
 				A788CA681486456100E1AFD9 /* UnitTest.octest */,
@@ -1459,7 +1459,7 @@
 			);
 			name = DemoApp;
 			productName = DTCoreText;
-			productReference = 1D6058910D05DD3D006BFB54 /* DemoApp.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* RTDemoApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A70F119A14863198009202BF /* Static Framework */ = {
@@ -2186,7 +2186,7 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PRODUCT_NAME = DemoApp;
+				PRODUCT_NAME = RTDemoApp;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/** Core/Externals/DTFoundation/Core/Source/**";
 			};
@@ -2205,7 +2205,7 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PRODUCT_NAME = DemoApp;
+				PRODUCT_NAME = RTDemoApp;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "Core/Source Core/Externals/** Core/Externals/DTFoundation/Core/Source/**";
 				VALIDATE_PRODUCT = YES;

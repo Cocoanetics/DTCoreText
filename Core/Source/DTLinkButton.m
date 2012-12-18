@@ -160,7 +160,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 				
 	CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:DTBackgroundColorAttribute];
 	
-	if (!backgroundColor)
+	if (!backgroundColor&&___useiOS6Attributes)
 	{
 		// could also be the iOS 6 background color
 		DTColor *color = [runAttributes objectForKey:NSBackgroundColorAttributeName];
