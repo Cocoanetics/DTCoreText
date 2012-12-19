@@ -19,6 +19,7 @@ static dispatch_semaphore_t selfLock;
 	CGFloat _paragraphSpacingBefore;
 	CGFloat _paragraphSpacing;
 	CGFloat _headIndent;
+	CGFloat _tailIndent;
 	CGFloat _listIndent;
 	CGFloat _lineHeightMultiple;
 	CGFloat _minimumLineHeight;
@@ -138,25 +139,37 @@ static dispatch_semaphore_t selfLock;
 {	
 	if ((self = [super init]))
 	{
+		// text alignment
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierAlignment,sizeof(_alignment), &_alignment);
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(_firstLineHeadIndent), &_firstLineHeadIndent);
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(_defaultTabInterval), &_defaultTabInterval);
 		
+		// indents
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(_firstLineHeadIndent), &_firstLineHeadIndent);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent);
+		
+		// paragraph spacing
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(_paragraphSpacing), &_paragraphSpacing);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore,sizeof(_paragraphSpacingBefore), &_paragraphSpacingBefore);
+
+
+		// tab stops
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(_defaultTabInterval), &_defaultTabInterval);
 		
 		__unsafe_unretained NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
 		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
 		{
 			self.tabStops = stops;
 		}
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(_paragraphSpacing), &_paragraphSpacing);
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore,sizeof(_paragraphSpacingBefore), &_paragraphSpacingBefore);
 		
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent);
+		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection);
-		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
 		
+		// line height
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(_minimumLineHeight), &_minimumLineHeight);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight);
+
+		
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
 		
 		if (_lineHeightMultiple)
 		{
@@ -203,6 +216,7 @@ static dispatch_semaphore_t selfLock;
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(tmpParagraphSpacingBefore), &tmpParagraphSpacingBefore},
 		
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent},
+		{kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection},
 		{kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple},
 		
@@ -210,7 +224,7 @@ static dispatch_semaphore_t selfLock;
 		{kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight}
 	};	
 	
-	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 11);
+	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 12);
 	if (stops) CFRelease(stops);
 	
 	return ret;
@@ -228,9 +242,9 @@ static dispatch_semaphore_t selfLock;
 	[mps setParagraphSpacingBefore:_paragraphSpacingBefore];
 	
 	[mps setHeadIndent:_headIndent];
-
+	[mps setTailIndent:_tailIndent];
+	
 	// _listIndent not supported
-	//	[mps setTailIndent:_tailIndent]; // new
 	
 	[mps setMinimumLineHeight:_minimumLineHeight];
 	[mps setMaximumLineHeight:_maximumLineHeight];
@@ -345,6 +359,7 @@ static dispatch_semaphore_t selfLock;
 	DTCoreTextParagraphStyle *newObject = [[DTCoreTextParagraphStyle allocWithZone:zone] init];
 	
 	newObject.firstLineHeadIndent = self.firstLineHeadIndent;
+	newObject.tailIndent = self.tailIndent;
 	newObject.defaultTabInterval = self.defaultTabInterval;
 	newObject.paragraphSpacing = self.paragraphSpacing;
 	newObject.paragraphSpacingBefore = self.paragraphSpacingBefore;
@@ -380,11 +395,12 @@ static dispatch_semaphore_t selfLock;
 @synthesize minimumLineHeight = _minimumLineHeight;
 @synthesize maximumLineHeight = _maximumLineHeight;
 @synthesize headIndent = _headIndent;
+@synthesize tailIndent = _tailIndent;
 @synthesize listIndent = _listIndent;
 @synthesize alignment = _alignment;
-@synthesize textLists;
-@synthesize textBlocks;
-@synthesize baseWritingDirection;
+@synthesize textLists = _textLists;
+@synthesize textBlocks = _textBlocks;
+@synthesize baseWritingDirection = _baseWritingDirection;
 @synthesize tabStops = _tabStops;
 
 @end

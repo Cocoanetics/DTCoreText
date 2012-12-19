@@ -124,10 +124,14 @@
 
 
 /**
+The distance in points from the margin of a text container to the end of lines.
+ */
+@property (nonatomic, assign) CGFloat tailIndent;
+
+/**
  The distance in points from the leading margin of a text container to the beginning of lines other than the first. This value is always nonnegative.
  */
 @property (nonatomic, assign) CGFloat headIndent;
-
 
 /**
  The text alignment of the receiver.
