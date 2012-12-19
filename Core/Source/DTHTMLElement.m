@@ -650,6 +650,20 @@ BOOL ___shouldUseiOS6Attributes = NO;
 			self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
 		}
 	}
+	
+	NSString *marginLeft = [styles objectForKey:@"margin-left"];
+	if (marginLeft)
+	{
+		self.paragraphStyle.headIndent = [marginLeft pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+		self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
+	}
+
+	NSString *marginRight = [styles objectForKey:@"margin-right"];
+	if (marginRight)
+	{
+		self.paragraphStyle.tailIndent = -[marginRight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+	}
+	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
 	if (fontVariantStr)
 	{

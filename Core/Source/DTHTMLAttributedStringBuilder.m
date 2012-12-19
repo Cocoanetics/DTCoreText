@@ -1062,7 +1062,6 @@
 		{
 			NSString *lowerDirection = [direction lowercaseString];
 			
-			
 			if ([lowerDirection isEqualToString:@"ltr"])
 			{
 				_currentTag.paragraphStyle.baseWritingDirection = kCTWritingDirectionLeftToRight;
