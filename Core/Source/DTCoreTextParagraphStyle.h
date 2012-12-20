@@ -54,6 +54,7 @@
  @name Bridging to and from NSParagraphStyle
  */
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 /**
  Create a new paragraph style instance from an `NSParagraphStyle`.
  
@@ -70,6 +71,7 @@
  @returns The `NSParagraphStyle` based on the receiver's attributes.
  */
 - (NSParagraphStyle *)NSParagraphStyle;
+#endif
 
 
 /**-------------------------------------------------------------------------------------

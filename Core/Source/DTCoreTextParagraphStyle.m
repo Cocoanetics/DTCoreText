@@ -66,6 +66,7 @@ static dispatch_semaphore_t selfLock;
 	return returnParagraphStyle;
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 + (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
 	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
@@ -114,6 +115,7 @@ static dispatch_semaphore_t selfLock;
 	
 	return retStyle;
 }
+#endif
 
 - (id)init
 {	
@@ -230,6 +232,7 @@ static dispatch_semaphore_t selfLock;
 	return ret;
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 - (NSParagraphStyle *)NSParagraphStyle
 {
 	NSMutableParagraphStyle *mps = [[NSMutableParagraphStyle alloc] init];
@@ -283,6 +286,7 @@ static dispatch_semaphore_t selfLock;
 	// _tap stops not supported
 	return (NSParagraphStyle *)mps;
 }
+#endif
 
 - (void)addTabStopAtPosition:(CGFloat)position alignment:(CTTextAlignment)alignment
 {
