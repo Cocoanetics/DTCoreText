@@ -19,6 +19,7 @@ static dispatch_semaphore_t selfLock;
 	CGFloat _paragraphSpacingBefore;
 	CGFloat _paragraphSpacing;
 	CGFloat _headIndent;
+	CGFloat _tailIndent;
 	CGFloat _listIndent;
 	CGFloat _lineHeightMultiple;
 	CGFloat _minimumLineHeight;
@@ -152,6 +153,7 @@ static dispatch_semaphore_t selfLock;
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore,sizeof(_paragraphSpacingBefore), &_paragraphSpacingBefore);
 		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
 		
@@ -203,6 +205,7 @@ static dispatch_semaphore_t selfLock;
 		{kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(tmpParagraphSpacingBefore), &tmpParagraphSpacingBefore},
 		
 		{kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent},
+		{kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent},
 		{kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection},
 		{kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple},
 		
@@ -228,9 +231,9 @@ static dispatch_semaphore_t selfLock;
 	[mps setParagraphSpacingBefore:_paragraphSpacingBefore];
 	
 	[mps setHeadIndent:_headIndent];
+	[mps setTailIndent:_tailIndent];
 
 	// _listIndent not supported
-	//	[mps setTailIndent:_tailIndent]; // new
 	
 	[mps setMinimumLineHeight:_minimumLineHeight];
 	[mps setMaximumLineHeight:_maximumLineHeight];
@@ -325,21 +328,26 @@ static dispatch_semaphore_t selfLock;
 		case kCTWritingDirectionNatural:
 			// no output, this is default
 			break;
-	}	
+	}
 	
 	// Spacing at the bottom
 	if ( _paragraphSpacing!=1.0f ) {
-		[retString appendFormat:@"margin-bottom:%.2fem;", _paragraphSpacing];
+		[retString appendFormat:@"margin-bottom:%.2fpx;", _paragraphSpacing];
 	}
-
+	
 	// Spacing at the top
 	if ( _paragraphSpacingBefore!=1.0f ) {
-		[retString appendFormat:@"margin-top:%.2fem;", _paragraphSpacingBefore];
+		[retString appendFormat:@"margin-top:%.2fpx;", _paragraphSpacingBefore];
 	}
 	
 	// Spacing at the left
 	if ( _headIndent!=0.0f ) {
-		[retString appendFormat:@"margin-left:%.2fem;", _paragraphSpacingBefore];
+		[retString appendFormat:@"margin-left:%.2fpx;", _headIndent];
+	}
+	
+	// Spacing at the right
+	if ( _tailIndent!=0.0f ) {
+		[retString appendFormat:@"margin-right:%.2fpx;", _tailIndent];
 	}
 	
 	// return nil if no content
@@ -395,6 +403,7 @@ static dispatch_semaphore_t selfLock;
 @synthesize minimumLineHeight = _minimumLineHeight;
 @synthesize maximumLineHeight = _maximumLineHeight;
 @synthesize headIndent = _headIndent;
+@synthesize tailIndent = _tailIndent;
 @synthesize listIndent = _listIndent;
 @synthesize alignment = _alignment;
 @synthesize textLists;
