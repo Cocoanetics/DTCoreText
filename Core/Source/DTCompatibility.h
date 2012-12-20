@@ -51,4 +51,11 @@ static inline NSString* NSStringFromCGPoint(const CGPoint point)
 {
 	return NSStringFromPoint(NSPointFromCGPoint(point));
 }
+
+#define NSTextAlignmentLeft			NSLeftTextAlignment
+#define NSTextAlignmentRight		NSRightTextAlignment
+#define NSTextAlignmentCenter		NSCenterTextAlignment
+#define NSTextAlignmentJustified	NSJustifiedTextAlignment
+#define NSTextAlignmentNatural		NSNaturalTextAlignment
+
 #endif
