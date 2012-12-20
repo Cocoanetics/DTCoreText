@@ -327,6 +327,21 @@ static dispatch_semaphore_t selfLock;
 			break;
 	}	
 	
+	// Spacing at the bottom
+	if ( _paragraphSpacing!=1.0f ) {
+		[retString appendFormat:@"margin-bottom:%.2fem;", _paragraphSpacing];
+	}
+
+	// Spacing at the top
+	if ( _paragraphSpacingBefore!=1.0f ) {
+		[retString appendFormat:@"margin-top:%.2fem;", _paragraphSpacingBefore];
+	}
+	
+	// Spacing at the left
+	if ( _headIndent!=0.0f ) {
+		[retString appendFormat:@"margin-left:%.2fem;", _paragraphSpacingBefore];
+	}
+	
 	// return nil if no content
 	if ([retString length])
 	{
