@@ -346,20 +346,29 @@ static dispatch_semaphore_t selfLock;
 	}	
 	
 	// Spacing at the bottom
-	if ( _paragraphSpacing!=1.0f ) {
-		[retString appendFormat:@"margin-bottom:%.2fem;", _paragraphSpacing];
+	if ( _paragraphSpacing!=0.0f )
+	{
+		[retString appendFormat:@"margin-bottom:%.2fpx;", _paragraphSpacing];
 	}
 
 	// Spacing at the top
-	if ( _paragraphSpacingBefore!=1.0f ) {
-		[retString appendFormat:@"margin-top:%.2fem;", _paragraphSpacingBefore];
+	if ( _paragraphSpacingBefore!=0.0f )
+	{
+		[retString appendFormat:@"margin-top:%.2fpx;", _paragraphSpacingBefore];
 	}
 	
 	// Spacing at the left
-	if ( _headIndent!=0.0f ) {
-		[retString appendFormat:@"margin-left:%.2fem;", _paragraphSpacingBefore];
+	if ( _headIndent!=0.0f )
+	{
+		[retString appendFormat:@"margin-left:%.2fpx;", _headIndent];
 	}
-	
+
+	// Spacing at the right
+	if ( _tailIndent!=0.0f )
+	{
+		[retString appendFormat:@"margin-right:%.2fpx;", _tailIndent];
+	}
+
 	// return nil if no content
 	if ([retString length])
 	{
