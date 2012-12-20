@@ -135,12 +135,14 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if (font)
 		{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (___useiOS6Attributes)
 			{
 				UIFont *uiFont = [UIFont fontWithCTFont:font];
 				[tmpDict setObject:uiFont forKey:NSFontAttributeName];
 			}
 			else
+#endif
 			{
 				// __bridge since its already retained elsewhere
 				[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
@@ -170,11 +172,13 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// add strikout if applicable
 	if (_strikeOut)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
 		}
 		else
+#endif
 		{
 			[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
 		}
@@ -183,11 +187,13 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// set underline style
 	if (_underlineStyle)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 		}
 		else
+#endif
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:_underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
 		}
@@ -198,11 +204,13 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	
 	if (_textColor)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:_textColor forKey:NSForegroundColorAttributeName];
 		}
 		else
+#endif
 		{
 			[tmpDict setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
 		}
@@ -210,11 +218,13 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	
 	if (_backgroundColor)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:_backgroundColor forKey:NSBackgroundColorAttributeName];
 		}
 		else
+#endif
 		{
 			[tmpDict setObject:(id)[_backgroundColor CGColor] forKey:DTBackgroundColorAttribute];
 		}
@@ -228,12 +238,14 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// add paragraph style
 	if (_paragraphStyle)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [self.paragraphStyle NSParagraphStyle];
 			[tmpDict setObject:style forKey:NSParagraphStyleAttributeName];
 		}
 		else
+#endif
 		{
 			CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
 			[tmpDict setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
@@ -243,6 +255,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// add shadow array if applicable
 	if (_shadows)
 	{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			// only a single shadow supported
@@ -255,6 +268,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 			[tmpDict setObject:shadow forKey:NSShadowAttributeName];
 		}
 		else
+#endif
 		{
 			[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
 		}
@@ -310,6 +324,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 				CTFontRef smallerFont = [smallDesc newMatchingFont];
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 				
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 				if (___useiOS6Attributes)
 				{
 					UIFont *font = [UIFont fontWithCTFont:smallerFont];
@@ -318,6 +333,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 					CFRelease(smallerFont);
 				}
 				else
+#endif
 				{
 					[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
 				}

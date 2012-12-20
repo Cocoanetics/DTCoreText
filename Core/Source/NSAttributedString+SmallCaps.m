@@ -17,6 +17,7 @@
 	
 	DTCoreTextFontDescriptor *smallerFontDesc = nil;
 	
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 	if ([normalFont isKindOfClass:[UIFont class]])
 	{
 		// UIKit Font
@@ -29,6 +30,7 @@
 		CFRelease(ctFont);
 	}
 	else
+#endif
 	{
 		// CTFontRef
 		smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)normalFont];
@@ -39,6 +41,7 @@
 	
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 	if (___useiOS6Attributes)
 	{
 		UIFont *uiFont = [UIFont fontWithCTFont:smallerFont];
@@ -48,6 +51,7 @@
 		CFRelease(smallerFont);
 	}
 	else
+#endif
 	{
 		[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
 	}

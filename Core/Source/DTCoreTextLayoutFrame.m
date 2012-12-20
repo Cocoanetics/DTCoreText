@@ -831,11 +831,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
 			
 			// can also be iOS 6 attribute
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (!backgroundColor && ___useiOS6Attributes)
 			{
 				UIColor *uiColor = [oneRun.attributes objectForKey:NSBackgroundColorAttributeName];
 				backgroundColor = uiColor.CGColor;
 			}
+#endif
 			
 			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:DTHorizontalRuleStyleAttribute];
 			

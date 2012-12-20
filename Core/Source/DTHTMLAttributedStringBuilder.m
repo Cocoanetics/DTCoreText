@@ -579,11 +579,13 @@
 		
 		if (_currentTag.backgroundColor)
 		{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (___useiOS6Attributes)
 			{
 				[styleDict setObject:_currentTag.backgroundColor forKey:NSBackgroundColorAttributeName];
 			}
 			else
+#endif
 			{
 				[styleDict setObject:_currentTag.backgroundColor forKey:DTBackgroundColorAttribute];
 			}
@@ -772,12 +774,14 @@
 				{
 					DTCoreTextParagraphStyle *paragraphStyle = nil;
 					
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 					// convert it to DTCoreText
 					if ([prevParagraphStyle isKindOfClass:[NSParagraphStyle class]])
 					{
 						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:prevParagraphStyle];
 					}
 					else
+#endif
 					{
 						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:(__bridge CTParagraphStyleRef)prevParagraphStyle];
 					}
@@ -790,6 +794,7 @@
 						// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
 						NSRange paragraphRange = [[_tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 						if (___useiOS6Attributes)
 						{
 							NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
@@ -800,6 +805,7 @@
 							[_tmpString addAttribute:NSParagraphStyleAttributeName value:style range:paragraphRange];
 						}
 						else
+#endif
 						{
 							CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
 							
