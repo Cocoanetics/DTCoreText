@@ -658,6 +658,17 @@
 			}
 			
 			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
+			
+			if (!textColor)
+			{
+				if (___useiOS6Attributes)
+				{
+					// could also be the iOS 6 color
+					DTColor *color = [attributes objectForKey:NSForegroundColorAttributeName];
+					textColor = color.CGColor;
+				}
+			}
+
 			if (textColor)
 			{
 				DTColor *color = [DTColor colorWithCGColor:textColor];
