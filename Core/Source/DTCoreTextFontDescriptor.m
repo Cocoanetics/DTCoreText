@@ -358,7 +358,10 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		CFRelease(fontFeatures);
 	}
 	
-	CFRelease(tmpFont);
+	if (tmpFont)
+	{
+		CFRelease(tmpFont);
+	}
 	
 	return smallCapsSupported;
 }

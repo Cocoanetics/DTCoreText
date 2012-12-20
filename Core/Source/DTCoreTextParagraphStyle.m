@@ -346,25 +346,25 @@ static dispatch_semaphore_t selfLock;
 	}	
 	
 	// Spacing at the bottom
-	if ( _paragraphSpacing!=0.0f )
+	if (_paragraphSpacing!=0.0f)
 	{
 		[retString appendFormat:@"margin-bottom:%.2fpx;", _paragraphSpacing];
 	}
 
 	// Spacing at the top
-	if ( _paragraphSpacingBefore!=0.0f )
+	if (_paragraphSpacingBefore!=0.0f)
 	{
 		[retString appendFormat:@"margin-top:%.2fpx;", _paragraphSpacingBefore];
 	}
 	
 	// Spacing at the left
-	if ( _headIndent!=0.0f )
+	if (_headIndent!=0.0f)
 	{
 		[retString appendFormat:@"margin-left:%.2fpx;", _headIndent];
 	}
 
 	// Spacing at the right
-	if ( _tailIndent!=0.0f )
+	if (_tailIndent!=0.0f)
 	{
 		[retString appendFormat:@"margin-right:%.2fpx;", _tailIndent];
 	}
