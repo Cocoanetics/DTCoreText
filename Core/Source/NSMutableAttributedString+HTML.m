@@ -41,12 +41,14 @@
 		
 		if (paragraphStyle)
 		{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (___useiOS6Attributes)
 			{
 				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
 				[attributes setObject:style forKey:NSParagraphStyleAttributeName];
 			}
 			else
+#endif
 			{
 				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
 				[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
@@ -57,6 +59,7 @@
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
 			
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (___useiOS6Attributes)
 			{
 				// convert to UIFont
@@ -66,6 +69,7 @@
 				CFRelease(newFont);
 			}
 			else
+#endif
 			{
 				[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
 			}
