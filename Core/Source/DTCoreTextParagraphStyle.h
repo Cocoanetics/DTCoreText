@@ -130,6 +130,12 @@
 
 
 /**
+ The distance in points from the right-sided margin of a text container. This value is always nonnegative.
+ */
+@property (nonatomic, assign) CGFloat tailIndent;
+
+
+/**
  The text alignment of the receiver.
 
  Natural text alignment is realized as left or right alignment depending on the line sweep direction of the first script contained in the paragraph.
