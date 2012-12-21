@@ -8,10 +8,6 @@
 
 #import "DTCoreTextParagraphStyle.h"
 
-static NSCache *_paragraphStyleCache;
-
-static dispatch_semaphore_t selfLock;
-
 @implementation DTCoreTextParagraphStyle
 {
 	CGFloat _firstLineHeadIndent;
@@ -38,32 +34,7 @@ static dispatch_semaphore_t selfLock;
 
 + (DTCoreTextParagraphStyle *)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)ctParagraphStyle
 {
-	DTCoreTextParagraphStyle *returnParagraphStyle = NULL;
-	static dispatch_once_t predicate;
-	
-	dispatch_once(&predicate, ^{
-		
-		_paragraphStyleCache = [[NSCache alloc] init];
-		selfLock = dispatch_semaphore_create(1);
-	});
-	
-	// synchronize class-wide
-	
-	dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
-	{
-		
-		NSNumber *cacheKey = [NSNumber numberWithInteger:(NSInteger)ctParagraphStyle];
-		returnParagraphStyle = [_paragraphStyleCache objectForKey:cacheKey];
-		
-		if (!returnParagraphStyle) 
-		{
-			returnParagraphStyle = [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
-			[_paragraphStyleCache setObject:returnParagraphStyle forKey:cacheKey];
-		}
-	}
-	dispatch_semaphore_signal(selfLock);
-	
-	return returnParagraphStyle;
+	return [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
 }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
