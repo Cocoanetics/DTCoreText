@@ -13,6 +13,7 @@
 
 // common utilities
 #import "CGUtils.h"
+#import "DTCoreTextFunctions.h"
 
 // common classes
 #import "DTCSSListStyle.h"
