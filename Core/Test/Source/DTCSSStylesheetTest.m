@@ -14,7 +14,7 @@
 
 - (void)testAttributeWithWhitespace
 {
-	NSString *string = @"span { font-family: 'Trebuchet MS'; font-size: 16px; font-style: italic }";
+	NSString *string = @"span { font-family: 'Trebuchet MS'; empty: ; empty2:; font-size: 16px; line-height: 20 px; font-style: italic }";
 	
 	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:string];
 	
@@ -26,8 +26,17 @@
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	STAssertEqualObjects(fontSize, @"16px", @"font-size should match");
 
+	NSString *lineHeight = [styles objectForKey:@"line-height"];
+	STAssertEqualObjects(lineHeight, @"20 px", @"line-height should match");
+
 	NSString *fontStyle = [styles objectForKey:@"font-style"];
 	STAssertEqualObjects(fontStyle, @"italic", @"font-style should match");
+	
+	NSString *empty = [styles objectForKey:@"empty"];
+	STAssertEqualObjects(empty, @"", @"empty should match");
+
+	NSString *empty2 = [styles objectForKey:@"empty2"];
+	STAssertEqualObjects(empty2, @"", @"empty2 should match");
 }
 
 @end
