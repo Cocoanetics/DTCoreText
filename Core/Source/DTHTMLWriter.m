@@ -659,8 +659,6 @@
 		[self _buildOutput];
 	}
 	
-	NSLog(@"%@", _HTMLString);
-	
 	return _HTMLString;
 }
 
