@@ -408,7 +408,15 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		}
 		else
 		{
-			_fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize]; // already multiplied with textScale
+			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+			
+			// absolute pixel values need to be scaled if text scale is used
+			if (_textScale!=1.0f && [fontSize hasSuffix:@"px"])
+			{
+				fontSizeValue *= _textScale;
+			}
+
+			_fontDescriptor.pointSize = fontSizeValue;
 		}
 	}
 	
@@ -648,8 +656,16 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		}
 		else // interpret as length
 		{
-			self.paragraphStyle.minimumLineHeight = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
-			self.paragraphStyle.maximumLineHeight = self.paragraphStyle.minimumLineHeight;
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+			
+			// absolute pixel values need to be scaled if text scale is used
+			if (_textScale!=1.0f && [lineHeight hasSuffix:@"px"])
+			{
+				lineHeightValue *= _textScale;
+			}
+			
+			self.paragraphStyle.minimumLineHeight = lineHeightValue;
+			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
 	}
 	
