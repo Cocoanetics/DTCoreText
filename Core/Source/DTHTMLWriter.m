@@ -8,6 +8,7 @@
 
 #import "DTHTMLWriter.h"
 #import "DTCoreText.h"
+#import "DTVersion.h"
 
 @implementation DTHTMLWriter
 {
@@ -15,6 +16,7 @@
 	NSString *_HTMLString;
 	
 	CGFloat _textScale;
+	BOOL _iOS6TagsPossible;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
@@ -27,6 +29,18 @@
 		
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
+		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+		// if running on iOS6 or higher
+		if ([DTVersion osVersionIsLessThen:@"6.0"])
+		{
+			_iOS6TagsPossible = NO;
+		}
+		else
+		{
+			_iOS6TagsPossible = YES;
+		}
+#endif
 	}
 	
 	return self;
@@ -495,7 +509,7 @@
 			
 			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 			
-			if (!textColor)
+			if (!textColor && _iOS6TagsPossible)
 			{
 				// could also be the iOS 6 color
 				DTColor *color = [attributes objectForKey:NSForegroundColorAttributeName];
@@ -511,13 +525,11 @@
 			
 			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
 			
-			if (!backgroundColor)
+			if (!backgroundColor && _iOS6TagsPossible)
 			{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-				// could also be the iOS 6 background color
-				DTColor *color = [attributes objectForKey:NSBackgroundColorAttributeName];
-				backgroundColor = color.CGColor;
-#endif
+					// could also be the iOS 6 background color
+					DTColor *color = [attributes objectForKey:NSBackgroundColorAttributeName];
+					backgroundColor = color.CGColor;
 			}
 			
 			if (backgroundColor)
