@@ -33,7 +33,7 @@
 	return tmpDict;
 }
 
-- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize
+- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
 {
 	NSUInteger stringLength = [self length];
 	unichar *_characters = calloc(stringLength, sizeof(unichar));
@@ -108,6 +108,17 @@
 				}
 			}
 		}
+		else if (ch == 'p')
+		{
+			if (i<stringLength)
+			{
+				if (_characters[i] == 'x')
+				{
+					// absolute pixel value gets scaled
+					value *= textScale;
+				}
+			}
+		}
 	}
 	
 	if (negative)
@@ -149,10 +160,10 @@
 					[scanner scanUpToCharactersFromSet:tokenEndSet intoString:&blurString];
 					
 					
-					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
+					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
 					CGSize offset = CGSizeMake(offset_x, offset_y);
-					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
 					
 					NSValue *offsetValue;
 #if TARGET_OS_IPHONE
@@ -195,10 +206,10 @@
 						shadowColor = color;
 					}
 					
-					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
-					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGFloat offset_x = [offsetXString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
+					CGFloat offset_y = [offsetYString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
 					CGSize offset = CGSizeMake(offset_x, offset_y);
-					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize];
+					CGFloat blur = [blurString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:1.0f];
 					
 					NSValue *offsetValue;
 #if TARGET_OS_IPHONE

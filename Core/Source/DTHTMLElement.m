@@ -408,14 +408,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		}
 		else
 		{
-			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
-			
-			// absolute pixel values need to be scaled if text scale is used
-			if (_textScale!=1.0f && [fontSize hasSuffix:@"px"])
-			{
-				fontSizeValue *= _textScale;
-			}
-
+			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 			_fontDescriptor.pointSize = fontSizeValue;
 		}
 	}
@@ -656,14 +649,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		}
 		else // interpret as length
 		{
-			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
-			
-			// absolute pixel values need to be scaled if text scale is used
-			if (_textScale!=1.0f && [lineHeight hasSuffix:@"px"])
-			{
-				lineHeightValue *= _textScale;
-			}
-			
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 			self.paragraphStyle.minimumLineHeight = lineHeightValue;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
@@ -672,28 +658,30 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
 	if (marginBottom) 
 	{
-		self.paragraphStyle.paragraphSpacing = [marginBottom pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+		CGFloat marginBottomValue = [marginBottom pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
+		self.paragraphStyle.paragraphSpacing = marginBottomValue;
+
 	}
 	else
 	{
 		NSString *webkitMarginAfter = [styles objectForKey:@"-webkit-margin-after"];
 		if (webkitMarginAfter) 
 		{
-			self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+			self.paragraphStyle.paragraphSpacing = [webkitMarginAfter pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 		}
 	}
 	
 	NSString *marginLeft = [styles objectForKey:@"margin-left"];
 	if (marginLeft)
 	{
-		self.paragraphStyle.headIndent = [marginLeft pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+		self.paragraphStyle.headIndent = [marginLeft pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 		self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 	}
 
 	NSString *marginRight = [styles objectForKey:@"margin-right"];
 	if (marginRight)
 	{
-		self.paragraphStyle.tailIndent = -[marginRight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize];
+		self.paragraphStyle.tailIndent = -[marginRight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
@@ -716,13 +704,13 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
-		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
-		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
@@ -794,7 +782,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	
 	if (webkitPaddingStart)
 	{
-		self.paragraphStyle.listIndent = [webkitPaddingStart pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+		self.paragraphStyle.listIndent = [webkitPaddingStart pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	BOOL needsTextBlock = (_backgroundColor!=nil);
@@ -808,28 +796,28 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if ([parts count] == 4)
 		{
-			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.left = [[parts objectAtIndex:3] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.left = [[parts objectAtIndex:3] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 		}
 		else if ([parts count] == 3)
 		{
-			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			padding.left = padding.right;
 		}
 		else if ([parts count] == 2)
 		{
-			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
-			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			padding.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			padding.bottom = padding.top;
 			padding.left = padding.right;
 		}
 		else 
 		{
-			CGFloat paddingAmount = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			CGFloat paddingAmount = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			padding = DTEdgeInsetsMake(paddingAmount, paddingAmount, paddingAmount, paddingAmount);
 		}
 		
@@ -844,7 +832,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if (paddingString)
 		{
-			padding.left = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.left = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			needsTextBlock = YES;
 			
 			// left padding overrides webkit list indent
@@ -855,7 +843,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if (paddingString)
 		{
-			padding.top = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.top = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			needsTextBlock = YES;
 		}
 		
@@ -863,7 +851,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if (paddingString)
 		{
-			padding.right = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.right = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			needsTextBlock = YES;
 		}
 		
@@ -871,7 +859,7 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		
 		if (paddingString)
 		{
-			padding.bottom = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize];
+			padding.bottom = [paddingString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			needsTextBlock = YES;
 		}
 	}

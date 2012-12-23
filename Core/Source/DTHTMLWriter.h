@@ -29,4 +29,9 @@
  */
 @property (nonatomic, assign) CGFloat textScale;
 
+/**
+ The attributed string that the writer is processing.
+ */
+@property (nonatomic, readonly) NSAttributedString *attributedString;
+
 @end

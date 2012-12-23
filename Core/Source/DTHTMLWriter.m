@@ -231,8 +231,15 @@
 			
 			if (_textScale!=1.0f)
 			{
-				para.minimumLineHeight /= _textScale;
-				para.maximumLineHeight /= _textScale;
+				para.minimumLineHeight = roundf(para.minimumLineHeight / _textScale);
+				para.maximumLineHeight = roundf(para.maximumLineHeight / _textScale);
+				
+				para.paragraphSpacing = roundf(para.paragraphSpacing/ _textScale);
+				para.paragraphSpacingBefore = roundf(para.paragraphSpacingBefore / _textScale);
+				
+				para.firstLineHeadIndent = roundf(para.firstLineHeadIndent / _textScale);
+				para.headIndent = roundf(para.headIndent / _textScale);
+				para.tailIndent = roundf(para.tailIndent / _textScale);
 			}
 			
 			paraStyleString = [para cssStyleRepresentation];
@@ -498,6 +505,12 @@
 				if (font)
 				{
 					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+					
+					if (_textScale!=1.0f)
+					{
+						desc.pointSize /= _textScale;
+					}
+					
 					fontStyle = [desc cssStyleRepresentation];
 				}
 			}
@@ -646,11 +659,14 @@
 		[self _buildOutput];
 	}
 	
+	NSLog(@"%@", _HTMLString);
+	
 	return _HTMLString;
 }
 
 #pragma mark - Properties
 
+@synthesize attributedString = _attributedString;
 @synthesize textScale = _textScale;
 
 @end

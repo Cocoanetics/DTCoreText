@@ -23,9 +23,10 @@
 /** 
  Takes a textSize and modifies the current string's pixel measurement to be modified by it. Used in DTHTMLElement.
  @param textSize The current size which the CSS size is relative to.
+ @param textScale The factor by which absolute sizes are scaled. Set to 1.0f to keep the original value.
  @returns A float that is the size textSize be it %, em or just numbers .
  */
-- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize;
+- (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
 
 
 /** 
