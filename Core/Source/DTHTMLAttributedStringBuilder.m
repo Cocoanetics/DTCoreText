@@ -892,6 +892,32 @@
 		}
 		
 		NSDictionary *tagAttributes = [_currentTag attributesDictionary];
+		
+		// need to get prefix text color from list parent
+		DTHTMLElement *element = _currentTag;
+		
+		// walk up the tree until we find the ul/ol
+		while (element)
+		{
+			if ([element.tagName isEqualToString:@"li"])
+			{
+				element = element.parent;
+				break;
+			}
+			
+			element = element.parent;
+		}
+		
+		if ([element.tagName isEqualToString:@"ul"] || [element.tagName isEqualToString:@"ol"])
+		{
+			// make a temporary element that inherits all from parent, except paragraph style (indents and tab)
+			DTHTMLElement *tmpElement = [element copy];
+			
+			tmpElement.paragraphStyle = _currentTag.paragraphStyle;
+			
+			tagAttributes = [tmpElement attributesDictionary];
+		}
+		
 		NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:_currentTag.paragraphStyle.listIndent attributes:tagAttributes];
 		
 		if (prefixString)
