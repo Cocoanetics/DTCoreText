@@ -17,6 +17,8 @@
 	
 	CGFloat _textScale;
 	BOOL _iOS6TagsPossible;
+	
+	NSMutableDictionary *_styleLookup;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
@@ -47,6 +49,35 @@
 }
 
 #pragma mark - Generating HTML
+
+// checks the style against previous styles and returns the style class for this
+- (NSString *)_styleClassForElement:(NSString *)elementName style:(NSString *)style
+{
+	// get array of styles for element
+	NSMutableArray *_styleArray = [_styleLookup objectForKey:elementName];
+
+	if (!_styleArray)
+	{
+		// first time we see this element
+		_styleArray = [[NSMutableArray alloc] init];
+		[_styleLookup setObject:_styleArray forKey:elementName];
+	}
+	
+	NSInteger index = [_styleArray indexOfObject:style];
+	
+	if (index==NSNotFound)
+	{
+		// need to add this style
+		[_styleArray addObject:style];
+		index = [_styleArray count];
+	}
+	else
+	{
+		index++;
+	}
+	
+	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],index];
+}
 
 - (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag
 {
@@ -159,21 +190,30 @@
 		{
 			typeString = [typeString stringByAppendingString:@" outside"];
 		}
-		
+
+		NSString *blockElement;
 		if (isOrdered)
 		{
-			return [NSString stringWithFormat:@"<ol style=\"list-style='%@';\">", typeString];
+			blockElement = @"ol";
 		}
 		else
 		{
-			return [NSString stringWithFormat:@"<ul style=\"list-style='%@';\">", typeString];
+			blockElement = @"ul";
 		}
+		
+		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';\">", typeString];
+		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
+		
+		return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 	}
 }
 
 
 - (void)_buildOutput
 {
+	// reusable styles
+	_styleLookup = [[NSMutableDictionary alloc] init];
+	
 	NSString *plainString = [_attributedString string];
 	
 	// divide the string into it's blocks (we assume that these are the P)
@@ -336,7 +376,9 @@
 		
 		if ([paraStyleString length])
 		{
-			[retString appendFormat:@"<%@ style=\"%@\">", blockElement, paraStyleString];
+			NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
+			[retString appendFormat:@"<%@ class=\"%@\">", blockElement, className];
+			//[retString appendFormat:@"<%@ style=\"%@\">", blockElement, paraStyleString];
 		}
 		else
 		{
@@ -602,7 +644,9 @@
 			{
 				if ([fontStyle length])
 				{
-					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url relativeString], fontStyle, subString];
+					NSString *className = [self _styleClassForElement:@"a" style:fontStyle];
+					[retString appendFormat:@"<a class=\"%@\" href=\"%@\" style=\"%@\">%@</a>", className, [url relativeString], fontStyle, subString];
+//					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url relativeString], fontStyle, subString];
 				}
 				else
 				{
@@ -613,7 +657,10 @@
 			{
 				if ([fontStyle length])
 				{
-					[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
+					NSString *className = [self _styleClassForElement:@"span" style:fontStyle];
+					[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
+
+//					[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
 				}
 				else
 				{
@@ -646,6 +693,27 @@
 		}
 		while ([closingStyles count]);
 	}
+	
+	// append style block before text
+	NSMutableString *styleBlock = [NSMutableString string];
+	
+	NSArray *keys = [[_styleLookup allKeys] sortedArrayUsingSelector:@selector(compare:)];
+	
+	for (NSString *oneKey in keys)
+	{
+		NSArray *styleArray = [_styleLookup objectForKey:oneKey];
+		
+		[styleArray enumerateObjectsUsingBlock:^(NSString *style, NSUInteger idx, BOOL *stop) {
+			NSString *className = [NSString stringWithFormat:@"%@%d", [oneKey substringToIndex:1], idx+1];
+			[styleBlock appendFormat:@"%@.%@ {%@}\n", oneKey, className, style];
+		}];
+	}
+	
+	NSString *tmpStr = [NSString stringWithFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\">\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
+	[retString insertString:tmpStr atIndex:0];
+	
+	[retString appendString:@"</body>\n</html>\n"];
+	
 	
 	_HTMLString = retString;
 }
