@@ -13,7 +13,9 @@
 
 // common utilities
 #import "CGUtils.h"
+#if TARGET_OS_IPHONE
 #import "DTCoreTextFunctions.h"
+#endif
 
 // common classes
 #import "DTCSSListStyle.h"
