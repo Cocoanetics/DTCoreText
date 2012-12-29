@@ -12,6 +12,7 @@
 
 #import "DTHTMLElementText.h"
 #import "DTHTMLElementBR.h"
+#import "DTHTMLElementStylesheet.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -716,6 +717,18 @@
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
+
+		if ([_currentTag isKindOfClass:[DTHTMLElementStylesheet class]])
+		{
+			DTCSSStylesheet *localSheet = [(DTHTMLElementStylesheet *)_currentTag stylesheet];
+			[_globalStyleSheet mergeStylesheet:localSheet];
+			
+			// go back up a level
+			_currentTag = [_currentTag parentElement];
+
+			return;
+		}
+		
 		if (_currentTag == _bodyElement || _currentTag.parentElement == _bodyElement)
 		{
 			// has children that have not been output yet

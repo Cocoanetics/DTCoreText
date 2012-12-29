@@ -12,6 +12,7 @@
 #import "DTHTMLElementBR.h"
 #import "DTHTMLElementHR.h"
 #import "DTHTMLElementLI.h"
+#import "DTHTMLElementStylesheet.h"
 #import "DTHTMLElementText.h"
 
 @interface DTHTMLElement ()
@@ -40,6 +41,7 @@ NSDictionary *_classesForNames = nil;
 	[tmpDict setObject:[DTHTMLElementBR class] forKey:@"br"];
 	[tmpDict setObject:[DTHTMLElementHR class] forKey:@"hr"];
 	[tmpDict setObject:[DTHTMLElementLI class] forKey:@"li"];
+	[tmpDict setObject:[DTHTMLElementStylesheet class] forKey:@"style"];
 	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"img"];
 	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"object"];
 	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"video"];
