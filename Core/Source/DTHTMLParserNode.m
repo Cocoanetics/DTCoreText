@@ -7,11 +7,11 @@
 //
 
 #import "DTHTMLParserNode.h"
+#import "DTHTMLParserTextNode.h"
 
 @implementation DTHTMLParserNode
 {
 	NSString *_name;
-	NSDictionary *_attributes;
 	__unsafe_unretained DTHTMLParserNode *_parentNode;
 	NSMutableArray *_childNodes;
 }
@@ -24,7 +24,7 @@
 	if (self)
 	{
 		_name = [name copy];
-		self.attributes = [attributes copy]; // property to allow overriding
+		[self setAttributes:attributes]; // property to allow overriding
 	}
 	
 	return self;
@@ -59,19 +59,19 @@
 	// write own name tag open
 	[string appendFormat:@"<%@", _name];
 
-	if (![_childNodes count])
-	{
-		[string appendString:@" \\>\n"];
-		return;
-	}
-	
 	// sort attribute names
 	NSArray *sortedKeys = [_attributes.allKeys sortedArrayUsingSelector:@selector(compare:)];
 	
 	for (NSString *oneKey in sortedKeys)
 	{
 		NSString *attribute = [_attributes objectForKey:oneKey];
-		[string appendFormat:@" %@='%@'", oneKey, attribute];
+		[string appendFormat:@" %@=\"%@\"", oneKey, attribute];
+	}
+
+	if (![_childNodes count])
+	{
+		[string appendString:@" \\>\n"];
+		return;
 	}
 	
 	[string appendFormat:@">\n"];
@@ -99,6 +99,21 @@
 	[self _appendHTMLToString:tmpString indentLevel:0];
 	
 	return tmpString;
+}
+
+- (NSString *)text
+{
+	NSMutableString *text = [NSMutableString string];
+	
+	for (DTHTMLParserTextNode *oneChild in self.childNodes)
+	{
+		if ([oneChild isKindOfClass:[DTHTMLParserTextNode class]])
+		{
+			[text appendString:[oneChild characters]];
+		}
+	}	
+	
+	return text;
 }
 
 #pragma mark - Properties

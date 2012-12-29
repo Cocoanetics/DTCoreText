@@ -11,6 +11,9 @@
 @class DTHTMLParserTextNode;
 
 @interface DTHTMLParserNode : NSObject
+{
+	NSDictionary *_attributes;
+}
 
 /**
  Designated initializer
@@ -47,5 +50,10 @@
  Hierarchy representation of the receiver including all attributes and children
  */
 - (NSString *)debugDescription;
+
+/**
+ Concatenated contents of all text nodes
+ */
+- (NSString *)text;
 
 @end

@@ -1147,13 +1147,10 @@ NSDictionary *_classesForNames = nil;
 
 - (void)setAttributes:(NSDictionary *)attributes
 {
-	if (_attributes != attributes)
-	{
-		_attributes = attributes;
-		
-		// decode size contained in attributes, might be overridden later by CSS size
-		_size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]); 
-	}
+	[super setAttributes:[attributes copy]];
+	
+	// decode size contained in attributes, might be overridden later by CSS size
+	_size = CGSizeMake([[self attributeForKey:@"width"] floatValue], [[self attributeForKey:@"height"] floatValue]);
 }
 
 - (void)setTextAttachment:(DTTextAttachment *)textAttachment
@@ -1197,7 +1194,6 @@ NSDictionary *_classesForNames = nil;
 @synthesize fontVariant = _fontVariant;
 @synthesize textScale = _textScale;
 @synthesize size = _size;
-@synthesize attributes = _attributes;
 @synthesize linkGUID = _linkGUID;
 
 @end

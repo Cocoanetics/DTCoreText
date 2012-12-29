@@ -67,7 +67,6 @@
 	CGSize _size;
 	
 	NSMutableArray *_children;
-	NSDictionary *_attributes; // contains all attributes from parsing
 	
 	NSDictionary *_styles;
 	

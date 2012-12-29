@@ -75,7 +75,7 @@
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
 	
 	// decode URL
-	NSString *src = [element attributeForKey:@"src"];
+	NSString *src = [element.attributes objectForKey:@"src"];
 	
 	NSURL *contentURL = nil;
 	DTImage *decodedImage = nil;
