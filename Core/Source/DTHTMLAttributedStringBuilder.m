@@ -681,17 +681,6 @@
 			{
 				_bodyElement = newNode;
 			}
-			else
-			{
-				// images that are direct descendants of body become blocks
-				if (newNode.parentElement == _bodyElement)
-				{
-					if (newNode.displayStyle == DTHTMLElementDisplayStyleInline && [newNode.name isEqualToString:@"img"])
-					{
-						newNode.displayStyle = DTHTMLElementDisplayStyleBlock;
-					}
-				}
-			}
 		}
 		else
 		{
@@ -726,7 +715,6 @@
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-		
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		if (_currentTag == _bodyElement || _currentTag.parentElement == _bodyElement)
 		{
@@ -756,8 +744,8 @@
 
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 {
+	
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		if ([string isWhitespace])
@@ -803,7 +791,6 @@
 - (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
@@ -818,8 +805,14 @@
 - (void)parserDidEndDocument:(DTHTMLParser *)parser
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-		
 		NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
+		
+		// trim off white space at end
+		while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
+		{
+			[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+		}
+		
 	});
 }
 
