@@ -27,7 +27,16 @@
 
 - (NSAttributedString *)attributedString
 {
-	NSString *text = [_text stringByNormalizingWhitespace];
+	NSString *text;
+	
+	if (self.preserveNewlines)
+	{
+		text = _text;
+	}
+	else
+	{
+		text = [_text stringByNormalizingWhitespace];
+	}
 	
 	NSDictionary *attributes = [self attributesDictionary];
 	
