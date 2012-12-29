@@ -29,7 +29,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 @implementation DTLinkButton
 {
 	NSURL *_URL;
-    NSString *_GUID;
+	NSString *_GUID;
 	
 	CGSize _minimumHitSize;
 	BOOL _showsTouchWhenHighlighted;
@@ -37,12 +37,12 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	// normal text
 	NSAttributedString *_attributedString;
 	DTCoreTextLayoutLine *_normalLine;
-	DTCoreTextGlyphRun *_normalGlyphRun;
+	//DTCoreTextGlyphRun *_normalGlyphRun;
 	
 	// highlighted text
 	NSAttributedString *_highlightedAttributedString;
 	DTCoreTextLayoutLine *_highlightedLine;
-	DTCoreTextGlyphRun *_highlightedGlyphRun;
+	//DTCoreTextGlyphRun *_highlightedGlyphRun;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -72,9 +72,9 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 
 #pragma mark Drawing the Link Text
 
-- (DTCoreTextGlyphRun *)_normalGlyphRun
+- (DTCoreTextLayoutLine *)_normalLine
 {
-	if (!_normalGlyphRun && _attributedString)
+	if (!_normalLine && _attributedString)
 	{
 		DTCoreTextLayouter *layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
 		
@@ -88,22 +88,14 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		
 		// get the line
 		_normalLine = [frame.lines objectAtIndex:0];
-		
-		if (![_normalLine.glyphRuns count])
-		{
-			return nil;
-		}
-		
-		// get the glyph run
-		_normalGlyphRun	= [_normalLine.glyphRuns objectAtIndex:0];
 	}
 	
-	return _normalGlyphRun;
+	return _normalLine;
 }
 
-- (DTCoreTextGlyphRun *)_highlightedGlyphRun
+- (DTCoreTextLayoutLine *)_highlightedLine
 {
-	if (!_highlightedGlyphRun && _highlightedAttributedString)
+	if (!_highlightedLine && _highlightedAttributedString)
 	{
 		DTCoreTextLayouter *layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_highlightedAttributedString];
 		
@@ -117,145 +109,141 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		
 		// get the line
 		_highlightedLine = [frame.lines objectAtIndex:0];
-		
-		if (![_highlightedLine.glyphRuns count])
-		{
-			return nil;
-		}
-		
-		// get the glyph run
-		_highlightedGlyphRun	= [_highlightedLine.glyphRuns objectAtIndex:0];
 	}
 	
-	return _highlightedGlyphRun;
+	return _highlightedLine;
 }
 
 - (void)drawTextInContext:(CGContextRef)context highlighted:(BOOL)highlighted
 {
-	DTCoreTextGlyphRun *glyphRunToDraw = nil;
+	DTCoreTextLayoutLine *lineToDraw = nil;
 	
 	if (highlighted)
 	{
 		// use highlighted glyph run
-		glyphRunToDraw = [self _highlightedGlyphRun];
+		lineToDraw = [self _highlightedLine];
 	}
 	else
 	{
 		// use normal glyph run
-		glyphRunToDraw = [self _normalGlyphRun];
+		lineToDraw = [self _normalLine];
 	}
 	
-	if (!glyphRunToDraw)
+	if (!lineToDraw)
 	{
 		return;
 	}
 	
-	CGContextSaveGState(context);
 	
-	NSDictionary *runAttributes = glyphRunToDraw.attributes;
-	
-	// -------------- Line-Out, Underline, Background-Color
-	BOOL drawStrikeOut = [[runAttributes objectForKey:DTStrikeOutAttribute] boolValue];
-	BOOL drawUnderline = [[runAttributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
-				
-	CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:DTBackgroundColorAttribute];
-	
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-	if (!backgroundColor&&___useiOS6Attributes)
+	for (DTCoreTextGlyphRun *glyphRunToDraw in lineToDraw.glyphRuns)
 	{
-		// could also be the iOS 6 background color
-		DTColor *color = [runAttributes objectForKey:NSBackgroundColorAttributeName];
-		backgroundColor = color.CGColor;
-	}
-#endif
-	
-	if (drawStrikeOut||drawUnderline||backgroundColor)
-	{
-		// get text color or use black
-		CGColorRef foregroundColor = (__bridge CGColorRef)[runAttributes objectForKey:(id)kCTForegroundColorAttributeName];
+		CGContextSaveGState(context);
+		
+		NSDictionary *runAttributes = glyphRunToDraw.attributes;
+		
+		// -------------- Line-Out, Underline, Background-Color
+		BOOL drawStrikeOut = [[runAttributes objectForKey:DTStrikeOutAttribute] boolValue];
+		BOOL drawUnderline = [[runAttributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+		
+		CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:DTBackgroundColorAttribute];
 		
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		// could also be an iOS 6 attribute
-		if (!foregroundColor)
+		if (!backgroundColor&&___useiOS6Attributes)
 		{
 			// could also be the iOS 6 background color
 			DTColor *color = [runAttributes objectForKey:NSBackgroundColorAttributeName];
-			foregroundColor = color.CGColor;
+			backgroundColor = color.CGColor;
 		}
 #endif
 		
-		if (foregroundColor)
+		if (drawStrikeOut||drawUnderline||backgroundColor)
 		{
-			CGContextSetStrokeColorWithColor(context, foregroundColor);
-		}
-		else
-		{
-			CGContextSetGrayStrokeColor(context, 0, 1.0);
-		}
-		
-		CGRect runStrokeBounds = UIEdgeInsetsInsetRect(self.bounds, self.contentEdgeInsets);
-		
-		NSInteger superscriptStyle = [[glyphRunToDraw.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
-		
-		switch (superscriptStyle)
-		{
-			case 1:
+			// get text color or use black
+			CGColorRef foregroundColor = (__bridge CGColorRef)[runAttributes objectForKey:(id)kCTForegroundColorAttributeName];
+			
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+			// could also be an iOS 6 attribute
+			if (!foregroundColor)
 			{
-				runStrokeBounds.origin.y -= glyphRunToDraw.ascent * 0.47f;
-				break;
+				// could also be the iOS 6 background color
+				DTColor *color = [runAttributes objectForKey:NSBackgroundColorAttributeName];
+				foregroundColor = color.CGColor;
 			}
-			case -1:
+#endif
+			
+			if (foregroundColor)
 			{
-				runStrokeBounds.origin.y += glyphRunToDraw.ascent * 0.25f;
-				break;
+				CGContextSetStrokeColorWithColor(context, foregroundColor);
 			}
-			default:
-				break;
+			else
+			{
+				CGContextSetGrayStrokeColor(context, 0, 1.0);
+			}
+			
+			CGRect runStrokeBounds = UIEdgeInsetsInsetRect(self.bounds, self.contentEdgeInsets);
+			
+			NSInteger superscriptStyle = [[glyphRunToDraw.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+			
+			switch (superscriptStyle)
+			{
+				case 1:
+				{
+					runStrokeBounds.origin.y -= glyphRunToDraw.ascent * 0.47f;
+					break;
+				}
+				case -1:
+				{
+					runStrokeBounds.origin.y += glyphRunToDraw.ascent * 0.25f;
+					break;
+				}
+				default:
+					break;
+			}
+			
+			
+			//		if (lastRunInLine)
+			//		{
+			//			runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
+			//		}
+			
+			if (backgroundColor)
+			{
+				CGContextSetFillColorWithColor(context, backgroundColor);
+				CGContextFillRect(context, runStrokeBounds);
+			}
+			
+			if (drawStrikeOut)
+			{
+				runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
+				
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+				
+				CGContextStrokePath(context);
+			}
+			
+			if (drawUnderline)
+			{
+				runStrokeBounds.origin.y = ceilf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height - glyphRunToDraw.descent)+0.5f;
+				
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+				
+				CGContextStrokePath(context);
+			}
 		}
 		
+		// Flip the coordinate system
+		CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+		CGContextScaleCTM(context, 1.0, -1.0);
+		CGContextTranslateCTM(context, 0, -self.bounds.size.height);
 		
-//		if (lastRunInLine)
-//		{
-//			runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
-//		}
+		CGContextSetTextPosition(context, 0, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
 		
-		if (backgroundColor)
-		{
-			CGContextSetFillColorWithColor(context, backgroundColor);
-			CGContextFillRect(context, runStrokeBounds);
-		}
-		
-		if (drawStrikeOut)
-		{
-			runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
-			
-			CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-			CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-			
-			CGContextStrokePath(context);
-		}
-		
-		if (drawUnderline)
-		{
-			runStrokeBounds.origin.y = ceilf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height - glyphRunToDraw.descent)+0.5f;
-			
-			CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-			CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
-			
-			CGContextStrokePath(context);
-		}
+		[glyphRunToDraw drawInContext:context];
+		CGContextRestoreGState(context);
 	}
 	
-	// Flip the coordinate system
-	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-	CGContextScaleCTM(context, 1.0, -1.0);
-	CGContextTranslateCTM(context, 0, -self.bounds.size.height);
-	
-	CGContextSetTextPosition(context, 0, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
-
-	[glyphRunToDraw drawInContext:context];
-	
-	CGContextRestoreGState(context);
 }
 
 #pragma mark Drawing the Run
@@ -271,7 +259,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		if (_showsTouchWhenHighlighted)
 		{
 			CGRect imageRect = [self contentRectForBounds:self.bounds];
-		
+			
 			UIBezierPath *roundedPath = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:3.0f];
 			CGContextSetGrayFillColor(ctx, 0.73f, 0.4f);
 			[roundedPath fill];
