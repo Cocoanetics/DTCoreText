@@ -90,9 +90,12 @@ code
 	font-family:Courier;
 }
 
-pre
+pre, xmp, plaintext, listing 
 {
-	font-family:Courier;
+	display: block;
+	font-family: monospace;
+	white-space: pre;
+	margin: 1em 0px;
 }
 
 /* color:-webkit-link */
