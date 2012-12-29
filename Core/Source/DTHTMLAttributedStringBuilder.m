@@ -9,7 +9,9 @@
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 #import "DTFoundation.h"
+
 #import "DTHTMLElementText.h"
+#import "DTHTMLElementBR.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -767,9 +769,15 @@
 			}
 			
 			// ignore whitespace following a block element
-			DTHTMLElement *element = [_currentTag.childNodes lastObject];
+			DTHTMLElement *previousTag = [_currentTag.childNodes lastObject];
 			
-			if (element.displayStyle != DTHTMLElementDisplayStyleInline)
+			if (previousTag.displayStyle != DTHTMLElementDisplayStyleInline)
+			{
+				return;
+			}
+			
+			// ignore whitespace following a BR
+			if ([previousTag isKindOfClass:[DTHTMLElementBR class]])
 			{
 				return;
 			}
