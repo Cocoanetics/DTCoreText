@@ -384,7 +384,7 @@ NSDictionary *_classesForNames = nil;
 				if (oneChild.displayStyle == DTHTMLElementDisplayStyleBlock)
 				{
 					// trim off whitespace suffix
-					while ([[tmpString string] hasSuffix:@" "])
+					while ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
 					{
 						[tmpString deleteCharactersInRange:NSMakeRange([tmpString length]-1, 1)];
 					}
@@ -399,7 +399,7 @@ NSDictionary *_classesForNames = nil;
 			if (nodeString)
 			{
 				// we already have a white space in the string so far
-				if ([[tmpString string] hasSuffix:@" "])
+				if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
 				{
 					while ([[nodeString string] hasPrefix:@" "])
 					{
