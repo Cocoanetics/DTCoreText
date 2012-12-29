@@ -307,7 +307,7 @@ extern unsigned int default_css_len;
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
 	// Get based on element
-	NSDictionary *byTagName = [self.styles objectForKey:element.tagName];
+	NSDictionary *byTagName = [self.styles objectForKey:element.name];
 	
 	if (byTagName) 
 	{
@@ -321,7 +321,7 @@ extern unsigned int default_css_len;
 	for (NSString *class in classes) 
 	{
 		NSString *classRule = [NSString stringWithFormat:@".%@", class];
-		NSString *classAndTagRule = [NSString stringWithFormat:@"%@.%@", element.tagName, class];
+		NSString *classAndTagRule = [NSString stringWithFormat:@"%@.%@", element.name, class];
 		
 		NSDictionary *byClass = [_styles objectForKey:classRule];
 		NSDictionary *byClassAndName = [_styles objectForKey:classAndTagRule];

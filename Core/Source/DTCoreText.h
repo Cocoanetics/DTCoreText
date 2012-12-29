@@ -37,6 +37,10 @@
 #import "NSAttributedString+DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
+// parsing classes
+#import "DTHTMLParserNode.h"
+#import "DTHTMLParserTextNode.h"
+
 
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE

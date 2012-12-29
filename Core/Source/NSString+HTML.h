@@ -24,6 +24,11 @@
  */
 - (BOOL)isNumeric;
 
+/**
+ Test whether the entire receiver consists of only whitespace characters.
+ @returns `YES` if the receiver only has whitespace and newline characters
+ */
+- (BOOL)isWhitespace;
 
 /** 
  Read through this string and store the numbers included, then divide them by 100 giving a percentage.

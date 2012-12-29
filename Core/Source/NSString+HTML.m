@@ -37,6 +37,13 @@ static NSDictionary *entityReverseLookup = nil;
 	return YES;
 }
 
+- (BOOL)isWhitespace
+{
+	NSString *tmpStr = [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	
+	return [tmpStr length]==0;
+}
+
 - (float)percentValue
 {
 	float result = 1;

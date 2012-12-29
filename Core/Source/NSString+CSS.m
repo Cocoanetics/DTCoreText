@@ -117,6 +117,14 @@
 					// absolute pixel value gets scaled
 					value *= textScale;
 				}
+				else if (_characters[i] == 't')
+				{
+					// 1 pt = 1.3333 px on Mac, so we do the same
+					value *= 1.3333f;
+					
+					// absolute pixel value gets scaled
+					value *= textScale;
+				}
 			}
 		}
 	}
@@ -236,16 +244,6 @@
 	
 	
 	return tmpArray;
-}
-
-- (CGFloat)CSSpixelSize
-{
-	if ([self hasSuffix:@"px"])
-	{
-		return [self floatValue];
-	}
-	
-	return [self floatValue];
 }
 
 - (NSString *)stringByDecodingCSSContentAttribute

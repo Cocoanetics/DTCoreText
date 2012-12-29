@@ -76,7 +76,7 @@
 		index++;
 	}
 	
-	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],index];
+	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],(int)index];
 }
 
 - (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag
@@ -704,7 +704,7 @@
 		NSArray *styleArray = [_styleLookup objectForKey:oneKey];
 		
 		[styleArray enumerateObjectsUsingBlock:^(NSString *style, NSUInteger idx, BOOL *stop) {
-			NSString *className = [NSString stringWithFormat:@"%@%d", [oneKey substringToIndex:1], idx+1];
+			NSString *className = [NSString stringWithFormat:@"%@%d", [oneKey substringToIndex:1], (int)idx+1];
 			[styleBlock appendFormat:@"%@.%@ {%@}\n", oneKey, className, style];
 		}];
 	}

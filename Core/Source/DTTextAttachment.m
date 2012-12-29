@@ -33,19 +33,19 @@
 	// determine type
 	DTTextAttachmentType attachmentType;
 	
-	if ([element.tagName isEqualToString:@"img"])
+	if ([element.name isEqualToString:@"img"])
 	{
 		attachmentType = DTTextAttachmentTypeImage;
 	}
-	else if ([element.tagName isEqualToString:@"video"])
+	else if ([element.name isEqualToString:@"video"])
 	{
 		attachmentType = DTTextAttachmentTypeVideoURL;
 	}
-	else if ([element.tagName isEqualToString:@"iframe"])
+	else if ([element.name isEqualToString:@"iframe"])
 	{
 		attachmentType = DTTextAttachmentTypeIframe;
 	}
-	else if ([element.tagName isEqualToString:@"object"])
+	else if ([element.name isEqualToString:@"object"])
 	{
 		attachmentType = DTTextAttachmentTypeObject;
 	}

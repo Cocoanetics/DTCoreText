@@ -12,32 +12,68 @@
 @class DTCSSListStyle;
 @class DTColor;
 
-typedef enum
+
+#import "DTCoreTextConstants.h"
+#import "DTHTMLParserNode.h"
+#import "DTTextAttachment.h"
+
+@class DTHTMLElementBR;
+
+/**
+ Class to represent a element (aka "tag") in a HTML document. Structure information - like parent or children - is inherited from its superclass <DTHTMLParserNode>.
+ */
+@interface DTHTMLElement : DTHTMLParserNode
 {
-	DTHTMLElementDisplayStyleInline = 0, // default
-	DTHTMLElementDisplayStyleNone,
-	DTHTMLElementDisplayStyleBlock,
-	DTHTMLElementDisplayStyleListItem,
-	DTHTMLElementDisplayStyleTable,
-} DTHTMLElementDisplayStyle;
+	DTHTMLElement *_parent;
+	
+	DTCoreTextFontDescriptor *_fontDescriptor;
+	DTCoreTextParagraphStyle *_paragraphStyle;
+	DTTextAttachment *_textAttachment;
+	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
+	NSURL *_link;
+	NSString *_anchorName;
+	
+	DTColor *_textColor;
+	DTColor *_backgroundColor;
+	
+	CTUnderlineStyle _underlineStyle;
+	
+	NSString *_beforeContent;
+	
+	NSString *_linkGUID;
+	
+	BOOL _tagContentInvisible;
+	BOOL _strikeOut;
+	NSInteger _superscriptStyle;
+	
+	NSInteger _headerLevel;
+	
+	NSArray *_shadows;
+	
+	NSMutableDictionary *_fontCache;
+	
+	NSMutableDictionary *_additionalAttributes;
+	
+	DTHTMLElementDisplayStyle _displayStyle;
+	DTHTMLElementFloatStyle _floatStyle;
+	
+	BOOL _isColorInherited;
+	
+	BOOL _preserveNewlines;
+	
+	DTHTMLElementFontVariant _fontVariant;
+	
+	CGFloat _textScale;
+	CGSize _size;
+	
+	NSMutableArray *_children;
+	NSDictionary *_attributes; // contains all attributes from parsing
+	
+	NSDictionary *_styles;
+	
+	BOOL _didOutput;
+}
 
-typedef enum
-{
-	DTHTMLElementFloatStyleNone = 0,
-	DTHTMLElementFloatStyleLeft,
-	DTHTMLElementFloatStyleRight
-} DTHTMLElementFloatStyle;
-
-typedef enum
-{
-	DTHTMLElementFontVariantInherit = 0,
-	DTHTMLElementFontVariantNormal,
-	DTHTMLElementFontVariantSmallCaps
-} DTHTMLElementFontVariant;
-
-@interface DTHTMLElement : NSObject <NSCopying>
-
-@property (nonatomic, strong) DTHTMLElement *parent;
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
 @property (nonatomic, copy) DTCoreTextParagraphStyle *paragraphStyle;
 @property (nonatomic, strong) DTTextAttachment *textAttachment;
@@ -45,9 +81,7 @@ typedef enum
 @property (nonatomic, copy) NSString *anchorName;
 @property (nonatomic, strong) DTColor *textColor;
 @property (nonatomic, strong) DTColor *backgroundColor;
-@property (nonatomic, copy) NSString *tagName;
 @property (nonatomic, copy) NSString *beforeContent;
-@property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSArray *shadows;
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;
 @property (nonatomic, assign) BOOL tagContentInvisible;
@@ -61,9 +95,28 @@ typedef enum
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
 @property (nonatomic, assign) CGFloat textScale;
 @property (nonatomic, assign) CGSize size;
-@property (nonatomic, strong) NSDictionary *attributes;
 
+@property (nonatomic, assign) BOOL didOutput;
+
+/**
+ Ignores children for output that consist only of whitespace
+ */
+@property (nonatomic, assign) BOOL supressWhitespaceChildren;
+
+
+/**
+ Designed initializer, creates the appropriate element sub type
+ @param attributes The attributes dictionary of the tag
+ @param options The parsing options dictionary
+ @returns the initialized element
+ */
++ (DTHTMLElement *)elementWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options;
+/**
+ Creates an `NSAttributedString` that represents the receiver including all its children
+ */
 - (NSAttributedString *)attributedString;
+
+
 - (NSDictionary *)attributesDictionary;
 
 - (void)parseStyleString:(NSString *)styleString;
@@ -72,14 +125,27 @@ typedef enum
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
 
-- (NSString *)path;
-
 - (NSString *)attributeForKey:(NSString *)key;
 
-- (void)addChild:(DTHTMLElement *)child;
-- (void)removeChild:(DTHTMLElement *)child;
+/**
+ Copies and inherits relevant attributes from the given parent element
+ */
+- (void)inheritAttributesFromElement:(DTHTMLElement *)element;
 
-- (DTHTMLElement *)parentWithTagName:(NSString *)name;
-- (BOOL)isContainedInBlockElement;
+/**
+ Returns the parent element. That's the same as the parent node but with adjusted type for convenience.
+ */
+- (DTHTMLElement *)parentElement;
+
+
+- (BOOL)needsOutput;
+
+/**
+ Appends an attributed string representation of the receiver - including its children - to the given attributed string.
+ @param attributedString A mutable attributed string to append to
+ */
+//- (void)appendToAttributedString:(NSMutableAttributedString *)attributedString;
+
+- (BOOL)containedInBlock;
 
 @end

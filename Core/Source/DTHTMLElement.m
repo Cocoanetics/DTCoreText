@@ -8,76 +8,69 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLElement.h"
+#import "DTHTMLElementAttachment.h"
+#import "DTHTMLElementBR.h"
+#import "DTHTMLElementHR.h"
+#import "DTHTMLElementLI.h"
+#import "DTHTMLElementText.h"
 
 @interface DTHTMLElement ()
 
 @property (nonatomic, strong) NSMutableDictionary *fontCache;
-@property (nonatomic, strong) NSMutableArray *children;
 @property (nonatomic, strong) NSString *linkGUID;
 
 - (DTCSSListStyle *)calculatedListStyle;
+
+// internal initializer
+- (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options;
 
 @end
 
 BOOL ___shouldUseiOS6Attributes = NO;
 
+NSDictionary *_classesForNames = nil;
+
 @implementation DTHTMLElement
+
++ (void)initialize
 {
-	DTHTMLElement *_parent;
+	// lookup table so that we quickly get the correct class to instantiate for special tags
+	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
-	DTCoreTextFontDescriptor *_fontDescriptor;
-	DTCoreTextParagraphStyle *_paragraphStyle;
-	DTTextAttachment *_textAttachment;
-	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
-	NSURL *_link;
-	NSString *_anchorName;
+	[tmpDict setObject:[DTHTMLElementBR class] forKey:@"br"];
+	[tmpDict setObject:[DTHTMLElementHR class] forKey:@"hr"];
+	[tmpDict setObject:[DTHTMLElementLI class] forKey:@"li"];
+	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"img"];
+	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"object"];
+	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"video"];
+	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"iframe"];
 	
-	DTColor *_textColor;
-	DTColor *_backgroundColor;
-	
-	CTUnderlineStyle _underlineStyle;
-	
-	NSString *_tagName;
-	
-	NSString *_beforeContent;
-	
-	NSString *_linkGUID;
-	
-	BOOL _tagContentInvisible;
-	BOOL _strikeOut;
-	NSInteger _superscriptStyle;
-	
-	NSInteger _headerLevel;
-	
-	NSArray *_shadows;
-	
-	NSMutableDictionary *_fontCache;
-	
-	NSMutableDictionary *_additionalAttributes;
-	
-	DTHTMLElementDisplayStyle _displayStyle;
-	DTHTMLElementFloatStyle _floatStyle;
-	
-	BOOL _isColorInherited;
-	
-	BOOL _preserveNewlines;
-	
-	DTHTMLElementFontVariant _fontVariant;
-	
-	CGFloat _textScale;
-	CGSize _size;
-	
-	NSMutableArray *_children;
-	NSDictionary *_attributes; // contains all attributes from parsing
-	
-	NSDictionary *_styles;
+	_classesForNames = [tmpDict copy];
 }
 
-- (id)init
++ (DTHTMLElement *)elementWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
 {
-	self = [super init];
+	// look for specialized class
+	Class class = [_classesForNames objectForKey:name];
+	
+	// use generic of none found
+	if (!class)
+	{
+		class = [DTHTMLElement class];
+	}
+	
+	DTHTMLElement *element = [[class alloc] initWithName:name attributes:attributes options:options];
+	
+	return element;
+}
+
+- (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
+{
+	// node does not need the options, but it needs the name and attributes
+	self = [super initWithName:name attributes:attributes];
 	if (self)
 	{
+		
 	}
 	
 	return self;
@@ -119,20 +112,8 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	// otherwise we have a font
 	if (shouldAddFont)
 	{
-		// try font cache first
-		NSNumber *key = [NSNumber numberWithUnsignedInteger:[_fontDescriptor hash]];
-		CTFontRef font = (__bridge CTFontRef)[self.fontCache objectForKey:key];
-		
-		if (!font)
-		{
-			font = [_fontDescriptor newMatchingFont];
+		CTFontRef font = [_fontDescriptor newMatchingFont];
 			
-			if (font)
-			{
-				[self.fontCache setObject:CFBridgingRelease(font) forKey:key];
-			}
-		}
-		
 		if (font)
 		{
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
@@ -151,6 +132,8 @@ BOOL ___shouldUseiOS6Attributes = NO;
 			
 			// use this font to adjust the values needed for the run delegate during layout time
 			[_textAttachment adjustVerticalAlignmentForFont:font];
+			
+			CFRelease(font);
 		}
 	}
 	
@@ -297,55 +280,187 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	return tmpDict;
 }
 
-- (NSAttributedString *)attributedString
+/*
+- (void)appendToAttributedString:(NSMutableAttributedString *)attributedString
 {
+	if (_displayStyle == DTHTMLElementDisplayStyleNone || _didOutput)
+	{
+		return;
+	}
+	
 	NSDictionary *attributes = [self attributesDictionary];
 	
 	if (_textAttachment)
 	{
-		// ignore text, use unicode object placeholder
+		// ignore children, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
-		
-		return tmpString;
+		[attributedString appendAttributedString:tmpString];
 	}
 	else
 	{
-		if (self.fontVariant == DTHTMLElementFontVariantNormal)
+		for (id oneChild in self.childNodes)
 		{
-			return [[NSAttributedString alloc] initWithString:_text attributes:attributes];
-		}
-		else
-		{
-			if ([self.fontDescriptor supportsNativeSmallCaps])
+			// the string for this single child
+			NSAttributedString *tmpString = nil;
+			
+			if ([oneChild isKindOfClass:[DTHTMLParserTextNode class]])
 			{
-				DTCoreTextFontDescriptor *smallDesc = [self.fontDescriptor copy];
-				smallDesc.smallCapsFeature = YES;
-				
-				CTFontRef smallerFont = [smallDesc newMatchingFont];
-				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-				
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-				if (___useiOS6Attributes)
-				{
-					UIFont *font = [UIFont fontWithCTFont:smallerFont];
-					
-					[smallAttributes setObject:font forKey:NSFontAttributeName];
-					CFRelease(smallerFont);
-				}
-				else
-#endif
-				{
-					[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
-				}
-				
-				return [[NSAttributedString alloc] initWithString:_text attributes:smallAttributes];
+				[attributedString appendAttributedString:tmpString];
 			}
 			else
 			{
-				return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:_text attributes:attributes];
+				NSAttributedString *tmpString = [oneChild attributedString];
+				[attributedString appendAttributedString:tmpString];
+//				
+//				if ([[oneChild name] isEqualToString:@"br"])
+//				{
+//					[attributedString appendString:UNICODE_LINE_FEED];
+//				}
+//				
+//				// should be a normal node
+//				[oneChild appendToAttributedString:attributedString];
 			}
 		}
 	}
+	
+	if (_displayStyle != DTHTMLElementDisplayStyleInline)
+	{
+		if (![self.name isEqualToString:@"body"] && ![self.name isEqualToString:@"html"])
+		{
+			[attributedString appendString:@"\n"];
+		}
+	}
+	
+	_didOutput = YES;
+}
+ */
+
+- (BOOL)needsOutput
+{
+	if ([self.childNodes count])
+	{
+		for (DTHTMLElement *oneChild in self.childNodes)
+		{
+			if (!oneChild.didOutput)
+			{
+				return YES;
+			}
+		}
+		
+		return NO;
+	}
+	
+	return YES;
+}
+
+- (NSAttributedString *)attributedString
+{
+	if (_displayStyle == DTHTMLElementDisplayStyleNone || _didOutput)
+	{
+		return nil;
+	}
+	
+	NSDictionary *attributes = [self attributesDictionary];
+	
+	NSMutableAttributedString *tmpString;
+	
+	if (_textAttachment)
+	{
+		// ignore text, use unicode object placeholder
+		tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
+	}
+	else
+	{
+		// walk through children
+		tmpString = [[NSMutableAttributedString alloc] init];
+		
+		DTHTMLElement *previousChild = nil;
+		
+		for (DTHTMLElement *oneChild in self.childNodes)
+		{
+			// if previous node was inline and this child is block then we need a newline
+			if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
+			{
+				if (oneChild.displayStyle == DTHTMLElementDisplayStyleBlock)
+				{
+					// trim off whitespace suffix
+					while ([[tmpString string] hasSuffix:@" "])
+					{
+						[tmpString deleteCharactersInRange:NSMakeRange([tmpString length]-1, 1)];
+					}
+
+					// paragraph break
+					[tmpString appendString:@"\n"];
+				}
+			}
+			
+			NSAttributedString *nodeString = [oneChild attributedString];
+			
+			if (nodeString)
+			{
+				// we already have a white space in the string so far
+				if ([[tmpString string] hasSuffix:@" "])
+				{
+					while ([[nodeString string] hasPrefix:@" "])
+					{
+						nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
+					}
+				}
+				
+				[tmpString appendAttributedString:nodeString];
+			}
+			
+			previousChild = oneChild;
+		}
+	}
+
+	// block-level elements get space trimmed and a newline
+	if (_displayStyle != DTHTMLElementDisplayStyleInline)
+	{
+		// trim off whitespace prefix
+		while ([[tmpString string] hasPrefix:@" "])
+		{
+			[tmpString deleteCharactersInRange:NSMakeRange(0, 1)];
+		}
+
+		// trim off whitespace suffix
+		while ([[tmpString string] hasSuffix:@" "])
+		{
+			[tmpString deleteCharactersInRange:NSMakeRange([tmpString length]-1, 1)];
+		}
+		
+		if (![self.name isEqualToString:@"html"] && ![self.name isEqualToString:@"body"])
+		{
+			if (![[tmpString string] hasSuffix:@"\n"])
+			{
+				[tmpString appendString:@"\n"];
+			}
+		}
+	}
+	
+	return tmpString;
+}
+
+- (DTHTMLElement *)parentElement
+{
+	return (DTHTMLElement *)self.parentNode;
+}
+
+- (BOOL)containedInBlock
+{
+	id element = self;
+	
+	while (element && ![[element name] isEqualToString:@"body"])
+	{
+		if ([element displayStyle] == DTHTMLElementDisplayStyleBlock)
+		{
+			return YES;
+		}
+		
+		element = [element parentNode];
+	}
+	
+	return NO;
 }
 
 - (void)applyStyleDictionary:(NSDictionary *)styles
@@ -622,7 +737,26 @@ BOOL ___shouldUseiOS6Attributes = NO;
 		{
 			// nothing to do
 		}
+		else if ([verticalAlignment isEqualToString:@"text-top"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentTop;
+		}
+		else if ([verticalAlignment isEqualToString:@"middle"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentCenter;
+		}
+		else if ([verticalAlignment isEqualToString:@"text-bottom"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBottom;
+		}
+		else if ([verticalAlignment isEqualToString:@"baseline"])
+		{
+			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
+		}
 	}
+	
+	// if there is a text attachment we transfer the aligment we got
+	_textAttachment.verticalAlignment = _textAttachmentAlignment;
 	
 	NSString *shadow = [styles objectForKey:@"text-shadow"];
 	if (shadow)
@@ -751,29 +885,6 @@ BOOL ___shouldUseiOS6Attributes = NO;
 			// nothing to do
 		}
 	}
-	
-	// only works for objects!
-	NSString *verticalAlignString = [styles objectForKey:@"vertical-align"];
-	if (verticalAlignString)
-	{
-		if ([verticalAlignString isEqualToString:@"text-top"])
-		{
-			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentTop;
-		}
-		else if ([verticalAlignString isEqualToString:@"middle"])
-		{
-			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentCenter;
-		}
-		else if ([verticalAlignString isEqualToString:@"text-bottom"])
-		{
-			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBottom;
-		}
-		else if ([verticalAlignString isEqualToString:@"baseline"])
-		{
-			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
-		}
-	}
-	
 	
 	DTEdgeInsets padding = {0,0,0,0};
 	
@@ -911,43 +1022,6 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	[_additionalAttributes setObject:attribute forKey:key];
 }
 
-- (void)addChild:(DTHTMLElement *)child
-{
-	child.parent = self;
-	[self.children addObject:child];
-}
-
-- (void)removeChild:(DTHTMLElement *)child
-{
-	child.parent = nil;
-	[self.children removeObject:child];
-}
-
-- (DTHTMLElement *)parentWithTagName:(NSString *)name
-{
-	if ([self.parent.tagName isEqualToString:name])
-	{
-		return self.parent;
-	}
-	
-	return [self.parent parentWithTagName:name];
-}
-
-- (BOOL)isContainedInBlockElement
-{
-	if (!_parent || !_parent.tagName) // default tag has no tag name
-	{
-		return NO;
-	}
-	
-	if (self.parent.displayStyle == DTHTMLElementDisplayStyleInline)
-	{
-		return [self.parent isContainedInBlockElement];
-	}
-	
-	return YES;
-}
-
 - (NSString *)attributeForKey:(NSString *)key
 {
 	return [_attributes objectForKey:key];
@@ -1009,48 +1083,40 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	return style;
 }
 
-#pragma mark Copying
+#pragma mark - Inheriting Attributes
 
-- (id)copyWithZone:(NSZone *)zone
+- (void)inheritAttributesFromElement:(DTHTMLElement *)element
 {
-	DTHTMLElement *newObject = [[DTHTMLElement allocWithZone:zone] init];
+	_fontDescriptor = [element.fontDescriptor copy];
+	_paragraphStyle = [element.paragraphStyle copy];
+
+	_fontVariant = element.fontVariant;
+	_underlineStyle = element.underlineStyle;
+	_strikeOut = element.strikeOut;
+	_superscriptStyle = element.superscriptStyle;
 	
-	newObject.fontDescriptor = self.fontDescriptor; // copy
-	newObject.paragraphStyle = self.paragraphStyle; // copy
+	_shadows = [element.shadows copy];
+
+	_link = [element.link copy];
+	_anchorName = [element.anchorName copy];
+	_linkGUID = element.linkGUID;
 	
-	newObject.fontVariant = self.fontVariant;
+	_tagContentInvisible = element.tagContentInvisible;
 	
-	newObject.underlineStyle = self.underlineStyle;
-	newObject.tagContentInvisible = self.tagContentInvisible;
-	newObject.textColor = self.textColor;
-	newObject.isColorInherited = YES;
+	_textColor = element.textColor;
+	_isColorInherited = YES;
 	
-	newObject.strikeOut = self.strikeOut;
-	newObject.superscriptStyle = self.superscriptStyle;
-	newObject.shadows = self.shadows;
+	_preserveNewlines = element.preserveNewlines;
+	_textScale = element.textScale;
 	
-	newObject.link = self.link; // copy
-	newObject.anchorName = self.anchorName; // copy
-	newObject.linkGUID = _linkGUID; // transfer the GUID
-	
-	newObject.preserveNewlines = self.preserveNewlines;
-	
-	newObject.fontCache = self.fontCache; // reference
-	
-	return newObject;
+	// only inherit background-color from inline elements
+	if (element.displayStyle == DTHTMLElementDisplayStyleInline)
+	{
+		self.backgroundColor = element.backgroundColor;
+	}
 }
 
 #pragma mark Properties
-
-- (NSMutableDictionary *)fontCache
-{
-	if (!_fontCache)
-	{
-		_fontCache = [[NSMutableDictionary alloc] init];
-	}
-	
-	return _fontCache;
-}
 
 - (void)setTextColor:(DTColor *)textColor
 {
@@ -1075,31 +1141,6 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	}
 	
 	return _fontVariant;
-}
-
-- (NSString *)path
-{
-	if (_parent)
-	{
-		return [[_parent path] stringByAppendingFormat:@"/%@", self.tagName];
-	}
-	
-	if (_tagName)
-	{
-		return _tagName;
-	}
-	
-	return @"root";
-}
-
-- (NSMutableArray *)children
-{
-	if (!_children)
-	{
-		_children = [[NSMutableArray alloc] init];
-	}
-	
-	return _children;
 }
 
 - (void)setAttributes:(NSDictionary *)attributes
@@ -1133,14 +1174,11 @@ BOOL ___shouldUseiOS6Attributes = NO;
 	}
 }
 
-@synthesize parent = _parent;
 @synthesize fontDescriptor = _fontDescriptor;
 @synthesize paragraphStyle = _paragraphStyle;
 @synthesize textColor = _textColor;
 @synthesize backgroundColor = _backgroundColor;
-@synthesize tagName = _tagName;
 @synthesize beforeContent = _beforeContent;
-@synthesize text = _text;
 @synthesize link = _link;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
@@ -1157,9 +1195,6 @@ BOOL ___shouldUseiOS6Attributes = NO;
 @synthesize fontVariant = _fontVariant;
 @synthesize textScale = _textScale;
 @synthesize size = _size;
-
-@synthesize fontCache = _fontCache;
-@synthesize children = _children;
 @synthesize attributes = _attributes;
 @synthesize linkGUID = _linkGUID;
 

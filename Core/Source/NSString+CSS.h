@@ -19,7 +19,6 @@
  */
 - (NSDictionary *)dictionaryOfCSSStyles;
 
-
 /** 
  Takes a textSize and modifies the current string's pixel measurement to be modified by it. Used in DTHTMLElement.
  @param textSize The current size which the CSS size is relative to.
@@ -28,21 +27,13 @@
  */
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
 
-
-/** 
+/**
  Parse CSS shadow styles, consisting of color, blur, and offset, out of this string. The input string must be comma delimited in the format: <length> <length> <length>? <color>? where the third length and the color are not required per CSS shadows. To calculate the sizes of the blur and offset pixelSizeOfCSSMeasureRelativeToCurrentTextSize is used. Used in DTHTMLElement.
  @param textSize In order to determine the shadow offset we need what text size it will be displayed at.
  @param color Used if no shadow attribute color is found. 
  @returns An array of dictionaries, each of which is a shadow consisting of color, blur, and offset keys value pairs. 
  */
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(DTColor *)color;
-
-
-/** 
- If this string ends with 'px' return the float value stored therein. Ex: The following '17.0px;' will return 17.0. I DON'T KNOW WHAT USES THIS METHOD IF ANYTHING AT ALL-grep returned just this class
- @returns The float value stored in this string. 
- */
-- (CGFloat)CSSpixelSize;
 
 /**
  Decodes a content attribute which might contained unicode sequences.

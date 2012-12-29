@@ -51,3 +51,28 @@ extern BOOL ___useiOS6Attributes;
 // macros
 
 #define IS_WHITESPACE(_c) (_c == ' ' || _c == '\t' || _c == 0xA || _c == 0xB || _c == 0xC || _c == 0xD || _c == 0x85)
+
+// types
+
+typedef enum
+{
+	DTHTMLElementDisplayStyleInline = 0, // default
+	DTHTMLElementDisplayStyleNone,
+	DTHTMLElementDisplayStyleBlock,
+	DTHTMLElementDisplayStyleListItem,
+	DTHTMLElementDisplayStyleTable,
+} DTHTMLElementDisplayStyle;
+
+typedef enum
+{
+	DTHTMLElementFloatStyleNone = 0,
+	DTHTMLElementFloatStyleLeft,
+	DTHTMLElementFloatStyleRight
+} DTHTMLElementFloatStyle;
+
+typedef enum
+{
+	DTHTMLElementFontVariantInherit = 0,
+	DTHTMLElementFontVariantNormal,
+	DTHTMLElementFontVariantSmallCaps
+} DTHTMLElementFontVariant;
