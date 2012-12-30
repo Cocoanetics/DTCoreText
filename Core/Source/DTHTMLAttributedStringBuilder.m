@@ -744,6 +744,22 @@
 				
 				if (nodeString)
 				{
+					// if this is a block element then we need a paragraph break before it
+					if (_currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+					{
+						if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
+						{
+							// trim off whitespace
+							while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+							{
+								[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+							}
+							
+							[_tmpString appendString:@"\n"];
+						}
+					}
+					
+					
 					[_tmpString appendAttributedString:nodeString];
 					_currentTag.didOutput = YES;
 				}
