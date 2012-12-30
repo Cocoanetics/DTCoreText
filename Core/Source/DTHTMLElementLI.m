@@ -49,6 +49,15 @@
 		[tmpString appendAttributedString:prefixString];
 	}
 
+	if ([self.childNodes count])
+	{
+		DTHTMLElement *firstchild = [self.childNodes objectAtIndex:0];
+		if (firstchild.displayStyle != DTHTMLElementDisplayStyleInline)
+		{
+			[tmpString appendString:@"\n"];
+		}
+	}
+	
 	NSAttributedString *childrenString = [super attributedString];
 	
 	if (childrenString)
