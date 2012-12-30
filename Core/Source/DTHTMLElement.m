@@ -440,6 +440,31 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
+	// make sure the last sub-paragraph of this has no less than the specified paragraph spacing of this element
+	// e.g. last LI needs to inherit the margin-after of the UL
+	if (self.displayStyle == DTHTMLElementDisplayStyleBlock)
+	{
+		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:[tmpString length]-1 effectiveRange:NULL];
+		
+		NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
+		
+		DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+		
+		if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+		{
+			paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+			
+			// make new paragraph style
+			paraStyle = [paragraphStyle createCTParagraphStyle];
+			
+			// remove old (works around iOS 4.3 leak)
+			[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+			
+			// set new
+			[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)paraStyle range:paragraphRange];
+		}
+	}
+	
 	return tmpString;
 }
 
