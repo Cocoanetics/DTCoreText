@@ -446,25 +446,51 @@ NSDictionary *_classesForNames = nil;
 	{
 		NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 		
-		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 		
-		DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-		
-		if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+		if (___useiOS6Attributes)
 		{
-			paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+			NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 			
-			// make new paragraph style
-			CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
+			DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:paraStyle];
 			
-			// remove old (works around iOS 4.3 leak)
-			[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
-			
-			// set new
-			[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+			if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+			{
+				paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+				
+				// make new paragraph style
+				NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
+				
+				// remove old (works around iOS 4.3 leak)
+				[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+				
+				// set new
+				[tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
+			}
+			else
+#endif
+			{
+				CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
+				
+				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+				
+				if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+				{
+					paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+					
+					// make new paragraph style
+					CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
+					
+					// remove old (works around iOS 4.3 leak)
+					[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+					
+					// set new
+					[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+				}
+			}
 		}
 	}
-	
+		
 	return tmpString;
 }
 
