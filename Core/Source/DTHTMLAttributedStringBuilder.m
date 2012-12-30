@@ -644,7 +644,7 @@
 						[_tmpString appendAttributedString:nodeString];
 						_currentTag.didOutput = YES;
 						
-						if (_shouldKeepDocumentNodeTree)
+						if (!_shouldKeepDocumentNodeTree)
 						{
 							// we don't need the children any more
 							[_currentTag removeAllChildNodes];
