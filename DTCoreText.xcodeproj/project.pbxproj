@@ -42,6 +42,7 @@
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		A71B927114E0165000360C30 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
 		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
+		A721D58A16909AC800C5A48F /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2614863EF100E1AFD9 /* ListTest.html */; };
 		A72418171678BACE001362C4 /* iOS6.html in Resources */ = {isa = PBXBuildFile; fileRef = A72418161678BACE001362C4 /* iOS6.html */; };
 		A72C15C71592FAF70064A67F /* CoreTextIssues.html in Resources */ = {isa = PBXBuildFile; fileRef = A72C15C61592FAF70064A67F /* CoreTextIssues.html */; };
 		A72D975E1684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */; };
@@ -260,7 +261,6 @@
 		A7949A8C14CC483C00A8CCDE /* ArabicTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1D14863EF100E1AFD9 /* ArabicTest.html */; };
 		A7949A8D14CC484100A8CCDE /* CustomFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2014863EF100E1AFD9 /* CustomFont.html */; };
 		A7949A8E14CC484700A8CCDE /* Image.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2514863EF100E1AFD9 /* Image.html */; };
-		A7949A8F14CC484A00A8CCDE /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2614863EF100E1AFD9 /* ListTest.html */; };
 		A7949A9014CC484D00A8CCDE /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2714863EF100E1AFD9 /* LoremIpsum.html */; };
 		A7949A9114CC485000A8CCDE /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2914863EF100E1AFD9 /* README.html */; };
 		A7949A9214CC485300A8CCDE /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2B14863EF100E1AFD9 /* styles.html */; };
@@ -310,7 +310,6 @@
 		A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */; };
 		A7C7AD0114DA6955005A9C69 /* NSString+SlashEscaping.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0014DA6955005A9C69 /* NSString+SlashEscaping.m */; };
 		A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0214DA6EB2005A9C69 /* Video.plist */; };
-		A7C7AD0514DA782D005A9C69 /* ListTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0414DA782D005A9C69 /* ListTest.plist */; };
 		A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */; };
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
@@ -409,6 +408,8 @@
 		A7EB853F168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */; };
 		A7EB8540168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */; };
 		A7EB8541168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */; };
+		A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
+		A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
 		A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671514D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671614D841EA00D1F167 /* NSString+CSS.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5671314D841E900D1F167 /* NSString+CSS.m */; };
@@ -935,6 +936,7 @@
 		A7EB84FB168ED63A00D686B7 /* FontSizes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FontSizes.html; sourceTree = "<group>"; };
 		A7EB8537168FA33000D686B7 /* DTHTMLElementStylesheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementStylesheet.h; sourceTree = "<group>"; };
 		A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementStylesheet.m; sourceTree = "<group>"; };
+		A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WhitespaceFollowingImagePromotedToParagraph.html; sourceTree = "<group>"; };
 		A7F5671214D841E900D1F167 /* NSString+CSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+CSS.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A7F5671314D841E900D1F167 /* NSString+CSS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSString+CSS.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A7F5671C14D8469000D1F167 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -1354,6 +1356,7 @@
 				A71B927214E016A300360C30 /* PreWhitespace.plist */,
 				A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */,
 				A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */,
+				A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1918,6 +1921,7 @@
 			files = (
 				A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */,
 				A7DBC1B31689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */,
+				A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1931,7 +1935,6 @@
 				A7949A8C14CC483C00A8CCDE /* ArabicTest.html in Resources */,
 				A7949A8D14CC484100A8CCDE /* CustomFont.html in Resources */,
 				A7949A8E14CC484700A8CCDE /* Image.html in Resources */,
-				A7949A8F14CC484A00A8CCDE /* ListTest.html in Resources */,
 				A7949A9014CC484D00A8CCDE /* LoremIpsum.html in Resources */,
 				A7949A9114CC485000A8CCDE /* README.html in Resources */,
 				A7949A9214CC485300A8CCDE /* styles.html in Resources */,
@@ -1942,7 +1945,6 @@
 				A7C7ACF014DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html in Resources */,
 				A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */,
 				A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */,
-				A7C7AD0514DA782D005A9C69 /* ListTest.plist in Resources */,
 				A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */,
 				A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */,
 				A74C973E14DC5294002B5A45 /* Emoji.html in Resources */,
@@ -1952,6 +1954,8 @@
 				A7DBC1AB1689B8C5003F1D38 /* ListItemBulletColorAndFont.html in Resources */,
 				A7DBC1B41689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */,
 				A7EB84FD168ED63A00D686B7 /* FontSizes.html in Resources */,
+				A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
+				A721D58A16909AC800C5A48F /* ListTest.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

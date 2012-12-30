@@ -48,4 +48,9 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  */
 @property (nonatomic, copy) DTHTMLAttributedStringBuilderWillFlushCallback willFlushCallback;
 
+/**
+ Setting this property to `YES` causes the tree of parse nodes to be preserved until the end of the generation process. This allows to output the HTML structure of the document for debugging.
+ */
+@property (nonatomic, assign) BOOL shouldKeepDocumentNodeTree;
+
 @end

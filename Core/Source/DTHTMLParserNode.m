@@ -42,6 +42,11 @@
 	[_childNodes addObject:childNode];
 }
 
+- (void)removeAllChildNodes
+{
+	[_childNodes removeAllObjects];
+}
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ name='%@'>", NSStringFromClass([self class]), _name];

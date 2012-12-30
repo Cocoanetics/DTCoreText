@@ -47,6 +47,11 @@
 - (void)addChildNode:(DTHTMLParserNode *)childNode;
 
 /**
+ Removes all child nodes from the receiver
+*/
+- (void)removeAllChildNodes;
+
+/**
  Hierarchy representation of the receiver including all attributes and children
  */
 - (NSString *)debugDescription;

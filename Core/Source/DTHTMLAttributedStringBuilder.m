@@ -57,6 +57,7 @@
 	NSMutableArray *_outputQueue;
 	
 	DTHTMLElement *_defaultTag; // root node inherits these defaults
+	BOOL _shouldKeepDocumentNodeTree;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -295,37 +296,7 @@
 	}
 	
 	_tagStartHandlers = [[NSMutableDictionary alloc] init];
-	
-	/*
-	void (^imgBlock)(void) = ^
-	{
-		// float causes the image to be its own block
-		if (_currentTag.floatStyle != DTHTMLElementFloatStyleNone)
-		{
-			_currentTag.displayStyle = DTHTMLElementDisplayStyleBlock;
-		}
-		
-		
-		// hide contents of recognized tag
-		_currentTag.tagContentInvisible = YES;
-		
-		// make appropriate attachment
-		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:_currentTag options:_options];
-		
-		// add it to tag
-		_currentTag.textAttachment = attachment;
-		
-		// to avoid much too much space before the image
-		_currentTag.paragraphStyle.lineHeightMultiple = 1;
-		
-		// specifiying line height interfers with correct positioning
-		_currentTag.paragraphStyle.minimumLineHeight = 0;
-		_currentTag.paragraphStyle.maximumLineHeight = 0;
 
-	};
-	
-	[_tagStartHandlers setObject:[imgBlock copy] forKey:@"img"];
-*/	
 	
 	void (^blockquoteBlock)(void) = ^
 	{
@@ -336,27 +307,6 @@
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
 	
-	
-	/*
-	void (^objectBlock)(void) = ^
-	{
-		// hide contents of recognized tag
-		_currentTag.tagContentInvisible = YES;
-		
-		// make appropriate attachment
-		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:_currentTag options:_options];
-		
-		// add it to tag
-		_currentTag.textAttachment = attachment;
-		
-		// to avoid much too much space before the image
-		_currentTag.paragraphStyle.lineHeightMultiple = 1;
-	};
-	
-	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"object"];
-	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"video"];
-	[_tagStartHandlers setObject:[objectBlock copy] forKey:@"iframe"];
-	*/
 	
 	void (^aBlock)(void) = ^
 	{
@@ -470,9 +420,6 @@
 		}
 		
 		_currentTag.paragraphStyle.textLists = textLists;
-		
-		// next text needs a NL inserted before it
-	//	_needsNewLineBefore = YES;
 	};
 	
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
@@ -587,79 +534,14 @@
 	
 	_tagEndHandlers = [[NSMutableDictionary alloc] init];
 	
-	void (^ulBlock)(void) = ^
+	
+	void (^styleBlock)(void) = ^
 	{
-		// pop the current list style from the paragraph style text lists
-		NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];
-		[textLists removeLastObject];
-		_currentTag.paragraphStyle.textLists = textLists;
-		
-		// if this was the last active list
-		if ([textLists count]==0)
-		{
-			// adjust spacing after last li to be the one defined for ol/ul
-			NSInteger index = [_tmpString length];
-			
-			if (index)
-			{
-				index--;
-				
-				// get the paragraph style for the previous paragraph
-				NSRange effectiveRange;
-				id prevParagraphStyle = [_tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:index effectiveRange:&effectiveRange];
-				
-				if (prevParagraphStyle)
-				{
-					DTCoreTextParagraphStyle *paragraphStyle = nil;
-					
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-					// convert it to DTCoreText
-					if ([prevParagraphStyle isKindOfClass:[NSParagraphStyle class]])
-					{
-						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:prevParagraphStyle];
-					}
-					else
-#endif
-					{
-						paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:(__bridge CTParagraphStyleRef)prevParagraphStyle];
-					}
-					
-					
-					if (paragraphStyle.paragraphSpacing != _currentTag.paragraphStyle.paragraphSpacing)
-					{
-						paragraphStyle.paragraphSpacing = _currentTag.paragraphStyle.paragraphSpacing;
-						
-						// because we have multiple paragraph styles per paragraph still, we need to extend towards the begin of the paragraph
-						NSRange paragraphRange = [[_tmpString string] rangeOfParagraphAtIndex:effectiveRange.location];
-						
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-						if (___useiOS6Attributes)
-						{
-							NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
-							
-							// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
-							[_tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
-							
-							[_tmpString addAttribute:NSParagraphStyleAttributeName value:style range:paragraphRange];
-						}
-						else
-#endif
-						{
-							CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-							
-							// iOS 4.3 bug: need to remove previous attribute or else CTParagraphStyleRef leaks
-							[_tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
-							
-							[_tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:CFBridgingRelease(newParagraphStyle) range:paragraphRange];
-						}
-					}
-				}
-			}
-		}
+		DTCSSStylesheet *localSheet = [(DTHTMLElementStylesheet *)_currentTag stylesheet];
+		[_globalStyleSheet mergeStylesheet:localSheet];
 	};
 	
-	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ul"];
-	[_tagEndHandlers setObject:[ulBlock copy] forKey:@"ol"];
+	[_tagEndHandlers setObject:[styleBlock copy] forKey:@"style"];
 }
 
 #pragma mark DTHTMLParser Delegate
@@ -717,51 +599,57 @@
 {
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
-
-		if ([_currentTag isKindOfClass:[DTHTMLElementStylesheet class]])
+		
+		// find block to execute for this tag if any
+		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
+		
+		if (tagBlock)
 		{
-			DTCSSStylesheet *localSheet = [(DTHTMLElementStylesheet *)_currentTag stylesheet];
-			[_globalStyleSheet mergeStylesheet:localSheet];
-			
-			// go back up a level
-			_currentTag = [_currentTag parentElement];
-
-			return;
+			tagBlock();
 		}
 		
-		if (_currentTag == _bodyElement || _currentTag.parentElement == _bodyElement)
+		if (_currentTag.displayStyle != DTHTMLElementDisplayStyleNone)
 		{
-			// has children that have not been output yet
-			if ([_currentTag needsOutput])
+			if (_currentTag == _bodyElement || _currentTag.parentElement == _bodyElement)
 			{
-				// caller gets opportunity to modify tag before it is written
-				if (_willFlushCallback)
+				// has children that have not been output yet
+				if ([_currentTag needsOutput])
 				{
-					_willFlushCallback(_currentTag);
-				}
-				
-				NSAttributedString *nodeString = [_currentTag attributedString];
-				
-				if (nodeString)
-				{
-					// if this is a block element then we need a paragraph break before it
-					if (_currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+					// caller gets opportunity to modify tag before it is written
+					if (_willFlushCallback)
 					{
-						if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
-						{
-							// trim off whitespace
-							while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
-							{
-								[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
-							}
-							
-							[_tmpString appendString:@"\n"];
-						}
+						_willFlushCallback(_currentTag);
 					}
 					
+					NSAttributedString *nodeString = [_currentTag attributedString];
 					
-					[_tmpString appendAttributedString:nodeString];
-					_currentTag.didOutput = YES;
+					if (nodeString)
+					{
+						// if this is a block element then we need a paragraph break before it
+						if (_currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+						{
+							if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
+							{
+								// trim off whitespace
+								while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+								{
+									[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+								}
+								
+								[_tmpString appendString:@"\n"];
+							}
+						}
+						
+						
+						[_tmpString appendAttributedString:nodeString];
+						_currentTag.didOutput = YES;
+						
+						if (_shouldKeepDocumentNodeTree)
+						{
+							// we don't need the children any more
+							[_currentTag removeAllChildNodes];
+						}
+					}
 				}
 			}
 		}
@@ -811,8 +699,17 @@
 		{
 			[_tmpString appendAttributedString:[textNode attributedString]];
 			_currentTag.didOutput = YES;
+			
+			// only add it to current tag if we need it
+			if (_shouldKeepDocumentNodeTree)
+			{
+				[_currentTag addChildNode:textNode];
+			}
+			
+			return;
 		}
 		
+		// save it for later output
 		[_currentTag addChildNode:textNode];
 	});
 }
@@ -841,12 +738,12 @@
 		{
 			[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
 		}
-		
 	});
 }
 
 #pragma mark Properties
 
 @synthesize willFlushCallback = _willFlushCallback;
+@synthesize shouldKeepDocumentNodeTree = _shouldKeepDocumentNodeTree;
 
 @end
