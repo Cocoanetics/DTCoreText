@@ -23,12 +23,12 @@
 	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
-	while ([scanner scanCSSAttribute:&name value:&value]) 
+	while ([scanner scanCSSAttribute:&name value:&value])
 	{
 		[tmpDict setObject:value forKey:name];
 	}
 	
-	// converting to non-mutable costs 37.5% of method	
+	// converting to non-mutable costs 37.5% of method
 	//	return [NSDictionary dictionaryWithDictionary:tmpDict];
 	return tmpDict;
 }
@@ -66,7 +66,7 @@
 		{
 			commaSeen = YES;
 		}
-		else if (ch=='-') 
+		else if (ch=='-')
 		{
 			negative = YES;
 		}
@@ -83,7 +83,7 @@
 	}
 	
 	// skip whitespace
-	while (i<stringLength && IS_WHITESPACE(_characters[i])) 
+	while (i<stringLength && IS_WHITESPACE(_characters[i]))
 	{
 		i++;
 	}
@@ -148,7 +148,7 @@
 	
 	NSMutableArray *tmpArray = [NSMutableArray array];
 	
-	while (![scanner isAtEnd]) 
+	while (![scanner isAtEnd])
 	{
 		DTColor *shadowColor = nil;
 		
@@ -181,8 +181,8 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-												[NSNumber numberWithFloat:blur], @"Blur",
-												shadowColor, @"Color", nil];
+														 [NSNumber numberWithFloat:blur], @"Blur",
+														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
 				}
@@ -208,7 +208,7 @@
 						}
 					}
 					
-					if (!shadowColor) 
+					if (!shadowColor)
 					{
 						// color is same as color attribute of style
 						shadowColor = color;
@@ -227,11 +227,11 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-												[NSNumber numberWithFloat:blur], @"Blur",
-												shadowColor, @"Color", nil];
+														 [NSNumber numberWithFloat:blur], @"Blur",
+														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
-				}	
+				}
 			}
 		}
 		
@@ -240,7 +240,7 @@
 		{
 			break;
 		}
-	}		
+	}
 	
 	
 	return tmpArray;
@@ -293,7 +293,7 @@
 				
 				escapedCharacterCount++;
 			}
-			else 
+			else
 			{
 				// illegal character following slash
 				final[outChars++] = '\\';
@@ -302,7 +302,7 @@
 				inEscapedSequence = NO;
 			}
 		}
-		else 
+		else
 		{
 			if (inEscapedSequence)
 			{
@@ -333,7 +333,7 @@
 		// output what we have decoded so far
 		final[outChars++] = decodedChar;
 	}
-
+	
 	free(characters);
 	NSString *clean = [[NSString alloc] initWithCharacters:final length:outChars];
 	free(final);
