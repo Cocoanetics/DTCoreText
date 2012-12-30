@@ -9,6 +9,7 @@
 #import "DTHTMLAttributedStringBuilderTest.h"
 
 #import "DTHTMLAttributedStringBuilder.h"
+#import "DTCoreTextConstants.h"
 
 @implementation DTHTMLAttributedStringBuilderTest
 
@@ -27,6 +28,25 @@
 	NSNumber *underLine = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:1 effectiveRange:&range_a];
 	
 	STAssertTrue([underLine integerValue]==0, @"Space between a and b should not be underlined");
+}
+
+// a block following an inline image should only cause a \n after the image, not whitespace
+- (void)testWhitspaceAfterParagraphPromotedImage
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSString *path = [bundle pathForResource:@"WhitespaceFollowingImagePromotedToParagraph" ofType:@"html"];
+	
+	NSData *data = [NSData dataWithContentsOfFile:path];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	
+	NSAttributedString *output = [builder generatedAttributedString];
+	
+	STAssertTrue([output length]==6, @"Generated String should be 6 characters");
+	
+	NSMutableString *expectedOutput = [NSMutableString stringWithFormat:@"1\n%@\n2\n", UNICODE_OBJECT_PLACEHOLDER];
+	
+	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
 
 @end
