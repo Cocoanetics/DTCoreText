@@ -849,6 +849,9 @@ NSDictionary *_classesForNames = nil;
 		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
+	// if this has an attachment set its size too
+	_textAttachment.displaySize = _size;
+	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
 	if ([whitespaceString hasPrefix:@"pre"])
 	{
@@ -1160,6 +1163,9 @@ NSDictionary *_classesForNames = nil;
 	
 	// transfer link GUID
 	_textAttachment.hyperLinkGUID = _linkGUID;
+	
+	// transfer size
+	_textAttachment.displaySize = _size;
 }
 
 - (void)setLink:(NSURL *)link
