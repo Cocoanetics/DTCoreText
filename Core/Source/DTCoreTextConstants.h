@@ -2,6 +2,7 @@
 
 #define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"
 #define UNICODE_LINE_FEED @"\u2028"
+#define UNICODE_NON_BREAKING_SPACE @"\u00a0"
 
 // standard options
 

@@ -37,9 +37,11 @@ static NSDictionary *entityReverseLookup = nil;
 	return YES;
 }
 
-- (BOOL)isWhitespace
+- (BOOL)isIgnorableWhitespace
 {
-	NSString *tmpStr = [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	NSCharacterSet *whitespaceCharacterSet = [NSCharacterSet ignorableWhitespaceCharacterSet];
+	
+	NSString *tmpStr = [self stringByTrimmingCharactersInSet:whitespaceCharacterSet];
 	
 	return [tmpStr length]==0;
 }
