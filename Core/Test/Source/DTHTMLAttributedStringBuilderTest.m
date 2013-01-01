@@ -49,4 +49,21 @@
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
 
+// This should come out as Keep_me_together with the _ being non-breaking spaces
+- (void)testKeepMeTogether
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSString *path = [bundle pathForResource:@"KeepMeTogether" ofType:@"html"];
+	
+	NSData *data = [NSData dataWithContentsOfFile:path];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	
+	NSAttributedString *output = [builder generatedAttributedString];
+	
+	NSString *expectedOutput = @"Keep me together";
+	
+	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
+}
+
 @end
