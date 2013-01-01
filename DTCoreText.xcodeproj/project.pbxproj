@@ -327,6 +327,7 @@
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
 		A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */; };
 		A7E383EC160DFFEC00CF72D6 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
+		A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
 		A7EB849A1689BB0800D686B7 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7B4E2D61686FDB300717707 /* libDTHTMLParser.a */; };
 		A7EB849D168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; };
 		A7EB849E168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; };
@@ -919,6 +920,7 @@
 		A7E3346C16837482002EFCBE /* DTCSSStylesheetTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCSSStylesheetTest.h; sourceTree = "<group>"; };
 		A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSStylesheetTest.m; sourceTree = "<group>"; };
 		A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DTFoundation.xcodeproj; path = DTFoundation/DTFoundation.xcodeproj; sourceTree = "<group>"; };
+		A7E3A5C5169360E5007A526B /* KeepMeTogether.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeepMeTogether.html; sourceTree = "<group>"; };
 		A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLParserNode.h; sourceTree = "<group>"; };
 		A7EB849C168B3E9D00D686B7 /* DTHTMLParserNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLParserNode.m; sourceTree = "<group>"; };
 		A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLParserTextNode.h; sourceTree = "<group>"; };
@@ -1357,6 +1359,7 @@
 				A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */,
 				A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */,
 				A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */,
+				A7E3A5C5169360E5007A526B /* KeepMeTogether.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1922,6 +1925,7 @@
 				A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */,
 				A7DBC1B31689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */,
 				A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
+				A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
