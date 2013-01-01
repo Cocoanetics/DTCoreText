@@ -61,7 +61,7 @@
 	
 	NSAttributedString *output = [builder generatedAttributedString];
 	
-	NSString *expectedOutput = @"Keep me together";
+	NSString *expectedOutput = @"Keep\u00a0me\u00a0together";
 	
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
