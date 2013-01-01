@@ -665,7 +665,7 @@
 	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
-		if ([string isWhitespace])
+		if ([string isIgnorableWhitespace])
 		{
 			// ignore whitespace as first element
 			if (![_currentTag.childNodes count])
