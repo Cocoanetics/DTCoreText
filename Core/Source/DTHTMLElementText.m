@@ -7,6 +7,10 @@
 //
 
 #import "DTHTMLElementText.h"
+#import "NSString+HTML.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "UIFont+DTCoreText.h"
+#import "NSAttributedString+SmallCaps.h"
 
 @implementation DTHTMLElementText
 {

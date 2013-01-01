@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
+#import "DTHTMLElement.h"
 
 @interface DTHTMLElementText : DTHTMLElement
 
