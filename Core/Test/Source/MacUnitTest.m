@@ -227,7 +227,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				
 				if (!isSame)
 				{
-					STFail(@"First differing character at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingSlashEscapes] , [mac stringByAddingSlashEscapes]);
+					STFail(@"First differing character at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingHTMLEntities] , [mac stringByAddingHTMLEntities]);
 				}
 				break;
 			}
@@ -271,5 +271,28 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	STAssertEquals(firstFontMacPoints, firstFontiOSPoints, @"First Font should be same size");
 	STAssertEquals(secondFontMacPoints, secondFontiOSPoints, @"Second Font should be same size");
 }
+
+/**
+ // this is included in the above, but I left it to get things
+- (void)testAppleConverted
+{
+	NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"AppleConverted" ofType:@"html"];
+	NSData *data = [NSData dataWithContentsOfFile:path];
+	
+	NSAttributedString *macString = [[NSAttributedString alloc] initWithHTML:data baseURL:nil documentAttributes:NULL];
+	
+	NSMutableString *dumpOutput = [[NSMutableString alloc] init];
+	NSData *dump = [[macString string] dataUsingEncoding:NSUTF8StringEncoding];
+	for (NSInteger i = 0; i < [dump length]; i++)
+	{
+		char *bytes = (char *)[dump bytes];
+		char b = bytes[i];
+		
+		[dumpOutput appendFormat:@"%d: %x %c\n", i, b, b];
+	}
+	
+	NSLog(@"%@\n\n", dumpOutput);
+}
+ */
 
 @end
