@@ -9,14 +9,16 @@
 #import "DTHTMLElementText.h"
 #import "NSString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"
-#import "UIFont+DTCoreText.h"
 #import "NSAttributedString+SmallCaps.h"
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#import "UIFont+DTCoreText.h"
+#endif
 
 @implementation DTHTMLElementText
 {
 	NSString *_text;
 }
-
 
 - (void)_appendHTMLToString:(NSMutableString *)string indentLevel:(NSUInteger)indentLevel
 {
