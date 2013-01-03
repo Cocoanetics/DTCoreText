@@ -14,6 +14,7 @@
 #import "DTHTMLElementLI.h"
 #import "DTHTMLElementStylesheet.h"
 #import "DTHTMLElementText.h"
+#import "NSString+DTUtilities.h"
 
 @interface DTHTMLElement ()
 
@@ -1228,7 +1229,7 @@ NSDictionary *_classesForNames = nil;
 
 - (void)setLink:(NSURL *)link
 {
-	_linkGUID = [NSString guid];
+	_linkGUID = [NSString stringWithUUID];
 	_link = [link copy];
 	
 	if (_textAttachment)

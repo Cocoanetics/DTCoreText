@@ -708,8 +708,7 @@
 	
 	NSMutableString *output = [NSMutableString string];
 	
-	NSString *headerStr = [NSString stringWithFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
-	[output appendString:headerStr];
+	[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
 	[output appendString:[retString stringByAddingAppleConvertedSpace]];
 	[output appendString:@"</body>\n</html>\n"];
 	
