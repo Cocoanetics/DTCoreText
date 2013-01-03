@@ -779,18 +779,4 @@ static NSDictionary *entityReverseLookup = nil;
 	return output;
 }
 
-#pragma mark Utility
-+ (NSString *)guid
-{
-	CFUUIDRef uuid = CFUUIDCreate(NULL);
-	CFStringRef cfStr = CFUUIDCreateString(NULL, uuid);
-	
-	NSString *ret = [NSString stringWithString:CFBridgingRelease(cfStr)];
-	
-	CFRelease(uuid);
-	// CFRelease(cfStr);
-	
-	return ret;
-}
-
 @end

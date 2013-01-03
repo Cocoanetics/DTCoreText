@@ -79,11 +79,4 @@
  */
 - (NSString *)stringByAddingAppleConvertedSpace;
 
-
-/** 
- Create a globally unique identifier to uniquely identify something. Used to create a GUID, store it in a dictionary or other data structure and retrieve it to uniquely identifiy something. In DTLinkButton multiple parts of the same hyperlink synchronize their looks through the GUID.
- @returns GUID assigned to this string to easily and uniquely identify it.. 
- */
-+ (NSString *)guid;
-
 @end
