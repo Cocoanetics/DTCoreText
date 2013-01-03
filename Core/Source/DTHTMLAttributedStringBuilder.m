@@ -694,6 +694,9 @@
 		
 		[textNode inheritAttributesFromElement:_currentTag];
 		
+		// need to transfer Apple Converted Space tag to text node
+		textNode.containsAppleConvertedSpace = _currentTag.containsAppleConvertedSpace;
+		
 		// text directly contained in body needs to be output right away
 		if (_currentTag == _bodyElement)
 		{

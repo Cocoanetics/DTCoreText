@@ -72,7 +72,11 @@ NSDictionary *_classesForNames = nil;
 	self = [super initWithName:name attributes:attributes];
 	if (self)
 	{
-		
+		// transfer Apple Converted Space tag
+		if ([[self attributeForKey:@"class"] isEqualToString:@"Apple-converted-space"])
+		{
+			_containsAppleConvertedSpace = YES;
+		}
 	}
 	
 	return self;
@@ -400,12 +404,15 @@ NSDictionary *_classesForNames = nil;
 			
 			if (nodeString)
 			{
-				// we already have a white space in the string so far
-				if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+				if (!oneChild.containsAppleConvertedSpace)
 				{
-					while ([[nodeString string] hasPrefix:@" "])
+					// we already have a white space in the string so far
+					if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
 					{
-						nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
+						while ([[nodeString string] hasPrefix:@" "])
+						{
+							nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
+						}
 					}
 				}
 				
@@ -1252,6 +1259,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize textScale = _textScale;
 @synthesize size = _size;
 @synthesize linkGUID = _linkGUID;
+@synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
 
 @end
 

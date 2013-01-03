@@ -60,6 +60,7 @@
 	BOOL _isColorInherited;
 	
 	BOOL _preserveNewlines;
+	BOOL _containsAppleConvertedSpace;
 	
 	DTHTMLElementFontVariant _fontVariant;
 	
@@ -94,6 +95,7 @@
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
 @property (nonatomic, assign) CGFloat textScale;
 @property (nonatomic, assign) CGSize size;
+@property (nonatomic, assign) BOOL containsAppleConvertedSpace;
 
 @property (nonatomic, assign) BOOL didOutput;
 
