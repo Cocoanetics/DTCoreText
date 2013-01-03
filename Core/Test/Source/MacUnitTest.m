@@ -135,6 +135,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 
 	// our own builder
 	DTHTMLAttributedStringBuilder *doc = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:testData options:nil documentAttributes:NULL];
+	doc.shouldKeepDocumentNodeTree = YES;
 
 	NSAttributedString *iosAttributedString = [doc generatedAttributedString];
 	NSString *iosString = [iosAttributedString string];
