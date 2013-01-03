@@ -601,7 +601,7 @@
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
 		// find block to execute for this tag if any
-		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
+		void (^tagBlock)(void) = [_tagEndHandlers objectForKey:elementName];
 		
 		if (tagBlock)
 		{
