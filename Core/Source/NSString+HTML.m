@@ -729,6 +729,56 @@ static NSDictionary *entityReverseLookup = nil;
 	return [NSString stringWithString:output];
 }
 
+- (NSString *)stringByAddingAppleConvertedSpace
+{
+	NSMutableString *output = [NSMutableString string];
+	
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	scanner.charactersToBeSkipped = nil;
+	
+	NSCharacterSet *spaceSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+	
+	while (![scanner isAtEnd])
+	{
+		NSString *part;
+		if ([scanner scanUpToString:@"  " intoString:&part])
+		{
+			[output appendString:part];
+		}
+		
+		NSString *spaces;
+		if ([scanner scanCharactersFromSet:spaceSet intoString:&spaces])
+		{
+			// first space always output as is
+			[output appendString:@" "];
+			
+			NSUInteger numSpaces = [spaces length]-1;
+			
+			if (numSpaces > 1)
+			{
+				[output appendString:@"<span class=\"Apple-converted-space\">"];
+				
+				// alternate nbsp; and normal space
+				for (int i=0; i<numSpaces;i++)
+				{
+					if (i%2)
+					{
+						[output appendString:@" "];
+					}
+					else
+					{
+						[output appendString:UNICODE_NON_BREAKING_SPACE];
+					}
+				}
+				
+				[output appendString:@"</span>"];
+			}
+		}
+	}
+	
+	return output;
+}
+
 #pragma mark Utility
 + (NSString *)guid
 {

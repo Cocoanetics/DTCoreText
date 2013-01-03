@@ -74,6 +74,12 @@
 - (NSString *)stringByReplacingHTMLEntities;
 
 
+/**
+ Replaces occurences of more two or more spaces with a range of alternating non-breaking space and regular space. It also encloses these parts with a span of class 'Apple-converted-space'
+ */
+- (NSString *)stringByAddingAppleConvertedSpace;
+
+
 /** 
  Create a globally unique identifier to uniquely identify something. Used to create a GUID, store it in a dictionary or other data structure and retrieve it to uniquely identifiy something. In DTLinkButton multiple parts of the same hyperlink synchronize their looks through the GUID.
  @returns GUID assigned to this string to easily and uniquely identify it.. 

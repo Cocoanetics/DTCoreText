@@ -646,7 +646,6 @@
 				{
 					NSString *className = [self _styleClassForElement:@"a" style:fontStyle];
 					[retString appendFormat:@"<a class=\"%@\" href=\"%@\" style=\"%@\">%@</a>", className, [url relativeString], fontStyle, subString];
-//					[retString appendFormat:@"<a href=\"%@\" style=\"%@\">%@</a>", [url relativeString], fontStyle, subString];
 				}
 				else
 				{
@@ -659,8 +658,6 @@
 				{
 					NSString *className = [self _styleClassForElement:@"span" style:fontStyle];
 					[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
-
-//					[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
 				}
 				else
 				{
@@ -709,13 +706,14 @@
 		}];
 	}
 	
-	NSString *tmpStr = [NSString stringWithFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
-	[retString insertString:tmpStr atIndex:0];
+	NSMutableString *output = [NSMutableString string];
 	
-	[retString appendString:@"</body>\n</html>\n"];
+	NSString *headerStr = [NSString stringWithFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
+	[output appendString:headerStr];
+	[output appendString:[retString stringByAddingAppleConvertedSpace]];
+	[output appendString:@"</body>\n</html>\n"];
 	
-	
-	_HTMLString = retString;
+	_HTMLString = output;
 }
 
 #pragma mark - Public
