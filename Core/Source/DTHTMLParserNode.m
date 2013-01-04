@@ -42,6 +42,11 @@
 	[_childNodes addObject:childNode];
 }
 
+- (void)removeChildNode:(DTHTMLParserNode *)childNode
+{
+	[_childNodes removeObject:childNode];
+}
+
 - (void)removeAllChildNodes
 {
 	[_childNodes removeAllObjects];

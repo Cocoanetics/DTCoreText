@@ -47,6 +47,12 @@
 - (void)addChildNode:(DTHTMLParserNode *)childNode;
 
 /**
+ Removes a child node from the receiver
+ @param childNode The child node to remove
+ */
+- (void)removeChildNode:(DTHTMLParserNode *)childNode;
+
+/**
  Removes all child nodes from the receiver
 */
 - (void)removeAllChildNodes;
