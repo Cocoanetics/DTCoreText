@@ -979,73 +979,70 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 			
-			switch (superscriptStyle) 
+			switch (superscriptStyle)
 			{
 				case 1:
 				{
 					textPosition.y += oneRun.ascent * 0.47f;
 					break;
-				}	
+				}
 				case -1:
 				{
 					textPosition.y -= oneRun.ascent * 0.25f;
 					break;
-				}	
+				}
 				default:
 					break;
 			}
 			
 			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 			
-			NSArray *shadows = [oneRun.attributes objectForKey:DTShadowsAttribute];
+			DTTextAttachment *attachment = oneRun.attachment;
 			
-			if (shadows)
+			if (attachment)
 			{
-				CGContextSaveGState(context);
-				
-				for (NSDictionary *shadowDict in shadows)
+				if (drawImages)
 				{
-					[self _setShadowInContext:context fromDictionary:shadowDict];
-					
-					// draw once per shadow
-					[oneRun drawInContext:context];
+					if (attachment.contentType == DTTextAttachmentTypeImage)
+					{
+						DTImage *image = (id)attachment.contents;
+						
+						// frame might be different due to image vertical alignment
+						CGFloat ascender = [attachment ascentForLayout];
+						CGFloat descender = [attachment descentForLayout];
+						
+						CGPoint origin = oneRun.frame.origin;
+						origin.y = self.frame.size.height - origin.y - ascender - descender;
+						CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
+						
+						CGContextDrawImage(context, flippedRect, image.CGImage);
+					}
 				}
-				
-				CGContextRestoreGState(context);
 			}
 			else
 			{
-				DTTextAttachment *attachment = oneRun.attachment;
+				NSArray *shadows = [oneRun.attributes objectForKey:DTShadowsAttribute];
 				
-				if (attachment)
+				if (shadows)
 				{
-					if (drawImages)
+					CGContextSaveGState(context);
+					
+					for (NSDictionary *shadowDict in shadows)
 					{
-						if (attachment.contentType == DTTextAttachmentTypeImage)
-						{
-							DTImage *image = (id)attachment.contents;
-							
-							// frame might be different due to image vertical alignment
-							CGFloat ascender = [attachment ascentForLayout];
-							CGFloat descender = [attachment descentForLayout];
-							 
-							CGPoint origin = oneRun.frame.origin;
-							origin.y = self.frame.size.height - origin.y - ascender - descender;
-							CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
-							
-							CGContextDrawImage(context, flippedRect, image.CGImage);
-						}
+						[self _setShadowInContext:context fromDictionary:shadowDict];
+						
+						// draw once per shadow
+						[oneRun drawInContext:context];
 					}
+					
+					CGContextRestoreGState(context);
 				}
-				else
-				{
-					// regular text
-					[oneRun drawInContext:context];
-				}
+				
+				// regular text
+				[oneRun drawInContext:context];
 			}
 		}
 	}
-	
 	
 	if (_textFrame)
 	{
