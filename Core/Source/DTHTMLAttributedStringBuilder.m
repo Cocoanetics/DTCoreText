@@ -557,7 +557,8 @@
 		{
 			// inherit stuff
 			[newNode inheritAttributesFromElement:_currentTag];
-			
+			[newNode interpretAttributes];
+
 			previousLastChild = [_currentTag.childNodes lastObject];
 			
 			// add as new child of current node
@@ -577,6 +578,7 @@
 				_rootNode = newNode;
 				
 				[_rootNode inheritAttributesFromElement:_defaultTag];
+				[_rootNode interpretAttributes];
 			}
 		}
 		
@@ -712,9 +714,7 @@
 		textNode.text = string;
 		
 		[textNode inheritAttributesFromElement:_currentTag];
-		
-		// need to transfer Apple Converted Space tag to text node
-		textNode.containsAppleConvertedSpace = _currentTag.containsAppleConvertedSpace;
+		[textNode interpretAttributes];
 		
 		// text directly contained in body needs to be output right away
 		if (_currentTag == _bodyElement)

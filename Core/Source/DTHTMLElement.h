@@ -134,6 +134,11 @@
 - (void)inheritAttributesFromElement:(DTHTMLElement *)element;
 
 /**
+ Interprets the tag attributes for e.g. writing direction. Usually you would call this after inheritAttributesFromElement:.
+ */
+- (void)interpretAttributes;
+
+/**
  Returns the parent element. That's the same as the parent node but with adjusted type for convenience.
  */
 - (DTHTMLElement *)parentElement;
