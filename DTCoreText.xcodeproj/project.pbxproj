@@ -412,6 +412,8 @@
 		A7EB8541168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */; };
 		A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
 		A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
+		A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
+		A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
 		A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671514D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671614D841EA00D1F167 /* NSString+CSS.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5671314D841E900D1F167 /* NSString+CSS.m */; };
@@ -941,6 +943,8 @@
 		A7EB8537168FA33000D686B7 /* DTHTMLElementStylesheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementStylesheet.h; sourceTree = "<group>"; };
 		A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementStylesheet.m; sourceTree = "<group>"; };
 		A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WhitespaceFollowingImagePromotedToParagraph.html; sourceTree = "<group>"; };
+		A7F16CF41698491400B0E843 /* NSStringCSSTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringCSSTest.h; sourceTree = "<group>"; };
+		A7F16CF51698491400B0E843 /* NSStringCSSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringCSSTest.m; sourceTree = "<group>"; };
 		A7F5671214D841E900D1F167 /* NSString+CSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+CSS.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A7F5671314D841E900D1F167 /* NSString+CSS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSString+CSS.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A7F5671C14D8469000D1F167 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -1384,6 +1388,8 @@
 				A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */,
 				A7DBC1B51689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.h */,
 				A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */,
+				A7F16CF41698491400B0E843 /* NSStringCSSTest.h */,
+				A7F16CF51698491400B0E843 /* NSStringCSSTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2218,6 +2224,7 @@
 				A7EB84EB168C657100D686B7 /* DTHTMLElementLI.m in Sources */,
 				A7EB8535168F336100D686B7 /* DTHTMLElementAttachment.m in Sources */,
 				A7EB853F168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
+				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2259,6 +2266,7 @@
 				A7EB84EC168C657100D686B7 /* DTHTMLElementLI.m in Sources */,
 				A7EB8534168F336000D686B7 /* DTHTMLElementAttachment.m in Sources */,
 				A7EB8540168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
+				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

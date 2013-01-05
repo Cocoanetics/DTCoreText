@@ -408,6 +408,11 @@
 			colorName = [colorName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		}
 	}
+	else
+	{
+		// could be a plain html color name
+		[self scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:&colorName];
+	}
 	
 	DTColor *foundColor = nil;
 	
