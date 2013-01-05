@@ -1160,8 +1160,6 @@ NSDictionary *_classesForNames = nil;
 	_anchorName = [element.anchorName copy];
 	_linkGUID = element.linkGUID;
 	
-	_tagContentInvisible = element.tagContentInvisible;
-	
 	_textColor = element.textColor;
 	_isColorInherited = YES;
 	
@@ -1284,7 +1282,6 @@ NSDictionary *_classesForNames = nil;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
 @synthesize textAttachment = _textAttachment;
-@synthesize tagContentInvisible = _tagContentInvisible;
 @synthesize strikeOut = _strikeOut;
 @synthesize superscriptStyle = _superscriptStyle;
 @synthesize headerLevel = _headerLevel;

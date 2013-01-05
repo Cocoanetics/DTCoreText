@@ -42,7 +42,6 @@
 	
 	NSString *_linkGUID;
 	
-	BOOL _tagContentInvisible;
 	BOOL _strikeOut;
 	NSInteger _superscriptStyle;
 	
@@ -84,7 +83,6 @@
 @property (nonatomic, copy) NSString *beforeContent;
 @property (nonatomic, copy) NSArray *shadows;
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;
-@property (nonatomic, assign) BOOL tagContentInvisible;
 @property (nonatomic, assign) BOOL strikeOut;
 @property (nonatomic, assign) NSInteger superscriptStyle;
 @property (nonatomic, assign) NSInteger headerLevel;

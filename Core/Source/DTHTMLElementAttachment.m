@@ -21,9 +21,6 @@
 	
 	if (self)
 	{
-		// hide contents of recognized tag
-		_tagContentInvisible = YES;
-		
 		// make appropriate attachment
 		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:self options:options];
 		
