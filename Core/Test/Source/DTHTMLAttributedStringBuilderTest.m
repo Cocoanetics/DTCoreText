@@ -10,6 +10,7 @@
 
 #import "DTHTMLAttributedStringBuilder.h"
 #import "DTCoreTextConstants.h"
+#import "DTCoreTextParagraphStyle.h"
 
 @implementation DTHTMLAttributedStringBuilderTest
 
@@ -65,5 +66,32 @@
 	
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
+
+// tests functionality of dir attribute
+- (void)testWritingDirection
+{
+	NSString *string = @"<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>";
+	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	
+	NSAttributedString *output = [builder generatedAttributedString];
+	
+	CTParagraphStyleRef paragraphStyleRTL = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:0 effectiveRange:NULL]);
+	DTCoreTextParagraphStyle *styleRTL = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleRTL];
+	
+	STAssertTrue(styleRTL.baseWritingDirection == NSWritingDirectionRightToLeft, @"Writing direction is not RTL");
+	
+	CTParagraphStyleRef paragraphStyleLTR = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:4 effectiveRange:NULL]);
+	DTCoreTextParagraphStyle *styleLTR = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleLTR];
+	
+	STAssertTrue(styleLTR.baseWritingDirection == NSWritingDirectionLeftToRight, @"Writing direction is not LTR");
+
+	CTParagraphStyleRef paragraphStyleNatural = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:8 effectiveRange:NULL]);
+	DTCoreTextParagraphStyle *styleNatural = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleNatural];
+	
+	STAssertTrue(styleNatural.baseWritingDirection == NSWritingDirectionNatural, @"Writing direction is not Natural");
+}
+
 
 @end
