@@ -3,7 +3,7 @@ Pod::Spec.new do |spec|
   spec.version      = '1.1.0'
   spec.platform     = :ios
   spec.license      = 'BSD'
-  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => "v#{spec.version}" }
+  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version }
   spec.source_files = 'Core/Source/*.{h,m,c}'
   spec.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
   spec.requires_arc = true
