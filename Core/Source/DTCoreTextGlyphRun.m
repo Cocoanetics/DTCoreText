@@ -10,6 +10,7 @@
 #import "DTCoreTextLayoutLine.h"
 #import "DTTextAttachment.h"
 #import "DTCoreTextConstants.h"
+#import "DTCoreTextParagraphStyle.h"
 
 #ifndef __IPHONE_4_3
 	#define __IPHONE_4_3 40300
@@ -39,6 +40,8 @@
 	CGFloat _leading;
 	CGFloat _width;
 	
+	BOOL _writingDirectionIsRightToLeft;
+	
 	NSInteger _numberOfGlyphs;
 	
 	const CGPoint *_glyphPositionPoints;
@@ -54,6 +57,7 @@
 	BOOL _didCheckForAttachmentInAttributes;
 	BOOL _didCheckForHyperlinkInAttributes;
 	BOOL _didCalculateMetrics;
+	BOOL _didGetWritingDirection;
 }
 
 @synthesize runLock;
@@ -314,6 +318,27 @@
 	return _leading;
 }
 
+- (BOOL)writingDirectionIsRightToLeft
+{
+	if (!_didGetWritingDirection)
+	{
+		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[self.attributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		
+		// depends on the text direction
+		CTWritingDirection baseWritingDirection;
+		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection);
+		
+		if (baseWritingDirection == kCTWritingDirectionRightToLeft)
+		{
+			_writingDirectionIsRightToLeft = YES;
+		}
+	
+		_didGetWritingDirection = YES;
+	}
+	
+	return _writingDirectionIsRightToLeft;
+}
+
 @synthesize frame = _frame;
 @synthesize numberOfGlyphs = _numberOfGlyphs;
 @synthesize attributes = _attributes;
@@ -322,5 +347,6 @@
 @synthesize descent = _descent;
 @synthesize leading = _leading;
 @synthesize attachment = _attachment;
+@synthesize writingDirectionIsRightToLeft = _writingDirectionIsRightToLeft;
 
 @end

@@ -43,6 +43,8 @@
 @property (nonatomic, assign, readonly) CGFloat leading;
 @property (nonatomic, assign, readonly) CGFloat width;
 
+@property (nonatomic, assign, readonly) BOOL writingDirectionIsRightToLeft;
+
 @property (nonatomic, strong) DTTextAttachment *attachment;
 
 @end

@@ -35,6 +35,9 @@
 
 	BOOL _didCalculateMetrics;
 	dispatch_queue_t _syncQueue;
+	
+	BOOL _writingDirectionIsRightToLeft;
+	BOOL _needsToDetectWritingDirection;
 }
 
 - (id)initWithLine:(CTLineRef)line
@@ -43,6 +46,9 @@
 	{
 		_line = line;
 		CFRetain(_line);
+		
+		// writing direction
+		_needsToDetectWritingDirection = YES;
 		
 		// get a global queue
 		_syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -430,6 +436,26 @@
 	return _trailingWhitespaceWidth;
 }
 
+- (BOOL)writingDirectionIsRightToLeft
+{
+	if (_needsToDetectWritingDirection)
+	{
+		if ([self.glyphRuns count])
+		{
+			DTCoreTextGlyphRun *firstRun = [self.glyphRuns objectAtIndex:0];
+			
+			_writingDirectionIsRightToLeft = [firstRun writingDirectionIsRightToLeft];
+		}
+	}
+	
+	return _writingDirectionIsRightToLeft;
+}
+
+- (void)setWritingDirectionIsRightToLeft:(BOOL)writingDirectionIsRightToLeft
+{
+	_writingDirectionIsRightToLeft = writingDirectionIsRightToLeft;
+	_needsToDetectWritingDirection = NO;
+}
 
 @synthesize frame =_frame;
 @synthesize glyphRuns = _glyphRuns;
@@ -440,5 +466,6 @@
 @synthesize trailingWhitespaceWidth = _trailingWhitespaceWidth;
 
 @synthesize baselineOrigin = _baselineOrigin;
+@synthesize writingDirectionIsRightToLeft = _writingDirectionIsRightToLeft;
 
 @end

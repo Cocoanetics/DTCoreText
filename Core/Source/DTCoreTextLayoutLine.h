@@ -69,4 +69,6 @@
 
 @property (nonatomic, assign) CGPoint baselineOrigin;
 
+@property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
+
 @end

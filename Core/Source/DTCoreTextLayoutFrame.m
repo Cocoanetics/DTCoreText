@@ -350,6 +350,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			textAlignment = kCTNaturalTextAlignment;
 		}
 		
+		BOOL isRTL = NO;
+		
 		switch (textAlignment) 
 		{
 			case kCTLeftTextAlignment:
@@ -368,6 +370,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				if (baseWritingDirection != kCTWritingDirectionRightToLeft)
 				{
 					break;
+				}
+				else
+				{
+					isRTL = YES;
 				}
 				
 				// right alignment falls through
@@ -421,6 +427,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
 		CFRelease(line);
+		
+		newLine.writingDirectionIsRightToLeft = isRTL;
 		
 		// baseline origin is rounded
 		lineOrigin.y = ceilf(lineOrigin.y);
