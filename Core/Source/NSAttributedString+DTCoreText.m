@@ -328,10 +328,11 @@
 		[newAttributes setObject:textBlocks forKey:DTTextBlocksAttribute];
 	}
 	
-	// transfer list style to new attributes
-	if (listStyle)
+	// transfer all lists so that
+	NSArray *lists = [attributes objectForKey:DTTextListsAttribute];
+	if (lists)
 	{
-		[newAttributes setObject:[NSArray arrayWithObject:listStyle] forKey:DTTextListsAttribute];
+		[newAttributes setObject:lists forKey:DTTextListsAttribute];
 	}
 	
 	// add a marker so that we know that this is a field/prefix
