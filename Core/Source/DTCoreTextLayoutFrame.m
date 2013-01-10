@@ -428,7 +428,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			if (lineOrigin.y - newLine.ascent < previousLineBottom)
 			{
-				// more baseline origin far enough down
+				// move baseline origin down far enough
 				lineOrigin.y = previousLineBottom + newLine.ascent;
 			}
 		}
