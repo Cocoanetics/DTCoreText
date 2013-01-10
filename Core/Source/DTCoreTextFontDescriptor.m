@@ -182,44 +182,46 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSMutableString *string = [NSMutableString string];
 	
-	[string appendFormat:@"<%@ ", [self class]];
+	[string appendFormat:@"<%@", [self class]];
 	
 	
 	if (self.fontName)
 	{
-		[string appendFormat:@"name:\'%@\' ", self.fontName];
+		[string appendFormat:@" name=\'%@\'", self.fontName];
 	}
 	
 	if (_fontFamily)
 	{
-		[string appendFormat:@"family:\'%@\' ", _fontFamily];
+		[string appendFormat:@" family=\'%@\'", _fontFamily];
 	}
+	
+	[string appendFormat:@" size:%.0f", _pointSize];
 	
 	NSMutableArray *tmpTraits = [NSMutableArray array];
 	
 	if (_stylisticTraits & kCTFontBoldTrait)
 	{
-		[tmpTraits addObject:@"bold"];
+		[tmpTraits addObject:@" bold"];
 	}
 	
 	if (_stylisticTraits & kCTFontItalicTrait)
 	{
-		[tmpTraits addObject:@"italic"];
+		[tmpTraits addObject:@" italic"];
 	}
 	
 	if (_stylisticTraits & kCTFontMonoSpaceTrait)
 	{
-		[tmpTraits addObject:@"monospace"];
+		[tmpTraits addObject:@" monospace"];
 	}
 	
 	if (_stylisticTraits & kCTFontCondensedTrait)
 	{
-		[tmpTraits addObject:@"condensed"];
+		[tmpTraits addObject:@" condensed"];
 	}
 	
 	if (_stylisticTraits & kCTFontExpandedTrait)
 	{
-		[tmpTraits addObject:@"expanded"];
+		[tmpTraits addObject:@" expanded"];
 	}
 	
 	if (_stylisticTraits & kCTFontVerticalTrait)
@@ -229,13 +231,13 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	
 	if (_stylisticTraits & kCTFontUIOptimizedTrait)
 	{
-		[tmpTraits addObject:@"UI optimized"];
+		[tmpTraits addObject:@" UI optimized"];
 	}
 	
 	
 	if ([tmpTraits count])
 	{
-		[string appendString:@"attributes:"];
+		[string appendString:@" attributes="];
 		[string appendString:[tmpTraits componentsJoinedByString:@", "]];
 	}
 	
@@ -513,6 +515,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		retFont = [self _findOrMakeMatchingFont];
 	});
 	
+	
+	NSLog(@"%@ %@", self, retFont);
 	return retFont;
 }
 
