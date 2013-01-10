@@ -163,7 +163,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 			
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			// could also be an iOS 6 attribute
-			if (!foregroundColor)
+			if (!foregroundColor&&___useiOS6Attributes)
 			{
 				// could also be the iOS 6 background color
 				DTColor *color = [runAttributes objectForKey:NSBackgroundColorAttributeName];
