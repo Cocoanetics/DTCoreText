@@ -414,26 +414,38 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 		}
 		
-		CGFloat lineBottom = lineOrigin.y + currentLineMetrics.descent;
-		
-		// abort layout if we left the configured frame
-		if (lineBottom>maxY)
-		{
-			// doesn't fit any more
-			CFRelease(line);
-			break;
-		}
-		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
 		CFRelease(line);
 		
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		
+		// prevent overlap of a line with small font size with line before it
+		if (previousLine && !usesForcedLineHeight)
+		{
+			// only if there IS a line before it AND the line height is not fixed
+			CGFloat previousLineBottom = CGRectGetMaxY(previousLine.frame);
+			
+			if (lineOrigin.y - newLine.ascent < previousLineBottom)
+			{
+				// more baseline origin far enough down
+				lineOrigin.y = previousLineBottom + newLine.ascent;
+			}
+		}
+		
 		// baseline origin is rounded
 		lineOrigin.y = ceilf(lineOrigin.y);
 		
 		newLine.baselineOrigin = lineOrigin;
+		
+		// abort layout if we left the configured frame
+		CGFloat lineBottom = lineOrigin.y + currentLineMetrics.descent;
+		
+		if (lineBottom>maxY)
+		{
+			// doesn't fit any more
+			break;
+		}
 		
 		[typesetLines addObject:newLine];
 		fittingLength += lineRange.length;
