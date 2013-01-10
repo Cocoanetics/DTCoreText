@@ -515,8 +515,6 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		retFont = [self _findOrMakeMatchingFont];
 	});
 	
-	
-	NSLog(@"%@ %@", self, retFont);
 	return retFont;
 }
 
