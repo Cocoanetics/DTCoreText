@@ -895,17 +895,24 @@ NSDictionary *_classesForNames = nil;
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
 		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+
+		// if this has an attachment set its size too
+		CGSize displaySize = _textAttachment.displaySize;
+		displaySize.width = _size.width;
+		_textAttachment.displaySize = displaySize;
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
 		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+
+		// if this has an attachment set its size too
+		CGSize displaySize = _textAttachment.displaySize;
+		displaySize.height = _size.height;
+		_textAttachment.displaySize = displaySize;
 	}
-	
-	// if this has an attachment set its size too
-	_textAttachment.displaySize = _size;
-	
+
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
 	if ([whitespaceString hasPrefix:@"pre"])
 	{
