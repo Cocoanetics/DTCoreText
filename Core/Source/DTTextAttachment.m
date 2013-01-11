@@ -82,7 +82,8 @@
 	
 	
 	// decode content URL
-	if (src != nil) { // guard against img with no src
+	if ([src length]) // guard against img with no src
+	{ 
 		if ([src hasPrefix:@"data:"])
 		{
 			NSRange range = [src rangeOfString:@"base64,"];
@@ -104,7 +105,8 @@
 		{
 			contentURL = [NSURL URLWithString:src];
 			
-			if(!contentURL){
+			if(!contentURL)
+			{
 				src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
 			}
@@ -119,10 +121,25 @@
 				else
 				{
 					// file in app bundle
-					NSString *path = [[NSBundle mainBundle] pathForResource:src ofType:nil];
-					if (path) {
+					NSBundle *bundle = [NSBundle mainBundle];
+					NSString *path = [bundle pathForResource:src ofType:nil];
+					
+					if (path)
+					{
 						// Prevent a crash if path turns up nil.
 						contentURL = [NSURL fileURLWithPath:path];   
+					}
+					else
+					{
+						// might also be in a different bundle, e.g. when unit testing
+						bundle = [NSBundle bundleForClass:[DTTextAttachment class]];
+						
+						path = [bundle pathForResource:src ofType:nil];
+						if (path)
+						{
+							// Prevent a crash if path turns up nil.
+							contentURL = [NSURL fileURLWithPath:path];
+						}
 					}
 				}
 			}
