@@ -8,11 +8,12 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
-#import "DTFoundation.h"
 
 #import "DTHTMLElementText.h"
 #import "DTHTMLElementBR.h"
 #import "DTHTMLElementStylesheet.h"
+
+#import "DTVersion.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 
