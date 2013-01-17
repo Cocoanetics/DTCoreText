@@ -32,8 +32,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	//NSInteger _tag;
 	
+	int _numberLinesFitInFrame;
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
 }
+
+@synthesize numberOfLines = _numberOfLines;
+@synthesize lineBreakMode = _lineBreakMode;
+@synthesize truncationString = _truncationString;
 
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
@@ -235,8 +240,49 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentParaMetrics.paragraphSpacing), &currentParaMetrics.paragraphSpacing);
 		}
 		
-		// create a line to fit
-		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+		BOOL truncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
+							 (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
+		CTLineRef line;
+		if(!truncateLine)
+		{
+			// create a line to fit
+			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+		}
+		else
+		{
+			NSRange oldLineRange = lineRange;
+			lineRange.length = maxIndex-lineRange.location;
+			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+
+			CTLineTruncationType truncationType = kCTLineTruncationEnd;
+			if (self.lineBreakMode == UILineBreakModeHeadTruncation)
+			{
+				truncationType = kCTLineTruncationStart;
+			}
+			else if (self.lineBreakMode == UILineBreakModeMiddleTruncation)
+			{
+				truncationType = kCTLineTruncationMiddle;
+			}
+
+			NSAttributedString * attribStr = self.truncationString;
+			if(attribStr == nil)
+			{
+				NSRange range;
+				int index = oldLineRange.location;
+				if (self.lineBreakMode == UILineBreakModeTailTruncation)
+				{
+					index += oldLineRange.length;
+				}
+				else if (self.lineBreakMode == UILineBreakModeMiddleTruncation)
+				{
+					index += oldLineRange.length/2.0;
+				}
+				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
+				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
+			}
+			CTLineRef elipsisLineRef = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attribStr));
+			line = CTLineCreateTruncatedLine(line, availableSpace, truncationType, elipsisLineRef);
+		}
 		
 		// we need all metrics so get the at once
 		currentLineMetrics.width = CTLineGetTypographicBounds(line, &currentLineMetrics.ascent, &currentLineMetrics.descent, &currentLineMetrics.leading);
@@ -443,8 +489,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (lineBottom>maxY)
 		{
-			// doesn't fit any more
-			break;
+			if([typesetLines count] &&
+			   (self.lineBreakMode == UILineBreakModeHeadTruncation ||
+				self.lineBreakMode == UILineBreakModeMiddleTruncation ||
+				self.lineBreakMode == UILineBreakModeTailTruncation))
+			{
+				_numberLinesFitInFrame = [typesetLines count];
+				[self _buildLinesWithTypesetter];
+				return;
+			}
+			else
+			{
+				// doesn't fit any more
+				break;
+			}
 		}
 		
 		[typesetLines addObject:newLine];

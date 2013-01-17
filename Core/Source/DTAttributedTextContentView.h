@@ -103,6 +103,8 @@
 	UIEdgeInsets _edgeInsets;
 	
 	NSMutableDictionary *customViewsForAttachmentsIndex;
+
+	BOOL _flexibleHeight;
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;

@@ -95,6 +95,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// DTLinkButton set this property to NO and create a highlighted version of the attributed string
 	_shouldDrawLinks = YES;
 	
+	_flexibleHeight = YES;
+
 	// possibly already set in NIB
 	if (!self.backgroundColor)
 	{
@@ -671,8 +673,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				if (theLayouter)
 				{
 					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, _edgeInsets);
-					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-					
+					if (_flexibleHeight)
+					{
+						rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+					}
+
 					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 					
 					if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
