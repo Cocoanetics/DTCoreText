@@ -3,12 +3,6 @@ DTCoreText
 
 This project aims to duplicate the methods present on Mac OSX which allow creation of `NSAttributedString` from HTML code on iOS. Previously we referred to it as NSAttributedString+HTML (or NSAS+HTML in short) but this only covers about half of what this framework does. 
 
-Please support us so that we can continue to make DTCoreText even more awesome!
-
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M5DZ3PAN7NW8J">
-<img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" />
-</a>
-
 The project covers two broad areas:
 
 1. Layouting - Interfacing with CoreText, generating NSAttributedString instances from HTML code
