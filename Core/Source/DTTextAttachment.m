@@ -11,6 +11,14 @@
 
 #import "NSData+Base64.h"
 
+static NSCache *imageCache = nil;
+
+@interface DTTextAttachment ()
+
++ (NSCache *)sharedImageCache;
+
+@end
+
 @implementation DTTextAttachment
 {
 	CGSize _originalSize;
@@ -27,6 +35,16 @@
 	CGFloat _fontLeading;
 	CGFloat _fontAscent;
 	CGFloat _fontDescent;
+}
+
++ (NSCache *)sharedImageCache {
+  if (imageCache) return imageCache;
+
+  static dispatch_once_t onceToken; // lock
+  dispatch_once(&onceToken, ^{ // this block run only once
+		imageCache = [[NSCache alloc] init];
+  });
+  return imageCache;
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
@@ -158,7 +176,12 @@
 			// inspect local file
 			if ([contentURL isFileURL])
 			{
-				DTImage *image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
+				DTImage *image = [[DTTextAttachment sharedImageCache] objectForKey:[contentURL path]];
+				if (!image) {
+					image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
+					[[DTTextAttachment sharedImageCache] setObject:image forKey:[contentURL path]];
+				}
+
 				originalSize = image.size;
 				
 				// width and/or height missing
@@ -317,8 +340,12 @@
 	{
 		if (_contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
 		{
-			DTImage *image = [[DTImage alloc] initWithContentsOfFile:[_contentURL path]];
-			
+			DTImage *image = [[DTTextAttachment sharedImageCache] objectForKey:[_contentURL path]];
+			if (!image) {
+				image = [[DTImage alloc] initWithContentsOfFile:[_contentURL path]];
+				[[DTTextAttachment sharedImageCache] setObject:image forKey:[_contentURL path]];
+			}
+
 			return image;
 		}
 	}
