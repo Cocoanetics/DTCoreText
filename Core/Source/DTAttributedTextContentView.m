@@ -577,11 +577,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		return;	
 	}
-	
-	BOOL frameDidChange = !CGRectEqualToRect(oldFrame, frame);
-	
+
 	// having a layouter means we are responsible for layouting yourselves
-	if (frameDidChange)
+	// relayout only if frame size has been changed
+	if (!CGSizeEqualToSize(oldFrame.size, frame.size))
 	{
 		[self relayoutText];
 	}
