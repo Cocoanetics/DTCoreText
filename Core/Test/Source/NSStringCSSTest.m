@@ -9,6 +9,7 @@
 #import "NSStringCSSTest.h"
 #import "NSString+CSS.h"
 #import "DTColor+HTML.h"
+#import "DTCompatibility.h"
 
 @implementation NSStringCSSTest
 
@@ -16,7 +17,7 @@
 {
 	NSString *string = @"red 1px 2px 3px;";
 	
-	DTColor *color = (DTColor *)[UIColor blackColor];
+	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
 	STAssertTrue([shadows count]==1, @"Could not find one shadow");
@@ -33,7 +34,11 @@
 	STAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
 	
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
-	STAssertEqualObjects(shadowColor, [UIColor redColor], @"Color should be red");
+	DTColor *redColor = [DTColor redColor];
+	
+	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
+	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
+	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
 }
 
 
@@ -41,7 +46,7 @@
 {
 	NSString *string = @"1px 2px 3px red;";
 	
-	DTColor *color = (DTColor *)[UIColor blackColor];
+	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
 	STAssertTrue([shadows count]==1, @"Could not find one shadow");
@@ -58,7 +63,11 @@
 	STAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
 	
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
-	STAssertEqualObjects(shadowColor, [UIColor redColor], @"Color should be red");
+	DTColor *redColor = [DTColor redColor];
+	
+	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
+	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
+	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
 }
 
 @end
