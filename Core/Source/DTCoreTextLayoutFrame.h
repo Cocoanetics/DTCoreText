@@ -284,6 +284,11 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 
 /**
+ @returns the current value of the debug frame drawing
+ */
++ (BOOL)shouldDrawDebugFrames;
+
+/**
  @name Truncation
  */
 
