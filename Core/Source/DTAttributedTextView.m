@@ -67,12 +67,10 @@
 	if (alpha < 1.0)
 	{
 		self.opaque = NO;
-		self.contentView.opaque = NO;
 	}
 	else 
 	{
 		self.opaque = YES;
-		self.contentView.opaque = YES;
 	}
 	
 	self.autoresizesSubviews = YES;
@@ -126,6 +124,19 @@
 		contentView.userInteractionEnabled = YES;
 		contentView.backgroundColor = self.backgroundColor;
 		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
+		
+		CGFloat alpha = [self.backgroundColor alphaComponent];
+		
+		if (alpha < 1.0)
+		{
+			self.opaque = NO;
+			contentView.opaque = NO;
+		}
+		else
+		{
+			self.opaque = YES;
+			contentView.opaque = YES;
+		}
 		
 		// we want to know if the frame changes so that we can adjust the scrollview content size
 		[contentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
