@@ -557,17 +557,20 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (_attributedString != string)
 	{
-		
 		_attributedString = [string copy];
 		
-		// new layout invalidates all positions for custom views
-		[self removeAllCustomViews];
+		// only do relayout if there is a previous layout frame
+		if (_layoutFrame)
+		{
+			// new layout invalidates all positions for custom views
+			[self removeAllCustomViews];
 		
-		[self relayoutText];
+			[self relayoutText];
+		}
 	}
 }
 
-- (void)setFrame:(CGRect)frame //relayoutText:(BOOL)relayoutText
+- (void)setFrame:(CGRect)frame
 {
 	CGRect oldFrame = self.frame;
 	
