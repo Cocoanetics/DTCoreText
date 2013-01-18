@@ -11,7 +11,12 @@
 @interface DTCoreTextLayouter ()
 
 @property (nonatomic, strong) NSMutableArray *frames;
-@property (nonatomic, assign) dispatch_semaphore_t selfLock;
+
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong) dispatch_semaphore_t selfLock;  // GCD objects use ARC
+#else
+@property (nonatomic, assign) dispatch_semaphore_t selfLock;  // GCD objects don't use ARC
+#endif
 
 - (CTFramesetterRef)framesetter;
 - (void)discardFramesetter;
@@ -53,7 +58,9 @@
 	[self discardFramesetter];
 	SYNCHRONIZE_END(self)
 
+#if !OS_OBJECT_USE_OBJC
 	dispatch_release(selfLock);
+#endif
 }
 
 - (NSString *)description

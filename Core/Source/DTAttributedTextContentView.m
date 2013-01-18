@@ -152,8 +152,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)dealloc 
 {
 	[self removeAllCustomViews];
-	
+
+#if !OS_OBJECT_USE_OBJC
 	dispatch_release(selfLock);
+#endif
 }
 
 - (void)layoutSubviewsInRect:(CGRect)rect

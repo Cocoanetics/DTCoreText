@@ -133,7 +133,11 @@
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
 
-@property (nonatomic, assign) dispatch_semaphore_t selfLock;
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong) dispatch_semaphore_t selfLock;  // GCD objects use ARC
+#else
+@property (nonatomic, assign) dispatch_semaphore_t selfLock;  // GCD objects don't use ARC
+#endif
 
 
 @end

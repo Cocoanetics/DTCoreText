@@ -23,7 +23,12 @@
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
 @property (nonatomic, unsafe_unretained, readwrite) NSDictionary *attributes;
-@property (nonatomic, assign) dispatch_semaphore_t runLock;
+
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong) dispatch_semaphore_t runLock; // GCD objects use ARC
+#else
+@property (nonatomic, assign) dispatch_semaphore_t runLock; // GCD objects don't use ARC
+#endif
 
 @end
 
@@ -86,7 +91,9 @@
 		CFRelease(_run);
 	}
 	
+#if !OS_OBJECT_USE_OBJC
 	dispatch_release(runLock);
+#endif
 }
 
 - (NSString *)description
