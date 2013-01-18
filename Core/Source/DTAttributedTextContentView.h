@@ -125,7 +125,6 @@
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 @property (nonatomic) UIEdgeInsets edgeInsets;
-@property (nonatomic) BOOL drawDebugFrames;
 @property (nonatomic) BOOL shouldDrawImages;
 @property (nonatomic) BOOL shouldDrawLinks;
 @property (nonatomic) BOOL shouldLayoutCustomSubviews;

@@ -110,6 +110,11 @@
 	// Create text view
 	[DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
+	
+	// set an inset. Since the bottom is below a toolbar inset by 44px
+	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
+	_textView.contentInset = UIEdgeInsetsMake(10, 10, 54, 10);
+
 	_textView.textDelegate = self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
@@ -156,28 +161,19 @@
 	return string;
 }
 
-
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	
-	// Display string
-	_textView.contentView.edgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-	_textView.contentView.shouldDrawLinks = NO; // we draw them in DTLinkButton
-	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
-}
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
 	
 	CGRect bounds = self.view.bounds;
 	_textView.frame = bounds;
+
+	// Display string
+	_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
+	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
 	
 	[self _segmentedControlChanged:nil];
-	[_textView setContentInset:UIEdgeInsetsMake(0, 0, 44, 0)];
-	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
+	
 	[self.navigationController setToolbarHidden:NO animated:YES];
 }
 
@@ -530,9 +526,8 @@
 
 - (void)debugButton:(UIBarButtonItem *)sender
 {
-	_textView.contentView.drawDebugFrames = !_textView.contentView.drawDebugFrames;
-	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:_textView.contentView.drawDebugFrames];
-	[self.view setNeedsDisplay];
+	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:![DTCoreTextLayoutFrame shouldDrawDebugFrames]];
+	[_textView.attributedTextContentView setNeedsDisplay];
 }
 
 #pragma mark DTLazyImageViewDelegate
@@ -544,7 +539,7 @@
 	NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 	
 	// update all attachments that matchin this URL (possibly multiple images with same size)
-	for (DTTextAttachment *oneAttachment in [_textView.contentView.layoutFrame textAttachmentsWithPredicate:pred])
+	for (DTTextAttachment *oneAttachment in [_textView.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred])
 	{
 		oneAttachment.originalSize = imageSize;
 		
@@ -556,7 +551,7 @@
 	
 	// redo layout
 	// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
-	[_textView.contentView relayoutText];
+	[_textView.attributedTextContentView relayoutText];
 }
 
 #pragma mark Properties

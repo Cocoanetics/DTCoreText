@@ -8,6 +8,7 @@
 
 #import "DTAttributedTextView.h"
 #import "DTCoreText.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface DTAttributedTextView ()
 
@@ -18,6 +19,15 @@
 
 
 @implementation DTAttributedTextView
+{
+	DTAttributedTextContentView *_attributedTextContentView;
+	UIView *_backgroundView;
+
+	// these are pass-through, i.e. store until the content view is created
+	__unsafe_unretained id textDelegate;
+	NSAttributedString *_attributedString;
+	BOOL _shouldDrawLinks;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -33,8 +43,8 @@
 
 - (void)dealloc 
 {
-	contentView.delegate = nil;
-	[contentView removeObserver:self forKeyPath:@"frame"];
+	_attributedTextContentView.delegate = nil;
+	[_attributedTextContentView removeObserver:self forKeyPath:@"frame"];
 }
 
 - (void)layoutSubviews
@@ -44,7 +54,7 @@
 	[self contentView];
 	
 	// layout custom subviews for visible area
-	[contentView layoutSubviewsInRect:self.bounds];
+	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
 }
 
 - (void)awakeFromNib
@@ -73,7 +83,7 @@
 		self.opaque = YES;
 	}
 	
-	self.autoresizesSubviews = YES;
+	self.autoresizesSubviews = NO;
 	self.clipsToBounds = YES;
 }
 
@@ -105,7 +115,7 @@
 #pragma mark Notifications
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if (object == contentView && [keyPath isEqualToString:@"frame"])
+	if (object == _attributedTextContentView && [keyPath isEqualToString:@"frame"])
 	{
 		CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
 		self.contentSize = newFrame.size;
@@ -115,36 +125,50 @@
 #pragma mark Properties
 - (DTAttributedTextContentView *)contentView
 {
-	if (!contentView)
+	if (!_attributedTextContentView)
 	{
 		// subclasses can specify a DTAttributedTextContentView subclass instead
 		Class classToUse = [self classForContentView];
 		
-		contentView = [[classToUse alloc] initWithFrame:self.bounds];
-		contentView.userInteractionEnabled = YES;
-		contentView.backgroundColor = self.backgroundColor;
-		contentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
+		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+		_attributedTextContentView = [[classToUse alloc] initWithFrame:frame];
 		
+		_attributedTextContentView.userInteractionEnabled = YES;
+		_attributedTextContentView.backgroundColor = self.backgroundColor;
+		_attributedTextContentView.shouldLayoutCustomSubviews = NO; // we call layout when scrolling
+		
+		// adjust opaqueness based on background color alpha
 		CGFloat alpha = [self.backgroundColor alphaComponent];
 		
 		if (alpha < 1.0)
 		{
-			self.opaque = NO;
-			contentView.opaque = NO;
+			_attributedTextContentView.opaque = NO;
 		}
 		else
 		{
-			self.opaque = YES;
-			contentView.opaque = YES;
+			_attributedTextContentView.opaque = YES;
 		}
+
+		// set text delegate if it was set before instantiation of content view
+		_attributedTextContentView.delegate = textDelegate;
+		
+		// pass on setting
+		_attributedTextContentView.shouldDrawLinks = _shouldDrawLinks;
+		
+		// set text we previously got
+		_attributedTextContentView.attributedString = _attributedString;
+		
+		CGSize neededSize = [_attributedTextContentView sizeThatFits:CGSizeZero];
+		frame.size = neededSize;
+		_attributedTextContentView.frame = frame;
 		
 		// we want to know if the frame changes so that we can adjust the scrollview content size
-		[contentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+		[_attributedTextContentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
 		
-		[self addSubview:contentView];
+		[self addSubview:_attributedTextContentView];
 	}		
 	
-	return contentView;
+	return _attributedTextContentView;
 }
 
 - (void)setBackgroundColor:(DTColor *)newColor
@@ -152,79 +176,91 @@
 	if ([newColor alphaComponent]<1.0)
 	{
 		super.backgroundColor = newColor;
-		contentView.backgroundColor = [DTColor clearColor];
+		_attributedTextContentView.backgroundColor = [DTColor clearColor];
 		self.opaque = NO;
 	}
 	else 
 	{
 		super.backgroundColor = newColor;
 		
-		if (contentView.opaque)
+		if (_attributedTextContentView.opaque)
 		{
-			contentView.backgroundColor = newColor;
+			_attributedTextContentView.backgroundColor = newColor;
 		}
 	}
 }
 
 - (UIView *)backgroundView
 {
-	if (!backgroundView)
+	if (!_backgroundView)
 	{
-		backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-		backgroundView.backgroundColor	= [DTColor whiteColor];
+		_backgroundView = [[UIView alloc] initWithFrame:self.bounds];
+		_backgroundView.backgroundColor	= [DTColor whiteColor];
 		
 		// default is no interaction because background should have no interaction
-		backgroundView.userInteractionEnabled = NO;
+		_backgroundView.userInteractionEnabled = NO;
 
-		[self insertSubview:backgroundView belowSubview:self.contentView];
+		[self insertSubview:_backgroundView belowSubview:self.contentView];
 		
 		// make content transparent so that we see the background
-		contentView.backgroundColor = [DTColor clearColor];
-		contentView.opaque = NO;
+		_attributedTextContentView.backgroundColor = [DTColor clearColor];
+		_attributedTextContentView.opaque = NO;
 	}		
 	
-	return backgroundView;
+	return _backgroundView;
 }
 
-- (void)setBackgroundView:(UIView *)newBackgroundView
+- (void)setBackgroundView:(UIView *)backgroundView
 {
-	if (backgroundView != newBackgroundView)
+	if (_backgroundView != backgroundView)
 	{
-		[backgroundView removeFromSuperview];
-		backgroundView = newBackgroundView;
+		[_backgroundView removeFromSuperview];
+		_backgroundView = backgroundView;
 		
-		[self insertSubview:backgroundView belowSubview:self.contentView];
+		if (_attributedTextContentView)
+		{
+			[self insertSubview:_backgroundView belowSubview:_attributedTextContentView];
+		}
+		else
+		{
+			[self addSubview:_backgroundView];
+		}
 		
-		if (backgroundView)
+		if (_backgroundView)
 		{
 			// make content transparent so that we see the background
-			contentView.backgroundColor = [DTColor clearColor];
-			contentView.opaque = NO;
+			_attributedTextContentView.backgroundColor = [DTColor clearColor];
+			_attributedTextContentView.opaque = NO;
 		}
 		else 
 		{
-			contentView.backgroundColor = [DTColor whiteColor];
-			contentView.opaque = YES;
+			_attributedTextContentView.backgroundColor = [DTColor whiteColor];
+			_attributedTextContentView.opaque = YES;
 		}
 	}
 }
 
 - (void)setAttributedString:(NSAttributedString *)string
 {
-	self.contentView.attributedString = string;
-	
+	_attributedString = string;
+
 	// might need layout for visible custom views
 	[self setNeedsLayout];
 
-	// adjust content size right away
-	self.contentSize = self.contentView.frame.size;
+	if (_attributedTextContentView)
+	{
+		// pass it along if contentView already exists
+		_attributedTextContentView.attributedString = string;
+	
+		// adjust content size right away
+		self.contentSize = _attributedTextContentView.frame.size;
+	}
 }
 
 - (NSAttributedString *)attributedString
 {
-	return self.contentView.attributedString;
+	return _attributedString;
 }
-
 
 - (void)setFrame:(CGRect)frame
 {
@@ -232,7 +268,10 @@
 	{
 		if (self.frame.size.width != frame.size.width)
 		{
-			contentView.frame = CGRectMake(0,0,frame.size.width, frame.size.height);
+			// height does not matter, that will be determined anyhow
+			CGRect contentFrame = CGRectMake(0, 0, frame.size.width - self.contentInset.left - self.contentInset.right, 0);
+			
+			_attributedTextContentView.frame = contentFrame;
 		}
 		[super setFrame:frame];
 	}
@@ -240,16 +279,28 @@
 
 - (void)setTextDelegate:(id<DTAttributedTextContentViewDelegate>)aTextDelegate
 {
-	self.contentView.delegate = aTextDelegate;
+	// store unsafe pointer to delegate because we might not have a contentView yet
+	textDelegate = aTextDelegate;
+	
+	// set it if possible, otherwise it will be set in contentView lazy property
+	_attributedTextContentView.delegate = aTextDelegate;
 }
 
 - (id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-	return contentView.delegate;
+	return _attributedTextContentView.delegate;
 }
 
-@synthesize attributedString;
-@synthesize contentView;
-@synthesize textDelegate;
+- (void)setShouldDrawLinks:(BOOL)shouldDrawLinks
+{
+	_shouldDrawLinks = shouldDrawLinks;
+	_attributedTextContentView.shouldDrawLinks = YES;
+}
+
+@synthesize attributedTextContentView = _attributedTextContentView;
+@synthesize attributedString = _attributedString;
+@synthesize textDelegate = _textDelegate;
+
+@synthesize shouldDrawLinks = _shouldDrawLinks;
 
 @end
