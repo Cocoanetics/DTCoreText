@@ -12,3 +12,32 @@ CTFontRef DTCTFontCreateWithUIFont(UIFont *font)
 {
 	return CTFontCreateWithName((__bridge CFStringRef)font.fontName, font.pointSize, NULL);
 }
+
+CTLineTruncationType DTCTLineTruncationTypeFromNSLineBreakMode(NSLineBreakMode lineBreakMode)
+{
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
+	switch (lineBreakMode)
+	{
+		case UILineBreakModeHeadTruncation:
+			return kCTLineTruncationStart;
+			
+		case UILineBreakModeTailTruncation:
+			return kCTLineTruncationMiddle;
+			
+		default:
+			return kCTLineTruncationEnd;
+	}
+#else
+	switch (lineBreakMode)
+	{
+		case NSLineBreakByTruncatingHead:
+			return kCTLineTruncationStart;
+			
+		case NSLineBreakByTruncatingMiddle:
+			return kCTLineTruncationMiddle;
+			
+		default:
+			return kCTLineTruncationEnd;
+	}
+#endif
+}

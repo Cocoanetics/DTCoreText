@@ -254,26 +254,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			lineRange.length = maxIndex-lineRange.location;
 			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 
-			CTLineTruncationType truncationType = kCTLineTruncationEnd;
-			if (self.lineBreakMode == UILineBreakModeHeadTruncation)
-			{
-				truncationType = kCTLineTruncationStart;
-			}
-			else if (self.lineBreakMode == UILineBreakModeMiddleTruncation)
-			{
-				truncationType = kCTLineTruncationMiddle;
-			}
+			// convert lineBreakMode to CoreText type
+			CTLineTruncationType truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(self.lineBreakMode);
 
 			NSAttributedString * attribStr = self.truncationString;
 			if(attribStr == nil)
 			{
 				NSRange range;
 				int index = oldLineRange.location;
-				if (self.lineBreakMode == UILineBreakModeTailTruncation)
+				if (truncationType == kCTLineTruncationEnd) // self.lineBreakMode == UILineBreakModeTailTruncation
 				{
 					index += oldLineRange.length;
 				}
-				else if (self.lineBreakMode == UILineBreakModeMiddleTruncation)
+				else if (truncationType == kCTLineTruncationMiddle) // self.lineBreakMode == UILineBreakModeMiddleTruncation
 				{
 					index += oldLineRange.length/2.0;
 				}
@@ -489,10 +482,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (lineBottom>maxY)
 		{
-			if([typesetLines count] &&
-			   (self.lineBreakMode == UILineBreakModeHeadTruncation ||
-				self.lineBreakMode == UILineBreakModeMiddleTruncation ||
-				self.lineBreakMode == UILineBreakModeTailTruncation))
+			if ([typesetLines count] && self.lineBreakMode)
 			{
 				_numberLinesFitInFrame = [typesetLines count];
 				[self _buildLinesWithTypesetter];

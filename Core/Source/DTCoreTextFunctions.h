@@ -12,3 +12,8 @@
  @returns The matching CTFont
  */
 CTFontRef DTCTFontCreateWithUIFont(UIFont *font);
+
+/**
+ Converts an NSLineBreakMode into CoreText line truncation type
+ */
+CTLineTruncationType DTCTLineTruncationTypeFromNSLineBreakMode(NSLineBreakMode lineBreakMode);
