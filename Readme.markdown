@@ -18,6 +18,14 @@ If you find brief test cases where the created `NSAttributedString` differs from
 
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter.
 
+Changelog
+---------
+
+- [Version 1.2](http://www.cocoanetics.com/2013/01/dtcoretext-1-2-0/)
+- [Version 1.1](http://www.cocoanetics.com/2012/12/dtcoretext-1-1/)
+- [Version 1.0.1](http://www.cocoanetics.com/2012/04/dtcoretext-1-0-1-linker-flags-and-rich-text-news/)
+- [Version 1.0](http://www.cocoanetics.com/2012/02/dtrichtexteditor-dtcoretext-news/)
+
 License
 -------
 
