@@ -9,6 +9,9 @@
 #import "DTCSSStyleSheetTest.h"
 
 #import "DTCSSStylesheet.h"
+#import "DTHTMLElement.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "DTCoreTextParagraphStyle.h"
 
 @implementation DTCSSStyleSheetTest
 
@@ -37,6 +40,24 @@
 
 	NSString *empty2 = [styles objectForKey:@"empty2"];
 	STAssertEqualObjects(empty2, @"", @"empty2 should match");
+}
+
+- (void)testMerging
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet defaultStyleSheet] copy];
+	DTCSSStylesheet *otherStyleSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {margin-bottom:30px;font-size:40px;}"];
+	[stylesheet mergeStylesheet:otherStyleSheet];
+	
+	DTHTMLElement *element = [DTHTMLElement elementWithName:@"p" attributes:nil options:nil];
+	element.fontDescriptor = [[DTCoreTextFontDescriptor alloc] init]; // need to have just any font descriptor
+	element.textScale = 1.0;
+	
+	NSDictionary *styles = [stylesheet mergedStyleDictionaryForElement:element];
+	[element applyStyleDictionary:styles];
+	
+	STAssertEquals(element.displayStyle, DTHTMLElementDisplayStyleBlock, @"Style merging lost block display style");
+
+	STAssertEquals((float)element.fontDescriptor.pointSize, (float)40.0f, @"font size should be 40px");
 }
 
 @end
