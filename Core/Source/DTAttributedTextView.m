@@ -162,6 +162,8 @@
 		frame.size = neededSize;
 		_attributedTextContentView.frame = frame;
 		
+		self.contentSize = neededSize;
+		
 		// we want to know if the frame changes so that we can adjust the scrollview content size
 		[_attributedTextContentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
 		
