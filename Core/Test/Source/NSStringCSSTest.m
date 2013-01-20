@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
 #import "NSStringCSSTest.h"
 #import "NSString+CSS.h"
 #import "DTColor+HTML.h"
-#import "DTCompatibility.h"
 
 @implementation NSStringCSSTest
 
@@ -35,10 +35,14 @@
 	
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
 	DTColor *redColor = [DTColor redColor];
-	
+
+#if TARGET_OS_IPHONE
+	STAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
+#else
 	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
 	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
 	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
+#endif
 }
 
 
@@ -65,9 +69,13 @@
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
 	DTColor *redColor = [DTColor redColor];
 	
+#if TARGET_OS_IPHONE
+	STAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
+#else
 	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
 	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
 	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
+#endif
 }
 
 @end
