@@ -23,7 +23,7 @@ CTLineTruncationType DTCTLineTruncationTypeFromNSLineBreakMode(NSLineBreakMode l
 		case UILineBreakModeHeadTruncation:
 			return kCTLineTruncationStart;
 			
-		case UILineBreakModeTailTruncation:
+		case UILineBreakModeMiddleTruncation:
 			return kCTLineTruncationMiddle;
 			
 		default:

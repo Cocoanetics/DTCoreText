@@ -39,6 +39,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 @synthesize numberOfLines = _numberOfLines;
 @synthesize lineBreakMode = _lineBreakMode;
 @synthesize truncationString = _truncationString;
+@synthesize noLeadingOnFirstLine = _noLeadingOnFirstLine;
 
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
@@ -262,11 +263,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			{
 				NSRange range;
 				int index = oldLineRange.location;
-				if (truncationType == kCTLineTruncationEnd) // self.lineBreakMode == UILineBreakModeTailTruncation
+				if (truncationType == kCTLineTruncationEnd)
 				{
 					index += oldLineRange.length;
 				}
-				else if (truncationType == kCTLineTruncationMiddle) // self.lineBreakMode == UILineBreakModeMiddleTruncation
+				else if (truncationType == kCTLineTruncationMiddle)
 				{
 					index += oldLineRange.length/2.0;
 				}
@@ -354,7 +355,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 			
 			// leading is included in the lineHeight
-			lineHeight += currentLineMetrics.leading;
+			lineHeight += self.noLeadingOnFirstLine ? 0 : currentLineMetrics.leading;
 			
 			if (isAtBeginOfParagraph)
 			{
