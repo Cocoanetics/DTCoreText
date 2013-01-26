@@ -575,11 +575,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_attributedString = [string copy];
 		
 		// only do relayout if there is a previous layout frame and visible
-		if (_layoutFrame && self.superview)
+		if (_layoutFrame)
 		{
 			// new layout invalidates all positions for custom views
 			[self removeAllCustomViews];
+			
+			// discard layout frame
+			self.layoutFrame = nil;
 		
+			// relayout only occurs if the view is visible
 			[self relayoutText];
 		}
 	}
