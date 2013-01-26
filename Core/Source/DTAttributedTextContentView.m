@@ -158,6 +158,18 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 #endif
 }
 
+- (NSString *)description
+{
+	NSString *extract = [[[_layoutFrame attributedStringFragment] string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
+	
+	if ([extract length]>10)
+	{
+		extract = [extract substringToIndex:10];
+	}
+	
+	return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
+}
+
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
 	// if we are called for partial (non-infinate) we remove unneeded custom subviews first
@@ -419,65 +431,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	[self.layoutFrame drawInContext:context drawImages:YES drawLinks:YES];
 }
 
-- (CGSize)sizeThatFits:(CGSize)size
-{
-	if (size.width==0)
-	{
-		size.width = self.bounds.size.width;
-	}
-	
-	CGSize neededSize = CGSizeMake(size.width, CGRectGetMaxY(self.layoutFrame.frame) + _edgeInsets.bottom);
-	
-	return neededSize;
-}
-
-- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
-{
-	if (!isnormal(width))
-	{
-		width = self.bounds.size.width;
-	}
-	
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
-	
-	// add vertical insets
-	neededSize.height += _edgeInsets.top + _edgeInsets.bottom;
-	
-	return neededSize;
-}
-
-- (CGSize)attributedStringSizeThatFits:(CGFloat)width
-{
-	if (!isnormal(width))
-	{
-		width = self.bounds.size.width;
-	}
-	
-	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
-	return neededSize;
-}
-
-
-- (NSString *)description
-{
-	NSString *extract = [[[_layoutFrame attributedStringFragment] string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
-	
-	if ([extract length]>10)
-	{
-		extract = [extract substringToIndex:10];
-	}
-	
-	return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
-}
-
 - (void)relayoutText
 {
     // Make sure we actually have a superview and a previous layout before attempting to relayout the text.
     if (_layoutFrame && self.superview)
 	{
-        // need new layouter
-        self.layouter = nil;
+        // need new layout frame, layouter can remain because the attributed string is probably the same
         self.layoutFrame = nil;
         
         // remove all links because they might have merged or split
@@ -486,7 +445,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
         if (_attributedString)
         {
             // triggers new layout
-            CGSize neededSize = [self sizeThatFits:self.bounds.size];
+            CGSize neededSize = [self intrinsicContentSize];
             
             // set frame to fit text preserving origin
             // call super to avoid endless loop
@@ -544,6 +503,57 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
+#pragma mark - Sizing
+
+- (CGSize)intrinsicContentSize
+{
+	if (!self.layoutFrame) // creates new layout frame if possible
+	{
+		return CGSizeMake(-1, -1);  // UIViewNoIntrinsicMetric as of iOS 6
+	}
+
+	//  we have a layout frame and from this we get the needed size
+	return CGSizeMake(_layoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(_layoutFrame.frame) + _edgeInsets.bottom);
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+	CGSize neededSize = [self intrinsicContentSize]; // creates layout frame if necessary
+	
+	if (neededSize.width>=0 && neededSize.height>=0)
+	{
+		return neededSize;
+	}
+	
+	return size;
+}
+
+- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
+{
+	if (!isnormal(width))
+	{
+		width = self.bounds.size.width;
+	}
+	
+	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
+	
+	// add vertical insets
+	neededSize.height += _edgeInsets.top + _edgeInsets.bottom;
+	
+	return neededSize;
+}
+
+- (CGSize)attributedStringSizeThatFits:(CGFloat)width
+{
+	if (!isnormal(width))
+	{
+		width = self.bounds.size.width;
+	}
+	
+	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
+	return [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
+}
+
 #pragma mark Properties
 - (void)setEdgeInsets:(UIEdgeInsets)edgeInsets
 {
@@ -559,10 +569,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (_attributedString != string)
 	{
+		// discard old layouter because that has the old string
+		self.layouter = nil;
+		
 		_attributedString = [string copy];
 		
-		// only do relayout if there is a previous layout frame
-		if (_layoutFrame)
+		// only do relayout if there is a previous layout frame and visible
+		if (_layoutFrame && self.superview)
 		{
 			// new layout invalidates all positions for custom views
 			[self removeAllCustomViews];
@@ -661,9 +674,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				if (theLayouter)
 				{
 					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, _edgeInsets);
+					
+					if (rect.size.width<=0)
+					{
+						// cannot create layout frame with negative or zero width
+						return nil;
+					}
+					
 					if (_flexibleHeight)
 					{
 						rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+					}
+					else if (rect.size.height<=0)
+					{
+						// cannot create layout frame with negative or zero height if flexible height is disabled
+						return nil;
 					}
 
 					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
