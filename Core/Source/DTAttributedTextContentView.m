@@ -494,9 +494,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
             super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
             [self didChangeValueForKey:@"frame"];
         }
-        
-        [self setNeedsDisplay];
-        [self setNeedsLayout];
+      
+		[self setNeedsDisplayInRect:self.bounds];
+		[self setNeedsLayout];
     }
 }
 
