@@ -421,7 +421,31 @@ extern unsigned int default_css_len;
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	[_styles addEntriesFromDictionary:[stylesheet styles]];
+	NSArray *otherStylesheetStyleKeys = [[stylesheet styles] allKeys];
+	
+	for (NSString *oneKey in otherStylesheetStyleKeys)
+	{
+		NSDictionary *existingStyles = [_styles objectForKey:oneKey];
+		NSDictionary *stylesToMerge = [[stylesheet styles] objectForKey:oneKey];
+		if (existingStyles)
+		{
+			NSMutableDictionary *mutableStyles = [existingStyles mutableCopy];
+			
+			for (NSString *oneStyleKey in stylesToMerge)
+			{
+				NSString *mergingStyleString = [stylesToMerge objectForKey:oneStyleKey];
+				
+				[mutableStyles setObject:mergingStyleString forKey:oneStyleKey];
+			}
+			
+			[_styles setObject:mutableStyles forKey:oneKey];
+		}
+		else
+		{
+			// nothing to worry
+			[_styles setObject:stylesToMerge forKey:oneKey];
+		}
+	}
 }
 
 #pragma mark Accessing Style Information
