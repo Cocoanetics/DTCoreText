@@ -83,6 +83,7 @@ extern unsigned int default_css_len;
 
 - (void)_uncompressShorthands:(NSMutableDictionary *)styles
 {
+	// list-style shorthand
 	NSString *shortHand = [[styles objectForKey:@"list-style"] lowercaseString];
 	
 	if (shortHand)
@@ -147,8 +148,122 @@ extern unsigned int default_css_len;
 				}
 			}
 		}
+	}
+	
+	// font shorthand, see http://www.w3.org/TR/CSS21/fonts.html#font-shorthand
+	shortHand = [styles objectForKey:@"font"];
+	
+	if (shortHand)
+	{
+		NSString *fontStyle = @"normal";
+		NSArray *validFontStyles = [NSArray arrayWithObjects:@"italic", @"oblique", nil];
+		BOOL fontStyleSet = NO;
+
+		NSString *fontVariant = @"normal";
+		NSArray *validFontVariants = [NSArray arrayWithObjects:@"small-caps", nil];
+		BOOL fontVariantSet = NO;
 		
-		return;
+		NSString *fontWeight = @"normal";
+		NSArray *validFontWeights = [NSArray arrayWithObjects:@"bold", @"bolder", @"lighter", @"100", @"200", @"300", @"400", @"500", @"600", @"700", @"800", @"900", nil];
+		BOOL fontWeightSet = NO;
+		
+		NSString *fontSize = @"normal";
+		NSArray *validFontSizes = [NSArray arrayWithObjects:@"xx-small", @"x-small", @"small", @"medium", @"large", @"x-large", @"xx-large", @"larger", @"smaller", nil];
+		BOOL fontSizeSet = NO;
+		
+		NSArray *suffixesToIgnore = [NSArray arrayWithObjects:@"caption", @"icon", @"menu", @"message-box", @"small-caption", @"status-bar", @"inherit", nil];
+		
+		NSString *lineHeight = @"normal";
+		BOOL lineHeightSet = NO;
+		
+		NSMutableString *fontFamily = [NSMutableString string];
+		
+		NSArray *components = [shortHand componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+		for (NSString *oneComponent in components)
+		{
+			// try font size keywords
+			if ([validFontSizes containsObject:oneComponent])
+			{
+				fontSize = oneComponent;
+				fontSizeSet = YES;
+				
+				continue;
+			}
+			
+			NSInteger slashIndex = [oneComponent rangeOfString:@"/"].location;
+			
+			if (slashIndex != NSNotFound)
+			{
+				// font-size / line-height
+				
+				fontSize = [oneComponent substringToIndex:slashIndex-1];
+				fontSizeSet = YES;
+				
+				lineHeight = [oneComponent substringFromIndex:slashIndex+1];
+				lineHeightSet = YES;
+				
+				continue;
+			}
+			else
+			{
+				// length
+				if ([oneComponent hasSuffix:@"%"] || [oneComponent hasSuffix:@"em"] || [oneComponent hasSuffix:@"px"] || [oneComponent hasSuffix:@"pt"])
+				{
+					fontSize = oneComponent;
+					fontSizeSet = YES;
+					
+					continue;
+				}
+			}
+				
+			if (fontSizeSet)
+			{
+				if ([suffixesToIgnore containsObject:oneComponent])
+				{
+					break;
+				}
+				
+				// assume that this is part of font family
+				if ([fontFamily length])
+				{
+					[fontFamily appendString:@" "];
+				}
+				
+				[fontFamily appendString:oneComponent];
+			}
+			else
+			{
+				if (!fontWeightSet && [validFontStyles containsObject:oneComponent])
+				{
+					fontStyle = oneComponent;
+					fontStyleSet = YES;
+				}
+				else if (!fontVariantSet && [validFontVariants containsObject:oneComponent])
+				{
+					fontVariant = oneComponent;
+					fontVariantSet = YES;
+				}
+				else if (!fontWeightSet && [validFontWeights containsObject:oneComponent])
+				{
+					fontWeight = oneComponent;
+					fontWeightSet = YES;
+				}
+			}
+		}
+
+		[styles removeObjectForKey:@"font"];
+
+		// size and family are mandatory, without them this is invalid
+		if ([fontSize length] && [fontFamily length])
+		{
+			[styles setObject:fontStyle forKey:@"font-style"];
+			[styles setObject:fontWeight forKey:@"font-weight"];
+			[styles setObject:fontVariant forKey:@"font-variant"];
+			[styles setObject:fontSize forKey:@"font-size"];
+			[styles setObject:lineHeight forKey:@"line-height"];
+			[styles setObject:fontFamily forKey:@"font-family"];
+		}
 	}
 }
 
@@ -252,7 +367,6 @@ extern unsigned int default_css_len;
 				return;
 			}
 		}
-		
 		
 		// An opening brace! It could be the start of a new rule, or it could be a nested brace.
 		if (c == '{') {
