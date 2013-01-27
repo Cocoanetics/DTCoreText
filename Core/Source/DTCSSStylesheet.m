@@ -346,25 +346,39 @@ extern unsigned int default_css_len;
 		if (c == '/')
 		{
 			i++;
-			// skip until closing /
-			
-			for (; i < length; i++)
-			{
-				if ([css characterAtIndex:i] == '/')
-				{
-					break;
-				}
-			}
 			
 			if (i < length)
 			{
-				braceMarker = i+1;
-				continue;
-			}
-			else
-			{
-				// end of string
-				return;
+				c = [css characterAtIndex:i];
+				
+				if (c == '*')
+				{
+					// skip comment until closing /
+					
+					for (; i < length; i++)
+					{
+						if ([css characterAtIndex:i] == '/')
+						{
+							break;
+						}
+					}
+					
+					if (i < length)
+					{
+						braceMarker = i+1;
+						continue;
+					}
+					else
+					{
+						// end of string
+						return;
+					}
+				}
+				else
+				{
+					// not a comment
+					i--;
+				}
 			}
 		}
 		
