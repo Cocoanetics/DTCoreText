@@ -665,7 +665,24 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
 	DTCoreTextLayouter *theLayouter = self.layouter;
-	
+	CGRect rect = UIEdgeInsetsInsetRect(self.bounds, _edgeInsets);
+
+	if (rect.size.width<=0)
+	{
+		// cannot create layout frame with negative or zero width
+		return nil;
+	}
+
+	if (_flexibleHeight)
+	{
+		rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+	}
+	else if (rect.size.height<=0)
+	{
+		// cannot create layout frame with negative or zero height if flexible height is disabled
+		return nil;
+	}
+
 	if (!_layoutFrame)
 	{
 		// prevent unnecessary locking if we don't need to create new layout frame
@@ -677,24 +694,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				// we can only layout if we have our own layouter
 				if (theLayouter)
 				{
-					CGRect rect = UIEdgeInsetsInsetRect(self.bounds, _edgeInsets);
-					
-					if (rect.size.width<=0)
-					{
-						// cannot create layout frame with negative or zero width
-						return nil;
-					}
-					
-					if (_flexibleHeight)
-					{
-						rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-					}
-					else if (rect.size.height<=0)
-					{
-						// cannot create layout frame with negative or zero height if flexible height is disabled
-						return nil;
-					}
-
 					_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 					
 					if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
