@@ -51,7 +51,7 @@
 {
 	[super layoutSubviews];
 	
-	[self contentView];
+	[self attributedTextContentView];
 	
 	// layout custom subviews for visible area
 	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
@@ -96,12 +96,12 @@
 #pragma mark External Methods
 - (void)scrollToAnchorNamed:(NSString *)anchorName animated:(BOOL)animated
 {
-	NSRange range = [self.contentView.attributedString rangeOfAnchorNamed:anchorName];
+	NSRange range = [self.attributedTextContentView.attributedString rangeOfAnchorNamed:anchorName];
 	
 	if (range.length != NSNotFound)
 	{
 		// get the line of the first index of the anchor range
-		DTCoreTextLayoutLine *line = [self.contentView.layoutFrame lineContainingIndex:range.location];
+		DTCoreTextLayoutLine *line = [self.attributedTextContentView.layoutFrame lineContainingIndex:range.location];
 		
 		// make sure we don't scroll too far
 		CGFloat maxScrollPos = self.contentSize.height - self.bounds.size.height + self.contentInset.bottom + self.contentInset.top;
@@ -123,7 +123,7 @@
 }
 
 #pragma mark Properties
-- (DTAttributedTextContentView *)contentView
+- (DTAttributedTextContentView *)attributedTextContentView
 {
 	if (!_attributedTextContentView)
 	{
@@ -158,11 +158,15 @@
 		// set text we previously got
 		_attributedTextContentView.attributedString = _attributedString;
 		
-		CGSize neededSize = [_attributedTextContentView sizeThatFits:CGSizeZero];
-		frame.size = neededSize;
-		_attributedTextContentView.frame = frame;
-		
-		self.contentSize = neededSize;
+		// only get contentSize if we have an attributed string
+		if (_attributedString)
+		{
+			CGSize neededSize = [_attributedTextContentView sizeThatFits:CGSizeZero];
+			frame.size = neededSize;
+			_attributedTextContentView.frame = frame;
+			
+			self.contentSize = neededSize;
+		}
 		
 		// we want to know if the frame changes so that we can adjust the scrollview content size
 		[_attributedTextContentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
@@ -202,7 +206,7 @@
 		// default is no interaction because background should have no interaction
 		_backgroundView.userInteractionEnabled = NO;
 
-		[self insertSubview:_backgroundView belowSubview:self.contentView];
+		[self insertSubview:_backgroundView belowSubview:self.attributedTextContentView];
 		
 		// make content transparent so that we see the background
 		_attributedTextContentView.backgroundColor = [DTColor clearColor];
