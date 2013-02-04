@@ -445,7 +445,7 @@ NSDictionary *_classesForNames = nil;
 	
 	// make sure the last sub-paragraph of this has no less than the specified paragraph spacing of this element
 	// e.g. last LI needs to inherit the margin-after of the UL
-	if (self.displayStyle == DTHTMLElementDisplayStyleBlock)
+	if (self.displayStyle == DTHTMLElementDisplayStyleBlock && [tmpString length]>0)
 	{
 		NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 		
