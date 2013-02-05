@@ -92,12 +92,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_shouldDrawLinks = YES;
 	
 	_flexibleHeight = YES;
-<<<<<<< Updated upstream
-
-=======
 	_relayoutMask = DTAttributedTextContentViewRelayoutOnWidthChanged;
 	
->>>>>>> Stashed changes
 	// possibly already set in NIB
 	if (!self.backgroundColor)
 	{
@@ -163,21 +159,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (NSString *)description
 {
 	NSString *extract = [[[_layoutFrame attributedStringFragment] string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
-<<<<<<< Updated upstream
 	
 	if ([extract length]>10)
 	{
 		extract = [extract substringToIndex:10];
 	}
 	
-=======
-	
-	if ([extract length]>10)
-	{
-		extract = [extract substringToIndex:10];
-	}
-	
->>>>>>> Stashed changes
 	return [NSString stringWithFormat:@"<%@ %@ range:%@ '%@...'>", [self class], NSStringFromCGRect(self.frame),NSStringFromRange([self.layoutFrame visibleStringRange]), extract];
 }
 
@@ -610,6 +597,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// having a layouter means we are responsible for layouting yourselves
 
 	// relayout based on relayoutMask
+	
 	BOOL shouldRelayout = NO;
 
 	if (_relayoutMask & DTAttributedTextContentViewRelayoutOnHeightChanged)
@@ -834,10 +822,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize customViewsForLinksIndex;
 @synthesize customViewsForAttachmentsIndex;
 @synthesize layoutQueue = _layoutQueue;
-<<<<<<< Updated upstream
-
-=======
 @synthesize relayoutMask = _relayoutMask;
->>>>>>> Stashed changes
 
 @end
