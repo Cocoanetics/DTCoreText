@@ -11,6 +11,7 @@
 #import "DTHTMLAttributedStringBuilder.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextParagraphStyle.h"
+#import "DTTextAttachment.h"
 
 @implementation DTHTMLAttributedStringBuilderTest
 
@@ -91,6 +92,26 @@
 	DTCoreTextParagraphStyle *styleNatural = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleNatural];
 	
 	STAssertTrue(styleNatural.baseWritingDirection == NSWritingDirectionNatural, @"Writing direction is not Natural");
+}
+
+- (void)testAttachmentDisplaySize
+{
+	NSString *string = @"<img src=\"Oliver.jpg\" style=\"foo:bar\">";
+	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	
+	NSAttributedString *output = [builder generatedAttributedString];
+	
+	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
+
+	DTTextAttachment *attachment = [output attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(attachment, @"No attachment found in output");
+	
+	CGSize expectedSize = CGSizeMake(300, 300);
+	STAssertEquals(attachment.originalSize, expectedSize, @"Expected displaySize to be 300x300");
+	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
 }
 
 

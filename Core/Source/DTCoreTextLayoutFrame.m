@@ -30,10 +30,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSRange _requestedStringRange;
 	NSRange _stringRange;
 	
-	//NSInteger _tag;
+	CGFloat _additionalPaddingAtBottom; // when last line in a text block with padding
 	
+	int _numberLinesFitInFrame;
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
 }
+
+@synthesize numberOfLines = _numberOfLines;
+@synthesize lineBreakMode = _lineBreakMode;
+@synthesize truncationString = _truncationString;
+@synthesize noLeadingOnFirstLine = _noLeadingOnFirstLine;
 
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
@@ -235,8 +241,42 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentParaMetrics.paragraphSpacing), &currentParaMetrics.paragraphSpacing);
 		}
 		
-		// create a line to fit
-		CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+		BOOL truncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
+							 (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
+		CTLineRef line;
+		if(!truncateLine)
+		{
+			// create a line to fit
+			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+		}
+		else
+		{
+			NSRange oldLineRange = lineRange;
+			lineRange.length = maxIndex-lineRange.location;
+			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+
+			// convert lineBreakMode to CoreText type
+			CTLineTruncationType truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(self.lineBreakMode);
+
+			NSAttributedString * attribStr = self.truncationString;
+			if(attribStr == nil)
+			{
+				NSRange range;
+				int index = oldLineRange.location;
+				if (truncationType == kCTLineTruncationEnd)
+				{
+					index += oldLineRange.length;
+				}
+				else if (truncationType == kCTLineTruncationMiddle)
+				{
+					index += oldLineRange.length/2.0;
+				}
+				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
+				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
+			}
+			CTLineRef elipsisLineRef = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attribStr));
+			line = CTLineCreateTruncatedLine(line, availableSpace, truncationType, elipsisLineRef);
+		}
 		
 		// we need all metrics so get the at once
 		currentLineMetrics.width = CTLineGetTypographicBounds(line, &currentLineMetrics.ascent, &currentLineMetrics.descent, &currentLineMetrics.leading);
@@ -315,7 +355,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 			
 			// leading is included in the lineHeight
-			lineHeight += currentLineMetrics.leading;
+			lineHeight += self.noLeadingOnFirstLine ? 0 : currentLineMetrics.leading;
 			
 			if (isAtBeginOfParagraph)
 			{
@@ -443,8 +483,17 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (lineBottom>maxY)
 		{
-			// doesn't fit any more
-			break;
+			if ([typesetLines count] && self.lineBreakMode)
+			{
+				_numberLinesFitInFrame = [typesetLines count];
+				[self _buildLinesWithTypesetter];
+				return;
+			}
+			else
+			{
+				// doesn't fit any more
+				break;
+			}
 		}
 		
 		[typesetLines addObject:newLine];
@@ -481,12 +530,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// at this point we can correct the frame if it is open-ended
 	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
 	{
-		// actual frame is spanned between first and last lines
-		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-		
-		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + currentTextBlock.padding.bottom));
-		
 		// need to add bottom padding if in text block
+		_additionalPaddingAtBottom = currentTextBlock.padding.bottom;
 	}
 }
 
@@ -541,15 +586,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	if ([DTVersion osVersionIsLessThen:@"4.2"])
 	{
 		[self _correctAttachmentHeights];
-	}
-	
-	// at this point we can correct the frame if it is open-ended
-	if ([_lines count] && _frame.size.height == CGFLOAT_OPEN_HEIGHT)
-	{
-		// actual frame is spanned between first and last lines
-		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-		
-		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f));
 	}
 }
 
@@ -1177,14 +1213,22 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (CGRect)frame
 {
-	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT && !_lines)
+	if (!_lines)
 	{
-		[self _buildLines]; // corrects frame if open-ended
+		[self _buildLines];
 	}
 	
 	if (![self.lines count])
 	{
 		return CGRectZero;
+	}
+	
+	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	{
+		// actual frame is spanned between first and last lines
+		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+	
+		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
 	}
 	
 	return _frame;
@@ -1462,6 +1506,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
 {
 	_DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
+}
+
++ (BOOL)shouldDrawDebugFrames
+{
+	return _DTCoreTextLayoutFramesShouldDrawDebugFrames;
 }
 
 #pragma mark Corrections

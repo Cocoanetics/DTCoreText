@@ -8,11 +8,12 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
-#import "DTFoundation.h"
 
 #import "DTHTMLElementText.h"
 #import "DTHTMLElementBR.h"
 #import "DTHTMLElementStylesheet.h"
+
+#import "DTVersion.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -82,13 +83,11 @@
 
 - (void)dealloc
 {
-#if TARGET_API_MAC_OSX
-#if MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+#if !OS_OBJECT_USE_OBJC
 	dispatch_release(_stringAssemblyQueue);
 	dispatch_release(_stringAssemblyGroup);
 	dispatch_release(_stringParsingQueue);
 	dispatch_release(_stringParsingGroup);
-#endif
 #endif
 }
 

@@ -282,4 +282,38 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
  */
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
 
+
+/**
+ @returns the current value of the debug frame drawing
+ */
++ (BOOL)shouldDrawDebugFrames;
+
+/**
+ @name Truncation
+ */
+
+
+/**
+ Maximum number of lines to display before truncation.  Default is 0 which indicates no limit.
+ */
+@property(nonatomic, assign) NSInteger numberOfLines;
+
+
+/**
+ Line break mode used to indicate how truncation should occur
+ */
+@property(nonatomic, assign) NSLineBreakMode lineBreakMode;
+
+
+/**
+ Optional attributed string tu use as truncation indicator.  If nil, will use "…" w/ attributes taken from text being truncated
+ */
+@property(nonatomic, strong)NSAttributedString *truncationString;
+
+
+/**
+ Flag to supress leading whitespace above fist line
+ */
+@property(nonatomic, assign)BOOL noLeadingOnFirstLine;
+
 @end

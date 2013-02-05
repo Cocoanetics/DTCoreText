@@ -30,6 +30,13 @@
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		3D710A1816662DFD008EFC73 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
+		A060479216A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; };
+		A060479316A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; };
+		A060479416A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; };
+		A060479516A8B5770000CAA1 /* DTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A060479116A8B5770000CAA1 /* DTAttributedLabel.m */; };
+		A060479616A8B5770000CAA1 /* DTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A060479116A8B5770000CAA1 /* DTAttributedLabel.m */; };
+		A060479716A8B5770000CAA1 /* DTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A060479116A8B5770000CAA1 /* DTAttributedLabel.m */; };
+		A060479816A8B5770000CAA1 /* DTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A060479116A8B5770000CAA1 /* DTAttributedLabel.m */; };
 		A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
 		A7081EA415036460002987F1 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7081EA515036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
@@ -314,6 +321,8 @@
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */; };
+		A7D386FE16B58A3900F2DB5E /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
+		A7D386FF16B58A3A00F2DB5E /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
 		A7D54EA514E003190063E78B /* Objects.html in Resources */ = {isa = PBXBuildFile; fileRef = A7D54EA414E003190063E78B /* Objects.html */; };
 		A7D63CDA1611B9AC00D4712A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
 		A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
@@ -760,6 +769,8 @@
 		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A060479016A8B5770000CAA1 /* DTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedLabel.h; sourceTree = "<group>"; };
+		A060479116A8B5770000CAA1 /* DTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedLabel.m; sourceTree = "<group>"; };
 		A704C93913901FDB0045CFC6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A7081EA11503645F002987F1 /* DTTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextBlock.h; sourceTree = "<group>"; };
 		A7081EA215036460002987F1 /* DTTextBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextBlock.m; sourceTree = "<group>"; };
@@ -1254,6 +1265,8 @@
 				A788C93714863E8700E1AFD9 /* DTWebVideoView.m */,
 				A788C92E14863E8700E1AFD9 /* DTLinkButton.h */,
 				A788C92F14863E8700E1AFD9 /* DTLinkButton.m */,
+				A060479016A8B5770000CAA1 /* DTAttributedLabel.h */,
+				A060479116A8B5770000CAA1 /* DTAttributedLabel.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1475,6 +1488,7 @@
 				A7EB84D5168B9B1300D686B7 /* DTHTMLElementHR.h in Headers */,
 				A7EB84E5168C657100D686B7 /* DTHTMLElementLI.h in Headers */,
 				A7EB8539168FA33500D686B7 /* DTHTMLElementStylesheet.h in Headers */,
+				A060479216A8B5770000CAA1 /* DTAttributedLabel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1531,6 +1545,7 @@
 				A7EB84D6168B9B1300D686B7 /* DTHTMLElementHR.h in Headers */,
 				A7EB84E6168C657100D686B7 /* DTHTMLElementLI.h in Headers */,
 				A7EB853A168FA33500D686B7 /* DTHTMLElementStylesheet.h in Headers */,
+				A060479316A8B5770000CAA1 /* DTAttributedLabel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1586,6 +1601,7 @@
 				A7EB84D7168B9B1300D686B7 /* DTHTMLElementHR.h in Headers */,
 				A7EB84E7168C657100D686B7 /* DTHTMLElementLI.h in Headers */,
 				A7EB853B168FA33500D686B7 /* DTHTMLElementStylesheet.h in Headers */,
+				A060479416A8B5770000CAA1 /* DTAttributedLabel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2113,6 +2129,7 @@
 				A7EB84D9168B9B1300D686B7 /* DTHTMLElementHR.m in Sources */,
 				A7EB84E9168C657100D686B7 /* DTHTMLElementLI.m in Sources */,
 				A7EB853D168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
+				A060479516A8B5770000CAA1 /* DTAttributedLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2167,6 +2184,7 @@
 				A7EB84EA168C657100D686B7 /* DTHTMLElementLI.m in Sources */,
 				A7EB8536168F336200D686B7 /* DTHTMLElementAttachment.m in Sources */,
 				A7EB853E168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
+				A060479616A8B5770000CAA1 /* DTAttributedLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2225,6 +2243,8 @@
 				A7EB8535168F336100D686B7 /* DTHTMLElementAttachment.m in Sources */,
 				A7EB853F168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
 				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
+				A060479716A8B5770000CAA1 /* DTAttributedLabel.m in Sources */,
+				A7D386FE16B58A3900F2DB5E /* DTCoreTextFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2267,6 +2287,7 @@
 				A7EB8534168F336000D686B7 /* DTHTMLElementAttachment.m in Sources */,
 				A7EB8540168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
 				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
+				A7D386FF16B58A3A00F2DB5E /* DTCoreTextFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2320,6 +2341,7 @@
 				A7EB84DB168B9B1300D686B7 /* DTHTMLElementHR.m in Sources */,
 				A7EB84ED168C657100D686B7 /* DTHTMLElementLI.m in Sources */,
 				A7EB8541168FA33500D686B7 /* DTHTMLElementStylesheet.m in Sources */,
+				A060479816A8B5770000CAA1 /* DTAttributedLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

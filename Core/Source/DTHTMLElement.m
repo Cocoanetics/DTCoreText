@@ -445,7 +445,7 @@ NSDictionary *_classesForNames = nil;
 	
 	// make sure the last sub-paragraph of this has no less than the specified paragraph spacing of this element
 	// e.g. last LI needs to inherit the margin-after of the UL
-	if (self.displayStyle == DTHTMLElementDisplayStyleBlock)
+	if (self.displayStyle == DTHTMLElementDisplayStyleBlock && [tmpString length]>0)
 	{
 		NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 		
@@ -895,17 +895,24 @@ NSDictionary *_classesForNames = nil;
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
 		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+
+		// if this has an attachment set its size too
+		CGSize displaySize = _textAttachment.displaySize;
+		displaySize.width = _size.width;
+		_textAttachment.displaySize = displaySize;
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
 		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+
+		// if this has an attachment set its size too
+		CGSize displaySize = _textAttachment.displaySize;
+		displaySize.height = _size.height;
+		_textAttachment.displaySize = displaySize;
 	}
-	
-	// if this has an attachment set its size too
-	_textAttachment.displaySize = _size;
-	
+
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
 	if ([whitespaceString hasPrefix:@"pre"])
 	{
