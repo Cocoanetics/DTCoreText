@@ -94,8 +94,15 @@
 @end
 
 
+enum {
+    DTAttributedTextContentViewRelayoutNever            = 0,
+	DTAttributedTextContentViewRelayoutOnWidthChanged   = 1 << 0,
+	DTAttributedTextContentViewRelayoutOnHeightChanged  = 1 << 1,
+};
+typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
-@interface DTAttributedTextContentView : UIView 
+
+@interface DTAttributedTextContentView : UIView
 {
 	NSAttributedString *_attributedString;
 	DTCoreTextLayoutFrame *_layoutFrame;
@@ -130,6 +137,13 @@
 @property (nonatomic) BOOL shouldLayoutCustomSubviews;
 @property (nonatomic) CGPoint layoutOffset;
 @property (nonatomic) CGSize backgroundOffset;
+
+/**
+ An integer bit mask that determines how the receiver relayouts its contents when its bounds change.
+ 
+ When the view’s bounds change, that view automatically re-layouts its text according to the relayout mask. You specify the value of this mask by combining the constants described in DTAttributedTextContentViewRelayoutMask using the C bitwise OR operator. Combining these constants lets you specify which dimensions will cause a re-layout if modified. The default value of this property is DTAttributedTextContentViewRelayoutOnWidthChanged, which indicates that the text will be re-layouted if the width changes, but not if the height changes.
+ */
+@property (nonatomic) DTAttributedTextContentViewRelayoutMask relayoutMask;
 
 @property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
 

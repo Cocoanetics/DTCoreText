@@ -1386,6 +1386,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
 	{
+		usesForcedLineHeight = YES;
+		
 		if (lineHeight<minLineHeight)
 		{
 			lineHeight = minLineHeight;
@@ -1396,10 +1398,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	if (lineHeight==0)
 	{
 		lineHeight = line.descent + line.ascent + usedLeading;
-	}
-	else
-	{
-		usesForcedLineHeight = YES;
 	}
 	
 	if ([self isLineLastInParagraph:previousLine])
