@@ -117,5 +117,21 @@
 	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
 }
 
+- (void)testFontTagWithStyle
+{
+	NSString *string = @"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>";
+	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	
+	NSAttributedString *output = [builder generatedAttributedString];
+	
+	CTFontRef font = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:0 effectiveRange:NULL]);
+	
+	CGFloat pointSize = CTFontGetSize(font);
+	
+	STAssertEquals(pointSize, (CGFloat)17.0f, @"Font Size should be 17");
+}
+
 
 @end
