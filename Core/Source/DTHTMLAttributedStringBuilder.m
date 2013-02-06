@@ -467,32 +467,37 @@
 	
 	void (^fontBlock)(void) = ^
 	{
-		NSInteger size = [[_currentTag attributeForKey:@"size"] intValue];
+		NSString *sizeAttribute = [_currentTag attributeForKey:@"size"];
 		
-		switch (size)
+		if (sizeAttribute)
 		{
-			case 1:
-				_currentTag.fontDescriptor.pointSize = _textScale * 9.0f;
-				break;
-			case 2:
-				_currentTag.fontDescriptor.pointSize = _textScale * 10.0f;
-				break;
-			case 4:
-				_currentTag.fontDescriptor.pointSize = _textScale * 14.0f;
-				break;
-			case 5:
-				_currentTag.fontDescriptor.pointSize = _textScale * 18.0f;
-				break;
-			case 6:
-				_currentTag.fontDescriptor.pointSize = _textScale * 24.0f;
-				break;
-			case 7:
-				_currentTag.fontDescriptor.pointSize = _textScale * 37.0f;
-				break;
-			case 3:
-			default:
-				_currentTag.fontDescriptor.pointSize = _defaultFontDescriptor.pointSize;
-				break;
+			NSInteger sizeValue = [sizeAttribute intValue];
+			
+			switch (sizeValue)
+			{
+				case 1:
+					_currentTag.fontDescriptor.pointSize = _textScale * 9.0f;
+					break;
+				case 2:
+					_currentTag.fontDescriptor.pointSize = _textScale * 10.0f;
+					break;
+				case 4:
+					_currentTag.fontDescriptor.pointSize = _textScale * 14.0f;
+					break;
+				case 5:
+					_currentTag.fontDescriptor.pointSize = _textScale * 18.0f;
+					break;
+				case 6:
+					_currentTag.fontDescriptor.pointSize = _textScale * 24.0f;
+					break;
+				case 7:
+					_currentTag.fontDescriptor.pointSize = _textScale * 37.0f;
+					break;
+				case 3:
+				default:
+					_currentTag.fontDescriptor.pointSize = _defaultFontDescriptor.pointSize;
+					break;
+			}
 		}
 		
 		NSString *face = [_currentTag attributeForKey:@"face"];

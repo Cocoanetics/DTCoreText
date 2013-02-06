@@ -123,6 +123,7 @@
 	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
 	
 	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	builder.shouldKeepDocumentNodeTree = YES;
 	
 	NSAttributedString *output = [builder generatedAttributedString];
 	
@@ -130,7 +131,7 @@
 	
 	CGFloat pointSize = CTFontGetSize(font);
 	
-	STAssertEquals(pointSize, (CGFloat)17.0f, @"Font Size should be 17");
+	STAssertEquals(pointSize, (CGFloat)23.0f, @"Font Size should be 23 px (= 17 pt)");
 }
 
 
