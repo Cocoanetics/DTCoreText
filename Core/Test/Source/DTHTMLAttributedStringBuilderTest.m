@@ -96,7 +96,10 @@
 
 - (void)testAttachmentDisplaySize
 {
-	NSString *string = @"<img src=\"Oliver.jpg\" style=\"foo:bar\">";
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSString *imagePath = [bundle pathForResource:@"Oliver" ofType:@"jpg"];
+	
+	NSString *string = [NSString stringWithFormat:@"<img src=\"file:%@\" style=\"foo:bar\">", imagePath];
 	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
 	
 	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
