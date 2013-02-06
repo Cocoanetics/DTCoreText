@@ -301,8 +301,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							{
 								UIView *newCustomAttachmentView = nil;
 								
-								
-								if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
+								if ([attachment isKindOfClass:[DTDictationPlaceholderTextAttachment class]])
+								{
+									newCustomAttachmentView = [DTDictationPlaceholderView placeholderView];
+									newCustomAttachmentView.frame = frameForSubview; // set fixed frame
+								}
+								else if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
 								{
 									newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
 								}

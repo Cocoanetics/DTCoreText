@@ -59,6 +59,9 @@
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayouter.h"
 
+#import "DTDictationPlaceholderTextAttachment.h"
+#import "DTDictationPlaceholderView.h"
+
 #import "UIFont+DTCoreText.h"
 
 #endif

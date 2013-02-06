@@ -1,0 +1,23 @@
+//
+//  DTDictationPlaceholderView.h
+//  DTRichTextEditor
+//
+//  Created by Oliver Drobnik on 05.02.13.
+//  Copyright (c) 2013 Cocoanetics. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface DTDictationPlaceholderView : UIView
+
+/**
+ Creates an appropriately sized DTDictationPlaceholderView with 3 animated purple dots
+ */
++ (DTDictationPlaceholderView *)placeholderView;
+
+/**
+ The context of the receiver. This can be any object, for example the selection range to replace with the dictation result text
+ */
+@property (nonatomic, strong) id context;
+
+@end
