@@ -339,28 +339,53 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		else 
 		{
-			/* 
-			 NOTE: CoreText does weird tricks for the first lines of a layout frame
-			 I don't know why, but somehow it is always shifting the first line slightly higher.
-			 These values seem to work ok.
-			 */
+			// on the first line the maximum line height is the ascender of an attachment if there is any
 			
-			if (lineHeight>0)
-			{
-				lineHeight -= currentLineMetrics.descent; 
-			}
-			else 
-			{
-				lineHeight = currentLineMetrics.ascent + currentLineMetrics.leading - currentLineMetrics.descent/2.0f;
-			}
+			__block CGFloat maxAttachmentAscender = 0;
+			__block BOOL lineHasAttachments = NO;
+			[_attributedStringFragment enumerateAttribute:NSAttachmentAttributeName inRange:lineRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
+				if (attachment)
+				{
+					CGFloat attachmentAscender = [attachment ascentForLayout];
+					
+					if (attachmentAscender>maxAttachmentAscender)
+					{
+						maxAttachmentAscender = attachmentAscender;
+						lineHasAttachments = YES;
+					}
+				}
+			}];
 			
-			// leading is included in the lineHeight
-			lineHeight += self.noLeadingOnFirstLine ? 0 : currentLineMetrics.leading;
-			
-			if (isAtBeginOfParagraph)
+			if (lineHasAttachments && currentLineMetrics.ascent <= maxAttachmentAscender)
 			{
-				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
+				// an attachment could have a lesser ascent than the surrounding text
+				lineHeight = maxAttachmentAscender;
 			}
+			else
+			{
+				/*
+				 NOTE: CoreText does weird tricks for the first lines of a layout frame
+				 I don't know why, but somehow it is always shifting the first line slightly higher.
+				 These values seem to work ok.
+				 */
+				
+				if (lineHeight>0)
+				{
+					lineHeight -= currentLineMetrics.descent;
+				}
+				else
+				{
+					lineHeight = currentLineMetrics.ascent + currentLineMetrics.leading - currentLineMetrics.descent/2.0f;
+				}
+				
+				// leading is included in the lineHeight
+				lineHeight += self.noLeadingOnFirstLine ? 0 : currentLineMetrics.leading;
+			}
+		}
+		
+		if (isAtBeginOfParagraph)
+		{
+			lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
 		}
 		
 		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(currentParaMetrics.lineHeightMultiplier), &currentParaMetrics.lineHeightMultiplier))
