@@ -156,7 +156,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 #endif
 }
 
-- (NSString *)description
+- (NSString *)debugDescription
 {
 	NSString *extract = [[[_layoutFrame attributedStringFragment] string] substringFromIndex:[self.layoutFrame visibleStringRange].location];
 	
@@ -526,19 +526,44 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return size;
 }
 
-- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
+- (CGRect)_frameForLayoutFrameConstraintedToWidth:(CGFloat)constrainWidth
 {
-	if (!isnormal(width))
+	if (!isnormal(constrainWidth))
 	{
-		width = self.bounds.size.width;
+		constrainWidth = self.bounds.size.width;
 	}
 	
-	CGSize neededSize = [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
+	CGRect bounds = self.bounds;
+	bounds.size.width = constrainWidth;
+	CGRect rect = UIEdgeInsetsInsetRect(bounds, _edgeInsets);
 	
-	// add vertical insets
-	neededSize.height += _edgeInsets.top + _edgeInsets.bottom;
+	if (rect.size.width<=0)
+	{
+		// cannot create layout frame with negative or zero width
+		return CGRectZero;
+	}
 	
-	return neededSize;
+	if (_flexibleHeight)
+	{
+		rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+	}
+	else if (rect.size.height<=0)
+	{
+		// cannot create layout frame with negative or zero height if flexible height is disabled
+		return CGRectZero;
+	}
+	
+	return rect;
+}
+
+- (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width
+{
+	// create a temporary frame, will be cached by the layouter for the given rect
+	CGRect rect = [self _frameForLayoutFrameConstraintedToWidth:width];
+	DTCoreTextLayoutFrame *tmpLayoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+	
+	//  we have a layout frame and from this we get the needed size
+	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
 }
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width
@@ -659,6 +684,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			if (_attributedString)
 			{
 				_layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:_attributedString];
+				
+				// allow frame caching if somebody uses the suggestedSize
+				_layouter.shouldCacheLayoutFrames = YES;
 			}
 		}
 	});

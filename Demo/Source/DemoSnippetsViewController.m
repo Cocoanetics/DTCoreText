@@ -14,7 +14,7 @@
 #pragma mark NSObject
 
 - (id)init {
-	if ((self = [super initWithStyle:UITableViewStyleGrouped])) {
+	if ((self = [super initWithStyle:UITableViewStylePlain])) {
 		self.title = @"Snippets";
 		self.tabBarItem.image = [UIImage imageNamed:@"snippets.png"];
 	}

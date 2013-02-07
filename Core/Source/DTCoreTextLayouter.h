@@ -36,4 +36,9 @@
 
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 
+/**
+ If set to `YES` then the receiver will cache layout frames generated with layoutFrameWithRect:range: for a given rect
+ */
+@property (nonatomic, assign) BOOL shouldCacheLayoutFrames;
+
 @end

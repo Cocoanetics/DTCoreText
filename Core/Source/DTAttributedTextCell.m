@@ -12,7 +12,6 @@
 
 @implementation DTAttributedTextCell
 {
-	NSAttributedString *_attributedString;
 	DTAttributedTextContentView *_attributedTextContextView;
 	
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
@@ -21,7 +20,7 @@
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier accessoryType:(UITableViewCellAccessoryType)accessoryType
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
-    if (self) 
+    if (self)
 	{
 		// don't know size jetzt because there's no string in it
 		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:CGRectZero];
@@ -31,21 +30,36 @@
     return self;
 }
 
+- (void)dealloc
+{
+	[self.contentView removeObserver:self forKeyPath:@"frame"];
+}
+
+- (void)setNeedsLayout
+{
+	[super setNeedsLayout];
+}
 
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
 	
+	if (!self.superview)
+	{
+		return;
+	}
+	
+	if (self.contentView.frame.origin.x==9.0f)
+	{
+		// "bug" in Tableview that sets the contentView first to {{9, 0}, {302, 102}} and then to {{10, 1}, {300, 99}}
+		return;
+	}
+	
 	CGFloat neededContentHeight = [self requiredRowHeightInTableView:(UITableView *)self.superview];
 	
 	// after the first call here the content view size is correct
 	CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
-	
-	// only change frame if width has changed to avoid extra layouting
-	if (_attributedTextContextView.frame.size.width != frame.size.width)
-	{
-		_attributedTextContextView.frame = frame;
-	}
+	_attributedTextContextView.frame = frame;
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
@@ -65,9 +79,9 @@
 {
 	
 	CGFloat contentWidth = tableView.frame.size.width;
-
+	
 	// reduce width for accessories
-	switch (self.accessoryType) 
+	switch (self.accessoryType)
 	{
 		case UITableViewCellAccessoryDisclosureIndicator:
 		case UITableViewCellAccessoryCheckmark:
@@ -83,7 +97,8 @@
 	// reduce width for grouped table views
 	if (tableView.style == UITableViewStyleGrouped)
 	{
-		contentWidth -= 19;
+		// left and right 10 px margins on grouped table views
+		contentWidth -= 20;
 	}
 	
 	CGSize neededSize = [_attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
@@ -98,7 +113,7 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
+	
     // Configure the view for the selected state
 }
 
@@ -121,16 +136,16 @@
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-	if (_attributedString != attributedString)
-	{
-		_attributedString = attributedString;
-		
-		// passthrough
-		_attributedTextContextView.attributedString = _attributedString;
-	}
+	// passthrough
+	_attributedTextContextView.attributedString = attributedString;
 }
 
-@synthesize attributedString = _attributedString;
+- (NSAttributedString *)attributedString
+{
+	// passthrough
+	return _attributedTextContextView.attributedString;
+}
+
 @synthesize attributedTextContextView = _attributedTextContextView;
 
 @end

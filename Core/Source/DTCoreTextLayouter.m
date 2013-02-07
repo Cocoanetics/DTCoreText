@@ -33,6 +33,9 @@
 	NSAttributedString *_attributedString;
 	
 	NSMutableArray *frames;
+	
+	BOOL _shouldCacheLayoutFrames;
+	NSCache *_layoutFrameCache;
 }
 @synthesize selfLock;
 
@@ -80,6 +83,9 @@
 																	 CGSizeMake(width, CGFLOAT_MAX),
 																	 NULL);
 
+	
+	
+	
 	// round up because generally we don't want non-integer view sizes
 	neededSize.width = ceilf(neededSize.width);
 	neededSize.height = ceilf(neededSize.height);
@@ -91,10 +97,36 @@
 // a temporary frame
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
 {
-	DTCoreTextLayoutFrame *newFrame;
+	DTCoreTextLayoutFrame *newFrame = nil;
+	NSString *cacheKey = nil;
+	
+	// need to have a non zero
+	if (!(frame.size.width > 0 && frame.size.height > 0))
+	{
+		return nil;
+	}
+	
+	if (_shouldCacheLayoutFrames)
+	{
+		cacheKey = [NSString stringWithFormat:@"%ud-%@-%@", [_attributedString hash], NSStringFromCGRect(frame), NSStringFromRange(range)];
+		
+		DTCoreTextLayoutFrame *cachedLayoutFrame = [_layoutFrameCache objectForKey:cacheKey];
+		
+		if (cachedLayoutFrame)
+		{
+			return cachedLayoutFrame;
+		}
+	}
+
 	@autoreleasepool {
 		newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
 	};
+	
+	if (newFrame && _shouldCacheLayoutFrames)
+	{
+		[_layoutFrameCache setObject:newFrame forKey:cacheKey];
+	}
+	
 	return newFrame;
 }
 
@@ -150,6 +182,9 @@
 			_attributedString = attributedString;
 			
 			[self discardFramesetter];
+			
+			// clear the cache
+			_layoutFrameCache = nil;
 		}
 	}
 	SYNCHRONIZE_END(self)
@@ -170,10 +205,28 @@
 	return frames;
 }
 
+- (void)setShouldCacheLayoutFrames:(BOOL)shouldCacheLayoutFrames
+{
+	if (_shouldCacheLayoutFrames != shouldCacheLayoutFrames)
+	{
+		_shouldCacheLayoutFrames = shouldCacheLayoutFrames;
+		
+		if (shouldCacheLayoutFrames)
+		{
+			_layoutFrameCache = [[NSCache alloc] init];
+		}
+		else
+		{
+			_layoutFrameCache = nil;
+		}
+	}
+}
+
 
 
 @synthesize attributedString = _attributedString;
 @synthesize frames = _frames;
 @synthesize framesetter = _framesetter;
+@synthesize shouldCacheLayoutFrames = _shouldCacheLayoutFrames;
 
 @end
