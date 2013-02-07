@@ -43,8 +43,7 @@
 
 - (void)dealloc 
 {
-	_attributedTextContentView.delegate = nil;
-	[_attributedTextContentView removeObserver:self forKeyPath:@"frame"];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)layoutSubviews
@@ -113,13 +112,13 @@
 }
 
 #pragma mark Notifications
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)contentViewDidLayout:(NSNotification *)notification
 {
-	if (object == _attributedTextContentView && [keyPath isEqualToString:@"frame"])
-	{
-		CGRect newFrame = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
-		self.contentSize = newFrame.size;
-	}
+	NSDictionary *userInfo = [notification userInfo];
+	CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
+	
+	_attributedTextContentView.frame = optimalFrame;
+	self.contentSize = [_attributedTextContentView intrinsicContentSize];
 }
 
 #pragma mark Properties
@@ -155,21 +154,16 @@
 		// pass on setting
 		_attributedTextContentView.shouldDrawLinks = _shouldDrawLinks;
 		
-		// set text we previously got
+		// notification that tells us about the actual size of the content view
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contentViewDidLayout:) name:DTAttributedTextContentViewDidFinishLayoutNotification object:_attributedTextContentView];
+
+		// temporary frame to specify the width
+		_attributedTextContentView.frame = frame;
+		
+		// set text we previously got, this also triggers a relayout
 		_attributedTextContentView.attributedString = _attributedString;
-		
-		// only get contentSize if we have an attributed string
-		if (_attributedString)
-		{
-			CGSize neededSize = [_attributedTextContentView sizeThatFits:CGSizeZero];
-			frame.size = neededSize;
-			_attributedTextContentView.frame = frame;
-			
-			self.contentSize = neededSize;
-		}
-		
-		// we want to know if the frame changes so that we can adjust the scrollview content size
-		[_attributedTextContentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+
+		// this causes a relayout and the resulting notification will allow us to set the final frame
 		
 		[self addSubview:_attributedTextContentView];
 	}		
@@ -257,9 +251,8 @@
 	{
 		// pass it along if contentView already exists
 		_attributedTextContentView.attributedString = string;
-	
-		// adjust content size right away
-		self.contentSize = _attributedTextContentView.frame.size;
+		
+		// this causes a relayout and the resulting notification will allow us to set the frame and contentSize
 	}
 }
 

@@ -14,6 +14,11 @@
 @class DTCoreTextLayouter;
 @class DTTextAttachment;
 
+/** 
+ notification that gets sent as soon as the receiver has done a layout pass
+ */
+extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
+
 /**
  Protocol to provide custom views for elements in an DTAttributedTextContentView. Also the delegate gets notified once the text view has been drawn.
  */
@@ -114,8 +119,6 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 	BOOL _flexibleHeight;
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width;
-
 - (void)layoutSubviewsInRect:(CGRect)rect;
 - (void)relayoutText;
 - (void)removeAllCustomViews;
@@ -123,6 +126,13 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 - (CGSize)attributedStringSizeThatFits:(CGFloat)width;
 - (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width; // obeys the edge insets
+
+/**
+ The size of contents of the receiver. This is possibly used by auto-layout, but also for example if you want to get the size of the receiver necessary for a scroll view
+ 
+ This method is defined as of iOS 6, but to support earlier OS versions 
+ */
+- (CGSize)intrinsicContentSize;
 
 // properties are overwritten with locking to avoid problem with async drawing
 @property (atomic, strong) DTCoreTextLayouter *layouter;

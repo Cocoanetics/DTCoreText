@@ -14,6 +14,8 @@
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
 #endif
 
+NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAttributedTextContentViewDidFinishLayoutNotification";
+
 @interface DTAttributedTextContentView ()
 {
 	BOOL _shouldDrawImages;
@@ -125,20 +127,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		[self setup];
 	}
-	return self;
-}
-
-- (id)initWithAttributedString:(NSAttributedString *)attributedString width:(CGFloat)width
-{
-	self = [self initWithFrame:CGRectMake(0, 0, width, 0)];
-	
-	if (self)
-	{		
-		// causes appropriate sizing
-		self.attributedString = attributedString;
-		[self sizeToFit];
-	}
-	
 	return self;
 }
 
@@ -445,11 +433,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
             // triggers new layout
             CGSize neededSize = [self intrinsicContentSize];
             
-            // set frame to fit text preserving origin
-            // call super to avoid endless loop
-            [self willChangeValueForKey:@"frame"];
-            super.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
-            [self didChangeValueForKey:@"frame"];
+			CGRect optimalFrame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGRect:optimalFrame] forKey:@"OptimalFrame"];
+			
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[[NSNotificationCenter defaultCenter] postNotificationName:DTAttributedTextContentViewDidFinishLayoutNotification object:self userInfo:userInfo];
+			});
         }
       
 		[self setNeedsDisplayInRect:self.bounds];
@@ -649,6 +638,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		[self relayoutText];
 	}
+	
+	if (oldFrame.size.height < frame.size.height)
+	{
+		// need to draw the newly visible area
+		[self setNeedsDisplayInRect:CGRectMake(0, oldFrame.size.height, self.bounds.size.width, frame.size.height - oldFrame.size.height)];
+	}
 }
 
 - (void)setShouldDrawImages:(BOOL)shouldDrawImages
@@ -733,6 +728,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
+				
+				// this must have been the initial layout pass
+				CGSize neededSize = CGSizeMake(_layoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(_layoutFrame.frame) + _edgeInsets.bottom);
+				
+				CGRect optimalFrame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+				NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGRect:optimalFrame] forKey:@"OptimalFrame"];
+				
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[[NSNotificationCenter defaultCenter] postNotificationName:DTAttributedTextContentViewDidFinishLayoutNotification object:self userInfo:userInfo];
+				});
 				
 				if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 				{
