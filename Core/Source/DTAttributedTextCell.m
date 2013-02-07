@@ -30,11 +30,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[self.contentView removeObserver:self forKeyPath:@"frame"];
-}
-
 - (void)setNeedsLayout
 {
 	[super setNeedsLayout];
