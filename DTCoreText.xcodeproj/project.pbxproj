@@ -2044,7 +2044,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText.atom\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--explicit-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}/Core/Source\"";
+			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText.atom\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}/Core/Source\"";
 		};
 		A788CA661486456100E1AFD9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

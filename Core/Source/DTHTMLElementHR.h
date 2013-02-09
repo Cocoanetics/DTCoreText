@@ -6,7 +6,11 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
+#import "DTHTMLElement.h"
+
+/**
+ Specialized subclass of <DTHTMLElement> that deals with list items.
+ */
 
 @interface DTHTMLElementHR : DTHTMLElement
 

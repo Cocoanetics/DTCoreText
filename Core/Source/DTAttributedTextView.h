@@ -10,12 +10,31 @@
 
 @class DTAttributedTextView;
 
+/**
+ This view is designed to be a replacement for `UITextView`. It is a `UIScrollView` subclass and creates a <DTAttributedTextContentView> as content view for displaying the text
+ */
+
 @interface DTAttributedTextView : UIScrollView
+
+/**
+ @name Providing Content
+ */
 
 /**
  The attributed text to be displayed in the text content view of the receiver.
  */
 @property (nonatomic, strong) NSAttributedString *attributedString;
+
+
+/**
+ A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
+ */
+@property (nonatomic, unsafe_unretained) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
+
+
+/**
+ @name Accessing Subviews
+ */
 
 /**
  References to the DTAttributedTextContentView that display the text. This is not named contentView because this class inherits from `UIScrollView` which has an internal property of this name
@@ -27,15 +46,20 @@
  */
 @property (nonatomic, strong) IBOutlet UIView *backgroundView;
 
+
 /**
- A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
+ @name Customizing Display
  */
-@property (nonatomic, unsafe_unretained) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
 /**
  If the content view of the receiver should draw links. Set to `NO` if displaying links as custom views via textDelegate;
  */
 @property (nonatomic, assign) BOOL shouldDrawLinks;
+
+
+/**
+ @name User Interaction
+ */
 
 /**
  Scrolls the receiver to the anchor with the given name to the top.

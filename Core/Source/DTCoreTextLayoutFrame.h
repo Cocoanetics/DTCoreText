@@ -107,15 +107,14 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
  
  @param context A graphics context to draw into
  @param drawImages Whether images should be drawn together with the text. If you specify `NO` then space is left blank where images would go and you have to add your own views to display these images.
+ @param drawLinks Whether hyperlinks should be drawn together with the text. If you specify `NO` then space is left blank where links would go and you have to add your own views to display these images.
  @param drawImages Whether hyperlinks should be drawn together with the text. If you specify `NO` then space is left blank where links would go and you have to add your own views to display these links.
  */
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks;
 
 
 /**
- Set a custom handler to be executed before text belonging to a text block is drawn.
- 
- @param handler A DTCoreTextLayoutFrameTextBlockHandler block.
+ Set a custom handler to be executed before text belonging to a text block is drawn. Of type <DTCoreTextLayoutFrameTextBlockHandler>.
 */
 @property (nonatomic, copy) DTCoreTextLayoutFrameTextBlockHandler textBlockHandler;
 

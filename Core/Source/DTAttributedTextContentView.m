@@ -49,10 +49,11 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 
 @property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
+@property (nonatomic, strong) NSMutableSet *customViews;
 
 - (void)removeAllCustomViews;
-- (void)removeSubviewsOutsideRect:(CGRect)rect;
 - (void)removeAllCustomViewsForLinks;
+- (void)removeSubviewsOutsideRect:(CGRect)rect;
 
 @end
 
@@ -555,17 +556,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
 }
 
-- (CGSize)attributedStringSizeThatFits:(CGFloat)width
-{
-	if (!isnormal(width))
-	{
-		width = self.bounds.size.width;
-	}
-	
-	// attributedStringSizeThatFits: returns an unreliable measure prior to 4.2 for very long documents.
-	return [self.layouter suggestedFrameSizeToFitEntireStringConstraintedToWidth:width-_edgeInsets.left-_edgeInsets.right];
-}
-
 #pragma mark Properties
 - (void)setEdgeInsets:(UIEdgeInsets)edgeInsets
 {
@@ -651,6 +641,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (_shouldDrawImages != shouldDrawImages)
 	{
 		_shouldDrawImages = shouldDrawImages;
+		
+		[self setNeedsDisplay];
+	}
+}
+
+- (void)setShouldDrawLinks:(BOOL)shouldDrawLinks
+{
+	if (_shouldDrawLinks != shouldDrawLinks)
+	{
+		_shouldDrawLinks = shouldDrawLinks;
 		
 		[self setNeedsDisplay];
 	}

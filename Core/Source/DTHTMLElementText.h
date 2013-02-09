@@ -8,8 +8,15 @@
 
 #import "DTHTMLElement.h"
 
+/**
+ Specialized subclass of <DTHTMLElement> that deals with text.
+ */
+
 @interface DTHTMLElementText : DTHTMLElement
 
+/**
+ The text content of the element.
+ */
 @property (nonatomic, strong) NSString *text;
 
 @end

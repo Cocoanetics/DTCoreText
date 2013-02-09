@@ -8,6 +8,10 @@
 
 #import "DTHTMLElement.h"
 
+/**
+ Specialized subclass of <DTHTMLElement> that represents a line break.
+ */
+
 @interface DTHTMLElementBR : DTHTMLElement
 
 @end

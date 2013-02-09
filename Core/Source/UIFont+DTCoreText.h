@@ -6,6 +6,10 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+/**
+ Methods to translate from `CTFont` to `UIFont`
+ */
+
 @interface UIFont (DTCoreText)
 
 /**
