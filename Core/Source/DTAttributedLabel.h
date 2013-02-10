@@ -9,10 +9,14 @@
 #import "DTAttributedTextContentView.h"
 
 /**
- Rich Text replacement for UILabel.
+ A Rich Text replacement for `UILabel`. It inherits from <DTAttributedTextContentView> and as such you can also set the delegate to provide custom subviews i.e. for images or hyperlinks.
  */
 
 @interface DTAttributedLabel : DTAttributedTextContentView
+
+/**
+ @name Setting Attributes
+ */
 
 /**
  The number of lines to display in the receiver

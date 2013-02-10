@@ -1239,6 +1239,8 @@
 			isa = PBXGroup;
 			children = (
 				A70E62CC16C248C2009B47BF /* Editing */,
+				A060479016A8B5770000CAA1 /* DTAttributedLabel.h */,
+				A060479116A8B5770000CAA1 /* DTAttributedLabel.m */,
 				A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */,
 				A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */,
 				A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */,
@@ -1251,8 +1253,6 @@
 				A788C93714863E8700E1AFD9 /* DTWebVideoView.m */,
 				A788C92E14863E8700E1AFD9 /* DTLinkButton.h */,
 				A788C92F14863E8700E1AFD9 /* DTLinkButton.m */,
-				A060479016A8B5770000CAA1 /* DTAttributedLabel.h */,
-				A060479116A8B5770000CAA1 /* DTAttributedLabel.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
