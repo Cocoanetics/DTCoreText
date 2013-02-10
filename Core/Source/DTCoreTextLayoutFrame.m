@@ -13,15 +13,6 @@
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
-
-// two correction methods used by the deprecated way of layouting to work around Core Text bugs
-@interface DTCoreTextLayoutFrame ()
-
-- (void)_correctAttachmentHeights;
-- (void)_correctLineOrigins;
-
-@end
-
 @implementation DTCoreTextLayoutFrame
 {
 	CTFrameRef _textFrame;
@@ -607,11 +598,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// line origins are wrong on last line of paragraphs
 	//[self _correctLineOrigins];
 	
-	// --- begin workaround for image squishing bug in iOS < 4.2
-	if ([DTVersion osVersionIsLessThen:@"4.2"])
-	{
-		[self _correctAttachmentHeights];
-	}
+//	// --- begin workaround for image squishing bug in iOS < 4.2
+//	if ([DTVersion osVersionIsLessThen:@"4.2"])
+//	{
+//		[self _correctAttachmentHeights];
+//	}
 }
 
 - (void)_buildLines
@@ -1537,6 +1528,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Corrections
+/**
 - (void)_correctAttachmentHeights
 {
 	CGFloat downShiftSoFar = 0;
@@ -1561,7 +1553,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}
 }
-
+*/
 
 // a bug in CoreText shifts the last line of paragraphs slightly down
 - (void)_correctLineOrigins

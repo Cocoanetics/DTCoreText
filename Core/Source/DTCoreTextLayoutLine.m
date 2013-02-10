@@ -220,6 +220,8 @@
 	CTLineDraw(_line, context);
 }
 
+/*
+
 // fix for image squishing bug < iOS 4.2
 - (BOOL)correctAttachmentHeights:(CGFloat *)downShift
 {
@@ -271,7 +273,8 @@
 	
 	return didShift;
 }
-
+*/
+ 
 - (void)_calculateMetrics
 {
 	dispatch_sync(_syncQueue, ^{
@@ -284,6 +287,7 @@
 		}
 	});
 }
+ 
 
 
 // calculates the extra space that is before every line even though the leading is zero

@@ -10,6 +10,9 @@
 
 @class DTHTMLParserTextNode;
 
+/**
+ This class represents one node in an HTML DOM tree.
+ */
 @interface DTHTMLParserNode : NSObject
 {
 	NSDictionary *_attributes;
@@ -17,6 +20,9 @@
 
 /**
  Designated initializer
+ @param name The element name
+ @param attributes The attributes dictionary
+ @returns An initialized parser node.
  */
 - (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes;
 

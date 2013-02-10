@@ -6,20 +6,41 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-//#import "DTColor+HTML.h"
-
 @class DTColor;
 
+/**
+ Extensions for NSScanner to deal with HTML-specific parsing, primarily CSS-related things
+ */
 @interface NSScanner (HTML)
 
-- (BOOL)scanHTMLTag:(NSString **)tagName attributes:(NSDictionary **)attributes isOpen:(BOOL *)isOpen isClosed:(BOOL *)isClosed;
-- (BOOL)scanDOCTYPE:(NSString **)contents;
+/**
+ @name Working with CSS
+ */
+
+/**
+ Scans for a CSS attribute used in CSS style sheets
+ @param name An optional output parameter that will contain the name of the scanned attribute if successful
+ @param value An optional output parameter that will contain the value of the scanned attribute if successful
+ @returns `YES` if an URL String could be scanned
+ */
 - (BOOL)scanCSSAttribute:(NSString **)name value:(NSString **)value;
+
+
+/**
+ Scans for URLs used in CSS style sheets
+ @param urlString An optional output parameter that will contain the scanned URL string if successful
+ @returns `YES` if an URL String could be scanned
+ */
 - (BOOL)scanCSSURL:(NSString **)urlString;
 
+
+/**
+ Scans for a typical HTML color, typically either #FFFFFF, rgb(255,255,255) or a HTML color name.
+ @param color An optional output parameter that will contain the scanned color if successful
+ @returns `YES` if a color could be scanned
+ */
 - (BOOL)scanHTMLColor:(DTColor **)color;
 
-- (void)logPosition;
 
 @end
 

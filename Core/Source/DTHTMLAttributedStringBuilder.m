@@ -377,8 +377,7 @@
 		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
 		
 		// create the appropriate list style from CSS
-		NSDictionary *styles = [_currentTag styles];
-		DTCSSListStyle *newListStyle = [[DTCSSListStyle alloc] initWithStyles:styles];
+		DTCSSListStyle *newListStyle = [_currentTag listStyle];
 		
 		// append this list style to the current paragraph style text lists
 		NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];

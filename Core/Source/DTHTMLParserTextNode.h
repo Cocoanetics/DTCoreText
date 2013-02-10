@@ -8,8 +8,16 @@
 
 #import "DTHTMLParserNode.h"
 
+/**
+ Specialized sub class of <DTHTMLParserNode> that represents text inside a node
+ */
 @interface DTHTMLParserTextNode : DTHTMLParserNode
 
+/**
+ Designated initializer with the characters that make up the text.
+ @param characters The characters of the string
+ @returns The initialized text node
+ */
 - (id)initWithCharacters:(NSString *)characters;
 
 /**

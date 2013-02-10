@@ -15,22 +15,138 @@
 
 @class DTCoreTextLayoutFrame;
 
-@interface DTCoreTextLayoutLine : NSObject 
+/**
+ This class represents one layouted line and contains a number of glyph runs.
+ */
+@interface DTCoreTextLayoutLine : NSObject
 {
 	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
+/**
+ @name Creating Layout Lines
+ */
+
+/**
+ Creates a layout line from a given `CTLine`
+ @param line The Core Text line to wrap
+ @returns A prepared layout line
+ */
 - (id)initWithLine:(CTLineRef)line;
 
+/**
+ @name Drawing Layout Lines
+ */
+
+/**
+ Draws the receiver in a given graphics context
+ @param context The graphics context to draw into
+ */
+- (void)drawInContext:(CGContextRef)context;
+
+/**
+ @name Getting Information about Layout Lines
+ */
+
+/**
+ The range in the original string that is represented by the receiver
+ @returns The string strange
+ */
 - (NSRange)stringRange;
+
+/**
+ The number of glyphs the receiver consists of
+ @returns the number of glyphs
+ */
 - (NSInteger)numberOfGlyphs;
+
+/**
+ Determines the frame of a specific glyph
+ @param index The index of the glyph
+ @return The frame of the glyph
+ */
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index;
+
+/**
+ Retrieves the glyphRuns with a given range
+ @param range The range
+ @returns An array of glyph runs
+ */
 - (NSArray *)glyphRunsWithRange:(NSRange)range;
+
+/**
+ The frame of a number of glyphs with a given range
+ @param range The range
+ @returns The rectangle containing the result
+ */
 - (CGRect)frameOfGlyphsWithRange:(NSRange)range;
+
+/**
+ The bounds of an image encompassing the entire run.
+ @param context The graphics context used for the measurement
+ @returns The rectangle containing the result
+ */
 - (CGRect)imageBoundsInContext:(CGContextRef)context;
+
+/**
+ The string indices of the receiver
+ @returns An array of string indices
+ */
 - (NSArray *)stringIndices;
+
+/**
+ Determins the graphical offset for a given string index
+ @param index The string index
+ @returns The offset
+ */
 - (CGFloat)offsetForStringIndex:(NSInteger)index;
+
+/**
+ Determines the string index that is closest to a given point
+ @param position The position to determine the string index for
+ @returns The string index
+ */
 - (NSInteger)stringIndexForPosition:(CGPoint)position;
+
+/**
+ The frame of the receiver relative to the layout frame
+ */
+@property (nonatomic, assign) CGRect frame;
+
+/**
+ The glyph runs that the line contains.
+ */
+@property (nonatomic, readonly) NSArray *glyphRuns;
+
+/**
+ The ascent (height above the baseline) of the receiver
+ */
+@property (nonatomic, assign) CGFloat ascent; // needs to be modifyable
+
+/**
+ The descent (height below the baseline) of the receiver
+ */
+@property (nonatomic, readonly) CGFloat descent;
+
+/**
+ The leading (additional space above the ascent) of the receiver
+ */
+@property (nonatomic, readonly) CGFloat leading;
+
+/**
+ The width of the traling whitespace of the receiver
+ */
+@property (nonatomic, readonly) CGFloat trailingWhitespaceWidth;
+
+/**
+ The baseline origin of the receiver
+ */
+@property (nonatomic, assign) CGPoint baselineOrigin;
+
+/**
+ `YES` if the writing direction is Right-to-Left, otherwise `NO`
+ */
+@property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
 
 
 /**
@@ -44,31 +160,5 @@
  @param justificationWidth The width to which the resultant line is justified. If justificationWidth is less than the actual width of the line, then negative justification is performed (that is, glyphs are squeezed together).
  */
 - (DTCoreTextLayoutLine *)justifiedLineWithFactor:(CGFloat)justificationFactor justificationWidth:(CGFloat)justificationWidth;
-
-
-
-- (void)drawInContext:(CGContextRef)context;
-
-
-/** Adjust the baselines of all lines in this layout frame to fit the heights of text attachments. 
- 
- This is used to work around a CoreText bug that was fixed in iOS 4.2
- 
- @returns `YES` if the line needed an adjustment, `NO` if no adjustment was carried out
- */
-- (BOOL)correctAttachmentHeights:(CGFloat *)downShift;
-
-
-@property (nonatomic, assign) CGRect frame;
-@property (nonatomic, strong, readonly) NSArray *glyphRuns;
-
-@property (nonatomic, assign) CGFloat ascent; // needs to be modifyable
-@property (nonatomic, assign, readonly) CGFloat descent;
-@property (nonatomic, assign, readonly) CGFloat leading;
-@property (nonatomic, assign, readonly) CGFloat trailingWhitespaceWidth;
-
-@property (nonatomic, assign) CGPoint baselineOrigin;
-
-@property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
 
 @end

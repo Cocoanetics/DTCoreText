@@ -20,6 +20,8 @@
 @property (nonatomic, strong) NSArray *fontDescriptors;
 @property (nonatomic, strong) NSCache *fontMatchCache;
 
+- (id)initWithAvailableFonts;
+
 @end
 
 static DTCoreTextFontCollection *_availableFontsCollection = nil;

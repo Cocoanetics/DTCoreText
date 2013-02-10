@@ -502,23 +502,6 @@ NSDictionary *_classesForNames = nil;
 	return (DTHTMLElement *)self.parentNode;
 }
 
-- (BOOL)containedInBlock
-{
-	id element = self;
-	
-	while (element && ![[element name] isEqualToString:@"body"])
-	{
-		if ([element displayStyle] == DTHTMLElementDisplayStyleBlock)
-		{
-			return YES;
-		}
-		
-		element = [element parentNode];
-	}
-	
-	return NO;
-}
-
 - (void)applyStyleDictionary:(NSDictionary *)styles
 {
 	if (![styles count])
@@ -1067,15 +1050,9 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
-- (NSDictionary *)styles
+- (DTCSSListStyle *)listStyle
 {
-	return _styles;
-}
-
-- (void)parseStyleString:(NSString *)styleString
-{
-	NSDictionary *styles = [styleString dictionaryOfCSSStyles];
-	[self applyStyleDictionary:styles];
+	return [[DTCSSListStyle alloc] initWithStyles:_styles];
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
