@@ -628,6 +628,13 @@
 			remoteGlobalIDString = A70B4CE61486637E00873A4A;
 			remoteInfo = "Static Library";
 		};
+		A7713AA816CD467B002DE820 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7E889A416A9B190009EF0DF;
+			remoteInfo = "DTUTI (Mac)";
+		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -669,20 +676,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = A7E383DA160DFF8600CF72D6;
 			remoteInfo = DTZipArchive;
-		};
-		A7B4E2DB1686FDB300717707 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7E383F1160E002200CF72D6;
-			remoteInfo = DTDownloadCache;
-		};
-		A7B4E2DD1686FDB300717707 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7787A0D16441B1800AF5830;
-			remoteInfo = DTBonjour;
 		};
 		A7B4E2DF1686FDB300717707 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1401,9 +1394,8 @@
 				A7B4E2D61686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2D81686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2DA1686FDB300717707 /* libDTZipArchive.a */,
-				A7B4E2DC1686FDB300717707 /* libDTDownloadCache.a */,
-				A7B4E2DE1686FDB300717707 /* libDTBonjour.a */,
 				A7B4E2E01686FDB300717707 /* libDTUTI.a */,
+				A7713AA916CD467B002DE820 /* libDTUTI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1778,7 +1770,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = Drobnik.com;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
@@ -1815,6 +1807,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A7713AA916CD467B002DE820 /* libDTUTI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTUTI.a;
+			remoteRef = A7713AA816CD467B002DE820 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A7B4E2D21686FDB300717707 /* UnitTests.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1848,20 +1847,6 @@
 			fileType = archive.ar;
 			path = libDTZipArchive.a;
 			remoteRef = A7B4E2D91686FDB300717707 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A7B4E2DC1686FDB300717707 /* libDTDownloadCache.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libDTDownloadCache.a;
-			remoteRef = A7B4E2DB1686FDB300717707 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A7B4E2DE1686FDB300717707 /* libDTBonjour.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libDTBonjour.a;
-			remoteRef = A7B4E2DD1686FDB300717707 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A7B4E2E01686FDB300717707 /* libDTUTI.a */ = {
@@ -2646,7 +2631,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -2677,7 +2662,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -2794,7 +2779,7 @@
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = DTCoreText;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -2827,7 +2812,7 @@
 				);
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				PRODUCT_NAME = DTCoreText;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
 				WRAPPER_EXTENSION = framework;
 			};

@@ -157,9 +157,22 @@
 	
 	// base tag with font defaults
 	_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
-	_defaultFontDescriptor.pointSize = 12.0f * _textScale;
+
+	
+	// set the default font size
+	CGFloat defaultFontSize = 12.0f;
+
+	NSNumber *defaultFontSizeNumber = [_options objectForKey:DTDefaultFontSize];
+	
+	if (defaultFontSizeNumber)
+	{
+		defaultFontSize = [defaultFontSizeNumber floatValue];
+	}
+	
+	_defaultFontDescriptor.pointSize = defaultFontSize * _textScale;
 	
 	NSString *defaultFontFamily = [_options objectForKey:DTDefaultFontFamily];
+	
 	if (defaultFontFamily)
 	{
 		_defaultFontDescriptor.fontFamily = defaultFontFamily;

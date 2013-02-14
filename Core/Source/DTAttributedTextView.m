@@ -12,7 +12,7 @@
 
 @interface DTAttributedTextView ()
 
-- (void)setup;
+- (void)_setup;
 
 @end
 
@@ -26,7 +26,9 @@
 	// these are pass-through, i.e. store until the content view is created
 	__unsafe_unretained id textDelegate;
 	NSAttributedString *_attributedString;
+	
 	BOOL _shouldDrawLinks;
+	BOOL _shouldDrawImages;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -35,7 +37,7 @@
 	
 	if (self)
 	{
-		[self setup];
+		[self _setup];
 	}
 	
 	return self;
@@ -58,32 +60,37 @@
 
 - (void)awakeFromNib
 {
-	[self setup];
+	[self _setup];
 }
 
 // default
-- (void)setup
+- (void)_setup
 {
-	if (!self.backgroundColor)
+	if (self.backgroundColor)
+	{
+		CGFloat alpha = [self.backgroundColor alphaComponent];
+		
+		if (alpha < 1.0)
+		{
+			self.opaque = NO;
+		}
+		else
+		{
+			self.opaque = YES;
+		}
+	}
+	else
 	{
 		self.backgroundColor = [DTColor whiteColor];
-		self.opaque = YES;
-		return;
-	}
-	
-	CGFloat alpha = [self.backgroundColor alphaComponent];
-	
-	if (alpha < 1.0)
-	{
-		self.opaque = NO;
-	}
-	else 
-	{
 		self.opaque = YES;
 	}
 	
 	self.autoresizesSubviews = NO;
 	self.clipsToBounds = YES;
+	
+	// defaults
+	_shouldDrawLinks = YES;
+	_shouldDrawImages = YES;
 }
 
 // override class e.g. for mutable content view
@@ -305,7 +312,13 @@
 - (void)setShouldDrawLinks:(BOOL)shouldDrawLinks
 {
 	_shouldDrawLinks = shouldDrawLinks;
-	_attributedTextContentView.shouldDrawLinks = YES;
+	_attributedTextContentView.shouldDrawLinks = _shouldDrawLinks;
+}
+
+- (void)setShouldDrawImages:(BOOL)shouldDrawImages
+{
+	_shouldDrawImages = shouldDrawImages;
+	_attributedTextContentView.shouldDrawImages = _shouldDrawImages;
 }
 
 @synthesize attributedTextContentView = _attributedTextContentView;
