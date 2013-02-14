@@ -12,7 +12,7 @@
 
 @interface DTAttributedTextView ()
 
-- (void)setup;
+- (void)_setup;
 
 @end
 
@@ -37,7 +37,7 @@
 	
 	if (self)
 	{
-		[self setup];
+		[self _setup];
 	}
 	
 	return self;
@@ -60,27 +60,28 @@
 
 - (void)awakeFromNib
 {
-	[self setup];
+	[self _setup];
 }
 
 // default
-- (void)setup
+- (void)_setup
 {
-	if (!self.backgroundColor)
+	if (self.backgroundColor)
+	{
+		CGFloat alpha = [self.backgroundColor alphaComponent];
+		
+		if (alpha < 1.0)
+		{
+			self.opaque = NO;
+		}
+		else
+		{
+			self.opaque = YES;
+		}
+	}
+	else
 	{
 		self.backgroundColor = [DTColor whiteColor];
-		self.opaque = YES;
-		return;
-	}
-	
-	CGFloat alpha = [self.backgroundColor alphaComponent];
-	
-	if (alpha < 1.0)
-	{
-		self.opaque = NO;
-	}
-	else 
-	{
 		self.opaque = YES;
 	}
 	

@@ -11,7 +11,9 @@
 @class DTAttributedTextView;
 
 /**
- This view is designed to be a replacement for `UITextView`. It is a `UIScrollView` subclass and creates a <DTAttributedTextContentView> as content view for displaying the text
+ This view is designed to be a replacement for `UITextView`. It is a `UIScrollView` subclass and creates a <DTAttributedTextContentView> as content view for displaying the text.
+ 
+ The content view of type <DTAttributedTextContentView> is created lazily. You should not set values on it directly if you use it in conjunction with this class for scrolling.
  */
 
 @interface DTAttributedTextView : UIScrollView
@@ -64,6 +66,17 @@
  Defaults to `YES` if you supply your own image drawing then set this property to NO and supply your custom image view (e.g. <DTLazyImageView>) via the <textDelegate>.
  */
 @property (nonatomic, assign) BOOL shouldDrawImages;
+
+
+/**
+ @name Customizing Content View
+ */
+
+/**
+ You can override this method to provide a different class to use for the content view. If you replace the content view class then it should inherit from <DTAttributedTextContentView> which is also the default.
+ @returns The class to use for the content view.
+ */
+- (Class)classForContentView;
 
 /**
  @name User Interaction
