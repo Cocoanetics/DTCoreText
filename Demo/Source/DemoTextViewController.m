@@ -111,11 +111,15 @@
 	[DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	
+	// we draw images and links via subviews provided by delegate methods
+	_textView.shouldDrawImages = NO;
+	_textView.shouldDrawLinks = NO;
+	_textView.textDelegate = self; // delegate for custom sub views
+	
 	// set an inset. Since the bottom is below a toolbar inset by 44px
 	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
 	_textView.contentInset = UIEdgeInsetsMake(10, 10, 54, 10);
 
-	_textView.textDelegate = self;
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
 	
@@ -169,7 +173,7 @@
 	_textView.frame = bounds;
 
 	// Display string
-	_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
+	//_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
 	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
 	
 	[self _segmentedControlChanged:nil];
