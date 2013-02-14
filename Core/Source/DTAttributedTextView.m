@@ -124,8 +124,14 @@
 	NSDictionary *userInfo = [notification userInfo];
 	CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
 	
-	_attributedTextContentView.frame = optimalFrame;
-	self.contentSize = [_attributedTextContentView intrinsicContentSize];
+	CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+	
+	// ignore possibly delayed layout notification for a different width
+	if (optimalFrame.size.width == frame.size.width)
+	{
+		_attributedTextContentView.frame = optimalFrame;
+		self.contentSize = [_attributedTextContentView intrinsicContentSize];
+	}
 }
 
 #pragma mark Properties
@@ -137,6 +143,12 @@
 		Class classToUse = [self classForContentView];
 		
 		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+		
+		if (frame.size.width<=0 || frame.size.height<=0)
+		{
+			frame = CGRectZero;
+		}
+		
 		_attributedTextContentView = [[classToUse alloc] initWithFrame:frame];
 		
 		_attributedTextContentView.userInteractionEnabled = YES;
