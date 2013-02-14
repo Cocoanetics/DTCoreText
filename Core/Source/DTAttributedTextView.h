@@ -53,9 +53,17 @@
 
 /**
  If the content view of the receiver should draw links. Set to `NO` if displaying links as custom views via textDelegate;
+ 
+ Defaults to `YES` if you supply your own link drawing  then set this property to NO and supply your custom view (e.g. <DTLinkButton>) via the <textDelegate>.
  */
 @property (nonatomic, assign) BOOL shouldDrawLinks;
 
+/**
+ If the content view of the receiver should draw images. Set to `NO` if displaying images as custom views via textDelegate;
+ 
+ Defaults to `YES` if you supply your own image drawing then set this property to NO and supply your custom image view (e.g. <DTLazyImageView>) via the <textDelegate>.
+ */
+@property (nonatomic, assign) BOOL shouldDrawImages;
 
 /**
  @name User Interaction
