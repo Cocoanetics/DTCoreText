@@ -11,6 +11,10 @@
 
 @class DTLazyImageView;
 
+// Notifications
+extern NSString * const DTLazyImageViewWillStartDownloadNotification;
+extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
+
 /**
  Protocol for delegates of <DTLazyImageView> to inform them about the downloaded image dimensions.
  */
