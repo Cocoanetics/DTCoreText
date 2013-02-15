@@ -962,6 +962,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				// get text color or use black
 				id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
 				
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+				if (!color && ___useiOS6Attributes)
+				{
+					UIColor *uiColor = [oneRun.attributes objectForKey:NSForegroundColorAttributeName];
+					color = (id)uiColor.CGColor;
+				}
+#endif
+				
 				if (color)
 				{
 					CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
