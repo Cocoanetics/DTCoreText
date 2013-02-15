@@ -378,7 +378,6 @@
 		{
 			NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
 			[retString appendFormat:@"<%@ class=\"%@\">", blockElement, className];
-			//[retString appendFormat:@"<%@ style=\"%@\">", blockElement, paraStyleString];
 		}
 		else
 		{
@@ -462,29 +461,46 @@
 					}
 				}
 				
-				// write appropriate tag
-				if (attachment.contentType == DTTextAttachmentTypeVideoURL)
+				NSString *blockName;
+				
+				switch (attachment.contentType)
 				{
-					[retString appendFormat:@"<video src=\"%@\"", urlString];
-				}
-				else if (attachment.contentType == DTTextAttachmentTypeImage)
-				{
-					[retString appendFormat:@"<img src=\"%@\"", urlString];
+					case DTTextAttachmentTypeVideoURL:
+					{
+						blockName = @"video";
+						break;
+					}
+						
+					case DTTextAttachmentTypeImage:
+					{
+						blockName = @"img";
+						break;
+					}
+
+					case DTTextAttachmentTypeObject:
+					{
+						blockName = @"object";
+						break;
+					}
+
+					case DTTextAttachmentTypeIframe:
+					{
+						blockName = @"iframe";
+						break;
+					}
+
+					default:
+					{
+						// we don't know how to output this
+						continue;
+					}
 				}
 				
-				
-				// build a HTML 5 conformant size style if set
-				NSMutableString *styleString = [NSMutableString string];
-				
-				if (attachment.originalSize.width>0)
-				{
-					[styleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
-				}
-				
-				if (attachment.originalSize.height>0)
-				{
-					[styleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
-				}
+				// output tag start
+				[retString appendFormat:@"<%@", blockName];
+
+				// build style for img/video
+				NSMutableString *classStyleString = [NSMutableString string];
 				
 				if (attachment.verticalAlignment != DTTextAttachmentVerticalAlignmentBaseline)
 				{
@@ -492,38 +508,64 @@
 					{
 						case DTTextAttachmentVerticalAlignmentBaseline:
 						{
-							[styleString appendString:@"vertical-align:baseline;"];
+							[classStyleString appendString:@"vertical-align:baseline;"];
 							break;
 						}
 						case DTTextAttachmentVerticalAlignmentTop:
 						{
-							[styleString appendString:@"vertical-align:text-top;"];
+							[classStyleString appendString:@"vertical-align:text-top;"];
 							break;
 						}
 						case DTTextAttachmentVerticalAlignmentCenter:
 						{
-							[styleString appendString:@"vertical-align:middle;"];
+							[classStyleString appendString:@"vertical-align:middle;"];
 							break;
 						}
 						case DTTextAttachmentVerticalAlignmentBottom:
 						{
-							[styleString appendString:@"vertical-align:text-bottom;"];
+							[classStyleString appendString:@"vertical-align:text-bottom;"];
 							break;
 						}
 					}
 				}
 				
-				if ([styleString length])
+				// only add class if there was some content
+				if ([classStyleString length])
 				{
-					[retString appendFormat:@" style=\"%@\"", styleString];
+					NSString *className = [self _styleClassForElement:blockName style:classStyleString];
+					
+					[retString appendFormat:@" class=\"%@\"", className];
 				}
+				
+				// build a HTML 5 conformant size style if set
+				NSMutableString *sizeStyleString = [NSMutableString string];
+				
+				if (attachment.originalSize.width>0)
+				{
+					[sizeStyleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
+				}
+				
+				if (attachment.originalSize.height>0)
+				{
+					[sizeStyleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
+				}
+				
+				// add local style for size, since sizes might vary quite a bit
+				if ([sizeStyleString length])
+				{
+					[retString appendFormat:@" style=\"%@\"", sizeStyleString];
+				}
+				
+				[retString appendFormat:@" src=\"%@\"", urlString];
 				
 				// attach the attributes dictionary
 				NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
 				
-				// remove src and style, we already have that
+				// remove src,style, width and height we already have these
 				[tmpAttributes removeObjectForKey:@"src"];
 				[tmpAttributes removeObjectForKey:@"style"];
+				[tmpAttributes removeObjectForKey:@"width"];
+				[tmpAttributes removeObjectForKey:@"height"];
 				
 				for (__strong NSString *oneKey in [tmpAttributes allKeys])
 				{
@@ -645,7 +687,7 @@
 				if ([fontStyle length])
 				{
 					NSString *className = [self _styleClassForElement:@"a" style:fontStyle];
-					[retString appendFormat:@"<a class=\"%@\" href=\"%@\" style=\"%@\">%@</a>", className, [url relativeString], fontStyle, subString];
+					[retString appendFormat:@"<a class=\"%@\" href=\"%@\">%@</a>", className, [url relativeString], subString];
 				}
 				else
 				{
