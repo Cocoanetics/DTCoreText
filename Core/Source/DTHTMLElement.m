@@ -512,6 +512,29 @@ NSDictionary *_classesForNames = nil;
 	// keep that for later lookup
 	_styles = styles;
 	
+	// writing direction
+	NSString *directionStr = [_styles objectForKey:@"direction"];
+	
+	if (directionStr)
+	{
+		if ([directionStr isEqualToString:@"rtl"])
+		{
+			_paragraphStyle.baseWritingDirection = NSWritingDirectionRightToLeft;
+		}
+		else if ([directionStr isEqualToString:@"ltr"])
+		{
+			_paragraphStyle.baseWritingDirection = NSWritingDirectionLeftToRight;
+		}
+		else if ([directionStr isEqualToString:@"auto"])
+		{
+			_paragraphStyle.baseWritingDirection = NSWritingDirectionNatural; // that's also default
+		}
+		else
+		{
+			// other values are invalid and will be ignored
+		}
+	}
+	
 	// register pseudo-selector contents
 	self.beforeContent = [[_styles objectForKey:@"before:content"] stringByDecodingCSSContentAttribute];
 	
