@@ -30,7 +30,7 @@ NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 
 NSString * const DTTextListsAttribute = @"DTTextLists";
 NSString * const DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
-NSString * const DTLinkAttribute = @"DTLink";
+NSString * const DTLinkAttribute = @"NSLinkAttributeName";
 NSString * const DTAnchorAttribute = @"DTAnchor";
 NSString * const DTGUIDAttribute = @"DTGUID";
 NSString * const DTHeaderLevelAttribute = @"DTHeaderLevel";
