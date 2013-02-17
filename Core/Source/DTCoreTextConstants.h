@@ -78,3 +78,4 @@ typedef enum
 	DTHTMLElementFontVariantNormal,
 	DTHTMLElementFontVariantSmallCaps
 } DTHTMLElementFontVariant;
+
