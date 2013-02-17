@@ -328,6 +328,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					{
 						UIView *existingLinkView = [self.customViewsForLinksIndex objectForKey:indexKey];
 						
+						// make sure that the frame height is no less than the line height for hyperlinks
+						if (frameForSubview.size.height < oneLine.frame.size.height)
+						{
+							frameForSubview.origin.y = truncf(oneLine.frame.origin.y);
+							frameForSubview.size.height = ceilf(oneLine.frame.size.height);
+						}
+						
 						if (existingLinkView)
 						{
 							existingLinkView.frame = frameForSubview;
