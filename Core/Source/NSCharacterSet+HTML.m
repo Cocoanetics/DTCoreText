@@ -47,8 +47,28 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	
 	dispatch_once(&predicate, ^{
 		NSMutableCharacterSet *tmpSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		[tmpSet removeCharactersInString:UNICODE_NON_BREAKING_SPACE];
 		
+		// remove all special unicode space characters
+		[tmpSet removeCharactersInString:UNICODE_NON_BREAKING_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_OGHAM_SPACE_MARK];
+		[tmpSet removeCharactersInString:UNICODE_MONGOLIAN_VOWEL_SEPARATOR];
+		[tmpSet removeCharactersInString:UNICODE_EN_QUAD];
+		[tmpSet removeCharactersInString:UNICODE_EM_QUAD];
+		[tmpSet removeCharactersInString:UNICODE_EN_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_EM_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_THREE_PER_EM_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_FOUR_PER_EM_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_SIX_PER_EM_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_FIGURE_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_PUNCTUATION_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_THIN_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_HAIR_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_ZERO_WIDTH_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_NARROW_NO_BREAK_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_MEDIUM_MATHEMATICAL_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_IDEOGRAPHIC_SPACE];
+		[tmpSet removeCharactersInString:UNICODE_ZERO_WIDTH_NO_BREAK_SPACE];
+
 		_ignorableWhitespaceCharacterSet = [tmpSet copy];
 	});
 	
