@@ -12,7 +12,7 @@
 #import "DTImage+HTML.h"
 
 // common utilities
-#import "CGUtils.h"
+#import "DTUtils.h"
 #if TARGET_OS_IPHONE
 #import "DTCoreTextFunctions.h"
 #endif

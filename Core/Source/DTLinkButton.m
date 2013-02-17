@@ -7,12 +7,6 @@
 //
 
 #import "DTLinkButton.h"
-#import "CGUtils.h"
-#import "DTColor+HTML.h"
-
-//#import "DTCoreTextLayoutFrame.h"
-//#import "DTCoreTextLayouter.h"
-//#import "DTCoreTextGlyphRun.h"
 #import "DTCoreText.h"
 
 // constant for notification
@@ -37,12 +31,10 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	// normal text
 	NSAttributedString *_attributedString;
 	DTCoreTextLayoutLine *_normalLine;
-	//DTCoreTextGlyphRun *_normalGlyphRun;
 	
 	// highlighted text
 	NSAttributedString *_highlightedAttributedString;
 	DTCoreTextLayoutLine *_highlightedLine;
-	//DTCoreTextGlyphRun *_highlightedGlyphRun;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -199,13 +191,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 				default:
 					break;
 			}
-			
-			
-			//		if (lastRunInLine)
-			//		{
-			//			runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
-			//		}
-			
+						
 			if (backgroundColor)
 			{
 				CGContextSetFillColorWithColor(context, backgroundColor);
@@ -330,7 +316,6 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 {
 	[super setHighlighted:highlighted];
 	[self setNeedsDisplay];
-	
 	
 	// notify other parts of the same link
 	if (_GUID)

@@ -101,10 +101,6 @@
 		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
-		A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C95914863E8700E1AFD9 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C95B14863E8700E1AFD9 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
-		A788C95C14863E8700E1AFD9 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -285,7 +281,6 @@
 		A7C5D00C14D7DFBF00AF1D75 /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93514863E8700E1AFD9 /* DTTextAttachment.m */; };
 		A7C5D01614D7E3DC00AF1D75 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
 		A7C5D01714D7E3DC00AF1D75 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
-		A7C5D01B14D7E4F700AF1D75 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
 		A7C5D01E14D7EBAE00AF1D75 /* NSScanner+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94714863E8700E1AFD9 /* NSScanner+HTML.m */; };
 		A7C7ACD514D924B1005A9C69 /* NSMutableString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C7ACD314D924B1005A9C69 /* NSMutableString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7C7ACD614D924B1005A9C69 /* NSMutableString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C7ACD314D924B1005A9C69 /* NSMutableString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -414,7 +409,6 @@
 		A7F5673E14D8744600D1F167 /* DTColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+HTML.m */; };
 		A7F5673F14D8744600D1F167 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
 		A7F7EF781573603100F5A4D0 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
-		A7F7EF791573603100F5A4D0 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
 		A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
 		A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */; };
 		A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
@@ -462,7 +456,6 @@
 		A7F7EFAC1573603100F5A4D0 /* DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93414863E8700E1AFD9 /* DTTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFAD1573603100F5A4D0 /* NSAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFAE1573603100F5A4D0 /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7F7EFAF1573603100F5A4D0 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB01573603100F5A4D0 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB11573603100F5A4D0 /* DTAttributedTextContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB21573603100F5A4D0 /* DTAttributedTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -506,8 +499,6 @@
 		E2262DE91638337D00BFDAD7 /* DTCoreTextFontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91B14863E8700E1AFD9 /* DTCoreTextFontDescriptor.m */; };
 		E2262DEA1638337D00BFDAD7 /* DTCoreTextParagraphStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92414863E8700E1AFD9 /* DTCoreTextParagraphStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2262DEB1638337D00BFDAD7 /* DTCoreTextParagraphStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92514863E8700E1AFD9 /* DTCoreTextParagraphStyle.m */; };
-		E2262DEC1638337D00BFDAD7 /* CGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C90E14863E8700E1AFD9 /* CGUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E2262DED1638337D00BFDAD7 /* CGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C90F14863E8700E1AFD9 /* CGUtils.m */; };
 		E2262DEE1638338B00BFDAD7 /* NSString+Paragraphs.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2262DEF1638338B00BFDAD7 /* NSString+Paragraphs.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */; };
 		E2262DF01638339E00BFDAD7 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -765,8 +756,6 @@
 		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
 		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		A788C90E14863E8700E1AFD9 /* CGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtils.h; sourceTree = "<group>"; };
-		A788C90F14863E8700E1AFD9 /* CGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGUtils.m; sourceTree = "<group>"; };
 		A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextCell.h; sourceTree = "<group>"; };
 		A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
@@ -1304,8 +1293,6 @@
 				A788C91B14863E8700E1AFD9 /* DTCoreTextFontDescriptor.m */,
 				A788C92414863E8700E1AFD9 /* DTCoreTextParagraphStyle.h */,
 				A788C92514863E8700E1AFD9 /* DTCoreTextParagraphStyle.m */,
-				A788C90E14863E8700E1AFD9 /* CGUtils.h */,
-				A788C90F14863E8700E1AFD9 /* CGUtils.m */,
 				A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */,
 				A7EB849C168B3E9D00D686B7 /* DTHTMLParserNode.m */,
 				A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */,
@@ -1420,7 +1407,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A788C95814863E8700E1AFD9 /* CGUtils.h in Headers */,
 				A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */,
 				A788C96214863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96714863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
@@ -1490,7 +1476,6 @@
 				A788C9B814863E8700E1AFD9 /* DTTextAttachment.h in Headers */,
 				A788C9C714863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
 				A788C9D114863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */,
-				A788C95914863E8700E1AFD9 /* CGUtils.h in Headers */,
 				A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */,
 				A788C96314863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96814863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
@@ -1548,7 +1533,6 @@
 				A7F7EFAC1573603100F5A4D0 /* DTTextAttachment.h in Headers */,
 				A7F7EFAD1573603100F5A4D0 /* NSAttributedString+HTML.h in Headers */,
 				A7F7EFAE1573603100F5A4D0 /* NSAttributedStringRunDelegates.h in Headers */,
-				A7F7EFAF1573603100F5A4D0 /* CGUtils.h in Headers */,
 				A7F7EFB01573603100F5A4D0 /* DTAttributedTextCell.h in Headers */,
 				A7F7EFB11573603100F5A4D0 /* DTAttributedTextContentView.h in Headers */,
 				A7F7EFB21573603100F5A4D0 /* DTAttributedTextView.h in Headers */,
@@ -1601,7 +1585,6 @@
 				E2262DE61638337D00BFDAD7 /* NSString+CSS.h in Headers */,
 				E2262DE81638337D00BFDAD7 /* DTCoreTextFontDescriptor.h in Headers */,
 				E2262DEA1638337D00BFDAD7 /* DTCoreTextParagraphStyle.h in Headers */,
-				E2262DEC1638337D00BFDAD7 /* CGUtils.h in Headers */,
 				E2262DEE1638338B00BFDAD7 /* NSString+Paragraphs.h in Headers */,
 				E2262DF01638339E00BFDAD7 /* NSAttributedString+DTCoreText.h in Headers */,
 				E2262DF21638339E00BFDAD7 /* NSAttributedString+SmallCaps.h in Headers */,
@@ -2065,7 +2048,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A758FC9614DBC7A2007DF8B2 /* default.css in Sources */,
-				A788C95B14863E8700E1AFD9 /* CGUtils.m in Sources */,
 				A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96514863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96A14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
@@ -2121,7 +2103,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A758FC9814DBCF20007DF8B2 /* default.css in Sources */,
-				A788C95C14863E8700E1AFD9 /* CGUtils.m in Sources */,
 				A788C96114863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96614863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96B14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
@@ -2196,7 +2177,6 @@
 				A7C5D00A14D7DFBF00AF1D75 /* DTCSSListStyle.m in Sources */,
 				A7C5D00B14D7DFBF00AF1D75 /* DTCSSStylesheet.m in Sources */,
 				A7C5D00C14D7DFBF00AF1D75 /* DTTextAttachment.m in Sources */,
-				A7C5D01B14D7E4F700AF1D75 /* CGUtils.m in Sources */,
 				A7C5D01E14D7EBAE00AF1D75 /* NSScanner+HTML.m in Sources */,
 				A7F5671914D841EA00D1F167 /* NSString+CSS.m in Sources */,
 				A7F5672C14D8506C00D1F167 /* NSAttributedString+SmallCaps.m in Sources */,
@@ -2233,7 +2213,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7F7EF781573603100F5A4D0 /* default.css in Sources */,
-				A7F7EF791573603100F5A4D0 /* CGUtils.m in Sources */,
 				A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */,
 				A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */,
 				A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */,
@@ -2299,7 +2278,6 @@
 				E2262DE71638337D00BFDAD7 /* NSString+CSS.m in Sources */,
 				E2262DE91638337D00BFDAD7 /* DTCoreTextFontDescriptor.m in Sources */,
 				E2262DEB1638337D00BFDAD7 /* DTCoreTextParagraphStyle.m in Sources */,
-				E2262DED1638337D00BFDAD7 /* CGUtils.m in Sources */,
 				E2262DEF1638338B00BFDAD7 /* NSString+Paragraphs.m in Sources */,
 				E2262DF11638339E00BFDAD7 /* NSAttributedString+DTCoreText.m in Sources */,
 				E2262DF31638339E00BFDAD7 /* NSAttributedString+SmallCaps.m in Sources */,
