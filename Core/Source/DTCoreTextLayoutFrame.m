@@ -1013,20 +1013,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				if (drawStrikeOut)
 				{
-					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0f + 1)+0.5f;
+					CGFloat y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0f + 1)+0.5f;
 					
-					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 					
 					CGContextStrokePath(context);
 				}
 				
 				if (drawUnderline)
 				{
-					runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height - oneRun.descent + 1)+0.5f;
+					CGFloat y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - oneRun.descent + 1)+0.5f;
 					
-					CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 					
 					CGContextStrokePath(context);
 				}
