@@ -133,6 +133,8 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		
 		NSDictionary *runAttributes = glyphRunToDraw.attributes;
 		
+		NSInteger superscriptStyle = [[runAttributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+
 		// -------------- Line-Out, Underline, Background-Color
 		BOOL drawStrikeOut = [[runAttributes objectForKey:DTStrikeOutAttribute] boolValue];
 		BOOL drawUnderline = [[runAttributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
@@ -173,6 +175,8 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 			}
 			
 			CGRect runStrokeBounds = UIEdgeInsetsInsetRect(self.bounds, self.contentEdgeInsets);
+			runStrokeBounds.origin.x = glyphRunToDraw.frame.origin.x;
+			runStrokeBounds.size.width = glyphRunToDraw.frame.size.width;
 			
 			NSInteger superscriptStyle = [[glyphRunToDraw.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 			
@@ -191,7 +195,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 				default:
 					break;
 			}
-						
+			
 			if (backgroundColor)
 			{
 				CGContextSetFillColorWithColor(context, backgroundColor);
@@ -200,20 +204,20 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 			
 			if (drawStrikeOut)
 			{
-				runStrokeBounds.origin.y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
+				CGFloat y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
 				
-				CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 				
 				CGContextStrokePath(context);
 			}
 			
 			if (drawUnderline)
 			{
-				runStrokeBounds.origin.y = ceilf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height - glyphRunToDraw.descent)+0.5f;
+				CGFloat y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - glyphRunToDraw.descent + 1)+0.5f;
 				
-				CGContextMoveToPoint(context, runStrokeBounds.origin.x, runStrokeBounds.origin.y);
-				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, runStrokeBounds.origin.y);
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 				
 				CGContextStrokePath(context);
 			}
@@ -224,7 +228,25 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		CGContextScaleCTM(context, 1.0, -1.0);
 		CGContextTranslateCTM(context, 0, -self.bounds.size.height);
 		
-		CGContextSetTextPosition(context, self.contentEdgeInsets.left, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
+		CGPoint textPosition = CGPointMake(self.contentEdgeInsets.left, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
+		
+		switch (superscriptStyle)
+		{
+			case 1:
+			{
+				textPosition.y += glyphRunToDraw.ascent * 0.47f;
+				break;
+			}
+			case -1:
+			{
+				textPosition.y -= glyphRunToDraw.ascent * 0.25f;
+				break;
+			}
+			default:
+				break;
+		}
+		
+		CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 		
 		[glyphRunToDraw drawInContext:context];
 		CGContextRestoreGState(context);
