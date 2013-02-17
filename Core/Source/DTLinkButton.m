@@ -280,7 +280,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 
 #pragma mark Utilitiy
 
-- (void)adjustBoundsIfNecessary
+- (void)_adjustBoundsIfNecessary
 {
 	CGRect bounds = self.bounds;
 	CGFloat widthExtend = 0;
@@ -289,19 +289,24 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	if (bounds.size.width < _minimumHitSize.width)
 	{
 		widthExtend = _minimumHitSize.width - bounds.size.width;
-		bounds.size.width = _minimumHitSize.width;
 	}
 	
 	if (bounds.size.height < _minimumHitSize.height)
 	{
 		heightExtend = _minimumHitSize.height - bounds.size.height;
-		bounds.size.height = _minimumHitSize.height;
 	}
 	
 	if (widthExtend>0 || heightExtend>0)
 	{
-		self.contentEdgeInsets = UIEdgeInsetsMake(heightExtend/2.0f, widthExtend/2.0f, heightExtend/2.0f, widthExtend/2.0f);
+		UIEdgeInsets edgeInsets = UIEdgeInsetsMake(ceilf(heightExtend/2.0f), ceilf(widthExtend/2.0f), ceilf(heightExtend/2.0f), ceilf(widthExtend/2.0f));
+		
+		// extend bounds by the calculated necessary edge insets
+		bounds.size.width += edgeInsets.left + edgeInsets.right;
+		bounds.size.height += edgeInsets.top + edgeInsets.bottom;
+
+		// apply bounds and insets
 		self.bounds = bounds;
+		self.contentEdgeInsets = edgeInsets;
 	}
 	else
 	{
@@ -357,7 +362,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		return;
 	}
 	
-	[self adjustBoundsIfNecessary];
+	[self _adjustBoundsIfNecessary];
 }
 
 
@@ -370,7 +375,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	
 	_minimumHitSize = minimumHitSize;
 	
-	[self adjustBoundsIfNecessary];
+	[self _adjustBoundsIfNecessary];
 }
 
 @synthesize URL = _URL;
