@@ -17,6 +17,8 @@
 
 /** 
  Appends a string with the same attributes as this string to this string. 
+ 
+ If the last character of the receiver contains a placeholder for a <DTTextAttachment> it is removed from the appended string.
  @param string The string to be appended to this string. */
 - (void)appendString:(NSString *)string;
 
