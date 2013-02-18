@@ -312,6 +312,8 @@
 		A7E383EC160DFFEC00CF72D6 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
 		A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
 		A7E3A5CC169443B6007A526B /* AppleConverted.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5CB169443B6007A526B /* AppleConverted.html */; };
+		A7E8E1D416D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */; };
+		A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */; };
 		A7EB849D168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; };
 		A7EB849E168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; };
 		A7EB849F168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; };
@@ -893,6 +895,7 @@
 		A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DTFoundation.xcodeproj; path = DTFoundation/DTFoundation.xcodeproj; sourceTree = "<group>"; };
 		A7E3A5C5169360E5007A526B /* KeepMeTogether.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeepMeTogether.html; sourceTree = "<group>"; };
 		A7E3A5CB169443B6007A526B /* AppleConverted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AppleConverted.html; sourceTree = "<group>"; };
+		A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EmptyLinesAndFontAttribute.html; sourceTree = "<group>"; };
 		A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLParserNode.h; sourceTree = "<group>"; };
 		A7EB849C168B3E9D00D686B7 /* DTHTMLParserNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLParserNode.m; sourceTree = "<group>"; };
 		A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLParserTextNode.h; sourceTree = "<group>"; };
@@ -1348,6 +1351,7 @@
 				A7E3A5C5169360E5007A526B /* KeepMeTogether.html */,
 				A7E3A5CB169443B6007A526B /* AppleConverted.html */,
 				A7F34D3F16CFC7C90054A512 /* RTL.html */,
+				A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1913,6 +1917,7 @@
 				A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */,
 				A70E630216C25734009B47BF /* Oliver.jpg in Resources */,
 				A7F34D4016CFC7C90054A512 /* RTL.html in Resources */,
+				A7E8E1D416D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1951,6 +1956,7 @@
 				A70E630316C25736009B47BF /* Oliver.jpg in Resources */,
 				A70E630516C25AC6009B47BF /* KeepMeTogether.html in Resources */,
 				A7F34D4116CFC7C90054A512 /* RTL.html in Resources */,
+				A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
