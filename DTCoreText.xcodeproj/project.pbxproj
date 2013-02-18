@@ -79,6 +79,9 @@
 		A72D97631684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
 		A72D97641684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
 		A72D97651684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
+		A730BCD716D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
+		A730BCD816D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
+		A730BCD916D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
 		A7358D701680F2B0005F1352 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
 		A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A73885A41606E9B2001D60C4 /* EmojiTest.html */; };
 		A73AE7911686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */; };
@@ -748,6 +751,7 @@
 		A72C15C61592FAF70064A67F /* CoreTextIssues.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CoreTextIssues.html; sourceTree = "<group>"; };
 		A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFunctions.h; sourceTree = "<group>"; };
 		A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFunctions.m; sourceTree = "<group>"; };
+		A730BCD616D29588003B849F /* Languages.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Languages.html; sourceTree = "<group>"; };
 		A73885A41606E9B2001D60C4 /* EmojiTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EmojiTest.html; sourceTree = "<group>"; };
 		A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriter.h; sourceTree = "<group>"; };
 		A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLWriter.m; sourceTree = "<group>"; };
@@ -1205,6 +1209,7 @@
 				A78C241015073BC50045651E /* TextBoxes.html */,
 				A72C15C61592FAF70064A67F /* CoreTextIssues.html */,
 				A73885A41606E9B2001D60C4 /* EmojiTest.html */,
+				A730BCD616D29588003B849F /* Languages.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1897,6 +1902,7 @@
 				A7D63CDA1611B9AC00D4712A /* Default-568h@2x.png in Resources */,
 				A72418171678BACE001362C4 /* iOS6.html in Resources */,
 				A7EB84FC168ED63A00D686B7 /* FontSizes.html in Resources */,
+				A730BCD716D29588003B849F /* Languages.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1918,6 +1924,7 @@
 				A70E630216C25734009B47BF /* Oliver.jpg in Resources */,
 				A7F34D4016CFC7C90054A512 /* RTL.html in Resources */,
 				A7E8E1D416D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
+				A730BCD816D29588003B849F /* Languages.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1957,6 +1964,7 @@
 				A70E630516C25AC6009B47BF /* KeepMeTogether.html in Resources */,
 				A7F34D4116CFC7C90054A512 /* RTL.html in Resources */,
 				A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
+				A730BCD916D29588003B849F /* Languages.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -118,6 +118,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Demonstrates multiple different languages display.</string>
+		<key>File</key>
+		<string>Languages.html</string>
+		<key>Title</key>
+		<string>Multiple Languages Support</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>This demonstrates how adding an object with a given width and height can be replaced with a custom view.</string>
 		<key>File</key>
 		<string>Objects.html</string>
