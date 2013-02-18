@@ -282,61 +282,6 @@ NSDictionary *_classesForNames = nil;
 	return tmpDict;
 }
 
-/*
-- (void)appendToAttributedString:(NSMutableAttributedString *)attributedString
-{
-	if (_displayStyle == DTHTMLElementDisplayStyleNone || _didOutput)
-	{
-		return;
-	}
-	
-	NSDictionary *attributes = [self attributesDictionary];
-	
-	if (_textAttachment)
-	{
-		// ignore children, use unicode object placeholder
-		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
-		[attributedString appendAttributedString:tmpString];
-	}
-	else
-	{
-		for (id oneChild in self.childNodes)
-		{
-			// the string for this single child
-			NSAttributedString *tmpString = nil;
-			
-			if ([oneChild isKindOfClass:[DTHTMLParserTextNode class]])
-			{
-				[attributedString appendAttributedString:tmpString];
-			}
-			else
-			{
-				NSAttributedString *tmpString = [oneChild attributedString];
-				[attributedString appendAttributedString:tmpString];
-//				
-//				if ([[oneChild name] isEqualToString:@"br"])
-//				{
-//					[attributedString appendString:UNICODE_LINE_FEED];
-//				}
-//				
-//				// should be a normal node
-//				[oneChild appendToAttributedString:attributedString];
-			}
-		}
-	}
-	
-	if (_displayStyle != DTHTMLElementDisplayStyleInline)
-	{
-		if (![self.name isEqualToString:@"body"] && ![self.name isEqualToString:@"html"])
-		{
-			[attributedString appendString:@"\n"];
-		}
-	}
-	
-	_didOutput = YES;
-}
- */
-
 - (BOOL)needsOutput
 {
 	if ([self.childNodes count])
@@ -438,7 +383,16 @@ NSDictionary *_classesForNames = nil;
 		{
 			if (![[tmpString string] hasSuffix:@"\n"])
 			{
-				[tmpString appendString:@"\n"];
+				if ([tmpString length])
+				{
+					// extend same paragraph and font style
+					[tmpString appendString:@"\n"];
+				}
+				else
+				{
+					// need to insure that paragraph and font style as properly set
+					[tmpString appendString:@"\n" withParagraphStyle:self.paragraphStyle fontDescriptor:self.fontDescriptor];
+				}
 			}
 		}
 	}
