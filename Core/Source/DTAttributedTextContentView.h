@@ -14,7 +14,7 @@
 @class DTCoreTextLayouter;
 @class DTTextAttachment;
 
-/** 
+/**
  notification that gets sent as soon as the receiver has done a layout pass
  */
 extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
@@ -31,7 +31,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  */
 
 /**
- Called after a layout frame or a part of it is drawn. 
+ Called after a layout frame or a part of it is drawn.
  
  @param attributedTextContentView The content view that drew a layout frame
  @param layoutFrame The layout frame that was drawn for
@@ -52,7 +52,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param layoutFrame The layout frame that will be drawn for
  @returns `YES` is the standard fill of the text block should be drawn, `NO` if it should not
  */
-- (BOOL)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame; 
+- (BOOL)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame;
 
 /**
  @name Providing Custom Views for Content
@@ -72,7 +72,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
 
 /**
  Provide button to be placed over links, the identifier is used to link multiple parts of the same A tag
-
+ 
  @param attributedTextContentView The content view asking for a custom view
  @param url The `NSURL` of the hyperlink
  @param identifier An identifier that uniquely identifies the hyperlink within the document
@@ -82,7 +82,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
 
-/** 
+/**
  Provide generic views for all attachments.
  
  This is only called if the more specific delegate methods are not implemented.
@@ -111,8 +111,8 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  
  Generally you have two options to providing content:
  
-  - set the attributed string
-  - set a layout frame
+ - set the attributed string
+ - set a layout frame
  
  The first you would normally use, the second you would use if you are layouting a larger text and then simply want to display individual parts (e.g. pages from an e-book) in a content view.
  */
@@ -125,7 +125,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 	UIEdgeInsets _edgeInsets;
 	
 	NSMutableDictionary *customViewsForAttachmentsIndex;
-
+	
 	BOOL _flexibleHeight;
 }
 
@@ -170,12 +170,14 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 - (void)relayoutText;
 
+
 /**
  The layouter to use for the receiver. Created by default.
  
  By default this is generated automatically for the current <attributedString>. You can also supply your own if you require special layouting behavior.
  */
 @property (atomic, strong) DTCoreTextLayouter *layouter;
+
 
 /**
  The layout frame to use for the receiver. Created by default.
@@ -184,6 +186,15 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 @property (atomic, strong) DTCoreTextLayoutFrame *layoutFrame;
 
+
+/**
+ The dispatch queue that is used to serialize layouting actions
+ */
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong) dispatch_queue_t layoutQueue;  // GCD objects use ARC
+#else
+@property (nonatomic, assign) dispatch_queue_t layoutQueue;  // GCD objects don't use ARC
+#endif
 
 /**
  @name Working with Custom Subviews
@@ -236,7 +247,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
- Specifies if the receiver should draw image text attachments. 
+ Specifies if the receiver should draw image text attachments.
  
  Set to `NO` if you use the delegate methods to provide custom subviews to display images.
  */
@@ -244,7 +255,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
- Specified if the receiver should draw hyperlinks. 
+ Specified if the receiver should draw hyperlinks.
  
  If set to `NO` then your custom subview/button for hyperlinks is responsible for displaying hyperlinks. You can use <DTLinkButton> to have links show a differently for normal and highlighted style
  */
@@ -252,7 +263,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
- Specifies if the receiver should layout custom subviews in layoutSubviews. 
+ Specifies if the receiver should layout custom subviews in layoutSubviews.
  
  If set to `YES` then all custom subviews will always be layouted. Set to `NO` to only layout visible subviews, e.g. in a scroll view. Defaults to `YES` if used stand-alone, `NO` inside a <DTAttributedTextView>.
  */
@@ -266,7 +277,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
- The offset to apply for drawing the background. 
+ The offset to apply for drawing the background.
  
  If you set a pattern color as background color you can have the pattern phase be offset by this value.
  */
