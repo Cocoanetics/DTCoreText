@@ -138,7 +138,7 @@
 			[self _discardFramesetter];
 			
 			// clear the cache
-			_layoutFrameCache = nil;
+			[_layoutFrameCache removeAllObjects];
 		}
 	}
 	SYNCHRONIZE_END(self)
