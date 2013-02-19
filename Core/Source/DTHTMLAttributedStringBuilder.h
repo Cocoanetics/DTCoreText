@@ -25,7 +25,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 /**
  Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL.
  @param data The data in HTML format from which to create the attributed string.
- @param options Specifies how the document should be loaded. Contains values described in “Option keys for importing documents.” 
+ @param options Specifies how the document should be loaded. Contains values described in NSAttributedString(HTML).
  @param docAttributes Currently not in used.
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  */

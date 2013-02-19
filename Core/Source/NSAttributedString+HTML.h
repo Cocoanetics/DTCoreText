@@ -57,7 +57,7 @@
  - DTWillFlushBlockCallBack: a block to be executed whenever content is flushed to the output string
 
  @param data The data in HTML format from which to create the attributed string.
- @param options Specifies how the document should be loaded. Contains values described in “Option keys for importing documents.” 
+ @param options Specifies how the document should be loaded.
  @param docAttributes Currently not in used.
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  */
