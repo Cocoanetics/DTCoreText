@@ -68,7 +68,7 @@
 	
 	NSString *resultOnMac = @"<50726566 69780a4f 6e652074 776f20e2 80a87468 7265650a 4e657720 50617261 67726170 680a5375 66666978>";
 	
-	[self dumpOneResult:resultOnIOS versusOtherResult:resultOnMac];
+	//[self dumpOneResult:resultOnIOS versusOtherResult:resultOnMac];
 	
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
 }
