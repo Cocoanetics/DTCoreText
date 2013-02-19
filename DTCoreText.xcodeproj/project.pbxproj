@@ -482,6 +482,8 @@
 		A7F7EFC51573603100F5A4D0 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFC61573603100F5A4D0 /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFC81573603100F5A4D0 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7F842E716D37A5A00BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F842E616D37A5A00BCD63F /* FontSizes.html */; };
+		A7F842E816D37A5A00BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F842E616D37A5A00BCD63F /* FontSizes.html */; };
 		DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 		E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
 		E2262DD51638336700BFDAD7 /* DTColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+HTML.m */; };
@@ -717,12 +719,19 @@
 			remoteGlobalIDString = A70B4CE61486637E00873A4A;
 			remoteInfo = "Static Library";
 		};
-		A7F34D9D16D0E3A30054A512 /* PBXContainerItemProxy */ = {
+		A7F842F016D37A5A00BCD63F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = A7E889A416A9B190009EF0DF;
-			remoteInfo = "DTUTI (Mac)";
+			remoteGlobalIDString = A7E383F1160E002200CF72D6;
+			remoteInfo = DTDownloadCache;
+		};
+		A7F842F216D37A5A00BCD63F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7787A0D16441B1800AF5830;
+			remoteInfo = DTBonjour;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -927,6 +936,7 @@
 		A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+SmallCaps.h"; sourceTree = "<group>"; };
 		A7F5672614D8506C00D1F167 /* NSAttributedString+SmallCaps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+SmallCaps.m"; sourceTree = "<group>"; };
 		A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText_no_DTFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7F842E616D37A5A00BCD63F /* FontSizes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = FontSizes.html; path = Demo/Resources/FontSizes.html; sourceTree = SOURCE_ROOT; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1340,6 +1350,7 @@
 		A7C7ACEB14DA62BA005A9C69 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A7F842E616D37A5A00BCD63F /* FontSizes.html */,
 				A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */,
 				A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */,
 				A7C7AD0414DA782D005A9C69 /* ListTest.plist */,
@@ -1394,8 +1405,9 @@
 				A7B4E2D61686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2D81686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2DA1686FDB300717707 /* libDTZipArchive.a */,
+				A7F842F116D37A5A00BCD63F /* libDTDownloadCache.a */,
+				A7F842F316D37A5A00BCD63F /* libDTBonjour.a */,
 				A7B4E2E01686FDB300717707 /* libDTUTI.a */,
-				A7F34D9E16D0E3A30054A512 /* libDTUTI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1859,11 +1871,18 @@
 			remoteRef = A7E383B8160DFEA800CF72D6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A7F34D9E16D0E3A30054A512 /* libDTUTI.a */ = {
+		A7F842F116D37A5A00BCD63F /* libDTDownloadCache.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libDTUTI.a;
-			remoteRef = A7F34D9D16D0E3A30054A512 /* PBXContainerItemProxy */;
+			path = libDTDownloadCache.a;
+			remoteRef = A7F842F016D37A5A00BCD63F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F842F316D37A5A00BCD63F /* libDTBonjour.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTBonjour.a;
+			remoteRef = A7F842F216D37A5A00BCD63F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1925,6 +1944,7 @@
 				A7F34D4016CFC7C90054A512 /* RTL.html in Resources */,
 				A7E8E1D416D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
 				A730BCD816D29588003B849F /* Languages.html in Resources */,
+				A7F842E716D37A5A00BCD63F /* FontSizes.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1965,6 +1985,7 @@
 				A7F34D4116CFC7C90054A512 /* RTL.html in Resources */,
 				A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
 				A730BCD916D29588003B849F /* Languages.html in Resources */,
+				A7F842E816D37A5A00BCD63F /* FontSizes.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

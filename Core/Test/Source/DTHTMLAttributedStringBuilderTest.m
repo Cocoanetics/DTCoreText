@@ -16,16 +16,32 @@
 
 @implementation DTHTMLAttributedStringBuilderTest
 
-- (void)testSpaceBetweenUnderlines
+#pragma mark - Utilities
+
+- (NSAttributedString *)_attributedStringFromTestFileName:(NSString *)testFileName
 {
 	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:@"SpaceBetweenUnderlines" ofType:@"html"];
-	
+	NSString *path = [bundle pathForResource:testFileName ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
 	
 	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	return [builder generatedAttributedString];
+}
+
+- (NSAttributedString *)_attributedStringFromHTMLString:(NSString *)HTMLString
+{
+	NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
 	
-	NSAttributedString *output = [builder generatedAttributedString];
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	return [builder generatedAttributedString];
+}
+
+
+#pragma mark - Tests
+
+- (void)testSpaceBetweenUnderlines
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"SpaceBetweenUnderlines"];
 	
 	NSRange range_a;
 	NSNumber *underLine = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:1 effectiveRange:&range_a];
@@ -36,15 +52,8 @@
 // a block following an inline image should only cause a \n after the image, not whitespace
 - (void)testWhitspaceAfterParagraphPromotedImage
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:@"WhitespaceFollowingImagePromotedToParagraph" ofType:@"html"];
-	
-	NSData *data = [NSData dataWithContentsOfFile:path];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	
-	NSAttributedString *output = [builder generatedAttributedString];
-	
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"WhitespaceFollowingImagePromotedToParagraph"];
+
 	STAssertTrue([output length]==6, @"Generated String should be 6 characters");
 	
 	NSMutableString *expectedOutput = [NSMutableString stringWithFormat:@"1\n%@\n2\n", UNICODE_OBJECT_PLACEHOLDER];
@@ -55,14 +64,7 @@
 // This should come out as Keep_me_together with the _ being non-breaking spaces
 - (void)testKeepMeTogether
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:@"KeepMeTogether" ofType:@"html"];
-	
-	NSData *data = [NSData dataWithContentsOfFile:path];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	
-	NSAttributedString *output = [builder generatedAttributedString];
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"KeepMeTogether"];
 	
 	NSString *expectedOutput = @"Keep\u00a0me\u00a0together";
 	
@@ -72,12 +74,7 @@
 // tests functionality of dir attribute
 - (void)testWritingDirection
 {
-	NSString *string = @"<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>";
-	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	
-	NSAttributedString *output = [builder generatedAttributedString];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>"];
 	
 	CTParagraphStyleRef paragraphStyleRTL = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:0 effectiveRange:NULL]);
 	DTCoreTextParagraphStyle *styleRTL = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleRTL];
@@ -99,14 +96,9 @@
 {
 	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
 	NSString *imagePath = [bundle pathForResource:@"Oliver" ofType:@"jpg"];
-	
 	NSString *string = [NSString stringWithFormat:@"<img src=\"file:%@\" style=\"foo:bar\">", imagePath];
-	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	
-	NSAttributedString *output = [builder generatedAttributedString];
-	
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+
 	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
 
 	DTTextAttachment *attachment = [output attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
@@ -120,13 +112,7 @@
 
 - (void)testFontTagWithStyle
 {
-	NSString *string = @"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>";
-	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	builder.shouldKeepDocumentNodeTree = YES;
-	
-	NSAttributedString *output = [builder generatedAttributedString];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>"];
 	
 	CTFontRef font = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:0 effectiveRange:NULL]);
 	
@@ -137,13 +123,7 @@
 
 - (void)testRTLParsing
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:@"RTL" ofType:@"html"];
-	NSData *data = [NSData dataWithContentsOfFile:path];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	builder.shouldKeepDocumentNodeTree = YES;
-	NSAttributedString *output = [builder generatedAttributedString];
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"RTL"];
 
 	NSUInteger paraEndIndex;
 	NSRange firstParagraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(0, 0) parBegIndex:NULL parEndIndex:&paraEndIndex];
@@ -164,13 +144,7 @@
 
 - (void)testEmptyParagraphAndFontAttribute
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:@"EmptyLinesAndFontAttribute" ofType:@"html"];
-	NSData *data = [NSData dataWithContentsOfFile:path];
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
-	builder.shouldKeepDocumentNodeTree = YES;
-	NSAttributedString *output = [builder generatedAttributedString];
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"EmptyLinesAndFontAttribute"];
 	
 	NSUInteger paraEndIndex;
 	NSRange firstParagraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(0, 0) parBegIndex:NULL parEndIndex:&paraEndIndex];
@@ -210,6 +184,34 @@
 	if (thirdParagraphFont)
 	{
 		STAssertEquals(thirdParagraphFontRange, thirdParagraphRange, @"Range Font in third paragraph is not full paragraph");
+	}
+}
+
+- (void)testFontSizeInterpretation
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"FontSizes"];
+
+	NSUInteger paraEndIndex = 0;
+	
+	while (paraEndIndex<[output length])
+	{
+		NSRange paragraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(paraEndIndex, 0) parBegIndex:NULL parEndIndex:&paraEndIndex];
+		
+		__block CGFloat paragraphFontSize = 0; // initialized from first font in paragraph
+		
+		[output enumerateAttribute:(id)kCTFontAttributeName inRange:paragraphRange options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)(value)];
+			
+			if (paragraphFontSize==0)
+			{
+				paragraphFontSize = fontDescriptor.pointSize;
+			}
+			else
+			{
+				STAssertEquals(fontDescriptor.pointSize, paragraphFontSize, @"Font in range %@ does not match paragraph font size of %.1fpx", NSStringFromRange(range), paragraphFontSize);
+			}
+		}];
+		
 	}
 }
 
