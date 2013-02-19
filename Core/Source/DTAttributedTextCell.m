@@ -15,17 +15,16 @@
 	DTAttributedTextContentView *_attributedTextContextView;
 	
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
+	
+	BOOL _hasFixedRowHeight;
 }
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier accessoryType:(UITableViewCellAccessoryType)accessoryType
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
     if (self)
 	{
-		// don't know size jetzt because there's no string in it
-		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:CGRectZero];
-		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-		[self.contentView addSubview:_attributedTextContextView];
+		// content view created lazily
     }
     return self;
 }
@@ -43,18 +42,19 @@
 	{
 		return;
 	}
-	
-	if (self.contentView.frame.origin.x==9.0f)
+
+	if (_hasFixedRowHeight)
 	{
-		// "bug" in Tableview that sets the contentView first to {{9, 0}, {302, 102}} and then to {{10, 1}, {300, 99}}
-		return;
+		self.attributedTextContextView.frame = self.contentView.bounds;
 	}
+	else
+	{
+		CGFloat neededContentHeight = [self requiredRowHeightInTableView:(UITableView *)self.superview];
 	
-	CGFloat neededContentHeight = [self requiredRowHeightInTableView:(UITableView *)self.superview];
-	
-	// after the first call here the content view size is correct
-	CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
-	_attributedTextContextView.frame = frame;
+		// after the first call here the content view size is correct
+		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
+		self.attributedTextContextView.frame = frame;
+	}
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
@@ -72,6 +72,10 @@
 
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
 {
+	if (_hasFixedRowHeight)
+	{
+		NSLog(@"Warning: you are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
+	}
 	
 	CGFloat contentWidth = tableView.frame.size.width;
 	
@@ -96,7 +100,7 @@
 		contentWidth -= 20;
 	}
 	
-	CGSize neededSize = [_attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
+	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
 	// note: non-integer row heights caused trouble < iOS 5.0
 	return neededSize.height;
@@ -132,7 +136,7 @@
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
 	// passthrough
-	_attributedTextContextView.attributedString = attributedString;
+	self.attributedTextContextView.attributedString = attributedString;
 }
 
 - (NSAttributedString *)attributedString
@@ -141,6 +145,31 @@
 	return _attributedTextContextView.attributedString;
 }
 
+- (DTAttributedTextContentView *)attributedTextContextView
+{
+	if (!_attributedTextContextView)
+	{
+		// don't know size jetzt because there's no string in it
+		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:self.contentView.bounds];
+		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+		_attributedTextContextView.layoutFrameHeightIsConstrainedByBounds = _hasFixedRowHeight;
+		[self.contentView addSubview:_attributedTextContextView];
+	}
+	
+	return _attributedTextContextView;
+}
+
+- (void)setHasFixedRowHeight:(BOOL)hasFixedRowHeight
+{
+	if (_hasFixedRowHeight != hasFixedRowHeight)
+	{
+		_hasFixedRowHeight = hasFixedRowHeight;
+		
+		[self setNeedsLayout];
+	}
+}
+
 @synthesize attributedTextContextView = _attributedTextContextView;
+@synthesize hasFixedRowHeight = _hasFixedRowHeight;
 
 @end

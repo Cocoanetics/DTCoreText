@@ -19,13 +19,10 @@
 
 /**
  Creates a tableview cell with a given reuse identifier. 
- 
- Because this determines the space available for the text the accessory type of the cell needs also be passed.
  @param reuseIdentifier The reuse identifier to use for the cell
- @param accessoryType The accessory type to use
  @returns A prepared cell
  */
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier accessoryType:(UITableViewCellAccessoryType)accessoryType;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 
 /**
  @name Setting Attributed Content
@@ -53,10 +50,18 @@
 /**
  Determines the row height that is needed in a specific table view to show the entire text content. 
  
- The table view is necessary because from this the method can know the
+ The table view is necessary because from this the method can know the style. Also the accessory type needs to be set before calling this method because this reduces the available space.
+ @note This value is only useful for table views with variable row height.
  @param tableView The table view to determine the height for.
  */
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView;
+
+/**
+ Determines whether the cells built-in contentView is allowed to dictate the size available for text. If active then attributedTextContextView's height always matches the cell height.
+ 
+ Set this to `YES` for use in fixed row height table views, leave it `NO` for flexible row height table views.
+ */
+@property (nonatomic, assign) BOOL hasFixedRowHeight;
 
 /**
  The attributed text content view that the receiver uses to display the attributed text content.
