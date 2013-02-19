@@ -553,7 +553,9 @@
 		}
 	}
 	
-	// redo layout
+	// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
+	_textView.attributedTextContentView.layouter=nil;
+	
 	// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
 	[_textView.attributedTextContentView relayoutText];
 }

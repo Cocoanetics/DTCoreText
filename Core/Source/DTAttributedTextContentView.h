@@ -170,14 +170,12 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 - (void)relayoutText;
 
-
 /**
  The layouter to use for the receiver. Created by default.
  
  By default this is generated automatically for the current <attributedString>. You can also supply your own if you require special layouting behavior.
  */
 @property (atomic, strong) DTCoreTextLayouter *layouter;
-
 
 /**
  The layout frame to use for the receiver. Created by default.
@@ -186,15 +184,6 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 @property (atomic, strong) DTCoreTextLayoutFrame *layoutFrame;
 
-
-/**
- The dispatch queue that is used to serialize layouting actions
- */
-#if OS_OBJECT_USE_OBJC
-@property (nonatomic, strong) dispatch_queue_t layoutQueue;  // GCD objects use ARC
-#else
-@property (nonatomic, assign) dispatch_queue_t layoutQueue;  // GCD objects don't use ARC
-#endif
 
 /**
  @name Working with Custom Subviews
