@@ -40,7 +40,8 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 @synthesize delegate=_delegate;
 
 - (void)dealloc
-{	
+{
+	_delegate = nil; // to avoid late notification
 	[_connection cancel];
 	
 	if (_imageSource) CFRelease(_imageSource);
