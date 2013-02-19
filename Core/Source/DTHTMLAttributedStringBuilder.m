@@ -488,24 +488,26 @@
 			switch (sizeValue)
 			{
 				case 1:
-					_currentTag.fontDescriptor.pointSize = _textScale * 9.0f;
-					break;
-				case 2:
 					_currentTag.fontDescriptor.pointSize = _textScale * 10.0f;
 					break;
-				case 4:
-					_currentTag.fontDescriptor.pointSize = _textScale * 14.0f;
-					break;
-				case 5:
-					_currentTag.fontDescriptor.pointSize = _textScale * 18.0f;
-					break;
-				case 6:
-					_currentTag.fontDescriptor.pointSize = _textScale * 24.0f;
-					break;
-				case 7:
-					_currentTag.fontDescriptor.pointSize = _textScale * 37.0f;
+				case 2:
+					_currentTag.fontDescriptor.pointSize = _textScale * 13.0f;
 					break;
 				case 3:
+					_currentTag.fontDescriptor.pointSize = _textScale * 16.0f;
+					break;
+				case 4:
+					_currentTag.fontDescriptor.pointSize = _textScale * 18.0f;
+					break;
+				case 5:
+					_currentTag.fontDescriptor.pointSize = _textScale * 24.0f;
+					break;
+				case 6:
+					_currentTag.fontDescriptor.pointSize = _textScale * 32.0f;
+					break;
+				case 7:
+					_currentTag.fontDescriptor.pointSize = _textScale * 48.0f;
+					break;
 				default:
 					_currentTag.fontDescriptor.pointSize = _defaultFontDescriptor.pointSize;
 					break;

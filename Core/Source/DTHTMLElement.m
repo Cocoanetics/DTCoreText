@@ -507,31 +507,35 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isEqualToString:@"xx-small"])
 		{
-			_fontDescriptor.pointSize = 9.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 9.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"x-small"])
 		{
-			_fontDescriptor.pointSize = 10.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 10.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"small"])
 		{
-			_fontDescriptor.pointSize = 13.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 13.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"medium"])
 		{
-			_fontDescriptor.pointSize = 16.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 16.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"large"])
 		{
-			_fontDescriptor.pointSize = 22.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 18.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"x-large"])
 		{
-			_fontDescriptor.pointSize = 24.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 24.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"xx-large"])
 		{
-			_fontDescriptor.pointSize = 37.0f/1.3333f * _textScale;
+			_fontDescriptor.pointSize = 32.0f * _textScale;
+		}
+		else if ([fontSize isEqualToString:@"-webkit-xxx-large"])
+		{
+			_fontDescriptor.pointSize = 48.0f * _textScale;
 		}
 		else if ([fontSize isEqualToString:@"inherit"])
 		{
@@ -547,7 +551,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *color = [styles objectForKey:@"color"];
 	if (color)
 	{
-		self.textColor = [DTColor colorWithHTMLName:color];       
+		self.textColor = [DTColor colorWithHTMLName:color];
 	}
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];
