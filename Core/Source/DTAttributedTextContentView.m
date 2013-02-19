@@ -345,7 +345,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					{
 						UIView *newCustomLinkView = nil;
 						
-						if (_delegateFlags.delegateSupportsCustomViewsForLinks)
+						// make sure that the frame height is no less than the line height for hyperlinks
+						if (frameForSubview.size.height < oneLine.frame.size.height)
+						{
+							frameForSubview.origin.y = truncf(oneLine.frame.origin.y);
+							frameForSubview.size.height = ceilf(oneLine.frame.size.height);
+						}
+						
+						if (existingLinkView)
 						{
 							NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
 							
