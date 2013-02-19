@@ -146,13 +146,19 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 - (CGSize)suggestedFrameSizeToFitEntireStringConstraintedToWidth:(CGFloat)width; // obeys the edge insets
 
-
 /**
  The size of contents of the receiver. This is possibly used by auto-layout, but also for example if you want to get the size of the receiver necessary for a scroll view
  
  This method is defined as of iOS 6, but to support earlier OS versions
  */
 - (CGSize)intrinsicContentSize;
+
+/**
+ Whether the receiver calculates layout limited to the view bounds.
+ 
+ If set to `YES` then the layout process calculates the layoutFrame with open ended height. If set to ´NO` then the current bounds of the receiver determine the height.
+ */
+@property (nonatomic, assign) BOOL layoutFrameHeightIsConstrainedByBounds;
 
 
 /**

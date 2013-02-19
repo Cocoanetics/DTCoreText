@@ -27,6 +27,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 	NSMutableDictionary *customViewsForLinksIndex;
     
 	BOOL _isTiling;
+	BOOL _layoutFrameHeightIsConstrainedByBounds;
 	
 	DTCoreTextLayouter *_layouter;
 	dispatch_queue_t _layoutQueue;
@@ -94,7 +95,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// DTLinkButton set this property to NO and create a highlighted version of the attributed string
 	_shouldDrawLinks = YES;
 	
-	_flexibleHeight = YES;
+	_layoutFrameHeightIsConstrainedByBounds = NO; // we calculate the necessary height unemcumbered by bounds
 	_relayoutMask = DTAttributedTextContentViewRelayoutOnWidthChanged;
 	
 	// possibly already set in NIB
@@ -260,7 +261,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					frameForSubview.size.width = roundf(frameForSubview.size.width);
 					frameForSubview.size.height = roundf(frameForSubview.size.height);
 					
-					
 					if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
 					{
 						// is still outside even though the bounds of the line already intersect visible area
@@ -277,12 +277,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							
 							if (existingAttachmentView)
 							{
-								existingAttachmentView.hidden = NO;
-								existingAttachmentView.frame = frameForSubview;
+								dispatch_async(dispatch_get_main_queue(), ^{
+									existingAttachmentView.hidden = NO;
+									existingAttachmentView.frame = frameForSubview;
 								
-								existingAttachmentView.alpha = 1;
-								[existingAttachmentView setNeedsLayout];
-								[existingAttachmentView setNeedsDisplay];
+									existingAttachmentView.alpha = 1;
+								
+									[existingAttachmentView setNeedsLayout];
+									[existingAttachmentView setNeedsDisplay];
+								});
 								
 								linkURL = nil; // prevent adding link button on top of image view
 							}
@@ -322,7 +325,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							}
 						}
 					}
-					
 					
 					if (linkURL && (_delegateFlags.delegateSupportsCustomViewsForLinks || _delegateFlags.delegateSupportsGenericCustomViews))
 					{
@@ -449,8 +451,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			});
         }
       
-		[self setNeedsDisplayInRect:self.bounds];
-		[self setNeedsLayout];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsLayout];
+			[self setNeedsDisplayInRect:self.bounds];
+		});
     }
 }
 
@@ -540,14 +544,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		return CGRectZero;
 	}
 	
-	if (_flexibleHeight)
+	if (_layoutFrameHeightIsConstrainedByBounds)
+	{
+		if (rect.size.height<=0)
+		{
+			// cannot create layout frame with negative or zero height if flexible height is disabled
+			return CGRectZero;
+		}
+		
+		// already set height to bounds height
+	}
+	else
 	{
 		rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-	}
-	else if (rect.size.height<=0)
-	{
-		// cannot create layout frame with negative or zero height if flexible height is disabled
-		return CGRectZero;
 	}
 	
 	return rect;
@@ -578,8 +587,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	if (_attributedString != string)
 	{
-		// discard old layouter because that has the old string
-		self.layouter = nil;
+		// keep the layouter, update string
+		self.layouter.attributedString = string;
 		
 		_attributedString = [string copy];
 		
@@ -589,9 +598,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			// new layout invalidates all positions for custom views
 			[self removeAllCustomViews];
 			
-			// discard layout frame
-			self.layoutFrame = nil;
-		
 			// relayout only occurs if the view is visible
 			[self relayoutText];
 		}
@@ -724,14 +730,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					return;
 				}
 				
-				if (_flexibleHeight)
+				if (_layoutFrameHeightIsConstrainedByBounds)
+				{
+					if (rect.size.height<=0)
+					{
+						// cannot create layout frame with negative or zero height if flexible height is disabled
+						return;
+					}
+			
+					// height already set
+				}
+				else
 				{
 					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
-				}
-				else if (rect.size.height<=0)
-				{
-					// cannot create layout frame with negative or zero height if flexible height is disabled
-					return;
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
@@ -776,8 +787,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			
 			if (layoutFrame)
 			{
-				[self setNeedsLayout];
-				[self setNeedsDisplay];
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[self setNeedsLayout];
+					[self setNeedsDisplayInRect:self.bounds];
+				});
 			}
 			_layoutFrame = layoutFrame;
 		}
