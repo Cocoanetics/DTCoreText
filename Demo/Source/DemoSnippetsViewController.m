@@ -9,7 +9,13 @@
 #import "DemoSnippetsViewController.h"
 #import "DemoTextViewController.h"
 
+// identifier for cell reuse
+NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseIdentifier";
+
 @implementation DemoSnippetsViewController
+{
+	BOOL _useStaticRowHeight;
+}
 
 #pragma mark NSObject
 
@@ -29,6 +35,29 @@
 	// Load snippets from plist
 	NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Snippets" ofType:@"plist"];
 	_snippets = [[NSArray alloc] initWithContentsOfFile:plistPath];
+	
+	//_useStaticRowHeight = YES;
+	
+	/*
+	 if you enable static row height in this demo then the cell height is determined from the tableView.rowHeight. Cells can be reused in this mode.
+	 If you disable this then cells are prepared and cached to reused their internal layouter and layoutFrame. Reuse is not recommended since the cells are cached anyway.
+	 */
+	
+	if (_useStaticRowHeight)
+	{
+		// use a static row height
+		self.tableView.rowHeight = 60;
+	}
+	else
+	{
+		// establish a cache for prepared cells because heightForRow... and cellForRow... both need the same cell for an index path
+		cellCache = [[NSCache alloc] init];
+	}
+	
+	// on iOS 6 we can register the attributed cells for the identifier
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000
+	[self.tableView registerClass:[DTAttributedTextCell class] forCellReuseIdentifier:AttributedTextCellReuseIdentifier];
+#endif
 }
 
 
@@ -62,12 +91,6 @@
 
 - (DTAttributedTextCell *)tableView:(UITableView *)tableView preparedCellForIndexPath:(NSIndexPath *)indexPath
 {
-	static NSString *cellIdentifier = @"cellIdentifier";
-
-	if (!cellCache)
-	{
-		cellCache = [[NSCache alloc] init];
-	}
 	
 	// workaround for iOS 5 bug
 	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
@@ -77,14 +100,18 @@
 	if (!cell)
 	{
 		// reuse does not work for variable height
-		//cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+		cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:AttributedTextCellReuseIdentifier];
 	
+		// legacy, as of iOS 6 this always returns a cell
 		if (!cell)
 		{
-			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:cellIdentifier accessoryType:UITableViewCellAccessoryDisclosureIndicator];
+			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:AttributedTextCellReuseIdentifier];
 		}
 		
-		// cache it
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.hasFixedRowHeight = _useStaticRowHeight;
+		
+		// cache it, if there is a cache
 		[cellCache setObject:cell forKey:key];
 	}
 	
@@ -96,6 +123,11 @@
 // disable this method to get static height = better performance
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	if (_useStaticRowHeight)
+	{
+		return tableView.rowHeight;
+	}
+	
 	DTAttributedTextCell *cell = (DTAttributedTextCell *)[self tableView:tableView preparedCellForIndexPath:indexPath];
 
 	return [cell requiredRowHeightInTableView:tableView];
