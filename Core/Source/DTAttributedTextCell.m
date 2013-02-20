@@ -14,6 +14,8 @@
 {
 	DTAttributedTextContentView *_attributedTextContextView;
 	
+	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _textDelegate;
+	
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
 	
 	BOOL _hasFixedRowHeight;
@@ -29,9 +31,9 @@
     return self;
 }
 
-- (void)setNeedsLayout
+- (void)dealloc
 {
-	[super setNeedsLayout];
+	_textDelegate = nil;
 }
 
 - (void)layoutSubviews
@@ -151,8 +153,11 @@
 	{
 		// don't know size jetzt because there's no string in it
 		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:self.contentView.bounds];
+		
 		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 		_attributedTextContextView.layoutFrameHeightIsConstrainedByBounds = _hasFixedRowHeight;
+		_attributedTextContextView.delegate = _textDelegate;
+		
 		[self.contentView addSubview:_attributedTextContextView];
 	}
 	
@@ -169,7 +174,14 @@
 	}
 }
 
+- (void)setTextDelegate:(id)textDelegate
+{
+	_textDelegate = textDelegate;
+	_attributedTextContextView.delegate = _textDelegate;
+}
+
 @synthesize attributedTextContextView = _attributedTextContextView;
 @synthesize hasFixedRowHeight = _hasFixedRowHeight;
+@synthesize textDelegate = _textDelegate;
 
 @end
