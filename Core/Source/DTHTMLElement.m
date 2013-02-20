@@ -1018,15 +1018,20 @@ NSDictionary *_classesForNames = nil;
 			newBlock.backgroundColor = _backgroundColor;
 			_backgroundColor = nil;
 			
-			NSArray *newBlocks = [self.paragraphStyle.textBlocks mutableCopy];
+			NSMutableArray *blocks = [self.paragraphStyle.textBlocks mutableCopy];
 			
-			if (!newBlocks)
+			if (blocks)
 			{
-				// need an array, this is the first block
-				newBlocks = [NSArray arrayWithObject:newBlock];
+				// add new block to the array
+				[blocks addObject:newBlock];
+			}
+			else
+			{
+				// didn't have any blocks before, start new array
+				blocks = [NSArray arrayWithObject:newBlock];
 			}
 			
-			self.paragraphStyle.textBlocks = newBlocks;
+			self.paragraphStyle.textBlocks = blocks;
 		}
 	}
 }
