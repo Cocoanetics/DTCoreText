@@ -1,6 +1,6 @@
 //
 //  DTWebVideoView.m
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 8/5/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

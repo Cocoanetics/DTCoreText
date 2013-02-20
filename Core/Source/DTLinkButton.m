@@ -1,6 +1,6 @@
 //
 //  DTLinkButton.m
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 1/16/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

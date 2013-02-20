@@ -1,6 +1,6 @@
 //
 //  DTCSSListStyle.h
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 8/11/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  NSCharacterSet+HTML.m
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 1/15/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

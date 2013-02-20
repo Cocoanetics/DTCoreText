@@ -1,6 +1,6 @@
 //
 //  DTCoreTextParagraphStyle.m
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 4/14/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  NSAttributedStringRunDelegates.h
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver on 14.01.11.
 //  Copyright 2011 Drobnik.com. All rights reserved.

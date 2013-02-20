@@ -1,9 +1,9 @@
 //
 //  DTLazyImageView.m
-//  PagingTextScroller
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 5/20/11.
-//  Copyright 2011 . All rights reserved.
+//  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
 #import "DTLazyImageView.h"
