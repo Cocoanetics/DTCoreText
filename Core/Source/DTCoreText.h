@@ -50,6 +50,7 @@
 #import "DTWebVideoView.h"
 #import "NSAttributedStringRunDelegates.h"
 
+#import "DTAttributedLabel.h"
 #import "DTAttributedTextCell.h"
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
