@@ -148,6 +148,13 @@
  */
 @property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
 
+/**
+ Method to efficiently determine if the receiver is a horizontal rule.
+ 
+ Note: This is used to shortcut drawing of text lines and to allow a horizontal rule line have an "endlessly wide" width so that it gets picked up by [DTCoreTextLayoutFrame linesVisibleInRect:].
+ */
+- (BOOL)isHorizontalRule;
+
 
 /**
  @name Creating Variants
