@@ -866,44 +866,42 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	UIGraphicsPushContext(context);
 	
 	// text block handling
-	if (_textBlockHandler)
-	{
-		__block NSMutableSet *handledBlocks = [NSMutableSet set];
-		
-		// enumerate all text blocks in this range
-		[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
-													  usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
-														  for (DTTextBlock *oneBlock in blockArray)
-														  {
-															  // make sure we only handle it once
-															  if (![handledBlocks containsObject:oneBlock])
-															  {
-																  CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
-																  
-																  BOOL shouldDrawStandardBackground = YES;
-																  if (_textBlockHandler)
-																  {
-																	  _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
-																  }
-																  
-																  // draw standard background if necessary
-																  if (shouldDrawStandardBackground)
-																  {
-																	  if (oneBlock.backgroundColor)
-																	  {
-																		  CGColorRef color = [oneBlock.backgroundColor CGColor];
-																		  CGContextSetFillColorWithColor(context, color);
-																		  CGContextFillRect(context, frame);
-																	  }
-																  }
-																  
-																  [handledBlocks addObject:oneBlock];
-															  }
-														  }
-														  
-														  
-													  }];
-	}
+	__block NSMutableSet *handledBlocks = [NSMutableSet set];
+	
+	// enumerate all text blocks in this range
+	[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
+									   usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
+										   for (DTTextBlock *oneBlock in blockArray)
+										   {
+											   // make sure we only handle it once
+											   if (![handledBlocks containsObject:oneBlock])
+											   {
+												   CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
+												   
+												   BOOL shouldDrawStandardBackground = YES;
+												   if (_textBlockHandler)
+												   {
+													   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
+												   }
+												   
+												   // draw standard background if necessary
+												   if (shouldDrawStandardBackground)
+												   {
+													   if (oneBlock.backgroundColor)
+													   {
+														   CGColorRef color = [oneBlock.backgroundColor CGColor];
+														   CGContextSetFillColorWithColor(context, color);
+														   CGContextFillRect(context, frame);
+													   }
+												   }
+												   
+												   [handledBlocks addObject:oneBlock];
+											   }
+										   }
+										   
+										   
+									   }];
+
 	
 	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
