@@ -28,6 +28,11 @@
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
 
 /**
+ Decodes edge inset values from the CSS attribute string. This is used for margin andpadding which might have varying number of elements.
+ */
+- (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
+
+/**
  Parse CSS shadow styles, consisting of color, blur, and offset, out of this string. The input string must be comma delimited in the format: <length> <length> <length>? <color>? where the third length and the color are not required per CSS shadows. To calculate the sizes of the blur and offset pixelSizeOfCSSMeasureRelativeToCurrentTextSize is used. Used in DTHTMLElement.
  @param textSize In order to determine the shadow offset we need what text size it will be displayed at.
  @param color Used if no shadow attribute color is found.
