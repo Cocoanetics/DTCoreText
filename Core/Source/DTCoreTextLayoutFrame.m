@@ -895,6 +895,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 													   }
 												   }
 												   
+												   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+												   {
+													   CGContextSaveGState(context);
+													   
+													   // draw line bounds
+													   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
+													   CGContextSetLineWidth(context, 2);
+													   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
+													   
+													   CGContextRestoreGState(context);
+												   }
+												   
 												   [handledBlocks addObject:oneBlock];
 											   }
 										   }
