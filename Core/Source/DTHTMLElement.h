@@ -10,12 +10,11 @@
 @class DTCoreTextFontDescriptor;
 @class DTTextAttachment;
 @class DTCSSListStyle;
-@class DTColor;
-
 
 #import "DTCoreTextConstants.h"
 #import "DTHTMLParserNode.h"
 #import "DTTextAttachment.h"
+#import "DTCompatibility.h"
 
 @class DTHTMLElementBR;
 
@@ -71,6 +70,10 @@
 	NSDictionary *_styles;
 	
 	BOOL _didOutput;
+	
+	// margins/padding
+	DTEdgeInsets _margins;
+	DTEdgeInsets _padding;
 }
 
 /**
@@ -210,10 +213,18 @@
 @property (nonatomic, assign) CGSize size;
 
 /**
+ The value of the CSS margins. Margin support is incomplete.
+ */
+@property (nonatomic, assign) DTEdgeInsets margins;
+
+/** The value of the CSS padding. Padding are added to DTTextBlock instances for block-level elements.
+ */
+@property (nonatomic, assign) DTEdgeInsets padding;
+
+/**
  Specifies that whitespace contained in the receiver's text has been converted with Apple's algorithm.
  */
 @property (nonatomic, assign) BOOL containsAppleConvertedSpace;
-
 
 
 /**
