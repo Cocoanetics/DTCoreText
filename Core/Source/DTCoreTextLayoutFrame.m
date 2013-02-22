@@ -982,9 +982,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				continue;
 			}
 			
-			// -------------- Line-Out, Underline, Background-Color
-			BOOL lastRunInLine = (oneRun == [oneLine.glyphRuns lastObject]);
+			// don't draw background, strikout or underline for trailing white space
+			if ([oneRun isTrailingWhitespace])
+			{
+				continue;
+			}
 			
+			// -------------- Line-Out, Underline, Background-Color
 			BOOL drawStrikeOut = [[oneRun.attributes objectForKey:DTStrikeOutAttribute] boolValue];
 			BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
 			
@@ -1028,12 +1032,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					}	
 					default:
 						break;
-				}
-				
-				
-				if (lastRunInLine)
-				{
-					runStrokeBounds.size.width -= [oneLine trailingWhitespaceWidth];
 				}
 				
 				if (backgroundColor)
