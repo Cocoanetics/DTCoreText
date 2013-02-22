@@ -102,6 +102,13 @@
 @property (nonatomic, assign, readonly, getter=isHyperlink) BOOL hyperlink;
 
 /**
+ Returns `YES` if the receiver represents trailing whitespace in a line.
+ 
+ This can be used to avoid drawing of background color, strikeout or underline for empty trailing white space glyph runs.
+ */
+- (BOOL)isTrailingWhitespace;
+
+/**
  The ascent (height above the baseline) of the receiver
  */
 @property (nonatomic, readonly) CGFloat ascent;
