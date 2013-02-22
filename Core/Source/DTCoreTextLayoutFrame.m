@@ -1,6 +1,6 @@
 //
 //  DTCoreTextLayoutFrame.m
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 1/24/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
@@ -764,6 +764,56 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return frame;
 }
 
+// draws the HR represented by the layout line
+- (void)_drawHorizontalRuleFromLine:(DTCoreTextLayoutLine *)line inContext:(CGContextRef)context
+{
+	// HR has only a single glyph run with a \n, but that has all the attributes
+	DTCoreTextGlyphRun *oneRun = [line.glyphRuns lastObject];
+	
+	CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
+	
+	// can also be iOS 6 attribute
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+	if (!backgroundColor && ___useiOS6Attributes)
+	{
+		UIColor *uiColor = [oneRun.attributes objectForKey:NSBackgroundColorAttributeName];
+		backgroundColor = uiColor.CGColor;
+	}
+#endif
+	
+	NSDictionary *ruleStyle = [oneRun.attributes objectForKey:DTHorizontalRuleStyleAttribute];
+	
+	if (ruleStyle)
+	{
+		if (backgroundColor)
+		{
+			CGContextSetStrokeColorWithColor(context, backgroundColor);
+		}
+		else
+		{
+			CGContextSetGrayStrokeColor(context, 0, 1.0f);
+		}
+		
+		CGRect nrect = self.frame;
+		nrect.origin = line.frame.origin;
+		nrect.size.height = oneRun.frame.size.height;
+		nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
+		
+		DTTextBlock *textBlock = [[oneRun.attributes objectForKey:DTTextBlocksAttribute] lastObject];
+		
+		if (textBlock)
+		{
+			// apply horizontal padding
+			nrect.size.width = _frame.size.width - textBlock.padding.left - textBlock.padding.right;
+		}
+		
+		CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
+		CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
+		
+		CGContextStrokePath(context);
+	}
+}
+
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks
 {
 	CGRect rect = CGContextGetClipBoundingBox(context);
@@ -816,48 +866,64 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	UIGraphicsPushContext(context);
 	
 	// text block handling
-	if (_textBlockHandler)
-	{
-		__block NSMutableSet *handledBlocks = [NSMutableSet set];
-		
-		// enumerate all text blocks in this range
-		[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
-													  usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
-														  for (DTTextBlock *oneBlock in blockArray)
-														  {
-															  // make sure we only handle it once
-															  if (![handledBlocks containsObject:oneBlock])
-															  {
-																  CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
-																  
-																  BOOL shouldDrawStandardBackground = YES;
-																  if (_textBlockHandler)
-																  {
-																	  _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
-																  }
-																  
-																  // draw standard background if necessary
-																  if (shouldDrawStandardBackground)
-																  {
-																	  if (oneBlock.backgroundColor)
-																	  {
-																		  CGColorRef color = [oneBlock.backgroundColor CGColor];
-																		  CGContextSetFillColorWithColor(context, color);
-																		  CGContextFillRect(context, frame);
-																	  }
-																  }
-																  
-																  [handledBlocks addObject:oneBlock];
-															  }
-														  }
-														  
-														  
-													  }];
-	}
+	__block NSMutableSet *handledBlocks = [NSMutableSet set];
+	
+	// enumerate all text blocks in this range
+	[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
+									   usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
+										   for (DTTextBlock *oneBlock in blockArray)
+										   {
+											   // make sure we only handle it once
+											   if (![handledBlocks containsObject:oneBlock])
+											   {
+												   CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
+												   
+												   BOOL shouldDrawStandardBackground = YES;
+												   if (_textBlockHandler)
+												   {
+													   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
+												   }
+												   
+												   // draw standard background if necessary
+												   if (shouldDrawStandardBackground)
+												   {
+													   if (oneBlock.backgroundColor)
+													   {
+														   CGColorRef color = [oneBlock.backgroundColor CGColor];
+														   CGContextSetFillColorWithColor(context, color);
+														   CGContextFillRect(context, frame);
+													   }
+												   }
+												   
+												   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+												   {
+													   CGContextSaveGState(context);
+													   
+													   // draw line bounds
+													   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
+													   CGContextSetLineWidth(context, 2);
+													   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
+													   
+													   CGContextRestoreGState(context);
+												   }
+												   
+												   [handledBlocks addObject:oneBlock];
+											   }
+										   }
+										   
+										   
+									   }];
+
 	
 	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
+		if ([oneLine isHorizontalRule])
+		{
+			[self _drawHorizontalRuleFromLine:oneLine inContext:context];
+			continue;
+		}
+		
 		if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 		{
 			// draw line bounds
@@ -878,7 +944,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			{
 				continue;
 			}
-
 			
 			if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 			{
@@ -910,40 +975,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				backgroundColor = uiColor.CGColor;
 			}
 #endif
-			
-			NSDictionary *ruleStyle = [oneRun.attributes objectForKey:DTHorizontalRuleStyleAttribute];
-			
-			if (ruleStyle)
-			{
-				if (backgroundColor)
-				{
-					CGContextSetStrokeColorWithColor(context, backgroundColor);
-				}
-				else
-				{
-					CGContextSetGrayStrokeColor(context, 0, 1.0f);
-				}
-				
-				CGRect nrect = self.frame;
-				nrect.origin = oneLine.frame.origin;
-				nrect.size.height = oneRun.frame.size.height;
-				nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
-				
-				DTTextBlock *textBlock = [[oneRun.attributes objectForKey:DTTextBlocksAttribute] lastObject];
-				
-				if (textBlock)
-				{
-					// apply horizontal padding
-					nrect.size.width = _frame.size.width - textBlock.padding.left - textBlock.padding.right;
-				}
-				
-				CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
-				CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
-				
-				CGContextStrokePath(context);
-				
-				continue;
-			}
 			
 			// don't draw decorations on images
 			if (oneRun.attachment)

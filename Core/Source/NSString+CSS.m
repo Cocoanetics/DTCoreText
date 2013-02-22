@@ -138,6 +138,50 @@
 	return value;
 }
 
+#pragma mark - Margins / Padding
+
+- (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
+{
+		DTEdgeInsets edgeInsets = {0,0,0,0};
+		
+		if ([self length])
+		{
+			// maybe it's using the short style
+			NSArray *parts = [self componentsSeparatedByString:@" "];
+			
+			if ([parts count] == 4)
+			{
+				edgeInsets.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.left = [[parts objectAtIndex:3] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+			}
+			else if ([parts count] == 3)
+			{
+				edgeInsets.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.bottom = [[parts objectAtIndex:2] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.left = edgeInsets.right;
+			}
+			else if ([parts count] == 2)
+			{
+				edgeInsets.top = [[parts objectAtIndex:0] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.right = [[parts objectAtIndex:1] pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets.bottom = edgeInsets.top;
+				edgeInsets.left = edgeInsets.right;
+			}
+			else
+			{
+				CGFloat paddingAmount = [self pixelSizeOfCSSMeasureRelativeToCurrentTextSize:textSize textScale:textScale];
+				edgeInsets = DTEdgeInsetsMake(paddingAmount, paddingAmount, paddingAmount, paddingAmount);
+			}
+		}
+		
+		return edgeInsets;
+}
+
+#pragma mark - CSS Shadows
+
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(DTColor *)color
 {
 	NSScanner *scanner = [NSScanner scannerWithString:self];

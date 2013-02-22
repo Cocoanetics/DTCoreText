@@ -1,12 +1,12 @@
 //
 //  DTAttributedTextCell.h
-//  CoreTextExtensions
+//  DTCoreText
 //
 //  Created by Oliver Drobnik on 8/4/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@class DTAttributedTextContentView;
+#import "DTAttributedTextContentView.h"
 
 /**
  This class represents a tableview cell that contains an attributed text as its content.
@@ -33,6 +33,10 @@
  */
 @property (nonatomic, strong) NSAttributedString *attributedString;
 
+/**
+ A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
+ */
+@property (nonatomic, unsafe_unretained) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
 /**
  This method allows to set HTML text directly as content of the receiver. 
