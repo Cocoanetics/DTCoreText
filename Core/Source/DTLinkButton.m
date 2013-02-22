@@ -129,6 +129,11 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	
 	for (DTCoreTextGlyphRun *glyphRunToDraw in lineToDraw.glyphRuns)
 	{
+		if ([glyphRunToDraw isTrailingWhitespace])
+		{
+			continue;
+		}
+		
 		CGContextSaveGState(context);
 		
 		NSDictionary *runAttributes = glyphRunToDraw.attributes;
@@ -175,7 +180,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 			}
 			
 			CGRect runStrokeBounds = UIEdgeInsetsInsetRect(self.bounds, self.contentEdgeInsets);
-			runStrokeBounds.origin.x = glyphRunToDraw.frame.origin.x;
+			runStrokeBounds.origin.x = glyphRunToDraw.frame.origin.x + self.contentEdgeInsets.left;
 			runStrokeBounds.size.width = glyphRunToDraw.frame.size.width;
 			
 			NSInteger superscriptStyle = [[glyphRunToDraw.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];

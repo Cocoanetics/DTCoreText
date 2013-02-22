@@ -46,6 +46,7 @@
 	CGFloat _width;
 	
 	BOOL _writingDirectionIsRightToLeft;
+	BOOL _isTrailingWhitespace;
 	
 	NSInteger _numberOfGlyphs;
 	
@@ -63,6 +64,7 @@
 	BOOL _didCheckForHyperlinkInAttributes;
 	BOOL _didCalculateMetrics;
 	BOOL _didGetWritingDirection;
+	BOOL _didDetermineTrailingWhitespace;
 }
 
 @synthesize runLock;
@@ -222,6 +224,31 @@
 		_descent = 0;
 		_ascent = self.attachment.displaySize.height;
 	}
+}
+
+- (BOOL)isTrailingWhitespace
+{
+	if (_didDetermineTrailingWhitespace)
+	{
+		return _isTrailingWhitespace;
+	}
+	
+	if (self == [[_line glyphRuns] lastObject])
+	{
+		if (!_didCalculateMetrics)
+		{
+			[self calculateMetrics];
+		}
+
+		// this is trailing whitespace if it matches the lines's trailing whitespace
+		if (_line.trailingWhitespaceWidth >= _width)
+		{
+			_isTrailingWhitespace = YES;
+		}
+	}
+	
+	_didDetermineTrailingWhitespace = YES;
+	return _isTrailingWhitespace;
 }
 
 #pragma mark Properites
