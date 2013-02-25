@@ -9,10 +9,30 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTTextBlock.h"
 #import "DTCSSListStyle.h"
+
+#if !TARGET_OS_IPHONE
 #import <CommonCrypto/CommonDigest.h>
+#endif
 
 // global cache for returning previously created immutable paragraph styles
 static NSCache *_CTParagraphStyleCache = nil;
+
+// a struct that takes on all sub-values, used for fast hash
+typedef struct {
+	CGFloat firstLineHeadIndent;
+	CGFloat defaultTabInterval;
+	CGFloat paragraphSpacingBefore;
+	CGFloat paragraphSpacing;
+	CGFloat headIndent;
+	CGFloat tailIndent;
+	CGFloat listIndent;
+	CGFloat lineHeightMultiple;
+	CGFloat minimumLineHeight;
+	CGFloat maximumLineHeight;
+	NSInteger alignment; // make it full width, origin is uint8
+	NSInteger baseWritingDirection; // make it full width, origin is int8
+	NSUInteger tabsBlocksListsHash;
+} allvalues_t;
 
 @implementation DTCoreTextParagraphStyle
 {
@@ -176,7 +196,6 @@ static NSCache *_CTParagraphStyleCache = nil;
 // creates a fast hash for the properties
 - (id <NSCopying>)_cacheKey
 {
-	
 	NSMutableString *tabsBlocksListsDescription = [NSMutableString string];
 	
 	for (id tab in _tabStops)
@@ -191,51 +210,51 @@ static NSCache *_CTParagraphStyleCache = nil;
 	
 	for (DTTextBlock *textBlock in _textBlocks)
 	{
-		[tabsBlocksListsDescription appendFormat:@"-block:%x", [textBlock hash]];
+		[tabsBlocksListsDescription appendFormat:@"-block:%lx", (unsigned long)[textBlock hash]];
 	}
 	
 	for (DTCSSListStyle *listStyle in _textLists)
 	{
-		[tabsBlocksListsDescription appendFormat:@"-list:%x", [listStyle hash]];
+		[tabsBlocksListsDescription appendFormat:@"-list:%lx", (unsigned long)[listStyle hash]];
 	}
 	
-	// a struct that takes on all sub-values
-	struct  {
-		CGFloat firstLineHeadIndent;
-		CGFloat defaultTabInterval;
-		CGFloat paragraphSpacingBefore;
-		CGFloat paragraphSpacing;
-		CGFloat headIndent;
-		CGFloat tailIndent;
-		CGFloat listIndent;
-		CGFloat lineHeightMultiple;
-		CGFloat minimumLineHeight;
-		CGFloat maximumLineHeight;
-		NSUInteger tabsBlocksListsHash;
-	} allvalues;
+#if TARGET_OS_IPHONE
+	// on iOS we use NSData's hashing function because we have less than 80 bytes (48)
+	allvalues_t *allvalues = malloc(sizeof(allvalues_t)); // will not be freed
+#else
+	// on MAC this struct is 96 bytes, so we use CommonCrypto's MD5 to reduce from > 80 bytes to less
+	allvalues_t allvalues_stack; // create tmp variable on stack 
+	allvalues_t *allvalues = &allvalues_stack; // pointer so that we can use the arrow operator
+#endif
 	
-	// pack all values in the struct
-	allvalues.firstLineHeadIndent = _firstLineHeadIndent;
-	allvalues.defaultTabInterval = _defaultTabInterval;
-	allvalues.paragraphSpacingBefore = _paragraphSpacingBefore;
-	allvalues.paragraphSpacing = _paragraphSpacing;
-	allvalues.headIndent = _headIndent;
-	allvalues.tailIndent = _tailIndent;
-	allvalues.listIndent = _listIndent;
-	allvalues.lineHeightMultiple = _lineHeightMultiple;
-	allvalues.minimumLineHeight = _minimumLineHeight;
-	allvalues.maximumLineHeight = _maximumLineHeight;
-	allvalues.tabsBlocksListsHash = [tabsBlocksListsDescription hash];
-	
-	// create md5
-	void *cStr = &allvalues;
-	
-	void *digest = malloc(CC_MD5_DIGEST_LENGTH);
-	CC_MD5( cStr, (CC_LONG)sizeof(allvalues), digest);
-	
-	return [NSData dataWithBytesNoCopy:digest length:sizeof(digest) freeWhenDone:YES];
-}
+	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0, nil};
 
+	// pack all values in the struct
+	allvalues->firstLineHeadIndent = _firstLineHeadIndent;
+	allvalues->defaultTabInterval = _defaultTabInterval;
+	allvalues->paragraphSpacingBefore = _paragraphSpacingBefore;
+	allvalues->paragraphSpacing = _paragraphSpacing;
+	allvalues->headIndent = _headIndent;
+	allvalues->tailIndent = _tailIndent;
+	allvalues->listIndent = _listIndent;
+	allvalues->lineHeightMultiple = _lineHeightMultiple;
+	allvalues->minimumLineHeight = _minimumLineHeight;
+	allvalues->maximumLineHeight = _maximumLineHeight;
+	allvalues->baseWritingDirection = _baseWritingDirection;
+	allvalues->alignment = _alignment;
+	allvalues->tabsBlocksListsHash = [tabsBlocksListsDescription hash];
+
+#if TARGET_OS_IPHONE
+	// wrap it in NSData
+	return [NSData dataWithBytesNoCopy:allvalues length:sizeof(allvalues_t) freeWhenDone:YES];
+#else
+	//	Alternate Implementation using MD5
+	void *digest = malloc(CC_MD5_DIGEST_LENGTH); // will not be freed
+	CC_MD5(allvalues, (CC_LONG)sizeof(allvalues_t), digest);
+	
+	return [NSData dataWithBytesNoCopy:digest length:CC_MD5_DIGEST_LENGTH freeWhenDone:YES];
+#endif
+}
 
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
@@ -500,7 +519,6 @@ static NSCache *_CTParagraphStyleCache = nil;
 	if (_paragraphSpacingBefore != paragraphSpacingBefore)
 	{
 		_paragraphSpacingBefore = paragraphSpacingBefore;
-		_cacheKey = nil; // modified
 	}
 }
 
