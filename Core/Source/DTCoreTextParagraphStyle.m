@@ -391,7 +391,8 @@ static NSCache *_CTParagraphStyleCache = nil;
 	// Spacing at the right
 	if (_tailIndent!=0.0f)
 	{
-		NSNumber *number = [NSNumber numberWithFloat:_tailIndent];
+		// tail indent is negative if from trailing margin
+		NSNumber *number = [NSNumber numberWithFloat:-_tailIndent];
 		[retString appendFormat:@"margin-right:%@px;", number];
 	}
 
