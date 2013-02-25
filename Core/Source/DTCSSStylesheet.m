@@ -265,6 +265,142 @@ extern unsigned int default_css_len;
 			[styles setObject:fontFamily forKey:@"font-family"];
 		}
 	}
+	
+	shortHand = [styles objectForKey:@"margin"];
+	
+	if (shortHand)
+	{
+		NSArray *parts = [shortHand componentsSeparatedByString:@" "];
+		
+		NSString *topMargin;
+		NSString *rightMargin;
+		NSString *bottomMargin;
+		NSString *leftMargin;
+		
+		if ([parts count] == 4)
+		{
+			topMargin = [parts objectAtIndex:0];
+			rightMargin = [parts objectAtIndex:1];
+			bottomMargin = [parts objectAtIndex:2];
+			leftMargin = [parts objectAtIndex:3];
+		}
+		else if ([parts count] == 3)
+		{
+			topMargin = [parts objectAtIndex:0];
+			rightMargin = [parts objectAtIndex:1];
+			bottomMargin = [parts objectAtIndex:2];
+			leftMargin = [parts objectAtIndex:1];
+		}
+		else if ([parts count] == 2)
+		{
+			topMargin = [parts objectAtIndex:0];
+			rightMargin = [parts objectAtIndex:1];
+			bottomMargin = [parts objectAtIndex:0];
+			leftMargin = [parts objectAtIndex:1];
+		}
+		else
+		{
+			NSString *onlyValue = [parts objectAtIndex:0];
+			
+			topMargin = onlyValue;
+			rightMargin = onlyValue;
+			bottomMargin = onlyValue;
+			leftMargin = onlyValue;
+		}
+		
+		// only apply the ones where there is no previous direct setting
+		
+		if (![styles objectForKey:@"margin-top"])
+		{
+			[styles setObject:topMargin forKey:@"margin-top"];
+		}
+		
+		if (![styles objectForKey:@"margin-right"])
+		{
+			[styles setObject:rightMargin forKey:@"margin-right"];
+		}
+		
+		if (![styles objectForKey:@"margin-bottom"])
+		{
+			[styles setObject:bottomMargin forKey:@"margin-bottom"];
+		}
+		
+		if (![styles objectForKey:@"margin-left"])
+		{
+			[styles setObject:leftMargin forKey:@"margin-left"];
+		}
+		
+		// remove the shorthand
+		[styles removeObjectForKey:@"margin"];
+	}
+	
+	shortHand = [styles objectForKey:@"padding"];
+	
+	if (shortHand)
+	{
+		NSArray *parts = [shortHand componentsSeparatedByString:@" "];
+		
+		NSString *topPadding;
+		NSString *rightPadding;
+		NSString *bottomPadding;
+		NSString *leftPadding;
+		
+		if ([parts count] == 4)
+		{
+			topPadding = [parts objectAtIndex:0];
+			rightPadding = [parts objectAtIndex:1];
+			bottomPadding = [parts objectAtIndex:2];
+			leftPadding = [parts objectAtIndex:3];
+		}
+		else if ([parts count] == 3)
+		{
+			topPadding = [parts objectAtIndex:0];
+			rightPadding = [parts objectAtIndex:1];
+			bottomPadding = [parts objectAtIndex:2];
+			leftPadding = [parts objectAtIndex:1];
+		}
+		else if ([parts count] == 2)
+		{
+			topPadding = [parts objectAtIndex:0];
+			rightPadding = [parts objectAtIndex:1];
+			bottomPadding = [parts objectAtIndex:0];
+			leftPadding = [parts objectAtIndex:1];
+		}
+		else
+		{
+			NSString *onlyValue = [parts objectAtIndex:0];
+			
+			topPadding = onlyValue;
+			rightPadding = onlyValue;
+			bottomPadding = onlyValue;
+			leftPadding = onlyValue;
+		}
+
+		// only apply the ones where there is no previous direct setting
+		
+		if (![styles objectForKey:@"padding-top"])
+		{
+			[styles setObject:topPadding forKey:@"padding-top"];
+		}
+		
+		if (![styles objectForKey:@"padding-right"])
+		{
+			[styles setObject:rightPadding forKey:@"padding-right"];
+		}
+
+		if (![styles objectForKey:@"padding-bottom"])
+		{
+			[styles setObject:bottomPadding forKey:@"padding-bottom"];
+		}
+		
+		if (![styles objectForKey:@"padding-left"])
+		{
+			[styles setObject:leftPadding forKey:@"padding-left"];
+		}
+		
+		// remove the shorthand
+		[styles removeObjectForKey:@"padding"];
+	}
 }
 
 - (void)_addStyleRule:(NSString *)rule withSelector:(NSString*)selectors
@@ -493,7 +629,7 @@ extern unsigned int default_css_len;
 	NSString *idRule = [NSString stringWithFormat:@"#%@", [element.attributes objectForKey:@"id"]];
 	NSDictionary *byID = [_styles objectForKey:idRule];
 	
-	if (byID) 
+	if (byID)
 	{
 		[tmpDict addEntriesFromDictionary:byID];
 	}
