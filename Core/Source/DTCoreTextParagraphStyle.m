@@ -7,6 +7,11 @@
 //
 
 #import "DTCoreTextParagraphStyle.h"
+#import "DTTextBlock.h"
+#import "DTCSSListStyle.h"
+
+// global cache for returning previously created immutable paragraph styles
+static NSCache *_CTParagraphStyleCache = nil;
 
 @implementation DTCoreTextParagraphStyle
 {
@@ -25,6 +30,11 @@
 	CTWritingDirection _baseWritingDirection;
 	
 	NSMutableArray *_tabStops;
+}
+
++ (void)initialize
+{
+	_CTParagraphStyleCache = [[NSCache alloc] init];
 }
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle
@@ -162,8 +172,45 @@
 	return self;
 }
 
+- (NSString *)_cacheKey
+{
+	NSMutableString *key = [NSMutableString stringWithFormat:@"%d-%f-%f-%f-%f-%f-%f-%d-%f-%f-%f", _alignment, _firstLineHeadIndent, _defaultTabInterval, _paragraphSpacing, _paragraphSpacingBefore, _headIndent, _tailIndent, _baseWritingDirection, _lineHeightMultiple, _minimumLineHeight, _maximumLineHeight];
+	
+	for (id tab in _tabStops)
+	{
+		CTTextTabRef tabStop = (__bridge CTTextTabRef)tab;
+		
+		CTTextAlignment alignment = CTTextTabGetAlignment(tabStop);
+		double location = CTTextTabGetLocation(tabStop);
+		
+		[key appendFormat:@"-tab:%d-%f", alignment, location];
+	}
+	
+	for (DTTextBlock *textBlock in _textBlocks)
+	{
+		[key appendFormat:@"-block:%x", [textBlock hash]];
+	}
+
+	for (DTCSSListStyle *listStyle in _textLists)
+	{
+		[key appendFormat:@"-list:%x", [listStyle hash]];
+	}
+	
+	return key;
+}
+
+
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
+	NSString *cacheKey = [self _cacheKey];
+	
+	CTParagraphStyleRef cachedParagraphStyle = CFBridgingRetain([_CTParagraphStyleCache objectForKey:cacheKey]);
+	
+	if (cachedParagraphStyle)
+	{
+		return cachedParagraphStyle; // +1 reference
+	}
+	
 	// need to multiple paragraph spacing with line height multiplier
 	float tmpParagraphSpacing = _paragraphSpacing;
 	float tmpParagraphSpacingBefore = _paragraphSpacingBefore;
@@ -199,6 +246,9 @@
 	
 	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 12);
 	if (stops) CFRelease(stops);
+
+	// cache it for next time
+	[_CTParagraphStyleCache setObject:(__bridge id)ret forKey:cacheKey];
 	
 	return ret;
 }
