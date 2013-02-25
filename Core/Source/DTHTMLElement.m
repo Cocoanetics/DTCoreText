@@ -1042,7 +1042,8 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.headIndent += _margins.left;
 			self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 			
-			self.paragraphStyle.tailIndent += _margins.right;
+			// tailIndent from right side is negative
+			self.paragraphStyle.tailIndent -= _margins.right;
 		}
 		
 		if (needsTextBlock)
