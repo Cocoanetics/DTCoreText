@@ -9,6 +9,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTTextBlock.h"
 #import "DTCSSListStyle.h"
+#import <CommonCrypto/CommonDigest.h>
 
 // global cache for returning previously created immutable paragraph styles
 static NSCache *_CTParagraphStyleCache = nil;
@@ -172,9 +173,11 @@ static NSCache *_CTParagraphStyleCache = nil;
 	return self;
 }
 
-- (NSString *)_cacheKey
+// creates a fast hash for the properties
+- (id <NSCopying>)_cacheKey
 {
-	NSMutableString *key = [NSMutableString stringWithFormat:@"%d-%f-%f-%f-%f-%f-%f-%d-%f-%f-%f", _alignment, _firstLineHeadIndent, _defaultTabInterval, _paragraphSpacing, _paragraphSpacingBefore, _headIndent, _tailIndent, _baseWritingDirection, _lineHeightMultiple, _minimumLineHeight, _maximumLineHeight];
+	
+	NSMutableString *tabsBlocksListsDescription = [NSMutableString string];
 	
 	for (id tab in _tabStops)
 	{
@@ -183,26 +186,60 @@ static NSCache *_CTParagraphStyleCache = nil;
 		CTTextAlignment alignment = CTTextTabGetAlignment(tabStop);
 		double location = CTTextTabGetLocation(tabStop);
 		
-		[key appendFormat:@"-tab:%d-%f", alignment, location];
+		[tabsBlocksListsDescription appendFormat:@"-tab:%d-%f", alignment, location];
 	}
 	
 	for (DTTextBlock *textBlock in _textBlocks)
 	{
-		[key appendFormat:@"-block:%x", [textBlock hash]];
-	}
-
-	for (DTCSSListStyle *listStyle in _textLists)
-	{
-		[key appendFormat:@"-list:%x", [listStyle hash]];
+		[tabsBlocksListsDescription appendFormat:@"-block:%x", [textBlock hash]];
 	}
 	
-	return key;
+	for (DTCSSListStyle *listStyle in _textLists)
+	{
+		[tabsBlocksListsDescription appendFormat:@"-list:%x", [listStyle hash]];
+	}
+	
+	// a struct that takes on all sub-values
+	struct  {
+		CGFloat firstLineHeadIndent;
+		CGFloat defaultTabInterval;
+		CGFloat paragraphSpacingBefore;
+		CGFloat paragraphSpacing;
+		CGFloat headIndent;
+		CGFloat tailIndent;
+		CGFloat listIndent;
+		CGFloat lineHeightMultiple;
+		CGFloat minimumLineHeight;
+		CGFloat maximumLineHeight;
+		NSUInteger tabsBlocksListsHash;
+	} allvalues;
+	
+	// pack all values in the struct
+	allvalues.firstLineHeadIndent = _firstLineHeadIndent;
+	allvalues.defaultTabInterval = _defaultTabInterval;
+	allvalues.paragraphSpacingBefore = _paragraphSpacingBefore;
+	allvalues.paragraphSpacing = _paragraphSpacing;
+	allvalues.headIndent = _headIndent;
+	allvalues.tailIndent = _tailIndent;
+	allvalues.listIndent = _listIndent;
+	allvalues.lineHeightMultiple = _lineHeightMultiple;
+	allvalues.minimumLineHeight = _minimumLineHeight;
+	allvalues.maximumLineHeight = _maximumLineHeight;
+	allvalues.tabsBlocksListsHash = [tabsBlocksListsDescription hash];
+	
+	// create md5
+	void *cStr = &allvalues;
+	
+	void *digest = malloc(CC_MD5_DIGEST_LENGTH);
+	CC_MD5( cStr, (CC_LONG)sizeof(allvalues), digest);
+	
+	return [NSData dataWithBytesNoCopy:digest length:sizeof(digest) freeWhenDone:YES];
 }
 
 
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
-	NSString *cacheKey = [self _cacheKey];
+	id cacheKey = [self _cacheKey];
 	
 	CTParagraphStyleRef cachedParagraphStyle = CFBridgingRetain([_CTParagraphStyleCache objectForKey:cacheKey]);
 	
@@ -442,10 +479,116 @@ static NSCache *_CTParagraphStyleCache = nil;
 	}
 }
 
+- (void)setFirstLineHeadIndent:(CGFloat)firstLineHeadIndent
+{
+	if (_firstLineHeadIndent != firstLineHeadIndent)
+	{
+		_firstLineHeadIndent = firstLineHeadIndent;
+	}
+}
+
+- (void)setDefaultTabInterval:(CGFloat)defaultTabInterval
+{
+	if (_defaultTabInterval != defaultTabInterval)
+	{
+		_defaultTabInterval = defaultTabInterval;
+	}
+}
+
+- (void)setParagraphSpacingBefore:(CGFloat)paragraphSpacingBefore
+{
+	if (_paragraphSpacingBefore != paragraphSpacingBefore)
+	{
+		_paragraphSpacingBefore = paragraphSpacingBefore;
+		_cacheKey = nil; // modified
+	}
+}
+
+- (void)setParagraphSpacing:(CGFloat)paragraphSpacing
+{
+	if (_paragraphSpacing != paragraphSpacing)
+	{
+		_paragraphSpacing = paragraphSpacing;
+	}
+}
+
+- (void)setLineHeightMultiple:(CGFloat)lineHeightMultiple
+{
+	if (_lineHeightMultiple != lineHeightMultiple)
+	{
+		_lineHeightMultiple = lineHeightMultiple;
+	}
+}
+
+- (void)setMinimumLineHeight:(CGFloat)minimumLineHeight
+{
+	if (_minimumLineHeight != minimumLineHeight)
+	{
+		_minimumLineHeight = minimumLineHeight;
+	}
+}
+
+- (void)setMaximumLineHeight:(CGFloat)maximumLineHeight
+{
+	if (_maximumLineHeight != maximumLineHeight)
+	{
+		_maximumLineHeight = maximumLineHeight;
+	}
+}
+
+- (void)setHeadIndent:(CGFloat)headIndent
+{
+	if (_headIndent != headIndent)
+	{
+		_headIndent = headIndent;
+	}
+}
+
+- (void)setTailIndent:(CGFloat)tailIndent
+{
+	if (_tailIndent != tailIndent)
+	{
+		_tailIndent = tailIndent;
+	}
+}
+
+- (void)setAlignment:(CTTextAlignment)alignment
+{
+	if (_alignment != alignment)
+	{
+		_alignment = alignment;
+	}
+}
+
+- (void)setTextLists:(NSArray *)textLists
+{
+	if (_textLists != textLists)
+	{
+		_textLists = [textLists copy];
+	}
+}
+
+- (void)setTextBlocks:(NSArray *)textBlocks
+{
+	if (_textBlocks != textBlocks)
+	{
+		_textBlocks = [textBlocks copy];
+	}
+}
+
+- (void)setBaseWritingDirection:(CTWritingDirection)baseWritingDirection
+{
+	if (_baseWritingDirection != baseWritingDirection)
+	{
+		_baseWritingDirection = baseWritingDirection;
+	}
+}
+
 @synthesize firstLineHeadIndent = _firstLineHeadIndent;
 @synthesize defaultTabInterval = _defaultTabInterval;
 @synthesize paragraphSpacingBefore = _paragraphSpacingBefore;
 @synthesize paragraphSpacing = _paragraphSpacing;
+
 @synthesize lineHeightMultiple = _lineHeightMultiple;
 @synthesize minimumLineHeight = _minimumLineHeight;
 @synthesize maximumLineHeight = _maximumLineHeight;
