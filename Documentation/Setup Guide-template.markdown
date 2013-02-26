@@ -34,7 +34,7 @@ This always gets the latest version of the pod spec from the global repository. 
 
 Cocoapods works by copying all source files into an Xcode project that compiles into a static library. It also automatically sets up all header search path and dependencies.
 
-Once mild disadvantage of using Cocoapods is that you cannot easily make changes and submit them as pull requests. But generally you should not need to modify DTCoreText code anyway.
+One mild disadvantage of using Cocoapods is that you cannot easily make changes and submit them as pull requests. But generally you should not need to modify DTCoreText code anyway.
 
 <a id="Subproject"></a>
 Integrating via Sub-Project
