@@ -739,9 +739,16 @@
 		A704C93913901FDB0045CFC6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A7081EA11503645F002987F1 /* DTTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextBlock.h; sourceTree = "<group>"; };
 		A7081EA215036460002987F1 /* DTTextBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextBlock.m; sourceTree = "<group>"; };
-		A70B4C9C1486525200873A4A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		A70B4C9D1486525200873A4A /* Readme.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.markdown; sourceTree = "<group>"; };
+		A70B4C9C1486525200873A4A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		A70B4C9D1486525200873A4A /* Readme.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.markdown; path = ../Readme.markdown; sourceTree = "<group>"; };
 		A70B4C9E1486558200873A4A /* DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = DTCoreText.h; path = Core/Source/DTCoreText.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		A70D37CF16DCE92C003F21C9 /* DTCoreText_Reference.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Reference.png; sourceTree = "<group>"; };
+		A70D37D016DCE92C003F21C9 /* Setup Guide-template.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Setup Guide-template.markdown"; sourceTree = "<group>"; };
+		A70D37DA16DCEDED003F21C9 /* DTCoreText_Search_Paths.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Search_Paths.png; sourceTree = "<group>"; };
+		A70D37DD16DCF043003F21C9 /* DTCoreText_Linker_Flags.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Linker_Flags.png; sourceTree = "<group>"; };
+		A70D37DF16DCFF07003F21C9 /* Known Issues-template.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Known Issues-template.markdown"; sourceTree = "<group>"; };
+		A70D37E016DD03EA003F21C9 /* AppledocSettings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = AppledocSettings.plist; sourceTree = "<group>"; };
+		A70D37E116DD0574003F21C9 /* DTCoreText_Demo_App.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Demo_App.png; sourceTree = "<group>"; };
 		A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDictationPlaceholderTextAttachment.h; sourceTree = "<group>"; };
 		A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTDictationPlaceholderTextAttachment.m; sourceTree = "<group>"; };
 		A70E62DE16C24DDF009B47BF /* DTDictationPlaceholderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDictationPlaceholderView.h; sourceTree = "<group>"; };
@@ -761,7 +768,7 @@
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
-		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = DTCoreText.podspec; sourceTree = "<group>"; };
+		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; };
 		A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextParagraphStyleTest.h; sourceTree = "<group>"; };
 		A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextParagraphStyleTest.m; sourceTree = "<group>"; };
 		A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -1044,7 +1051,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				A70B4C9B1486523400873A4A /* Documentation */,
+				A70D37CE16DCE92C003F21C9 /* Documentation */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -1113,14 +1120,29 @@
 			name = Layouting;
 			sourceTree = "<group>";
 		};
-		A70B4C9B1486523400873A4A /* Documentation */ = {
+		A70D37CE16DCE92C003F21C9 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				A70D37DE16DCFD89003F21C9 /* Guides */,
 				A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */,
 				A70B4C9C1486525200873A4A /* LICENSE */,
 				A70B4C9D1486525200873A4A /* Readme.markdown */,
 			);
-			name = Documentation;
+			path = Documentation;
+			sourceTree = "<group>";
+		};
+		A70D37DE16DCFD89003F21C9 /* Guides */ = {
+			isa = PBXGroup;
+			children = (
+				A70D37E116DD0574003F21C9 /* DTCoreText_Demo_App.png */,
+				A70D37DD16DCF043003F21C9 /* DTCoreText_Linker_Flags.png */,
+				A70D37DA16DCEDED003F21C9 /* DTCoreText_Search_Paths.png */,
+				A70D37CF16DCE92C003F21C9 /* DTCoreText_Reference.png */,
+				A70D37D016DCE92C003F21C9 /* Setup Guide-template.markdown */,
+				A70D37DF16DCFF07003F21C9 /* Known Issues-template.markdown */,
+				A70D37E016DD03EA003F21C9 /* AppledocSettings.plist */,
+			);
+			name = Guides;
 			sourceTree = "<group>";
 		};
 		A70E62CC16C248C2009B47BF /* Editing */ = {
@@ -2025,7 +2047,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText.atom\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}/Core/Source\"";
+			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText.atom\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/Readme.markdown\" \\\n--include \"${PROJECT_DIR}/Documentation\" \\\n\"${PROJECT_DIR}/Core/Source\"";
 		};
 		A788CA661486456100E1AFD9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
