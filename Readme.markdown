@@ -13,9 +13,9 @@ This is useful for drawing simple rich text like any HTML document without havin
 Documentation
 -------------
 
-The [Setup Guide](docs/Documentation/Setup%20Guide.html) describes how to integrate DTCoreText into your apps. Documentation can be [browsed online](http://cocoanetics.github.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](http://cocoanetics.github.com/DTCoreText/DTCoreText.atom).
+Documentation can be [browsed online](http://cocoanetics.github.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](http://cocoanetics.github.com/DTCoreText/DTCoreText.atom).
 
-The list of [Known Issues](docs/Documentation/Known%20Issues.html) details differences between Apple's and DTCoreText's implementations. A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
+A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
 
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
 
