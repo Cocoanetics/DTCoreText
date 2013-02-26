@@ -17,14 +17,14 @@ The [Setup Guide](docs/Documentation/Setup%20Guide.html) describes how to integr
 
 The list of [Known Issues](docs/Documentation/Known%20Issues.html) details differences between Apple's and DTCoreText's implementations. A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
 
+Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
+
 #### Changelog
 
 - [Version 1.2](http://www.cocoanetics.com/2013/01/dtcoretext-1-2-0/)
 - [Version 1.1](http://www.cocoanetics.com/2012/12/dtcoretext-1-1/)
 - [Version 1.0.1](http://www.cocoanetics.com/2012/04/dtcoretext-1-0-1-linker-flags-and-rich-text-news/)
 - [Version 1.0](http://www.cocoanetics.com/2012/02/dtrichtexteditor-dtcoretext-news/)
-
-Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
 
 License
 -------
