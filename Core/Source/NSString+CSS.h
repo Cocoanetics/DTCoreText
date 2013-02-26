@@ -29,6 +29,9 @@
 
 /**
  Decodes edge inset values from the CSS attribute string. This is used for margin andpadding which might have varying number of elements.
+ @param textSize The current size which the CSS size is relative to.
+ @param textScale The factor by which absolute sizes are scaled. Set to 1.0f to keep the original value.
+ @returns The edge insets that this describes
  */
 - (DTEdgeInsets)DTEdgeInsetsRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale;
 
