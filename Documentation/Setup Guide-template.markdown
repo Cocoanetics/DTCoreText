@@ -115,6 +115,12 @@ For the linker to be able to find the symbols of DTCoreText, specifically catego
 
 In Xcode versions before 4.6 you also needed the `-all_load` flag but that appears to no longer be necessary.
 
+#### Resources
+
+DTCoreText uses the `DTCoreTextFontOverrides.plist` to speed up font matching. The version in the Demo App resources has the commonly used font families set up so that it can quickly get the name of a specific font face given font family and the italic and bold settings. It works without this as well, but will be slower. Add your own custom fonts to the plist and include it in your app to make use of this optimization.
+
+The `default.css` stylesheet that is used for defining the default HTML CSS styles is compiled into `default.css.h` via a build rule. It is linked into the static library, so you don't need to do anything there. If you want to customize something then please do so via the parse options documented in the [NSAttributedString HTML Category](../../Categories/NSAttributedString+HTML.html).
+
 #### Smoke Test
 
 At this point your project should build and be able to use DTCoreText functionality. As a quick *Smoke Test* - to see if all is setup correctly - you can test your setup by adding this code to your app delegate:
