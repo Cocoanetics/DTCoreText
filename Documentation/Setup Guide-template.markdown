@@ -70,7 +70,7 @@ If you don't use git for your project's SCM you clone the project into the Exter
 The you move into Externals/DTCoreText and execute the submodule update to have git also fetch DTFoundation.
 
     cd Externals/DTCoreText
-    git submodule update --init --recursive`
+    git submodule update --init --recursive
    
 Now you have a clone of DTCoreText in `Externals/DTCoreText` as well as a clone of DTFoundation in `Externals/DTCoreText/Core/Externals/DTFoundation`.
 
