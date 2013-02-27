@@ -18,8 +18,6 @@
 		<string>https://docs.cocoanetics.com/DTCoreText/%DOCSETPACKAGEFILENAME</string>
 		<key>--docset-fallback-url</key>
 		<string>https://docs.cocoanetics.com/DTCoreText/</string>
-		<key>--output</key>
-		<string>~/help/DTCoreText</string>
         <key>--create-docset</key>
         <true/>
         <key>--publish-docset</key>
