@@ -13,11 +13,11 @@
 		<key>--docset-atom-filename</key>
 		<string>DTCoreText.atom</string>
 		<key>--docset-feed-url</key>
-		<string>http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME</string>
+		<string>https://docs.cocoanetics.com/DTCoreText/%DOCSETATOMFILENAME</string>
 		<key>--docset-package-url</key>
-		<string>http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME</string>
+		<string>https://docs.cocoanetics.com/DTCoreText/%DOCSETPACKAGEFILENAME</string>
 		<key>--docset-fallback-url</key>
-		<string>http://cocoanetics.github.com/DTCoreText/</string>
+		<string>https://docs.cocoanetics.com/DTCoreText/</string>
 		<key>--output</key>
 		<string>~/help/DTCoreText</string>
         <key>--create-docset</key>
@@ -40,8 +40,6 @@
 		</array>
 		<key>--index-desc</key>
 		<string>Readme.markdown</string>
-		<key>--verbose</key>
-		<integer>2</integer>
 		<key>--include</key>
 		<array>
 			<string>./Documentation/Setup Guide-template.markdown</string>
@@ -53,9 +51,5 @@
 		</array>
 		<key>--warn-invalid-crossref</key>
 		<false/>
-		<key>--merge-categories</key>
-		<true/>
-		<key>--print-settings</key>
-		<true/>
 	</dict>
 </plist>
