@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>--project-name</key>
+		<string>DTCoreText</string>
+		<key>--project-company</key>
+		<string>Cocoanetics</string>
+		<key>--project-version</key>
+		<string>1.2</string>
+		<key>--company-id</key>
+		<string>com.cocoanetics</string>
+		<key>--docset-atom-filename</key>
+		<string>DTCoreText.atom</string>
+		<key>--docset-feed-url</key>
+		<string>https://docs.cocoanetics.com/DTCoreText/%DOCSETATOMFILENAME</string>
+		<key>--docset-package-url</key>
+		<string>https://docs.cocoanetics.com/DTCoreText/%DOCSETPACKAGEFILENAME</string>
+		<key>--docset-fallback-url</key>
+		<string>https://docs.cocoanetics.com/DTCoreText/</string>
+        <key>--create-docset</key>
+        <true/>
+        <key>--publish-docset</key>
+        <true/>
+        <key>--install-docset</key>
+        <false/>
+		<key>--logformat</key>
+		<string>xcode</string>
+		<key>--keep-intermediate-files</key>
+		<true/>
+		<key>--no-repeat-first-par</key>
+		<true/>
+		<key>--ignore</key>
+		<array>
+			<string>*.m</string>
+			<string>Core/Externals</string>
+			<string>Demo</string>
+		</array>
+		<key>--index-desc</key>
+		<string>Readme.markdown</string>
+		<key>--include</key>
+		<array>
+			<string>./Documentation/Setup Guide-template.markdown</string>
+			<string>./Documentation/Known Issues-template.markdown</string>
+			<string>./Documentation/DTCoreText_Demo_App.png</string>
+			<string>./Documentation/DTCoreText_Linker_Flags.png</string>
+			<string>./Documentation/DTCoreText_Search_Paths.png</string>
+			<string>./Documentation/DTCoreText_Reference.png</string>
+		</array>
+		<key>--warn-invalid-crossref</key>
+		<false/>
+	</dict>
+</plist>

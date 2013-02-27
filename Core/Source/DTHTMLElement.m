@@ -464,11 +464,7 @@ NSDictionary *_classesForNames = nil;
 	
 	BOOL didModify = NO;
 	
-	// get the keys that match this and have the sorted, because that brings a "margin" before a "margin-left"
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self BEGINSWITH %@", prefix];
-	NSArray *keysWithPrefix = [[[styles allKeys] filteredArrayUsingPredicate:predicate] sortedArrayUsingSelector:@selector(compare:)];
-	
-	if (![keysWithPrefix count])
+	if (![styles count])
 	{
 		return didModify;
 	}
@@ -515,8 +511,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *topKey = isWebKitAttribute?@"-before":@"-top";
 	NSString *bottomKey = isWebKitAttribute?@"-after":@"-bottom";
 	
-	for (NSString *oneKey in keysWithPrefix)
+	for (NSString *oneKey in styles)
 	{
+		if (![oneKey hasPrefix:prefix])
+		{
+			continue;
+		}
+		
 		NSString *attributeValue = [styles objectForKey:oneKey];
 		
 		NSRange dashRange = [oneKey rangeOfString:@"-"];
@@ -993,12 +994,25 @@ NSDictionary *_classesForNames = nil;
 	
 	BOOL needsTextBlock = (_backgroundColor!=nil);
 	
-	BOOL hasMargins = [self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins];
-	hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+	BOOL hasMargins = NO;
 	
-
-	BOOL hasPadding = [self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding];
-	hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+	NSString *allKeys = [[styles allKeys] componentsJoinedByString:@";"];
+	
+	// there can only be padding if the word "margin" occurs in the styles keys
+	if ([allKeys rangeOfString:@"margin"].length)
+	{
+		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+		hasMargins = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"margin" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_margins] || hasMargins);
+	}
+	
+	BOOL hasPadding = NO;
+	
+	// there can only be padding if the word "padding" occurs in the styles keys
+	if ([allKeys rangeOfString:@"padding"].length)
+	{
+		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
+	}
 	
 	if (hasPadding)
 	{
@@ -1028,7 +1042,8 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.headIndent += _margins.left;
 			self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 			
-			self.paragraphStyle.tailIndent += _margins.right;
+			// tailIndent from right side is negative
+			self.paragraphStyle.tailIndent -= _margins.right;
 		}
 		
 		if (needsTextBlock)

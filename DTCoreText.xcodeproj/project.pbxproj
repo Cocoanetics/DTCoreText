@@ -96,6 +96,8 @@
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
 		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
+		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
+		A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
 		A758FC9614DBC7A2007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FC9814DBCF20007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
@@ -299,6 +301,7 @@
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */; };
+		A7CF230A16DE1DF7005A4A6E /* AppledocSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */; };
 		A7D386FF16B58A3A00F2DB5E /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
 		A7D54EA514E003190063E78B /* Objects.html in Resources */ = {isa = PBXBuildFile; fileRef = A7D54EA414E003190063E78B /* Objects.html */; };
 		A7D63CDA1611B9AC00D4712A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
@@ -627,6 +630,13 @@
 			remoteGlobalIDString = A70B4CE61486637E00873A4A;
 			remoteInfo = "Static Library";
 		};
+		A74F6FD216DB9AF600C12307 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7E889A416A9B190009EF0DF;
+			remoteInfo = "DTUTI (Mac)";
+		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -718,20 +728,6 @@
 			remoteGlobalIDString = A70B4CE61486637E00873A4A;
 			remoteInfo = "Static Library";
 		};
-		A7F842F016D37A5A00BCD63F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7E383F1160E002200CF72D6;
-			remoteInfo = DTDownloadCache;
-		};
-		A7F842F216D37A5A00BCD63F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7787A0D16441B1800AF5830;
-			remoteInfo = DTBonjour;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -744,9 +740,15 @@
 		A704C93913901FDB0045CFC6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A7081EA11503645F002987F1 /* DTTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextBlock.h; sourceTree = "<group>"; };
 		A7081EA215036460002987F1 /* DTTextBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextBlock.m; sourceTree = "<group>"; };
-		A70B4C9C1486525200873A4A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		A70B4C9D1486525200873A4A /* Readme.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.markdown; sourceTree = "<group>"; };
+		A70B4C9C1486525200873A4A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		A70B4C9D1486525200873A4A /* Readme.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.markdown; path = ../Readme.markdown; sourceTree = "<group>"; };
 		A70B4C9E1486558200873A4A /* DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = DTCoreText.h; path = Core/Source/DTCoreText.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		A70D37CF16DCE92C003F21C9 /* DTCoreText_Reference.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Reference.png; sourceTree = "<group>"; };
+		A70D37D016DCE92C003F21C9 /* Setup Guide-template.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Setup Guide-template.markdown"; sourceTree = "<group>"; };
+		A70D37DA16DCEDED003F21C9 /* DTCoreText_Search_Paths.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Search_Paths.png; sourceTree = "<group>"; };
+		A70D37DD16DCF043003F21C9 /* DTCoreText_Linker_Flags.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Linker_Flags.png; sourceTree = "<group>"; };
+		A70D37DF16DCFF07003F21C9 /* Known Issues-template.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Known Issues-template.markdown"; sourceTree = "<group>"; };
+		A70D37E116DD0574003F21C9 /* DTCoreText_Demo_App.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTCoreText_Demo_App.png; sourceTree = "<group>"; };
 		A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDictationPlaceholderTextAttachment.h; sourceTree = "<group>"; };
 		A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTDictationPlaceholderTextAttachment.m; sourceTree = "<group>"; };
 		A70E62DE16C24DDF009B47BF /* DTDictationPlaceholderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDictationPlaceholderView.h; sourceTree = "<group>"; };
@@ -766,6 +768,9 @@
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
+		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; };
+		A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextParagraphStyleTest.h; sourceTree = "<group>"; };
+		A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextParagraphStyleTest.m; sourceTree = "<group>"; };
 		A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
 		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
@@ -894,6 +899,7 @@
 		A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringHTMLTest.m; sourceTree = "<group>"; };
 		A7C7AD0D14DA7C2C005A9C69 /* UIColorHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorHTMLTest.h; sourceTree = "<group>"; };
 		A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorHTMLTest.m; sourceTree = "<group>"; };
+		A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppledocSettings.plist; sourceTree = "<group>"; };
 		A7D54EA414E003190063E78B /* Objects.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Objects.html; sourceTree = "<group>"; };
 		A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ListItemBulletColorAndFont.html; sourceTree = "<group>"; };
@@ -1046,7 +1052,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				A70B4C9B1486523400873A4A /* Documentation */,
+				A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */,
+				A70D37CE16DCE92C003F21C9 /* Documentation */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -1115,13 +1122,28 @@
 			name = Layouting;
 			sourceTree = "<group>";
 		};
-		A70B4C9B1486523400873A4A /* Documentation */ = {
+		A70D37CE16DCE92C003F21C9 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				A70D37DE16DCFD89003F21C9 /* Guides */,
+				A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */,
 				A70B4C9C1486525200873A4A /* LICENSE */,
 				A70B4C9D1486525200873A4A /* Readme.markdown */,
 			);
-			name = Documentation;
+			path = Documentation;
+			sourceTree = "<group>";
+		};
+		A70D37DE16DCFD89003F21C9 /* Guides */ = {
+			isa = PBXGroup;
+			children = (
+				A70D37E116DD0574003F21C9 /* DTCoreText_Demo_App.png */,
+				A70D37DD16DCF043003F21C9 /* DTCoreText_Linker_Flags.png */,
+				A70D37DA16DCEDED003F21C9 /* DTCoreText_Search_Paths.png */,
+				A70D37CF16DCE92C003F21C9 /* DTCoreText_Reference.png */,
+				A70D37D016DCE92C003F21C9 /* Setup Guide-template.markdown */,
+				A70D37DF16DCFF07003F21C9 /* Known Issues-template.markdown */,
+			);
+			name = Guides;
 			sourceTree = "<group>";
 		};
 		A70E62CC16C248C2009B47BF /* Editing */ = {
@@ -1388,6 +1410,8 @@
 				A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */,
 				A7F16CF41698491400B0E843 /* NSStringCSSTest.h */,
 				A7F16CF51698491400B0E843 /* NSStringCSSTest.m */,
+				A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */,
+				A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1402,9 +1426,8 @@
 				A7B4E2D61686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2D81686FDB300717707 /* libDTHTMLParser.a */,
 				A7B4E2DA1686FDB300717707 /* libDTZipArchive.a */,
-				A7F842F116D37A5A00BCD63F /* libDTDownloadCache.a */,
-				A7F842F316D37A5A00BCD63F /* libDTBonjour.a */,
 				A7B4E2E01686FDB300717707 /* libDTUTI.a */,
+				A74F6FD316DB9AF600C12307 /* libDTUTI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1812,6 +1835,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A74F6FD316DB9AF600C12307 /* libDTUTI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTUTI.a;
+			remoteRef = A74F6FD216DB9AF600C12307 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A7B4E2D21686FDB300717707 /* UnitTests.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1868,20 +1898,6 @@
 			remoteRef = A7E383B8160DFEA800CF72D6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A7F842F116D37A5A00BCD63F /* libDTDownloadCache.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libDTDownloadCache.a;
-			remoteRef = A7F842F016D37A5A00BCD63F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A7F842F316D37A5A00BCD63F /* libDTBonjour.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libDTBonjour.a;
-			remoteRef = A7F842F216D37A5A00BCD63F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1919,6 +1935,7 @@
 				A72418171678BACE001362C4 /* iOS6.html in Resources */,
 				A7EB84FC168ED63A00D686B7 /* FontSizes.html in Resources */,
 				A730BCD716D29588003B849F /* Languages.html in Resources */,
+				A7CF230A16DE1DF7005A4A6E /* AppledocSettings.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2032,7 +2049,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"DTCoreText\" \\\n--project-company \"Cocoanetics\" \\\n--company-id \"com.cocoanetics\" \\\n--docset-atom-filename \"DTCoreText.atom\" \\\n--docset-feed-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://cocoanetics.github.com/DTCoreText/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://cocoanetics.github.com/DTCoreText/\" \\\n--output \"~/help/DTCoreText\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-intermediate-files \\\n--keep-undocumented-members \\\n--keep-undocumented-objects \\\n--no-repeat-first-par \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/readme.markdown\" \\\n\"${PROJECT_DIR}/Core/Source\"";
+			shellScript = "/usr/local/bin/appledoc --print-settings --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\necho \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"";
+			showEnvVarsInLog = 0;
 		};
 		A788CA661486456100E1AFD9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2194,6 +2212,7 @@
 				A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */,
 				A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
+				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2236,6 +2255,7 @@
 				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
 				A7D386FF16B58A3A00F2DB5E /* DTCoreTextFunctions.m in Sources */,
 				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
+				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
