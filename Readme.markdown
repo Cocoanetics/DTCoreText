@@ -13,7 +13,7 @@ This is useful for drawing simple rich text like any HTML document without havin
 Documentation
 -------------
 
-Documentation can be [browsed online](http://cocoanetics.github.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](http://cocoanetics.github.com/DTCoreText/DTCoreText.atom).
+Documentation can be [browsed online](https://docs.cocoanetics.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](https://docs.cocoanetics.com/DTCoreText/DTCoreText.atom).
 
 A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
 
