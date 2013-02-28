@@ -7,7 +7,9 @@ You have multiple options available for integrating DTCoreText into your own app
 - [As Sub-Project and/or Git Submodule](#Subproject)
 - [As Framework](#Framework)
 
-DTCoreText is designed to be included as static library from a subproject, it embeds several classes from the DTFoundation project. If you want to use DTFoundation as well in your project you need to use the "Static Library (no DTFoundation)" target to avoid duplicate symbols.
+DTCoreText is designed to be included as static library from a subproject, it embeds several classes from the **DTFoundation** project. If you want to use DTFoundation as well in your project you need to use the "Static Library (no DTFoundation)" target to avoid duplicate symbols.
+
+GitHub offers tar balls for the individual tagged versions but you shouldn't try to set these up with your project because those are missing the external references. Doing a recursive clone insures that you get all the files from all involved GitHub repositories.
 
 Requirements
 ------------
@@ -65,12 +67,7 @@ Now you have a clone of DTCoreText in Externals/DTCoreText as well as a clone of
 
 If you don't use git for your project's SCM you clone the project into the Externals folder:
 
-    git clone https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
-   
-The you move into Externals/DTCoreText and execute the submodule update to have git also fetch DTFoundation.
-
-    cd Externals/DTCoreText
-    git submodule update --init --recursive
+    git clone --recursive https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
    
 Now you have a clone of DTCoreText in `Externals/DTCoreText` as well as a clone of DTFoundation in `Externals/DTCoreText/Core/Externals/DTFoundation`.
 
