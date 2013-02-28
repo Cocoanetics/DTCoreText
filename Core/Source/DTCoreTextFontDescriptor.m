@@ -803,6 +803,10 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	_pointSize = roundf(pointSize);
 }
 
+- (void)dealloc {
+	dispatch_release(_fontQueue);
+}
+
 @synthesize fontFamily;
 @synthesize fontName;
 @synthesize pointSize = _pointSize;
