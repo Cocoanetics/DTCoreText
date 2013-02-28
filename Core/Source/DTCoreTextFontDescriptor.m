@@ -798,8 +798,12 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	_pointSize = roundf(pointSize);
 }
 
-@synthesize fontFamily = _fontFamily;
-@synthesize fontName = _fontName;
+- (void)dealloc {
+	dispatch_release(_fontQueue);
+}
+
+@synthesize fontFamily;
+@synthesize fontName;
 @synthesize pointSize = _pointSize;
 
 @synthesize symbolicTraits;
