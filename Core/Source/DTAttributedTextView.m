@@ -121,17 +121,19 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	NSDictionary *userInfo = [notification userInfo];
-	CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
-	
-	CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
-	
-	// ignore possibly delayed layout notification for a different width
-	if (optimalFrame.size.width == frame.size.width)
-	{
-		_attributedTextContentView.frame = optimalFrame;
-		self.contentSize = [_attributedTextContentView intrinsicContentSize];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSDictionary *userInfo = [notification userInfo];
+		CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
+		
+		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+		
+		// ignore possibly delayed layout notification for a different width
+		if (optimalFrame.size.width == frame.size.width)
+		{
+			_attributedTextContentView.frame = optimalFrame;
+			self.contentSize = [_attributedTextContentView intrinsicContentSize];
+		}
+	});
 }
 
 #pragma mark Properties
