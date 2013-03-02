@@ -28,6 +28,7 @@
 {
 	NSData *_data;
 	NSDictionary *_options;
+	BOOL _shouldKeepDocumentNodeTree;
 	
 	// settings for parsing
 	CGFloat _textScale;
@@ -37,16 +38,19 @@
 	DTCoreTextFontDescriptor *_defaultFontDescriptor;
 	DTCoreTextParagraphStyle *_defaultParagraphStyle;
 	
+	// root node inherits these defaults
+	DTHTMLElement *_defaultTag; 
+	
 	// parsing state, accessed from inside blocks
 	NSMutableAttributedString *_tmpString;
 	
 	// GCD
 	dispatch_queue_t _stringAssemblyQueue;
 	dispatch_group_t _stringAssemblyGroup;
-	dispatch_queue_t _stringParsingQueue;
-	dispatch_group_t _stringParsingGroup;
-	dispatch_queue_t _treeQueue;;
-	dispatch_group_t _treeGroup;
+	dispatch_queue_t _dataParsingQueue;
+	dispatch_group_t _dataParsingGroup;
+	dispatch_queue_t _treeBuildingQueue;;
+	dispatch_group_t _treeBuildingGroup;
 	
 	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
@@ -58,10 +62,6 @@
 	DTHTMLElement *_rootNode;
 	DTHTMLElement *_bodyElement;
 	DTHTMLElement *_currentTag;
-	NSMutableArray *_outputQueue;
-	
-	DTHTMLElement *_defaultTag; // root node inherits these defaults
-	BOOL _shouldKeepDocumentNodeTree;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -77,10 +77,10 @@
 		//GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
 		_stringAssemblyGroup = dispatch_group_create();
-		_stringParsingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser", 0);
-		_stringParsingGroup = dispatch_group_create();
-		_treeQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser Tree Queue", 0);
-		_treeGroup = dispatch_group_create();
+		_dataParsingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser", 0);
+		_dataParsingGroup = dispatch_group_create();
+		_treeBuildingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser Tree Queue", 0);
+		_treeBuildingGroup = dispatch_group_create();
 	}
 	
 	return self;
@@ -91,10 +91,10 @@
 #if !OS_OBJECT_USE_OBJC
 	dispatch_release(_stringAssemblyQueue);
 	dispatch_release(_stringAssemblyGroup);
-	dispatch_release(_stringParsingQueue);
-	dispatch_release(_stringParsingGroup);
-	dispatch_release(_treeQueue);
-	dispatch_release(_treeGroup);
+	dispatch_release(_dataParsingQueue);
+	dispatch_release(_dataParsingGroup);
+	dispatch_release(_treeBuildingQueue);
+	dispatch_release(_treeBuildingGroup);
 #endif
 }
 
@@ -280,18 +280,16 @@
 		}
 	}
 	
-	_outputQueue = [[NSMutableArray alloc] init];
-	
 	// create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
 	
 	__block BOOL result;
-	dispatch_group_async(_stringParsingGroup, _stringParsingQueue, ^{ result = [parser parse]; });
+	dispatch_group_async(_dataParsingGroup, _dataParsingQueue, ^{ result = [parser parse]; });
 	
 	// wait until all string assembly is complete
-	dispatch_group_wait(_stringParsingGroup, DISPATCH_TIME_FOREVER);
-	dispatch_group_wait(_treeGroup, DISPATCH_TIME_FOREVER);
+	dispatch_group_wait(_dataParsingGroup, DISPATCH_TIME_FOREVER);
+	dispatch_group_wait(_treeBuildingGroup, DISPATCH_TIME_FOREVER);
 	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
 	
 	// clean up handlers because they retained self
@@ -586,7 +584,7 @@
 
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
 {
-	dispatch_group_async(_treeGroup, _treeQueue, ^{
+	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
 		
 		DTHTMLElement *previousLastChild = nil;
@@ -656,7 +654,7 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
-	dispatch_group_async(_treeGroup, _treeQueue, ^{
+	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
 		// find block to execute for this tag if any
@@ -726,7 +724,7 @@
 								- (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 	{
 		
-		dispatch_group_async(_treeGroup, _treeQueue, ^{
+		dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 			NSAssert(_currentTag, @"Cannot add text node without a current node");
 			
 			if ([string isIgnorableWhitespace])
@@ -786,7 +784,7 @@
 								
 								- (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
 	{
-		dispatch_group_async(_treeGroup, _treeQueue, ^{
+		dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 			NSAssert(_currentTag, @"Cannot add text node without a current node");
 			
 			NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
@@ -800,7 +798,7 @@
 								
 								- (void)parserDidEndDocument:(DTHTMLParser *)parser
 	{
-		dispatch_group_async(_treeGroup, _treeQueue, ^{
+		dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 			NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
 			
 			dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
