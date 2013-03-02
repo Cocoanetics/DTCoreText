@@ -20,8 +20,11 @@
 
 - (NSAttributedString *)attributedString
 {
-	NSDictionary *attributes = [self attributesDictionary];
-	return [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
+	@synchronized(self)
+	{
+		NSDictionary *attributes = [self attributesDictionary];
+		return [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
+	}
 }
 
 @end

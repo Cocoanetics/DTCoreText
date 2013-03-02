@@ -12,8 +12,11 @@
 
 - (NSAttributedString *)attributedString
 {
-	NSDictionary *attributes = [self attributesDictionary];
-	return [[NSAttributedString alloc] initWithString:UNICODE_LINE_FEED attributes:attributes];
+	@synchronized(self)
+	{
+		NSDictionary *attributes = [self attributesDictionary];
+		return [[NSAttributedString alloc] initWithString:UNICODE_LINE_FEED attributes:attributes];
+	}
 }
 
 @end

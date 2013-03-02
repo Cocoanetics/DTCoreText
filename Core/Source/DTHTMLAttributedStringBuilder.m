@@ -45,6 +45,8 @@
 	dispatch_group_t _stringAssemblyGroup;
 	dispatch_queue_t _stringParsingQueue;
 	dispatch_group_t _stringParsingGroup;
+	dispatch_queue_t _treeQueue;;
+	dispatch_group_t _treeGroup;
 	
 	// lookup table for blocks that deal with begin and end tags
 	NSMutableDictionary *_tagStartHandlers;
@@ -77,6 +79,8 @@
 		_stringAssemblyGroup = dispatch_group_create();
 		_stringParsingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser", 0);
 		_stringParsingGroup = dispatch_group_create();
+		_treeQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser Tree Queue", 0);
+		_treeGroup = dispatch_group_create();
 	}
 	
 	return self;
@@ -89,6 +93,8 @@
 	dispatch_release(_stringAssemblyGroup);
 	dispatch_release(_stringParsingQueue);
 	dispatch_release(_stringParsingGroup);
+	dispatch_release(_treeQueue);
+	dispatch_release(_treeGroup);
 #endif
 }
 
@@ -285,6 +291,7 @@
 	
 	// wait until all string assembly is complete
 	dispatch_group_wait(_stringParsingGroup, DISPATCH_TIME_FOREVER);
+	dispatch_group_wait(_treeGroup, DISPATCH_TIME_FOREVER);
 	dispatch_group_wait(_stringAssemblyGroup, DISPATCH_TIME_FOREVER);
 	
 	// clean up handlers because they retained self
@@ -579,7 +586,7 @@
 
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
 {
-	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+	dispatch_group_async(_treeGroup, _treeQueue, ^{
 		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
 		
 		DTHTMLElement *previousLastChild = nil;
@@ -649,7 +656,7 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
-	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+	dispatch_group_async(_treeGroup, _treeQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
 		// find block to execute for this tag if any
@@ -673,35 +680,40 @@
 						_willFlushCallback(_currentTag);
 					}
 					
-					NSAttributedString *nodeString = [_currentTag attributedString];
+					DTHTMLElement *theTag = _currentTag;
 					
-					if (nodeString)
-					{
-						// if this is a block element then we need a paragraph break before it
-						if (_currentTag.displayStyle != DTHTMLElementDisplayStyleInline)
+					dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+						NSAttributedString *nodeString = [theTag attributedString];
+						
+						if (nodeString)
 						{
-							if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
+							// if this is a block element then we need a paragraph break before it
+							if (theTag.displayStyle != DTHTMLElementDisplayStyleInline)
 							{
-								// trim off whitespace
-								while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+								if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
 								{
-									[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+									// trim off whitespace
+									while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+									{
+										[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+									}
+									
+									[_tmpString appendString:@"\n"];
 								}
-								
-								[_tmpString appendString:@"\n"];
+							}
+							
+							
+							[_tmpString appendAttributedString:nodeString];
+							theTag.didOutput = YES;
+							
+							if (!_shouldKeepDocumentNodeTree)
+							{
+								// we don't need the children any more
+								[theTag removeAllChildNodes];
 							}
 						}
-						
-						
-						[_tmpString appendAttributedString:nodeString];
-						_currentTag.didOutput = YES;
-						
-						if (!_shouldKeepDocumentNodeTree)
-						{
-							// we don't need the children any more
-							[_currentTag removeAllChildNodes];
-						}
-					}
+					});
+					
 				}
 			}
 		}
@@ -714,7 +726,7 @@
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 {
 	
-	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+	dispatch_group_async(_treeGroup, _treeQueue, ^{
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		if ([string isIgnorableWhitespace])
@@ -746,30 +758,35 @@
 		
 		[textNode inheritAttributesFromElement:_currentTag];
 		[textNode interpretAttributes];
+
+		// save it for later output
+		[_currentTag addChildNode:textNode];
 		
+		DTHTMLElement *theTag = _currentTag;
+
 		// text directly contained in body needs to be output right away
-		if (_currentTag == _bodyElement)
+		if (theTag == _bodyElement)
 		{
-			[_tmpString appendAttributedString:[textNode attributedString]];
-			_currentTag.didOutput = YES;
+			dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+				[_tmpString appendAttributedString:[textNode attributedString]];
+				theTag.didOutput = YES;
+			});
 			
 			// only add it to current tag if we need it
 			if (_shouldKeepDocumentNodeTree)
 			{
-				[_currentTag addChildNode:textNode];
+				[theTag addChildNode:textNode];
 			}
 			
 			return;
 		}
 		
-		// save it for later output
-		[_currentTag addChildNode:textNode];
 	});
 }
 
 - (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
 {
-	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+	dispatch_group_async(_treeGroup, _treeQueue, ^{
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
@@ -783,14 +800,16 @@
 
 - (void)parserDidEndDocument:(DTHTMLParser *)parser
 {
-	dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+	dispatch_group_async(_treeGroup, _treeQueue, ^{
 		NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
 		
-		// trim off white space at end
-		while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
-		{
-			[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
-		}
+		dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+			// trim off white space at end
+			while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
+			{
+				[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+			}
+		});
 	});
 }
 
