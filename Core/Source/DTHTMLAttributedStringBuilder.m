@@ -169,11 +169,11 @@
 	
 	// base tag with font defaults
 	_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
-
+	
 	
 	// set the default font size
 	CGFloat defaultFontSize = 12.0f;
-
+	
 	NSNumber *defaultFontSizeNumber = [_options objectForKey:DTDefaultFontSize];
 	
 	if (defaultFontSizeNumber)
@@ -297,7 +297,7 @@
 	// clean up handlers because they retained self
 	_tagStartHandlers = nil;
 	_tagEndHandlers = nil;
-
+	
 #if DEBUG
 	// metrics: get end time
 	CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
@@ -328,7 +328,7 @@
 	}
 	
 	_tagStartHandlers = [[NSMutableDictionary alloc] init];
-
+	
 	
 	void (^blockquoteBlock)(void) = ^
 	{
@@ -596,7 +596,7 @@
 			// inherit stuff
 			[newNode inheritAttributesFromElement:_currentTag];
 			[newNode interpretAttributes];
-
+			
 			previousLastChild = [_currentTag.childNodes lastObject];
 			
 			// add as new child of current node
@@ -626,7 +626,7 @@
 		{
 			[newNode applyStyleDictionary:mergedStyles];
 		}
-
+		
 		// adding a block element eliminates previous trailing white space text node
 		// because a new block starts on a new line
 		if (previousLastChild && newNode.displayStyle != DTHTMLElementDisplayStyleInline)
@@ -671,18 +671,18 @@
 		{
 			if (_currentTag == _bodyElement || _currentTag.parentElement == _bodyElement)
 			{
-				// has children that have not been output yet
-				if ([_currentTag needsOutput])
-				{
-					// caller gets opportunity to modify tag before it is written
-					if (_willFlushCallback)
+				DTHTMLElement *theTag = _currentTag;
+				
+				dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+					// has children that have not been output yet
+					if ([theTag needsOutput])
 					{
-						_willFlushCallback(_currentTag);
-					}
-					
-					DTHTMLElement *theTag = _currentTag;
-					
-					dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+						// caller gets opportunity to modify tag before it is written
+						if (_willFlushCallback)
+						{
+							_willFlushCallback(theTag);
+						}
+						
 						NSAttributedString *nodeString = [theTag attributedString];
 						
 						if (nodeString)
@@ -702,7 +702,6 @@
 								}
 							}
 							
-							
 							[_tmpString appendAttributedString:nodeString];
 							theTag.didOutput = YES;
 							
@@ -712,10 +711,11 @@
 								[theTag removeAllChildNodes];
 							}
 						}
-					});
-					
-				}
+						
+					}
+				});
 			}
+			
 		}
 		
 		// go back up a level
@@ -723,99 +723,99 @@
 	});
 }
 
-- (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
-{
-	
-	dispatch_group_async(_treeGroup, _treeQueue, ^{
-		NSAssert(_currentTag, @"Cannot add text node without a current node");
+								- (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
+	{
 		
-		if ([string isIgnorableWhitespace])
-		{
-			// ignore whitespace as first element of block element
-			if (_currentTag.displayStyle!=DTHTMLElementDisplayStyleInline && ![_currentTag.childNodes count])
+		dispatch_group_async(_treeGroup, _treeQueue, ^{
+			NSAssert(_currentTag, @"Cannot add text node without a current node");
+			
+			if ([string isIgnorableWhitespace])
 			{
+				// ignore whitespace as first element of block element
+				if (_currentTag.displayStyle!=DTHTMLElementDisplayStyleInline && ![_currentTag.childNodes count])
+				{
+					return;
+				}
+				
+				// ignore whitespace following a block element
+				DTHTMLElement *previousTag = [_currentTag.childNodes lastObject];
+				
+				if (previousTag.displayStyle != DTHTMLElementDisplayStyleInline)
+				{
+					return;
+				}
+				
+				// ignore whitespace following a BR
+				if ([previousTag isKindOfClass:[DTHTMLElementBR class]])
+				{
+					return;
+				}
+			}
+			
+			// adds a text node to the current node
+			DTHTMLElementText *textNode = [[DTHTMLElementText alloc] init];
+			textNode.text = string;
+			
+			[textNode inheritAttributesFromElement:_currentTag];
+			[textNode interpretAttributes];
+			
+			// save it for later output
+			[_currentTag addChildNode:textNode];
+			
+			DTHTMLElement *theTag = _currentTag;
+			
+			// text directly contained in body needs to be output right away
+			if (theTag == _bodyElement)
+			{
+				dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+					[_tmpString appendAttributedString:[textNode attributedString]];
+					theTag.didOutput = YES;
+				});
+				
+				// only add it to current tag if we need it
+				if (_shouldKeepDocumentNodeTree)
+				{
+					[theTag addChildNode:textNode];
+				}
+				
 				return;
 			}
 			
-			// ignore whitespace following a block element
-			DTHTMLElement *previousTag = [_currentTag.childNodes lastObject];
-			
-			if (previousTag.displayStyle != DTHTMLElementDisplayStyleInline)
-			{
-				return;
-			}
-			
-			// ignore whitespace following a BR
-			if ([previousTag isKindOfClass:[DTHTMLElementBR class]])
-			{
-				return;
-			}
-		}
-		
-		// adds a text node to the current node
-		DTHTMLElementText *textNode = [[DTHTMLElementText alloc] init];
-		textNode.text = string;
-		
-		[textNode inheritAttributesFromElement:_currentTag];
-		[textNode interpretAttributes];
-
-		// save it for later output
-		[_currentTag addChildNode:textNode];
-		
-		DTHTMLElement *theTag = _currentTag;
-
-		// text directly contained in body needs to be output right away
-		if (theTag == _bodyElement)
-		{
-			dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-				[_tmpString appendAttributedString:[textNode attributedString]];
-				theTag.didOutput = YES;
-			});
-			
-			// only add it to current tag if we need it
-			if (_shouldKeepDocumentNodeTree)
-			{
-				[theTag addChildNode:textNode];
-			}
-			
-			return;
-		}
-		
-	});
-}
-
-- (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
-{
-	dispatch_group_async(_treeGroup, _treeQueue, ^{
-		NSAssert(_currentTag, @"Cannot add text node without a current node");
-		
-		NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
-		
-		// adds a text node to the current node
-		DTHTMLParserTextNode *textNode = [[DTHTMLParserTextNode alloc] initWithCharacters:styleBlock];
-		
-		[_currentTag addChildNode:textNode];
-	});
-}
-
-- (void)parserDidEndDocument:(DTHTMLParser *)parser
-{
-	dispatch_group_async(_treeGroup, _treeQueue, ^{
-		NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
-		
-		dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-			// trim off white space at end
-			while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
-			{
-				[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
-			}
 		});
-	});
-}
-
+	}
+								
+								- (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
+	{
+		dispatch_group_async(_treeGroup, _treeQueue, ^{
+			NSAssert(_currentTag, @"Cannot add text node without a current node");
+			
+			NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
+			
+			// adds a text node to the current node
+			DTHTMLParserTextNode *textNode = [[DTHTMLParserTextNode alloc] initWithCharacters:styleBlock];
+			
+			[_currentTag addChildNode:textNode];
+		});
+	}
+								
+								- (void)parserDidEndDocument:(DTHTMLParser *)parser
+	{
+		dispatch_group_async(_treeGroup, _treeQueue, ^{
+			NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
+			
+			dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
+				// trim off white space at end
+				while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
+				{
+					[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
+				}
+			});
+		});
+	}
+								
 #pragma mark Properties
-
-@synthesize willFlushCallback = _willFlushCallback;
-@synthesize shouldKeepDocumentNodeTree = _shouldKeepDocumentNodeTree;
-
-@end
+								
+								@synthesize willFlushCallback = _willFlushCallback;
+								@synthesize shouldKeepDocumentNodeTree = _shouldKeepDocumentNodeTree;
+								
+								@end
