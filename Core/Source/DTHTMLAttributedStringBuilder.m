@@ -14,6 +14,7 @@
 #import "DTHTMLElementStylesheet.h"
 
 #import "DTVersion.h"
+#import "NSString+DTFormatNumbers.h"
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -93,6 +94,11 @@
 
 - (BOOL)_buildString
 {
+#if DEBUG
+	// metrics: get start time
+	CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
+#endif
+	
 	// only with valid data
 	if (![_data length])
 	{
@@ -284,7 +290,14 @@
 	// clean up handlers because they retained self
 	_tagStartHandlers = nil;
 	_tagEndHandlers = nil;
+
+#if DEBUG
+	// metrics: get end time
+	CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
 	
+	// output metrics
+	NSLog(@"DTCoreText created attributed string from %@ in %.2f ms", [NSString stringByFormattingBytes:[_data length]], endTime-startTime);
+#endif
 	return result;
 }
 
