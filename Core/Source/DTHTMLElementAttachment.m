@@ -40,18 +40,21 @@
 
 - (NSAttributedString *)attributedString
 {
-	NSDictionary *attributes = [self attributesDictionary];
-	
-	// ignore text, use unicode object placeholder
-	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
-	
-	// block-level elements get space trimmed and a newline
-	if (self.displayStyle != DTHTMLElementDisplayStyleInline)
+	@synchronized(self)
 	{
-		[tmpString appendString:@"\n"];
+		NSDictionary *attributes = [self attributesDictionary];
+		
+		// ignore text, use unicode object placeholder
+		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];
+		
+		// block-level elements get space trimmed and a newline
+		if (self.displayStyle != DTHTMLElementDisplayStyleInline)
+		{
+			[tmpString appendString:@"\n"];
+		}
+		
+		return tmpString;
 	}
-	
-	return tmpString;
 }
 
 // workaround, because we don't support float yet. float causes the image to be its own block
