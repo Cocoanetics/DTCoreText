@@ -25,4 +25,17 @@
 
   return someView;
 }</pre>
+	
+	<p>Object tags can access their childNodes</p>
+	<pre>
+	&lt;object height=100 width=100&gt;
+		&lt;special stuff="bla" /&gt;
+	&lt;/object&gt;
+	</pre>
+	
+	<object height=100 width=100>
+		<special stuff="bla" />
+	</object>
+	
+	<p>When creating the custom view for this object you access the text attachment childNodes to get special information you have put there in addition to the attributes</p>
 </body>

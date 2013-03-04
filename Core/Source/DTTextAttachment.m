@@ -31,7 +31,9 @@ static NSCache *imageCache = nil;
     DTTextAttachmentType _contentType;
 	
 	NSURL *_contentURL;
+	
 	NSURL *_hyperLinkURL;
+	NSString *_hyperLinkGUID;
 	
 	CGFloat _fontLeading;
 	CGFloat _fontAscent;
@@ -362,6 +364,7 @@ static NSCache *imageCache = nil;
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;
 @synthesize verticalAlignment = _verticalAlignment;
-@synthesize hyperLinkGUID;
+@synthesize hyperLinkGUID = hyperLinkGUID;
+@synthesize childNodes = _childNodes;
 
 @end

@@ -131,4 +131,9 @@ typedef enum
  */
 @property (nonatomic, strong) NSDictionary *attributes;
 
+/**
+ The DTHTMLElement child nodes of the receiver. This array is only used for object tags at the moment.
+ */
+@property (nonatomic, strong) NSArray *childNodes;
+
 @end

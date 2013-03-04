@@ -12,6 +12,7 @@
 #import "DTHTMLElementText.h"
 #import "DTHTMLElementBR.h"
 #import "DTHTMLElementStylesheet.h"
+#import "DTHTMLElementAttachment.h"
 
 #import "DTVersion.h"
 #import "NSString+DTFormatNumbers.h"
@@ -571,6 +572,20 @@
 	
 	_tagEndHandlers = [[NSMutableDictionary alloc] init];
 	
+	void (^objectBlock)(void) = ^
+	{
+		if ([_currentTag isKindOfClass:[DTHTMLElementAttachment class]])
+		{
+			if (_currentTag.textAttachment.contentType == DTTextAttachmentTypeObject)
+			{
+				// transfer the child nodes to the attachment
+				_currentTag.textAttachment.childNodes = [_currentTag.childNodes copy];
+			}
+		}
+	};
+	
+	[_tagEndHandlers setObject:[objectBlock copy] forKey:@"object"];
+
 	
 	void (^styleBlock)(void) = ^
 	{
