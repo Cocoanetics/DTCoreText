@@ -10,7 +10,7 @@
 #import "DTCoreText.h"
 #import "DTUtils.h"
 
-#import "NSData+Base64.h"
+#import "DTBase64Coding.h"
 
 static NSCache *imageCache = nil;
 
@@ -111,7 +111,7 @@ static NSCache *imageCache = nil;
 			if (range.length)
 			{
 				NSString *encodedData = [src substringFromIndex:range.location + range.length];
-				NSData *decodedData = [NSData dataFromBase64String:encodedData];
+				NSData *decodedData = [DTBase64Coding dataByDecodingString:encodedData];
 				
 				decodedImage = [[DTImage alloc] initWithData:decodedData];
 				
@@ -260,7 +260,7 @@ static NSCache *imageCache = nil;
 	
 	DTImage *image = (DTImage *)_contents;
 	NSData *data = [image dataForPNGRepresentation];
-	NSString *encoded = [data base64EncodedString];
+	NSString *encoded = [DTBase64Coding stringByEncodingData:data];
 	
 	return [@"data:image/png;base64," stringByAppendingString:encoded];
 }
