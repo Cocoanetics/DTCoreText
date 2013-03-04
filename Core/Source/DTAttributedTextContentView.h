@@ -188,15 +188,6 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
- The dispatch queue that is used to serialize layouting actions
- */
-#if OS_OBJECT_USE_OBJC
-@property (nonatomic, strong) dispatch_queue_t layoutQueue;  // GCD objects use ARC
-#else
-@property (nonatomic, assign) dispatch_queue_t layoutQueue;  // GCD objects don't use ARC
-#endif
-
-/**
  @name Working with Custom Subviews
  */
 
