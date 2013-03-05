@@ -345,7 +345,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							frameForSubview.size.height = ceilf(oneLine.frame.size.height);
 						}
 						
-						if (existingLinkView)
+						if (_delegateFlags.delegateSupportsCustomViewsForLinks)
 						{
 							NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
 							
