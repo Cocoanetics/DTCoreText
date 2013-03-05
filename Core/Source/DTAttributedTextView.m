@@ -20,7 +20,6 @@
 
 @implementation DTAttributedTextView
 {
-	DTAttributedTextContentView *_attributedTextContentView;
 	UIView *_backgroundView;
 
 	// these are pass-through, i.e. store until the content view is created
