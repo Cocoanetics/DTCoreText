@@ -593,6 +593,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			// relayout only occurs if the view is visible
 			[self relayoutText];
 		}
+		else
+		{
+			// this is needed or else no lazy layout will be triggered if there is no layout frame yet (before this is added to a superview)
+			[self setNeedsLayout];
+			[self setNeedsDisplayInRect:self.bounds];
+		}
 	}
 }
 

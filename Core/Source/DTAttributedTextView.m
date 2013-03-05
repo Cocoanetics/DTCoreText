@@ -121,19 +121,23 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSDictionary *userInfo = [notification userInfo];
-		CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
-		
-		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
-		
-		// ignore possibly delayed layout notification for a different width
-		if (optimalFrame.size.width == frame.size.width)
-		{
-			_attributedTextContentView.frame = optimalFrame;
-			self.contentSize = [_attributedTextContentView intrinsicContentSize];
-		}
-	});
+	if (![NSThread mainThread])
+	{
+		[self performSelectorOnMainThread:@selector(contentViewDidLayout:) withObject:notification waitUntilDone:YES];
+		return;
+	}
+	
+	NSDictionary *userInfo = [notification userInfo];
+	CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
+	
+	CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+	
+	// ignore possibly delayed layout notification for a different width
+	if (optimalFrame.size.width == frame.size.width)
+	{
+		_attributedTextContentView.frame = optimalFrame;
+		self.contentSize = [_attributedTextContentView intrinsicContentSize];
+	}
 }
 
 #pragma mark Properties
@@ -211,6 +215,19 @@
 	}
 }
 
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+	if (!UIEdgeInsetsEqualToEdgeInsets(self.contentInset, contentInset))
+	{
+		[super setContentInset:contentInset];
+		
+		// height does not matter, that will be determined anyhow
+		CGRect contentFrame = CGRectMake(0, 0, self.frame.size.width - self.contentInset.left - self.contentInset.right, 0);
+		
+		_attributedTextContentView.frame = contentFrame;
+	}
+}
+
 - (UIView *)backgroundView
 {
 	if (!_backgroundView)
@@ -284,16 +301,19 @@
 
 - (void)setFrame:(CGRect)frame
 {
-	if (!CGRectEqualToRect(self.frame, frame))
+	CGRect oldFrame = self.frame;
+	
+	if (!CGRectEqualToRect(oldFrame, frame))
 	{
-		if (self.frame.size.width != frame.size.width)
+		[super setFrame:frame]; // need to set own frame first because layout completion needs this updated frame
+		
+		if (oldFrame.size.width != frame.size.width)
 		{
 			// height does not matter, that will be determined anyhow
 			CGRect contentFrame = CGRectMake(0, 0, frame.size.width - self.contentInset.left - self.contentInset.right, 0);
 			
 			_attributedTextContentView.frame = contentFrame;
 		}
-		[super setFrame:frame];
 	}
 }
 
