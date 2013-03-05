@@ -222,7 +222,7 @@
 		[super setContentInset:contentInset];
 		
 		// height does not matter, that will be determined anyhow
-		CGRect contentFrame = CGRectMake(0, 0, self.frame.size.width - self.contentInset.left - self.contentInset.right, 0);
+		CGRect contentFrame = CGRectMake(0, 0, self.frame.size.width - self.contentInset.left - self.contentInset.right, _attributedTextContentView.frame.size.height);
 		
 		_attributedTextContentView.frame = contentFrame;
 	}
@@ -310,7 +310,7 @@
 		if (oldFrame.size.width != frame.size.width)
 		{
 			// height does not matter, that will be determined anyhow
-			CGRect contentFrame = CGRectMake(0, 0, frame.size.width - self.contentInset.left - self.contentInset.right, 0);
+			CGRect contentFrame = CGRectMake(0, 0, frame.size.width - self.contentInset.left - self.contentInset.right, _attributedTextContentView.frame.size.height);
 			
 			_attributedTextContentView.frame = contentFrame;
 		}
