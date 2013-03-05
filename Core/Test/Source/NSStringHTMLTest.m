@@ -11,7 +11,7 @@
 
 @implementation NSStringHTMLTest
 
-- (void)testEnojiEncoding
+- (void)testEmojiEncodingAndDecoding
 {
 	NSString *string = @"😄";
 

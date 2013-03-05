@@ -97,6 +97,7 @@
 		A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */; };
 		A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */; };
 		A740369116E51C9800ECCDE0 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A740369016E51C9800ECCDE0 /* About.html */; };
+		A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
 		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
 		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
@@ -2270,6 +2271,7 @@
 				A7D386FF16B58A3A00F2DB5E /* DTCoreTextFunctions.m in Sources */,
 				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
+				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
