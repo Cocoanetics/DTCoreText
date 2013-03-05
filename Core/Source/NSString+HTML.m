@@ -410,7 +410,7 @@ static NSDictionary *entityReverseLookup = nil;
 				i++;
 				unichar surrogateLowChar = [self characterAtIndex:i];
 				UTF32Char u32code = CFStringGetLongCharacterForSurrogatePair(oneChar, surrogateLowChar);
-				[tmpString appendFormat:@"&#%lu", u32code];
+				[tmpString appendFormat:@"&#%lu;", u32code];
 			}
 			else
 			{
