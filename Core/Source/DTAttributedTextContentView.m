@@ -345,7 +345,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 							frameForSubview.size.height = ceilf(oneLine.frame.size.height);
 						}
 						
-						if (existingLinkView)
+						if (_delegateFlags.delegateSupportsCustomViewsForLinks)
 						{
 							NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
 							
@@ -592,6 +592,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			
 			// relayout only occurs if the view is visible
 			[self relayoutText];
+		}
+		else
+		{
+			// this is needed or else no lazy layout will be triggered if there is no layout frame yet (before this is added to a superview)
+			[self setNeedsLayout];
+			[self setNeedsDisplayInRect:self.bounds];
 		}
 	}
 }

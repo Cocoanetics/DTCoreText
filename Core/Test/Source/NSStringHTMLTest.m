@@ -7,7 +7,21 @@
 //
 
 #import "NSStringHTMLTest.h"
+#import "NSString+HTML.h"
 
 @implementation NSStringHTMLTest
+
+- (void)testEmojiEncodingAndDecoding
+{
+	NSString *string = @"😄";
+
+	// check encoding
+	NSString *encoded = [string stringByAddingHTMLEntities];
+	STAssertTrue([encoded isEqualToString:@"&#128516;"], @"Smiley is not properly encoded");
+
+	// check reverse
+	NSString *decoded = [string stringByReplacingHTMLEntities];
+	STAssertTrue([decoded isEqualToString:string], @"Smiley is not properly round trip decoded");
+}
 
 @end

@@ -17,6 +17,10 @@
  */
 
 @interface DTAttributedTextView : UIScrollView
+{
+	// ivars needed by subclasses
+	DTAttributedTextContentView *_attributedTextContentView;
+}
 
 /**
  @name Providing Content

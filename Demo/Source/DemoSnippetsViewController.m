@@ -8,6 +8,7 @@
 
 #import "DemoSnippetsViewController.h"
 #import "DemoTextViewController.h"
+#import "DemoAboutViewController.h"
 
 // identifier for cell reuse
 NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseIdentifier";
@@ -58,11 +59,21 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000
 	[self.tableView registerClass:[DTAttributedTextCell class] forCellReuseIdentifier:AttributedTextCellReuseIdentifier];
 #endif
+	
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStyleBordered target:self action:@selector(showAbout:)];
 }
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
+}
+
+#pragma mark - Actions
+
+- (void)showAbout:(id)sender
+{
+	DemoAboutViewController *aboutViewController = [[DemoAboutViewController alloc] init];
+	[self.navigationController pushViewController:aboutViewController animated:YES];
 }
 
 #pragma mark UITableViewDataSource
