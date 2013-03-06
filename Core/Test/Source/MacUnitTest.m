@@ -9,8 +9,7 @@
 #import "MacUnitTest.h"
 #import "DTHTMLAttributedStringBuilder.h"
 #import "NSString+SlashEscaping.h"
-
-#import <objc/objc-class.h>
+#import "NSObject+DTRuntime.h"
 
 #define TESTCASE_FILE_EXTENSION @"html"
 //#define ONLY_TEST_CURRENT 1
@@ -50,8 +49,6 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 		NSString *testFile = nil;
 		while ((testFile = [enumerator nextObject]) != nil) 
 		{
-			
-			NSLog(@"%@", [testFile lastPathComponent]);
 #if ONLY_TEST_CURRENT
 		if (![[testFile lastPathComponent] isEqualToString:@"CurrentTest.html"])
 		{
@@ -76,21 +73,9 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 			NSString *caseName = testCaseNameFromURL(URL, NO);
 			NSString *selectorName = [NSString stringWithFormat:@"test_%@", caseName];
 			
-			void(^impBlock)(MacUnitTest *) = ^(MacUnitTest *test) {
+			[MacUnitTest addInstanceMethodWithSelectorName:selectorName block:^(MacUnitTest *test) {
 				[test internalTestCaseWithURL:URL withTempPath:tempPath];
-			};
-			
-			// See http://stackoverflow.com/questions/6357663/casting-a-block-to-a-void-for-dynamic-class-method-resolution
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7
-			void *impBlockForIMP = (void *)objc_unretainedPointer(impBlock);
-#else
-			id impBlockForIMP = (__bridge id)objc_unretainedPointer(impBlock);
-#endif
-			IMP myIMP = imp_implementationWithBlock(impBlockForIMP);
-			
-			SEL selector = NSSelectorFromString(selectorName);
-			
-			class_addMethod([self class], selector, myIMP, "v@:");
+			}];
 		}
 	}
 }
