@@ -428,7 +428,19 @@
 			// NOTE: this is a hack, you probably want to use your own image view and touch handling
 			// also, this treats an image with a hyperlink by itself because we don't have the GUID of the link parts
 			imageView.userInteractionEnabled = YES;
-			DTLinkButton *button = (DTLinkButton *)[self attributedTextContentView:attributedTextContentView viewForLink:attachment.hyperLinkURL identifier:attachment.hyperLinkGUID frame:imageView.bounds];
+			
+			DTLinkButton *button = [[DTLinkButton alloc] initWithFrame:imageView.bounds];
+			button.URL = attachment.hyperLinkURL;
+			button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
+			button.GUID = attachment.hyperLinkGUID;
+			
+			// use normal push action for opening URL
+			[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];
+			
+			// demonstrate combination with long press
+			UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(linkLongPressed:)];
+			[button addGestureRecognizer:longPress];
+			
 			[imageView addSubview:button];
 		}
 		
