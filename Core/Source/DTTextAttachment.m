@@ -209,12 +209,6 @@ static NSCache *imageCache = nil;
 				displaySize = CGSizeMake(1, 1); // one pixel so that loading is triggered
 			}
 		}
-		
-		// we copy the link because we might need for it making the custom view
-		if (element.link)
-		{
-			attachment.hyperLinkURL = element.link;
-		}
 	}
 
 	

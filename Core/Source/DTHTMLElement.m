@@ -1197,6 +1197,9 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	_containsAppleConvertedSpace = element.containsAppleConvertedSpace;
+	
+	// we copy the link because we might need for it making the custom view
+	_textAttachment.hyperLinkURL = element.link;
 }
 
 - (void)interpretAttributes
