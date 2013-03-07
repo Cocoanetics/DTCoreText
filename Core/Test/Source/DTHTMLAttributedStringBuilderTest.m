@@ -216,4 +216,25 @@
 }
 
 
+// if there is a text attachment contained in a HREF then the URL of that needs to be transferred to the image because it is needed for affixing a custom subview for a link button over the image or 
+- (void)testTransferOfHyperlinkURLToAttachment
+{
+	NSAttributedString *string = [self _attributedStringFromHTMLString:@"<a href=\"https://www.cocoanetics.com\"><img class=\"Bla\" style=\"width:150px; height:150px\" src=\"Oliver.jpg\"></a>"];
+	
+	STAssertEquals([string length], (NSUInteger)1, @"Output length should be 1");
+	
+	// get the attachment
+	DTTextAttachment *attachment = [string attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(attachment, @"Attachment is missing");
+	
+	// get the link
+	NSURL *URL = [string attribute:DTLinkAttribute atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(URL, @"Element URL is nil");
+	
+	STAssertEqualObjects(URL, attachment.hyperLinkURL, @"Attachment URL and element URL should match!");
+}
+
+
 @end
