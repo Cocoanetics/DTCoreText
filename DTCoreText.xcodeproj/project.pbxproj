@@ -1307,7 +1307,6 @@
 			isa = PBXGroup;
 			children = (
 				A7C5D00614D7DA6500AF1D75 /* Dual Platform */,
-				A7C5D00514D7DA5800AF1D75 /* iOS */,
 				A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */,
 				A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */,
 				A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */,
@@ -1359,13 +1358,6 @@
 				A7949A5F14CC456000A8CCDE /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		A7C5D00514D7DA5800AF1D75 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = iOS;
 			sourceTree = "<group>";
 		};
 		A7C5D00614D7DA6500AF1D75 /* Dual Platform */ = {
