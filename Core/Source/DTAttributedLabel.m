@@ -8,8 +8,15 @@
 
 #import "DTAttributedLabel.h"
 #import "DTCoreTextLayoutFrame.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation DTAttributedLabel
+
++ (Class)layerClass
+{
+	// most likely the label will be less than a screen size and so we don't want any tiling behavior
+	return [CALayer class];
+}
 
 - (DTCoreTextLayoutFrame *)layoutFrame
 {
