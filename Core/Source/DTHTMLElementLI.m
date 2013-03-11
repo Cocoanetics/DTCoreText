@@ -13,22 +13,25 @@
 
 - (NSUInteger)_indexOfListItemInListRoot:(DTHTMLElement *)listRoot
 {
-	NSInteger index = -1;
-	
-	for (DTHTMLElement *oneElement in listRoot.childNodes)
+	@synchronized(self)
 	{
-		if ([oneElement isKindOfClass:[DTHTMLElementLI class]])
+		NSInteger index = -1;
+		
+		for (DTHTMLElement *oneElement in listRoot.childNodes)
 		{
-			index++;
+			if ([oneElement isKindOfClass:[DTHTMLElementLI class]])
+			{
+				index++;
+			}
+			
+			if (oneElement == self)
+			{
+				break;
+			}
 		}
 		
-		if (oneElement == self)
-		{
-			break;
-		}
+		return index;
 	}
-	
-	return index;
 }
 
 - (NSAttributedString *)attributedString
