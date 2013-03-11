@@ -115,6 +115,8 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  - set a layout frame
  
  The first you would normally use, the second you would use if you are layouting a larger text and then simply want to display individual parts (e.g. pages from an e-book) in a content view.
+ 
+ DTAttributedTextContentView is designed to be used as the content view inside a DTAttributedTextView and thus sizes its intrinsicContentSize always to be the same as the width of the set frame. Use DTAttributedLabel if you don't require scrolling behavior.
  */
 
 @interface DTAttributedTextContentView : UIView
