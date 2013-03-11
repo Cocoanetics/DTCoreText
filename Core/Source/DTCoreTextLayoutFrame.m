@@ -25,6 +25,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	int _numberLinesFitInFrame;
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
+	
+	CGFloat _longestLayoutLineWidth;
 }
 
 @synthesize numberOfLines = _numberOfLines;
@@ -1285,6 +1287,41 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	return _frame;
+}
+
+- (CGRect)intrinsicContentFrame
+{
+	if (!_lines)
+	{
+		[self _buildLines];
+	}
+	
+	if (![self.lines count])
+	{
+		return CGRectZero;
+	}
+	
+	DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
+	
+	CGRect outerFrame = self.frame;
+	
+	CGRect frameOverAllLines = firstLine.frame;
+	
+	// move up to frame origin because first line usually does not go all the ways up
+	frameOverAllLines.origin.y = outerFrame.origin.y;
+	
+	for (DTCoreTextLayoutLine *oneLine in _lines)
+	{
+		// need to limit frame to outer frame, otherwise HR causes too long lines
+		CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
+		
+		frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
+	}
+	
+	// extend the height to be same to frame
+	frameOverAllLines.size.height = outerFrame.size.height;
+	
+	return CGRectIntegral(frameOverAllLines);
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index

@@ -98,6 +98,16 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 
 /**
+ Calculates the frame that is covered by the text content.
+ 
+ The result is calculated by enumerating over all lines and creating a union over all their frames. This is different than the frame property since this gets calculated.
+ @returns The area that is covered by the text content.
+ @note The height is always equivalent to the frame's height. The width depends on how many glyphs Core Text was able to fit into a line. A line that gets broken might not have glyphs all the way to the margin.
+ */
+- (CGRect)intrinsicContentFrame;
+
+
+/**
  @name Drawing
  */
 

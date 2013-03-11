@@ -42,6 +42,19 @@
 	return self;
 }
 
+#pragma mark - Sizing
+
+- (CGSize)intrinsicContentSize
+{
+	if (!self.layoutFrame) // creates new layout frame if possible
+	{
+		return CGSizeMake(-1, -1);  // UIViewNoIntrinsicMetric as of iOS 6
+	}
+	
+	//  we have a layout frame and from this we get the needed size
+	return [_layoutFrame intrinsicContentFrame].size;
+}
+
 #pragma mark - Properties 
 
 - (void)setNumberOfLines:(NSInteger)numberOfLines
@@ -69,12 +82,6 @@
         _truncationString = trunctionString;
         [self relayoutText];
     }
-}
-
-- (void)sizeToFit
-{
-	CGSize size = [self suggestedFrameSizeToFitEntireStringConstraintedToWidth:CGFLOAT_OPEN_HEIGHT];
-	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height);
 }
 
 @synthesize numberOfLines = _numberOfLines;
