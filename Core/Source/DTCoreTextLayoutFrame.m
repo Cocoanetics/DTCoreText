@@ -1318,8 +1318,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
 	}
 	
-	// extend the height to be same to frame
-	frameOverAllLines.size.height = outerFrame.size.height;
+	// extend height same method as frame
+	frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
 	
 	return CGRectIntegral(frameOverAllLines);
 }
