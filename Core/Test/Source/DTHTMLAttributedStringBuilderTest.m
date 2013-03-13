@@ -32,7 +32,13 @@
 {
 	NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
 	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
+	// set the base URL so that resources are found in the resource bundle
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *baseURL = [bundle resourceURL];
+	
+	NSDictionary *options = @{NSBaseURLDocumentOption: baseURL};
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:NULL];
 	return [builder generatedAttributedString];
 }
 
@@ -94,9 +100,7 @@
 
 - (void)testAttachmentDisplaySize
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *imagePath = [bundle pathForResource:@"Oliver" ofType:@"jpg"];
-	NSString *string = [NSString stringWithFormat:@"<img src=\"file:%@\" style=\"foo:bar\">", imagePath];
+	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\" style=\"foo:bar\">"];
 	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
 
 	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
