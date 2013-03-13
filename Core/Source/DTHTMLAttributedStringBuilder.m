@@ -670,8 +670,6 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
-	NSLog(@"did end: %@", elementName);
-
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
