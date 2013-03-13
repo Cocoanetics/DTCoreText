@@ -117,6 +117,25 @@
 	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
 }
 
+// parser should ignore "auto" value for height
+- (void)testAttachmentAutoSize
+{
+	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\" style=\"width:260px; height:auto;\">"];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+	
+	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
+	
+	DTTextAttachment *attachment = [output attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(attachment, @"No attachment found in output");
+	
+	CGSize expectedOriginalSize = CGSizeMake(300, 300);
+	CGSize expectedDisplaySize = CGSizeMake(260, 260);
+	
+	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Expected originalSize to be 300x300");
+	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Expected displaySize to be 260x260");
+}
+
 - (void)testFontTagWithStyle
 {
 	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>"];
