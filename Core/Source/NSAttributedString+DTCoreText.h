@@ -85,6 +85,13 @@
 
 
 /**
+ Encodes the receiver into a generic HTML fragment representation. Styles are inlined and no html or head tags are included.
+ 
+ @returns An HTML string.
+ */
+- (NSString *)htmlFragment;
+
+/**
  Converts the receiver into plain text.
  
  This is different from the `string` method of `NSAttributedString` by also erasing placeholders for text attachments.
