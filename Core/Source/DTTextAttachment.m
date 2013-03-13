@@ -180,37 +180,21 @@ static NSCache *imageCache = nil;
 			if ([contentURL isFileURL])
 			{
 				DTImage *image = [[DTTextAttachment sharedImageCache] objectForKey:[contentURL path]];
-				if (!image) {
+				if (!image)
+				{
 					image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
 					[[DTTextAttachment sharedImageCache] setObject:image forKey:[contentURL path]];
 				}
 
 				originalSize = image.size;
 				
-				// width and/or height missing
-				if (displaySize.width==0 && displaySize.height==0)
-				{
-					displaySize = originalSize;
-				}
-				else if (!displaySize.width && displaySize.height)
-				{
-					CGFloat factor = image.size.height / displaySize.height;
-					displaySize.width = roundf(image.size.width / factor);
-				}
-				else if (displaySize.width>0 && displaySize.height==0)
-				{
-					CGFloat factor = image.size.width / displaySize.width;
-					displaySize.height = roundf(image.size.height / factor);
-				}
-			}
-			else
-			{
-				// remote image, we have to relayout once this size is known
-				displaySize = CGSizeMake(1, 1); // one pixel so that loading is triggered
+				// initial display size matches original
+				displaySize = originalSize;
 			}
 		}
 	}
 
+	
 	
 	// if you have no display size we assume original size
 	if (CGSizeEqualToSize(displaySize, CGSizeZero))
@@ -327,7 +311,41 @@ static NSCache *imageCache = nil;
 	self.displaySize = _originalSize;
 }
 
-/** 
+- (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize
+{
+	if (_originalSize.width && _originalSize.height)
+	{
+		// width and/or height missing
+		if (displaySize.width==0 && displaySize.height==0)
+		{
+			displaySize = _originalSize;
+		}
+		else if (!displaySize.width && displaySize.height)
+		{
+			// width missing, calculate it
+			CGFloat factor = _originalSize.height / displaySize.height;
+			displaySize.width = roundf(_originalSize.width / factor);
+		}
+		else if (displaySize.width>0 && displaySize.height==0)
+		{
+			// height missing, calculate it
+			CGFloat factor = _originalSize.width / displaySize.width;
+			displaySize.height = roundf(_originalSize.height / factor);
+		}
+	}
+	
+	if (maxDisplaySize.width>0 && maxDisplaySize.height>0)
+	{
+		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)
+		{
+			displaySize = sizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
+		}
+	}
+	
+	_displaySize = displaySize;
+}
+
+/**
  Accessor for the contents instance variable. If the content type is DTTextAttachmentTypeImage this returns a DTImage instance of the contents.
  @returns Contents. If it is an image, a DTImage instance is returned. Otherwise it is returned as is. 
  */

@@ -102,6 +102,15 @@ typedef enum
 @property (nonatomic, assign) CGSize displaySize;
 
 /**
+ Updates the display size optionally passing a maximum size that it should not exceed.
+ 
+ This method in contrast to using the displaySize property will use the originalSize and max display size to calculate missing dimensions.
+ @param displaySize The new size to display the content with
+ @param maxDisplaySize the maximum size that the content should be scaled to fit
+ */
+- (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize;
+
+/**
  The contents of the receiver
  */
 @property (nonatomic, strong) id contents;
