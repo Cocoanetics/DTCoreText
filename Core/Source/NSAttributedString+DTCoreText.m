@@ -217,6 +217,15 @@
 	return [writer HTMLString];
 }
 
+- (NSString *)htmlFragment
+{
+	// create a writer
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:self];
+	
+	// return it's output
+	return [writer HTMLFragment];
+}
+
 - (NSString *)plainTextString
 {
 	NSString *tmpString = [self string];
