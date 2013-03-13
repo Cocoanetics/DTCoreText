@@ -36,7 +36,6 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  - DTDefaultTextAlignment: the default text alignment for paragraphs
  - DTDefaultLineHeightMultiplier: The multiplier for line heights
  - DTDefaultFirstLineHeadIndent: The default indent for left margin on first line
- - DTDefaultParagraphSpacing: The default spacing to apply after paragraphs
  - DTDefaultHeadIndent: The default indent for left margin except first line
  - DTDefaultListIndent: The amount by which lists are indented
  - DTDefaultStyleSheet: The default style sheet to use
