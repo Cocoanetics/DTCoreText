@@ -125,6 +125,20 @@
 	STAssertEquals(pointSize, (CGFloat)23.0f, @"Font Size should be 23 px (= 17 pt)");
 }
 
+// parser should recover from no end element being sent for this img
+- (void)testMissingClosingBracket
+{
+	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\""];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+	
+	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
+	
+	DTTextAttachment *attachment = [output attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(attachment, @"No attachment found in output");
+}
+
+
 - (void)testRTLParsing
 {
 	NSAttributedString *output = [self _attributedStringFromTestFileName:@"RTL"];

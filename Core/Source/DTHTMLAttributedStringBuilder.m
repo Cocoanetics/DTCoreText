@@ -670,6 +670,8 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
+	NSLog(@"did end: %@", elementName);
+
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
@@ -731,7 +733,13 @@
 			}
 			
 		}
-		
+
+		while (![_currentTag.name isEqualToString:elementName])
+		{
+			// missing end of element, attempt to recover
+			_currentTag = [_currentTag parentElement];
+		}
+
 		// go back up a level
 		_currentTag = [_currentTag parentElement];
 	});
