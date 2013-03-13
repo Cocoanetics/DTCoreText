@@ -98,6 +98,9 @@
 	STAssertTrue(styleNatural.baseWritingDirection == NSWritingDirectionNatural, @"Writing direction is not Natural");
 }
 
+
+
+// parser should get the displaySize and originalSize from local image
 - (void)testAttachmentDisplaySize
 {
 	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\" style=\"foo:bar\">"];
@@ -110,7 +113,7 @@
 	STAssertNotNil(attachment, @"No attachment found in output");
 	
 	CGSize expectedSize = CGSizeMake(300, 300);
-	STAssertEquals(attachment.originalSize, expectedSize, @"Expected displaySize to be 300x300");
+	STAssertEquals(attachment.originalSize, expectedSize, @"Expected originalSize to be 300x300");
 	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
 }
 
