@@ -1136,8 +1136,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				if (shadows)
 				{
-					CGContextSaveGState(context);
-					
 					for (NSDictionary *shadowDict in shadows)
 					{
 						[self _setShadowInContext:context fromDictionary:shadowDict];
@@ -1145,8 +1143,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						// draw once per shadow
 						[oneRun drawInContext:context];
 					}
-					
-					CGContextRestoreGState(context);
 				}
 				
 				// regular text
