@@ -731,6 +731,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}
 	
+	offset.width -= 10000;
 	CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
 }
 
@@ -1137,15 +1138,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				if (shadows)
 				{
 					CGContextSaveGState(context);
+          
+          // Move the text 10000pt away from the current position so that on the shadow is visisble
+          CGContextSetTextPosition(context, textPosition.x + 10000, textPosition.y);
 					
 					for (NSDictionary *shadowDict in shadows)
 					{
 						[self _setShadowInContext:context fromDictionary:shadowDict];
 						
-						// draw once per shadow
 						[oneRun drawInContext:context];
 					}
-					
+          
+          CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 					CGContextRestoreGState(context);
 				}
 				
