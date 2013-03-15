@@ -704,11 +704,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark Drawing
 
-- (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary
+- (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary additionalOffset:(CGSize)additionalOffset
 {
 	DTColor *color = [dictionary objectForKey:@"Color"];
 	CGSize offset = [[dictionary objectForKey:@"Offset"] CGSizeValue];
 	CGFloat blur = [[dictionary objectForKey:@"Blur"] floatValue];
+	
+	// add extra offset
+	offset.width += additionalOffset.width;
+	offset.height += additionalOffset.height;
 	
 	CGFloat scaleFactor = 1.0;
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
@@ -731,7 +735,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}
 	
-	offset.width -= 10000;
 	CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
 }
 
@@ -1138,23 +1141,60 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				if (shadows)
 				{
 					CGContextSaveGState(context);
-          
-          // Move the text 10000pt away from the current position so that on the shadow is visisble
-          CGContextSetTextPosition(context, textPosition.x + 10000, textPosition.y);
 					
-					for (NSDictionary *shadowDict in shadows)
+					NSUInteger numShadows = [shadows count];
+					
+					if (numShadows == 1)
 					{
-						[self _setShadowInContext:context fromDictionary:shadowDict];
+						// single shadow, we only draw the glyph run with the shadow, no clipping magic
+						NSDictionary *singleShadow = [shadows objectAtIndex:0];
+						[self _setShadowInContext:context fromDictionary:singleShadow additionalOffset:CGSizeZero];
 						
 						[oneRun drawInContext:context];
 					}
-          
-          CGContextSetTextPosition(context, textPosition.x, textPosition.y);
+					else // multiple shadows, we shift the text away and then draw a single glyph run over it
+					{
+						// get the run bounds, Core Text has bottom left 0,0 so we flip it
+						CGRect runBoundsFlipped = oneRun.frame;
+						runBoundsFlipped.origin.y = self.frame.size.height - runBoundsFlipped.origin.y - runBoundsFlipped.size.height;
+						
+						// assume that shadows would never be more than 100 pixels away from glyph run frame or outside of frame
+						CGRect clipRect = CGRectIntersection(CGRectInset(runBoundsFlipped, -100, -100), self.frame);
+						
+						// clip to the rect
+						CGContextAddRect(context, clipRect);
+						CGContextClipToRect(context, clipRect);
+						
+						// Move the text outside of the clip rect so that only the shadow is visisble
+						CGContextSetTextPosition(context, textPosition.x + clipRect.size.width, textPosition.y);
+						
+						// draw each shadow
+						[shadows enumerateObjectsUsingBlock:^(NSDictionary *shadowDict, NSUInteger idx, BOOL *stop) {
+							BOOL isLastShadow = (idx == (numShadows-1));
+							
+							if (isLastShadow)
+							{
+								// last shadow draws the original text
+								[self _setShadowInContext:context fromDictionary:shadowDict additionalOffset:CGSizeZero];
+								
+								// ... so we put text position back
+								CGContextSetTextPosition(context, textPosition.x, textPosition.y);
+							}
+							else
+							{
+								[self _setShadowInContext:context fromDictionary:shadowDict additionalOffset:CGSizeMake(-clipRect.size.width, 0)];
+							}
+							
+							[oneRun drawInContext:context];
+						}];
+					}
+					
 					CGContextRestoreGState(context);
 				}
-				
-				// regular text
-				[oneRun drawInContext:context];
+				else // no shadows
+				{
+					[oneRun drawInContext:context];
+				}
 			}
 		}
 	}
