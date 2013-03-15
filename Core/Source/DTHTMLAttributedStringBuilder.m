@@ -101,7 +101,7 @@
 
 - (BOOL)_buildString
 {
-#if DEBUG
+#if DEBUG_LOG_METRICS
 	// metrics: get start time
 	CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
 #endif
@@ -297,7 +297,7 @@
 	_tagStartHandlers = nil;
 	_tagEndHandlers = nil;
 
-#if DEBUG
+#if DEBUG_LOG_METRICS
 	// metrics: get end time
 	CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
 	
