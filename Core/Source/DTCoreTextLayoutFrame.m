@@ -1139,9 +1139,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					for (NSDictionary *shadowDict in shadows)
 					{
 						[self _setShadowInContext:context fromDictionary:shadowDict];
-						
-						// draw once per shadow
-						[oneRun drawInContext:context];
 					}
 				}
 				
