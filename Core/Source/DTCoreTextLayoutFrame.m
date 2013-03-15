@@ -1136,10 +1136,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				if (shadows)
 				{
+					CGContextBeginTransparencyLayer(context, nil);
+					
 					for (NSDictionary *shadowDict in shadows)
 					{
 						[self _setShadowInContext:context fromDictionary:shadowDict];
+						
+						[oneRun drawInContext:context];
 					}
+					
+					CGContextEndTransparencyLayer(context);
 				}
 				
 				// regular text
