@@ -24,4 +24,13 @@ In the following "Mac" means the initWithHTML: methods there, "DTCoreText" means
 - Mac does not properly encode a double list start. iOS prints the empty list prefix.
 - Mac seems to ignore list-style-position:outside, iOS does the right thing.
 
+### Differences between UITextView/UIWebView and DTCoreText
+
+There are also some notable differences between display of an attributed string via DTCoreText versus UITextView or UIWebView (UIKit).
+
+- UIKit always draws a 1 px line for underline and strike-out text, DTCoreText gets the line thickness and position from the CTFont and draws.
+- UIKit does not support multiple shadows, DTCoreText does
+- UIKit does not support kerning, DTCoreText always kerns
+- UIKit does not support embedded text attachments (e.g. images), DTCoreText does
+
 If you find an issue then you are welcome to fix it and contribute your fix via a GitHub pull request.
