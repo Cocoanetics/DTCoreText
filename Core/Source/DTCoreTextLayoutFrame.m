@@ -1000,6 +1000,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			if (drawStrikeOut||drawUnderline||backgroundColor)
 			{
+				// calculate area covered by non-whitespace
+				CGRect lineFrame = oneLine.frame;
+				lineFrame.size.width -= oneLine.trailingWhitespaceWidth;
+				
+				// exclude trailing whitespace so that we don't underline too much
+				CGRect runStrokeBounds = CGRectIntersection(lineFrame, oneRun.frame);
+
 				// get text color or use black
 				id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
 				
@@ -1019,8 +1026,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				{
 					CGContextSetGrayStrokeColor(context, 0, 1.0);
 				}
-				
-				CGRect runStrokeBounds = oneRun.frame;
 				
 				NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 				
