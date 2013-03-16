@@ -46,9 +46,16 @@
 
 /**
  Draws the receiver into the given context with the position that it derives from the layout line it belongs to.
+ @see drawDecorationInContext: for drawing the receiver's decoration
  @param context The graphics context to draw into
  */
 - (void)drawInContext:(CGContextRef)context;
+
+/**
+ Draws the receiver's decoration into the given context with the position that it derives from the layout line it belongs to. Decoration is background highlighting, underline and strike-through.
+ @param context The graphics context to draw into
+ */
+- (void)drawDecorationInContext:(CGContextRef)context;
 
 
 /**

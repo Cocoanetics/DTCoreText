@@ -138,8 +138,6 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		
 		NSDictionary *runAttributes = glyphRunToDraw.attributes;
 		
-		NSInteger superscriptStyle = [[runAttributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
-
 		// -------------- Line-Out, Underline, Background-Color
 		BOOL drawStrikeOut = [[runAttributes objectForKey:DTStrikeOutAttribute] boolValue];
 		BOOL drawUnderline = [[runAttributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
@@ -207,54 +205,85 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 				CGContextFillRect(context, runStrokeBounds);
 			}
 			
-			if (drawStrikeOut)
+			if (drawStrikeOut || drawUnderline)
 			{
-				CGFloat y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
+				CTFontRef usedFont = (__bridge CTFontRef)([glyphRunToDraw.attributes objectForKey:(id)kCTFontAttributeName]);
 				
-				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
-				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				if (usedFont)
+				{
+					CGFloat underlineThickness = CTFontGetUnderlineThickness(usedFont);
+					CGContextSetLineWidth(context, underlineThickness);
+				}
 				
-				CGContextStrokePath(context);
+				if (drawStrikeOut)
+				{
+					CGFloat y;
+					
+					if (usedFont)
+					{
+						CGFloat strokePosition = CTFontGetXHeight(usedFont)/2.0;
+						y = runStrokeBounds.origin.y + glyphRunToDraw.ascent - strokePosition;
+					}
+					else
+					{
+						y = roundf(runStrokeBounds.origin.y + glyphRunToDraw.frame.size.height/2.0f + 1)+0.5f;
+					}
+					
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+					
+					CGContextStrokePath(context);
+				}
+				
+				if (drawUnderline)
+				{
+					CGFloat y;
+					
+					if (usedFont)
+					{
+						CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
+						y = runStrokeBounds.origin.y + runStrokeBounds.size.height - glyphRunToDraw.descent - underlinePosition;
+					}
+					else
+					{
+						y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - glyphRunToDraw.descent + 1)+0.5f;
+					}
+					
+					CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+					CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+					
+					CGContextStrokePath(context);
+				}
 			}
 			
-			if (drawUnderline)
+			// Flip the coordinate system
+			CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+			CGContextScaleCTM(context, 1.0, -1.0);
+			CGContextTranslateCTM(context, 0, -self.bounds.size.height);
+			
+			CGPoint textPosition = CGPointMake(self.contentEdgeInsets.left, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
+			
+			switch (superscriptStyle)
 			{
-				CGFloat y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - glyphRunToDraw.descent + 1)+0.5f;
-				
-				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
-				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
-				
-				CGContextStrokePath(context);
+				case 1:
+				{
+					textPosition.y += glyphRunToDraw.ascent * 0.47f;
+					break;
+				}
+				case -1:
+				{
+					textPosition.y -= glyphRunToDraw.ascent * 0.25f;
+					break;
+				}
+				default:
+					break;
 			}
+			
+			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
+			
+			[glyphRunToDraw drawInContext:context];
+			CGContextRestoreGState(context);
 		}
-		
-		// Flip the coordinate system
-		CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-		CGContextScaleCTM(context, 1.0, -1.0);
-		CGContextTranslateCTM(context, 0, -self.bounds.size.height);
-		
-		CGPoint textPosition = CGPointMake(self.contentEdgeInsets.left, ceilf(glyphRunToDraw.descent+self.contentEdgeInsets.bottom));
-		
-		switch (superscriptStyle)
-		{
-			case 1:
-			{
-				textPosition.y += glyphRunToDraw.ascent * 0.47f;
-				break;
-			}
-			case -1:
-			{
-				textPosition.y -= glyphRunToDraw.ascent * 0.25f;
-				break;
-			}
-			default:
-				break;
-		}
-		
-		CGContextSetTextPosition(context, textPosition.x, textPosition.y);
-		
-		[glyphRunToDraw drawInContext:context];
-		CGContextRestoreGState(context);
 	}
 }
 
@@ -308,7 +337,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 		// extend bounds by the calculated necessary edge insets
 		bounds.size.width += edgeInsets.left + edgeInsets.right;
 		bounds.size.height += edgeInsets.top + edgeInsets.bottom;
-
+		
 		// apply bounds and insets
 		self.bounds = bounds;
 		self.contentEdgeInsets = edgeInsets;

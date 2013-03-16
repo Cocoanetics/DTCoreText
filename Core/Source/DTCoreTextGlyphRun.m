@@ -212,6 +212,128 @@
 	}
 }
 
+- (void)drawDecorationInContext:(CGContextRef)context
+{
+	CGColorRef backgroundColor = (__bridge CGColorRef)[_attributes objectForKey:DTBackgroundColorAttribute];
+	
+	// can also be iOS 6 attribute
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+	if (!backgroundColor && ___useiOS6Attributes)
+	{
+		UIColor *uiColor = [_attributes objectForKey:NSBackgroundColorAttributeName];
+		backgroundColor = uiColor.CGColor;
+	}
+#endif
+	// -------------- Line-Out, Underline, Background-Color
+	BOOL drawStrikeOut = [[_attributes objectForKey:DTStrikeOutAttribute] boolValue];
+	BOOL drawUnderline = [[_attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
+	
+	if (drawStrikeOut||drawUnderline||backgroundColor)
+	{
+		// calculate area covered by non-whitespace
+		CGRect lineFrame = _line.frame;
+		lineFrame.size.width -= _line.trailingWhitespaceWidth;
+		
+		// exclude trailing whitespace so that we don't underline too much
+		CGRect runStrokeBounds = CGRectIntersection(lineFrame, self.frame);
+		
+		// get text color or use black
+		id color = [_attributes objectForKey:(id)kCTForegroundColorAttributeName];
+		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+		if (!color && ___useiOS6Attributes)
+		{
+			UIColor *uiColor = [_attributes objectForKey:NSForegroundColorAttributeName];
+			color = (id)uiColor.CGColor;
+		}
+#endif
+		
+		if (color)
+		{
+			CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
+		}
+		else
+		{
+			CGContextSetGrayStrokeColor(context, 0, 1.0);
+		}
+		
+		NSInteger superscriptStyle = [[_attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
+		
+		switch (superscriptStyle)
+		{
+			case 1:
+			{
+				runStrokeBounds.origin.y -= _ascent * 0.47f;
+				break;
+			}
+			case -1:
+			{
+				runStrokeBounds.origin.y += _ascent * 0.25f;
+				break;
+			}
+			default:
+				break;
+		}
+		
+		if (backgroundColor)
+		{
+			CGContextSetFillColorWithColor(context, backgroundColor);
+			CGContextFillRect(context, runStrokeBounds);
+		}
+		
+		if (drawStrikeOut || drawUnderline)
+		{
+			CTFontRef usedFont = (__bridge CTFontRef)([_attributes objectForKey:(id)kCTFontAttributeName]);
+			
+			if (usedFont)
+			{
+				CGFloat underlineThickness = CTFontGetUnderlineThickness(usedFont);
+				CGContextSetLineWidth(context, underlineThickness);
+			}
+			
+			if (drawStrikeOut)
+			{
+				CGFloat y;
+				
+				if (usedFont)
+				{
+					CGFloat strokePosition = CTFontGetXHeight(usedFont)/2.0;
+					y = runStrokeBounds.origin.y + _ascent - strokePosition;
+				}
+				else
+				{
+					y = roundf(runStrokeBounds.origin.y + _frame.size.height/2.0f + 1)+0.5f;
+				}
+				
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				CGContextStrokePath(context);
+			}
+			
+			if (drawUnderline)
+			{
+				CGFloat y;
+				
+				if (usedFont)
+				{
+					CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
+					y = runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent - underlinePosition;
+				}
+				else
+				{
+					y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent + 1)+0.5f;
+				}
+				
+				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
+				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				CGContextStrokePath(context);
+			}
+		}
+	}
+}
+
 - (void)fixMetricsFromAttachment
 {
 	if (self.attachment)

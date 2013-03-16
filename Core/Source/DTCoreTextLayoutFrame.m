@@ -971,17 +971,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				continue;
 			}
 			
-			CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
-			
-			// can also be iOS 6 attribute
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-			if (!backgroundColor && ___useiOS6Attributes)
-			{
-				UIColor *uiColor = [oneRun.attributes objectForKey:NSBackgroundColorAttributeName];
-				backgroundColor = uiColor.CGColor;
-			}
-#endif
-			
 			// don't draw decorations on images
 			if (oneRun.attachment)
 			{
@@ -994,114 +983,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				continue;
 			}
 			
-			// -------------- Line-Out, Underline, Background-Color
-			BOOL drawStrikeOut = [[oneRun.attributes objectForKey:DTStrikeOutAttribute] boolValue];
-			BOOL drawUnderline = [[oneRun.attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
-			
-			if (drawStrikeOut||drawUnderline||backgroundColor)
-			{
-				// calculate area covered by non-whitespace
-				CGRect lineFrame = oneLine.frame;
-				lineFrame.size.width -= oneLine.trailingWhitespaceWidth;
-				
-				// exclude trailing whitespace so that we don't underline too much
-				CGRect runStrokeBounds = CGRectIntersection(lineFrame, oneRun.frame);
-
-				// get text color or use black
-				id color = [oneRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
-				
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-				if (!color && ___useiOS6Attributes)
-				{
-					UIColor *uiColor = [oneRun.attributes objectForKey:NSForegroundColorAttributeName];
-					color = (id)uiColor.CGColor;
-				}
-#endif
-				
-				if (color)
-				{
-					CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
-				}
-				else
-				{
-					CGContextSetGrayStrokeColor(context, 0, 1.0);
-				}
-				
-				NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
-				
-				switch (superscriptStyle) 
-				{
-					case 1:
-					{
-						runStrokeBounds.origin.y -= oneRun.ascent * 0.47f;
-						break;
-					}	
-					case -1:
-					{
-						runStrokeBounds.origin.y += oneRun.ascent * 0.25f;
-						break;
-					}	
-					default:
-						break;
-				}
-				
-				if (backgroundColor)
-				{
-					CGContextSetFillColorWithColor(context, backgroundColor);
-					CGContextFillRect(context, runStrokeBounds);
-				}
-				
-				if (drawStrikeOut || drawUnderline)
-				{
-					CTFontRef usedFont = (__bridge CTFontRef)([oneRun.attributes objectForKey:(id)kCTFontAttributeName]);
-					
-					if (usedFont)
-					{
-						CGFloat underlineThickness = CTFontGetUnderlineThickness(usedFont);
-						CGContextSetLineWidth(context, underlineThickness);
-					}
-					
-					if (drawStrikeOut)
-					{
-						CGFloat y;
-						
-						if (usedFont)
-						{
-							CGFloat strokePosition = CTFontGetXHeight(usedFont)/2.0;
-							y = runStrokeBounds.origin.y + oneRun.ascent - strokePosition;
-						}
-						else
-						{
-							y = roundf(runStrokeBounds.origin.y + oneRun.frame.size.height/2.0f + 1)+0.5f;
-						}
-						
-						CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
-						CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
-						
-						CGContextStrokePath(context);
-					}
-					
-					if (drawUnderline)
-					{
-						CGFloat y;
-						
-						if (usedFont)
-						{
-							CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
-							y = runStrokeBounds.origin.y + runStrokeBounds.size.height - oneRun.descent - underlinePosition;
-						}
-						else
-						{
-							y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - oneRun.descent + 1)+0.5f;
-						}
-						
-						CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
-						CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
-						
-						CGContextStrokePath(context);
-					}
-				}
-			}
+			[oneRun drawDecorationInContext:context];
 		}
 	}
 	
