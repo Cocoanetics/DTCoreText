@@ -31,6 +31,6 @@ License
 
 It is open source and covered by a standard 2-clause BSD license. That means you have to mention *Cocoanetics* as the original author of this code and reproduce the LICENSE text inside your app. 
 
-You can purchase a [Non-Attribution-License](http://www.cocoanetics.com/order/?product=DTCoreText%20Non-Attribution%20License) for 75 Euros for not having to include the LICENSE text.
+You can purchase a [Non-Attribution-License](https://www.cocoanetics.com/order/?product_id=DTCoreText) for 75 Euros for not having to include the LICENSE text.
 
 We also accept sponsorship for specific enhancements which you might need. Please [contact us via email](mailto:oliver@cocoanetics.com?subject=DTCoreText) for inquiries.
