@@ -11,6 +11,7 @@
 #import "DTTextAttachment.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextParagraphStyle.h"
+#import "DTCoreTextFunctions.h"
 
 #ifndef __IPHONE_4_3
 	#define __IPHONE_4_3 40300
@@ -214,6 +215,11 @@
 
 - (void)drawDecorationInContext:(CGContextRef)context
 {
+	// get the scaling factor of the current translation matrix
+	CGAffineTransform ctm = CGContextGetCTM(context);
+	CGFloat contentScale = ctm.a; // needed for  rounding operations
+	CGFloat smallestPixelWidth = 1.0f/contentScale;
+	
 	CGColorRef backgroundColor = (__bridge CGColorRef)[_attributes objectForKey:DTBackgroundColorAttribute];
 	
 	// can also be iOS 6 attribute
@@ -283,13 +289,24 @@
 		
 		if (drawStrikeOut || drawUnderline)
 		{
+			CGContextSaveGState(context);
+
 			CTFontRef usedFont = (__bridge CTFontRef)([_attributes objectForKey:(id)kCTFontAttributeName]);
+			
+			CGFloat fontUnderlineThickness;
 			
 			if (usedFont)
 			{
-				CGFloat underlineThickness = CTFontGetUnderlineThickness(usedFont);
-				CGContextSetLineWidth(context, underlineThickness);
+				fontUnderlineThickness = CTFontGetUnderlineThickness(usedFont);
 			}
+			else
+			{
+				fontUnderlineThickness = smallestPixelWidth;
+			}
+			
+			CGFloat usedUnderlineThickness = DTCeilWithContentScale(fontUnderlineThickness, contentScale);
+			
+			CGContextSetLineWidth(context, usedUnderlineThickness);
 			
 			if (drawStrikeOut)
 			{
@@ -298,17 +315,20 @@
 				if (usedFont)
 				{
 					CGFloat strokePosition = CTFontGetXHeight(usedFont)/2.0;
-					y = runStrokeBounds.origin.y + _ascent - strokePosition;
+					y = DTRoundWithContentScale(runStrokeBounds.origin.y + _ascent - strokePosition, contentScale);
 				}
 				else
 				{
-					y = roundf(runStrokeBounds.origin.y + _frame.size.height/2.0f + 1)+0.5f;
+					y = DTRoundWithContentScale((runStrokeBounds.origin.y + self.frame.size.height/2.0f + 1), contentScale);
+				}
+				
+				if ((int)(usedUnderlineThickness/smallestPixelWidth)%2) // odd line width
+				{
+					y += smallestPixelWidth/2.0f; // shift down half a pixel to avoid aliasing
 				}
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
-				
-				CGContextStrokePath(context);
 			}
 			
 			if (drawUnderline)
@@ -318,18 +338,27 @@
 				if (usedFont)
 				{
 					CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
-					y = runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent - underlinePosition;
+					
+					y = DTRoundWithContentScale(runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent - underlinePosition - fontUnderlineThickness/2.0f, contentScale);
 				}
 				else
 				{
-					y = roundf(runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent + 1)+0.5f;
+					y = DTRoundWithContentScale((runStrokeBounds.origin.y + runStrokeBounds.size.height - self.descent + 1.0f), contentScale);
+				}
+				
+				if ((int)(usedUnderlineThickness/smallestPixelWidth)%2) // odd line width
+				{
+					y += smallestPixelWidth/2.0f; // shift down half a pixel to avoid aliasing
 				}
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
-				
-				CGContextStrokePath(context);
 			}
+
+			
+			CGContextStrokePath(context);
+			
+			CGContextRestoreGState(context); // restore antialiasing
 		}
 	}
 }
