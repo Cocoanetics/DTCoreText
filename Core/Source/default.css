@@ -105,6 +105,8 @@ a
 	text-decoration:underline;
 }
 
+a:active {color:#FF0000;}  /* link while finger down */
+
 center
 {
 	text-align:center;

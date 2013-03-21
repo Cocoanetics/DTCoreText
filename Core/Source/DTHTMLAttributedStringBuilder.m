@@ -225,6 +225,24 @@
 		}
 	}
 	
+	DTColor *defaultLinkHighlightColor = [_options objectForKey:DTDefaultLinkHighlightColor];
+	
+	if (defaultLinkHighlightColor)
+	{
+		if ([defaultLinkHighlightColor isKindOfClass:[NSString class]])
+		{
+			// convert from string to color
+			defaultLinkHighlightColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkHighlightColor];
+		}
+		
+		// get hex code for the passed color
+		NSString *colorHex = [defaultLinkHighlightColor htmlHexString];
+		
+		// overwrite the style
+		NSString *styleBlock = [NSString stringWithFormat:@"a:active {color:#%@;}", colorHex];
+		[_globalStyleSheet parseStyleBlock:styleBlock];
+	}
+	
 	// default paragraph style
 	_defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
 	

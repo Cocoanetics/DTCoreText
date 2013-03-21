@@ -43,6 +43,7 @@ extern NSString * const DTDefaultFontSize;
 extern NSString * const DTDefaultTextColor;
 extern NSString * const DTDefaultLinkColor;
 extern NSString * const DTDefaultLinkDecoration;
+extern NSString * const DTDefaultLinkHighlightColor;
 extern NSString * const DTDefaultTextAlignment;
 extern NSString * const DTDefaultLineHeightMultiplier;
 extern NSString * const DTDefaultLineHeightMultiplier;

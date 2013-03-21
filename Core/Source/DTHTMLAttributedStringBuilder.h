@@ -33,6 +33,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  - DTDefaultTextColor: the default text color
  - DTDefaultLinkColor: the default color for hyperlink text
  - DTDefaultLinkDecoration: the default decoration for hyperlinks
+ - DTDefaultLinkHighlightColor: the color to show while the hyperlink is highlighted
  - DTDefaultTextAlignment: the default text alignment for paragraphs
  - DTDefaultLineHeightMultiplier: The multiplier for line heights
  - DTDefaultFirstLineHeadIndent: The default indent for left margin on first line

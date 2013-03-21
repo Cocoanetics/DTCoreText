@@ -7,6 +7,7 @@
 //
 
 #import "DTHTMLElementA.h"
+#import "DTColor+HTML.h"
 
 @implementation DTHTMLElementA
 {
@@ -17,8 +18,13 @@
 {
 	[super applyStyleDictionary:styles];
 	
-	// TODO: get the highlighted color from CSS
-	self.highlightedTextColor = [DTColor redColor];
+	// get highlight color from a:active pseudo-selector
+	NSString *activeColor = [styles objectForKey:@"active:color"];
+	
+	if (activeColor)
+	{
+		self.highlightedTextColor = [DTColor colorWithHTMLName:activeColor];
+	}
 }
 
 - (NSAttributedString *)attributedString
