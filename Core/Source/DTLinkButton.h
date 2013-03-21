@@ -15,7 +15,7 @@ extern NSString *DTLinkButtonDidHighlightNotification;
 /**
  A button that corresponds to a hyperlink.
  
- Multiple parts of the same hyperlink synchronize their looks through the guid.
+ Multiple parts of the same hyperlink synchronize their looks through the guid. You can show link text in a different color for normal and highlighted mode by setting the button images for these states.
  */
 @interface DTLinkButton : UIButton 
 
@@ -43,15 +43,5 @@ extern NSString *DTLinkButtonDidHighlightNotification;
  */
 @property(nonatomic) BOOL showsTouchWhenHighlighted;
 
-/**
- The attributed string to be drawn for the link button.
- */
-@property (nonatomic, retain) NSAttributedString *attributedString;
-
-
-/**
- The attributed string to be drawn for the link button while it is highlighted.
- */
-@property (nonatomic, retain) NSAttributedString *highlightedAttributedString;
 
 @end
