@@ -822,6 +822,27 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks
 {
+	DTCoreTextLayoutFrameDrawingOptions options = DTCoreTextLayoutFrameDrawingDefault;
+	
+	if (!drawImages)
+	{
+		options |= DTCoreTextLayoutFrameDrawingOmitAttachments;
+	}
+	
+	if (!drawLinks)
+	{
+		options |= DTCoreTextLayoutFrameDrawingOmitLinks;
+	}
+	
+	[self drawInContext:context options:options];
+}
+
+
+- (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options
+{
+	BOOL drawLinks = !(options & DTCoreTextLayoutFrameDrawingOmitLinks);
+	BOOL drawImages = !(options & DTCoreTextLayoutFrameDrawingOmitAttachments);
+	
 	CGRect rect = CGContextGetClipBoundingBox(context);
 	
 	if (!context)

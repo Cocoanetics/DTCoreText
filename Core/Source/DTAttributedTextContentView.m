@@ -408,8 +408,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame; // this is synchronized
 	
+	// construct drawing options
+	DTCoreTextLayoutFrameDrawingOptions options = DTCoreTextLayoutFrameDrawingDefault;
+	
+	if (!_shouldDrawImages)
+	{
+		options |= DTCoreTextLayoutFrameDrawingOmitAttachments;
+	}
+	
+	if (!_shouldDrawImages)
+	{
+		options |= DTCoreTextLayoutFrameDrawingOmitLinks;
+	}
+	
 	// need to prevent updating of string and drawing at the same time
-	[theLayoutFrame drawInContext:ctx drawImages:_shouldDrawImages drawLinks:_shouldDrawLinks];
+	[theLayoutFrame drawInContext:ctx options:options];
 	
 	if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
 	{
@@ -420,7 +433,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	[self.layoutFrame drawInContext:context drawImages:YES drawLinks:YES];
+	[self.layoutFrame drawInContext:context options:DTCoreTextLayoutFrameDrawingDefault];
 }
 
 - (void)relayoutText
