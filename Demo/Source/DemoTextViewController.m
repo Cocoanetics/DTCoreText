@@ -306,7 +306,7 @@
 	
 	DTLinkButton *button = [[DTLinkButton alloc] initWithFrame:frame];
 	button.URL = URL;
-	button.minimumHitSize = CGSizeMake(50, 50); // adjusts it's bounds so that button is always large enough
+	button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
 	button.GUID = identifier;
 	
 	// get image with normal link text
