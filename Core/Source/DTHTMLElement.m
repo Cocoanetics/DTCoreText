@@ -8,6 +8,7 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLElement.h"
+#import "DTHTMLElementA.h"
 #import "DTHTMLElementAttachment.h"
 #import "DTHTMLElementBR.h"
 #import "DTHTMLElementHR.h"
@@ -39,6 +40,7 @@ NSDictionary *_classesForNames = nil;
 	// lookup table so that we quickly get the correct class to instantiate for special tags
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
+	[tmpDict setObject:[DTHTMLElementA class] forKey:@"a"];
 	[tmpDict setObject:[DTHTMLElementBR class] forKey:@"br"];
 	[tmpDict setObject:[DTHTMLElementHR class] forKey:@"hr"];
 	[tmpDict setObject:[DTHTMLElementLI class] forKey:@"li"];

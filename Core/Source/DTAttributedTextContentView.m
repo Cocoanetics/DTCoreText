@@ -416,7 +416,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		options |= DTCoreTextLayoutFrameDrawingOmitAttachments;
 	}
 	
-	if (!_shouldDrawImages)
+	if (!_shouldDrawLinks)
 	{
 		options |= DTCoreTextLayoutFrameDrawingOmitLinks;
 	}

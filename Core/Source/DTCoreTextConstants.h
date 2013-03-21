@@ -58,6 +58,7 @@ extern NSString * const DTWillFlushBlockCallBack;
 extern NSString * const DTTextListsAttribute;
 extern NSString * const DTAttachmentParagraphSpacingAttribute;
 extern NSString * const DTLinkAttribute;
+extern NSString * const DTLinkHighlightColorAttribute;
 extern NSString * const DTAnchorAttribute;
 extern NSString * const DTGUIDAttribute;
 extern NSString * const DTHeaderLevelAttribute;

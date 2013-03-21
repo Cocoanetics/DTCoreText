@@ -206,6 +206,9 @@
 		
 		CGContextSetTextMatrix(context, textMatrix);
 		
+		CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+		CGContextSetBlendMode(context, kCGBlendModePlusLighter);
+		
 		CTRunDraw(_run, context, CFRangeMake(0, 0));
 
 		// restore identity
@@ -242,26 +245,6 @@
 		
 		// exclude trailing whitespace so that we don't underline too much
 		CGRect runStrokeBounds = CGRectIntersection(lineFrame, self.frame);
-		
-		// get text color or use black
-		id color = [_attributes objectForKey:(id)kCTForegroundColorAttributeName];
-		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (!color && ___useiOS6Attributes)
-		{
-			UIColor *uiColor = [_attributes objectForKey:NSForegroundColorAttributeName];
-			color = (id)uiColor.CGColor;
-		}
-#endif
-		
-		if (color)
-		{
-			CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
-		}
-		else
-		{
-			CGContextSetGrayStrokeColor(context, 0, 1.0);
-		}
 		
 		NSInteger superscriptStyle = [[_attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 		

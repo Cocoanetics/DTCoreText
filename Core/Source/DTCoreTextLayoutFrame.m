@@ -837,6 +837,50 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	[self drawInContext:context options:options];
 }
 
+// sets the text foreground color based on the glyph run and drawing options
+- (void)_setForgroundColorInContext:(CGContextRef)context forGlyphRun:(DTCoreTextGlyphRun *)glyphRun options:(DTCoreTextLayoutFrameDrawingOptions)options
+{
+	id color = nil;
+	
+	BOOL needsToSetFillColor = [[glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName] boolValue];
+	
+	if (glyphRun.isHyperlink)
+	{
+		if (options & DTCoreTextLayoutFrameDrawingDrawLinksHighlighted)
+		{
+			color = (id)[[glyphRun.attributes objectForKey:DTLinkHighlightColorAttribute] CGColor];
+		}
+	}
+	
+	if (!color)
+	{
+		// get text color or use black
+		color = [glyphRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
+		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+		if (!color && ___useiOS6Attributes)
+		{
+			DTColor *uiColor = [glyphRun.attributes objectForKey:NSForegroundColorAttributeName];
+			color = (id)uiColor.CGColor;
+		}
+#endif
+	}
+	
+	// default color
+	if (!color)
+	{
+		color = (id)[DTColor blackColor].CGColor;
+	}
+	
+	// set fill for text that uses kCTForegroundColorFromContextAttributeName
+	if (needsToSetFillColor)
+	{
+		CGContextSetFillColorWithColor(context, (__bridge CGColorRef)color);
+	}
+	
+	// set stroke for lines
+	CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
+}
 
 - (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
@@ -1004,6 +1048,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				continue;
 			}
 			
+			[self _setForgroundColorInContext:context forGlyphRun:oneRun options:options];
+			
 			[oneRun drawDecorationInContext:context];
 		}
 	}
@@ -1132,6 +1178,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				}
 				else // no shadows
 				{
+					[self _setForgroundColorInContext:context forGlyphRun:oneRun options:options];
+
 					[oneRun drawInContext:context];
 				}
 			}
