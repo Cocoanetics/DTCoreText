@@ -882,3 +882,23 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize relayoutMask = _relayoutMask;
 
 @end
+
+@implementation DTAttributedTextContentView (Drawing)
+
+- (UIImage *)contentImageWithBounds:(CGRect)bounds options:(DTCoreTextLayoutFrameDrawingOptions)options
+{
+	UIGraphicsBeginImageContextWithOptions(bounds.size, NO, 0);
+	
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	
+	CGContextTranslateCTM(context, -bounds.origin.x, -bounds.origin.y);
+	
+	[self.layoutFrame drawInContext:context options:options];
+	
+	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	return image;
+}
+
+@end
