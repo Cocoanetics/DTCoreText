@@ -1084,7 +1084,17 @@ NSDictionary *_classesForNames = nil;
 
 - (DTCSSListStyle *)listStyle
 {
-	return [[DTCSSListStyle alloc] initWithStyles:_styles];
+	DTCSSListStyle *style = [[DTCSSListStyle alloc] initWithStyles:_styles];
+	
+	NSString *startingIndex = [_attributes objectForKey:@"start"];
+	
+	// set the starting index if there is one specified
+	if (startingIndex)
+	{
+		style.startingItemNumber = [startingIndex integerValue];
+	}
+	
+	return style;
 }
 
 - (void)addAdditionalAttribute:(id)attribute forKey:(id)key
