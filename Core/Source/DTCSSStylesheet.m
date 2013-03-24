@@ -412,6 +412,22 @@ extern unsigned int default_css_len;
 		NSString *cleanSelector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		
 		NSMutableDictionary *ruleDictionary = [[rule dictionaryOfCSSStyles] mutableCopy];
+		
+		// remove !important, we're ignoring these
+		for (NSString *oneKey in [ruleDictionary allKeys])
+		{
+			NSString *value = [ruleDictionary objectForKey:oneKey];
+			
+			NSRange rangeOfImportant = [value rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
+			
+			if (rangeOfImportant.location != NSNotFound)
+			{
+				value = [value stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
+				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				
+				[ruleDictionary setObject:value forKey:oneKey];
+			}
+		}
 
 		// need to uncompress because otherwise we might get shorthands and non-shorthands together
 		[self _uncompressShorthands:ruleDictionary];
