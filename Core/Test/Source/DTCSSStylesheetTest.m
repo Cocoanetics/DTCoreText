@@ -42,6 +42,7 @@
 	STAssertEqualObjects(empty2, @"", @"empty2 should match");
 }
 
+// the !important CSS tag should be ignored
 - (void)testImportant
 {
 	NSString *string = @"p {align: center !IMPORTANT;color:blue;}";
