@@ -612,6 +612,22 @@
 	};
 	
 	[_tagEndHandlers setObject:[styleBlock copy] forKey:@"style"];
+	
+	
+	void (^linkBlock)(void) = ^
+	{
+		// NSString *ref = [[_currentTag attributeForKey:@"rel"] lowercaseString];
+		NSString *href = [_currentTag attributeForKey:@"href"];
+		NSString *type = [[_currentTag attributeForKey:@"type"] lowercaseString];
+		if ([type isEqualToString:@"text/css"]) {
+			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:_baseURL];
+			NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
+			DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent];
+			[_globalStyleSheet mergeStylesheet:localSheet];
+		}
+	};
+	
+	[ _tagEndHandlers setObject:[linkBlock copy] forKey:@"link"];
 }
 
 #pragma mark DTHTMLParser Delegate
