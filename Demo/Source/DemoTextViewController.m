@@ -161,6 +161,8 @@
 		[options setObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
 	}
 	
+	[options setObject:[NSURL fileURLWithPath:readmePath] forKey:NSBaseURLDocumentOption];
+	
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 	
 	return string;
