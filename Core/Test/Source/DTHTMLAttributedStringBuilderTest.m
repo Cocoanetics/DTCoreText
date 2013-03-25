@@ -277,4 +277,26 @@
 }
 
 
+// setting ordered list starting number
+- (void)testOrderedListStartingNumber
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ol start=\"5\">\n<li>Item #5</li>\n<li>Item #6</li>\n<li>etc.</li>\n</ol>"];
+	NSString *string = [attributedString string];
+	
+	NSArray *lines = [string componentsSeparatedByString:@"\n"];
+	
+	STAssertEquals([lines count], 4u, @"There should be 4 lines"); // last one is empty
+	
+	NSString *line1 = lines[0];
+	STAssertTrue([line1 hasPrefix:@"\t5."], @"String should have prefix 5. on first item");
+	
+	NSString *line2 = lines[1];
+	STAssertTrue([line2 hasPrefix:@"\t6."], @"String should have prefix 6. on third item");
+	
+	NSString *line3 = lines[2];
+	STAssertTrue([line3 hasPrefix:@"\t7."], @"String should have prefix 7. on third item");
+}
+
+
+
 @end

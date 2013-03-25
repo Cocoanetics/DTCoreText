@@ -154,7 +154,7 @@
 	};
 	
 	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
-							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, callBackBlock, DTWillFlushBlockCallBack, nil];
+							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, @"red", DTDefaultLinkHighlightColor, callBackBlock, DTWillFlushBlockCallBack, nil];
 	
 	if (useiOS6Attributes)
 	{
@@ -176,7 +176,7 @@
 	_textView.frame = bounds;
 
 	// Display string
-	//_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
+	_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
 	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
 	
 	[self _segmentedControlChanged:nil];
@@ -311,20 +311,13 @@
 	button.minimumHitSize = CGSizeMake(25, 25); // adjusts it's bounds so that button is always large enough
 	button.GUID = identifier;
 	
-	// we draw the contents ourselves
-	button.attributedString = string;
+	// get image with normal link text
+	UIImage *normalImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDefault];
+	[button setImage:normalImage forState:UIControlStateNormal];
 	
-	// make a version with different text color
-	NSMutableAttributedString *highlightedString = [string mutableCopy];
-	
-	NSRange range = NSMakeRange(0, highlightedString.length);
-	
-	NSDictionary *highlightedAttributes = [NSDictionary dictionaryWithObject:(__bridge id)[UIColor redColor].CGColor forKey:(id)kCTForegroundColorAttributeName];
-	
-	
-	[highlightedString addAttributes:highlightedAttributes range:range];
-	
-	button.highlightedAttributedString = highlightedString;
+	// get image for highlighted link text
+	UIImage *highlightImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDrawLinksHighlighted];
+	[button setImage:highlightImage forState:UIControlStateHighlighted];
 	
 	// use normal push action for opening URL
 	[button addTarget:self action:@selector(linkPushed:) forControlEvents:UIControlEventTouchUpInside];

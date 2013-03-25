@@ -22,6 +22,15 @@
 
 typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground); 
 
+// the drawing options
+typedef enum
+{
+	DTCoreTextLayoutFrameDrawingDefault              = 1<<0,
+	DTCoreTextLayoutFrameDrawingOmitLinks            = 1<<1,
+	DTCoreTextLayoutFrameDrawingOmitAttachments      = 1<<2,
+	DTCoreTextLayoutFrameDrawingDrawLinksHighlighted = 1<<3
+} DTCoreTextLayoutFrameDrawingOptions;
+
 
 @class DTCoreTextLayouter;
 
@@ -113,14 +122,31 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 
 /**
- Draws the entire layout frame into the given graphics context.
- 
+ Draws the receiver into the given graphics context.
+
+ @warning This method is deprecated, use -[DTCoreTextLayoutFrame drawInContext:options:] instead
  @param context A graphics context to draw into
  @param drawImages Whether images should be drawn together with the text. If you specify `NO` then space is left blank where images would go and you have to add your own views to display these images.
  @param drawLinks Whether hyperlinks should be drawn together with the text. If you specify `NO` then space is left blank where links would go and you have to add your own views to display these images.
  @param drawImages Whether hyperlinks should be drawn together with the text. If you specify `NO` then space is left blank where links would go and you have to add your own views to display these links.
  */
-- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks;
+- (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks __attribute__((deprecated("use -[DTCoreTextLayoutFrame drawInContext:options:] instead")));
+
+
+/**
+ Draws the receiver into the given graphics context.
+ 
+ Possible options are the following, you may combine them with a binary OR.
+ 
+ - DTCoreTextLayoutFrameDrawingDefault or 0
+ - DTCoreTextLayoutFrameDrawingOmitLinks
+ - DTCoreTextLayoutFrameDrawingOmitAttachments
+ - DTCoreTextLayoutFrameDrawingDrawLinksHighlighted
+ 
+ @param context A graphics context to draw into
+ @param options The drawing options. Use DTCoreTextLayoutFrameDrawingDefault or 0 to draw everything
+ */
+- (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options;
 
 
 /**

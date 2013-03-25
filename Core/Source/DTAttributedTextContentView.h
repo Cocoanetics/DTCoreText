@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <CoreText/CoreText.h>
+#import "DTCoreTextLayoutFrame.h"
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
@@ -305,6 +305,23 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  @returns The `CALayer` subclass that new instances are using
  */
 + (Class)layerClass;
+
+@end
+
+
+/**
+ Methods for drawing the content view
+ */
+@interface DTAttributedTextContentView (Drawing)
+
+/**
+ Creates an image from a part of the receiver's content view
+ @param bounds The bounds of the content to draw
+ @param options The drawing options to apply when drawing
+ @see [DTCoreTextLayoutFrame drawInContext:options:] for a list of available drawing options
+ @returns A `UIImage` with the specified content
+ */
+- (UIImage *)contentImageWithBounds:(CGRect)bounds options:(DTCoreTextLayoutFrameDrawingOptions)options;
 
 @end
 
