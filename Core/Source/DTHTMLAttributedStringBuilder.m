@@ -627,6 +627,9 @@
 					[_globalStyleSheet mergeStylesheet:localSheet];
 				}
 			}
+			else {
+				NSLog(@"WARNING: css link referencing a non-local target, ignored");
+			}
 		}
 	};
 	
