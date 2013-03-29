@@ -612,6 +612,28 @@
 	};
 	
 	[_tagEndHandlers setObject:[styleBlock copy] forKey:@"style"];
+	
+	
+	void (^linkBlock)(void) = ^
+	{
+		NSString *href = [_currentTag attributeForKey:@"href"];
+		NSString *type = [[_currentTag attributeForKey:@"type"] lowercaseString];
+		if ([type isEqualToString:@"text/css"]) {
+			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:_baseURL];
+			if ([stylesheetURL isFileURL]) {
+				NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
+				if (stylesheetContent) {
+					DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent];
+					[_globalStyleSheet mergeStylesheet:localSheet];
+				}
+			}
+			else {
+				NSLog(@"WARNING: css link referencing a non-local target, ignored");
+			}
+		}
+	};
+	
+	[ _tagEndHandlers setObject:[linkBlock copy] forKey:@"link"];
 }
 
 #pragma mark DTHTMLParser Delegate
