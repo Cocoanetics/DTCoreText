@@ -411,10 +411,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			textAlignment = kCTNaturalTextAlignment;
 		}
-		
+
+		// determine writing direction
 		BOOL isRTL = NO;
+		CTWritingDirection baseWritingDirection;
+		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection))
+		{
+			isRTL = (baseWritingDirection == kCTWritingDirectionRightToLeft);
+		}
 		
-		switch (textAlignment) 
+		switch (textAlignment)
 		{
 			case kCTLeftTextAlignment:
 			{
@@ -425,17 +431,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTNaturalTextAlignment:
 			{
-				// depends on the text direction
-				CTWritingDirection baseWritingDirection;
-				CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection);
-				
 				if (baseWritingDirection != kCTWritingDirectionRightToLeft)
 				{
 					break;
-				}
-				else
-				{
-					isRTL = YES;
 				}
 				
 				// right alignment falls through
@@ -470,7 +468,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					line = justifiedLine;
 				}
 				
-				lineOrigin.x = _frame.origin.x + offset;
+				if (isRTL)
+				{
+					// align line with right margin
+					lineOrigin.x = _frame.origin.x + offset + CTLineGetPenOffsetForFlush(line, 1.0, availableSpace);
+				}
+				else
+				{
+					// align line with left margin
+					lineOrigin.x = _frame.origin.x + offset;
+				}
 				
 				break;
 			}
