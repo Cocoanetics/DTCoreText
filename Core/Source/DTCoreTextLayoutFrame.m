@@ -157,6 +157,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	DTTextBlock *currentTextBlock = nil;
 	DTTextBlock *previousTextBlock = nil;
+	BOOL truncateLine;
 	
 	do 
 	{
@@ -234,8 +235,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(currentParaMetrics.paragraphSpacing), &currentParaMetrics.paragraphSpacing);
 		}
 		
-		BOOL truncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
-							 (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
+		truncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
+						(_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		CTLineRef line;
 		if(!truncateLine)
 		{
@@ -244,8 +245,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		else
 		{
+			// extend the line to the end of the current paragraph
+			// if we extend to the entire to the entire text range
+			// it is possible to pull lines up from paragraphs below us
 			NSRange oldLineRange = lineRange;
-			lineRange.length = maxIndex-lineRange.location;
+			lineRange.length = NSMaxRange(currentParagraphRange)-lineRange.location;
 			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 
 			// convert lineBreakMode to CoreText type
@@ -529,7 +533,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		previousLine = newLine;
 	//previousLineMetrics = currentLineMetrics;
 	} 
-	while (lineRange.location < maxIndex);
+	while (lineRange.location < maxIndex && !truncateLine);
 	
 	_lines = typesetLines;
 	
