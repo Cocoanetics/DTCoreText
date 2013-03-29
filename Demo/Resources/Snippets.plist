@@ -110,11 +110,11 @@
 	</dict>
 	<dict>
 		<key>Description</key>
-		<string>Arabic Ligation</string>
+		<string>Examples and Tests for Arabic and RTL Text</string>
 		<key>File</key>
 		<string>ArabicTest.html</string>
 		<key>Title</key>
-		<string>Arabic Ligation</string>
+		<string>Arabic Text</string>
 	</dict>
 	<dict>
 		<key>Description</key>
