@@ -455,8 +455,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 			case kCTJustifiedTextAlignment:
 			{
-				BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length || 		// JTL 28/June/2012
-					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);									// JTL 28/June/2012
+				BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length ||
+					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);
 
 				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
 				// avoids over-stretching
