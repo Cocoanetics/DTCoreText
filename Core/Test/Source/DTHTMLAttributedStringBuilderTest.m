@@ -285,7 +285,7 @@
 	
 	NSArray *lines = [string componentsSeparatedByString:@"\n"];
 	
-	STAssertEquals([lines count], 4u, @"There should be 4 lines"); // last one is empty
+	STAssertEquals([lines count], (NSUInteger)4, @"There should be 4 lines"); // last one is empty
 	
 	NSString *line1 = lines[0];
 	STAssertTrue([line1 hasPrefix:@"\t5."], @"String should have prefix 5. on first item");
