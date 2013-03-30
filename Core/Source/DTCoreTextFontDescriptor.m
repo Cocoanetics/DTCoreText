@@ -7,6 +7,7 @@
 //
 
 #import "DTCoreTextFontDescriptor.h"
+#import "DTCoreTextFontCollection.h"
 #import "DTVersion.h"
 
 static NSCache *_fontCache = nil;
@@ -15,6 +16,14 @@ static dispatch_queue_t _fontQueue;
 
 // adds "STHeitiSC-Light" font for cascading fix on iOS 5
 static BOOL _needsChineseFontCascadeFix = NO;
+
+@interface DTCoreTextFontDescriptor ()
+
+// gets descriptors of all available fonts from system and registers them as overrides
++ (void)_loadAvailableFontsIntoOverrideTable;
+
+@end
+
 
 @implementation DTCoreTextFontDescriptor
 {
@@ -41,6 +50,10 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		// init/load of overrides
 		_fontOverrides = [[NSMutableDictionary alloc] init];
 		
+		// first we load the available system fonts for quick lookup
+		[DTCoreTextFontDescriptor _loadAvailableFontsIntoOverrideTable];
+		
+		// then - if it exists - we override from the plist
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
 		NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
 		
@@ -75,6 +88,17 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		_needsChineseFontCascadeFix = YES;
 	}
 #endif
+}
+
+// gets descriptors of all available fonts from system and registers them as overrides
++ (void)_loadAvailableFontsIntoOverrideTable
+{
+	DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
+	
+	for (DTCoreTextFontDescriptor *oneFontDescriptor in [allFonts fontDescriptors])
+	{
+		[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+	}
 }
 
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
