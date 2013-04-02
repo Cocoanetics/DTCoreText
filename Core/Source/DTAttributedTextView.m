@@ -117,6 +117,18 @@
 	}
 }
 
+- (void)relayoutText
+{
+	// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
+	_attributedTextContentView.layouter=nil;
+	
+	// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
+	[_attributedTextContentView relayoutText];
+	
+	// layout custom subviews for visible area
+	[self setNeedsLayout];
+}
+
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {

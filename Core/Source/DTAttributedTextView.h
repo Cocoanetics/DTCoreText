@@ -39,6 +39,11 @@
 
 
 /**
+ Performs a new layout pass on the receiver. This destroys the frame setter, calls relayoutText on the content view and marks the receiver as needing layout so that custom subviews get appropriately sized.
+ */
+- (void)relayoutText;
+
+/**
  @name Accessing Subviews
  */
 
