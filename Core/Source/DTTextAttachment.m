@@ -205,17 +205,11 @@ static NSCache *imageCache = nil;
 	// adjust the display size if there is a restriction and it's too large
 	CGSize adjustedSize = displaySize;
 	
-	if (maxImageSize.width>0 && maxImageSize.height>0)
+	if (!CGSizeEqualToSize(maxImageSize, CGSizeZero))
 	{
 		if (maxImageSize.width < displaySize.width || maxImageSize.height < displaySize.height)
 		{
 			adjustedSize = sizeThatFitsKeepingAspectRatio(displaySize, maxImageSize);
-		}
-		
-		// still no display size? use max size
-		if (CGSizeEqualToSize(displaySize, CGSizeZero))
-		{
-			adjustedSize = maxImageSize;
 		}
 	}
 		
