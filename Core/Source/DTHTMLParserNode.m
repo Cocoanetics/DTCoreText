@@ -146,6 +146,14 @@
 
 #pragma mark - Properties
 
+- (NSArray *)childNodes
+{
+	@synchronized(self)
+	{
+		return _childNodes;
+	}
+}
+
 @synthesize name = _name;
 @synthesize attributes = _attributes;
 @synthesize parentNode = _parentNode;
