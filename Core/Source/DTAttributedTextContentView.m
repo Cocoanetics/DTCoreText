@@ -233,7 +233,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					}
 				}
 				
-				if (CGRectIsEmpty(frameForSubview))
+				// if there is an attachment then we continue even with empty frame, might be a lazily loaded image
+				if (CGRectIsEmpty(frameForSubview) && !attachment)
 				{
 					continue;
 				}
