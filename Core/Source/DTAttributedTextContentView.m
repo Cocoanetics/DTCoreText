@@ -259,60 +259,56 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					continue;
 				}
 				
-				if (_delegateFlags.delegateSupportsCustomViewsForAttachments || _delegateFlags.delegateSupportsGenericCustomViews)
+				if (attachment)
 				{
-					if (attachment)
+					indexKey = [NSNumber numberWithInteger:[attachment hash]];
+					UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
+					
+					if (existingAttachmentView)
 					{
-						indexKey = [NSNumber numberWithInteger:[attachment hash]];
+						//dispatch_sync(dispatch_get_main_queue(), ^{
+						existingAttachmentView.hidden = NO;
+						existingAttachmentView.frame = frameForSubview;
 						
-						UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
+						existingAttachmentView.alpha = 1;
 						
-						if (existingAttachmentView)
+						[existingAttachmentView setNeedsLayout];
+						[existingAttachmentView setNeedsDisplay];
+						//});
+						
+						linkURL = nil; // prevent adding link button on top of image view
+					}
+					else
+					{
+						UIView *newCustomAttachmentView = nil;
+						
+						if ([attachment isKindOfClass:[DTDictationPlaceholderTextAttachment class]])
 						{
-							//dispatch_sync(dispatch_get_main_queue(), ^{
-							existingAttachmentView.hidden = NO;
-							existingAttachmentView.frame = frameForSubview;
-							
-							existingAttachmentView.alpha = 1;
-							
-							[existingAttachmentView setNeedsLayout];
-							[existingAttachmentView setNeedsDisplay];
-							//});
-							
-							linkURL = nil; // prevent adding link button on top of image view
+							newCustomAttachmentView = [DTDictationPlaceholderView placeholderView];
+							newCustomAttachmentView.frame = frameForSubview; // set fixed frame
 						}
-						else
+						else if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
 						{
-							UIView *newCustomAttachmentView = nil;
-							
-							if ([attachment isKindOfClass:[DTDictationPlaceholderTextAttachment class]])
-							{
-								newCustomAttachmentView = [DTDictationPlaceholderView placeholderView];
-								newCustomAttachmentView.frame = frameForSubview; // set fixed frame
-							}
-							else if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
-							{
-								newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
-							}
-							else if (_delegateFlags.delegateSupportsGenericCustomViews)
-							{
-								NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange];
-								newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
-							}
-							
+							newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
+						}
+						else if (_delegateFlags.delegateSupportsGenericCustomViews)
+						{
+							NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange];
+							newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+						}
+						
+						if (newCustomAttachmentView)
+						{
+							// delegate responsible to set frame
 							if (newCustomAttachmentView)
 							{
-								// delegate responsible to set frame
-								if (newCustomAttachmentView)
-								{
-									newCustomAttachmentView.tag = [indexKey integerValue];
-									[self addSubview:newCustomAttachmentView];
-									
-									[self.customViews addObject:newCustomAttachmentView];
-									[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
-									
-									linkURL = nil; // prevent adding link button on top of image view
-								}
+								newCustomAttachmentView.tag = [indexKey integerValue];
+								[self addSubview:newCustomAttachmentView];
+								
+								[self.customViews addObject:newCustomAttachmentView];
+								[self.customViewsForAttachmentsIndex setObject:newCustomAttachmentView forKey:indexKey];
+								
+								linkURL = nil; // prevent adding link button on top of image view
 							}
 						}
 					}
