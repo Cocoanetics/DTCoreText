@@ -121,6 +121,8 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 			
 			self.fontDescriptors = tmpArray;
 		}
+		
+		CFRelease(fonts);
 	}
 	
 	return _fontDescriptors;
