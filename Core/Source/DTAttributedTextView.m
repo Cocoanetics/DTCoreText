@@ -119,7 +119,7 @@
 	CGFloat scrollPos = MIN(line.frame.origin.y, maxScrollPos);
 	
 	// scroll
-	[self setContentOffset:CGPointMake(0, scrollPos) animated:YES];
+	[self setContentOffset:CGPointMake(0, scrollPos) animated:animated];
 }
 
 - (void)relayoutText
