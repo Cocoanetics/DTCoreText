@@ -788,6 +788,8 @@
 	
 	if (_useAppleConvertedSpace) {
 		[output appendString:[retString stringByAddingAppleConvertedSpace]];
+	} else {
+		[output appendString:retString];
 	}
 
 	if (!fragment) {
