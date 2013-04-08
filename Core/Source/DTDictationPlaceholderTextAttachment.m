@@ -9,6 +9,9 @@
 #import "DTDictationPlaceholderTextAttachment.h"
 
 @implementation DTDictationPlaceholderTextAttachment
+{
+	NSAttributedString *_replacedAttributedString;
+}
 
 // if you change any of these then also make sure to adjust the sizes in DTDictationPlaceholderTextAttachment
 #define DOT_WIDTH 10.0f
@@ -40,5 +43,9 @@
 {
 	return 0.0f;
 }
+
+#pragma mark - Properties
+
+@synthesize replacedAttributedString = _replacedAttributedString;
 
 @end
