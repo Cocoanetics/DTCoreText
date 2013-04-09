@@ -37,6 +37,11 @@
 @property (nonatomic, assign) CGFloat textScale;
 
 /**
+ If YES, preserve whitespaces in HTML by using "Apple-converted-space". Default YES.
+ */
+@property (nonatomic, assign) BOOL useAppleConvertedSpace;
+
+/**
  The attributed string that the writer is processing.
  */
 @property (nonatomic, readonly) NSAttributedString *attributedString;
