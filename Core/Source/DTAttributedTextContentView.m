@@ -18,6 +18,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 
 @interface DTAttributedTextContentView ()
 {
+	BOOL _shouldAddFirstLineLeading;
 	BOOL _shouldDrawImages;
 	BOOL _shouldDrawLinks;
 	BOOL _shouldLayoutCustomSubviews;
@@ -85,6 +86,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 {
 	self.contentMode = UIViewContentModeTopLeft; // to avoid bitmap scaling effect on resize
 	_shouldLayoutCustomSubviews = YES;
+	
+	// no extra leading is added by default
+	_shouldAddFirstLineLeading = NO;
 	
 	// by default we draw images, if custom views are supported (by setting delegate) this is disabled
 	// if you still want images to be drawn together with text then set it back to YES after setting delegate
@@ -657,6 +661,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
+- (void)setShouldAddFirstLineLeading:(BOOL)shouldAddLeading
+{
+	if (_shouldAddFirstLineLeading != shouldAddLeading)
+	{
+		_shouldAddFirstLineLeading = shouldAddLeading;
+		
+		[self setNeedsDisplay];
+	}
+}
+
 - (void)setShouldDrawImages:(BOOL)shouldDrawImages
 {
 	if (_shouldDrawImages != shouldDrawImages)
@@ -757,7 +771,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-				
+				_layoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
+
 				// this must have been the initial layout pass
 				CGSize neededSize = CGSizeMake(_layoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(_layoutFrame.frame) + _edgeInsets.bottom);
 				
@@ -867,6 +882,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize attributedString = _attributedString;
 @synthesize delegate = _delegate;
 @synthesize edgeInsets = _edgeInsets;
+@synthesize shouldAddFirstLineLeading = _shouldAddFirstLineLeading;
 @synthesize shouldDrawImages = _shouldDrawImages;
 @synthesize shouldDrawLinks = _shouldDrawLinks;
 @synthesize shouldLayoutCustomSubviews = _shouldLayoutCustomSubviews;
