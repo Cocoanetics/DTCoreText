@@ -297,6 +297,57 @@
 	STAssertTrue([line3 hasPrefix:@"\t7."], @"String should have prefix 7. on third item");
 }
 
+// testing if Helvetica font family returns the correct font
+- (void)testHelveticaVariants
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica\"><b>Bold</b></p><p style=\"font-family:Helvetica\"><i>Italic</i></p><p style=\"font-family:Helvetica\"><b><i>Bold+Italic</i></b></p>"];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSRange fontRange;
+		CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(id)kCTFontAttributeName atIndex:substringRange.location effectiveRange:&fontRange]);
+		
+		STAssertEquals(enclosingRange, fontRange, @"Font should be on entire string");
+		
+		DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+		
+		switch (lineNumber) {
+			case 0:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica", @"Font face should be Helvetica");
+				break;
+			}
 
+			case 1:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Bold", @"Font face should be Helvetica");
+				break;
+			}
+			case 2:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Oblique", @"Font face should be Helvetica-Oblique");
+				break;
+			}
+			case 3:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-BoldOblique", @"Font face should be Helvetica-BoldOblique");
+				break;
+			}
+			default:
+				break;
+		}
+		
+		lineNumber++;
+	}];
+}
 
 @end
