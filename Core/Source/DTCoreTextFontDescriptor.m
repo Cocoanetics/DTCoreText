@@ -95,9 +95,28 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
 	
-	for (DTCoreTextFontDescriptor *oneFontDescriptor in [allFonts fontDescriptors])
+	// sort font descriptors by name so that shorter names are preferred
+	
+	NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"fontFamily" ascending:YES];
+	NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"fontName" ascending:YES];
+	NSArray *sortedFonts = [[allFonts fontDescriptors] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sort1, sort2, nil]];
+	
+	for (DTCoreTextFontDescriptor *oneFontDescriptor in sortedFonts)
 	{
-		[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+		NSString *existingOverride = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+		
+		if (!existingOverride)
+		{
+			[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+		}
+		else
+		{
+			// prefer fonts with shorter name, there are probably "more correct". e.g. Helvetica-Oblique instead of Helvetica-LightOblique
+			if ([existingOverride length]>[oneFontDescriptor.fontName length])
+			{
+				[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+			}
+		}
 	}
 }
 
