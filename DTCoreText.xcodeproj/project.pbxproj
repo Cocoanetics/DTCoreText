@@ -309,8 +309,6 @@
 		A7D63CDA1611B9AC00D4712A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
 		A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
 		A7DBC1AB1689B8C5003F1D38 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
-		A7DBC1B01689B910003F1D38 /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7B4E2D41686FDB300717707 /* libDTFoundation_Mac.a */; };
-		A7DBC1B11689B91E003F1D38 /* libDTHTMLParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7B4E2D81686FDB300717707 /* libDTHTMLParser.a */; };
 		A7DBC1B31689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */; };
 		A7DBC1B41689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */; };
 		A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
@@ -686,19 +684,12 @@
 			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
 			remoteInfo = DTHTMLParser;
 		};
-		A7DBC1AC1689B8FC003F1D38 /* PBXContainerItemProxy */ = {
+		A7CE7CE8171569E10043A448 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A710A4FF1607556000437D36;
-			remoteInfo = "Static Library (Mac)";
-		};
-		A7DBC1AE1689B900003F1D38 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3D7CE53D166613B60028D339;
-			remoteInfo = "DTHTMLParser (Mac)";
+			remoteGlobalIDString = E2262DC51638331500BFDAD7;
+			remoteInfo = "Mac Framework";
 		};
 		A7E383B6160DFEA800CF72D6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1004,8 +995,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A76F503D1705ABAC00DF52D5 /* DTCoreText.framework in Frameworks */,
-				A7DBC1B11689B91E003F1D38 /* libDTHTMLParser.a in Frameworks */,
-				A7DBC1B01689B910003F1D38 /* libDTFoundation_Mac.a in Frameworks */,
 				A7F5671D14D8469000D1F167 /* Cocoa.framework in Frameworks */,
 				A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */,
 				A7949A5914CC456000A8CCDE /* SenTestingKit.framework in Frameworks */,
@@ -1752,8 +1741,7 @@
 				A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A7DBC1AF1689B900003F1D38 /* PBXTargetDependency */,
-				A7DBC1AD1689B8FC003F1D38 /* PBXTargetDependency */,
+				A7CE7CE9171569E10043A448 /* PBXTargetDependency */,
 			);
 			name = MacUnitTest;
 			productName = MacUnitTest;
@@ -2376,15 +2364,10 @@
 			name = DTHTMLParser;
 			targetProxy = A7B4E2E71686FE1B00717707 /* PBXContainerItemProxy */;
 		};
-		A7DBC1AD1689B8FC003F1D38 /* PBXTargetDependency */ = {
+		A7CE7CE9171569E10043A448 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Static Library (Mac)";
-			targetProxy = A7DBC1AC1689B8FC003F1D38 /* PBXContainerItemProxy */;
-		};
-		A7DBC1AF1689B900003F1D38 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "DTHTMLParser (Mac)";
-			targetProxy = A7DBC1AE1689B900003F1D38 /* PBXContainerItemProxy */;
+			target = E2262DC51638331500BFDAD7 /* Mac Framework */;
+			targetProxy = A7CE7CE8171569E10043A448 /* PBXContainerItemProxy */;
 		};
 		A7E383E8160DFFDE00CF72D6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2808,6 +2791,7 @@
 				);
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
@@ -2841,6 +2825,7 @@
 					"\"$(SRCROOT)/Core/Externals\"/**",
 				);
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Core/Externals\"/**";
