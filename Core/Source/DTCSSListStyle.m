@@ -254,6 +254,7 @@
 	newStyle.type = self.type;
 	newStyle.position = self.position;
 	newStyle.imageName = self.imageName;
+	newStyle.startingItemNumber = self.startingItemNumber;
 	
 	return newStyle;
 }
