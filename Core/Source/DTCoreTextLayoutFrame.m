@@ -376,7 +376,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				}
 				
 				// leading is included in the lineHeight
-				lineHeight += self.noLeadingOnFirstLine ? 0 : currentLineMetrics.leading;
+				if(_noLeadingOnFirstLine == NO)
+					lineHeight += currentLineMetrics.leading;
 			}
 		}
 		
