@@ -71,6 +71,10 @@ extern NSString * const DTHorizontalRuleStyleAttribute;
 extern NSString * const DTTextBlocksAttribute;
 extern NSString * const DTFieldAttribute;
 
+// field constants
+
+extern NSString * const DTListPrefixField;
+
 // iOS 6 compatibility
 extern BOOL ___useiOS6Attributes;
 

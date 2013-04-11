@@ -44,6 +44,9 @@ NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
 
+// field constants
+NSString * const DTListPrefixField = @"{listprefix}";
+
 // iOS 6 compatibility
 
 BOOL ___useiOS6Attributes = NO; // this gets set globally by DTHTMLAttributedStringBuilder

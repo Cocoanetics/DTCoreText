@@ -345,7 +345,7 @@
 	}
 	
 	// add a marker so that we know that this is a field/prefix
-	[newAttributes setObject:@"{listprefix}" forKey:DTFieldAttribute];
+	[newAttributes setObject:DTListPrefixField forKey:DTFieldAttribute];
 	
 	NSString *prefix = [listStyle prefixWithCounter:listCounter];
 	
