@@ -641,7 +641,15 @@
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
 {
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
-		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
+
+		NSMutableDictionary*	patchedAttributes	=	[ NSMutableDictionary dictionaryWithDictionary: attributeDict ];
+		NSString*	pAlign	=	[ attributeDict objectForKey: @"align" ];
+
+		if ( [ pAlign isEqualToString: @"justify" ] )
+		{
+			[patchedAttributes setObject:@"text-align:justify" forKey:@"style"];
+		}
+		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:patchedAttributes options:_options];
 		
 		DTHTMLElement *previousLastChild = nil;
 		
