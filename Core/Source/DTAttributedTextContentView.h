@@ -240,6 +240,12 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 
 /**
+ Specifies if the receiver should add extra leading the first line of its content
+ 
+ */
+@property (nonatomic) BOOL shouldAddFirstLineLeading;
+
+/**
  Specifies if the receiver should draw image text attachments.
  
  Set to `NO` if you use the delegate methods to provide custom subviews to display images.
