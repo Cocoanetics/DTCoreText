@@ -28,6 +28,8 @@
 		*parEndIndex = endIndex;
 	}
 	
+	// endIndex is the first character of the following paragraph
+	
 	return NSMakeRange(beginIndex, endIndex - beginIndex);
 }
 

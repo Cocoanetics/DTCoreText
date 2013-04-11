@@ -117,6 +117,8 @@
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A76F503D1705ABAC00DF52D5 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
+		A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
+		A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -765,6 +767,8 @@
 		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
 		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		A776DBE61716A8EE00E71F36 /* NSStringParagraphTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringParagraphTest.h; sourceTree = "<group>"; };
+		A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringParagraphTest.m; sourceTree = "<group>"; };
 		A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextCell.h; sourceTree = "<group>"; };
 		A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
@@ -1402,6 +1406,8 @@
 				A7F16CF51698491400B0E843 /* NSStringCSSTest.m */,
 				A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */,
 				A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */,
+				A776DBE61716A8EE00E71F36 /* NSStringParagraphTest.h */,
+				A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2214,6 +2220,7 @@
 				A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
 				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
+				A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2227,6 +2234,7 @@
 				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,
+				A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
