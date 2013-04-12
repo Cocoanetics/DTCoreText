@@ -1242,6 +1242,29 @@ NSDictionary *_classesForNames = nil;
 			// other values are invalid and will be ignored
 		}
 	}
+
+	// handles align="justify"
+	NSString *align = [self attributeForKey:@"align"];
+
+	if (align)
+	{
+		if ([align isEqualToString: @"justify"])
+		{
+			_paragraphStyle.alignment = kCTTextAlignmentJustified;
+		}
+		else if ([align isEqualToString: @"left"])
+		{
+			_paragraphStyle.alignment = kCTTextAlignmentLeft;
+		}
+		else if ([align isEqualToString: @"center"])
+		{
+			_paragraphStyle.alignment = kCTTextAlignmentCenter;
+		}
+		else if ([align isEqualToString: @"right"])
+		{
+			_paragraphStyle.alignment = kCTTextAlignmentRight;
+		}
+	}
 }
 
 #pragma mark Properties
