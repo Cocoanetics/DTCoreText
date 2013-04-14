@@ -108,13 +108,29 @@ static NSCache *imageCache = nil;
 	{ 
 		if ([src hasPrefix:@"data:"])
 		{
-			NSRange range = [src rangeOfString:@"base64,"];
+			NSString *cleanStr = [[src componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
 			
-			if (range.length)
+			NSURL *dataURL = [NSURL URLWithString:cleanStr];
+			
+			// try native decoding first
+			NSData *decodedData = [NSData dataWithContentsOfURL:dataURL];
+			
+			// try own base64 decoding
+			if (!decodedData)
 			{
-				NSString *encodedData = [src substringFromIndex:range.location + range.length];
-				NSData *decodedData = [DTBase64Coding dataByDecodingString:encodedData];
+				NSRange range = [cleanStr rangeOfString:@"base64,"];
 				
+				if (range.length)
+				{
+					NSString *encodedData = [cleanStr substringFromIndex:range.location + range.length];
+					
+					decodedData = [DTBase64Coding dataByDecodingString:encodedData];
+				}
+			}
+			
+			// if we have image data, get the default display size
+			if (decodedData)
+			{
 				decodedImage = [[DTImage alloc] initWithData:decodedData];
 				
 				if (!displaySize.width || !displaySize.height)

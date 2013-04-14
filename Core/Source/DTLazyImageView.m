@@ -55,6 +55,14 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 		return;
 	}
 	
+	// local files we don't need to get asynchronously
+	if ([url isFileURL] || [url.scheme isEqualToString:@"data"])
+	{
+		NSData *data = [NSData dataWithContentsOfURL:url];
+		[self completeDownloadWithData:data];
+		return;
+	}
+	
 	@autoreleasepool 
 	{
 		if (_urlRequest == nil) {
