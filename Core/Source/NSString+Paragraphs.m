@@ -56,4 +56,19 @@
 	return [self rangeOfParagraphsContainingRange:NSMakeRange(index, 1) parBegIndex:NULL parEndIndex:NULL];
 }
 
+- (NSUInteger)numberOfParagraphs
+{
+	NSUInteger retValue = 0;
+	
+	for (int i=0; i<[self length]; i++)
+	{
+		if ([self characterAtIndex:i] == '\n')
+		{
+			retValue++;
+		}
+	}
+	
+	return retValue;
+}
+
 @end
