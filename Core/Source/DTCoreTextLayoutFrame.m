@@ -261,13 +261,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				NSRange range;
 				int index = oldLineRange.location;
 				if (truncationType == kCTLineTruncationEnd)
-				{
-					index += oldLineRange.length;
-				}
-				else if (truncationType == kCTLineTruncationMiddle)
-				{
-					index += oldLineRange.length/2.0;
-				}
+                {
+                    index += (oldLineRange.length > 0 ? oldLineRange.length - 1 : 0);
+                }
+                else if (truncationType == kCTLineTruncationMiddle)
+                {
+                    index += (oldLineRange.length > 1 ? (oldLineRange.length/2.0 - 1) : 0);
+                }
 				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
 				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
 			}
@@ -1722,6 +1722,36 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	return _paragraphRanges;
+}
+
+- (void)setNumberOfLines:(NSInteger)numberOfLines
+{
+    if( _numberOfLines != numberOfLines ) {
+        _numberOfLines = numberOfLines;
+        // clear lines cache
+        _lines = nil;
+    }
+}
+
+- (void)setLineBreakMode:(NSLineBreakMode)lineBreakMode
+{
+    if( _lineBreakMode != lineBreakMode ) {
+        _lineBreakMode = lineBreakMode;
+        // clear lines cache
+        _lines = nil;
+    }
+}
+
+- (void)setTruncationString:(NSAttributedString *)truncationString
+{
+    if( ![_truncationString isEqualToAttributedString:truncationString] ) {
+        _truncationString = truncationString;
+		
+        if( self.numberOfLines > 0 ) {
+            // clear lines cache
+            _lines = nil;
+        }
+    }
 }
 
 @synthesize frame = _frame;
