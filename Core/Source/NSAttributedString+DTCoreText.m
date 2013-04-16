@@ -183,7 +183,12 @@
 
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
 {
-	return [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+	NSRange listRange = [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+	
+	// extend list range to full paragraphs to be safe
+	listRange = [self.string rangeOfParagraphsContainingRange:listRange parBegIndex:NULL parEndIndex:NULL];
+	
+	return listRange;
 }
 
 - (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
