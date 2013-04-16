@@ -250,7 +250,6 @@
 		paragraphStyle.tabStops = nil;
 		
 		paragraphStyle.headIndent = listIndent;
-		paragraphStyle.paragraphSpacing = 0;
 		
 		if (listStyle.type != DTCSSListStyleTypeNone)
 		{
@@ -260,7 +259,7 @@
 		}
 		
 		// second tab is for the beginning of first line after bullet
-		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];	
+		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];	
 	}
 	
 	if (font)
