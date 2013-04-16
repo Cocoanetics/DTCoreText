@@ -77,12 +77,21 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	// only allow the embed request
-	if ([[[request URL] absoluteString] hasPrefix:@"http://www.youtube.com/embed/"])
+	BOOL shouldLoadEmbeddedVideo = NO;
+
+	if ([_delegate respondsToSelector:@selector(videoView:shouldLoadEmbeddedVideo:)])
 	{
-		return YES;
+		shouldLoadEmbeddedVideo = [_delegate videoView:self shouldLoadEmbeddedVideo:[request URL]];
 	}
-	
+	else // We keep old code for compatibily
+	{
+		// only allow the embed request
+		if ([[[request URL] absoluteString] hasPrefix:@"http://www.youtube.com/embed/"])
+		{
+			return YES;
+		}
+	}
+
 	BOOL shouldOpenExternalURL = YES;
 	
 	if ([_delegate respondsToSelector:@selector(videoView:shouldOpenExternalURL:)])
@@ -95,7 +104,7 @@
 		[[UIApplication sharedApplication] openURL:[request URL]];
 	}
 	
-	return NO;
+	return shouldLoadEmbeddedVideo;
 }
 
 
