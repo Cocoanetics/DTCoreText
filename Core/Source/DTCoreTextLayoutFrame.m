@@ -1704,12 +1704,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		for (NSString *oneString in paragraphs)
 		{
-			range.length = [oneString length]+1;
+			range.length = [oneString length];
 			
 			NSValue *value = [NSValue valueWithRange:range];
 			[tmpArray addObject:value];
 			
-			range.location += range.length;
+			range.location += (range.length + 1);
 		}
 		
 		// prevent counting a paragraph after a final newline
