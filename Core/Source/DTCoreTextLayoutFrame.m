@@ -1693,47 +1693,35 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return _attributedStringFragment;
 }
 
-// builds an array 
+// builds an array
 - (NSArray *)paragraphRanges
 {
 	if (!_paragraphRanges)
 	{
 		NSString *plainString = [[self attributedStringFragment] string];
+		NSUInteger length = [plainString length];
 		
-		NSInteger stringLength = [plainString length];
-		NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
-		if( [paragraphs count] == 1 ) {
-			
-			_paragraphRanges = [NSArray arrayWithObject:[NSValue valueWithRange:NSMakeRange(0, stringLength)]];
-			
-		} else {
-		
-			NSRange range = NSMakeRange(0, 0);
-			
-			NSMutableArray *tmpArray = [NSMutableArray array];
-			
-			for (NSString *oneString in paragraphs)
-			{
-				range.length = [oneString length];
-				if( NSMaxRange(range) < stringLength ) {
-					// add new line character to range
-					range.location += 1;
-				}
+		NSRange paragraphRange = [plainString rangeOfParagraphsContainingRange:NSMakeRange(0, 0) parBegIndex:NULL parEndIndex:NULL];
 
-				NSValue *value = [NSValue valueWithRange:range];
-				[tmpArray addObject:value];
-				
-				range.location += range.length;
-			}
+		NSMutableArray *tmpArray = [NSMutableArray array];
+
+		while (paragraphRange.length)
+		{
+			NSValue *value = [NSValue valueWithRange:paragraphRange];
+			[tmpArray addObject:value];
 			
-			// prevent counting a paragraph after a final newline
-			if ([plainString hasSuffix:@"\n"])
+			NSUInteger nextParagraphBegin = NSMaxRange(paragraphRange);
+			
+			if (nextParagraphBegin>=length)
 			{
-				[tmpArray removeLastObject];
+				break;
 			}
 			
-			_paragraphRanges = [tmpArray copy];
+			// next paragraph
+			paragraphRange = [plainString rangeOfParagraphsContainingRange:NSMakeRange(nextParagraphBegin, 0) parBegIndex:NULL parEndIndex:NULL];
 		}
+		
+		_paragraphRanges = tmpArray; // no copy for performance
 	}
 	
 	return _paragraphRanges;
