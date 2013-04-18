@@ -18,17 +18,6 @@
 	return [CALayer class];
 }
 
-- (DTCoreTextLayoutFrame *)layoutFrame
-{
-    self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
-	DTCoreTextLayoutFrame * layoutFrame = [super layoutFrame];
-    layoutFrame.numberOfLines = self.numberOfLines;
-    layoutFrame.lineBreakMode = self.lineBreakMode;
-    layoutFrame.truncationString = self.truncationString;
-	layoutFrame.noLeadingOnFirstLine = YES;
-	return layoutFrame;
-}
-
 - (id)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
@@ -37,6 +26,9 @@
 	{
 		// we want to relayout the text if height or width change
 		self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
+		
+		self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
+		self.shouldAddFirstLineLeading = NO;
 	}
 	
 	return self;
@@ -57,6 +49,11 @@
 
 #pragma mark - Properties 
 
+- (NSInteger)numberOfLines
+{
+	return _numberOfLines;
+}
+
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
     if (numberOfLines != _numberOfLines)
@@ -64,6 +61,11 @@
         _numberOfLines = numberOfLines;
         [self relayoutText];
     }
+}
+
+- (NSLineBreakMode)lineBreakMode
+{
+	return _lineBreakMode;
 }
 
 - (void)setLineBreakMode:(NSLineBreakMode)lineBreakMode
@@ -75,17 +77,19 @@
     }
 }
 
-- (void)setTruncationString:(NSAttributedString *)trunctionString
+- (NSAttributedString*)truncationString
 {
-    if (trunctionString != _truncationString)
+	return _truncationString;
+}
+
+- (void)setTruncationString:(NSAttributedString *)truncationString
+{
+    if (![truncationString isEqualToAttributedString:_truncationString])
     {
-        _truncationString = trunctionString;
+        _truncationString = truncationString;
         [self relayoutText];
     }
 }
 
-@synthesize numberOfLines = _numberOfLines;
-@synthesize lineBreakMode = _lineBreakMode;
-@synthesize truncationString = _truncationString;
 
 @end
