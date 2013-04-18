@@ -574,6 +574,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	CGRect rect = [self _frameForLayoutFrameConstraintedToWidth:width];
 	DTCoreTextLayoutFrame *tmpLayoutFrame = [self.layouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 	
+	// assign current layout frame properties to tmpLayoutFrame
+	tmpLayoutFrame.numberOfLines = _numberOfLines;
+	tmpLayoutFrame.lineBreakMode = _lineBreakMode;
+	tmpLayoutFrame.truncationString = _truncationString;
+	
 	//  we have a layout frame and from this we get the needed size
 	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
 }
@@ -772,6 +777,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
 				_layoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
+				_layoutFrame.numberOfLines = _numberOfLines;
+				_layoutFrame.lineBreakMode = _lineBreakMode;
+				_layoutFrame.truncationString = _truncationString;
 
 				// this must have been the initial layout pass
 				CGSize neededSize = CGSizeMake(_layoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(_layoutFrame.frame) + _edgeInsets.bottom);

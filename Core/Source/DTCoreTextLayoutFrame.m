@@ -419,6 +419,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection))
 		{
 			isRTL = (baseWritingDirection == kCTWritingDirectionRightToLeft);
+		} else {
+			baseWritingDirection = kCTWritingDirectionNatural;
 		}
 		
 		switch (textAlignment)
@@ -1698,27 +1700,40 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		NSString *plainString = [[self attributedStringFragment] string];
 		
+		NSInteger stringLength = [plainString length];
 		NSArray *paragraphs = [plainString componentsSeparatedByString:@"\n"];
-		NSRange range = NSMakeRange(0, 0);
-		NSMutableArray *tmpArray = [NSMutableArray array];
-		
-		for (NSString *oneString in paragraphs)
-		{
-			range.length = [oneString length]+1;
+		if( [paragraphs count] == 1 ) {
 			
-			NSValue *value = [NSValue valueWithRange:range];
-			[tmpArray addObject:value];
+			_paragraphRanges = [NSArray arrayWithObject:[NSValue valueWithRange:NSMakeRange(0, stringLength)]];
 			
-			range.location += range.length;
-		}
+		} else {
 		
-		// prevent counting a paragraph after a final newline
-		if ([plainString hasSuffix:@"\n"])
-		{
-			[tmpArray removeLastObject];
+			NSRange range = NSMakeRange(0, 0);
+			
+			NSMutableArray *tmpArray = [NSMutableArray array];
+			
+			for (NSString *oneString in paragraphs)
+			{
+				range.length = [oneString length];
+				if( NSMaxRange(range) < stringLength ) {
+					// add new line character to range
+					range.location += 1;
+				}
+
+				NSValue *value = [NSValue valueWithRange:range];
+				[tmpArray addObject:value];
+				
+				range.location += range.length;
+			}
+			
+			// prevent counting a paragraph after a final newline
+			if ([plainString hasSuffix:@"\n"])
+			{
+				[tmpArray removeLastObject];
+			}
+			
+			_paragraphRanges = [tmpArray copy];
 		}
-		
-		_paragraphRanges = [tmpArray copy];
 	}
 	
 	return _paragraphRanges;
@@ -1727,7 +1742,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
     if( _numberOfLines != numberOfLines ) {
-        _numberOfLines = numberOfLines;
+		_numberOfLines = numberOfLines;
         // clear lines cache
         _lines = nil;
     }
