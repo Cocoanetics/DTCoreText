@@ -129,6 +129,11 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 	NSMutableDictionary *customViewsForAttachmentsIndex;
 	
 	BOOL _flexibleHeight;
+	
+	// for layoutFrame
+	NSInteger _numberOfLines;
+	NSLineBreakMode _lineBreakMode;
+	NSAttributedString *_truncationString;
 }
 
 
