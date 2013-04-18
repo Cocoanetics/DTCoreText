@@ -47,7 +47,10 @@
 	// make a temporary version of self that has same font attributes as list root
 	DTHTMLElementLI *tmpCopy = [[DTHTMLElementLI alloc] init];
 	[tmpCopy inheritAttributesFromElement:self];
-	
+
+/*
+ // OD: disabled, was causing problems in the editor. Who does really use 3-level nested lists?!
+ 
 	DTCSSListStyleType type = listRoot.listStyle.type;
     // Only force Times New Roman if bullet types
     if (type == DTCSSListStyleTypeCircle || type == DTCSSListStyleTypeSquare || type == DTCSSListStyleTypeDisc)
@@ -56,7 +59,7 @@
         tmpCopy.fontDescriptor = listRoot.fontDescriptor;
         tmpCopy.fontDescriptor.fontFamily = @"Times New Roman";
     }
-	
+*/
 	// take the parents text color
 	tmpCopy.textColor = listRoot.textColor;
 
