@@ -28,7 +28,7 @@
 		
 		if (attachment)
 		{
-			if ([predicate evaluateWithObject:attachment])
+			if (predicate == nil || [predicate evaluateWithObject:attachment])
 			{
 				[tmpArray addObject:attachment];
 			}
