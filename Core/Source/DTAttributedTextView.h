@@ -98,4 +98,11 @@
  */
 - (void)scrollToAnchorNamed:(NSString *)anchorName animated:(BOOL)animated;
 
+/**
+ Scrolls the receiver until the text in the specified range is visible.
+ @param range The range of text to scroll into view.
+ @param animated `YES` if the movement should be animated.
+ */
+- (void)scrollRangeToVisible:(NSRange)range animated:(BOOL)animated;
+
 @end
