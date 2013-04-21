@@ -105,16 +105,21 @@
 	
 	if (range.length != NSNotFound)
 	{
-		// get the line of the first index of the anchor range
-		DTCoreTextLayoutLine *line = [self.attributedTextContentView.layoutFrame lineContainingIndex:range.location];
-		
-		// make sure we don't scroll too far
-		CGFloat maxScrollPos = self.contentSize.height - self.bounds.size.height + self.contentInset.bottom + self.contentInset.top;
-		CGFloat scrollPos = MIN(line.frame.origin.y, maxScrollPos);
-		
-		// scroll
-		[self setContentOffset:CGPointMake(0, scrollPos) animated:animated];
+		[self scrollRangeToVisible:range animated:animated];
 	}
+}
+
+- (void)scrollRangeToVisible:(NSRange)range animated:(BOOL)animated
+{
+	// get the line of the first index of the anchor range
+	DTCoreTextLayoutLine *line = [self.attributedTextContentView.layoutFrame lineContainingIndex:range.location];
+	
+	// make sure we don't scroll too far
+	CGFloat maxScrollPos = self.contentSize.height - self.bounds.size.height + self.contentInset.bottom + self.contentInset.top;
+	CGFloat scrollPos = MIN(line.frame.origin.y, maxScrollPos);
+	
+	// scroll
+	[self setContentOffset:CGPointMake(0, scrollPos) animated:animated];
 }
 
 - (void)relayoutText
