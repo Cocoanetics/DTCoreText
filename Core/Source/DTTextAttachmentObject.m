@@ -99,9 +99,28 @@
 		[retString appendFormat:@" %@=\"%@\"", oneKey, value];
 	}
 	
-	[retString appendString:@" />"];
+	if (_childNodes)
+	{
+		[retString appendString:@">"];
+		
+		for (DTHTMLElement *oneChild in _childNodes)
+		{
+			[retString appendString:[oneChild debugDescription]];
+		}
+		
+		[retString appendString:@"</object>"];
+	}
+	else
+	{
+		[retString appendString:@" />"];
+	}
+	
 	
 	return retString;
 }
+
+#pragma mark - Properties
+
+@synthesize childNodes = _childNodes;
 
 @end

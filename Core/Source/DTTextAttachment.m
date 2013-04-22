@@ -159,7 +159,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	[_classForTagNameLookup setObject:class forKey:tagName];
 }
 
-- (Class)registeredClassForTagName:(NSString *)tagName
++ (Class)registeredClassForTagName:(NSString *)tagName
 {
 	return [_classForTagNameLookup objectForKey:tagName];
 }
@@ -226,6 +226,5 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 @synthesize attributes = _attributes;
 @synthesize verticalAlignment = _verticalAlignment;
 @synthesize hyperLinkGUID = hyperLinkGUID;
-@synthesize childNodes = _childNodes;
 
 @end

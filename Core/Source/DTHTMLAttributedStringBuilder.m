@@ -596,8 +596,10 @@
 		{
 			if ([_currentTag.textAttachment isKindOfClass:[DTTextAttachmentObject class]])
 			{
+				DTTextAttachmentObject *objectAttachment = (DTTextAttachmentObject *)_currentTag.textAttachment;
+				
 				// transfer the child nodes to the attachment
-				_currentTag.textAttachment.childNodes = [_currentTag.childNodes copy];
+				objectAttachment.childNodes = [_currentTag.childNodes copy];
 			}
 		}
 	};
