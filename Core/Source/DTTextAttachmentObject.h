@@ -12,6 +12,6 @@
  A specialized subclass in the DTTextAttachment class cluster to represent an generic object
  */
 
-@interface DTTextAttachmentObject : DTTextAttachment
+@interface DTTextAttachmentObject : DTTextAttachment <DTTextAttachmentHTMLPersistence>
 
 @end
