@@ -1182,7 +1182,8 @@
 		A788C90D14863E8700E1AFD9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				A7949A4414CAF56300A8CCDE /* Parsing */,
+				A7949A4414CAF56300A8CCDE /* HTML Parsing */,
+				A7AE580A1725351B00A9BF61 /* HTML Writing */,
 				A70B4C9A1486518E00873A4A /* Layouting */,
 				A788CAA71486490600E1AFD9 /* UI */,
 			);
@@ -1293,20 +1294,18 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		A7949A4414CAF56300A8CCDE /* Parsing */ = {
+		A7949A4414CAF56300A8CCDE /* HTML Parsing */ = {
 			isa = PBXGroup;
 			children = (
-				A7AE58091725332D00A9BF61 /* DTTextAttachment */,
-				A7AE58021725330400A9BF61 /* DTHTMLElement */,
 				A7C5D00614D7DA6500AF1D75 /* Dual Platform */,
+				A7AE58021725330400A9BF61 /* DTHTMLElement */,
+				A7AE58091725332D00A9BF61 /* DTTextAttachment */,
 				A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */,
 				A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */,
 				A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */,
 				A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */,
 				A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */,
 				A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */,
-				A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */,
-				A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */,
 				A788C92614863E8700E1AFD9 /* DTCSSListStyle.h */,
 				A788C92714863E8700E1AFD9 /* DTCSSListStyle.m */,
 				A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */,
@@ -1323,7 +1322,7 @@
 				A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */,
 				A7EB84A6168B3EC000D686B7 /* DTHTMLParserTextNode.m */,
 			);
-			name = Parsing;
+			name = "HTML Parsing";
 			sourceTree = "<group>";
 		};
 		A7949A5C14CC456000A8CCDE /* Other Frameworks */ = {
@@ -1368,6 +1367,15 @@
 				A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */,
 			);
 			name = DTTextAttachment;
+			sourceTree = "<group>";
+		};
+		A7AE580A1725351B00A9BF61 /* HTML Writing */ = {
+			isa = PBXGroup;
+			children = (
+				A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */,
+				A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */,
+			);
+			name = "HTML Writing";
 			sourceTree = "<group>";
 		};
 		A7C5D00614D7DA6500AF1D75 /* Dual Platform */ = {
