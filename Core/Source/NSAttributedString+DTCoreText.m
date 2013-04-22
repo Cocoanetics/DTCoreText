@@ -375,9 +375,8 @@
 		if (image)
 		{
 			// make an attachment for the image
-			DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
-			attachment.contents = image;
-			attachment.contentType = DTTextAttachmentTypeImage;
+			DTTextAttachmentImage *attachment = [[DTTextAttachmentImage alloc] init];
+			attachment.image = image;
 			attachment.displaySize = image.size;
 			
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1

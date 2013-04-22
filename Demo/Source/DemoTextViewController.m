@@ -331,7 +331,7 @@
 
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
 {
-	if (attachment.contentType == DTTextAttachmentTypeVideoURL)
+	if ([attachment isKindOfClass:[DTTextAttachmentVideo class]])
 	{
 		NSURL *url = (id)attachment.contentURL;
 		
@@ -404,7 +404,7 @@
 		
 		return grayView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeImage)
+	else if ([attachment isKindOfClass:[DTTextAttachmentImage class]])
 	{
 		// if the attachment has a hyperlinkURL then this is currently ignored
 		DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
@@ -441,14 +441,14 @@
 		
 		return imageView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeIframe)
+	else if ([attachment isKindOfClass:[DTTextAttachmentIframe class]])
 	{
 		DTWebVideoView *videoView = [[DTWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
 		
 		return videoView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeObject)
+	else if ([attachment isKindOfClass:[DTTextAttachmentObject class]])
 	{
 		// somecolorparameter has a HTML color
 		UIColor *someColor = [UIColor colorWithHTMLName:[attachment.attributes objectForKey:@"somecolorparameter"]];

@@ -7,7 +7,7 @@
 //
 
 #import "DTWebVideoView.h"
-#import "DTTextAttachment.h"
+#import "DTTextAttachmentIframe.h"
 
 
 @interface DTWebVideoView ()
@@ -114,19 +114,12 @@
 	{
 		
 		_attachment = attachment;
-	}
-	
-	switch (attachment.contentType) 
-	{
-		case DTTextAttachmentTypeIframe:
+		
+		if ([attachment isKindOfClass:[DTTextAttachmentIframe class]])
 		{
 			NSURLRequest *request = [NSURLRequest requestWithURL:attachment.contentURL];
 			[_webView loadRequest:request];
-			break;
 		}
-			
-		default:
-			break;
 	}
 }
 

@@ -222,6 +222,29 @@
 	[self _buildOutputAsHTMLFragment:NO];
 }
 
+
+- (NSString *)_blockNameForAttachment:(DTTextAttachment	*)attachment
+{
+	if ([attachment isKindOfClass:[DTTextAttachmentImage class]])
+	{
+		return @"img";
+	}
+	else if ([attachment isKindOfClass:[DTTextAttachmentVideo class]])
+	{
+		return @"video";
+	}
+	else if ([attachment isKindOfClass:[DTTextAttachmentObject class]])
+	{
+		return @"object";
+	}
+	else if ([attachment isKindOfClass:[DTTextAttachmentIframe class]])
+	{
+		return @"iframe";
+	}
+	
+	return nil;
+}
+
 - (void)_buildOutputAsHTMLFragment:(BOOL)fragment
 {
 	// reusable styles
@@ -468,9 +491,9 @@
 				}
 				else
 				{
-					if (attachment.contentType == DTTextAttachmentTypeImage && attachment.contents)
+					if ([attachment isKindOfClass:[DTTextAttachmentImage class]] && [(DTTextAttachmentImage *)attachment image])
 					{
-						urlString = [attachment dataURLRepresentation];
+						urlString = [(DTTextAttachmentImage *)attachment dataURLRepresentation];
 					}
 					else
 					{
@@ -479,40 +502,7 @@
 					}
 				}
 				
-				NSString *blockName;
-				
-				switch (attachment.contentType)
-				{
-					case DTTextAttachmentTypeVideoURL:
-					{
-						blockName = @"video";
-						break;
-					}
-						
-					case DTTextAttachmentTypeImage:
-					{
-						blockName = @"img";
-						break;
-					}
-
-					case DTTextAttachmentTypeObject:
-					{
-						blockName = @"object";
-						break;
-					}
-
-					case DTTextAttachmentTypeIframe:
-					{
-						blockName = @"iframe";
-						break;
-					}
-
-					default:
-					{
-						// we don't know how to output this
-						continue;
-					}
-				}
+				NSString *blockName = [self _blockNameForAttachment:attachment];
 				
 				// output tag start
 				[retString appendFormat:@"<%@", blockName];

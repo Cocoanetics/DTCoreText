@@ -16,15 +16,6 @@
 
 typedef enum
 {
-	DTTextAttachmentTypeImage,
-	DTTextAttachmentTypeVideoURL,
-	DTTextAttachmentTypeIframe,
-	DTTextAttachmentTypeObject,
-	DTTextAttachmentTypeGeneric
-}  DTTextAttachmentType;
-
-typedef enum
-{
 	DTTextAttachmentVerticalAlignmentBaseline = 0,
 	DTTextAttachmentVerticalAlignmentTop,
 	DTTextAttachmentVerticalAlignmentCenter,
@@ -34,7 +25,14 @@ typedef enum
 /** 
  An object to represent an attachment in an HTML/rich text view.  
  */
-@interface DTTextAttachment : NSObject 
+@interface DTTextAttachment : NSObject
+{
+	CGSize _displaySize;  // the display dimensions of the attachment
+	CGSize _originalSize; // the original dimensions of the attachment
+	CGSize _maxImageSize; // the maximum dimensions to size to
+	NSURL *_contentURL;
+	NSDictionary *_attributes; // attributes transferred from HTML element
+}
 
 /**
  @name Creating Text Attachments
@@ -45,21 +43,17 @@ typedef enum
 	The element must have a valid tagName. The size of the returned text attachment is determined by the element, constrained by the option's key for DTMaxImageSize. Any valid image resource included in the element (denoted by the method attributeForKey: "src") is loaded and determines the text attachment size if it was not known before. If a size is too large the image is downsampled with sizeThatFitsKeepingAspectRatio() which preserves the aspect ratio. 
  @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements. 
  @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize. 
- @returns Returns an initialized DTTextAttachment built using the element and options parameters. 
+ @returns Returns the appropriate subclass of the class cluster
  */
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
 
 /**
- @name Alternate Representations
- */
-
-/** 
- Retrieves a string which is in the format "data:image/png;base64,%@" with this DTTextAttachment's content's data representation encoded in Base64 string encoding. For image contents only.  
- @returns A Base64 encoded string of the png data representation of this text attachment's image contents. 
- */
-- (NSString *)dataURLRepresentation;
-
+ The designated initializer for members of the DTTextAttachment class cluster. If you need additional setup for custom subclasses then you should override this initializer.
+ @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements.
+ @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize.
+ @returns Returns an initialized DTTextAttachment built using the element and options parameters.  */
+- (id)initWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
 /**
  @name Vertical Alignment
@@ -114,11 +108,6 @@ typedef enum
  The contents of the receiver
  */
 @property (nonatomic, strong) id contents;
-
-/**
- The content type of the attachment
- */
-@property (nonatomic, assign) DTTextAttachmentType contentType;
 
 /**
  The URL representing the content

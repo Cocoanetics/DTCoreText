@@ -1117,9 +1117,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			{
 				if (drawImages)
 				{
-					if (attachment.contentType == DTTextAttachmentTypeImage)
+					if ([attachment isKindOfClass:[DTTextAttachmentImage class]])
 					{
-						DTImage *image = (id)attachment.contents;
+						DTTextAttachmentImage *imageAttachment = (DTTextAttachmentImage *)attachment;
 						
 						// frame might be different due to image vertical alignment
 						CGFloat ascender = [attachment ascentForLayout];
@@ -1129,7 +1129,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						origin.y = self.frame.size.height - origin.y - ascender - descender;
 						CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
 						
-						CGContextDrawImage(context, flippedRect, image.CGImage);
+						CGContextDrawImage(context, flippedRect, imageAttachment.image.CGImage);
 					}
 				}
 			}
