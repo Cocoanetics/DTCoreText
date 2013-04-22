@@ -85,6 +85,7 @@ static NSCache *imageCache = nil;
 			if (decodedData)
 			{
 				self.image = [[DTImage alloc] initWithData:decodedData];
+				_contentURL = nil;
 			}
 		}
 		else // normal URL
@@ -161,10 +162,12 @@ static NSCache *imageCache = nil;
 		// we have an image, so we can set the original size and default display size
 		if (image)
 		{
+			_contentURL = nil;
 			[self _updateSizesFromImage:image];
 		}
 	}
 	
+	// only remote images should have a URL
 	_contentURL = contentURL;
 }
 
@@ -258,6 +261,11 @@ static NSCache *imageCache = nil;
 		
 		[self _updateSizesFromImage:_image];
 	}
+}
+
+- (void)setDisplaySize:(CGSize)displaySize
+{
+	_displaySize = displaySize;
 }
 
 @end

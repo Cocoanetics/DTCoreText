@@ -105,11 +105,6 @@ typedef enum
 - (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize;
 
 /**
- The contents of the receiver
- */
-@property (nonatomic, strong) id contents;
-
-/**
  The URL representing the content
  */
 @property (nonatomic, strong) NSURL *contentURL;

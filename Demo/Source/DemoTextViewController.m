@@ -409,10 +409,9 @@
 		// if the attachment has a hyperlinkURL then this is currently ignored
 		DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
 		imageView.delegate = self;
-		if (attachment.contents)
-		{
-			imageView.image = attachment.contents;
-		}
+		
+		// sets the image if there is one
+		imageView.image = [(DTTextAttachmentImage *)attachment image];
 		
 		// url for deferred loading
 		imageView.url = attachment.contentURL;
@@ -549,19 +548,25 @@
 	
 	NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 	
+	BOOL didUpdate = NO;
+	
 	// update all attachments that matchin this URL (possibly multiple images with same size)
 	for (DTTextAttachment *oneAttachment in [_textView.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred])
 	{
-		oneAttachment.originalSize = imageSize;
-		
-		if (!CGSizeEqualToSize(imageSize, oneAttachment.displaySize))
+		// update attachments that have no original size, that also sets the display size
+		if (CGSizeEqualToSize(oneAttachment.originalSize, CGSizeZero))
 		{
-			oneAttachment.displaySize = imageSize;
+			oneAttachment.originalSize = imageSize;
+			
+			didUpdate = YES;
 		}
 	}
 	
-	// layout might have changed due to image sizes
-	[_textView relayoutText];
+	if (didUpdate)
+	{
+		// layout might have changed due to image sizes
+		[_textView relayoutText];
+	}
 }
 
 #pragma mark Properties

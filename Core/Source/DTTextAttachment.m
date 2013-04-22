@@ -49,7 +49,6 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	[DTTextAttachment registerClass:[DTTextAttachmentVideo class] forTagName:@"video"];
 	[DTTextAttachment registerClass:[DTTextAttachmentIframe class] forTagName:@"iframe"];
 	[DTTextAttachment registerClass:[DTTextAttachmentObject class] forTagName:@"object"];
-	
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
@@ -73,6 +72,10 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	
 	if (self)
 	{
+		// width, height from tag
+		_displaySize = element.size; // width/height from attributes or CSS style
+		_originalSize = CGSizeZero; // initially not known
+		
 		// determine if there is a display size restriction
 		_maxImageSize = CGSizeZero;
 		
@@ -154,8 +157,15 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
  @param The CGSize to store in originalSize. */
 - (void)setOriginalSize:(CGSize)originalSize
 {
-	_originalSize = originalSize;
-	self.displaySize = _originalSize;
+	if (!CGSizeEqualToSize(originalSize, _originalSize))
+	{
+		_originalSize = originalSize;
+		
+		if (!_displaySize.width || !_displaySize.height)
+		{
+			[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
+		}
+	}
 }
 
 - (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize
@@ -192,9 +202,13 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	_displaySize = displaySize;
 }
 
+- (void)setDisplaySize:(CGSize)displaySize
+{
+	_displaySize = displaySize;
+}
+
 @synthesize originalSize = _originalSize;
 @synthesize displaySize = _displaySize;
-@synthesize contents = _contents;
 @synthesize contentURL = _contentURL;
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;
