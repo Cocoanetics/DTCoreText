@@ -219,6 +219,12 @@ static NSCache *imageCache = nil;
 	return [@"data:image/png;base64," stringByAppendingString:encoded];
 }
 
+#pragma mark - DTTextAttachmentDrawing
+
+- (void)drawInRect:(CGRect)rect context:(CGContextRef)context
+{
+	CGContextDrawImage(context, rect, self.image.CGImage);
+}
 
 #pragma mark - Properties
 

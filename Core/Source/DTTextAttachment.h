@@ -22,7 +22,25 @@ typedef enum
 	DTTextAttachmentVerticalAlignmentBottom
 } DTTextAttachmentVerticalAlignment;
 
-/** 
+
+/**
+ Methods to implement for attachments to support inline drawing.
+ */
+@protocol DTTextAttachmentDrawing <NSObject>
+
+@optional
+
+/**
+ Draws the contents of the receiver into a graphics context
+ @param rect The rectangle to draw the receiver into
+ @param context The graphics context
+ */
+- (void)drawInRect:(CGRect)rect context:(CGContextRef)context;
+
+@end
+
+
+/**
  An object to represent an attachment in an HTML/rich text view.  
  */
 @interface DTTextAttachment : NSObject
