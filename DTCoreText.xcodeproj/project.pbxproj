@@ -1150,8 +1150,6 @@
 			children = (
 				A70E62DE16C24DDF009B47BF /* DTDictationPlaceholderView.h */,
 				A70E62DF16C24DDF009B47BF /* DTDictationPlaceholderView.m */,
-				A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */,
-				A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */,
 			);
 			name = Editing;
 			sourceTree = "<group>";
@@ -1298,6 +1296,8 @@
 		A7949A4414CAF56300A8CCDE /* Parsing */ = {
 			isa = PBXGroup;
 			children = (
+				A7AE58091725332D00A9BF61 /* DTTextAttachment */,
+				A7AE58021725330400A9BF61 /* DTHTMLElement */,
 				A7C5D00614D7DA6500AF1D75 /* Dual Platform */,
 				A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */,
 				A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */,
@@ -1305,22 +1305,6 @@
 				A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */,
 				A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */,
 				A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */,
-				A788C92A14863E8700E1AFD9 /* DTHTMLElement.h */,
-				A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */,
-				A700289716FB220B00AFEDA3 /* DTHTMLElementA.h */,
-				A700289816FB220B00AFEDA3 /* DTHTMLElementA.m */,
-				A7EB84B5168B948000D686B7 /* DTHTMLElementBR.h */,
-				A7EB84B6168B948000D686B7 /* DTHTMLElementBR.m */,
-				A7EB84D3168B9B1100D686B7 /* DTHTMLElementHR.h */,
-				A7EB84D4168B9B1200D686B7 /* DTHTMLElementHR.m */,
-				A7EB84E3168C656E00D686B7 /* DTHTMLElementLI.h */,
-				A7EB84E4168C657000D686B7 /* DTHTMLElementLI.m */,
-				A7EB8537168FA33000D686B7 /* DTHTMLElementStylesheet.h */,
-				A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */,
-				A7EB84BF168B973900D686B7 /* DTHTMLElementText.h */,
-				A7EB84C0168B973A00D686B7 /* DTHTMLElementText.m */,
-				A7EB84C9168B9A8400D686B7 /* DTHTMLElementAttachment.h */,
-				A7EB84CA168B9A8400D686B7 /* DTHTMLElementAttachment.m */,
 				A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */,
 				A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */,
 				A788C92614863E8700E1AFD9 /* DTCSSListStyle.h */,
@@ -1328,8 +1312,6 @@
 				A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */,
 				A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */,
 				A76994F914DBB5F70047CC8D /* default.css */,
-				A788C93414863E8700E1AFD9 /* DTTextAttachment.h */,
-				A788C93514863E8700E1AFD9 /* DTTextAttachment.m */,
 				A7F5671214D841E900D1F167 /* NSString+CSS.h */,
 				A7F5671314D841E900D1F167 /* NSString+CSS.m */,
 				A788C91A14863E8700E1AFD9 /* DTCoreTextFontDescriptor.h */,
@@ -1352,6 +1334,40 @@
 				A7949A5F14CC456000A8CCDE /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		A7AE58021725330400A9BF61 /* DTHTMLElement */ = {
+			isa = PBXGroup;
+			children = (
+				A788C92A14863E8700E1AFD9 /* DTHTMLElement.h */,
+				A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */,
+				A700289716FB220B00AFEDA3 /* DTHTMLElementA.h */,
+				A700289816FB220B00AFEDA3 /* DTHTMLElementA.m */,
+				A7EB84B5168B948000D686B7 /* DTHTMLElementBR.h */,
+				A7EB84B6168B948000D686B7 /* DTHTMLElementBR.m */,
+				A7EB84D3168B9B1100D686B7 /* DTHTMLElementHR.h */,
+				A7EB84D4168B9B1200D686B7 /* DTHTMLElementHR.m */,
+				A7EB84E3168C656E00D686B7 /* DTHTMLElementLI.h */,
+				A7EB84E4168C657000D686B7 /* DTHTMLElementLI.m */,
+				A7EB8537168FA33000D686B7 /* DTHTMLElementStylesheet.h */,
+				A7EB8538168FA33300D686B7 /* DTHTMLElementStylesheet.m */,
+				A7EB84BF168B973900D686B7 /* DTHTMLElementText.h */,
+				A7EB84C0168B973A00D686B7 /* DTHTMLElementText.m */,
+				A7EB84C9168B9A8400D686B7 /* DTHTMLElementAttachment.h */,
+				A7EB84CA168B9A8400D686B7 /* DTHTMLElementAttachment.m */,
+			);
+			name = DTHTMLElement;
+			sourceTree = "<group>";
+		};
+		A7AE58091725332D00A9BF61 /* DTTextAttachment */ = {
+			isa = PBXGroup;
+			children = (
+				A788C93414863E8700E1AFD9 /* DTTextAttachment.h */,
+				A788C93514863E8700E1AFD9 /* DTTextAttachment.m */,
+				A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */,
+				A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */,
+			);
+			name = DTTextAttachment;
 			sourceTree = "<group>";
 		};
 		A7C5D00614D7DA6500AF1D75 /* Dual Platform */ = {
