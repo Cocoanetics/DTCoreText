@@ -33,11 +33,6 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	CGFloat _fontDescent;
 }
 
-+ (void)registerClass:(Class)class forTagName:(NSString *)tagName
-{
-	[_classForTagNameLookup setObject:class forKey:tagName];
-}
-
 + (void)initialize
 {
 	_classForTagNameLookup = [[NSMutableDictionary alloc] init];
@@ -51,7 +46,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
-	Class class = [_classForTagNameLookup objectForKey:element.name];
+	Class class = [DTTextAttachment registeredClassForTagName:element.name];
 	
 	if (!class)
 	{
@@ -148,6 +143,25 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 			return _fontDescent;
 		}
 	}
+}
+
+#pragma mark - Subclass Customization
+
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName
+{
+	Class previousClass = [DTTextAttachment registeredClassForTagName:tagName];
+
+	if (previousClass)
+	{
+		NSLog(@"Warning: replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
+	}
+	
+	[_classForTagNameLookup setObject:class forKey:tagName];
+}
+
+- (Class)registeredClassForTagName:(NSString *)tagName
+{
+	return [_classForTagNameLookup objectForKey:tagName];
 }
 
 #pragma mark Properties

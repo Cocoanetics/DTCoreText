@@ -78,7 +78,6 @@ typedef enum
  */
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
-
 /**
  The designated initializer for members of the DTTextAttachment class cluster. If you need additional setup for custom subclasses then you should override this initializer.
  @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements.
@@ -159,5 +158,25 @@ typedef enum
  The DTHTMLElement child nodes of the receiver. This array is only used for object tags at the moment.
  */
 @property (nonatomic, strong) NSArray *childNodes;
+
+/**
+ @name Customizing Attachments
+ */
+
+/**
+ Registers your own class for use when encountering a specific tag Name. If you register a class for a previously registered class (or one of the predefined ones (img, iframe, object, video) then this replaces this with the newer registration.
+ 
+ These registrations are permanent during the run time of your app. Custom attachment classes must implement the initWithElement:options: initializer and can implement the DTTextAttachmentDrawing and/or DTTextAttachmentHTMLPersistence protocols.
+ @param class The class to instantiate in textAttachmentWithElement:options: when encountering a tag with this name
+ @param tagName The tag name to use this class for
+ */
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName;
+
+/**
+ The class to use for a tag name
+ @param tagName The tag name
+ @returns The class to use for attachments with with tag name, or `nil` if this should not be an attachment
+ */
++ (Class)registeredClassForTagName:(NSString *)tagName;
 
 @end
