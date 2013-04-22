@@ -77,12 +77,18 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	// only allow the embed request
+	// allow the embed request for YouTube
 	if ([[[request URL] absoluteString] hasPrefix:@"http://www.youtube.com/embed/"])
 	{
 		return YES;
 	}
-	
+
+	// allow the embed request for DailyMotion Cloud
+	if ([[[request URL] absoluteString] hasPrefix:@"http://api.dmcloud.net/player/embed/"])
+	{
+		return YES;
+	}
+
 	BOOL shouldOpenExternalURL = YES;
 	
 	if ([_delegate respondsToSelector:@selector(videoView:shouldOpenExternalURL:)])

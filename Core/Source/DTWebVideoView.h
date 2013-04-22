@@ -32,6 +32,10 @@
 
 /**
  The class represents a custom subview for use in <DTAttributedTextContentView> to represent an embedded video.
+ 
+ Embedded videos work by loading the video URL in a UIWebView which iOS then replaces with the built-in media player view. The URL of the embed script depends on the service and needs to be added to the webView:shouldStartLoadWithRequest:navigationType:. You want to allow the URL for the embed script, but disallow all other requests which for example occur if a user taps on the YouTube logo. If you were to allow this type of navigation then the YouTube website would be loaded in the video view. For these scenarios there is the videoView:shouldOpenExternalURL: method in DTWebVideoViewDelegate. If you respond with `YES` (which is default if the method is not implemented) then the URL will be opened in Safari.
+ 
+ To add additional video services please add them in the mentioned location and submit a pull request for the addition.
  */
 @interface DTWebVideoView : UIView <UIWebViewDelegate>
 
