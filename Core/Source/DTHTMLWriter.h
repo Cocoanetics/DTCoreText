@@ -12,11 +12,18 @@
 @interface DTHTMLWriter : NSObject
 
 /**
+ @name Creating an HTML Writer
+ */
+
+/**
  Creates a writer with a given `NSAttributedString` as input
  @param attributedString An attributed string
  */
 - (id)initWithAttributedString:(NSAttributedString *)attributedString;
 
+/**
+ @name Generating HTML
+ */
 
 /**
  Generates a HTML representation of the attributed string
@@ -30,6 +37,10 @@
  @returns The generated string
  */
 - (NSString *)HTMLFragment;
+
+/**
+ @name Properties
+ */
 
 /**
  If specified then all absolute font sizes (px) will be divided by this value. This is useful if you specified a text size multiplicator when converting HTML to the attributed string you are processing.
