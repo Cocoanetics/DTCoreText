@@ -397,8 +397,11 @@ NSDictionary *_classesForNames = nil;
 					}
 					else
 					{
-						// need to insure that paragraph and font style as properly set
-						[tmpString appendString:@"\n" withParagraphStyle:self.paragraphStyle fontDescriptor:self.fontDescriptor];
+						// tmpString has no attributes to extend, so we make a new string with attributes
+						
+						// need all attributes to e.g. extend list to include this character
+						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:[self attributesDictionary]];
+						[tmpString appendAttributedString:attributedString];
 					}
 				}
 			}
