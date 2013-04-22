@@ -28,8 +28,6 @@ typedef enum
  */
 @protocol DTTextAttachmentDrawing <NSObject>
 
-@optional
-
 /**
  Draws the contents of the receiver into a graphics context
  @param rect The rectangle to draw the receiver into
@@ -44,8 +42,6 @@ typedef enum
  Methods to implement for attachments to support output to HTML.
  */
 @protocol DTTextAttachmentHTMLPersistence <NSObject>
-
-@optional
 
 /**
  Creates a HTML representation of the receiver
