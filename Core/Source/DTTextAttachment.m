@@ -35,6 +35,13 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 + (void)initialize
 {
+	// this gets called from each subclass
+	// prevent calling from children
+	if (self != [DTTextAttachment class])
+	{
+		return;
+	}
+	
 	_classForTagNameLookup = [[NSMutableDictionary alloc] init];
 	
 	// register standard tags

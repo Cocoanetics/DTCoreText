@@ -37,6 +37,12 @@ NSDictionary *_classesForNames = nil;
 
 + (void)initialize
 {
+	// prevent calling from children
+	if (self != [DTHTMLElement class])
+	{
+		return;
+	}
+	
 	// lookup table so that we quickly get the correct class to instantiate for special tags
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
@@ -57,11 +63,21 @@ NSDictionary *_classesForNames = nil;
 {
 	// look for specialized class
 	Class class = [_classesForNames objectForKey:name];
-	
-	// use generic of none found
+
 	if (!class)
 	{
-		class = [DTHTMLElement class];
+		// see if this is a custom attachment class
+		Class attachmentClass = [DTTextAttachment registeredClassForTagName:name];
+		
+		if (attachmentClass)
+		{
+			class = [DTHTMLElementAttachment class];
+		}
+		else
+		{
+			// use generic of none found
+			class = [DTHTMLElement class];
+		}
 	}
 	
 	DTHTMLElement *element = [[class alloc] initWithName:name attributes:attributes options:options];
