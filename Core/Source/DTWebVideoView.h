@@ -19,6 +19,15 @@
 @optional
 
 /**
+ Asks the delegate if we should load embedded video
+ @param videoView The web video view
+ @param url The external URL that is asked to be loaded
+ @returns `YES` if the app should load embedded video
+ */
+
+- (BOOL)videoView:(DTWebVideoView *)videoView shouldLoadEmbeddedVideo:(NSURL *)url;
+
+/**
  Asks the delegate if an external URL may be opened
  @param videoView The web video view
  @param url The external URL that is asked to be opened
