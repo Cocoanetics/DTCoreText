@@ -12,6 +12,6 @@
  A specialized subclass in the DTTextAttachment class cluster to represent an IFRAME
  */
 
-@interface DTTextAttachmentIframe : DTTextAttachment
+@interface DTTextAttachmentIframe : DTTextAttachment <DTTextAttachmentHTMLPersistence>
 
 @end

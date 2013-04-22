@@ -14,7 +14,7 @@
  A specialized subclass in the DTTextAttachment class cluster to represent an embedded image
  */
 
-@interface DTTextAttachmentImage : DTTextAttachment <DTTextAttachmentDrawing>
+@interface DTTextAttachmentImage : DTTextAttachment <DTTextAttachmentDrawing, DTTextAttachmentHTMLPersistence>
 
 /**
  The designated initializer which will be called by [DTTextAttachment textAttachmentWithElement:options:] for image attachments.

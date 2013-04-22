@@ -25,8 +25,6 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 @implementation DTTextAttachment
 {
-	DTTextAttachmentVerticalAlignment _verticalAlignment;
-    
 	NSURL *_hyperLinkURL;
 	NSString *_hyperLinkGUID;
 	

@@ -464,131 +464,17 @@
 			
 			if (attachment)
 			{
-				NSString *urlString;
-				
-				if (attachment.contentURL)
+				if ([attachment conformsToProtocol:@protocol(DTTextAttachmentHTMLPersistence)])
 				{
+					id<DTTextAttachmentHTMLPersistence> persistableAttachment = (id<DTTextAttachmentHTMLPersistence>)attachment;
 					
-					if ([attachment.contentURL isFileURL])
-					{
-						NSString *path = [attachment.contentURL path];
-						
-						NSRange range = [path rangeOfString:@".app/"];
-						
-						if (range.length)
-						{
-							urlString = [path substringFromIndex:NSMaxRange(range)];
-						}
-						else
-						{
-							urlString = [attachment.contentURL absoluteString];
-						}
-					}
-					else
-					{
-						urlString = [attachment.contentURL relativeString];
-					}
-				}
-				else
-				{
-					if ([attachment isKindOfClass:[DTTextAttachmentImage class]] && [(DTTextAttachmentImage *)attachment image])
-					{
-						urlString = [(DTTextAttachmentImage *)attachment dataURLRepresentation];
-					}
-					else
-					{
-						// no valid image remote or local
-						continue;
-					}
-				}
-				
-				NSString *blockName = [self _blockNameForAttachment:attachment];
-				
-				// output tag start
-				[retString appendFormat:@"<%@", blockName];
-
-				// build style for img/video
-				NSMutableString *classStyleString = [NSMutableString string];
-				
-				if (attachment.verticalAlignment != DTTextAttachmentVerticalAlignmentBaseline)
-				{
-					switch (attachment.verticalAlignment)
-					{
-						case DTTextAttachmentVerticalAlignmentBaseline:
-						{
-							[classStyleString appendString:@"vertical-align:baseline;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentTop:
-						{
-							[classStyleString appendString:@"vertical-align:text-top;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentCenter:
-						{
-							[classStyleString appendString:@"vertical-align:middle;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentBottom:
-						{
-							[classStyleString appendString:@"vertical-align:text-bottom;"];
-							break;
-						}
-					}
-				}
-				
-				// only add class if there was some content
-				if ([classStyleString length])
-				{
-					NSString *className = [self _styleClassForElement:blockName style:classStyleString];
+					NSString *HTMLString = [persistableAttachment stringByEncodingAsHTML];
 					
-					if (fragment) {
-						[retString appendFormat:@" style=\"%@\"", classStyleString];
-					} else {
-						[retString appendFormat:@" class=\"%@\"", className];
+					if (HTMLString)
+					{
+						[retString appendString:HTMLString];
 					}
 				}
-				
-				// build a HTML 5 conformant size style if set
-				NSMutableString *sizeStyleString = [NSMutableString string];
-				
-				if (attachment.originalSize.width>0)
-				{
-					[sizeStyleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
-				}
-				
-				if (attachment.originalSize.height>0)
-				{
-					[sizeStyleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
-				}
-				
-				// add local style for size, since sizes might vary quite a bit
-				if ([sizeStyleString length])
-				{
-					[retString appendFormat:@" style=\"%@\"", sizeStyleString];
-				}
-				
-				[retString appendFormat:@" src=\"%@\"", urlString];
-				
-				// attach the attributes dictionary
-				NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
-				
-				// remove src,style, width and height we already have these
-				[tmpAttributes removeObjectForKey:@"src"];
-				[tmpAttributes removeObjectForKey:@"style"];
-				[tmpAttributes removeObjectForKey:@"width"];
-				[tmpAttributes removeObjectForKey:@"height"];
-				
-				for (__strong NSString *oneKey in [tmpAttributes allKeys])
-				{
-					oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
-					[retString appendFormat:@" %@=\"%@\"", oneKey, value];
-				}
-				
-				// end
-				[retString appendString:@" />"];
-				
 				
 				continue;
 			}

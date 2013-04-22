@@ -41,6 +41,22 @@ typedef enum
 
 
 /**
+ Methods to implement for attachments to support output to HTML.
+ */
+@protocol DTTextAttachmentHTMLPersistence <NSObject>
+
+@optional
+
+/**
+ Creates a HTML representation of the receiver
+ @returns A HTML string with the receiver encoded as HTML
+ */
+- (NSString *)stringByEncodingAsHTML;
+
+@end
+
+
+/**
  An object to represent an attachment in an HTML/rich text view.  
  */
 @interface DTTextAttachment : NSObject
@@ -50,6 +66,7 @@ typedef enum
 	CGSize _maxImageSize; // the maximum dimensions to size to
 	NSURL *_contentURL;
 	NSDictionary *_attributes; // attributes transferred from HTML element
+	DTTextAttachmentVerticalAlignment _verticalAlignment; // alignment in relation to the baseline
 }
 
 /**
