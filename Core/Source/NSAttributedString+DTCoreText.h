@@ -18,17 +18,16 @@
  @name Working with Text Attachments
  */
 
-
 /**
  Retrieves the DTTextAttachment objects that match the given predicate.
  
  With this method you can for example find all images that have a certain URL.
  
- @param predicate The predicate to apply for filtering or `nil` for all attachments.
+ @param predicate The predicate to apply for filtering or `nil` to not filter by attachment
+ @param class The class that attachments need to have, or `nil` for all attachments regardless of class
  @returns The filtered array of attachments
  */
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
-
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)class;
 
 /**
  @name Calculating Ranges
