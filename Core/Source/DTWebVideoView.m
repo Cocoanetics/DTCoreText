@@ -7,7 +7,7 @@
 //
 
 #import "DTWebVideoView.h"
-#import "DTTextAttachmentIframe.h"
+#import "DTIframeTextAttachment.h"
 
 
 @interface DTWebVideoView ()

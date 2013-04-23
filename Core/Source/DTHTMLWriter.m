@@ -222,29 +222,6 @@
 	[self _buildOutputAsHTMLFragment:NO];
 }
 
-
-- (NSString *)_blockNameForAttachment:(DTTextAttachment	*)attachment
-{
-	if ([attachment isKindOfClass:[DTTextAttachmentImage class]])
-	{
-		return @"img";
-	}
-	else if ([attachment isKindOfClass:[DTTextAttachmentVideo class]])
-	{
-		return @"video";
-	}
-	else if ([attachment isKindOfClass:[DTTextAttachmentObject class]])
-	{
-		return @"object";
-	}
-	else if ([attachment isKindOfClass:[DTTextAttachmentIframe class]])
-	{
-		return @"iframe";
-	}
-	
-	return nil;
-}
-
 - (void)_buildOutputAsHTMLFragment:(BOOL)fragment
 {
 	// reusable styles

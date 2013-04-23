@@ -375,7 +375,7 @@
 		if (image)
 		{
 			// make an attachment for the image
-			DTTextAttachmentImage *attachment = [[DTTextAttachmentImage alloc] init];
+			DTImageTextAttachment *attachment = [[DTImageTextAttachment alloc] init];
 			attachment.image = image;
 			attachment.displaySize = image.size;
 			

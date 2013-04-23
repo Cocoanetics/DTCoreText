@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
 {
-	[DTTextAttachment registerClass:[DTTextAttachmentObject class] forTagName:@"oliver"];
+	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"oliver"];
 	
 	// Create window
 	_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
