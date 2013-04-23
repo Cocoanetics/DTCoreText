@@ -115,7 +115,7 @@
 		
 		_attachment = attachment;
 		
-		if ([attachment isKindOfClass:[DTTextAttachmentIframe class]])
+		if ([attachment isKindOfClass:[DTIframeTextAttachment class]])
 		{
 			NSURLRequest *request = [NSURLRequest requestWithURL:attachment.contentURL];
 			[_webView loadRequest:request];

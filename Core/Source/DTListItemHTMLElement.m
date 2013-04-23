@@ -19,7 +19,7 @@
 		
 		for (DTHTMLElement *oneElement in listRoot.childNodes)
 		{
-			if ([oneElement isKindOfClass:[DTHTMLElementLI class]])
+			if ([oneElement isKindOfClass:[DTListItemHTMLElement class]])
 			{
 				index++;
 			}
