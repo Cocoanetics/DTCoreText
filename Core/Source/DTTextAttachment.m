@@ -12,10 +12,10 @@
 
 #import "DTBase64Coding.h"
 #import "DTDictationPlaceholderTextAttachment.h"
-#import "DTTextAttachmentIframe.h"
-#import "DTTextAttachmentImage.h"
-#import "DTTextAttachmentObject.h"
-#import "DTTextAttachmentVideo.h"
+#import "DTIframeTextAttachment.h"
+#import "DTImageTextAttachment.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
 
 static NSMutableDictionary *_classForTagNameLookup = nil;
 
@@ -45,10 +45,10 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	_classForTagNameLookup = [[NSMutableDictionary alloc] init];
 	
 	// register standard tags
-	[DTTextAttachment registerClass:[DTTextAttachmentImage class] forTagName:@"img"];
-	[DTTextAttachment registerClass:[DTTextAttachmentVideo class] forTagName:@"video"];
-	[DTTextAttachment registerClass:[DTTextAttachmentIframe class] forTagName:@"iframe"];
-	[DTTextAttachment registerClass:[DTTextAttachmentObject class] forTagName:@"object"];
+	[DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"img"];
+	[DTTextAttachment registerClass:[DTVideoTextAttachment class] forTagName:@"video"];
+	[DTTextAttachment registerClass:[DTIframeTextAttachment class] forTagName:@"iframe"];
+	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"object"];
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options

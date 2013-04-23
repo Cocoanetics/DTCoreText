@@ -594,9 +594,9 @@
 	{
 		if ([_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
 		{
-			if ([_currentTag.textAttachment isKindOfClass:[DTTextAttachmentObject class]])
+			if ([_currentTag.textAttachment isKindOfClass:[DTObjectTextAttachment class]])
 			{
-				DTTextAttachmentObject *objectAttachment = (DTTextAttachmentObject *)_currentTag.textAttachment;
+				DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)_currentTag.textAttachment;
 				
 				// transfer the child nodes to the attachment
 				objectAttachment.childNodes = [_currentTag.childNodes copy];

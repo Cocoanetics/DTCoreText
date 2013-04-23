@@ -43,10 +43,10 @@
 // text attachment cluster
 #import "DTTextAttachment.h"
 #import "DTDictationPlaceholderTextAttachment.h"
-#import "DTTextAttachmentIframe.h"
-#import "DTTextAttachmentImage.h"
-#import "DTTextAttachmentObject.h"
-#import "DTTextAttachmentVideo.h"
+#import "DTIframeTextAttachment.h"
+#import "DTImageTextAttachment.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
 
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
