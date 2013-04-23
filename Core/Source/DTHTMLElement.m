@@ -37,6 +37,12 @@ NSDictionary *_classesForNames = nil;
 
 + (void)initialize
 {
+	// prevent calling from children
+	if (self != [DTHTMLElement class])
+	{
+		return;
+	}
+	
 	// lookup table so that we quickly get the correct class to instantiate for special tags
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
