@@ -35,7 +35,6 @@
 	NSArray *_glyphRuns;
 
 	BOOL _didCalculateMetrics;
-	dispatch_queue_t _syncQueue;
 	
 	BOOL _writingDirectionIsRightToLeft;
 	BOOL _needsToDetectWritingDirection;
@@ -50,9 +49,6 @@
 		
 		// writing direction
 		_needsToDetectWritingDirection = YES;
-		
-		// get a global queue
-		_syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	}
 	return self;
 }
@@ -278,7 +274,8 @@
  
 - (void)_calculateMetrics
 {
-	dispatch_sync(_syncQueue, ^{
+	@synchronized(self)
+	{
 		if (!_didCalculateMetrics)
 		{
 			_width = (CGFloat)CTLineGetTypographicBounds(_line, &_ascent, &_descent, &_leading);
@@ -286,7 +283,7 @@
 			
 			_didCalculateMetrics = YES;
 		}
-	});
+	}
 }
  
 
@@ -369,13 +366,14 @@
 #pragma mark Properties
 - (NSArray *)glyphRuns
 {
-	dispatch_sync(_syncQueue, ^{
+	@synchronized(self)
+	{
 		if (!_glyphRuns)
 		{
 			// run array is owned by line
 			NSArray *runs = (__bridge NSArray *)CTLineGetGlyphRuns(_line);
 			
-			if (runs) 
+			if (runs)
 			{
 				CGFloat offset = 0;
 				
@@ -392,9 +390,9 @@
 				_glyphRuns = tmpArray;
 			}
 		}
-	});
-	
-	return _glyphRuns;
+		
+		return _glyphRuns;
+	}
 }
 
 - (CGRect)frame
