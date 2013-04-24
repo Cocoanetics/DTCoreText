@@ -9,37 +9,41 @@
 #import "DTCoreText.h"
 #import "NSAttributedString+DTCoreText.h"
 #import "DTHTMLWriter.h"
+#import "NSURL+DTComparing.h"
 
 @implementation NSAttributedString (DTCoreText)
 
 #pragma mark Text Attachments
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)class
 {
-	NSMutableArray *tmpArray = [NSMutableArray array];
-	
-	NSUInteger index = 0;
-	
-	while (index<[self length]) 
+	if (![self length])
 	{
-		NSRange range;
-		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&range];
-		
-		DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
-		
-		if (attachment)
-		{
-			if (predicate == nil || [predicate evaluateWithObject:attachment])
-			{
-				[tmpArray addObject:attachment];
-			}
-		}
-		
-		index += range.length;
+		return nil;
 	}
 	
-	if ([tmpArray count])
+	NSMutableArray *foundAttachments = [NSMutableArray array];
+	
+	NSRange entireRange = NSMakeRange(0, [self length]);
+	[self enumerateAttribute:NSAttachmentAttributeName inRange:entireRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
+		
+		if (predicate && ![predicate evaluateWithObject:attachment])
+		{
+			// doesn't fit predicate, next
+			return;
+		}
+		
+		if (class && ![attachment isKindOfClass:[DTImageTextAttachment class]])
+		{
+			// doesn't fit class, next
+			return;
+		}
+		
+		[foundAttachments addObject:attachment];
+	}];
+	
+	if ([foundAttachments count])
 	{
-		return tmpArray;
+		return foundAttachments;
 	}
 	
 	return nil;
