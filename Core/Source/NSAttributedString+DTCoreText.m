@@ -215,6 +215,23 @@
 	return foundRange;
 }
 
+- (NSRange)rangeOfFieldAtIndex:(NSUInteger)location
+{
+    if (location<[self length])
+    {
+        // get range of prefix
+        NSRange fieldRange;
+        NSString *fieldAttribute = [self attribute:DTFieldAttribute atIndex:location effectiveRange:&fieldRange];
+        
+        if (fieldAttribute)
+        {
+            return fieldRange;
+        }
+    }
+    
+    return NSMakeRange(NSNotFound, 0);
+}
+
 #pragma mark HTML Encoding
 
 - (NSString *)htmlString

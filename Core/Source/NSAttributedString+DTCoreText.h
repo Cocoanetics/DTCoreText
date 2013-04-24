@@ -53,7 +53,6 @@
  */
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location;
 
-
 /**
  Returns the range of the given text block that contains the given location.
  
@@ -70,6 +69,15 @@
  @returns The range of the given anchor.
  */
 - (NSRange)rangeOfAnchorNamed:(NSString *)anchorName;
+
+/**
+ Returns the range of a field at the given index. 
+ 
+ @param location The location of the field
+ @returns The range of the field. If there is no field at this location it returns {NSNotFound, 0}.
+ */
+- (NSRange)rangeOfFieldAtIndex:(NSUInteger)location;
+
 
 /**
  @name Converting to Other Representations

@@ -416,12 +416,11 @@
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
-				NSInteger counter = [_attributedString itemNumberInTextList:effectiveListStyle atIndex:index];
-				NSString *prefix = [effectiveListStyle prefixWithCounter:counter];
+				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:effectiveRange.location];
 				
-				if ([plainSubString hasPrefix:prefix])
+				if (prefixRange.location != NSNotFound)
 				{
-					plainSubString = [plainSubString substringFromIndex:[prefix length]];
+					plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
 				}
 				
 				needsToRemovePrefix = NO;
