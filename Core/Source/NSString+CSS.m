@@ -247,7 +247,7 @@
 						{
 							if (![scanner scanHTMLColor:&shadowColor])
 							{
-								
+								// invalid color, we ignore this color
 							}
 						}
 					}
