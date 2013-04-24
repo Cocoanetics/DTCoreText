@@ -227,7 +227,7 @@ typedef struct {
 	allvalues_t *allvalues = &allvalues_stack; // pointer so that we can use the arrow operator
 #endif
 	
-	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0, nil};
+	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 	// pack all values in the struct
 	allvalues->firstLineHeadIndent = _firstLineHeadIndent;

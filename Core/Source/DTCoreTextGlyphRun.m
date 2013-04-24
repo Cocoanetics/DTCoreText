@@ -297,7 +297,7 @@
 				
 				if (usedFont)
 				{
-					CGFloat strokePosition = CTFontGetXHeight(usedFont)/2.0;
+					CGFloat strokePosition = CTFontGetXHeight(usedFont)/(CGFloat)2.0;
 					y = DTRoundWithContentScale(runStrokeBounds.origin.y + _ascent - strokePosition, contentScale);
 				}
 				else

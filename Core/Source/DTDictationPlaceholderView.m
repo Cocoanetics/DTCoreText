@@ -43,12 +43,12 @@
 
 - (UIColor *)_lightDotColor
 {
-    return [UIColor colorWithRed:238.0/255.0 green:128.0/255.0 blue:238.0/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(CGFloat)(238.0/255.0) green:(CGFloat)(128.0/255.0) blue:(CGFloat)(238.0/255.0) alpha:1.0];
 }
 
 - (UIColor *)_darkDotColor
 {
-    return [UIColor colorWithRed:191.0/255.0 green:51.0/255.0 blue:191.0/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(CGFloat)(191.0/255.0) green:(CGFloat)(51.0/255.0) blue:(CGFloat)(191.0/255.0) alpha:1.0];
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview

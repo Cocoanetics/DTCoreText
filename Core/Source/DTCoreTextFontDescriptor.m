@@ -566,7 +566,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSUInteger calcHash = 7;
 	
-	calcHash = calcHash*31 + _pointSize;
+	calcHash = calcHash*31 + (NSUInteger)_pointSize;
 	calcHash = calcHash*31 + (_stylisticClass | _stylisticTraits);
 	calcHash = calcHash*31 + [_fontName hash];
 	calcHash = calcHash*31 + [_fontFamily hash];
