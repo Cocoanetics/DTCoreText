@@ -78,4 +78,26 @@
 #endif
 }
 
+- (void)testShadowInvalid
+{
+	NSString *string = @"bla";
+	
+	DTColor *color = (DTColor *)[DTColor blackColor];
+	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
+	
+	STAssertNil(shadows, @"Got back an array with %d entries instead of nil", [shadows count]);
+}
+
+- (void)testShadowNone
+{
+	NSString *string = @"none";
+	
+	DTColor *color = (DTColor *)[DTColor blackColor];
+	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
+	
+	STAssertNil(shadows, @"Got back an array with %d entries instead of nil", [shadows count]);
+}
+
+
+
 @end
