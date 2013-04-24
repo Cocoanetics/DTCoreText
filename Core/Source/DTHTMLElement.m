@@ -8,13 +8,13 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLElement.h"
-#import "DTHTMLElementA.h"
-#import "DTHTMLElementAttachment.h"
-#import "DTHTMLElementBR.h"
-#import "DTHTMLElementHR.h"
-#import "DTHTMLElementLI.h"
-#import "DTHTMLElementStylesheet.h"
-#import "DTHTMLElementText.h"
+#import "DTAnchorHTMLElement.h"
+#import "DTTextAttachmentHTMLElement.h"
+#import "DTBreakHTMLElement.h"
+#import "DTHorizontalRuleHTMLElement.h"
+#import "DTListItemHTMLElement.h"
+#import "DTStylesheetHTMLElement.h"
+#import "DTTextHTMLElement.h"
 #import "NSString+DTUtilities.h"
 
 @interface DTHTMLElement ()
@@ -46,15 +46,15 @@ NSDictionary *_classesForNames = nil;
 	// lookup table so that we quickly get the correct class to instantiate for special tags
 	NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] init];
 	
-	[tmpDict setObject:[DTHTMLElementA class] forKey:@"a"];
-	[tmpDict setObject:[DTHTMLElementBR class] forKey:@"br"];
-	[tmpDict setObject:[DTHTMLElementHR class] forKey:@"hr"];
-	[tmpDict setObject:[DTHTMLElementLI class] forKey:@"li"];
-	[tmpDict setObject:[DTHTMLElementStylesheet class] forKey:@"style"];
-	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"img"];
-	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"object"];
-	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"video"];
-	[tmpDict setObject:[DTHTMLElementAttachment class] forKey:@"iframe"];
+	[tmpDict setObject:[DTAnchorHTMLElement class] forKey:@"a"];
+	[tmpDict setObject:[DTBreakHTMLElement class] forKey:@"br"];
+	[tmpDict setObject:[DTHorizontalRuleHTMLElement class] forKey:@"hr"];
+	[tmpDict setObject:[DTListItemHTMLElement class] forKey:@"li"];
+	[tmpDict setObject:[DTStylesheetHTMLElement class] forKey:@"style"];
+	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"img"];
+	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"object"];
+	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"video"];
+	[tmpDict setObject:[DTTextAttachmentHTMLElement class] forKey:@"iframe"];
 	
 	_classesForNames = [tmpDict copy];
 }
@@ -63,11 +63,21 @@ NSDictionary *_classesForNames = nil;
 {
 	// look for specialized class
 	Class class = [_classesForNames objectForKey:name];
-	
-	// use generic of none found
+
 	if (!class)
 	{
-		class = [DTHTMLElement class];
+		// see if this is a custom attachment class
+		Class attachmentClass = [DTTextAttachment registeredClassForTagName:name];
+		
+		if (attachmentClass)
+		{
+			class = [DTTextAttachmentHTMLElement class];
+		}
+		else
+		{
+			// use generic of none found
+			class = [DTHTMLElement class];
+		}
 	}
 	
 	DTHTMLElement *element = [[class alloc] initWithName:name attributes:attributes options:options];

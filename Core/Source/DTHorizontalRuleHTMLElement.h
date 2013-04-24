@@ -1,5 +1,5 @@
 //
-//  DTHTMLElementBR.h
+//  DTHTMLElementHR.h
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 26.12.12.
@@ -9,9 +9,9 @@
 #import "DTHTMLElement.h"
 
 /**
- Specialized subclass of <DTHTMLElement> that represents a line break.
+ Specialized subclass of <DTHTMLElement> that deals with list items.
  */
 
-@interface DTHTMLElementBR : DTHTMLElement
+@interface DTHorizontalRuleHTMLElement : DTHTMLElement
 
 @end

@@ -29,11 +29,6 @@
 	return [self displaySize];
 }
 
-- (DTTextAttachmentType)contentType
-{
-	return DTTextAttachmentTypeGeneric;
-}
-
 - (CGFloat)ascentForLayout
 {
 	return self.displaySize.height;

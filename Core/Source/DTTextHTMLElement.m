@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementText.h"
+#import "DTTextHTMLElement.h"
 #import "NSString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "NSAttributedString+SmallCaps.h"
@@ -15,7 +15,7 @@
 #import "UIFont+DTCoreText.h"
 #endif
 
-@implementation DTHTMLElementText
+@implementation DTTextHTMLElement
 {
 	NSString *_text;
 }

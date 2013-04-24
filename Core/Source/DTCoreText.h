@@ -23,7 +23,6 @@
 #import "DTCSSStylesheet.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTHTMLElement.h"
-#import "DTTextAttachment.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSMutableString+HTML.h"
@@ -41,6 +40,13 @@
 #import "DTHTMLParserNode.h"
 #import "DTHTMLParserTextNode.h"
 
+// text attachment cluster
+#import "DTTextAttachment.h"
+#import "DTDictationPlaceholderTextAttachment.h"
+#import "DTIframeTextAttachment.h"
+#import "DTImageTextAttachment.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
 
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
@@ -60,7 +66,6 @@
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayouter.h"
 
-#import "DTDictationPlaceholderTextAttachment.h"
 #import "DTDictationPlaceholderView.h"
 
 #import "UIFont+DTCoreText.h"

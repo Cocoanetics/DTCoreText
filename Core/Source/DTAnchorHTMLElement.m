@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementA.h"
+#import "DTAnchorHTMLElement.h"
 #import "DTColor+HTML.h"
 
-@implementation DTHTMLElementA
+@implementation DTAnchorHTMLElement
 {
 	DTColor *_highlightedTextColor;
 }

@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementLI.h"
+#import "DTListItemHTMLElement.h"
 
-@implementation DTHTMLElementLI
+@implementation DTListItemHTMLElement
 
 
 - (NSUInteger)_indexOfListItemInListRoot:(DTHTMLElement *)listRoot
@@ -19,7 +19,7 @@
 		
 		for (DTHTMLElement *oneElement in listRoot.childNodes)
 		{
-			if ([oneElement isKindOfClass:[DTHTMLElementLI class]])
+			if ([oneElement isKindOfClass:[DTListItemHTMLElement class]])
 			{
 				index++;
 			}
@@ -45,7 +45,7 @@
 	NSUInteger counter = [self _indexOfListItemInListRoot:listRoot]+effectiveList.startingItemNumber;
 	
 	// make a temporary version of self that has same font attributes as list root
-	DTHTMLElementLI *tmpCopy = [[DTHTMLElementLI alloc] init];
+	DTListItemHTMLElement *tmpCopy = [[DTListItemHTMLElement alloc] init];
 	[tmpCopy inheritAttributesFromElement:self];
 
 /*

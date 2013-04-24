@@ -6,14 +6,14 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementAttachment.h"
+#import "DTTextAttachmentHTMLElement.h"
 
 #import "DTHTMLElement.h"
 #import "DTTextAttachment.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "NSMutableAttributedString+HTML.h"
 
-@implementation DTHTMLElementAttachment
+@implementation DTTextAttachmentHTMLElement
 {
 	CGSize _maxDisplaySize;
 }

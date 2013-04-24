@@ -16,7 +16,7 @@
 #import "DTTextAttachment.h"
 #import "DTCompatibility.h"
 
-@class DTHTMLElementBR;
+@class DTBreakHTMLElement;
 
 /**
  Class to represent a element (aka "tag") in a HTML document. Structure information - like parent or children - is inherited from its superclass <DTHTMLParserNode>.

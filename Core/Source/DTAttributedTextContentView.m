@@ -8,6 +8,7 @@
 
 #import "DTAttributedTextContentView.h"
 #import "DTCoreText.h"
+#import "DTDictationPlaceholderTextAttachment.h"
 #import <QuartzCore/QuartzCore.h>
 
 #if !__has_feature(objc_arc)
