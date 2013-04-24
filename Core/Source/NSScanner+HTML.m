@@ -177,8 +177,6 @@
 	}
 	
 	return YES;
-	
-	
 }
 
 - (BOOL)scanHTMLColor:(DTColor **)color

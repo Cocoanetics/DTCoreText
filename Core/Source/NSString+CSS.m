@@ -184,7 +184,14 @@
 
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(DTColor *)color
 {
-	NSScanner *scanner = [NSScanner scannerWithString:self];
+	NSString *trimmedString = [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	
+	if ([trimmedString isEqualToString:@"none"])
+	{
+		return nil;
+	}
+	
+	NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
 	
 	NSMutableCharacterSet *tokenEndSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
 	[tokenEndSet addCharactersInString:@","];
@@ -286,8 +293,13 @@
 		}
 	}
 	
+	// only return array if not empty
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
 	
-	return tmpArray;
+	return nil;
 }
 
 - (NSString *)stringByDecodingCSSContentAttribute
