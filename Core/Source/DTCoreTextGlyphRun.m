@@ -40,7 +40,6 @@
 	NSInteger _numberOfGlyphs;
 	
 	const CGPoint *_glyphPositionPoints;
-	//BOOL needToFreeGlyphPositionPoints;
 	
 	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
 	__unsafe_unretained NSDictionary *_attributes;
@@ -52,7 +51,6 @@
 	BOOL _didCheckForAttachmentInAttributes;
 	BOOL _didCheckForHyperlinkInAttributes;
 	BOOL _didCalculateMetrics;
-	BOOL _didGetWritingDirection;
 	BOOL _didDetermineTrailingWhitespace;
 }
 
@@ -465,23 +463,9 @@
 
 - (BOOL)writingDirectionIsRightToLeft
 {
-	if (!_didGetWritingDirection)
-	{
-		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[self.attributes objectForKey:(id)kCTParagraphStyleAttributeName];
-		
-		// depends on the text direction
-		CTWritingDirection baseWritingDirection;
-		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(baseWritingDirection), &baseWritingDirection);
-		
-		if (baseWritingDirection == kCTWritingDirectionRightToLeft)
-		{
-			_writingDirectionIsRightToLeft = YES;
-		}
+	CTRunStatus status = CTRunGetStatus(_run);
 	
-		_didGetWritingDirection = YES;
-	}
-	
-	return _writingDirectionIsRightToLeft;
+	return (status & kCTRunStatusRightToLeft)!=0;
 }
 
 @synthesize frame = _frame;
