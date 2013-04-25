@@ -13,23 +13,11 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
 
-#ifndef __IPHONE_4_3
-	#define __IPHONE_4_3 40300
-#endif
-
-#define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(runLock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(runLock);
-
 @interface DTCoreTextGlyphRun ()
+
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
 @property (nonatomic, unsafe_unretained, readwrite) NSDictionary *attributes;
-
-#if OS_OBJECT_USE_OBJC
-@property (nonatomic, strong) dispatch_semaphore_t runLock; // GCD objects use ARC
-#else
-@property (nonatomic, assign) dispatch_semaphore_t runLock; // GCD objects don't use ARC
-#endif
 
 @end
 
@@ -68,8 +56,6 @@
 	BOOL _didDetermineTrailingWhitespace;
 }
 
-@synthesize runLock;
-
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset
 {
 	self = [super init];
@@ -81,7 +67,6 @@
 		
 		_offset = offset;
 		_line = layoutLine;
-		runLock = dispatch_semaphore_create(1);
 	}
 	
 	return self;
@@ -93,10 +78,6 @@
 	{
 		CFRelease(_run);
 	}
-	
-#if !OS_OBJECT_USE_OBJC
-	dispatch_release(runLock);
-#endif
 }
 
 - (NSString *)description
@@ -108,7 +89,7 @@
 - (void)calculateMetrics
 {
 	// calculate metrics
-	SYNCHRONIZE_START(self)
+	@synchronized(self)
 	{
 		if (!_didCalculateMetrics)
 		{
@@ -116,7 +97,6 @@
 			_didCalculateMetrics = YES;
 		}
 	}
-	SYNCHRONIZE_END(self)
 }
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
