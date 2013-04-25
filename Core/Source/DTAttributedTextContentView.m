@@ -578,6 +578,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	tmpLayoutFrame.numberOfLines = _numberOfLines;
 	tmpLayoutFrame.lineBreakMode = _lineBreakMode;
 	tmpLayoutFrame.truncationString = _truncationString;
+	tmpLayoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
 	
 	//  we have a layout frame and from this we get the needed size
 	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
