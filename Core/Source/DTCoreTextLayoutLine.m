@@ -135,8 +135,11 @@
 	{
 		NSRange runRange = [oneRun stringRange];
 		
-		// we only care about locations, assume that number of glyphs >= indexes
-		if (NSLocationInRange(runRange.location, range))
+		// intersect these ranges
+		NSRange intersectionRange = NSIntersectionRange(range, runRange);
+		
+		// if intersection is longer than zero length they intersect
+		if (intersectionRange.length)
 		{
 			[tmpArray addObject:oneRun];
 		}
