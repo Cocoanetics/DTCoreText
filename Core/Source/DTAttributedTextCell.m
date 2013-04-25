@@ -133,6 +133,8 @@
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data documentAttributes:NULL];
 	self.attributedString = string;
+	
+	[self setNeedsLayout];
 }
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
