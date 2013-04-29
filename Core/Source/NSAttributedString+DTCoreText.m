@@ -187,6 +187,8 @@
 
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
 {
+	NSParameterAssert(list);
+	
 	NSRange listRange = [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
 	
 	// extend list range to full paragraphs to be safe
@@ -197,6 +199,8 @@
 
 - (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
 {
+	NSParameterAssert(textBlock);
+
 	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
