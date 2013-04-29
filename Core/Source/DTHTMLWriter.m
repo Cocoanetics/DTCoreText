@@ -387,19 +387,28 @@
 			}
 		}
 		
+		// Add dir="auto" if the writing direction is unknown
+		NSString *directionAttributeString = @"";
+		if (paraStyle)
+		{
+			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+			if (para.baseWritingDirection == kCTWritingDirectionNatural)
+				directionAttributeString = @" dir=\"auto\"";
+		}
+		
 		if ([paraStyleString length])
 		{
 			NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
 			
 			if (fragment) {
-				[retString appendFormat:@"<%@ style=\"%@\">", blockElement, paraStyleString];
+				[retString appendFormat:@"<%@ style=\"%@\"%@>", blockElement, paraStyleString, directionAttributeString];
 			} else {
-				[retString appendFormat:@"<%@ class=\"%@\">", blockElement, className];
+				[retString appendFormat:@"<%@ class=\"%@\"%@>", blockElement, className, directionAttributeString];
 			}
 		}
 		else
 		{
-			[retString appendFormat:@"<%@>", blockElement];
+			[retString appendFormat:@"<%@%@>", blockElement, directionAttributeString];
 		}
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
