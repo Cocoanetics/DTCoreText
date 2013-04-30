@@ -223,7 +223,9 @@ static NSCache *imageCache = nil;
 
 - (void)drawInRect:(CGRect)rect context:(CGContextRef)context
 {
+#if TARGET_OS_IPHONE
 	CGContextDrawImage(context, rect, self.image.CGImage);
+#endif
 }
 
 #pragma mark - DTTextAttachmentHTMLEncoding
@@ -364,7 +366,7 @@ static NSCache *imageCache = nil;
 	return _image;
 }
 
-- (void)setImage:(UIImage *)image
+- (void)setImage:(DTImage *)image
 {
 	if (_image != image)
 	{
