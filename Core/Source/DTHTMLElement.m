@@ -1193,7 +1193,9 @@ NSDictionary *_classesForNames = nil;
 {
 	_fontDescriptor = [element.fontDescriptor copy];
 	_paragraphStyle = [element.paragraphStyle copy];
-	
+
+	_headerLevel = element.headerLevel;
+
 	_fontVariant = element.fontVariant;
 	_underlineStyle = element.underlineStyle;
 	_strikeOut = element.strikeOut;
