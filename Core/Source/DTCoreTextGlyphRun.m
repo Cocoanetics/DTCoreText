@@ -206,9 +206,6 @@
 		
 		CGContextSetTextMatrix(context, textMatrix);
 		
-		CGContextSetRGBFillColor(context, 1, 0, 0, 1);
-		CGContextSetBlendMode(context, kCGBlendModePlusLighter);
-		
 		CTRunDraw(_run, context, CFRangeMake(0, 0));
 
 		// restore identity
