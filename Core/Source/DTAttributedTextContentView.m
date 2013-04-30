@@ -829,6 +829,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[self setNeedsDisplayInRect:self.bounds];
 			}
 			_layoutFrame = layoutFrame;
+			
+			[self invalidateAccessibilityElements];
 		}
 	};
 }
