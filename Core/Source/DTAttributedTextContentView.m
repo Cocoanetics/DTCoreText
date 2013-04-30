@@ -52,6 +52,8 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 @property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
 @property (nonatomic, strong) NSMutableSet *customViews;
 
+@property (nonatomic, strong) NSArray *accessibilityElements;
+
 - (void)removeAllCustomViews;
 - (void)removeAllCustomViewsForLinks;
 - (void)removeSubviewsOutsideRect:(CGRect)rect;
@@ -804,6 +806,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						
 					}];
 				}
+
+				[self invalidateAccessibilityElements];
 			}
 		}
 	
@@ -886,6 +890,44 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
+#pragma mark - Accessibility
+
+- (void)invalidateAccessibilityElements
+{
+	_accessibilityElements = nil;
+}
+
+- (BOOL)isAccessibilityElement
+{
+	return NO;
+}
+
+- (NSInteger)accessibilityElementCount
+{
+	return [[self accessibilityElements] count];
+}
+
+- (id)accessibilityElementAtIndex:(NSInteger)index
+{
+	DTAccessibilityElement *element = [[self accessibilityElements] objectAtIndex:index];
+	return element;
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element
+{
+	return [[self accessibilityElements] indexOfObject:element];
+}
+
+- (NSArray *)accessibilityElements
+{
+	if (!_accessibilityElements)
+	{
+		DTCoreTextLayoutFrameAccessibilityElementGenerator *generator = [[DTCoreTextLayoutFrameAccessibilityElementGenerator alloc] init];
+		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self];
+	}
+	return _accessibilityElements;
+}
+
 @synthesize layouter = _layouter;
 @synthesize layoutFrame = _layoutFrame;
 @synthesize attributedString = _attributedString;
@@ -902,6 +944,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize customViewsForLinksIndex;
 @synthesize customViewsForAttachmentsIndex;
 @synthesize relayoutMask = _relayoutMask;
+
+@synthesize accessibilityElements = _accessibilityElements;
 
 @end
 

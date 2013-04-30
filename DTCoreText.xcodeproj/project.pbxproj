@@ -30,6 +30,18 @@
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
+		A04FE6DD172F75D400A478CA /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6D9172F75D400A478CA /* DTAccessibilityElement.h */; };
+		A04FE6DE172F75D400A478CA /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6D9172F75D400A478CA /* DTAccessibilityElement.h */; };
+		A04FE6DF172F75D400A478CA /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6D9172F75D400A478CA /* DTAccessibilityElement.h */; };
+		A04FE6E0172F75D400A478CA /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DA172F75D400A478CA /* DTAccessibilityElement.m */; };
+		A04FE6E1172F75D400A478CA /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DA172F75D400A478CA /* DTAccessibilityElement.m */; };
+		A04FE6E2172F75D400A478CA /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DA172F75D400A478CA /* DTAccessibilityElement.m */; };
+		A04FE6E3172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6DB172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04FE6E4172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6DB172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04FE6E5172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04FE6DB172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04FE6E6172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DC172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
+		A04FE6E7172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DC172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
+		A04FE6E8172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04FE6DC172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
 		A060479216A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A060479316A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A060479416A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; };
@@ -725,6 +737,10 @@
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementTest.h; sourceTree = "<group>"; };
 		9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementTest.m; sourceTree = "<group>"; };
+		A04FE6D9172F75D400A478CA /* DTAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAccessibilityElement.h; sourceTree = "<group>"; };
+		A04FE6DA172F75D400A478CA /* DTAccessibilityElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAccessibilityElement.m; sourceTree = "<group>"; };
+		A04FE6DB172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayoutFrameAccessibilityElementGenerator.h; sourceTree = "<group>"; };
+		A04FE6DC172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutFrameAccessibilityElementGenerator.m; sourceTree = "<group>"; };
 		A060479016A8B5770000CAA1 /* DTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedLabel.h; sourceTree = "<group>"; };
 		A060479116A8B5770000CAA1 /* DTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedLabel.m; sourceTree = "<group>"; };
 		A700289716FB220B00AFEDA3 /* DTHTMLElementA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementA.h; sourceTree = "<group>"; };
@@ -1083,6 +1099,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A04FE6D2172F75AE00A478CA /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				A04FE6D9172F75D400A478CA /* DTAccessibilityElement.h */,
+				A04FE6DA172F75D400A478CA /* DTAccessibilityElement.m */,
+				A04FE6DB172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */,
+				A04FE6DC172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */,
+			);
+			name = Accessibility;
+			sourceTree = "<group>";
+		};
 		A70B4C9A1486518E00873A4A /* Layouting */ = {
 			isa = PBXGroup;
 			children = (
@@ -1264,6 +1291,7 @@
 		A788CAA71486490600E1AFD9 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A04FE6D2172F75AE00A478CA /* Accessibility */,
 				A70E62CC16C248C2009B47BF /* Editing */,
 				A060479016A8B5770000CAA1 /* DTAttributedLabel.h */,
 				A060479116A8B5770000CAA1 /* DTAttributedLabel.m */,
@@ -1524,6 +1552,8 @@
 				A70E62D616C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */,
 				A70E62E016C24DDF009B47BF /* DTDictationPlaceholderView.h in Headers */,
 				A700289916FB220B00AFEDA3 /* DTHTMLElementA.h in Headers */,
+				A04FE6DD172F75D400A478CA /* DTAccessibilityElement.h in Headers */,
+				A04FE6E3172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1582,6 +1612,8 @@
 				A70E62D716C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */,
 				A70E62E116C24DDF009B47BF /* DTDictationPlaceholderView.h in Headers */,
 				A700289A16FB220B00AFEDA3 /* DTHTMLElementA.h in Headers */,
+				A04FE6DE172F75D400A478CA /* DTAccessibilityElement.h in Headers */,
+				A04FE6E4172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1640,6 +1672,8 @@
 				A70E62E216C24DDF009B47BF /* DTDictationPlaceholderView.h in Headers */,
 				A700289B16FB220B00AFEDA3 /* DTHTMLElementA.h in Headers */,
 				A7AFCEF016FF4DC1007EF360 /* UIFont+DTCoreText.h in Headers */,
+				A04FE6DF172F75D400A478CA /* DTAccessibilityElement.h in Headers */,
+				A04FE6E5172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2180,6 +2214,8 @@
 				A70E62DA16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62E316C24DDF009B47BF /* DTDictationPlaceholderView.m in Sources */,
 				A700289D16FB220B00AFEDA3 /* DTHTMLElementA.m in Sources */,
+				A04FE6E0172F75D400A478CA /* DTAccessibilityElement.m in Sources */,
+				A04FE6E6172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2236,6 +2272,8 @@
 				A70E62DB16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62E416C24DDF009B47BF /* DTDictationPlaceholderView.m in Sources */,
 				A700289E16FB220B00AFEDA3 /* DTHTMLElementA.m in Sources */,
+				A04FE6E1172F75D400A478CA /* DTAccessibilityElement.m in Sources */,
+				A04FE6E7172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2322,6 +2360,8 @@
 				A70E62DC16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62E516C24DDF009B47BF /* DTDictationPlaceholderView.m in Sources */,
 				A700289F16FB220B00AFEDA3 /* DTHTMLElementA.m in Sources */,
+				A04FE6E2172F75D400A478CA /* DTAccessibilityElement.m in Sources */,
+				A04FE6E8172F75D400A478CA /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
