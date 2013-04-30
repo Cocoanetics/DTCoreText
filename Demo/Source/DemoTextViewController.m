@@ -21,6 +21,7 @@
 - (void)debugButton:(UIBarButtonItem *)sender;
 
 @property (nonatomic, strong) NSMutableSet *mediaPlayers;
+@property (nonatomic, strong) NSArray *contentViews;
 
 @end
 
@@ -131,6 +132,8 @@
 	_iOS6View.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
 	_iOS6View.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_iOS6View];
+	
+	self.contentViews = @[_charsView, _rangeView, _htmlView, _textView, _iOS6View];
 }
 
 
@@ -290,6 +293,11 @@
 
 	// refresh only this tab
 	[self updateDetailViewForIndex:_segmentedControl.selectedSegmentIndex];
+	
+	// Hide all views except for the selected view to not conflict with VoiceOver
+	for (UIView *view in self.contentViews)
+		view.hidden = YES;
+	selectedView.hidden = NO;
 	
 	[self.view bringSubviewToFront:selectedView];
 	[selectedView flashScrollIndicators];
