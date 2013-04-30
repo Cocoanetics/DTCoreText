@@ -350,4 +350,17 @@
 	}];
 }
 
+- (void)testHeaderLevelTransfer
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<h3>Header</h3>"];
+	
+	NSNumber *headerLevelNum = [attributedString attribute:DTHeaderLevelAttribute atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(headerLevelNum, @"No Header Level Attribute");
+
+	NSInteger level = [headerLevelNum integerValue];
+	
+	STAssertEquals(level, (NSInteger)3, @"Level should be 3");
+}
+
 @end
