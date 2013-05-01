@@ -109,7 +109,6 @@
 	[self.view addSubview:_htmlView];
 
 	// Create text view
-	[DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	
 	// we draw images and links via subviews provided by delegate methods
