@@ -12,6 +12,7 @@
 #import "DTCoreTextLayouter.h"
 #import "DTTextAttachment.h"
 #import "DTCoreTextConstants.h"
+#import <UIKit/UIKit.h>
 
 @interface DTCoreTextLayoutLine ()
 
@@ -84,7 +85,32 @@
 	return ret;
 }
 
-#pragma mark Creating Variants
+#pragma mark - Drawing
+
+- (void)drawInContext:(CGContextRef)context
+{
+	CTLineDraw(_line, context);
+}
+
+- (CGPathRef)newPathWithGlyphs
+{
+	// mutable path for the line
+	CGMutablePathRef mutablePath = CGPathCreateMutable();
+
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		CGPathRef glyphPath = [oneRun newPathWithGlyphs];
+		
+		CGAffineTransform posTransform = CGAffineTransformMakeTranslation(_baselineOrigin.x, _baselineOrigin.y);
+		CGPathAddPath(mutablePath, &posTransform, glyphPath);
+		
+		CGPathRelease(glyphPath);
+	}
+	
+	return mutablePath;
+}
+
+#pragma mark - Creating Variants
 
 - (DTCoreTextLayoutLine *)justifiedLineWithFactor:(CGFloat)justificationFactor justificationWidth:(CGFloat)justificationWidth
 {
@@ -215,66 +241,6 @@
 	return index;
 }
 
-- (void)drawInContext:(CGContextRef)context
-{
-	CTLineDraw(_line, context);
-}
-
-/*
-
-// fix for image squishing bug < iOS 4.2
-- (BOOL)correctAttachmentHeights:(CGFloat *)downShift
-{
-	// get the glyphRuns with attachments
-	NSArray *glyphRuns = [self glyphRuns];
-	
-	CGFloat necessaryDownShift = 0;
-	BOOL didShift = NO;
-	
-	NSMutableSet *correctedRuns = [[NSMutableSet alloc] init];
-	
-	
-	for (DTCoreTextGlyphRun *oneRun in glyphRuns)
-	{
-		DTTextAttachment *attachment = oneRun.attachment;
-		
-		if (attachment)
-		{
-			CGFloat currentGlyphHeight = oneRun.ascent;
-			CGFloat neededGlyphHeight = attachment.displaySize.height;
-			
-			if (neededGlyphHeight > currentGlyphHeight)
-			{
-				CGFloat ndownShift = neededGlyphHeight - currentGlyphHeight;
-				
-				if (ndownShift > necessaryDownShift)
-				{
-					necessaryDownShift = ndownShift;
-					didShift = YES;
-					
-					[correctedRuns addObject:oneRun];
-				}
-			}
-		}
-	}
-	
-	// now fix the ascent of these runs
-	for (DTCoreTextGlyphRun *oneRun in correctedRuns)
-	{
-		[oneRun fixMetricsFromAttachment];
-	}
-	
-	
-	// return executed shift
-	if (downShift)
-	{
-		*downShift = necessaryDownShift;
-	}
-	
-	return didShift;
-}
-*/
- 
 - (void)_calculateMetrics
 {
 	@synchronized(self)
@@ -288,8 +254,6 @@
 		}
 	}
 }
- 
-
 
 // calculates the extra space that is before every line even though the leading is zero
 // http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
@@ -366,7 +330,7 @@
 	return NO;
 }
 
-#pragma mark Properties
+#pragma mark - Properties
 - (NSArray *)glyphRuns
 {
 	@synchronized(self)
