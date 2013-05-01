@@ -78,13 +78,13 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
 	// allow the embed request for YouTube
-	if ([[[request URL] absoluteString] hasPrefix:@"http://www.youtube.com/embed/"])
+	if (NSNotFound != [[[request URL] absoluteString] rangeOfString:@"www.youtube.com/embed/"].location)
 	{
 		return YES;
 	}
 
 	// allow the embed request for DailyMotion Cloud
-	if ([[[request URL] absoluteString] hasPrefix:@"http://api.dmcloud.net/player/embed/"])
+	if (NSNotFound != [[[request URL] absoluteString] rangeOfString:@"api.dmcloud.net/player/embed/"].location)
 	{
 		return YES;
 	}
