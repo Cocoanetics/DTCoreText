@@ -34,7 +34,7 @@
 	CGFloat _trailingWhitespaceWidth;
 	
 	NSArray *_glyphRuns;
-
+	
 	BOOL _didCalculateMetrics;
 	
 	BOOL _writingDirectionIsRightToLeft;
@@ -96,7 +96,7 @@
 {
 	// mutable path for the line
 	CGMutablePathRef mutablePath = CGPathCreateMutable();
-
+	
 	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
 	{
 		CGPathRef glyphPath = [oneRun newPathWithGlyphs];
@@ -116,7 +116,7 @@
 {
 	// make this line justified
 	CTLineRef justifiedLine = CTLineCreateJustifiedLine(_line, justificationFactor, justificationWidth);
-
+	
 	DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:justifiedLine];
 	
 	CFRelease(justifiedLine);
@@ -125,8 +125,8 @@
 }
 
 
-#pragma mark Calculations
-- (NSArray *)stringIndices 
+#pragma mark - Calculations
+- (NSArray *)stringIndices
 {
 	NSMutableArray *array = [NSMutableArray array];
 	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
@@ -144,7 +144,7 @@
 		{
 			index -= count;
 		}
-		else 
+		else
 		{
 			return [oneRun frameOfGlyphAtIndex:index];
 		}
@@ -293,7 +293,7 @@
 				}
 			}
 		}
-
+		
 		// remember the max
 		maxLeading = MAX(maxLeading, runLeading);
 	}
