@@ -9,6 +9,7 @@
 #import "DTHTMLWriter.h"
 #import "DTCoreText.h"
 #import "DTVersion.h"
+#import "NSDictionary+DTCoreText.h"
 
 @implementation DTHTMLWriter
 {
@@ -105,6 +106,13 @@
 			break;
 		}
 			
+		case DTCSSListStyleTypeSquare:
+		{
+			typeString = @"square";
+			isOrdered = NO;
+			break;
+		}
+			
 		case DTCSSListStyleTypePlus:
 		{
 			typeString = @"plus";
@@ -167,9 +175,6 @@
 			isOrdered = YES;
 			break;
 		}
-			
-		default:
-			break;
 	}
 	
 	if (closingTag)
@@ -275,27 +280,26 @@
 		
 		DTCSSListStyle *effectiveListStyle = [currentListStyles lastObject];
 		
-		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		// retrieve the paragraph style
+		DTCoreTextParagraphStyle *paragraphStyle = [paraAttributes paragraphStyle];
 		NSString *paraStyleString = nil;
 		
-		if (paraStyle)
+		if (paragraphStyle)
 		{
-			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-			
 			if (_textScale!=1.0f)
 			{
-				para.minimumLineHeight = roundf(para.minimumLineHeight / _textScale);
-				para.maximumLineHeight = roundf(para.maximumLineHeight / _textScale);
+				paragraphStyle.minimumLineHeight = roundf(paragraphStyle.minimumLineHeight / _textScale);
+				paragraphStyle.maximumLineHeight = roundf(paragraphStyle.maximumLineHeight / _textScale);
 				
-				para.paragraphSpacing = roundf(para.paragraphSpacing/ _textScale);
-				para.paragraphSpacingBefore = roundf(para.paragraphSpacingBefore / _textScale);
+				paragraphStyle.paragraphSpacing = roundf(paragraphStyle.paragraphSpacing/ _textScale);
+				paragraphStyle.paragraphSpacingBefore = roundf(paragraphStyle.paragraphSpacingBefore / _textScale);
 				
-				para.firstLineHeadIndent = roundf(para.firstLineHeadIndent / _textScale);
-				para.headIndent = roundf(para.headIndent / _textScale);
-				para.tailIndent = roundf(para.tailIndent / _textScale);
+				paragraphStyle.firstLineHeadIndent = roundf(paragraphStyle.firstLineHeadIndent / _textScale);
+				paragraphStyle.headIndent = roundf(paragraphStyle.headIndent / _textScale);
+				paragraphStyle.tailIndent = roundf(paragraphStyle.tailIndent / _textScale);
 			}
 			
-			paraStyleString = [para cssStyleRepresentation];
+			paraStyleString = [paragraphStyle cssStyleRepresentation];
 		}
 		
 		if (!paraStyleString)
@@ -389,11 +393,29 @@
 		
 		// Add dir="auto" if the writing direction is unknown
 		NSString *directionAttributeString = @"";
-		if (paraStyle)
+		
+		if (paragraphStyle)
 		{
-			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-			if (para.baseWritingDirection == kCTWritingDirectionNatural)
-				directionAttributeString = @" dir=\"auto\"";
+			switch (paragraphStyle.baseWritingDirection)
+			{
+				case kCTWritingDirectionNatural:
+				{
+					directionAttributeString = @" dir=\"auto\"";
+					break;
+				}
+					
+				case kCTWritingDirectionRightToLeft:
+				{
+					directionAttributeString = @" dir=\"rtl\"";
+					break;
+				}
+					
+				case kCTWritingDirectionLeftToRight:
+				{
+					// this is default, so we omit it
+					break;
+				}
+			}
 		}
 		
 		if ([paraStyleString length])
@@ -474,18 +496,16 @@
 			NSString *fontStyle = nil;
 			if (!fontIsBlockLevel)
 			{
-				CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+				DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 				
-				if (font)
+				if (fontDescriptor)
 				{
-					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
-					
 					if (_textScale!=1.0f)
 					{
-						desc.pointSize /= _textScale;
+						fontDescriptor.pointSize /= _textScale;
 					}
 					
-					fontStyle = [desc cssStyleRepresentation];
+					fontStyle = [fontDescriptor cssStyleRepresentation];
 				}
 			}
 			
@@ -654,13 +674,17 @@
 		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
 	}
 	
-	if (_useAppleConvertedSpace) {
+	if (_useAppleConvertedSpace)
+	{
 		[output appendString:[retString stringByAddingAppleConvertedSpace]];
-	} else {
+	}
+	else
+	{
 		[output appendString:retString];
 	}
 
-	if (!fragment) {
+	if (!fragment)
+	{
 		[output appendString:@"</body>\n</html>\n"];
 	}
 	
