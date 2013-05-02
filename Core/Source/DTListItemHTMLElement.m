@@ -63,19 +63,32 @@
 	// take the parents text color
 	tmpCopy.textColor = listRoot.textColor;
 
+	// check for list-style:none modifier
+	
+	NSDictionary *styles = [[self attributeForKey:@"style"] dictionaryOfCSSStyles];
+	
+	if (styles)
+	{
+		// make a temp copy
+		effectiveList = [effectiveList copy];
+		
+		// update from styles
+		[effectiveList updateFromStyleDictionary:styles];
+	}
+	
 	NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:self.paragraphStyle.listIndent attributes:[tmpCopy attributesDictionary]];
 	
 	if (prefixString)
 	{
 		[tmpString appendAttributedString:prefixString];
-	}
-
-	if ([self.childNodes count])
-	{
-		DTHTMLElement *firstchild = [self.childNodes objectAtIndex:0];
-		if (firstchild.displayStyle != DTHTMLElementDisplayStyleInline)
+		
+		if ([self.childNodes count])
 		{
-			[tmpString appendString:@"\n"];
+			DTHTMLElement *firstchild = [self.childNodes objectAtIndex:0];
+			if (firstchild.displayStyle != DTHTMLElementDisplayStyleInline)
+			{
+				[tmpString appendString:@"\n"];
+			}
 		}
 	}
 	
