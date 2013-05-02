@@ -175,6 +175,18 @@
 			isOrdered = YES;
 			break;
 		}
+			
+		case DTCSSListStyleTypeNone:
+		{
+			typeString = @"none";
+			
+			break;
+		}
+			
+		case DTCSSListStyleTypeInvalid:
+		{
+			break;
+		}
 	}
 	
 	if (closingTag)
