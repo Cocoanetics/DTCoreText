@@ -401,4 +401,32 @@
 	}];
 }
 
+// list prefixes should never contained the newline
+- (void)testPrefixWithNewlines
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li><ul><li>Bullet 2</li></ul></li></ul>"];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		NSString *prefix = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		// there should never be a newline contained inside the prefix
+		NSRange newlineRange = [prefix rangeOfString:@"\n"];
+		
+		BOOL foundNL = (newlineRange.location != NSNotFound);
+		
+		STAssertFalse(foundNL, @"Newline in prefix of line %d", lineNumber);
+		
+		lineNumber++;
+	}];
+}
+
 @end
