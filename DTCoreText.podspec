@@ -3,13 +3,13 @@ Pod::Spec.new do |spec|
   spec.version      = '1.4.2'
   spec.platform     = :ios, '4.3'
   spec.license      = 'BSD'
-  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
+  spec.source       = { :git => 'https://github.com/holgersindbaek/DTCoreText.git', :tag => spec.version.to_s }
   spec.source_files = 'Core/Source/*.{h,m,c}'
   spec.dependency 'DTFoundation/Core', '~>1.2.0'
   spec.dependency 'DTFoundation/DTHMLParser', '~>1.2.0'
   spec.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
   spec.requires_arc = true
-  spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
+  spec.homepage     = 'https://github.com/holgersindbaek/DTCoreText'
   spec.summary      = 'Methods to allow using HTML code with CoreText.'
   spec.author       = { 'Oliver Drobnik' => 'oliver@cocoanetics.com' }
   spec.library      = 'xml2'
