@@ -250,11 +250,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// it is possible to pull lines up from paragraphs below us
 			NSRange oldLineRange = lineRange;
 			lineRange.length = NSMaxRange(currentParagraphRange)-lineRange.location;
-			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
-
+			CTLineRef baseLine = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+			
 			// convert lineBreakMode to CoreText type
 			CTLineTruncationType truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(self.lineBreakMode);
-
+			
+			// prepare truncation string
 			NSAttributedString * attribStr = self.truncationString;
 			if(attribStr == nil)
 			{
@@ -271,8 +272,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
 				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
 			}
+			
 			CTLineRef elipsisLineRef = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attribStr));
-			line = CTLineCreateTruncatedLine(line, availableSpace, truncationType, elipsisLineRef);
+			
+			// create the truncated line
+			line = CTLineCreateTruncatedLine(baseLine, availableSpace, truncationType, elipsisLineRef);
+			
+			// clean up
+			CFRelease(baseLine);
+			CFRelease(elipsisLineRef);
 		}
 		
 		// we need all metrics so get the at once
