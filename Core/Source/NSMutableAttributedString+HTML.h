@@ -18,7 +18,7 @@
 /** 
  Appends a string with the same attributes as this string to this string. 
  
- If the last character of the receiver contains a placeholder for a <DTTextAttachment> it is removed from the appended string.
+ If the last character of the receiver contains a placeholder for a <DTTextAttachment> it is removed from the appended string. Also fields (e.g. list prefixes) are not extended
  @param string The string to be appended to this string. */
 - (void)appendString:(NSString *)string;
 
@@ -28,11 +28,5 @@
  @param paragraphStyle Paragraph style to be attributed to the appended string. 
  @param fontDescriptor Font descriptor to be attributed to the appended string. */
 - (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor;
-
-/** 
- Appends a string without any attributes. 
- @param string The string to be appended to this string without any attributes. 
- */
-- (void)appendNakedString:(NSString *)string;
 
 @end
