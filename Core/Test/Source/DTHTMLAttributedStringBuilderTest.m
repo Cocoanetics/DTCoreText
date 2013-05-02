@@ -384,11 +384,11 @@
 			{
 				NSArray *lists = [attributedSubstring attribute:DTTextListsAttribute atIndex:0 effectiveRange:NULL];
 				NSInteger numLists = [lists count];
-				STAssertEquals(numLists, 2, @"There should be two lists active on line 2, but only %d found", numLists);
+				STAssertEquals(numLists, (NSInteger)2, @"There should be two lists active on line 2, but %d found", numLists);
 				
-				NSString *subString = [attributedSubstring string];
+				NSString *subString = [[attributedSubstring string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				
-				STAssertTrue([subString hasPrefix:@"Bullet 2"], @"The second line should have the 'Bullet 2' text");
+				STAssertTrue([subString hasSuffix:@"Bullet 2"], @"The second line should have the 'Bullet 2' text");
 				
 				break;
 			}
