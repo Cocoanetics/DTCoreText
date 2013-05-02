@@ -39,6 +39,7 @@ NSString * const DTHeaderLevelAttribute = @"DTHeaderLevel";
 NSString * const DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
 NSString * const DTStrikeOutAttribute = @"NSStrikethrough";
 NSString * const DTBackgroundColorAttribute = @"DTBackgroundColor";
+NSString * const DTForegroundColorAttribute = @"CTForegroundColor";
 NSString * const DTShadowsAttribute = @"DTShadows";
 NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
