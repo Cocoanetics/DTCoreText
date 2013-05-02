@@ -429,7 +429,14 @@
 				
 				if (prefixRange.location != NSNotFound)
 				{
-					plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
+					if (NSMaxRange(prefixRange)<plainSubString.length)
+					{
+						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
+					}
+					else
+					{
+						plainSubString = @"";
+					}
 				}
 				
 				needsToRemovePrefix = NO;
