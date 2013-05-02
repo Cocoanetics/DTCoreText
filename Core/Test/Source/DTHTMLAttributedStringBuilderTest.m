@@ -363,4 +363,42 @@
 	STAssertEquals(level, (NSInteger)3, @"Level should be 3");
 }
 
+#pragma mark - Nested Lists
+
+- (void)testNestedListWithStyleNone
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li style=\"list-style: none\"><ul><li>Bullet 2</li></ul></li></ul>"];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		switch (lineNumber)
+		{
+			case 1:
+			{
+				NSArray *lists = [attributedSubstring attribute:DTTextListsAttribute atIndex:0 effectiveRange:NULL];
+				NSInteger numLists = [lists count];
+				STAssertEquals(numLists, 2, @"There should be two lists active on line 2, but only %d found", numLists);
+				
+				NSString *subString = [attributedSubstring string];
+				
+				STAssertTrue([subString hasPrefix:@"Bullet 2"], @"The second line should have the 'Bullet 2' text");
+				
+				break;
+			}
+				
+			default:
+				break;
+		}
+		
+		lineNumber++;
+	}];
+}
+
 @end
