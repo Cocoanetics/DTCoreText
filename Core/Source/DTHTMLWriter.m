@@ -105,6 +105,13 @@
 			break;
 		}
 			
+		case DTCSSListStyleTypeSquare:
+		{
+			typeString = @"square";
+			isOrdered = NO;
+			break;
+		}
+			
 		case DTCSSListStyleTypePlus:
 		{
 			typeString = @"plus";
@@ -167,9 +174,6 @@
 			isOrdered = YES;
 			break;
 		}
-			
-		default:
-			break;
 	}
 	
 	if (closingTag)
