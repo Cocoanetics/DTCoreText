@@ -66,6 +66,7 @@ extern NSString * const DTHeaderLevelAttribute;
 extern NSString * const DTPreserveNewlinesAttribute;
 extern NSString * const DTStrikeOutAttribute;
 extern NSString * const DTBackgroundColorAttribute;
+extern NSString * const DTForegroundColorAttribute;
 extern NSString * const DTShadowsAttribute;
 extern NSString * const DTHorizontalRuleStyleAttribute;
 extern NSString * const DTTextBlocksAttribute;
