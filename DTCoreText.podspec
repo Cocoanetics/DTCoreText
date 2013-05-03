@@ -1,9 +1,9 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.4.2'
+  spec.version      = '1.4.3'
   spec.platform     = :ios, '4.3'
   spec.license      = 'BSD'
-  spec.source       = { :git => 'https://github.com/holgersindbaek/DTCoreText.git', :tag => spec.version.to_s, :branch => 'develop' }
+  spec.source       = { :git => 'https://github.com/holgersindbaek/DTCoreText.git', :tag => spec.version.to_s, :commit => 'aa73b3c2e9b306944388e96bab5ce6c148b4f31a' }
   spec.source_files = 'Core/Source/*.{h,m,c}'
   spec.dependency 'DTFoundation/Core', '~>1.2.0'
   spec.dependency 'DTFoundation/DTHMLParser', '~>1.2.0'
