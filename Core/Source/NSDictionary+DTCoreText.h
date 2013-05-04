@@ -66,4 +66,11 @@
  */
 - (DTColor *)foregroundColor;
 
+/**
+ Retrieves the background color. On iOS as UIColor, on Mac as NSColor. This supports both the DT as well as the NS/UIKit method of specifying the color. If no background color is defined in the receiver then `nil` is returned
+ @returns The platform-specific color defined for the background, or `nil` if none is defined
+ */
+- (DTColor *)backgroundColor;
+
+
 @end

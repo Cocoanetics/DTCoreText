@@ -123,4 +123,32 @@
 	return [DTColor blackColor];
 }
 
+- (DTColor *)backgroundColor
+{
+	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:DTBackgroundColorAttribute];
+	
+	if (cgColor)
+	{
+		return [DTColor colorWithCGColor:cgColor];
+	}
+	
+	// try NSParagraphStyle to see if "modern tags" are possible
+	
+	if (![NSParagraphStyle class])
+	{
+		// unknown class
+		return nil;
+	}
+	
+	DTColor *color = [self objectForKey:NSBackgroundColorAttributeName];
+	
+	if (color)
+	{
+		return color;
+	}
+	
+	// default background is nil
+	return nil;
+}
+
 @end
