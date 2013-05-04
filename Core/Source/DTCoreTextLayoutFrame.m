@@ -619,15 +619,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CFRange fittingRange = CTFrameGetStringRange(_textFrame);
 	_stringRange.location = fittingRange.location;
 	_stringRange.length = fittingRange.length;
-	
-	// line origins are wrong on last line of paragraphs
-	//[self _correctLineOrigins];
-	
-//	// --- begin workaround for image squishing bug in iOS < 4.2
-//	if ([DTVersion osVersionIsLessThen:@"4.2"])
-//	{
-//		[self _correctAttachmentHeights];
-//	}
 }
 
 - (void)_buildLines
@@ -1621,47 +1612,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 + (BOOL)shouldDrawDebugFrames
 {
 	return _DTCoreTextLayoutFramesShouldDrawDebugFrames;
-}
-
-#pragma mark Corrections
-/**
-- (void)_correctAttachmentHeights
-{
-	CGFloat downShiftSoFar = 0;
-	
-	for (DTCoreTextLayoutLine *oneLine in self.lines)
-	{
-		CGFloat lineShift = 0;
-		if ([oneLine correctAttachmentHeights:&lineShift])
-		{
-			downShiftSoFar += lineShift;
-		}
-		
-		if (downShiftSoFar>0)
-		{
-			// shift the frame baseline down for the total shift so far
-			CGPoint origin = oneLine.baselineOrigin;
-			origin.y += downShiftSoFar;
-			oneLine.baselineOrigin = origin;
-			
-			// increase the ascent by the extend needed for this lines attachments
-			oneLine.ascent += lineShift;
-		}
-	}
-}
-*/
-
-// a bug in CoreText shifts the last line of paragraphs slightly down
-- (void)_correctLineOrigins
-{
-	DTCoreTextLayoutLine *previousLine = nil;
-	for (DTCoreTextLayoutLine *currentLine in self.lines)
-	{
-		// Since paragraphSpaceBefore can affect the first line in self.lines, (previousLine ==  nil) needs to be allowed.
-		currentLine.baselineOrigin = [self baselineOriginToPositionLine:currentLine afterLine:previousLine];
-		
-		previousLine = currentLine;
-	}
 }
 
 #pragma mark Properties
