@@ -9,7 +9,6 @@
 #import "DTAttributedTextView.h"
 #import "DTCoreText.h"
 #import <QuartzCore/QuartzCore.h>
-#import "DTTiledLayerWithoutFade.h"
 
 @interface DTAttributedTextView ()
 
@@ -182,7 +181,6 @@
 			
 			if (![layerClass isSubclassOfClass:[CATiledLayer class]])
 			{
-				[DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]];
 				previousLayerClass = layerClass;
 			}
 		}
