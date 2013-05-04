@@ -136,7 +136,7 @@ NSDictionary *_classesForNames = nil;
 		
 		if (font)
 		{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 			if (___useiOS6Attributes)
 			{
 				UIFont *uiFont = [UIFont fontWithCTFont:font];
@@ -175,7 +175,7 @@ NSDictionary *_classesForNames = nil;
 	// add strikout if applicable
 	if (_strikeOut)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
@@ -190,7 +190,7 @@ NSDictionary *_classesForNames = nil;
 	// set underline style
 	if (_underlineStyle)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
@@ -207,7 +207,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_textColor)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:_textColor forKey:NSForegroundColorAttributeName];
@@ -221,7 +221,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_backgroundColor)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			[tmpDict setObject:_backgroundColor forKey:NSBackgroundColorAttributeName];
@@ -241,7 +241,7 @@ NSDictionary *_classesForNames = nil;
 	// add paragraph style
 	if (_paragraphStyle)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [self.paragraphStyle NSParagraphStyle];
@@ -258,7 +258,7 @@ NSDictionary *_classesForNames = nil;
 	// add shadow array if applicable
 	if (_shadows)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			// only a single shadow supported
@@ -430,7 +430,7 @@ NSDictionary *_classesForNames = nil;
 			NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 			
 			
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 			if (___useiOS6Attributes)
 			{
 				NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];

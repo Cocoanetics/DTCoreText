@@ -33,7 +33,30 @@
 
 - (BOOL)isUnderline
 {
-	return [[self objectForKey:(id)kCTUnderlineStyleAttributeName] integerValue]!=kCTUnderlineStyleNone;
+	NSNumber *underlineStyle = [self objectForKey:(id)kCTUnderlineStyleAttributeName];
+	
+	if (underlineStyle)
+	{
+		return [underlineStyle integerValue] != kCTUnderlineStyleNone;
+	}
+	
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	// try NSParagraphStyle to see if "modern tags" are possible
+	if (![NSParagraphStyle class])
+	{
+		// unknown class
+		return NO;
+	}
+	
+	underlineStyle = [self objectForKey:NSUnderlineStyleAttributeName];
+	
+	if (underlineStyle)
+	{
+		return [underlineStyle integerValue] != NSUnderlineStyleNone;
+	}
+#endif
+	
+	return NO;
 }
 
 - (BOOL)hasAttachment
@@ -50,6 +73,7 @@
 		return [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:ctParagraphStyle];
 	}
 	
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	// try NSParagraphStyle
 	
 	if (![NSParagraphStyle class])
@@ -60,6 +84,9 @@
 	
 	NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
 	return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
+#else
+	return nil;
+#endif
 }
 
 - (DTCoreTextFontDescriptor *)fontDescriptor
@@ -71,7 +98,7 @@
 		return [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
 	}
 	
-#if TARGET_OS_IPHONE
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 	UIFont *uiFont = [self objectForKey:NSFontAttributeName];
 	
 	if (!uiFont)
@@ -103,7 +130,8 @@
 	{
 		return [DTColor colorWithCGColor:cgColor];
 	}
-	
+
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	// try NSParagraphStyle to see if "modern tags" are possible
 	
 	if (![NSParagraphStyle class])
@@ -118,6 +146,7 @@
 	{
 		return color;
 	}
+#endif
 	
 	// default foreground is black
 	return [DTColor blackColor];
@@ -132,6 +161,7 @@
 		return [DTColor colorWithCGColor:cgColor];
 	}
 	
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	// try NSParagraphStyle to see if "modern tags" are possible
 	
 	if (![NSParagraphStyle class])
@@ -146,6 +176,7 @@
 	{
 		return color;
 	}
+#endif
 	
 	// default background is nil
 	return nil;

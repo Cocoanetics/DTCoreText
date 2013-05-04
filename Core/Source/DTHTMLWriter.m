@@ -36,7 +36,7 @@
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		// if running on iOS6 or higher
 		if ([DTVersion osVersionIsLessThen:@"6.0"])
 		{

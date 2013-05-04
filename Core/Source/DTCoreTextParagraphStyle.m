@@ -68,7 +68,7 @@ typedef struct {
 	return [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 + (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
 	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
@@ -309,7 +309,7 @@ typedef struct {
 	return ret;
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 - (NSParagraphStyle *)NSParagraphStyle
 {
 	NSMutableParagraphStyle *mps = [[NSMutableParagraphStyle alloc] init];

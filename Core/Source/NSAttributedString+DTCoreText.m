@@ -309,7 +309,7 @@
 		
 		font = [fontDesc newMatchingFont];
 		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			UIFont *uiFont = [UIFont fontWithCTFont:font];
@@ -330,10 +330,10 @@
 	{
 		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
 	}
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	else if (___useiOS6Attributes)
 	{
-		UIColor *uiColor = [attributes objectForKey:NSForegroundColorAttributeName];
+		DTColor *uiColor = [attributes foregroundColor];
 		
 		if (uiColor)
 		{
@@ -345,7 +345,7 @@
 	// add paragraph style (this has the tabs)
 	if (paragraphStyle)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
@@ -404,7 +404,7 @@
 			attachment.image = image;
 			attachment.displaySize = image.size;
 			
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 			// need run delegate for sizing
 			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 			[newAttributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];

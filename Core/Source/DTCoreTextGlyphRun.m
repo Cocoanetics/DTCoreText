@@ -12,6 +12,7 @@
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
+#import "NSDictionary+DTCoreText.h"
 
 @interface DTCoreTextGlyphRun ()
 
@@ -122,16 +123,8 @@
 	CGFloat contentScale = ctm.a; // needed for  rounding operations
 	CGFloat smallestPixelWidth = 1.0f/contentScale;
 	
-	CGColorRef backgroundColor = (__bridge CGColorRef)[_attributes objectForKey:DTBackgroundColorAttribute];
+	DTColor *backgroundColor = [_attributes backgroundColor];
 	
-	// can also be iOS 6 attribute
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-	if (!backgroundColor && ___useiOS6Attributes)
-	{
-		UIColor *uiColor = [_attributes objectForKey:NSBackgroundColorAttributeName];
-		backgroundColor = uiColor.CGColor;
-	}
-#endif
 	// -------------- Line-Out, Underline, Background-Color
 	BOOL drawStrikeOut = [[_attributes objectForKey:DTStrikeOutAttribute] boolValue];
 	BOOL drawUnderline = [[_attributes objectForKey:(id)kCTUnderlineStyleAttributeName] boolValue];
@@ -165,7 +158,7 @@
 		
 		if (backgroundColor)
 		{
-			CGContextSetFillColorWithColor(context, backgroundColor);
+			CGContextSetFillColorWithColor(context, backgroundColor.CGColor);
 			CGContextFillRect(context, runStrokeBounds);
 		}
 		

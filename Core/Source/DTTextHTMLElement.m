@@ -11,7 +11,7 @@
 #import "DTCoreTextFontDescriptor.h"
 #import "NSAttributedString+SmallCaps.h"
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"
 #endif
 
@@ -84,7 +84,7 @@
 				CTFontRef smallerFont = [smallDesc newMatchingFont];
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 				
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 				if (___useiOS6Attributes)
 				{
 					UIFont *font = [UIFont fontWithCTFont:smallerFont];

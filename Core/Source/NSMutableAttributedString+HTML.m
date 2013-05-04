@@ -59,7 +59,7 @@
 		
 		if (paragraphStyle)
 		{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 			if (___useiOS6Attributes)
 			{
 				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
@@ -77,7 +77,7 @@
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
 			
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 			if (___useiOS6Attributes)
 			{
 				// convert to UIFont
