@@ -799,48 +799,33 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// HR has only a single glyph run with a \n, but that has all the attributes
 	DTCoreTextGlyphRun *oneRun = [line.glyphRuns lastObject];
 	
-	CGColorRef backgroundColor = (__bridge CGColorRef)[oneRun.attributes objectForKey:DTBackgroundColorAttribute];
-	
-	// can also be iOS 6 attribute
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-	if (!backgroundColor && ___useiOS6Attributes)
-	{
-		UIColor *uiColor = [oneRun.attributes objectForKey:NSBackgroundColorAttributeName];
-		backgroundColor = uiColor.CGColor;
-	}
-#endif
-	
 	NSDictionary *ruleStyle = [oneRun.attributes objectForKey:DTHorizontalRuleStyleAttribute];
 	
-	if (ruleStyle)
+	if (!ruleStyle)
 	{
-		if (backgroundColor)
-		{
-			CGContextSetStrokeColorWithColor(context, backgroundColor);
-		}
-		else
-		{
-			CGContextSetGrayStrokeColor(context, 0, 1.0f);
-		}
-		
-		CGRect nrect = self.frame;
-		nrect.origin = line.frame.origin;
-		nrect.size.height = oneRun.frame.size.height;
-		nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
-		
-		DTTextBlock *textBlock = [[oneRun.attributes objectForKey:DTTextBlocksAttribute] lastObject];
-		
-		if (textBlock)
-		{
-			// apply horizontal padding
-			nrect.size.width = _frame.size.width - textBlock.padding.left - textBlock.padding.right;
-		}
-		
-		CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
-		CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
-		
-		CGContextStrokePath(context);
+		return;
 	}
+	
+	DTColor *color = [oneRun.attributes foregroundColor];
+	CGContextSetStrokeColorWithColor(context, color.CGColor);
+	
+	CGRect nrect = self.frame;
+	nrect.origin = line.frame.origin;
+	nrect.size.height = oneRun.frame.size.height;
+	nrect.origin.y = roundf(nrect.origin.y + oneRun.frame.size.height/2.0f)+0.5f;
+	
+	DTTextBlock *textBlock = [[oneRun.attributes objectForKey:DTTextBlocksAttribute] lastObject];
+	
+	if (textBlock)
+	{
+		// apply horizontal padding
+		nrect.size.width = _frame.size.width - textBlock.padding.left - textBlock.padding.right;
+	}
+	
+	CGContextMoveToPoint(context, nrect.origin.x, nrect.origin.y);
+	CGContextAddLineToPoint(context, nrect.origin.x + nrect.size.width, nrect.origin.y);
+	
+	CGContextStrokePath(context);
 }
 
 - (void)drawInContext:(CGContextRef)context drawImages:(BOOL)drawImages drawLinks:(BOOL)drawLinks
