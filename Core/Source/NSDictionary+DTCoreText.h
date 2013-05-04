@@ -6,10 +6,10 @@
 //  Copyright 2011 Cocoanetics. All rights reserved.
 //
 
+#import "DTCompatibility.h"
+
 @class DTCoreTextParagraphStyle;
 @class DTCoreTextFontDescriptor;
-
-#import "DTCompatibility.h"
 
 /**
  Convenience methods for editors dealing with Core Text attribute dictionaries.
