@@ -848,7 +848,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 // sets the text foreground color based on the glyph run and drawing options
 - (void)_setForgroundColorInContext:(CGContextRef)context forGlyphRun:(DTCoreTextGlyphRun *)glyphRun options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
-	id color = nil;
+	DTColor *color = nil;
 	
 	BOOL needsToSetFillColor = [[glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName] boolValue];
 	
@@ -856,38 +856,24 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		if (options & DTCoreTextLayoutFrameDrawingDrawLinksHighlighted)
 		{
-			color = (id)[[glyphRun.attributes objectForKey:DTLinkHighlightColorAttribute] CGColor];
+			color = [glyphRun.attributes objectForKey:DTLinkHighlightColorAttribute];
 		}
 	}
 	
 	if (!color)
 	{
 		// get text color or use black
-		color = [glyphRun.attributes objectForKey:(id)kCTForegroundColorAttributeName];
-		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (!color && ___useiOS6Attributes)
-		{
-			DTColor *uiColor = [glyphRun.attributes objectForKey:NSForegroundColorAttributeName];
-			color = (id)uiColor.CGColor;
-		}
-#endif
-	}
-	
-	// default color
-	if (!color)
-	{
-		color = (id)[DTColor blackColor].CGColor;
+		color = [glyphRun.attributes foregroundColor];
 	}
 	
 	// set fill for text that uses kCTForegroundColorFromContextAttributeName
 	if (needsToSetFillColor)
 	{
-		CGContextSetFillColorWithColor(context, (__bridge CGColorRef)color);
+		CGContextSetFillColorWithColor(context, color.CGColor);
 	}
 	
 	// set stroke for lines
-	CGContextSetStrokeColorWithColor(context, (__bridge CGColorRef)color);
+	CGContextSetStrokeColorWithColor(context, color.CGColor);
 }
 
 - (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options
