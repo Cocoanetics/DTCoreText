@@ -298,9 +298,11 @@
 
 - (CGRect)frameOfGlyphAtIndex:(NSInteger)index
 {
-	if (!_didCalculateMetrics) {
+	if (!_didCalculateMetrics)
+	{
 		[self calculateMetrics];
 	}
+	
 	if (!_glyphPositionPoints)
 	{
 		// this is a pointer to the points inside the run, thus no retain necessary

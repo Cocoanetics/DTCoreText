@@ -65,9 +65,12 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	
 	@autoreleasepool 
 	{
-		if (_urlRequest == nil) {
+		if (!_urlRequest)
+		{
 			_urlRequest = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10.0];
-		} else {
+		}
+		else
+		{
 			[_urlRequest setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
 			[_urlRequest setTimeoutInterval:10.0];
 		}

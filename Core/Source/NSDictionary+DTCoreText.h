@@ -9,6 +9,8 @@
 @class DTCoreTextParagraphStyle;
 @class DTCoreTextFontDescriptor;
 
+#import "DTCompatibility.h"
+
 /**
  Convenience methods for editors dealing with Core Text attribute dictionaries.
  */
@@ -57,5 +59,11 @@
  @returns The font descriptor
  */
 - (DTCoreTextFontDescriptor *)fontDescriptor;
+
+/**
+ Retrieves the foreground color. On iOS as UIColor, on Mac as NSColor. This supports both the CT as well as the NS/UIKit method of specifying the color. If no foreground color is defined in the receiver then black is assumed.
+ @returns The platform-specific color defined for the foreground
+ */
+- (DTColor *)foregroundColor;
 
 @end

@@ -332,32 +332,55 @@ typedef struct {
 	switch(_alignment)
 	{
 		case kCTLeftTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentLeft];
 			break;
+		}
+			
 		case kCTRightTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentRight];
 			break;
+		}
+			
 		case kCTCenterTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentCenter];
 			break;
+		}
+			
 		case kCTJustifiedTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentJustified];
 			break;
+		}
+			
 		case kCTNaturalTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentNatural];
 			break;
+		}
 	}
 	
-	switch (_baseWritingDirection) {
+	switch (_baseWritingDirection)
+	{
 		case  kCTWritingDirectionNatural:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionNatural];
 			break;
+		}
+			
 		case  kCTWritingDirectionLeftToRight:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionLeftToRight];
 			break;
+		}
+			
 		case  kCTWritingDirectionRightToLeft:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionRightToLeft];
 			break;
+		}
 	}
 
 	// _tap stops not supported

@@ -20,8 +20,12 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 
 #pragma mark NSObject
 
-- (id)init {
-	if ((self = [super initWithStyle:UITableViewStylePlain])) {
+- (id)init
+{
+	self = [super initWithStyle:UITableViewStylePlain];
+	
+	if (self)
+	{
 		self.title = @"Snippets";
 		self.tabBarItem.image = [UIImage imageNamed:@"snippets.png"];
 	}

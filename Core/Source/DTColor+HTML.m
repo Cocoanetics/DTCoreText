@@ -41,7 +41,8 @@ static NSDictionary *colorLookup = nil;
 		return [UIColor colorWithHexString:[name substringFromIndex:1]];
 	}
 	
-	if ([name hasPrefix:@"rgba"]) {
+	if ([name hasPrefix:@"rgba"])
+	{
 		NSString *rgbaName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rgba() "]];
 		NSArray *rgba = [rgbaName componentsSeparatedByString:@","];
 		
@@ -291,11 +292,13 @@ static NSDictionary *colorLookup = nil;
 		return [NSColor colorWithHexString:[name substringFromIndex:1]];
 	}
 	
-	if ([name hasPrefix:@"rgba"]) {
+	if ([name hasPrefix:@"rgba"])
+	{
 		NSString *rgbaName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rgba() "]];
 		NSArray *rgba = [rgbaName componentsSeparatedByString:@","];
 		
-		if ([rgba count] != 4) {
+		if ([rgba count] != 4)
+		{
 			// Incorrect syntax
 			return nil;
 		}
@@ -310,10 +313,13 @@ static NSDictionary *colorLookup = nil;
 	{
 		NSString * rgbName = [name stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"rbg() "]];
 		NSArray* rbg = [rgbName componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@","]];
-		if ([rbg count] != 3) {
+		
+		if ([rbg count] != 3)
+		{
 			// Incorrect syntax
 			return nil;
 		}
+		
 		return [NSColor colorWithDeviceRed:[[rbg objectAtIndex:0]floatValue]/255 
 											  green:[[rbg objectAtIndex:1]floatValue] /255
 												blue:[[rbg objectAtIndex:2]floatValue] /255

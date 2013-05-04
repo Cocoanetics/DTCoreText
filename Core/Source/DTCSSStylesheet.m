@@ -30,12 +30,15 @@ extern unsigned int default_css_len;
 + (DTCSSStylesheet *)defaultStyleSheet
 {
 	static DTCSSStylesheet *defaultDTCSSStylesheet = nil;
-	if (defaultDTCSSStylesheet != nil) {
+	if (defaultDTCSSStylesheet)
+	{
 		return defaultDTCSSStylesheet;
 	}
 	
-	@synchronized(self) {
-		if (defaultDTCSSStylesheet == nil) {
+	@synchronized(self)
+	{
+		if (!defaultDTCSSStylesheet)
+		{
 			// get the data from the external symbol
 			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
 			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -491,8 +494,8 @@ extern unsigned int default_css_len;
 	
 	NSUInteger length = [css length];
 	
-	for (NSUInteger i = 0; i < length; i++) {
-		
+	for (NSUInteger i = 0; i < length; i++)
+	{
 		unichar c = [css characterAtIndex:i];
 		
 		if (c == '/')
@@ -535,8 +538,8 @@ extern unsigned int default_css_len;
 		}
 		
 		// An opening brace! It could be the start of a new rule, or it could be a nested brace.
-		if (c == '{') {
-			
+		if (c == '{')
+		{
 			// If we start a new rule...
 			
 			if (braceLevel == 0) 

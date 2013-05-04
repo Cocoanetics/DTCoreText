@@ -268,18 +268,26 @@
 - (void)_segmentedControlChanged:(id)sender {
 	UIScrollView *selectedView = _textView;
 	
-	switch (_segmentedControl.selectedSegmentIndex) {
+	switch (_segmentedControl.selectedSegmentIndex)
+	{
 		case 1:
+		{
 			selectedView = _rangeView;
 			break;
+		}
+			
 		case 2:
+		{
 			selectedView = _charsView;
 			break;
+		}
+			
 		case 3:
 		{
 			selectedView = _htmlView;
 			break;
 		}
+			
 		case 4:
 		{
 			selectedView = _iOS6View;

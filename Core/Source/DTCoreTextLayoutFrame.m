@@ -1656,7 +1656,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
-    if( _numberOfLines != numberOfLines ) {
+    if( _numberOfLines != numberOfLines )
+	 {
 		_numberOfLines = numberOfLines;
         // clear lines cache
         _lines = nil;
@@ -1665,7 +1666,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)setLineBreakMode:(NSLineBreakMode)lineBreakMode
 {
-    if( _lineBreakMode != lineBreakMode ) {
+    if( _lineBreakMode != lineBreakMode )
+	 {
         _lineBreakMode = lineBreakMode;
         // clear lines cache
         _lines = nil;
@@ -1674,10 +1676,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (void)setTruncationString:(NSAttributedString *)truncationString
 {
-    if( ![_truncationString isEqualToAttributedString:truncationString] ) {
+    if( ![_truncationString isEqualToAttributedString:truncationString] )
+	 {
         _truncationString = truncationString;
 		
-        if( self.numberOfLines > 0 ) {
+        if( self.numberOfLines > 0 )
+		  {
             // clear lines cache
             _lines = nil;
         }

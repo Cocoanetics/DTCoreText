@@ -6,6 +6,7 @@
 //  Copyright 2011 Cocoanetics. All rights reserved.
 //
 
+
 #import <CoreText/CoreText.h>
 
 #import "NSDictionary+DTCoreText.h"
@@ -92,6 +93,34 @@
 #endif
 	
 	return nil;
+}
+
+- (DTColor *)foregroundColor
+{
+	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:(id)kCTForegroundColorAttributeName];
+	
+	if (cgColor)
+	{
+		return [DTColor colorWithCGColor:cgColor];
+	}
+	
+	// try NSParagraphStyle to see if "modern tags" are possible
+	
+	if (![NSParagraphStyle class])
+	{
+		// unknown class
+		return nil;
+	}
+	
+	DTColor *color = [self objectForKey:NSForegroundColorAttributeName];
+	
+	if (color)
+	{
+		return color;
+	}
+	
+	// default foreground is black
+	return [DTColor blackColor];
 }
 
 @end

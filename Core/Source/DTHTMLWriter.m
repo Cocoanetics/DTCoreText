@@ -225,9 +225,12 @@
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
 		
 		NSString *listElementString = nil;
-		if (inlineStyles) {
+		if (inlineStyles)
+		{
 			listElementString = [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
-		} else {
+		}
+		else
+		{
 			listElementString = [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 		}
 		return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
@@ -627,9 +630,12 @@
 				{
 					NSString *className = [self _styleClassForElement:@"span" style:fontStyle];
 					
-					if (fragment) {
+					if (fragment)
+					{
 						[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
-					} else {
+					}
+					else
+					{
 						[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
 					}
 				}
@@ -667,7 +673,8 @@
 		
 	NSMutableString *output = [NSMutableString string];
 
-	if (!fragment) {
+	if (!fragment)
+	{
 		// append style block before text
 		NSMutableString *styleBlock = [NSMutableString string];
 		

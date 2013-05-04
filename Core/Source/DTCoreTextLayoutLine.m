@@ -129,7 +129,8 @@
 - (NSArray *)stringIndices
 {
 	NSMutableArray *array = [NSMutableArray array];
-	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns) {
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
 		[array addObjectsFromArray:[oneRun stringIndices]];
 	}
 	return array;
