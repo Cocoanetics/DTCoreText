@@ -109,7 +109,7 @@
 	// Success 
 	if (name)
 	{
-		*name = [attrName lowercaseString];
+		*name = attrName;
 	}
 	
 	if (value)
