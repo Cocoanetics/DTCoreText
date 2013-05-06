@@ -23,9 +23,12 @@
 	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
-	while ([scanner scanCSSAttribute:&name value:&value])
+	@autoreleasepool
 	{
-		[tmpDict setObject:value forKey:name];
+		while ([scanner scanCSSAttribute:&name value:&value])
+		{
+			[tmpDict setObject:value forKey:name];
+		}
 	}
 	
 	// converting to non-mutable costs 37.5% of method
