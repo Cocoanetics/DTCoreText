@@ -18,17 +18,16 @@
  @name Working with Text Attachments
  */
 
-
 /**
  Retrieves the DTTextAttachment objects that match the given predicate.
  
  With this method you can for example find all images that have a certain URL.
  
- @param predicate The predicate to apply for filtering or `nil` for all attachments.
+ @param predicate The predicate to apply for filtering or `nil` to not filter by attachment
+ @param class The class that attachments need to have, or `nil` for all attachments regardless of class
  @returns The filtered array of attachments
  */
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
-
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)class;
 
 /**
  @name Calculating Ranges
@@ -54,7 +53,6 @@
  */
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location;
 
-
 /**
  Returns the range of the given text block that contains the given location.
  
@@ -71,6 +69,15 @@
  @returns The range of the given anchor.
  */
 - (NSRange)rangeOfAnchorNamed:(NSString *)anchorName;
+
+/**
+ Returns the range of a field at the given index. 
+ 
+ @param location The location of the field
+ @returns The range of the field. If there is no field at this location it returns {NSNotFound, 0}.
+ */
+- (NSRange)rangeOfFieldAtIndex:(NSUInteger)location;
+
 
 /**
  @name Converting to Other Representations

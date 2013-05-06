@@ -350,4 +350,83 @@
 	}];
 }
 
+- (void)testHeaderLevelTransfer
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<h3>Header</h3>"];
+	
+	NSNumber *headerLevelNum = [attributedString attribute:DTHeaderLevelAttribute atIndex:0 effectiveRange:NULL];
+	
+	STAssertNotNil(headerLevelNum, @"No Header Level Attribute");
+
+	NSInteger level = [headerLevelNum integerValue];
+	
+	STAssertEquals(level, (NSInteger)3, @"Level should be 3");
+}
+
+#pragma mark - Nested Lists
+
+- (void)testNestedListWithStyleNone
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li style=\"list-style: none\"><ul><li>Bullet 2</li></ul></li></ul>"];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		switch (lineNumber)
+		{
+			case 1:
+			{
+				NSArray *lists = [attributedSubstring attribute:DTTextListsAttribute atIndex:0 effectiveRange:NULL];
+				NSInteger numLists = [lists count];
+				STAssertEquals(numLists, (NSInteger)2, @"There should be two lists active on line 2, but %d found", numLists);
+				
+				NSString *subString = [[attributedSubstring string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				
+				STAssertTrue([subString hasSuffix:@"Bullet 2"], @"The second line should have the 'Bullet 2' text");
+				
+				break;
+			}
+				
+			default:
+				break;
+		}
+		
+		lineNumber++;
+	}];
+}
+
+// list prefixes should never contained the newline
+- (void)testPrefixWithNewlines
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li><ul><li>Bullet 2</li></ul></li></ul>"];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		NSString *prefix = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		// there should never be a newline contained inside the prefix
+		NSRange newlineRange = [prefix rangeOfString:@"\n"];
+		
+		BOOL foundNL = (newlineRange.location != NSNotFound);
+		
+		STAssertFalse(foundNL, @"Newline in prefix of line %d", lineNumber);
+		
+		lineNumber++;
+	}];
+}
+
 @end

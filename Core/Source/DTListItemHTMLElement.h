@@ -11,6 +11,6 @@
 /**
  Specialized subclass of <DTHTMLElement> that deals with list items.
  */
-@interface DTHTMLElementLI : DTHTMLElement
+@interface DTListItemHTMLElement : DTHTMLElement
 
 @end

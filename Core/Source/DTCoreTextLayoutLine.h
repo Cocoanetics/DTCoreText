@@ -45,6 +45,11 @@
 - (void)drawInContext:(CGContextRef)context;
 
 /**
+ Creates a `CGPath` containing the shapes of all glyphs in the line
+ */
+- (CGPathRef)newPathWithGlyphs;
+
+/**
  @name Getting Information about Layout Lines
  */
 

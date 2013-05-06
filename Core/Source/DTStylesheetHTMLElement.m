@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementStylesheet.h"
+#import "DTStylesheetHTMLElement.h"
 #import "DTCSSStylesheet.h"
 
-@implementation DTHTMLElementStylesheet
+@implementation DTStylesheetHTMLElement
 
 - (NSAttributedString *)attributedString
 {

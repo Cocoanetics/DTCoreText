@@ -12,6 +12,6 @@
  Specialized subclass of <DTHTMLElement> for dealing with <DTTextAttachment> instances, e.g. images.
  */
 
-@interface DTHTMLElementAttachment : DTHTMLElement
+@interface DTTextAttachmentHTMLElement : DTHTMLElement
 
 @end

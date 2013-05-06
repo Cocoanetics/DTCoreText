@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementHR.h"
+#import "DTHorizontalRuleHTMLElement.h"
 
-@implementation DTHTMLElementHR
+@implementation DTHorizontalRuleHTMLElement
 
 - (NSDictionary *)attributesDictionary
 {

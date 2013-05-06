@@ -68,7 +68,7 @@ typedef struct {
 	return [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 + (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
 	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
@@ -227,7 +227,7 @@ typedef struct {
 	allvalues_t *allvalues = &allvalues_stack; // pointer so that we can use the arrow operator
 #endif
 	
-	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0, nil};
+	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 	// pack all values in the struct
 	allvalues->firstLineHeadIndent = _firstLineHeadIndent;
@@ -309,7 +309,7 @@ typedef struct {
 	return ret;
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 - (NSParagraphStyle *)NSParagraphStyle
 {
 	NSMutableParagraphStyle *mps = [[NSMutableParagraphStyle alloc] init];
@@ -332,32 +332,55 @@ typedef struct {
 	switch(_alignment)
 	{
 		case kCTLeftTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentLeft];
 			break;
+		}
+			
 		case kCTRightTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentRight];
 			break;
+		}
+			
 		case kCTCenterTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentCenter];
 			break;
+		}
+			
 		case kCTJustifiedTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentJustified];
 			break;
+		}
+			
 		case kCTNaturalTextAlignment:
+		{
 			[mps setAlignment:NSTextAlignmentNatural];
 			break;
+		}
 	}
 	
-	switch (_baseWritingDirection) {
+	switch (_baseWritingDirection)
+	{
 		case  kCTWritingDirectionNatural:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionNatural];
 			break;
+		}
+			
 		case  kCTWritingDirectionLeftToRight:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionLeftToRight];
 			break;
+		}
+			
 		case  kCTWritingDirectionRightToLeft:
+		{
 			[mps setBaseWritingDirection:NSWritingDirectionRightToLeft];
 			break;
+		}
 	}
 
 	// _tap stops not supported

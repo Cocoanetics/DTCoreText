@@ -16,15 +16,33 @@
 // appends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
 {
-	NSUInteger selfLengthBefore = [self length];
+	NSParameterAssert(string);
 	
-	[self.mutableString appendString:string];
+	NSUInteger length = [self length];
+	NSAttributedString *appendString = nil;
 	
-	NSRange appendedStringRange = NSMakeRange(selfLengthBefore, [string length]);
-	
-	// we need to remove the image placeholder (if any) to prevent duplication
-	[self removeAttribute:NSAttachmentAttributeName range:appendedStringRange];
-	[self removeAttribute:(id)kCTRunDelegateAttributeName range:appendedStringRange];
+	if (length)
+	{
+		// get attributes at end of self
+		NSMutableDictionary *attributes = [[self attributesAtIndex:length-1 effectiveRange:NULL] mutableCopy];
+		
+		// we need to remove the image placeholder (if any) to prevent duplication
+		[attributes removeObjectForKey:NSAttachmentAttributeName];
+		[attributes removeObjectForKey:(id)kCTRunDelegateAttributeName];
+		
+		// we also remove field attribute, because appending plain strings should never extend an field
+		[attributes removeObjectForKey:DTFieldAttribute];
+		
+		// create a temp attributed string from the appended part
+		appendString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
+	}
+	else
+	{
+		// no attributes to extend
+		appendString = [[NSAttributedString alloc] initWithString:string];
+	}
+
+	[self appendAttributedString:appendString];
 }
 
 - (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
@@ -41,7 +59,7 @@
 		
 		if (paragraphStyle)
 		{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 			if (___useiOS6Attributes)
 			{
 				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
@@ -59,7 +77,7 @@
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
 			
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 			if (___useiOS6Attributes)
 			{
 				// convert to UIFont
@@ -83,12 +101,6 @@
 		// Remove attributes
 		[self setAttributes:[NSDictionary dictionary] range:appendedStringRange];
 	}
-}
-
-// appends a string without any attributes
-- (void)appendNakedString:(NSString *)string
-{
-	[self appendString:string withParagraphStyle:nil fontDescriptor:nil];
 }
 
 @end

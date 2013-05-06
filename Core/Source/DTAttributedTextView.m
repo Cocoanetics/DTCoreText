@@ -9,6 +9,7 @@
 #import "DTAttributedTextView.h"
 #import "DTCoreText.h"
 #import <QuartzCore/QuartzCore.h>
+#import "DTTiledLayerWithoutFade.h"
 
 @interface DTAttributedTextView ()
 
@@ -171,7 +172,28 @@
 			frame = CGRectZero;
 		}
 		
+		// make sure we always have a tiled layer
+		Class previousLayerClass = nil;
+		
+		// for DTAttributedTextContentView subclasses we force a tiled layer
+		if ([classToUse isSubclassOfClass:[DTAttributedTextContentView class]])
+		{
+			Class layerClass = [DTAttributedTextContentView layerClass];
+			
+			if (![layerClass isSubclassOfClass:[CATiledLayer class]])
+			{
+				[DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]];
+				previousLayerClass = layerClass;
+			}
+		}
+		
 		_attributedTextContentView = [[classToUse alloc] initWithFrame:frame];
+		
+		// restore previous layer class if we changed the layer class for the content view
+		if (previousLayerClass)
+		{
+			[DTAttributedTextContentView setLayerClass:previousLayerClass];
+		}
 		
 		_attributedTextContentView.userInteractionEnabled = YES;
 		_attributedTextContentView.backgroundColor = self.backgroundColor;

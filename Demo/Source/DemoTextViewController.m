@@ -109,7 +109,6 @@
 	[self.view addSubview:_htmlView];
 
 	// Create text view
-	[DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]];
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
 	
 	// we draw images and links via subviews provided by delegate methods
@@ -269,18 +268,26 @@
 - (void)_segmentedControlChanged:(id)sender {
 	UIScrollView *selectedView = _textView;
 	
-	switch (_segmentedControl.selectedSegmentIndex) {
+	switch (_segmentedControl.selectedSegmentIndex)
+	{
 		case 1:
+		{
 			selectedView = _rangeView;
 			break;
+		}
+			
 		case 2:
+		{
 			selectedView = _charsView;
 			break;
+		}
+			
 		case 3:
 		{
 			selectedView = _htmlView;
 			break;
 		}
+			
 		case 4:
 		{
 			selectedView = _iOS6View;
@@ -331,7 +338,7 @@
 
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
 {
-	if (attachment.contentType == DTTextAttachmentTypeVideoURL)
+	if ([attachment isKindOfClass:[DTVideoTextAttachment class]])
 	{
 		NSURL *url = (id)attachment.contentURL;
 		
@@ -404,15 +411,14 @@
 		
 		return grayView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeImage)
+	else if ([attachment isKindOfClass:[DTImageTextAttachment class]])
 	{
 		// if the attachment has a hyperlinkURL then this is currently ignored
 		DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
 		imageView.delegate = self;
-		if (attachment.contents)
-		{
-			imageView.image = attachment.contents;
-		}
+		
+		// sets the image if there is one
+		imageView.image = [(DTImageTextAttachment *)attachment image];
 		
 		// url for deferred loading
 		imageView.url = attachment.contentURL;
@@ -441,14 +447,14 @@
 		
 		return imageView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeIframe)
+	else if ([attachment isKindOfClass:[DTIframeTextAttachment class]])
 	{
 		DTWebVideoView *videoView = [[DTWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
 		
 		return videoView;
 	}
-	else if (attachment.contentType == DTTextAttachmentTypeObject)
+	else if ([attachment isKindOfClass:[DTObjectTextAttachment class]])
 	{
 		// somecolorparameter has a HTML color
 		UIColor *someColor = [UIColor colorWithHTMLName:[attachment.attributes objectForKey:@"somecolorparameter"]];
@@ -549,19 +555,25 @@
 	
 	NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 	
+	BOOL didUpdate = NO;
+	
 	// update all attachments that matchin this URL (possibly multiple images with same size)
 	for (DTTextAttachment *oneAttachment in [_textView.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred])
 	{
-		oneAttachment.originalSize = imageSize;
-		
-		if (!CGSizeEqualToSize(imageSize, oneAttachment.displaySize))
+		// update attachments that have no original size, that also sets the display size
+		if (CGSizeEqualToSize(oneAttachment.originalSize, CGSizeZero))
 		{
-			oneAttachment.displaySize = imageSize;
+			oneAttachment.originalSize = imageSize;
+			
+			didUpdate = YES;
 		}
 	}
 	
-	// layout might have changed due to image sizes
-	[_textView relayoutText];
+	if (didUpdate)
+	{
+		// layout might have changed due to image sizes
+		[_textView relayoutText];
+	}
 }
 
 #pragma mark Properties

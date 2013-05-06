@@ -54,7 +54,7 @@
  @name Bridging to and from NSParagraphStyle
  */
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 /**
  Create a new paragraph style instance from an `NSParagraphStyle`.
  

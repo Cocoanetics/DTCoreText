@@ -109,7 +109,7 @@
 	// Success 
 	if (name)
 	{
-		*name = [attrName lowercaseString];
+		*name = attrName;
 	}
 	
 	if (value)
@@ -177,8 +177,6 @@
 	}
 	
 	return YES;
-	
-	
 }
 
 - (BOOL)scanHTMLColor:(DTColor **)color

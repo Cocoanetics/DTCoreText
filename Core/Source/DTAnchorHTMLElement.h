@@ -11,7 +11,7 @@
 /**
  Specialized subclass of <DTHTMLElement> that represents a hyperlink.
  */
-@interface DTHTMLElementA : DTHTMLElement
+@interface DTAnchorHTMLElement : DTHTMLElement
 
 /**
  Foreground text color of the receiver when highlighted

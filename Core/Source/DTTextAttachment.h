@@ -16,25 +16,54 @@
 
 typedef enum
 {
-	DTTextAttachmentTypeImage,
-	DTTextAttachmentTypeVideoURL,
-	DTTextAttachmentTypeIframe,
-	DTTextAttachmentTypeObject,
-	DTTextAttachmentTypeGeneric
-}  DTTextAttachmentType;
-
-typedef enum
-{
 	DTTextAttachmentVerticalAlignmentBaseline = 0,
 	DTTextAttachmentVerticalAlignmentTop,
 	DTTextAttachmentVerticalAlignmentCenter,
 	DTTextAttachmentVerticalAlignmentBottom
 } DTTextAttachmentVerticalAlignment;
 
-/** 
+
+/**
+ Methods to implement for attachments to support inline drawing.
+ */
+@protocol DTTextAttachmentDrawing <NSObject>
+
+/**
+ Draws the contents of the receiver into a graphics context
+ @param rect The rectangle to draw the receiver into
+ @param context The graphics context
+ */
+- (void)drawInRect:(CGRect)rect context:(CGContextRef)context;
+
+@end
+
+
+/**
+ Methods to implement for attachments to support output to HTML.
+ */
+@protocol DTTextAttachmentHTMLPersistence <NSObject>
+
+/**
+ Creates a HTML representation of the receiver
+ @returns A HTML string with the receiver encoded as HTML
+ */
+- (NSString *)stringByEncodingAsHTML;
+
+@end
+
+
+/**
  An object to represent an attachment in an HTML/rich text view.  
  */
-@interface DTTextAttachment : NSObject 
+@interface DTTextAttachment : NSObject
+{
+	CGSize _displaySize;  // the display dimensions of the attachment
+	CGSize _originalSize; // the original dimensions of the attachment
+	CGSize _maxImageSize; // the maximum dimensions to size to
+	NSURL *_contentURL;
+	NSDictionary *_attributes; // attributes transferred from HTML element
+	DTTextAttachmentVerticalAlignment _verticalAlignment; // alignment in relation to the baseline
+}
 
 /**
  @name Creating Text Attachments
@@ -45,21 +74,16 @@ typedef enum
 	The element must have a valid tagName. The size of the returned text attachment is determined by the element, constrained by the option's key for DTMaxImageSize. Any valid image resource included in the element (denoted by the method attributeForKey: "src") is loaded and determines the text attachment size if it was not known before. If a size is too large the image is downsampled with sizeThatFitsKeepingAspectRatio() which preserves the aspect ratio. 
  @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements. 
  @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize. 
- @returns Returns an initialized DTTextAttachment built using the element and options parameters. 
+ @returns Returns the appropriate subclass of the class cluster
  */
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
-
 /**
- @name Alternate Representations
- */
-
-/** 
- Retrieves a string which is in the format "data:image/png;base64,%@" with this DTTextAttachment's content's data representation encoded in Base64 string encoding. For image contents only.  
- @returns A Base64 encoded string of the png data representation of this text attachment's image contents. 
- */
-- (NSString *)dataURLRepresentation;
-
+ The designated initializer for members of the DTTextAttachment class cluster. If you need additional setup for custom subclasses then you should override this initializer.
+ @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements.
+ @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize.
+ @returns Returns an initialized DTTextAttachment built using the element and options parameters.  */
+- (id)initWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
 
 /**
  @name Vertical Alignment
@@ -111,16 +135,6 @@ typedef enum
 - (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize;
 
 /**
- The contents of the receiver
- */
-@property (nonatomic, strong) id contents;
-
-/**
- The content type of the attachment
- */
-@property (nonatomic, assign) DTTextAttachmentType contentType;
-
-/**
  The URL representing the content
  */
 @property (nonatomic, strong) NSURL *contentURL;
@@ -141,8 +155,23 @@ typedef enum
 @property (nonatomic, strong) NSDictionary *attributes;
 
 /**
- The DTHTMLElement child nodes of the receiver. This array is only used for object tags at the moment.
+ @name Customizing Attachments
  */
-@property (nonatomic, strong) NSArray *childNodes;
+
+/**
+ Registers your own class for use when encountering a specific tag Name. If you register a class for a previously registered class (or one of the predefined ones (img, iframe, object, video) then this replaces this with the newer registration.
+ 
+ These registrations are permanent during the run time of your app. Custom attachment classes must implement the initWithElement:options: initializer and can implement the DTTextAttachmentDrawing and/or DTTextAttachmentHTMLPersistence protocols.
+ @param class The class to instantiate in textAttachmentWithElement:options: when encountering a tag with this name
+ @param tagName The tag name to use this class for
+ */
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName;
+
+/**
+ The class to use for a tag name
+ @param tagName The tag name
+ @returns The class to use for attachments with with tag name, or `nil` if this should not be an attachment
+ */
++ (Class)registeredClassForTagName:(NSString *)tagName;
 
 @end
