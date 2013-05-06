@@ -59,6 +59,34 @@
 	return NO;
 }
 
+- (BOOL)isStrikethrough
+{
+	NSNumber *strikethroughStyle = [self objectForKey:DTStrikeOutAttribute];
+	
+	if (strikethroughStyle)
+	{
+		return [strikethroughStyle boolValue];
+	}
+
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	// try NSParagraphStyle to see if "modern tags" are possible
+	if (![NSParagraphStyle class])
+	{
+		// unknown class
+		return NO;
+	}
+	
+	strikethroughStyle = [self objectForKey:NSStrikethroughStyleAttributeName];
+	
+	if (strikethroughStyle)
+	{
+		return [strikethroughStyle boolValue];
+	}
+#endif
+	
+	return NO;
+}
+
 - (BOOL)hasAttachment
 {
 	return [self objectForKey:NSAttachmentAttributeName]!=nil;

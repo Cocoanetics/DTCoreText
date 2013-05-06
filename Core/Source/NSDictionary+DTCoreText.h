@@ -39,6 +39,12 @@
 - (BOOL)isUnderline;
 
 /**
+ Whether the receiver's attributes contains strike-through.
+ @returns `YES` if the text is strike-through
+ */
+- (BOOL)isStrikethrough;
+
+/**
  Whether the receiver's attributes contain a DTTextAttachment
  @returns `YES` if ther is an attachment
  */
