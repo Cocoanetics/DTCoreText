@@ -173,13 +173,49 @@ static NSCache *imageCache = nil;
 
 - (void)_updateSizesFromImage:(DTImage *)image
 {
-	_originalSize = image.size;
+	// set original size if there is none set yet
+	if (CGSizeEqualToSize(_originalSize, CGSizeZero))
+	{
+		_originalSize = image.size;
+	}
+	else
+	{
+		// get the other dimension if one is missing
+		
+		if (!_originalSize.width && _originalSize.height)
+		{
+			CGFloat factor = _originalSize.height/image.size.height;
+			_originalSize.width = image.size.height * factor;
+		}
+		else if (_originalSize.width && !_originalSize.height)
+		{
+			CGFloat factor = _originalSize.width/image.size.width;
+			_originalSize.height = image.size.width * factor;
+		}
+	}
 	
 	// initial display size matches original
-	if (!_displaySize.width || !_displaySize.height)
+	if (CGSizeEqualToSize(CGSizeZero, _displaySize))
 	{
 		_displaySize = _originalSize;
 	}
+	else
+	{
+		// get the other dimension if one is missing
+		
+		if (!_displaySize.width && _displaySize.height)
+		{
+			CGFloat factor = _displaySize.height/_originalSize.height;
+			_displaySize.width = _originalSize.height * factor;
+		}
+		else if (_displaySize.width && !_displaySize.height)
+		{
+			CGFloat factor = _displaySize.width/_originalSize.width;
+			_displaySize.height = _originalSize.width * factor;
+		}
+	}
+
+	// reduce to display size if one is set
 	
 	if (!CGSizeEqualToSize(_maxImageSize, CGSizeZero))
 	{

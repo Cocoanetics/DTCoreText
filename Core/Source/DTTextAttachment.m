@@ -74,7 +74,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	{
 		// width, height from tag
 		_displaySize = element.size; // width/height from attributes or CSS style
-		_originalSize = CGSizeZero; // initially not known
+		_originalSize = element.size; // initially not known
 		
 		// determine if there is a display size restriction
 		_maxImageSize = CGSizeZero;
@@ -209,7 +209,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 			displaySize.height = roundf(_originalSize.height / factor);
 		}
 	}
-	
+
 	if (maxDisplaySize.width>0 && maxDisplaySize.height>0)
 	{
 		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)

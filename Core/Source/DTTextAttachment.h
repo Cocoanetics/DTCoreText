@@ -116,7 +116,7 @@ typedef enum
  */
 
 /**
- The original size of the attachment
+ The size of the receiver according to width/height HTML attribute or CSS style attribute
  */
 @property (nonatomic, assign) CGSize originalSize;
 
