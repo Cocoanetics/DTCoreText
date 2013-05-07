@@ -406,19 +406,8 @@ NSDictionary *_classesForNames = nil;
 			{
 				if (![[tmpString string] hasSuffix:@"\n"])
 				{
-					if ([tmpString length])
-					{
-						// extend same paragraph and font style
-						[tmpString appendString:@"\n"];
-					}
-					else
-					{
-						// tmpString has no attributes to extend, so we make a new string with attributes
-						
-						// need all attributes to e.g. extend list to include this character
-						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:[self attributesDictionary]];
-						[tmpString appendAttributedString:attributedString];
-					}
+					NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:[self attributesDictionary]];
+					[tmpString appendAttributedString:attributedString];
 				}
 			}
 		}
