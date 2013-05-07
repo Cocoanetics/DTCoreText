@@ -929,7 +929,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (NSInteger)indexOfAccessibilityElement:(id)element
 {
-	return [[self accessibilityElements] indexOfObject:element];
+	// It seems like indexOfObject: is failing for the proxy views, even though isEqual: and hash are both implemented
+	// on the proxy.  Perhaps UIView doesn't like isEqual: with our proxy view.  Regardless, this implementation seems to work.
+	NSInteger index = [[self accessibilityElements] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+		BOOL equal = [obj isEqual:element];
+		*stop = equal;
+		return equal;
+	}];
+
+	return index;
 }
 
 - (NSArray *)accessibilityElements
@@ -937,12 +945,16 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (!_accessibilityElements)
 	{
 		DTCoreTextLayoutFrameAccessibilityElementGenerator *generator = [[DTCoreTextLayoutFrameAccessibilityElementGenerator alloc] init];
-		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self attachmentViewProvider:^UIView *(DTTextAttachment *attachment) {
-			return (id)[[DTAccessibilityViewProxy alloc] initWithTextAttachment:attachment delegate:self];
+		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self attachmentViewProvider:^id(DTTextAttachment *attachment) {
+			// Since we actually take the views out of the view hierarchy when they're off screen, create a proxy object that stands
+			// in for the view until it's needed by VoiceOver.  By the time VoiceOver asks for the view, it should already be onscreen.
+			return [[DTAccessibilityViewProxy alloc] initWithTextAttachment:attachment delegate:self];
 		}];
 	}
 	return _accessibilityElements;
 }
+
+#pragma mark - DTAccessibilityViewProxyDelegate
 
 - (UIView *)viewForTextAttachment:(DTTextAttachment *)textAttachment proxy:(DTAccessibilityViewProxy *)proxy
 {

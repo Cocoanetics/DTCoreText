@@ -17,6 +17,20 @@
 	return self;
 }
 
+- (UIView *)proxiedView
+{
+	return [self.delegate viewForTextAttachment:self.textAttachment proxy:self];
+}
+
+- (Class)class
+{
+	Class aClass = [[self proxiedView] class];
+	
+	if (!aClass)
+		aClass = [DTAccessibilityViewProxy class];
+	
+	return aClass;
+}
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
 {
@@ -27,8 +41,18 @@
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-	UIView *view = [self.delegate viewForTextAttachment:self.textAttachment proxy:self];
+	UIView *view = [self proxiedView];
 	[invocation invokeWithTarget:view];
+}
+
+- (BOOL)isEqual:(id)object
+{
+	return [[self proxiedView] isEqual:object];
+}
+
+- (NSUInteger)hash
+{
+	return [[self proxiedView] hash];
 }
 
 @end
