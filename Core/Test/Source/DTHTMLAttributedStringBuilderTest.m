@@ -300,7 +300,7 @@
 // testing if Helvetica font family returns the correct font
 - (void)testHelveticaVariants
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica\"><b>Bold</b></p><p style=\"font-family:Helvetica\"><i>Italic</i></p><p style=\"font-family:Helvetica\"><b><i>Bold+Italic</i></b></p>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>"];
 	
 	NSString *string = [attributedString string];
 	NSRange entireStringRange = NSMakeRange(0, [string length]);
