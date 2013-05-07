@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLElementBR.h"
+#import "DTBreakHTMLElement.h"
 
-@implementation DTHTMLElementBR
+@implementation DTBreakHTMLElement
 
 - (NSAttributedString *)attributedString
 {

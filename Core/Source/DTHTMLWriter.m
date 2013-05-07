@@ -9,6 +9,7 @@
 #import "DTHTMLWriter.h"
 #import "DTCoreText.h"
 #import "DTVersion.h"
+#import "NSDictionary+DTCoreText.h"
 
 @implementation DTHTMLWriter
 {
@@ -35,7 +36,7 @@
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		// if running on iOS6 or higher
 		if ([DTVersion osVersionIsLessThen:@"6.0"])
 		{
@@ -105,6 +106,13 @@
 			break;
 		}
 			
+		case DTCSSListStyleTypeSquare:
+		{
+			typeString = @"square";
+			isOrdered = NO;
+			break;
+		}
+			
 		case DTCSSListStyleTypePlus:
 		{
 			typeString = @"plus";
@@ -168,8 +176,17 @@
 			break;
 		}
 			
-		default:
+		case DTCSSListStyleTypeNone:
+		{
+			typeString = @"none";
+			
 			break;
+		}
+			
+		case DTCSSListStyleTypeInvalid:
+		{
+			break;
+		}
 	}
 	
 	if (closingTag)
@@ -208,9 +225,12 @@
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
 		
 		NSString *listElementString = nil;
-		if (inlineStyles) {
+		if (inlineStyles)
+		{
 			listElementString = [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
-		} else {
+		}
+		else
+		{
 			listElementString = [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 		}
 		return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
@@ -275,27 +295,26 @@
 		
 		DTCSSListStyle *effectiveListStyle = [currentListStyles lastObject];
 		
-		CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[paraAttributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		// retrieve the paragraph style
+		DTCoreTextParagraphStyle *paragraphStyle = [paraAttributes paragraphStyle];
 		NSString *paraStyleString = nil;
 		
-		if (paraStyle)
+		if (paragraphStyle)
 		{
-			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-			
 			if (_textScale!=1.0f)
 			{
-				para.minimumLineHeight = roundf(para.minimumLineHeight / _textScale);
-				para.maximumLineHeight = roundf(para.maximumLineHeight / _textScale);
+				paragraphStyle.minimumLineHeight = roundf(paragraphStyle.minimumLineHeight / _textScale);
+				paragraphStyle.maximumLineHeight = roundf(paragraphStyle.maximumLineHeight / _textScale);
 				
-				para.paragraphSpacing = roundf(para.paragraphSpacing/ _textScale);
-				para.paragraphSpacingBefore = roundf(para.paragraphSpacingBefore / _textScale);
+				paragraphStyle.paragraphSpacing = roundf(paragraphStyle.paragraphSpacing/ _textScale);
+				paragraphStyle.paragraphSpacingBefore = roundf(paragraphStyle.paragraphSpacingBefore / _textScale);
 				
-				para.firstLineHeadIndent = roundf(para.firstLineHeadIndent / _textScale);
-				para.headIndent = roundf(para.headIndent / _textScale);
-				para.tailIndent = roundf(para.tailIndent / _textScale);
+				paragraphStyle.firstLineHeadIndent = roundf(paragraphStyle.firstLineHeadIndent / _textScale);
+				paragraphStyle.headIndent = roundf(paragraphStyle.headIndent / _textScale);
+				paragraphStyle.tailIndent = roundf(paragraphStyle.tailIndent / _textScale);
 			}
 			
-			paraStyleString = [para cssStyleRepresentation];
+			paraStyleString = [paragraphStyle cssStyleRepresentation];
 		}
 		
 		if (!paraStyleString)
@@ -389,11 +408,29 @@
 		
 		// Add dir="auto" if the writing direction is unknown
 		NSString *directionAttributeString = @"";
-		if (paraStyle)
+		
+		if (paragraphStyle)
 		{
-			DTCoreTextParagraphStyle *para = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-			if (para.baseWritingDirection == kCTWritingDirectionNatural)
-				directionAttributeString = @" dir=\"auto\"";
+			switch (paragraphStyle.baseWritingDirection)
+			{
+				case kCTWritingDirectionNatural:
+				{
+					directionAttributeString = @" dir=\"auto\"";
+					break;
+				}
+					
+				case kCTWritingDirectionRightToLeft:
+				{
+					directionAttributeString = @" dir=\"rtl\"";
+					break;
+				}
+					
+				case kCTWritingDirectionLeftToRight:
+				{
+					// this is default, so we omit it
+					break;
+				}
+			}
 		}
 		
 		if ([paraStyleString length])
@@ -425,12 +462,18 @@
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
-				NSInteger counter = [_attributedString itemNumberInTextList:effectiveListStyle atIndex:index];
-				NSString *prefix = [effectiveListStyle prefixWithCounter:counter];
+				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:effectiveRange.location];
 				
-				if ([plainSubString hasPrefix:prefix])
+				if (prefixRange.location != NSNotFound)
 				{
-					plainSubString = [plainSubString substringFromIndex:[prefix length]];
+					if (NSMaxRange(prefixRange)<plainSubString.length)
+					{
+						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
+					}
+					else
+					{
+						plainSubString = @"";
+					}
 				}
 				
 				needsToRemovePrefix = NO;
@@ -450,164 +493,17 @@
 			
 			if (attachment)
 			{
-				NSString *urlString;
-				
-				if (attachment.contentURL)
+				if ([attachment conformsToProtocol:@protocol(DTTextAttachmentHTMLPersistence)])
 				{
+					id<DTTextAttachmentHTMLPersistence> persistableAttachment = (id<DTTextAttachmentHTMLPersistence>)attachment;
 					
-					if ([attachment.contentURL isFileURL])
-					{
-						NSString *path = [attachment.contentURL path];
-						
-						NSRange range = [path rangeOfString:@".app/"];
-						
-						if (range.length)
-						{
-							urlString = [path substringFromIndex:NSMaxRange(range)];
-						}
-						else
-						{
-							urlString = [attachment.contentURL absoluteString];
-						}
-					}
-					else
-					{
-						urlString = [attachment.contentURL relativeString];
-					}
-				}
-				else
-				{
-					if (attachment.contentType == DTTextAttachmentTypeImage && attachment.contents)
-					{
-						urlString = [attachment dataURLRepresentation];
-					}
-					else
-					{
-						// no valid image remote or local
-						continue;
-					}
-				}
-				
-				NSString *blockName;
-				
-				switch (attachment.contentType)
-				{
-					case DTTextAttachmentTypeVideoURL:
-					{
-						blockName = @"video";
-						break;
-					}
-						
-					case DTTextAttachmentTypeImage:
-					{
-						blockName = @"img";
-						break;
-					}
-
-					case DTTextAttachmentTypeObject:
-					{
-						blockName = @"object";
-						break;
-					}
-
-					case DTTextAttachmentTypeIframe:
-					{
-						blockName = @"iframe";
-						break;
-					}
-
-					default:
-					{
-						// we don't know how to output this
-						continue;
-					}
-				}
-				
-				// output tag start
-				[retString appendFormat:@"<%@", blockName];
-
-				// build style for img/video
-				NSMutableString *classStyleString = [NSMutableString string];
-				
-				if (attachment.verticalAlignment != DTTextAttachmentVerticalAlignmentBaseline)
-				{
-					switch (attachment.verticalAlignment)
-					{
-						case DTTextAttachmentVerticalAlignmentBaseline:
-						{
-							[classStyleString appendString:@"vertical-align:baseline;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentTop:
-						{
-							[classStyleString appendString:@"vertical-align:text-top;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentCenter:
-						{
-							[classStyleString appendString:@"vertical-align:middle;"];
-							break;
-						}
-						case DTTextAttachmentVerticalAlignmentBottom:
-						{
-							[classStyleString appendString:@"vertical-align:text-bottom;"];
-							break;
-						}
-					}
-				}
-				
-				// only add class if there was some content
-				if ([classStyleString length])
-				{
-					NSString *className = [self _styleClassForElement:blockName style:classStyleString];
+					NSString *HTMLString = [persistableAttachment stringByEncodingAsHTML];
 					
-					if (fragment) {
-						[retString appendFormat:@" style=\"%@\"", classStyleString];
-					} else {
-						[retString appendFormat:@" class=\"%@\"", className];
+					if (HTMLString)
+					{
+						[retString appendString:HTMLString];
 					}
 				}
-				
-				// build a HTML 5 conformant size style if set
-				NSMutableString *sizeStyleString = [NSMutableString string];
-				
-				if (attachment.originalSize.width>0)
-				{
-					[sizeStyleString appendFormat:@"width:%.0fpx;", attachment.originalSize.width];
-				}
-				
-				if (attachment.originalSize.height>0)
-				{
-					[sizeStyleString appendFormat:@"height:%.0fpx;", attachment.originalSize.height];
-				}
-				
-				// add local style for size, since sizes might vary quite a bit
-				if ([sizeStyleString length])
-				{
-					[retString appendFormat:@" style=\"%@\"", sizeStyleString];
-				}
-				
-				[retString appendFormat:@" src=\"%@\"", urlString];
-				
-				// attach the attributes dictionary
-				NSMutableDictionary *tmpAttributes = [attachment.attributes mutableCopy];
-				
-				// remove src,style, width and height we already have these
-				[tmpAttributes removeObjectForKey:@"src"];
-				[tmpAttributes removeObjectForKey:@"style"];
-				[tmpAttributes removeObjectForKey:@"width"];
-				[tmpAttributes removeObjectForKey:@"height"];
-				
-				for (__strong NSString *oneKey in [tmpAttributes allKeys])
-				{
-					oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-					NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
-					[retString appendFormat:@" %@=\"%@\"", oneKey, value];
-				}
-				
-				// end
-				[retString appendString:@" />"];
-				
 				
 				continue;
 			}
@@ -615,18 +511,16 @@
 			NSString *fontStyle = nil;
 			if (!fontIsBlockLevel)
 			{
-				CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+				DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 				
-				if (font)
+				if (fontDescriptor)
 				{
-					DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
-					
 					if (_textScale!=1.0f)
 					{
-						desc.pointSize /= _textScale;
+						fontDescriptor.pointSize /= _textScale;
 					}
 					
-					fontStyle = [desc cssStyleRepresentation];
+					fontStyle = [fontDescriptor cssStyleRepresentation];
 				}
 			}
 			
@@ -736,9 +630,12 @@
 				{
 					NSString *className = [self _styleClassForElement:@"span" style:fontStyle];
 					
-					if (fragment) {
+					if (fragment)
+					{
 						[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
-					} else {
+					}
+					else
+					{
 						[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
 					}
 				}
@@ -776,7 +673,8 @@
 		
 	NSMutableString *output = [NSMutableString string];
 
-	if (!fragment) {
+	if (!fragment)
+	{
 		// append style block before text
 		NSMutableString *styleBlock = [NSMutableString string];
 		
@@ -795,13 +693,17 @@
 		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
 	}
 	
-	if (_useAppleConvertedSpace) {
+	if (_useAppleConvertedSpace)
+	{
 		[output appendString:[retString stringByAddingAppleConvertedSpace]];
-	} else {
+	}
+	else
+	{
 		[output appendString:retString];
 	}
 
-	if (!fragment) {
+	if (!fragment)
+	{
 		[output appendString:@"</body>\n</html>\n"];
 	}
 	

@@ -9,10 +9,10 @@
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
-#import "DTHTMLElementText.h"
-#import "DTHTMLElementBR.h"
-#import "DTHTMLElementStylesheet.h"
-#import "DTHTMLElementAttachment.h"
+#import "DTTextHTMLElement.h"
+#import "DTBreakHTMLElement.h"
+#import "DTStylesheetHTMLElement.h"
+#import "DTTextAttachmentHTMLElement.h"
 
 #import "DTVersion.h"
 #import "NSString+DTFormatNumbers.h"
@@ -592,12 +592,14 @@
 	
 	void (^objectBlock)(void) = ^
 	{
-		if ([_currentTag isKindOfClass:[DTHTMLElementAttachment class]])
+		if ([_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
 		{
-			if (_currentTag.textAttachment.contentType == DTTextAttachmentTypeObject)
+			if ([_currentTag.textAttachment isKindOfClass:[DTObjectTextAttachment class]])
 			{
+				DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)_currentTag.textAttachment;
+				
 				// transfer the child nodes to the attachment
-				_currentTag.textAttachment.childNodes = [_currentTag.childNodes copy];
+				objectAttachment.childNodes = [_currentTag.childNodes copy];
 			}
 		}
 	};
@@ -607,7 +609,7 @@
 	
 	void (^styleBlock)(void) = ^
 	{
-		DTCSSStylesheet *localSheet = [(DTHTMLElementStylesheet *)_currentTag stylesheet];
+		DTCSSStylesheet *localSheet = [(DTStylesheetHTMLElement *)_currentTag stylesheet];
 		[_globalStyleSheet mergeStylesheet:localSheet];
 	};
 	
@@ -618,11 +620,15 @@
 	{
 		NSString *href = [_currentTag attributeForKey:@"href"];
 		NSString *type = [[_currentTag attributeForKey:@"type"] lowercaseString];
-		if ([type isEqualToString:@"text/css"]) {
+		
+		if ([type isEqualToString:@"text/css"])
+		{
 			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:_baseURL];
-			if ([stylesheetURL isFileURL]) {
+			if ([stylesheetURL isFileURL])
+			{
 				NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
-				if (stylesheetContent) {
+				if (stylesheetContent)
+				{
 					DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent];
 					[_globalStyleSheet mergeStylesheet:localSheet];
 				}
@@ -685,9 +691,9 @@
 		// because a new block starts on a new line
 		if (previousLastChild && newNode.displayStyle != DTHTMLElementDisplayStyleInline)
 		{
-			if ([previousLastChild isKindOfClass:[DTHTMLElementText class]])
+			if ([previousLastChild isKindOfClass:[DTTextHTMLElement class]])
 			{
-				DTHTMLElementText *textElement = (DTHTMLElementText *)previousLastChild;
+				DTTextHTMLElement *textElement = (DTTextHTMLElement *)previousLastChild;
 				
 				if ([[textElement text] isIgnorableWhitespace])
 				{
@@ -806,14 +812,14 @@
 			}
 			
 			// ignore whitespace following a BR
-			if ([previousTag isKindOfClass:[DTHTMLElementBR class]])
+			if ([previousTag isKindOfClass:[DTBreakHTMLElement class]])
 			{
 				return;
 			}
 		}
 		
 		// adds a text node to the current node
-		DTHTMLElementText *textNode = [[DTHTMLElementText alloc] init];
+		DTTextHTMLElement *textNode = [[DTTextHTMLElement alloc] init];
 		textNode.text = string;
 		
 		[textNode inheritAttributesFromElement:_currentTag];

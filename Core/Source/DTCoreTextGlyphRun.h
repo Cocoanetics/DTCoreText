@@ -57,6 +57,10 @@
  */
 - (void)drawDecorationInContext:(CGContextRef)context;
 
+/**
+ Creates a `CGPath` containing the shapes of all glyphs in the receiver
+ */
+- (CGPathRef)newPathWithGlyphs;
 
 /**
  @name Getting Information

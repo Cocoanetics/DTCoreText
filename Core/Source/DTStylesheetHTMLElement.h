@@ -13,7 +13,7 @@
 /**
  This is a specialized subclass of <DTHTMLElement> representing a style block.
  */
-@interface DTHTMLElementStylesheet : DTHTMLElement
+@interface DTStylesheetHTMLElement : DTHTMLElement
 
 /**
  Parses the text children and assembles the resulting stylesheet.
