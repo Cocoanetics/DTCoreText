@@ -12,29 +12,31 @@
 #import "DTCoreTextGlyphRun.h"
 #import "DTAccessibilityElement.h"
 #import "DTCoreTextConstants.h"
+#import "DTTextAttachment.h"
 
 @implementation DTCoreTextLayoutFrameAccessibilityElementGenerator
 
-- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view
+- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block
 {
 	NSMutableArray *elements = [NSMutableArray array];
 
 	for (NSUInteger idx = 0; idx < frame.paragraphRanges.count; idx++)
 	{
-		NSArray *paragraphElements = [self accessibilityElementsInParagraphAtIndex:idx layoutFrame:frame view:view];
+		NSArray *paragraphElements = [self accessibilityElementsInParagraphAtIndex:idx layoutFrame:frame view:view attachmentViewProvider:block];
 		[elements addObjectsFromArray:paragraphElements];
 	}
 		
 	return elements;
 }
 
-- (NSArray *)accessibilityElementsInParagraphAtIndex:(NSUInteger)index layoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view
+- (NSArray *)accessibilityElementsInParagraphAtIndex:(NSUInteger)index layoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block
 {
 	NSMutableArray *elements = [NSMutableArray array];
 	
 	[self enumerateAccessibleGroupsInFrame:frame forParagraphAtIndex:index usingBlock:^(NSDictionary *attrs, NSRange substringRange, BOOL *stop, NSArray *runs) {
-		DTAccessibilityElement *element = [self accessibilityElementForTextInAttributedString:frame.attributedStringFragment atRange:substringRange attributes:attrs run:runs view:view];
-		[elements addObject:element];
+		id element = [self accessibilityElementForTextInAttributedString:frame.attributedStringFragment atRange:substringRange attributes:attrs run:runs view:view attachmentViewProvider:block];
+		if (element)
+			[elements addObject:element];
 	}];
 	
 	return elements;
@@ -55,6 +57,16 @@
 		
 		block(attrs, range, stop, runs);
 	}];
+}
+
+- (id)accessibilityElementForTextInAttributedString:(NSAttributedString *)attributedString atRange:(NSRange)range attributes:(NSDictionary *)attributes run:(NSArray *)runs view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block
+{
+	DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
+	
+	if (attachment != nil)
+		return [self viewForAttachment:attachment attachmentViewProvider:block];
+	else
+		return [self accessibilityElementForTextInAttributedString:attributedString atRange:range attributes:attributes run:runs view:view];
 }
 
 - (DTAccessibilityElement *)accessibilityElementForTextInAttributedString:(NSAttributedString *)attributedString atRange:(NSRange)range attributes:(NSDictionary *)attributes run:(NSArray *)runs view:(UIView *)view
@@ -79,8 +91,20 @@
 	
 	if ([attributes objectForKey:DTLinkAttribute])
 		element.accessibilityTraits |= UIAccessibilityTraitLink;
-		
+	
 	return element;
+}
+
+- (UIView *)viewForAttachment:(DTTextAttachment *)attachment attachmentViewProvider:(DTAttachmentViewProvider)block
+{
+	UIView *view = nil;
+	
+	if (block)
+	{
+		view = block(attachment);
+	}
+	
+	return view;
 }
 
 - (CGRect)frameForRuns:(NSArray *)runs

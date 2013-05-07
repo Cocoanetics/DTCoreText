@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "DTAccessibilityElement.h"
 
-@class DTCoreTextLayoutFrame;
+@class DTCoreTextLayoutFrame, DTTextAttachment;
+
+typedef UIView *(^DTAttachmentViewProvider)(DTTextAttachment *textAttachment);
 
 @interface DTCoreTextLayoutFrameAccessibilityElementGenerator : NSObject
 
 // Contains DTAccessibilityElement objects
-- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view;
+- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block;
 
 @end

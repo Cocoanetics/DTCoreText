@@ -9,6 +9,9 @@
 #import "DTAttributedTextContentView.h"
 #import "DTCoreText.h"
 #import <QuartzCore/QuartzCore.h>
+#import "DTAccessibilityViewProxy.h"
+#import "DTAccessibilityElement.h"
+#import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
@@ -16,7 +19,7 @@
 
 NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAttributedTextContentViewDidFinishLayoutNotification";
 
-@interface DTAttributedTextContentView ()
+@interface DTAttributedTextContentView () <DTAccessibilityViewProxyDelegate>
 {
 	BOOL _shouldAddFirstLineLeading;
 	BOOL _shouldDrawImages;
@@ -925,9 +928,18 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	if (!_accessibilityElements)
 	{
 		DTCoreTextLayoutFrameAccessibilityElementGenerator *generator = [[DTCoreTextLayoutFrameAccessibilityElementGenerator alloc] init];
-		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self];
+		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self attachmentViewProvider:^UIView *(DTTextAttachment *attachment) {
+			return (id)[[DTAccessibilityViewProxy alloc] initWithTextAttachment:attachment delegate:self];
+		}];
 	}
 	return _accessibilityElements;
+}
+
+- (UIView *)viewForTextAttachment:(DTTextAttachment *)textAttachment proxy:(DTAccessibilityViewProxy *)proxy
+{
+	NSNumber *indexKey = [NSNumber numberWithInteger:[textAttachment hash]];
+	UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
+	return existingAttachmentView;
 }
 
 @synthesize layouter = _layouter;
