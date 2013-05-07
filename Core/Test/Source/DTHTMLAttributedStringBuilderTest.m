@@ -240,6 +240,15 @@
 		__block CGFloat paragraphFontSize = 0; // initialized from first font in paragraph
 		
 		[output enumerateAttribute:(id)kCTFontAttributeName inRange:paragraphRange options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+			
+			NSString *subString = [[output string] substringWithRange:range];
+			
+			// the NL are exempt from the test
+			if ([subString isEqualToString:@"\n"])
+			{
+				return;
+			}
+			
 			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)(value)];
 			
 			if (paragraphFontSize==0)
@@ -300,7 +309,7 @@
 // testing if Helvetica font family returns the correct font
 - (void)testHelveticaVariants
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica\"><b>Bold</b></p><p style=\"font-family:Helvetica\"><i>Italic</i></p><p style=\"font-family:Helvetica\"><b><i>Bold+Italic</i></b></p>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>"];
 	
 	NSString *string = [attributedString string];
 	NSRange entireStringRange = NSMakeRange(0, [string length]);
@@ -361,6 +370,23 @@
 	NSInteger level = [headerLevelNum integerValue];
 	
 	STAssertEquals(level, (NSInteger)3, @"Level should be 3");
+}
+
+// Issue 437, strikethrough bleeding into NL
+- (void)testBleedingOutAttributes
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>"];
+	
+	STAssertTrue([attributedString length] == 5, @"Attributed String should be 5 characters long");
+	
+	NSRange effectiveRange;
+	NSNumber *strikethroughStyle = [attributedString attribute:DTStrikeOutAttribute atIndex:0 effectiveRange:&effectiveRange];
+	
+	STAssertNotNil(strikethroughStyle, @"There should be a strikethrough style");
+	
+	NSRange expectedRange = NSMakeRange(0, 4);
+	
+	STAssertEquals(effectiveRange, expectedRange, @"Strikethrough style should only contain abc, not the NL");
 }
 
 #pragma mark - Nested Lists
