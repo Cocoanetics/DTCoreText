@@ -73,7 +73,7 @@
 {
 	NSString *text = [attributedString.string substringWithRange:range];
 	
-	DTAccessibilityElement *element = [[DTAccessibilityElement alloc] initWithAccessibilityContainer:view];
+	DTAccessibilityElement *element = [[DTAccessibilityElement alloc] initWithParentView:view];
 	element.accessibilityLabel = text;
 	element.localCoordinateAccessibilityFrame = [self frameForRuns:runs];
 	
@@ -81,7 +81,7 @@
 	// even if that spans across multiple lines.  Set the local coordinate activation point to support multi-line links. A link that is at the end of one line and
 	// wraps to the beginning of the next would have a rect that's the size of both lines combined.  The center of that rect would be outside the hit areas for either of the
 	// runs individually, so we set the accessibility activation point to be the origin of the first run.
-	if (runs.count > 0)
+	if (runs.count > 1)
 	{
 		DTCoreTextGlyphRun *run = [runs objectAtIndex:0];
 		element.localCoordinateAccessibilityActivationPoint = run.frame.origin;

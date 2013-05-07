@@ -8,23 +8,42 @@
 
 #import "DTAccessibilityElement.h"
 
+static const CGPoint DTAccessibilityElementNullActivationPoint = {CGFLOAT_MAX, CGFLOAT_MAX};
+
+@interface DTAccessibilityElement()
+@property (nonatomic, unsafe_unretained) UIView *parentView;
+@end
+
 @implementation DTAccessibilityElement
+
+- (id)initWithParentView:(UIView *)parentView
+{
+	self = [super initWithAccessibilityContainer:parentView];
+	if (self)
+	{
+		_parentView = parentView;
+		_localCoordinateAccessibilityActivationPoint = DTAccessibilityElementNullActivationPoint;
+	}
+	return self;
+}
 
 - (CGRect)accessibilityFrame
 {
 	CGRect frame = self.localCoordinateAccessibilityFrame;
-	UIView *parent = self.accessibilityContainer;
-	NSAssert([parent isKindOfClass:[UIView class]], @"AccessibilityContainer must be a UIView - is actually %@", parent);
-	frame = [parent.window convertRect:frame fromView:parent];
+	frame = [self.parentView.window convertRect:frame fromView:self.parentView];
 	return frame;
 }
 
 - (CGPoint)accessibilityActivationPoint
 {
 	CGPoint point = self.localCoordinateAccessibilityActivationPoint;
-	UIView *parent = self.accessibilityContainer;
-	NSAssert([parent isKindOfClass:[UIView class]], @"AccessibilityContainer must be a UIView - is actually %@", parent);
-	point = [parent.window convertPoint:point fromView:parent];
+	if (CGPointEqualToPoint(point, DTAccessibilityElementNullActivationPoint))
+	{
+		point = [super accessibilityActivationPoint];
+	}
+	
+	point = [self.parentView.window convertPoint:point fromView:self.parentView];
+	
 	return point;
 }
 
