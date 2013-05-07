@@ -240,6 +240,15 @@
 		__block CGFloat paragraphFontSize = 0; // initialized from first font in paragraph
 		
 		[output enumerateAttribute:(id)kCTFontAttributeName inRange:paragraphRange options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+			
+			NSString *subString = [[output string] substringWithRange:range];
+			
+			// the NL are exempt from the test
+			if ([subString isEqualToString:@"\n"])
+			{
+				return;
+			}
+			
 			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)(value)];
 			
 			if (paragraphFontSize==0)
