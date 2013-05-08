@@ -448,6 +448,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
+	if (![NSThread isMainThread])
+	{
+		[self performSelectorOnMainThread:@selector(relayoutText) withObject:nil waitUntilDone:YES];
+		return;
+	}
+	
     // Make sure we actually have a superview and a previous layout before attempting to relayout the text.
     if (_layoutFrame && self.superview)
 	{
