@@ -160,7 +160,6 @@ extern unsigned int default_css_len;
 	{
 		NSString *fontStyle = @"normal";
 		NSArray *validFontStyles = [NSArray arrayWithObjects:@"italic", @"oblique", nil];
-		BOOL fontStyleSet = NO;
 
 		NSString *fontVariant = @"normal";
 		NSArray *validFontVariants = [NSArray arrayWithObjects:@"small-caps", nil];
@@ -177,7 +176,6 @@ extern unsigned int default_css_len;
 		NSArray *suffixesToIgnore = [NSArray arrayWithObjects:@"caption", @"icon", @"menu", @"message-box", @"small-caption", @"status-bar", @"inherit", nil];
 		
 		NSString *lineHeight = @"normal";
-		BOOL lineHeightSet = NO;
 		
 		NSMutableString *fontFamily = [NSMutableString string];
 		
@@ -204,7 +202,6 @@ extern unsigned int default_css_len;
 				fontSizeSet = YES;
 				
 				lineHeight = [oneComponent substringFromIndex:slashIndex+1];
-				lineHeightSet = YES;
 				
 				continue;
 			}
@@ -240,7 +237,6 @@ extern unsigned int default_css_len;
 				if (!fontWeightSet && [validFontStyles containsObject:oneComponent])
 				{
 					fontStyle = oneComponent;
-					fontStyleSet = YES;
 				}
 				else if (!fontVariantSet && [validFontVariants containsObject:oneComponent])
 				{

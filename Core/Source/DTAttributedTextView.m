@@ -125,6 +125,12 @@
 
 - (void)relayoutText
 {
+	if (![NSThread isMainThread])
+	{
+		[self performSelectorOnMainThread:@selector(relayoutText) withObject:nil waitUntilDone:YES];
+		return;
+	}
+	
 	// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
 	_attributedTextContentView.layouter=nil;
 	

@@ -15,7 +15,7 @@
 #import "DTCoreTextFunctions.h"
 #import "DTCoreTextParagraphStyle.h"
 
-@implementation NSDictionary (DTRichText)
+@implementation NSDictionary (DTCoreText)
 
 - (BOOL)isBold
 {
@@ -85,6 +85,13 @@
 #endif
 	
 	return NO;
+}
+
+- (NSUInteger)headerLevel
+{
+	NSNumber *headerLevelNum = [self objectForKey:DTHeaderLevelAttribute];
+	
+	return [headerLevelNum integerValue];
 }
 
 - (BOOL)hasAttachment

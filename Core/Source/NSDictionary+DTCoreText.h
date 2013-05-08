@@ -14,7 +14,7 @@
 /**
  Convenience methods for editors dealing with Core Text attribute dictionaries.
  */
-@interface NSDictionary (DTRichText)
+@interface NSDictionary (DTCoreText)
 
 /**
  @name Getting State information
@@ -49,6 +49,12 @@
  @returns `YES` if ther is an attachment
  */
 - (BOOL)hasAttachment;
+
+/**
+ The header level of the receiver
+ @returns The header level (1-6) or 0 if no header level is set
+ */
+- (NSUInteger)headerLevel;
 
 /**
  @name Getting Style Information

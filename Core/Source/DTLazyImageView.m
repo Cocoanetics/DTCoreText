@@ -211,8 +211,15 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	
 	if (_url)
 	{
-		// cache image
-		[_imageCache setObject:image forKey:_url];
+		if (image)
+		{
+			// cache image
+			[_imageCache setObject:image forKey:_url];
+		}
+		else
+		{
+			NSLog(@"Warning, %@ did not get an image for %@", NSStringFromClass([self class]), [_url absoluteString]);
+		}
 	}
 	
 }
