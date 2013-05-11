@@ -391,6 +391,22 @@
 	STAssertEquals(effectiveRange, expectedRange, @"Strikethrough style should only contain abc, not the NL");
 }
 
+// Issue 441, display size ignored if img has width/height
+- (void)testImageDisplaySize
+{
+	NSDictionary *options = @{DTMaxImageSize: [NSValue valueWithSize:CGSizeMake(200, 200)]};
+	
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<img width=\"300\" height=\"300\" src=\"Oliver.jpg\">" options:options];
+	
+	STAssertTrue([attributedString length]==1, @"Output length should be 1");
+	
+	DTImageTextAttachment *imageAttachment = [attributedString attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
+	
+	CGSize expectedSize = CGSizeMake(200, 200);
+	
+	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
