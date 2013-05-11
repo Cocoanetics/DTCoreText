@@ -73,7 +73,6 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	if (self)
 	{
 		// width, height from tag
-		_displaySize = element.size; // width/height from attributes or CSS style
 		_originalSize = element.size; // initially not known
 		
 		// determine if there is a display size restriction
@@ -88,6 +87,9 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 			_maxImageSize = [maxImageSizeValue sizeValue];
 #endif
 		}
+		
+		// set the display size from the original size, restricted to the max size
+		[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
 
 		_attributes = element.attributes;
 	}

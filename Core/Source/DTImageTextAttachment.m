@@ -197,7 +197,7 @@ static NSCache *imageCache = nil;
 	// initial display size matches original
 	if (CGSizeEqualToSize(CGSizeZero, _displaySize))
 	{
-		_displaySize = _originalSize;
+		[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
 	}
 	else
 	{
@@ -205,24 +205,21 @@ static NSCache *imageCache = nil;
 		
 		if (!_displaySize.width && _displaySize.height)
 		{
+			CGSize newDisplaySize = _displaySize;
+
 			CGFloat factor = _displaySize.height/_originalSize.height;
-			_displaySize.width = _originalSize.height * factor;
+			newDisplaySize.width = _originalSize.height * factor;
+			
+			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
 		else if (_displaySize.width && !_displaySize.height)
 		{
+			CGSize newDisplaySize = _displaySize;
+			
 			CGFloat factor = _displaySize.width/_originalSize.width;
-			_displaySize.height = _originalSize.width * factor;
-		}
-	}
-
-	// reduce to display size if one is set
-	
-	if (!CGSizeEqualToSize(_maxImageSize, CGSizeZero))
-	{
-		// adjust the display size if there is a restriction and it's too large
-		if (_maxImageSize.width < _displaySize.width || _maxImageSize.height < _displaySize.height)
-		{
-			_displaySize = sizeThatFitsKeepingAspectRatio(_displaySize, _maxImageSize);
+			newDisplaySize.height = _originalSize.width * factor;
+			
+			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
 	}
 }
