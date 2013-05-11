@@ -394,7 +394,7 @@
 // Issue 441, display size ignored if img has width/height
 - (void)testImageDisplaySize
 {
-	NSDictionary *options = @{DTMaxImageSize: [NSValue valueWithSize:CGSizeMake(200, 200)]};
+	NSDictionary *options = @{DTMaxImageSize: [NSValue valueWithCGSize:CGSizeMake(200, 200)]};
 	
 	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<img width=\"300\" height=\"300\" src=\"Oliver.jpg\">" options:options];
 	
