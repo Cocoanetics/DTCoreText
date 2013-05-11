@@ -756,6 +756,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	NSRange blockRange = [_attributedStringFragment rangeOfTextBlock:textBlock atIndex:location];
 	
+	// need to reduce to actually visible string range in layout frame
+	blockRange = NSUnionRange(blockRange, self.visibleStringRange);
+	
 	DTCoreTextLayoutLine *firstBlockLine = [self lineContainingIndex:blockRange.location];
 	DTCoreTextLayoutLine *lastBlockLine = [self lineContainingIndex:NSMaxRange(blockRange)-1];
 	
@@ -769,6 +772,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	for (NSUInteger index = blockRange.location; index<NSMaxRange(blockRange);)
 	{
 		DTCoreTextLayoutLine *oneLine = [self lineContainingIndex:index];
+		
+		// avoid potential endless loop and log warning because this should never happen
+		if (!oneLine)
+		{
+			NSLog(@"No line found containing index %ld of block range %@. This should never happen, please report that to oliver@cocoanetics.com", (unsigned long)index, NSStringFromRange(blockRange));
+			break;
+		}
 		
 		if (maxWidth<oneLine.frame.size.width)
 		{
