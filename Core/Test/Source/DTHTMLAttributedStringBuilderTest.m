@@ -28,7 +28,7 @@
 	return [builder generatedAttributedString];
 }
 
-- (NSAttributedString *)_attributedStringFromHTMLString:(NSString *)HTMLString
+- (NSAttributedString *)_attributedStringFromHTMLString:(NSString *)HTMLString options:(NSDictionary *)options
 {
 	NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
 	
@@ -36,9 +36,11 @@
 	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
 	NSURL *baseURL = [bundle resourceURL];
 	
-	NSDictionary *options = @{NSBaseURLDocumentOption: baseURL};
+	NSMutableDictionary *mutableOptions = [[NSMutableDictionary alloc] initWithDictionary:options];
+	mutableOptions[NSBaseURLDocumentOption] = baseURL;
 	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:NULL];
+	
+	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:mutableOptions documentAttributes:NULL];
 	return [builder generatedAttributedString];
 }
 
@@ -80,7 +82,7 @@
 // tests functionality of dir attribute
 - (void)testWritingDirection
 {
-	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>"];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>" options:nil];
 	
 	CTParagraphStyleRef paragraphStyleRTL = (__bridge CTParagraphStyleRef)([output attribute:(id)kCTParagraphStyleAttributeName atIndex:0 effectiveRange:NULL]);
 	DTCoreTextParagraphStyle *styleRTL = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paragraphStyleRTL];
@@ -104,7 +106,7 @@
 - (void)testAttachmentDisplaySize
 {
 	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\" style=\"foo:bar\">"];
-	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string options:nil];
 
 	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
 
@@ -121,7 +123,7 @@
 - (void)testAttachmentAutoSize
 {
 	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\" style=\"width:260px; height:auto;\">"];
-	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string options:nil];
 	
 	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
 	
@@ -138,7 +140,7 @@
 
 - (void)testFontTagWithStyle
 {
-	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>"];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>" options:nil];
 	
 	CTFontRef font = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:0 effectiveRange:NULL]);
 	
@@ -151,7 +153,7 @@
 - (void)testMissingClosingBracket
 {
 	NSString *string = [NSString stringWithFormat:@"<img src=\"Oliver.jpg\""];
-	NSAttributedString *output = [self _attributedStringFromHTMLString:string];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:string options:nil];
 	
 	STAssertEquals([output length],(NSUInteger)1 , @"Output length should be 1");
 	
@@ -268,7 +270,7 @@
 // if there is a text attachment contained in a HREF then the URL of that needs to be transferred to the image because it is needed for affixing a custom subview for a link button over the image or 
 - (void)testTransferOfHyperlinkURLToAttachment
 {
-	NSAttributedString *string = [self _attributedStringFromHTMLString:@"<a href=\"https://www.cocoanetics.com\"><img class=\"Bla\" style=\"width:150px; height:150px\" src=\"Oliver.jpg\"></a>"];
+	NSAttributedString *string = [self _attributedStringFromHTMLString:@"<a href=\"https://www.cocoanetics.com\"><img class=\"Bla\" style=\"width:150px; height:150px\" src=\"Oliver.jpg\"></a>" options:nil];
 	
 	STAssertEquals([string length], (NSUInteger)1, @"Output length should be 1");
 	
@@ -289,7 +291,7 @@
 // setting ordered list starting number
 - (void)testOrderedListStartingNumber
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ol start=\"5\">\n<li>Item #5</li>\n<li>Item #6</li>\n<li>etc.</li>\n</ol>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ol start=\"5\">\n<li>Item #5</li>\n<li>Item #6</li>\n<li>etc.</li>\n</ol>" options:nil];
 	NSString *string = [attributedString string];
 	
 	NSArray *lines = [string componentsSeparatedByString:@"\n"];
@@ -309,7 +311,7 @@
 // testing if Helvetica font family returns the correct font
 - (void)testHelveticaVariants
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>" options:nil];
 	
 	NSString *string = [attributedString string];
 	NSRange entireStringRange = NSMakeRange(0, [string length]);
@@ -361,7 +363,7 @@
 
 - (void)testHeaderLevelTransfer
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<h3>Header</h3>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<h3>Header</h3>" options:nil];
 	
 	NSNumber *headerLevelNum = [attributedString attribute:DTHeaderLevelAttribute atIndex:0 effectiveRange:NULL];
 	
@@ -375,7 +377,7 @@
 // Issue 437, strikethrough bleeding into NL
 - (void)testBleedingOutAttributes
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>" options:nil];
 	
 	STAssertTrue([attributedString length] == 5, @"Attributed String should be 5 characters long");
 	
@@ -393,7 +395,7 @@
 
 - (void)testNestedListWithStyleNone
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li style=\"list-style: none\"><ul><li>Bullet 2</li></ul></li></ul>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li style=\"list-style: none\"><ul><li>Bullet 2</li></ul></li></ul>" options:nil];
 	
 	NSString *string = [attributedString string];
 	NSRange entireStringRange = NSMakeRange(0, [string length]);
@@ -430,7 +432,7 @@
 // list prefixes should never contained the newline
 - (void)testPrefixWithNewlines
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li><ul><li>Bullet 2</li></ul></li></ul>"];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>Bullet</li><li><ul><li>Bullet 2</li></ul></li></ul>" options:nil];
 	
 	NSString *string = [attributedString string];
 	NSRange entireStringRange = NSMakeRange(0, [string length]);
