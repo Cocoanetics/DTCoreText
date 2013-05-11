@@ -757,7 +757,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSRange blockRange = [_attributedStringFragment rangeOfTextBlock:textBlock atIndex:location];
 	
 	// need to reduce to actually visible string range in layout frame
-	blockRange = NSUnionRange(blockRange, self.visibleStringRange);
+	blockRange = NSIntersectionRange(blockRange, self.visibleStringRange);
 	
 	DTCoreTextLayoutLine *firstBlockLine = [self lineContainingIndex:blockRange.location];
 	DTCoreTextLayoutLine *lastBlockLine = [self lineContainingIndex:NSMaxRange(blockRange)-1];
