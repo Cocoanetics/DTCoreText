@@ -407,6 +407,16 @@
 	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
 }
 
+// Issue 443: crash on combining font-family:inherit with small caps
+- (void)testFontFamilySmallCapsCrash
+{
+	NSAttributedString *attributedString;
+	
+	STAssertTrueNoThrow((attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-variant:small-caps; font-family:inherit;\">Test</p>" options:nil]), @"Should be able to parse without crash");
+	
+	STAssertTrue([attributedString length]==5, @"Should be 5 characters");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
