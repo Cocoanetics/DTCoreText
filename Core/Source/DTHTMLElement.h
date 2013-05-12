@@ -23,8 +23,6 @@
  */
 @interface DTHTMLElement : DTHTMLParserNode
 {
-	DTHTMLElement *_parent;
-	
 	DTCoreTextFontDescriptor *_fontDescriptor;
 	DTCoreTextParagraphStyle *_paragraphStyle;
 	DTTextAttachment *_textAttachment;

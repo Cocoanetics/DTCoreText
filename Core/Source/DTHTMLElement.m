@@ -660,7 +660,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isEqualToString:@"inherit"])
 		{
-			_fontDescriptor.pointSize = _parent.fontDescriptor.pointSize;
+			_fontDescriptor.pointSize = self.parentElement.fontDescriptor.pointSize;
 		}
 		else
 		{
@@ -1124,14 +1124,12 @@ NSDictionary *_classesForNames = nil;
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
 {
-	
-	
 	id value = [self valueForKeyPath:keyPath];
 	
 	// if property is not set we also go to parent
-	if (!value && _parent)
+	if (!value && self.parentElement)
 	{
-		return [_parent valueForKeyPathWithInheritance:keyPath];
+		return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 	}
 	
 	// enum properties have 0 for inherit
@@ -1139,9 +1137,9 @@ NSDictionary *_classesForNames = nil;
 	{
 		NSNumber *number = value;
 		
-		if (([number integerValue]==0) && _parent)
+		if (([number integerValue]==0) && self.parentElement)
 		{
-			return [_parent valueForKeyPathWithInheritance:keyPath];
+			return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 		}
 	}
 	
@@ -1150,9 +1148,9 @@ NSDictionary *_classesForNames = nil;
 	{
 		NSString *string = value;
 		
-		if ([string isEqualToString:@"inherit"] && _parent)
+		if ([string isEqualToString:@"inherit"] && self.parentElement)
 		{
-			return [_parent valueForKeyPathWithInheritance:keyPath];
+			return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 		}
 	}
 	
@@ -1293,9 +1291,9 @@ NSDictionary *_classesForNames = nil;
 {
 	if (_fontVariant == DTHTMLElementFontVariantInherit)
 	{
-		if (_parent)
+		if (self.parentElement)
 		{
-			return _parent.fontVariant;
+			return self.parentElement.fontVariant;
 		}
 		
 		return DTHTMLElementFontVariantNormal;
