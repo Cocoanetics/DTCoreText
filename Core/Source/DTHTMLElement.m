@@ -742,6 +742,10 @@ NSDictionary *_classesForNames = nil;
 		{
 			_fontDescriptor.fontFamily = @"Times New Roman";
 		}
+		else if ([lowercaseFontFamily isEqualToString:@"inherit"])
+		{
+			_fontDescriptor.fontFamily = self.parentElement.fontDescriptor.fontFamily;
+		}
 		else
 		{
 			// probably custom font registered in info.plist
