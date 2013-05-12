@@ -220,6 +220,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (id)initWithCTFont:(CTFontRef)ctFont
 {
+   NSParameterAssert(ctFont);
+	
 	self = [super init];
 	if (self)
 	{
