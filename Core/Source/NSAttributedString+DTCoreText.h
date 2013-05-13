@@ -122,6 +122,6 @@
  @param attributes The attribute dictionary for the text to be prefixed
  @returns An attributed string with the list prefix
  */
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes;
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent leftMargin:(CGFloat)leftMargin leftPadding:(CGFloat)leftPadding attributes:(NSDictionary *)attributes;
 
 @end

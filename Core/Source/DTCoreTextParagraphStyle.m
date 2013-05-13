@@ -25,7 +25,6 @@ typedef struct {
 	CGFloat paragraphSpacing;
 	CGFloat headIndent;
 	CGFloat tailIndent;
-	CGFloat listIndent;
 	CGFloat lineHeightMultiple;
 	CGFloat minimumLineHeight;
 	CGFloat maximumLineHeight;
@@ -42,7 +41,6 @@ typedef struct {
 	CGFloat _paragraphSpacing;
 	CGFloat _headIndent;
 	CGFloat _tailIndent;
-	CGFloat _listIndent;
 	CGFloat _lineHeightMultiple;
 	CGFloat _minimumLineHeight;
 	CGFloat _maximumLineHeight;
@@ -132,7 +130,6 @@ typedef struct {
 		_minimumLineHeight = 0.0;
 		_maximumLineHeight = 0.0;
 		_paragraphSpacing = 0.0;
-		_listIndent = 0;
 	}
 	
 	return self;
@@ -227,7 +224,7 @@ typedef struct {
 	allvalues_t *allvalues = &allvalues_stack; // pointer so that we can use the arrow operator
 #endif
 	
-	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0,0};
+	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0};
 
 	// pack all values in the struct
 	allvalues->firstLineHeadIndent = _firstLineHeadIndent;
@@ -236,7 +233,6 @@ typedef struct {
 	allvalues->paragraphSpacing = _paragraphSpacing;
 	allvalues->headIndent = _headIndent;
 	allvalues->tailIndent = _tailIndent;
-	allvalues->listIndent = _listIndent;
 	allvalues->lineHeightMultiple = _lineHeightMultiple;
 	allvalues->minimumLineHeight = _minimumLineHeight;
 	allvalues->maximumLineHeight = _maximumLineHeight;
@@ -323,8 +319,6 @@ typedef struct {
 	
 	[mps setHeadIndent:_headIndent];
 	[mps setTailIndent:_tailIndent];
-	
-	// _listIndent not supported
 	
 	[mps setMinimumLineHeight:_minimumLineHeight];
 	[mps setMaximumLineHeight:_maximumLineHeight];
@@ -501,7 +495,6 @@ typedef struct {
 	newObject.minimumLineHeight = self.minimumLineHeight;
 	newObject.maximumLineHeight = self.maximumLineHeight;
 	newObject.headIndent = self.headIndent;
-	newObject.listIndent = self.listIndent;
 	newObject.alignment = self.alignment;
 	newObject.baseWritingDirection = self.baseWritingDirection;
 	newObject.tabStops = self.tabStops; // copy
@@ -635,7 +628,6 @@ typedef struct {
 @synthesize maximumLineHeight = _maximumLineHeight;
 @synthesize headIndent = _headIndent;
 @synthesize tailIndent = _tailIndent;
-@synthesize listIndent = _listIndent;
 @synthesize alignment = _alignment;
 @synthesize textLists = _textLists;
 @synthesize textBlocks = _textBlocks;

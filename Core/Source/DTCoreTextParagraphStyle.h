@@ -196,12 +196,6 @@ The distance in points from the margin of a text container to the end of lines.
 @property (nonatomic, copy) NSArray *textLists;
 
 
-/**
- The amount by which each list level is indented from the previous. NOTE: about to be replaced by textLists property.
- */
-@property (nonatomic, assign) CGFloat listIndent;
-
-
 /**-------------------------------------------------------------------------------------
  @name Setting Text Blocks
  ---------------------------------------------------------------------------------------

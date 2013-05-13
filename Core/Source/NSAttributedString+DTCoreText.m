@@ -10,6 +10,7 @@
 #import "NSAttributedString+DTCoreText.h"
 #import "DTHTMLWriter.h"
 #import "NSURL+DTComparing.h"
+#import "NSDictionary+DTCoreText.h"
 
 @implementation NSAttributedString (DTCoreText)
 
@@ -264,38 +265,35 @@
 }
 
 #pragma mark Generating Special Attributed Strings
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent leftMargin:(CGFloat)leftMargin leftPadding:(CGFloat)leftPadding attributes:(NSDictionary *)attributes
 {
-	// get existing values from attributes
-	CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
-	CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
+	NSParameterAssert(paragraphStyle);
+
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+	NSParameterAssert(fontDescriptor);
 	
-	DTCoreTextFontDescriptor *fontDescriptor = nil;
-	DTCoreTextParagraphStyle *paragraphStyle = nil;
 	
-	if (paraStyle)
+	// modify paragraph style
+	
+	paragraphStyle.firstLineHeadIndent = listIndent;  // first line has prefix and starts at list indent;
+	paragraphStyle.headIndent = listIndent + leftMargin + leftPadding;  // following lines hanging
+
+	// resets tabs
+	
+	paragraphStyle.tabStops = nil;
+	
+	// set tab stops
+	
+	if (listStyle.type != DTCSSListStyleTypeNone)
 	{
-		paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-		
-		paragraphStyle.tabStops = nil;
-		
-		paragraphStyle.headIndent = listIndent;
-		
-		if (listStyle.type != DTCSSListStyleTypeNone)
-		{
-			// first tab is to right-align bullet, numbering against
-			CGFloat tabOffset = paragraphStyle.headIndent - (CGFloat)5.0; // TODO: change with font size
-			[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-		}
-		
-		// second tab is for the beginning of first line after bullet
-		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];	
+		// first tab is to right-align bullet, numbering against
+		CGFloat tabOffset = leftPadding - (CGFloat)5.0; // TODO: change with font size
+		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 	}
 	
-	if (font)
-	{
-		fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
-	}
+	// second tab is for the beginning of first line after bullet
+	[paragraphStyle addTabStopAtPosition:leftPadding + leftMargin alignment:kCTLeftTextAlignment];
 	
 	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
 	
@@ -307,7 +305,7 @@
 		fontDesc.boldTrait = NO;
 		fontDesc.italicTrait = NO;
 		
-		font = [fontDesc newMatchingFont];
+		CTFontRef font = [fontDesc newMatchingFont];
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)

@@ -10,7 +10,6 @@
 
 @implementation DTListItemHTMLElement
 
-
 - (NSUInteger)_indexOfListItemInListRoot:(DTHTMLElement *)listRoot
 {
 	@synchronized(self)
@@ -32,6 +31,20 @@
 		
 		return index;
 	}
+}
+
+// calculates the accumulated list indent
+- (CGFloat)_listIndent
+{
+	CGFloat indent = _padding.left + _margins.left;
+	
+	return indent;
+}
+
+- (void)applyStyleDictionary:(NSDictionary *)styles
+{
+	[super applyStyleDictionary:styles];
+	
 }
 
 - (NSAttributedString *)attributedString
@@ -76,7 +89,7 @@
 		[effectiveList updateFromStyleDictionary:styles];
 	}
 	
-	NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:self.paragraphStyle.listIndent attributes:[tmpCopy attributesDictionary]];
+	NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:_listIndent leftMargin:_margins.left leftPadding:_padding.left attributes:[tmpCopy attributesDictionary]];
 	
 	if (prefixString)
 	{
