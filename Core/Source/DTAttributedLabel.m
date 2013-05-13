@@ -18,20 +18,31 @@
 	return [CALayer class];
 }
 
+- (void) setupAttributedLabel
+{
+	// we want to relayout the text if height or width change
+	self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
+	
+	self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
+	self.shouldAddFirstLineLeading = NO;
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	
 	if (self)
 	{
-		// we want to relayout the text if height or width change
-		self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
-		
-		self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
-		self.shouldAddFirstLineLeading = NO;
+		[self setupAttributedLabel];
 	}
 	
 	return self;
+}
+
+- (void) awakeFromNib
+{
+	[super awakeFromNib];
+	[self setupAttributedLabel];
 }
 
 #pragma mark - Sizing
@@ -44,7 +55,9 @@
 	}
 	
 	//  we have a layout frame and from this we get the needed size
-	return [_layoutFrame intrinsicContentFrame].size;
+	CGSize intrisicContentSize = [_layoutFrame intrinsicContentFrame].size;
+	return CGSizeMake(intrisicContentSize.width + _edgeInsets.left + _edgeInsets.right,
+					  intrisicContentSize.height + _edgeInsets.top + _edgeInsets.bottom);
 }
 
 #pragma mark - Properties 
