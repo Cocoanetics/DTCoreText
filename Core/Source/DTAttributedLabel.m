@@ -44,7 +44,9 @@
 	}
 	
 	//  we have a layout frame and from this we get the needed size
-	return [_layoutFrame intrinsicContentFrame].size;
+	CGSize intrisicContentSize = [_layoutFrame intrinsicContentFrame].size;
+	return CGSizeMake(intrisicContentSize.width + _edgeInsets.left + _edgeInsets.right,
+					  intrisicContentSize.height + _edgeInsets.top + _edgeInsets.bottom);
 }
 
 #pragma mark - Properties 
