@@ -1040,13 +1040,6 @@ NSDictionary *_classesForNames = nil;
 		{
 			_listIndent = _padding.left;
 			_padding.left = 0;
-			
-		}
-		
-		if (self.displayStyle == DTHTMLElementDisplayStyleListItem)
-		{
-			self.paragraphStyle.headIndent = _listIndent + _margins.left + _padding.left;
-			self.paragraphStyle.firstLineHeadIndent = 0;
 		}
 		
 		// if we still have padding we need a block
@@ -1207,8 +1200,6 @@ NSDictionary *_classesForNames = nil;
 	
 	_textColor = element.textColor;
 	_isColorInherited = YES;
-	
-	_listIndent = element->_listIndent;
 	
 	_preserveNewlines = element.preserveNewlines;
 	_textScale = element.textScale;

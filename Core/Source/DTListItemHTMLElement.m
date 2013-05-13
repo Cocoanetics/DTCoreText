@@ -34,9 +34,30 @@
 }
 
 // calculates the accumulated list indent
-- (CGFloat)_listIndent
+- (CGFloat)_sumOfListIndents
 {
-	CGFloat indent = _padding.left + _margins.left;
+	CGFloat indent = 0;
+	
+	DTHTMLElement *element = self.parentElement;
+	
+	while (element)
+	{
+		if ([element.name isEqualToString:@"ul"] || [element.name isEqualToString:@"ol"])
+		{
+			indent += element->_listIndent;
+		}
+		else if (element.displayStyle == DTHTMLElementDisplayStyleListItem)
+		{
+			// we accept these
+			indent += element.padding.left;
+		}
+		else
+		{
+			break;
+		}
+		
+		element = element.parentElement;
+	}
 	
 	return indent;
 }
@@ -45,6 +66,12 @@
 {
 	[super applyStyleDictionary:styles];
 	
+	CGFloat parentPadding = self.parentElement->_listIndent;
+	CGFloat listIndents = [self _sumOfListIndents];
+	
+	self.paragraphStyle.headIndent = listIndents + _padding.left + _margins.left;
+	
+	_margins.left += parentPadding;
 }
 
 - (NSAttributedString *)attributedString
@@ -89,7 +116,9 @@
 		[effectiveList updateFromStyleDictionary:styles];
 	}
 	
-	NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:_listIndent leftMargin:_margins.left leftPadding:_padding.left attributes:[tmpCopy attributesDictionary]];
+	CGFloat listIndents = self.paragraphStyle.headIndent - _margins.left - _padding.left;
+	
+	NSAttributedString *prefixString = [NSAttributedString prefixForListItemWithCounter:counter listStyle:effectiveList listIndent:listIndents leftMargin:_margins.left leftPadding:_padding.left attributes:[tmpCopy attributesDictionary]];
 	
 	if (prefixString)
 	{

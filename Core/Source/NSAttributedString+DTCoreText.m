@@ -273,27 +273,24 @@
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 	NSParameterAssert(fontDescriptor);
 	
-	
 	// modify paragraph style
-	
 	paragraphStyle.firstLineHeadIndent = listIndent;  // first line has prefix and starts at list indent;
-	paragraphStyle.headIndent = listIndent + leftMargin + leftPadding;  // following lines hanging
 
 	// resets tabs
-	
 	paragraphStyle.tabStops = nil;
 	
 	// set tab stops
-	
 	if (listStyle.type != DTCSSListStyleTypeNone)
 	{
+		NSAssert(leftMargin>0, @"There needs to be a margin greater than zero in %s", __PRETTY_FUNCTION__);
+		
 		// first tab is to right-align bullet, numbering against
-		CGFloat tabOffset = leftPadding - (CGFloat)5.0; // TODO: change with font size
+		CGFloat tabOffset = leftMargin - (CGFloat)5.0; // TODO: change with font size
 		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 	}
 	
 	// second tab is for the beginning of first line after bullet
-	[paragraphStyle addTabStopAtPosition:leftPadding + leftMargin alignment:kCTLeftTextAlignment];
+	[paragraphStyle addTabStopAtPosition:leftMargin + leftPadding alignment:kCTLeftTextAlignment];
 	
 	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
 	
