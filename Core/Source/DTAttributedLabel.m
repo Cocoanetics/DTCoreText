@@ -18,20 +18,31 @@
 	return [CALayer class];
 }
 
+- (void) setupAttributedLabel
+{
+	// we want to relayout the text if height or width change
+	self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
+	
+	self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
+	self.shouldAddFirstLineLeading = NO;
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	
 	if (self)
 	{
-		// we want to relayout the text if height or width change
-		self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
-		
-		self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
-		self.shouldAddFirstLineLeading = NO;
+		[self setupAttributedLabel];
 	}
 	
 	return self;
+}
+
+- (void) awakeFromNib
+{
+	[super awakeFromNib];
+	[self setupAttributedLabel];
 }
 
 #pragma mark - Sizing
