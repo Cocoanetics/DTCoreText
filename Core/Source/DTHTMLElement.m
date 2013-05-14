@@ -1038,7 +1038,7 @@ NSDictionary *_classesForNames = nil;
 		// FIXME: this is a workaround because having a text block padding in addition to list ident messes up indenting of the list
 		if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
 		{
-			self.paragraphStyle.listIndent = _padding.left;
+			_listIndent = _padding.left;
 			_padding.left = 0;
 		}
 		

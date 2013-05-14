@@ -273,12 +273,6 @@
 		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
 	}
 	
-	NSNumber *defaultListIndent = [_options objectForKey:DTDefaultListIndent];
-	if (defaultListIndent)
-	{
-		_defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
-	}
-	
 	_defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;
 	_defaultTag.paragraphStyle = _defaultParagraphStyle;
@@ -425,7 +419,7 @@
 	void (^listBlock)(void) = ^
 	{
 		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
-		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
+//		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
 		
 		// create the appropriate list style from CSS
 		DTCSSListStyle *newListStyle = [_currentTag listStyle];

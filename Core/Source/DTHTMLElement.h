@@ -72,6 +72,9 @@
 	// margins/padding
 	DTEdgeInsets _margins;
 	DTEdgeInsets _padding;
+	
+	// indent of lists
+	CGFloat _listIndent;
 }
 
 /**

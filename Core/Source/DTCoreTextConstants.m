@@ -22,7 +22,6 @@ NSString * const DTDefaultTextAlignment = @"DTDefaultTextAlignment";
 NSString * const DTDefaultLineHeightMultiplier = @"DTDefaultLineHeightMultiplier";
 NSString * const DTDefaultFirstLineHeadIndent = @"DTDefaultFirstLineHeadIndent";
 NSString * const DTDefaultHeadIndent = @"DTDefaultHeadIndent";
-NSString * const DTDefaultListIndent = @"DTDefaultListIndent";
 NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
