@@ -158,8 +158,10 @@
 		
 		if (backgroundColor)
 		{
+			CGRect backgroundColorRect = CGRectIntegral(CGRectMake(runStrokeBounds.origin.x, lineFrame.origin.y, runStrokeBounds.size.width, lineFrame.size.height));
+			
 			CGContextSetFillColorWithColor(context, backgroundColor.CGColor);
-			CGContextFillRect(context, runStrokeBounds);
+			CGContextFillRect(context, backgroundColorRect);
 		}
 		
 		if (drawStrikeOut || drawUnderline)
