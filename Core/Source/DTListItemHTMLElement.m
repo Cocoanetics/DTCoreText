@@ -70,6 +70,7 @@
 	CGFloat listIndents = [self _sumOfListIndents];
 	
 	self.paragraphStyle.headIndent = listIndents + _padding.left + _margins.left;
+	self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 	
 	_margins.left += parentPadding;
 }
@@ -117,7 +118,10 @@
 	// set tab stops
 	if (effectiveList.type != DTCSSListStyleTypeNone)
 	{
-		NSAssert(_margins.left>0, @"There needs to be a margin greater than zero in %s", __PRETTY_FUNCTION__);
+		if (_margins.left<=0)
+		{
+			return nil;
+		}
 		
 		// first tab is to right-align bullet, numbering against
 		CGFloat tabOffset = _margins.left - (CGFloat)5.0; // TODO: change with font size
@@ -129,29 +133,24 @@
 	
 	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
 	
-	if (fontDescriptor)
-	{
-		// make a font without italic or bold
-		DTCoreTextFontDescriptor *fontDesc = [fontDescriptor copy];
-		
-		fontDesc.boldTrait = NO;
-		fontDesc.italicTrait = NO;
-		
-		CTFontRef font = [fontDesc newMatchingFont];
-		
+	// make a font without italic or bold
+	fontDescriptor.boldTrait = NO;
+	fontDescriptor.italicTrait = NO;
+	
+	CTFontRef font = [fontDescriptor newMatchingFont];
+	
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
-		{
-			UIFont *uiFont = [UIFont fontWithCTFont:font];
-			[newAttributes setObject:uiFont forKey:NSFontAttributeName];
-			
-			CFRelease(font);
-		}
-		else
+	if (___useiOS6Attributes)
+	{
+		UIFont *uiFont = [UIFont fontWithCTFont:font];
+		[newAttributes setObject:uiFont forKey:NSFontAttributeName];
+		
+		CFRelease(font);
+	}
+	else
 #endif
-		{
-			[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
-		}
+	{
+		[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
 	}
 	
 	CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
@@ -254,6 +253,20 @@
 		{
 			[tmpStr setAttributes:newAttributes range:NSMakeRange(1, 1)];
 		}
+	}
+	
+	// estimate width of the prefix
+	NSString *trimmedPrefix = [prefix stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	NSAttributedString *tmpAttributedString = [[NSAttributedString alloc] initWithString:trimmedPrefix attributes:newAttributes];
+
+	CTLineRef tmpLine = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)(tmpAttributedString));
+	double width = CTLineGetTypographicBounds(tmpLine, NULL, NULL, NULL);
+	CFRelease(tmpLine);
+	
+	// if the non-whitespace characters are too wide then we omit the prefix
+	if ((width+5.0)>_margins.left)
+	{
+		return nil;
 	}
 	
 	return tmpStr;
