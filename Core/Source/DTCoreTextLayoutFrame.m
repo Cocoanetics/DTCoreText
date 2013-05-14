@@ -498,6 +498,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
 		CFRelease(line);
 		
+		NSLog(@"%f", newLine.ascent);
+		
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		
 		// prevent overlap of a line with small font size with line before it
@@ -540,17 +542,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		fittingLength += lineRange.length;
 		
 		lineRange.location += lineRange.length;
-		
-		// if there is a custom line height we need to adjust the ascender too
-		if (usesForcedLineHeight)
-		{
-			// causes the line frame to encompass also the extra space
-			newLine.ascent = lineHeight;
-		}
-		
 		previousLine = newLine;
-	//previousLineMetrics = currentLineMetrics;
-	} 
+	}
 	while (lineRange.location < maxIndex && !truncateLine);
 	
 	_lines = typesetLines;
