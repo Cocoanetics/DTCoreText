@@ -397,24 +397,22 @@
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
 	
 	
-	void (^liBlock)(void) = ^
-	{
-		_currentTag.paragraphStyle.paragraphSpacing = 0;
-		
-		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
-		
-		if (listStyle.type != DTCSSListStyleTypeNone)
-		{
-			// first tab is to right-align bullet, numbering against
-			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
-			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-		}
-		
-		// second tab is for the beginning of first line after bullet
-		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
-	};
-	
-	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
+//	void (^liBlock)(void) = ^
+//	{
+//		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
+//		
+//		if (listStyle.type != DTCSSListStyleTypeNone)
+//		{
+//			// first tab is to right-align bullet, numbering against
+//			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
+//			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+//		}
+//		
+//		// second tab is for the beginning of first line after bullet
+//		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
+//	};
+//	
+//	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
 	
 	void (^listBlock)(void) = ^
