@@ -498,8 +498,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
 		CFRelease(line);
 		
-		NSLog(@"%f", newLine.ascent);
-		
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		
 		// prevent overlap of a line with small font size with line before it
