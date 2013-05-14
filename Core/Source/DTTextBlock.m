@@ -15,12 +15,6 @@
 	DTColor *_backgroundColor;
 }
 
-- (NSString *)description
-{
-	return [NSString stringWithFormat:@"<%@ padding=%@>", NSStringFromClass([self class]), NSStringFromUIEdgeInsets(_padding)];
-}
-
-
 #pragma mark Properties
 
 @synthesize padding = _padding;
