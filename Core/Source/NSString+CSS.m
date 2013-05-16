@@ -36,6 +36,31 @@
 	return tmpDict;
 }
 
+- (BOOL)isCSSLengthValue
+{
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	
+	NSString *numberStr;
+	
+	if (![scanner scanCharactersFromSet:[NSCharacterSet cssLengthValueCharacterSet] intoString:&numberStr])
+	{
+		return NO;
+	}
+
+	NSString *numberUnitStr;
+	if (![scanner scanCharactersFromSet:[NSCharacterSet cssLengthUnitCharacterSet] intoString:&numberUnitStr])
+	{
+		return NO;
+	}
+	
+	if ([numberUnitStr isEqualToString:@"em"] | [numberUnitStr isEqualToString:@"px"] | [numberUnitStr isEqualToString:@"pt"])
+	{
+		return YES;
+	}
+
+	return NO;
+}
+
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
 {
 	NSUInteger stringLength = [self length];

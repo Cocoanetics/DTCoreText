@@ -63,6 +63,7 @@
 	DTHTMLElement *_rootNode;
 	DTHTMLElement *_bodyElement;
 	DTHTMLElement *_currentTag;
+	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -75,7 +76,7 @@
 		
 		// documentAttributes ignored for now
 		
-		//GCD setup
+		// GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
 		_stringAssemblyGroup = dispatch_group_create();
 		_dataParsingQueue = dispatch_queue_create("DTHTMLAttributedStringBuilderParser", 0);
@@ -273,12 +274,6 @@
 		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
 	}
 	
-	NSNumber *defaultListIndent = [_options objectForKey:DTDefaultListIndent];
-	if (defaultListIndent)
-	{
-		_defaultParagraphStyle.listIndent = [defaultListIndent integerValue];
-	}
-	
 	_defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;
 	_defaultTag.paragraphStyle = _defaultParagraphStyle;
@@ -402,30 +397,28 @@
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
 	
 	
-	void (^liBlock)(void) = ^
-	{
-		_currentTag.paragraphStyle.paragraphSpacing = 0;
-		
-		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
-		
-		if (listStyle.type != DTCSSListStyleTypeNone)
-		{
-			// first tab is to right-align bullet, numbering against
-			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
-			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-		}
-		
-		// second tab is for the beginning of first line after bullet
-		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
-	};
-	
-	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
+//	void (^liBlock)(void) = ^
+//	{
+//		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
+//		
+//		if (listStyle.type != DTCSSListStyleTypeNone)
+//		{
+//			// first tab is to right-align bullet, numbering against
+//			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
+//			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
+//		}
+//		
+//		// second tab is for the beginning of first line after bullet
+//		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
+//	};
+//	
+//	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
 	
 	
 	void (^listBlock)(void) = ^
 	{
 		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
-		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
+//		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
 		
 		// create the appropriate list style from CSS
 		DTCSSListStyle *newListStyle = [_currentTag listStyle];
@@ -646,9 +639,15 @@
 
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
 {
+	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
-		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
 		
+		if (_ignoreParseEvents)
+		{
+			return;
+		}
+
+		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
 		DTHTMLElement *previousLastChild = nil;
 		
 		if (_currentTag)
@@ -670,6 +669,8 @@
 		}
 		else
 		{
+			NSAssert(!_rootNode, @"Something went wrong, second root node found in document and not ignored.");
+			
 			// might be first node ever
 			if (!_rootNode)
 			{
@@ -716,7 +717,14 @@
 
 - (void)parser:(DTHTMLParser *)parser didEndElement:(NSString *)elementName
 {
+
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
+		
+		if (_ignoreParseEvents)
+		{
+			return;
+		}
+		
 		// output the element if it is direct descendant of body tag, or close of body in case there are direct text nodes
 		
 		// find block to execute for this tag if any
@@ -783,6 +791,12 @@
 			// missing end of element, attempt to recover
 			_currentTag = [_currentTag parentElement];
 		}
+		
+		// closing the root node, ignore everything afterwards
+		if (_currentTag == _rootNode)
+		{
+			_ignoreParseEvents = YES;
+		}
 
 		// go back up a level
 		_currentTag = [_currentTag parentElement];
@@ -794,6 +808,11 @@
 	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
+		
+		if (_ignoreParseEvents)
+		{
+			return;
+		}
 		
 		if ([string isIgnorableWhitespace])
 		{
@@ -853,6 +872,12 @@
 - (void)parser:(DTHTMLParser *)parser foundCDATA:(NSData *)CDATABlock
 {
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
+		
+		if (_ignoreParseEvents)
+		{
+			return;
+		}
+		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		NSString *styleBlock = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
@@ -866,9 +891,10 @@
 
 - (void)parserDidEndDocument:(DTHTMLParser *)parser
 {
+
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		NSAssert(!_currentTag, @"Something went wrong, at end of document there is still an open node");
-		
+
 		dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
 			// trim off white space at end
 			while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])

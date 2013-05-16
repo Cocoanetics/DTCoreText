@@ -23,8 +23,6 @@
  */
 @interface DTHTMLElement : DTHTMLParserNode
 {
-	DTHTMLElement *_parent;
-	
 	DTCoreTextFontDescriptor *_fontDescriptor;
 	DTCoreTextParagraphStyle *_paragraphStyle;
 	DTTextAttachment *_textAttachment;
@@ -74,6 +72,9 @@
 	// margins/padding
 	DTEdgeInsets _margins;
 	DTEdgeInsets _padding;
+	
+	// indent of lists
+	CGFloat _listIndent;
 }
 
 /**

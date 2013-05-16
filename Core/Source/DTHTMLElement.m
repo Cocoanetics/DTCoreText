@@ -321,6 +321,26 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
+- (BOOL)_isNotChildOfList
+{
+	DTHTMLElement *parent = self.parentElement;
+	
+	if (parent.displayStyle == DTHTMLElementDisplayStyleListItem)
+	{
+		return NO;
+	}
+	
+	if (parent.displayStyle == DTHTMLElementDisplayStyleBlock)
+	{
+		if ([parent.name isEqualToString:@"ol"] || [parent.name isEqualToString:@"ul"])
+		{
+			return NO;
+		}
+	}
+	
+	return YES;
+}
+
 - (NSAttributedString *)attributedString
 {
 	@synchronized(self)
@@ -416,49 +436,53 @@ NSDictionary *_classesForNames = nil;
 		// e.g. last LI needs to inherit the margin-after of the UL
 		if (self.displayStyle == DTHTMLElementDisplayStyleBlock && [tmpString length]>0)
 		{
-			NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 			
-			
+			// if this is latest
+			if ([self _isNotChildOfList])
+			{
+				NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
+				
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-			if (___useiOS6Attributes)
-			{
-				NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
-				
-				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:paraStyle];
-				
-				if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+				if (___useiOS6Attributes)
 				{
-					paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+					NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 					
-					// make new paragraph style
-					NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
+					DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:paraStyle];
 					
-					// remove old (works around iOS 4.3 leak)
-					[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
-					
-					// set new
-					[tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
+					if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+					{
+						paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+						
+						// make new paragraph style
+						NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
+						
+						// remove old (works around iOS 4.3 leak)
+						[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+						
+						// set new
+						[tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
+					}
 				}
-			}
-			else
+				else
 #endif
-			{
-				CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
-				
-				DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
-				
-				if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
 				{
-					paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+					CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 					
-					// make new paragraph style
-					CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
+					DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
 					
-					// remove old (works around iOS 4.3 leak)
-					[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
-					
-					// set new
-					[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+					if (paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing)
+					{
+						paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing;
+						
+						// make new paragraph style
+						CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
+						
+						// remove old (works around iOS 4.3 leak)
+						[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+						
+						// set new
+						[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+					}
 				}
 			}
 		}
@@ -660,9 +684,9 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isEqualToString:@"inherit"])
 		{
-			_fontDescriptor.pointSize = _parent.fontDescriptor.pointSize;
+			_fontDescriptor.pointSize = self.parentElement.fontDescriptor.pointSize;
 		}
-		else
+		else if ([fontSize isCSSLengthValue])
 		{
 			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 			_fontDescriptor.pointSize = fontSizeValue;
@@ -741,6 +765,10 @@ NSDictionary *_classesForNames = nil;
 		else if ([lowercaseFontFamily rangeOfString:@"times"].length)
 		{
 			_fontDescriptor.fontFamily = @"Times New Roman";
+		}
+		else if ([lowercaseFontFamily isEqualToString:@"inherit"])
+		{
+			_fontDescriptor.fontFamily = self.parentElement.fontDescriptor.fontFamily;
 		}
 		else
 		{
@@ -1034,7 +1062,7 @@ NSDictionary *_classesForNames = nil;
 		// FIXME: this is a workaround because having a text block padding in addition to list ident messes up indenting of the list
 		if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
 		{
-			self.paragraphStyle.listIndent = _padding.left;
+			_listIndent = _padding.left;
 			_padding.left = 0;
 		}
 		
@@ -1088,6 +1116,10 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.textBlocks = blocks;
 		}
 	}
+	else if (_displayStyle == DTHTMLElementDisplayStyleListItem)
+	{
+		self.paragraphStyle.paragraphSpacing = _margins.bottom;
+	}
 }
 
 - (DTCSSListStyle *)listStyle
@@ -1124,14 +1156,12 @@ NSDictionary *_classesForNames = nil;
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
 {
-	
-	
 	id value = [self valueForKeyPath:keyPath];
 	
 	// if property is not set we also go to parent
-	if (!value && _parent)
+	if (!value && self.parentElement)
 	{
-		return [_parent valueForKeyPathWithInheritance:keyPath];
+		return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 	}
 	
 	// enum properties have 0 for inherit
@@ -1139,9 +1169,9 @@ NSDictionary *_classesForNames = nil;
 	{
 		NSNumber *number = value;
 		
-		if (([number integerValue]==0) && _parent)
+		if (([number integerValue]==0) && self.parentElement)
 		{
-			return [_parent valueForKeyPathWithInheritance:keyPath];
+			return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 		}
 	}
 	
@@ -1150,9 +1180,9 @@ NSDictionary *_classesForNames = nil;
 	{
 		NSString *string = value;
 		
-		if ([string isEqualToString:@"inherit"] && _parent)
+		if ([string isEqualToString:@"inherit"] && self.parentElement)
 		{
-			return [_parent valueForKeyPathWithInheritance:keyPath];
+			return [self.parentElement valueForKeyPathWithInheritance:keyPath];
 		}
 	}
 	
@@ -1293,9 +1323,9 @@ NSDictionary *_classesForNames = nil;
 {
 	if (_fontVariant == DTHTMLElementFontVariantInherit)
 	{
-		if (_parent)
+		if (self.parentElement)
 		{
-			return _parent.fontVariant;
+			return self.parentElement.fontVariant;
 		}
 		
 		return DTHTMLElementFontVariantNormal;
