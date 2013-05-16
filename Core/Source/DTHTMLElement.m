@@ -686,7 +686,7 @@ NSDictionary *_classesForNames = nil;
 		{
 			_fontDescriptor.pointSize = self.parentElement.fontDescriptor.pointSize;
 		}
-		else
+		else if ([fontSize isCSSLengthValue])
 		{
 			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
 			_fontDescriptor.pointSize = fontSizeValue;

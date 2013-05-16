@@ -13,6 +13,10 @@
  */
 @interface NSCharacterSet (HTML)
 
+/**
+ @name HTML Character Sets
+ */
+
 
 /** 
  Creates an alpha-numeric character set, appropriate for tag names. 
@@ -48,10 +52,28 @@
 + (NSCharacterSet *)nonQuotedAttributeEndCharacterSet;
 
 
+/**
+ @name CSS Character Sets
+ */
+
 /** 
  Creates an alpha-numeric character set just as tagNameCharacterSet does but also with the dash and underscore characters. Does not contain the colon character because it will mess up parsing of CSS style attributes. Useful for CSS attribute names. 
  @returns An NSCharacterSet with alpha-numeric characters, dash, and underscore characters. 
  */
 + (NSCharacterSet *)cssStyleAttributeNameCharacterSet;
+
+
+/**
+ Characterset of characters that make up units in CSS values
+ @returns An NSCharacterSet
+ */
++ (NSCharacterSet *)cssLengthValueCharacterSet;
+
+
+/**
+ Characterset of characters that make up units in CSS lengths
+ @returns An NSCharacterSet
+ */
++ (NSCharacterSet *)cssLengthUnitCharacterSet;
 
 @end
