@@ -111,5 +111,17 @@
 	STAssertNil(fontAttribute, @"Uppercase FONT attribute shoudl be ignored");
 }
 
+- (void)testInvalidFontSize
+{
+	NSString *style = @"normal";
+	
+	BOOL isCSSLength = [style isCSSLengthValue];
+	STAssertFalse(isCSSLength, @"Should not be a normal font value");
+	
+	style = @"10px";
+	isCSSLength = [style isCSSLengthValue];
+	STAssertTrue(isCSSLength, @"Should be a valid font size value");
+}
+
 
 @end

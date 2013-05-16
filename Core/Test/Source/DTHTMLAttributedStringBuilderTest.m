@@ -266,6 +266,17 @@
 	}
 }
 
+- (void)testInvalidFontSize
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<span style=\"font-size:30px\"><p style=\"font-size:normal\">Bla</p></span>" options:nil];
+	
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+	
+	STAssertEquals(fontDescriptor.pointSize, (CGFloat)30, @"Should ignore invalid CSS length");
+}
+
 
 // if there is a text attachment contained in a HREF then the URL of that needs to be transferred to the image because it is needed for affixing a custom subview for a link button over the image or 
 - (void)testTransferOfHyperlinkURLToAttachment
