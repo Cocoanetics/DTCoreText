@@ -32,7 +32,7 @@
 			return;
 		}
 		
-		if (class && ![attachment isKindOfClass:[DTImageTextAttachment class]])
+		if (class && ![attachment isKindOfClass:class])
 		{
 			// doesn't fit class, next
 			return;
