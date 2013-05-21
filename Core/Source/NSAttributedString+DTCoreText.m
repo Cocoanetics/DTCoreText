@@ -26,6 +26,12 @@
 	NSRange entireRange = NSMakeRange(0, [self length]);
 	[self enumerateAttribute:NSAttachmentAttributeName inRange:entireRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
 		
+		if (attachment == nil)
+		{
+			// no attachment value
+			return;
+		}
+		
 		if (predicate && ![predicate evaluateWithObject:attachment])
 		{
 			// doesn't fit predicate, next
