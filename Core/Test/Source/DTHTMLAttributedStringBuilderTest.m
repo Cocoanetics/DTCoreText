@@ -138,17 +138,6 @@
 	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Expected displaySize to be 260x260");
 }
 
-- (void)testFontTagWithStyle
-{
-	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>" options:nil];
-	
-	CTFontRef font = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:0 effectiveRange:NULL]);
-	
-	CGFloat pointSize = CTFontGetSize(font);
-	
-	STAssertEquals(pointSize, (CGFloat)23.0f, @"Font Size should be 23 px (= 17 pt)");
-}
-
 // parser should recover from no end element being sent for this img
 - (void)testMissingClosingBracket
 {
@@ -229,56 +218,7 @@
 	}
 }
 
-- (void)testFontSizeInterpretation
-{
-	NSAttributedString *output = [self _attributedStringFromTestFileName:@"FontSizes"];
-
-	NSUInteger paraEndIndex = 0;
-	
-	while (paraEndIndex<[output length])
-	{
-		NSRange paragraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(paraEndIndex, 0) parBegIndex:NULL parEndIndex:&paraEndIndex];
-		
-		__block CGFloat paragraphFontSize = 0; // initialized from first font in paragraph
-		
-		[output enumerateAttribute:(id)kCTFontAttributeName inRange:paragraphRange options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
-			
-			NSString *subString = [[output string] substringWithRange:range];
-			
-			// the NL are exempt from the test
-			if ([subString isEqualToString:@"\n"])
-			{
-				return;
-			}
-			
-			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)(value)];
-			
-			if (paragraphFontSize==0)
-			{
-				paragraphFontSize = fontDescriptor.pointSize;
-			}
-			else
-			{
-				STAssertEquals(fontDescriptor.pointSize, paragraphFontSize, @"Font in range %@ does not match paragraph font size of %.1fpx", NSStringFromRange(range), paragraphFontSize);
-			}
-		}];
-		
-	}
-}
-
-- (void)testInvalidFontSize
-{
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<span style=\"font-size:30px\"><p style=\"font-size:normal\">Bla</p></span>" options:nil];
-	
-	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
-	
-	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-	
-	STAssertEquals(fontDescriptor.pointSize, (CGFloat)30, @"Should ignore invalid CSS length");
-}
-
-
-// if there is a text attachment contained in a HREF then the URL of that needs to be transferred to the image because it is needed for affixing a custom subview for a link button over the image or 
+// if there is a text attachment contained in a HREF then the URL of that needs to be transferred to the image because it is needed for affixing a custom subview for a link button over the image or
 - (void)testTransferOfHyperlinkURLToAttachment
 {
 	NSAttributedString *string = [self _attributedStringFromHTMLString:@"<a href=\"https://www.cocoanetics.com\"><img class=\"Bla\" style=\"width:150px; height:150px\" src=\"Oliver.jpg\"></a>" options:nil];
@@ -317,59 +257,6 @@
 	
 	NSString *line3 = lines[2];
 	STAssertTrue([line3 hasPrefix:@"\t7."], @"String should have prefix 7. on third item");
-}
-
-// testing if Helvetica font family returns the correct font
-- (void)testHelveticaVariants
-{
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>" options:nil];
-	
-	NSString *string = [attributedString string];
-	NSRange entireStringRange = NSMakeRange(0, [string length]);
-	
-	__block NSUInteger lineNumber = 0;
-	
-	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-		
-		NSRange fontRange;
-		CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(id)kCTFontAttributeName atIndex:substringRange.location effectiveRange:&fontRange]);
-		
-		STAssertEquals(enclosingRange, fontRange, @"Font should be on entire string");
-		
-		DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
-		
-		switch (lineNumber) {
-			case 0:
-			{
-				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
-				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica", @"Font face should be Helvetica");
-				break;
-			}
-
-			case 1:
-			{
-				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
-				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Bold", @"Font face should be Helvetica");
-				break;
-			}
-			case 2:
-			{
-				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
-				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Oblique", @"Font face should be Helvetica-Oblique");
-				break;
-			}
-			case 3:
-			{
-				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
-				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-BoldOblique", @"Font face should be Helvetica-BoldOblique");
-				break;
-			}
-			default:
-				break;
-		}
-		
-		lineNumber++;
-	}];
 }
 
 - (void)testHeaderLevelTransfer
@@ -439,6 +326,118 @@
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 	
 	STAssertEqualObjects(fontDescriptor.fontFamily, @"Times New Roman", @"Incorrect fallback font family");
+}
+
+- (void)testInvalidFontSize
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<span style=\"font-size:30px\"><p style=\"font-size:normal\">Bla</p></span>" options:nil];
+	
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+	
+	STAssertEquals(fontDescriptor.pointSize, (CGFloat)30, @"Should ignore invalid CSS length");
+}
+
+- (void)testFontTagWithStyle
+{
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<font style=\"font-size: 17pt;\"> <u>BOLUS DOSE&nbsp;&nbsp; = xx.x mg&nbsp;</u> </font>" options:nil];
+	
+	CTFontRef font = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:0 effectiveRange:NULL]);
+	
+	CGFloat pointSize = CTFontGetSize(font);
+	
+	STAssertEquals(pointSize, (CGFloat)23.0f, @"Font Size should be 23 px (= 17 pt)");
+}
+
+- (void)testFontSizeInterpretation
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"FontSizes"];
+	
+	NSUInteger paraEndIndex = 0;
+	
+	while (paraEndIndex<[output length])
+	{
+		NSRange paragraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(paraEndIndex, 0) parBegIndex:NULL parEndIndex:&paraEndIndex];
+		
+		__block CGFloat paragraphFontSize = 0; // initialized from first font in paragraph
+		
+		[output enumerateAttribute:(id)kCTFontAttributeName inRange:paragraphRange options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+			
+			NSString *subString = [[output string] substringWithRange:range];
+			
+			// the NL are exempt from the test
+			if ([subString isEqualToString:@"\n"])
+			{
+				return;
+			}
+			
+			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)(value)];
+			
+			if (paragraphFontSize==0)
+			{
+				paragraphFontSize = fontDescriptor.pointSize;
+			}
+			else
+			{
+				STAssertEquals(fontDescriptor.pointSize, paragraphFontSize, @"Font in range %@ does not match paragraph font size of %.1fpx", NSStringFromRange(range), paragraphFontSize);
+			}
+		}];
+		
+	}
+}
+
+// testing if Helvetica font family returns the correct font
+- (void)testHelveticaVariants
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica\">Regular</p><p style=\"font-family:Helvetica;font-weight:bold;\">Bold</p><p style=\"font-family:Helvetica;font-style:italic;}\">Italic</p><p style=\"font-family:Helvetica;font-style:italic;font-weight:bold;}\">Bold+Italic</p>" options:nil];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSRange fontRange;
+		CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(id)kCTFontAttributeName atIndex:substringRange.location effectiveRange:&fontRange]);
+		
+		STAssertEquals(enclosingRange, fontRange, @"Font should be on entire string");
+		
+		DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+		
+		switch (lineNumber) {
+			case 0:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica", @"Font face should be Helvetica");
+				break;
+			}
+				
+			case 1:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Bold", @"Font face should be Helvetica");
+				break;
+			}
+			case 2:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-Oblique", @"Font face should be Helvetica-Oblique");
+				break;
+			}
+			case 3:
+			{
+				STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font family should be Helvetica");
+				STAssertEqualObjects(fontDescriptor.fontName, @"Helvetica-BoldOblique", @"Font face should be Helvetica-BoldOblique");
+				break;
+			}
+			default:
+				break;
+		}
+		
+		lineNumber++;
+	}];
 }
 
 #pragma mark - Nested Lists
