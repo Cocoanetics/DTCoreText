@@ -418,6 +418,8 @@
 	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
 }
 
+#pragma mark - Fonts
+
 // Issue 443: crash on combining font-family:inherit with small caps
 - (void)testFontFamilySmallCapsCrash
 {
@@ -426,6 +428,17 @@
 	STAssertTrueNoThrow((attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-variant:small-caps; font-family:inherit;\">Test</p>" options:nil]), @"Should be able to parse without crash");
 	
 	STAssertTrue([attributedString length]==5, @"Should be 5 characters");
+}
+
+- (void)testFallbackFontFamily
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:Calibri\">Text</p>" options:nil];
+	
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+	
+	STAssertEqualObjects(fontDescriptor.fontFamily, @"Times New Roman", @"Incorrect fallback font family");
 }
 
 #pragma mark - Nested Lists
