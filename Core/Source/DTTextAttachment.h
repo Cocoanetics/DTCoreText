@@ -150,7 +150,9 @@ typedef enum
 @property (nonatomic, strong) NSString *hyperLinkGUID;
 
 /**
- The attributes dictionary of the attachment
+ The attributes dictionary of the attachment.
+ 
+ If initialized from HTML, the values of this dictionary are transferred from the give HTML element.  If you wish to add custom attribute values to be written to and read from HTML, be aware that the attribute name will be lowercased in compliance with W3C recommendations.  Therefore, you may set a camel-case name and persist to HTML, but you will receive a lowercase name when the HTML is transformed into an attributed string.
  */
 @property (nonatomic, strong) NSDictionary *attributes;
 
