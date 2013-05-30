@@ -167,6 +167,20 @@
  */
 
 /**
+ Sets the font family to use if the font family in a font descriptor is invalid.
+ 
+ The fallback font family cannot be `nil` and must be a valid font family. The default is **Times New Roman**. 
+ @param fontFamily The font family
+ */
++ (void)setFallbackFontFamily:(NSString *)fontFamily;
+
+/**
+ Returns the font family to use if the font family in a font descriptor is invalid. The default is **Times New Roman**.
+ @returns The font family
+ */
++ (NSString *)fallbackFontFamily;
+
+/**
  Sets the global font name override to use when encountering a font family with given bold and italic attributes.
  @param fontName The font name to use
  @param fontFamily The font family to use this for

@@ -14,6 +14,9 @@ static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
 static dispatch_queue_t _fontQueue;
 
+// font family to use if no font can be found with the given font-family
+static NSString *_fallbackFontFamily = @"Times New Roman";
+
 // adds "STHeitiSC-Light" font for cascading fix on iOS 5
 static BOOL _needsChineseFontCascadeFix = NO;
 
@@ -141,6 +144,20 @@ static BOOL _needsChineseFontCascadeFix = NO;
 			}
 		}
 	}
+}
+
+#pragma mark - Global Font Overriding
+
++ (void)setFallbackFontFamily:(NSString *)fontFamily
+{
+	NSParameterAssert(fontFamily);
+	
+	_fallbackFontFamily = [fontFamily copy];
+}
+
++ (NSString *)fallbackFontFamily
+{
+	return _fallbackFontFamily;
 }
 
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
@@ -553,6 +570,19 @@ static BOOL _needsChineseFontCascadeFix = NO;
 			// try without traits
 			NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
 			[mutableAttributes removeObjectForKey:(id)kCTFontTraitsAttribute];
+			
+			CFRelease(searchingFontDescriptor);
+			searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
+			
+			// do the relaxed search
+			matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
+		}
+		
+		if (!matchingFontDescriptor)
+		{
+			// try with fallback font family
+			NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
+			[mutableAttributes setObject:_fallbackFontFamily forKey:(id)kCTFontFamilyNameAttribute];
 			
 			CFRelease(searchingFontDescriptor);
 			searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
