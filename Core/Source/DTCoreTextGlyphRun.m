@@ -379,7 +379,18 @@
 		return _isTrailingWhitespace;
 	}
 	
-	if (self == [[_line glyphRuns] lastObject])
+	BOOL isTrailing;
+	
+	if (_line.writingDirectionIsRightToLeft)
+	{
+		isTrailing = (self == [[_line glyphRuns] objectAtIndex:0]);
+	}
+	else
+	{
+		isTrailing = (self == [[_line glyphRuns] lastObject]);
+	}
+	
+	if (isTrailing)
 	{
 		if (!_didCalculateMetrics)
 		{
