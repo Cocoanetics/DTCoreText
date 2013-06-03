@@ -6,10 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTWeakSupport.h"
 
-
-@class DTTextAttachment;
 @class DTWebVideoView;
+@class DTTextAttachment;
 
 /**
  Protocol for delegates of <DTWebVideoView>
@@ -42,7 +42,7 @@
 /**
  The delegate of the video view
  */
-@property (nonatomic, assign) id <DTWebVideoViewDelegate> delegate; 	// subtle simulator bug - use assign not __unsafe_unretained
+@property (nonatomic, DT_WEAK_PROPERTY) id <DTWebVideoViewDelegate> delegate;
 
 /**
  The text attachment representing an embedded video.

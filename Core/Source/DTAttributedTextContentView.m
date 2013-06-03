@@ -46,7 +46,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 		unsigned int delegateSupportsNotificationBeforeTextBoxDrawing:1;
 	} _delegateFlags;
 	
-	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
+	DT_WEAK_VARIABLE id <DTAttributedTextContentViewDelegate> _delegate;
 }
 
 @property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
@@ -807,7 +807,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				
 				if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 				{
-					__unsafe_unretained DTAttributedTextContentView *weakself = self;
+					DT_WEAK_VARIABLE DTAttributedTextContentView *weakself = self;
 					
 					[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
 						BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];

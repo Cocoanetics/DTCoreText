@@ -9,6 +9,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTTextBlock.h"
 #import "DTCSSListStyle.h"
+#import "DTWeakSupport.h"
 
 #if !TARGET_OS_IPHONE
 #import <CommonCrypto/CommonDigest.h>
@@ -156,7 +157,7 @@ typedef struct {
 		// tab stops
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(_defaultTabInterval), &_defaultTabInterval);
 		
-		__unsafe_unretained NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
+		DT_WEAK_VARIABLE NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
 		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
 		{
 			self.tabStops = stops;

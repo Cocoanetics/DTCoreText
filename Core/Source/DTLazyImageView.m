@@ -6,6 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
 
 static NSCache *_imageCache = nil;
@@ -26,18 +27,17 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	
 	NSURLConnection *_connection;
 	NSMutableData *_receivedData;
-
+	
 	/* For progressive download */
 	CGImageSourceRef _imageSource;
 	CGFloat _fullHeight;
 	CGFloat _fullWidth;
 	NSUInteger _expectedSize;
-    
-    BOOL shouldShowProgressiveDownload;
 	
-	__unsafe_unretained id<DTLazyImageViewDelegate> _delegate;
+	BOOL shouldShowProgressiveDownload;
+	
+	DT_WEAK_VARIABLE id<DTLazyImageViewDelegate> _delegate;
 }
-@synthesize delegate=_delegate;
 
 - (void)dealloc
 {
@@ -311,13 +311,15 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 
 #pragma mark Properties
 
-- (void) setUrlRequest:(NSMutableURLRequest *)request {
+- (void) setUrlRequest:(NSMutableURLRequest *)request
+{
 	_urlRequest = request;
 	self.url = [_urlRequest URL];
 }
 
-@synthesize url = _url;
+@synthesize delegate=_delegate;
 @synthesize shouldShowProgressiveDownload;
+@synthesize url = _url;
 @synthesize urlRequest = _urlRequest;
 
 @end
