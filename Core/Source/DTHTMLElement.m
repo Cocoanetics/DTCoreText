@@ -100,8 +100,6 @@ NSDictionary *_classesForNames = nil;
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
-	BOOL shouldAddFont = YES;
-	
 	// copy additional attributes
 	if (_additionalAttributes)
 	{
@@ -122,39 +120,30 @@ NSDictionary *_classesForNames = nil;
 		
 		// remember original paragraphSpacing
 		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:DTAttachmentParagraphSpacingAttribute];
-		
-#ifndef DT_ADD_FONT_ON_ATTACHMENTS
-		// omit adding a font unless we need it also on attachments, e.g. for editing
-		shouldAddFont = NO;
-#endif
 	}
 	
-	// otherwise we have a font
-	if (shouldAddFont)
+	CTFontRef font = [_fontDescriptor newMatchingFont];
+	
+	if (font)
 	{
-		CTFontRef font = [_fontDescriptor newMatchingFont];
-		
-		if (font)
-		{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-			if (___useiOS6Attributes)
-			{
-				UIFont *uiFont = [UIFont fontWithCTFont:font];
-				[tmpDict setObject:uiFont forKey:NSFontAttributeName];
-			}
-			else
-#endif
-			{
-				// __bridge since its already retained elsewhere
-				[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
-			}
-			
-			
-			// use this font to adjust the values needed for the run delegate during layout time
-			[_textAttachment adjustVerticalAlignmentForFont:font];
-			
-			CFRelease(font);
+		if (___useiOS6Attributes)
+		{
+			UIFont *uiFont = [UIFont fontWithCTFont:font];
+			[tmpDict setObject:uiFont forKey:NSFontAttributeName];
 		}
+		else
+#endif
+		{
+			// __bridge since its already retained elsewhere
+			[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+		}
+		
+		
+		// use this font to adjust the values needed for the run delegate during layout time
+		[_textAttachment adjustVerticalAlignmentForFont:font];
+		
+		CFRelease(font);
 	}
 	
 	// add hyperlink
