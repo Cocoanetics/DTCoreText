@@ -134,7 +134,13 @@
 	{
 		// calculate area covered by non-whitespace
 		CGRect lineFrame = _line.frame;
-		lineFrame.size.width -= _line.trailingWhitespaceWidth;
+		
+		// LTR line frames include trailing whitespace in width
+		// we need to subtract it so that we don't highlight/underline it
+		if (!_line.writingDirectionIsRightToLeft)
+		{
+			lineFrame.size.width -= _line.trailingWhitespaceWidth;
+		}
 		
 		// exclude trailing whitespace so that we don't underline too much
 		CGRect runStrokeBounds = CGRectIntersection(lineFrame, self.frame);
@@ -379,7 +385,18 @@
 		return _isTrailingWhitespace;
 	}
 	
-	if (self == [[_line glyphRuns] lastObject])
+	BOOL isTrailing;
+	
+	if (_line.writingDirectionIsRightToLeft)
+	{
+		isTrailing = (self == [[_line glyphRuns] objectAtIndex:0]);
+	}
+	else
+	{
+		isTrailing = (self == [[_line glyphRuns] lastObject]);
+	}
+	
+	if (isTrailing)
 	{
 		if (!_didCalculateMetrics)
 		{

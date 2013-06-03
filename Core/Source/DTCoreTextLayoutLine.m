@@ -339,20 +339,22 @@
 		if (!_glyphRuns)
 		{
 			// run array is owned by line
-			NSArray *runs = (__bridge NSArray *)CTLineGetGlyphRuns(_line);
+			CFArrayRef runs = CTLineGetGlyphRuns(_line);
+			CFIndex runCount = CFArrayGetCount(runs);
 			
-			if (runs)
+			if (runCount)
 			{
-				CGFloat offset = 0;
-				
-				NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:[runs count]];
-				
-				for (id oneRun in runs)
+				NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:runCount];
+
+				for (CFIndex i=0; i<runCount; i++)
 				{
-					DTCoreTextGlyphRun *glyphRun = [[DTCoreTextGlyphRun alloc] initWithRun:(__bridge CTRunRef)oneRun layoutLine:self offset:offset];
-					[tmpArray addObject:glyphRun];
+					CTRunRef oneRun = CFArrayGetValueAtIndex(runs, i);
 					
-					offset += glyphRun.frame.size.width;
+					// assumption: position of first glyph is also the correct offset of the entire run
+					CGPoint position = *CTRunGetPositionsPtr(oneRun);
+					
+					DTCoreTextGlyphRun *glyphRun = [[DTCoreTextGlyphRun alloc] initWithRun:oneRun layoutLine:self offset:position.x];
+					[tmpArray addObject:glyphRun];
 				}
 				
 				_glyphRuns = tmpArray;
