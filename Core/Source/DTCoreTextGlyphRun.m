@@ -13,12 +13,13 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
+#import "DTWeakSupport.h"
 
 @interface DTCoreTextGlyphRun ()
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
-@property (nonatomic, unsafe_unretained, readwrite) NSDictionary *attributes;
+@property (nonatomic, DT_WEAK_PROPERTY, readwrite) NSDictionary *attributes;
 
 @end
 
@@ -42,8 +43,8 @@
 	
 	const CGPoint *_glyphPositionPoints;
 	
-	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
-	__unsafe_unretained NSDictionary *_attributes;
+	DT_WEAK_VARIABLE DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+	DT_WEAK_VARIABLE NSDictionary *_attributes;
     NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;

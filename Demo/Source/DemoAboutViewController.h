@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "DTWeakSupport.h"
 
 @interface DemoAboutViewController : UIViewController
 
-@property (unsafe_unretained, nonatomic) IBOutlet DTAttributedTextView *attributedTextView;
+@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet DTAttributedTextView *attributedTextView;
 
 @end

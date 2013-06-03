@@ -14,7 +14,7 @@
 {
 	DTAttributedTextContentView *_attributedTextContextView;
 	
-	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _textDelegate;
+	DT_WEAK_VARIABLE id <DTAttributedTextContentViewDelegate> _textDelegate;
 	
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
 	

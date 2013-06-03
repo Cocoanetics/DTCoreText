@@ -6,9 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTWebVideoView.h"
-#import "DTIframeTextAttachment.h"
-
+#import "DTCoreText.h"
 
 @interface DTWebVideoView ()
 
@@ -21,7 +19,7 @@
 {
 	DTTextAttachment *_attachment;
 	
-	__unsafe_unretained id <DTWebVideoViewDelegate> _delegate;
+	DT_WEAK_VARIABLE id <DTWebVideoViewDelegate> _delegate;
 	
 	UIWebView *_webView;
 }

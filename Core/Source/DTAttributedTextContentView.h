@@ -7,6 +7,7 @@
 //
 
 #import "DTCoreTextLayoutFrame.h"
+#import "DTWeakSupport.h"
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
@@ -231,8 +232,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  The delegate that is in charge of supplying custom behavior for the receiver. It must conform to <DTAttributedTextContentViewDelegate> and provide custom subviews, link buttons, etc.
  */
 
-@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
-
+@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
 
 /**
  @name Customizing Content Display
