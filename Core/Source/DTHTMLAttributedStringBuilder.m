@@ -805,6 +805,8 @@
 
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 {
+	// encoded tab entities (%#9;) are returned individually, normal tab characters together with text
+	BOOL isSingleTab = [string isEqualToString:@"\t"] && [parser previousCharacterWasDecodedEntity];
 	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		
@@ -814,9 +816,6 @@
 		}
 		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
-		
-		// encoded tab entities (%#9;) are returned individually, normal tab characters together with text
-		BOOL isSingleTab = [string isEqualToString:@"\t"];
 		
 		if (!isSingleTab && [string isIgnorableWhitespace])
 		{
