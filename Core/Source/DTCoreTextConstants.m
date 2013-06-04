@@ -35,7 +35,6 @@ NSString * const DTLinkHighlightColorAttribute = @"DTLinkHighlightColor";
 NSString * const DTAnchorAttribute = @"DTAnchor";
 NSString * const DTGUIDAttribute = @"DTGUID";
 NSString * const DTHeaderLevelAttribute = @"DTHeaderLevel";
-NSString * const DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
 NSString * const DTStrikeOutAttribute = @"NSStrikethrough";
 NSString * const DTBackgroundColorAttribute = @"DTBackgroundColor";
 NSString * const DTShadowsAttribute = @"DTShadows";
