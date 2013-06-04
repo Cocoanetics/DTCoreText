@@ -265,13 +265,7 @@ NSDictionary *_classesForNames = nil;
 			[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
 		}
 	}
-	
-	// add tag for PRE so that we can omit changing this font if we override fonts
-	if (_preserveNewlines)
-	{
-		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTPreserveNewlinesAttribute];
-	}
-	
+
 	if (_headerLevel)
 	{
 		[tmpDict setObject:[NSNumber numberWithInteger:_headerLevel] forKey:DTHeaderLevelAttribute];
