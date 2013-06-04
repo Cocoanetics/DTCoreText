@@ -305,6 +305,20 @@
 	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
 }
 
+#pragma mark - Non-Wellformed Content
+
+// issue 462: Assertion Failure when attempting to parse beyond final </html> tag
+- (void)testCharactersAfterEndOfHTML
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html>bla bla bla" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
+// issue 447: EXC_BAD_ACCESS on Release build when accessing -[DTHTMLElement parentElement] with certain HTML data
+- (void)testTagAfterEndOfHTML
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html><img>" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
 #pragma mark - Fonts
 
 // Issue 443: crash on combining font-family:inherit with small caps

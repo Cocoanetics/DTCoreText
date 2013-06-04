@@ -807,12 +807,13 @@
 {
 	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
-		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		if (_ignoreParseEvents)
 		{
 			return;
 		}
+		
+		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
 		if ([string isIgnorableWhitespace])
 		{
