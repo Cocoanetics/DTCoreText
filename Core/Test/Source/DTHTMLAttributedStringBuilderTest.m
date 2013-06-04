@@ -78,6 +78,30 @@
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
 
+// issue 466: Support Encoding of Tabs in HTML
+- (void)testTabDecodingAndPreservation
+{
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"Some text and then 2 encoded&#9;&#9tabs and 2 non-encoded		tabs" options:nil];
+	
+	NSString *plainString = [output string];
+	NSRange range = [plainString rangeOfString:@"encoded"];
+	
+	STAssertTrue(range.location != NSNotFound, @"Should find 'encoded' in the string");
+	
+	NSString *tabs = [plainString substringWithRange:NSMakeRange(range.location+range.length, 2)];
+	
+	BOOL hasTabs = [tabs isEqualToString:@"\t\t"];
+	
+	STAssertTrue(hasTabs, @"There should be two tabs");
+	
+	range = [plainString rangeOfString:@"non-encoded"];
+	NSString *compressedTabs = [plainString substringWithRange:NSMakeRange(range.location+range.length, 2)];
+	
+	BOOL hasCompressed = [compressedTabs isEqualToString:@" t"];
+	
+	STAssertTrue(hasCompressed, @"The second two tabs should be compressed to a single whitespace");
+}
+
 #pragma mark - General Tests
 
 // tests functionality of dir attribute
