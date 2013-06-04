@@ -79,4 +79,10 @@
  */
 - (NSString *)stringByAddingAppleConvertedSpace;
 
+/**
+ Encloses ranges of tabs in a span to preserve them when being parsed.
+ @param fragment If `YES` then the class will will be added, if `NO` then the white-space inline style is used
+ */
+- (NSString *)stringByAddingAppleTabSpansForFragment:(BOOL)fragment;
+
 @end
