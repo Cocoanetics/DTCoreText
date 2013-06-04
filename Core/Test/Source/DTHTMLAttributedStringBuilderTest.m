@@ -44,8 +44,7 @@
 	return [builder generatedAttributedString];
 }
 
-
-#pragma mark - Tests
+#pragma mark - Whitespace
 
 - (void)testSpaceBetweenUnderlines
 {
@@ -61,7 +60,7 @@
 - (void)testWhitspaceAfterParagraphPromotedImage
 {
 	NSAttributedString *output = [self _attributedStringFromTestFileName:@"WhitespaceFollowingImagePromotedToParagraph"];
-
+	
 	STAssertTrue([output length]==6, @"Generated String should be 6 characters");
 	
 	NSMutableString *expectedOutput = [NSMutableString stringWithFormat:@"1\n%@\n2\n", UNICODE_OBJECT_PLACEHOLDER];
@@ -78,6 +77,8 @@
 	
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
+
+#pragma mark - General Tests
 
 // tests functionality of dir attribute
 - (void)testWritingDirection
