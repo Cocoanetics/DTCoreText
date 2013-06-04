@@ -400,12 +400,15 @@ static NSDictionary *entityReverseLookup = nil;
 		}
 		else
 		{
-			if (oneChar<=255)
+			if (oneChar<32)
+			{
+				[tmpString appendFormat:@"&#%x;", oneChar];
+			}
+			else if (oneChar<=255)
 			{
 				[tmpString appendFormat:@"%C", oneChar];
 			}
-			else if (CFStringIsSurrogateHighCharacter(oneChar) &&
-							 i < [self length]-1)
+			else if (CFStringIsSurrogateHighCharacter(oneChar) &&  i < [self length]-1)
 			{
 				i++;
 				unichar surrogateLowChar = [self characterAtIndex:i];
