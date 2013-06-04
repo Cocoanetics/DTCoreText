@@ -310,13 +310,13 @@
 // issue 462: Assertion Failure when attempting to parse beyond final </html> tag
 - (void)testCharactersAfterEndOfHTML
 {
-	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html>bla bla bla" options:nil], @"Should be able to parse without crash");
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html>bla bla bla" options:nil]!=nil, @"Should be able to parse without crash");
 }
 
 // issue 447: EXC_BAD_ACCESS on Release build when accessing -[DTHTMLElement parentElement] with certain HTML data
 - (void)testTagAfterEndOfHTML
 {
-	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html><img>" options:nil], @"Should be able to parse without crash");
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html><img>" options:nil]!=nil, @"Should be able to parse without crash");
 }
 
 #pragma mark - Fonts
