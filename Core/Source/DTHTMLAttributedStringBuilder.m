@@ -815,7 +815,10 @@
 		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
-		if ([string isIgnorableWhitespace])
+		// encoded tab entities (%#9;) are returned individually, normal tab characters together with text
+		BOOL isSingleTab = [string isEqualToString:@"\t"];
+		
+		if (!isSingleTab && [string isIgnorableWhitespace])
 		{
 			// ignore whitespace as first element of block element
 			if (_currentTag.displayStyle!=DTHTMLElementDisplayStyleInline && ![_currentTag.childNodes count])
@@ -844,6 +847,11 @@
 		
 		[textNode inheritAttributesFromElement:_currentTag];
 		[textNode interpretAttributes];
+		
+		if (isSingleTab)
+		{
+			textNode.preserveNewlines = YES;
+		}
 		
 		// save it for later output
 		[_currentTag addChildNode:textNode];
