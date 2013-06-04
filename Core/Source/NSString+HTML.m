@@ -400,7 +400,7 @@ static NSDictionary *entityReverseLookup = nil;
 		}
 		else
 		{
-			if (oneChar>=32 && oneChar<=255)
+			if (oneChar<=255)
 			{
 				// output as is
 				[tmpString appendFormat:@"%C", oneChar];
@@ -782,6 +782,44 @@ static NSDictionary *entityReverseLookup = nil;
 				
 				[output appendString:@"</span>"];
 			}
+		}
+	}
+	
+	return output;
+}
+
+- (NSString *)stringByAddingAppleTabSpansForFragment:(BOOL)fragment
+{
+	NSMutableString *output = [NSMutableString string];
+	
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	scanner.charactersToBeSkipped = nil;
+	
+	NSCharacterSet *tabSet = [NSCharacterSet characterSetWithCharactersInString:@"\t"];
+	
+	while (![scanner isAtEnd])
+	{
+		NSString *part;
+		if ([scanner scanUpToCharactersFromSet:tabSet intoString:&part])
+		{
+			[output appendString:part];
+		}
+		
+		NSString *tabs;
+		if ([scanner scanCharactersFromSet:tabSet intoString:&tabs])
+		{
+			if (fragment)
+			{
+				[output appendString:@"<span style=\"white-space:pre;\">"];
+			}
+			else
+			{
+				[output appendString:@"<span class=\"Apple-tab-span\">"];
+			}
+			
+			[output appendString:tabs];
+			
+			[output appendString:@"</span>"];
 		}
 	}
 	
