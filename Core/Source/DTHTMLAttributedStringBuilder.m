@@ -396,29 +396,9 @@
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
 	
-	
-//	void (^liBlock)(void) = ^
-//	{
-//		DTCSSListStyle *listStyle = [_currentTag.paragraphStyle.textLists lastObject];
-//		
-//		if (listStyle.type != DTCSSListStyleTypeNone)
-//		{
-//			// first tab is to right-align bullet, numbering against
-//			CGFloat tabOffset = _currentTag.paragraphStyle.headIndent - 5.0f*_textScale;
-//			[_currentTag.paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-//		}
-//		
-//		// second tab is for the beginning of first line after bullet
-//		[_currentTag.paragraphStyle addTabStopAtPosition:_currentTag.paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];
-//	};
-//	
-//	[_tagStartHandlers setObject:[liBlock copy] forKey:@"li"];
-	
-	
 	void (^listBlock)(void) = ^
 	{
 		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent;
-//		_currentTag.paragraphStyle.headIndent += _currentTag.paragraphStyle.listIndent;
 		
 		// create the appropriate list style from CSS
 		DTCSSListStyle *newListStyle = [_currentTag listStyle];
@@ -805,7 +785,6 @@
 
 - (void)parser:(DTHTMLParser *)parser foundCharacters:(NSString *)string
 {
-	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
 		
 		if (_ignoreParseEvents)
@@ -815,7 +794,7 @@
 		
 		NSAssert(_currentTag, @"Cannot add text node without a current node");
 		
-		if ([string isIgnorableWhitespace])
+		if (!_currentTag.preserveNewlines && [string isIgnorableWhitespace])
 		{
 			// ignore whitespace as first element of block element
 			if (_currentTag.displayStyle!=DTHTMLElementDisplayStyleInline && ![_currentTag.childNodes count])

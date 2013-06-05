@@ -54,18 +54,26 @@
 
 #pragma mark - Generating HTML
 
-// checks the style against previous styles and returns the style class for this
-- (NSString *)_styleClassForElement:(NSString *)elementName style:(NSString *)style
+- (NSMutableArray *)_styleArrayForElement:(NSString *)elementName
 {
 	// get array of styles for element
 	NSMutableArray *_styleArray = [_styleLookup objectForKey:elementName];
-
+	
 	if (!_styleArray)
 	{
 		// first time we see this element
 		_styleArray = [[NSMutableArray alloc] init];
 		[_styleLookup setObject:_styleArray forKey:elementName];
 	}
+	
+	return _styleArray;
+}
+
+// checks the style against previous styles and returns the style class for this
+- (NSString *)_styleClassForElement:(NSString *)elementName style:(NSString *)style
+{
+	// get array of styles for element
+	NSMutableArray *_styleArray = [self _styleArrayForElement:elementName];
 	
 	NSInteger index = [_styleArray indexOfObject:style];
 	
@@ -672,7 +680,9 @@
 	}
 		
 	NSMutableString *output = [NSMutableString string];
-
+	
+	BOOL hasTab = ([retString rangeOfString:@"\t"].location != NSNotFound);
+	
 	if (!fragment)
 	{
 		// append style block before text
@@ -690,12 +700,34 @@
 			}];
 		}
 		
+		if (hasTab)
+		{
+			[styleBlock appendString:@"span.Apple-tab-span {white-space:pre;}"];
+		}
+		
 		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
+	}
+
+
+	if (hasTab)
+	{
+		NSRange range = NSMakeRange(0, [retString length]);
+		
+		if (fragment)
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span style=\"white-space:pre;\">\t</span>" options:0 range:range];
+		}
+		else
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span class=\"Apple-tab-span\">\t</span>" options:0 range:range];
+		}
 	}
 	
 	if (_useAppleConvertedSpace)
 	{
-		[output appendString:[retString stringByAddingAppleConvertedSpace]];
+		NSString *convertedSpaces = [retString stringByAddingAppleConvertedSpace];
+		
+		[output appendString:convertedSpaces];
 	}
 	else
 	{

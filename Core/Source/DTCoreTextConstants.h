@@ -62,7 +62,6 @@ extern NSString * const DTLinkHighlightColorAttribute;
 extern NSString * const DTAnchorAttribute;
 extern NSString * const DTGUIDAttribute;
 extern NSString * const DTHeaderLevelAttribute;
-extern NSString * const DTPreserveNewlinesAttribute;
 extern NSString * const DTStrikeOutAttribute;
 extern NSString * const DTBackgroundColorAttribute;
 extern NSString * const DTShadowsAttribute;
