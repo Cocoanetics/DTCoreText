@@ -22,8 +22,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 @interface DTCoreTextFontDescriptor ()
 
-// gets descriptors of all available fonts from system and registers them as overrides
-+ (void)_loadAvailableFontsIntoOverrideTable;
+// gets descriptors of all available fonts from system
++ (void)_createDictionaryOfAllAvailableFontOverrideNamesWithCompletion:(void(^)(NSDictionary *dictionary))completion;
 
 @end
 
@@ -91,52 +91,70 @@ static BOOL _needsChineseFontCascadeFix = NO;
 #endif
 	
 	// asynchronically load all available fonts into override table
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-		[self _loadAvailableFontsIntoOverrideTable];
-	});
+	[self _createDictionaryOfAllAvailableFontOverrideNamesWithCompletion:^(NSDictionary *dictionary) {
+		
+		// now we're done and we can merge the new dictionary synchronized
+		
+		@synchronized(_fontOverrides)
+		{
+			__block NSUInteger numAdded = 0;
+			NSUInteger numBefore = [_fontOverrides count];
+			
+			[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *overrideFontName, BOOL *stop) {
+				
+				// only add the overrides where there is no previous setting, either from plist of user setting it
+				if (![_fontOverrides objectForKey:key])
+				{
+					[_fontOverrides setObject:overrideFontName forKey:key];
+					numAdded++;
+				}
+			}];
+
+			NSLog(@"Added %d font names to override table, which had %d entries before", numAdded, numBefore);
+		}
+	}];
 }
 
-// gets descriptors of all available fonts from system and registers them as overrides
-+ (void)_loadAvailableFontsIntoOverrideTable
+// get font names of all available fonts from system 
++ (void)_createDictionaryOfAllAvailableFontOverrideNamesWithCompletion:(void(^)(NSDictionary *dictionary))completion
 {
-	DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
+	NSParameterAssert(completion);
 	
-	// sync in case user adds overrides
-	@synchronized(_fontOverrides)
-	{
-		// we ignore previous user overrides
-		NSDictionary *userOverrides = [_fontOverrides copy];
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
 		
+		// get all font descriptors
+		DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
+		
+		NSMutableDictionary *tmpDictionary = [NSMutableDictionary dictionaryWithCapacity:[allFonts.fontDescriptors count]];
+
 		// sort font descriptors by name so that shorter names are preferred
 		NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"fontFamily" ascending:YES];
 		NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"fontName" ascending:YES];
 		NSArray *sortedFonts = [[allFonts fontDescriptors] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sort1, sort2, nil]];
 		
+		
 		for (DTCoreTextFontDescriptor *oneFontDescriptor in sortedFonts)
 		{
 			NSString *key = [NSString stringWithFormat:@"%@-%d-%d-override", oneFontDescriptor.fontFamily, oneFontDescriptor.boldTrait, oneFontDescriptor.italicTrait];
 			
-			if ([userOverrides objectForKey:key])
-			{
-				continue;
-			}
-			
-			NSString *existingOverride = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+			NSString *existingOverride = [tmpDictionary objectForKey:key];
 			
 			if (!existingOverride)
 			{
-				[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+				[tmpDictionary setObject:oneFontDescriptor.fontName forKey:key];
 			}
 			else
 			{
 				// prefer fonts with shorter name, there are probably "more correct". e.g. Helvetica-Oblique instead of Helvetica-LightOblique
 				if ([existingOverride length]>[oneFontDescriptor.fontName length])
 				{
-					[DTCoreTextFontDescriptor setOverrideFontName:oneFontDescriptor.fontName forFontFamily:oneFontDescriptor.fontFamily bold:oneFontDescriptor.boldTrait italic:oneFontDescriptor.italicTrait];
+					[tmpDictionary setObject:oneFontDescriptor.fontName forKey:key];
 				}
 			}
 		}
-	}
+		
+		completion([tmpDictionary copy]);
+	});
 }
 
 #pragma mark - Global Font Overriding

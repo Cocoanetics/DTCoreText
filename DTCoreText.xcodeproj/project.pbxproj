@@ -521,8 +521,8 @@
 		A7F7EFC81573603100F5A4D0 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F842F416D38BC300BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
 		A7FB12B2175E23C200D4B7F0 /* libDTHTMLParser_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7B4E2D81686FDB300717707 /* libDTHTMLParser_Mac.a */; };
+		A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 		DDCCEB1E17005A4F009FF923 /* css.css in Resources */ = {isa = PBXBuildFile; fileRef = DDCCEB1D17005A4F009FF923 /* css.css */; };
-		DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 		E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
 		E2262DD51638336700BFDAD7 /* DTColor+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+HTML.m */; };
 		E2262DD61638336700BFDAD7 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
@@ -2145,7 +2145,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE08BAB5148808B20054DC84 /* DTCoreTextFontOverrides.plist in Resources */,
 				A788CA3A14863EF100E1AFD9 /* Alignment.html in Resources */,
 				A788CA3B14863EF100E1AFD9 /* APOD.html in Resources */,
 				A788CA3C14863EF100E1AFD9 /* ArabicTest.html in Resources */,
@@ -2179,6 +2178,7 @@
 				A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */,
 				A740369116E51C9800ECCDE0 /* About.html in Resources */,
 				DDCCEB1E17005A4F009FF923 /* css.css in Resources */,
+				A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
