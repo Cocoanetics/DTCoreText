@@ -37,7 +37,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	
 	CTFontSymbolicTraits _stylisticTraits;
 	CTFontStylisticClass _stylisticClass;
-    
+	
 	BOOL _smallCapsFeature;
 }
 
@@ -52,6 +52,31 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	_fontCache = [[NSCache alloc] init];
 	_fontQueue = dispatch_queue_create("DTCoreTextFontDescriptor", 0);
 	
+	// init/load of overrides
+	_fontOverrides = [[NSMutableDictionary alloc] init];
+	
+	// then - if it exists - we override from the plist
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
+	NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
+	
+	for (NSDictionary *oneOverride in fileArray)
+	{
+		NSString *fontFamily = [oneOverride objectForKey:@"FontFamily"];
+		NSString *overrideFontName = [oneOverride objectForKey:@"OverrideFontName"];
+		BOOL bold = [[oneOverride objectForKey:@"Bold"] boolValue];
+		BOOL italic = [[oneOverride objectForKey:@"Italic"] boolValue];
+		BOOL smallcaps = [[oneOverride objectForKey:@"SmallCaps"] boolValue];
+		
+		if (smallcaps)
+		{
+			[DTCoreTextFontDescriptor setSmallCapsFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
+		}
+		else
+		{
+			[DTCoreTextFontDescriptor setOverrideFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
+		}
+	}
+	
 #if TARGET_OS_IPHONE
 	// workaround for iOS 5.x bug: global font cascade table has incorrect bold font for Chinese characters in Chinese locale
 	
@@ -65,49 +90,17 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 #endif
 	
-	// init the overrides
-	_fontOverrides = [[NSMutableDictionary alloc] init];
-	
-	// then - if it exists - we load override from the plist
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
-	NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
-	BOOL plistContainsFontOverrides = [fileArray count] > 0;
-	
-	if (plistContainsFontOverrides)
-	{
-		for (NSDictionary *oneOverride in fileArray)
-		{
-			NSString *fontFamily = [oneOverride objectForKey:@"FontFamily"];
-			NSString *overrideFontName = [oneOverride objectForKey:@"OverrideFontName"];
-			BOOL bold = [[oneOverride objectForKey:@"Bold"] boolValue];
-			BOOL italic = [[oneOverride objectForKey:@"Italic"] boolValue];
-			BOOL smallcaps = [[oneOverride objectForKey:@"SmallCaps"] boolValue];
-			
-			if (smallcaps)
-			{
-				[DTCoreTextFontDescriptor setSmallCapsFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
-			}
-			else
-			{
-				[DTCoreTextFontDescriptor setOverrideFontName:overrideFontName forFontFamily:fontFamily bold:bold italic:italic];
-			}
-		}
-		
-	}
-	else
-	{
-		// if the overrides plist is not found or empty, asynchronically load all available fonts into override table
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-			[self _loadAvailableFontsIntoOverrideTable];
-		});
-	}
+	// asynchronically load all available fonts into override table
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+		[self _loadAvailableFontsIntoOverrideTable];
+	});
 }
 
 // gets descriptors of all available fonts from system and registers them as overrides
 + (void)_loadAvailableFontsIntoOverrideTable
 {
 	DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
-
+	
 	// sync in case user adds overrides
 	@synchronized(_fontOverrides)
 	{
@@ -387,7 +380,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		NSNumber *selNum = [NSNumber numberWithInteger:3];
 		
 		NSDictionary *setting = [NSDictionary dictionaryWithObjectsAndKeys:selNum, (id)kCTFontFeatureSelectorIdentifierKey,
-								 typeNum, (id)kCTFontFeatureTypeIdentifierKey, nil];
+										 typeNum, (id)kCTFontFeatureTypeIdentifierKey, nil];
 		
 		NSArray *featureSettings = [NSArray arrayWithObject:setting];
 		
@@ -924,4 +917,3 @@ static BOOL _needsChineseFontCascadeFix = NO;
 @synthesize smallCapsFeature = _smallCapsFeature;
 
 @end
-
