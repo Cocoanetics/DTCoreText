@@ -545,7 +545,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		return neededSize;
 	}
 	
-	return size;
+	// return empty size plus padding
+	return CGSizeMake(_edgeInsets.left + _edgeInsets.right, _edgeInsets.bottom + _edgeInsets.top);
 }
 
 - (CGRect)_frameForLayoutFrameConstraintedToWidth:(CGFloat)constrainWidth
