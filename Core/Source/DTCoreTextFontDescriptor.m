@@ -95,20 +95,14 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		
 		@synchronized(_fontOverrides)
 		{
-			__block NSUInteger numAdded = 0;
-			NSUInteger numBefore = [_fontOverrides count];
-			
 			[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *overrideFontName, BOOL *stop) {
 				
 				// only add the overrides where there is no previous setting, either from plist of user setting it
 				if (![_fontOverrides objectForKey:key])
 				{
 					[_fontOverrides setObject:overrideFontName forKey:key];
-					numAdded++;
 				}
 			}];
-
-			NSLog(@"Added %d font names to override table, which had %d entries before", numAdded, numBefore);
 		}
 	}];
 }
