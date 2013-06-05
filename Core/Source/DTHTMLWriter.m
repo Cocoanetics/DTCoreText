@@ -709,22 +709,29 @@
 	}
 
 
-	NSString *string = retString;
-	
 	if (hasTab)
 	{
-		string = [retString stringByAddingAppleTabSpansForFragment:fragment];
+		NSRange range = NSMakeRange(0, [retString length]);
+		
+		if (fragment)
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span style=\"white-space:pre;\">\t</span>" options:0 range:range];
+		}
+		else
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span class=\"Apple-tab-span\">\t</span>" options:0 range:range];
+		}
 	}
 	
 	if (_useAppleConvertedSpace)
 	{
-		NSString *convertedSpaces = [string stringByAddingAppleConvertedSpace];
+		NSString *convertedSpaces = [retString stringByAddingAppleConvertedSpace];
 		
 		[output appendString:convertedSpaces];
 	}
 	else
 	{
-		[output appendString:string];
+		[output appendString:retString];
 	}
 
 	if (!fragment)

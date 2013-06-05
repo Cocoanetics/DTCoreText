@@ -788,42 +788,4 @@ static NSDictionary *entityReverseLookup = nil;
 	return output;
 }
 
-- (NSString *)stringByAddingAppleTabSpansForFragment:(BOOL)fragment
-{
-	NSMutableString *output = [NSMutableString string];
-	
-	NSScanner *scanner = [NSScanner scannerWithString:self];
-	scanner.charactersToBeSkipped = nil;
-	
-	NSCharacterSet *tabSet = [NSCharacterSet characterSetWithCharactersInString:@"\t"];
-	
-	while (![scanner isAtEnd])
-	{
-		NSString *part;
-		if ([scanner scanUpToCharactersFromSet:tabSet intoString:&part])
-		{
-			[output appendString:part];
-		}
-		
-		NSString *tabs;
-		if ([scanner scanCharactersFromSet:tabSet intoString:&tabs])
-		{
-			if (fragment)
-			{
-				[output appendString:@"<span style=\"white-space:pre;\">"];
-			}
-			else
-			{
-				[output appendString:@"<span class=\"Apple-tab-span\">"];
-			}
-			
-			[output appendString:tabs];
-			
-			[output appendString:@"</span>"];
-		}
-	}
-	
-	return output;
-}
-
 @end
