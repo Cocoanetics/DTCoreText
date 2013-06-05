@@ -81,7 +81,7 @@
 // issue 466: Support Encoding of Tabs in HTML
 - (void)testTabDecodingAndPreservation
 {
-	NSAttributedString *output = [self _attributedStringFromHTMLString:@"Some text and then 2 encoded&#9;&#9tabs and 2 non-encoded		tabs" options:nil];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"Some text and then 2 encoded<span style=\"white-space:pre\">&#9;&#9</span>tabs and 2 non-encoded		tabs" options:nil];
 	
 	NSString *plainString = [output string];
 	NSRange range = [plainString rangeOfString:@"encoded"];
