@@ -12,7 +12,6 @@
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
-static dispatch_queue_t _fontQueue;
 
 // font family to use if no font can be found with the given font-family
 static NSString *_fallbackFontFamily = @"Times New Roman";
@@ -50,7 +49,6 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 	
 	_fontCache = [[NSCache alloc] init];
-	_fontQueue = dispatch_queue_create("DTCoreTextFontDescriptor", 0);
 	
 	// init/load of overrides
 	_fontOverrides = [[NSMutableDictionary alloc] init];
@@ -173,10 +171,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 + (void)setSmallCapsFontName:(NSString *)fontName forFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
 {
-	dispatch_async(_fontQueue, ^{
+	@synchronized(_fontOverrides)
+	{
 		NSString *key = [NSString stringWithFormat:@"%@-%d-%d-smallcaps", fontFamily, bold, italic];
 		[_fontOverrides setObject:fontName forKey:key];
-	});
+	}
 }
 
 + (NSString *)smallCapsFontNameforFontFamily:(NSString *)fontFamily bold:(BOOL)bold italic:(BOOL)italic
@@ -635,14 +634,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (CTFontRef)newMatchingFont
 {
-	__block CTFontRef retFont;
-	
-	// all calls get queued
-	dispatch_sync(_fontQueue, ^{
-		retFont = [self _findOrMakeMatchingFont];
-	});
-	
-	return retFont;
+	return [self _findOrMakeMatchingFont];
 }
 
 // two font descriptors are equal if their attributes has identical hash codes
