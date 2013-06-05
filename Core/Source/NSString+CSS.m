@@ -50,7 +50,7 @@
 	NSString *numberUnitStr;
 	if (![scanner scanCharactersFromSet:[NSCharacterSet cssLengthUnitCharacterSet] intoString:&numberUnitStr])
 	{
-		return NO;
+		return YES;
 	}
 	
 	if ([numberUnitStr isEqualToString:@"em"] | [numberUnitStr isEqualToString:@"px"] | [numberUnitStr isEqualToString:@"pt"])
