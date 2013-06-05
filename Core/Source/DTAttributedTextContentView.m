@@ -811,7 +811,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					DT_WEAK_VARIABLE DTAttributedTextContentView *weakself = self;
 					
 					[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
-						BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];
+						
+						DTAttributedTextContentView *strongself = weakself;
+						
+						BOOL result = [strongself->_delegate attributedTextContentView:strongself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:strongself->_layoutFrame];
 						
 						if (shouldDrawDefaultBackground)
 						{
