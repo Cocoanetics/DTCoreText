@@ -613,6 +613,24 @@
 				}
 			}
 			
+			//Generate attribute string if any HTML attributes are present on the range in question
+			NSString *attributeString = @"";
+			NSDictionary *htmlAttributes = [attributes objectForKey:DTHTMLAttributesAttribute];
+			if (htmlAttributes && htmlAttributes.count)
+			{
+				NSMutableArray *htmlAttributesArray = [NSMutableArray arrayWithCapacity:htmlAttributes.count];
+				for (NSString *attributeName in htmlAttributes.allKeys)
+				{
+					//TODO: Need a better way to "skip" attributes already handled by writing HTML
+					//Allow the "class" attribute if we're writing fragments. This is useful when writing HTML editors that use classes for special style features.
+					if (![attributeName isEqualToString:@"style"] && ![attributeName isEqualToString:@"dir"] && ![attributeName isEqualToString:@"href"] && (![attributeName isEqualToString:@"class"] || fragment))
+					{
+						[htmlAttributesArray addObject:[NSString stringWithFormat:@"%@=\"%@\"", attributeName, htmlAttributes[attributeName]]];
+					}
+				}
+				attributeString = [htmlAttributesArray componentsJoinedByString:@" "];
+			}
+			
 			NSURL *url = [attributes objectForKey:DTLinkAttribute];
 			
 			if (url)
@@ -622,14 +640,14 @@
 					NSString *className = [self _styleClassForElement:@"a" style:fontStyle];
 					
 					if (fragment) {
-						[retString appendFormat:@"<a style=\"%@\" href=\"%@\">%@</a>", fontStyle, [url relativeString], subString];
+						[retString appendFormat:@"<a style=\"%@\" href=\"%@\" %@>%@</a>", fontStyle, [url relativeString], attributeString, subString];
 					} else {
-						[retString appendFormat:@"<a class=\"%@\" href=\"%@\">%@</a>", className, [url relativeString], subString];
+						[retString appendFormat:@"<a class=\"%@\" href=\"%@\" %@>%@</a>", className, [url relativeString], attributeString, subString];
 					}
 				}
 				else
 				{
-					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url relativeString], subString];
+					[retString appendFormat:@"<a href=\"%@\" %@>%@</a>", [url relativeString], attributeString, subString];
 				}
 			}
 			else
@@ -640,11 +658,11 @@
 					
 					if (fragment)
 					{
-						[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
+						[retString appendFormat:@"<span style=\"%@\" %@>%@</span>", fontStyle, attributeString, subString];
 					}
 					else
 					{
-						[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
+						[retString appendFormat:@"<span class=\"%@\" %@>%@</span>", className, attributeString, subString];
 					}
 				}
 				else

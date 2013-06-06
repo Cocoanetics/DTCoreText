@@ -12,6 +12,23 @@
 
 @implementation NSMutableAttributedString (HTML)
 
+- (void)addHTMLAttribute:(NSString *)name value:(id)value range:(NSRange)aRange {
+	if (name == nil)
+	{
+		return;
+	}
+
+	NSDictionary *allAttributes = [self attributesAtIndex:aRange.location longestEffectiveRange:NULL inRange:aRange];
+	NSMutableDictionary *htmlAttributes = [NSMutableDictionary dictionaryWithDictionary:allAttributes[DTHTMLAttributesAttribute]];
+
+	if (value == nil)
+	{
+		[htmlAttributes removeObjectForKey:name];
+	} else {
+		htmlAttributes[name] = value;
+		[self addAttribute:DTHTMLAttributesAttribute value:htmlAttributes range:aRange];
+	}
+}
 
 // appends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
