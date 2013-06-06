@@ -8,10 +8,11 @@
 
 #import "NSAttributedStringHTMLTest.h"
 #import "NSAttributedString+HTML.h"
-
 #import "NSAttributedString+DTCoreText.h"
 
 #import "DTHTMLAttributedStringBuilder.h"
+
+#import "DTCoreTextConstants.h"
 
 @implementation NSAttributedStringHTMLTest
 
@@ -153,6 +154,18 @@
 	
 	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
 	
+}
+
+- (void)testParseHTMLAttributes {
+	NSString *html = @"<span><a href=\"http://cocoanetics.com\" title=\"Cocoanetics Website\" target=\"_blank\">Cocoanetics</a></span>";
+	NSAttributedString *string = [self attributedStringFromHTML:html];
+	NSDictionary *attributes = [string attributesAtIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, string.length - 1)];
+	NSDictionary *htmlAttributes = attributes[DTHTMLAttributesAttribute];
+
+	STAssertTrue(htmlAttributes.count == 3, @"Parsed the wrong number of attributes");
+	STAssertEqualObjects(htmlAttributes[@"href"], @"http://cocoanetics.com", @"href attribute was not property parsed");
+	STAssertEqualObjects(htmlAttributes[@"title"], @"Cocoanetics Website", @"target attribute was not property parsed");
+	STAssertEqualObjects(htmlAttributes[@"target"], @"_blank", @"blank attribute was not property parsed");
 }
 
 /*

@@ -368,6 +368,14 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				NSAttributedString *nodeString = [oneChild attributedString];
+
+				//Keep all HTML attributes on the attributed string when parsing so we can write them out when going to HTML
+				if (oneChild.attributes)
+				{
+					NSMutableAttributedString *mutableNodeString = [[NSMutableAttributedString alloc] initWithAttributedString:nodeString];
+					[mutableNodeString addAttribute:DTHTMLAttributesAttribute value:[oneChild.attributes mutableCopy] range:NSMakeRange(0, nodeString.length)];
+					nodeString = mutableNodeString;
+				}
 				
 				if (nodeString)
 				{
@@ -382,6 +390,7 @@ NSDictionary *_classesForNames = nil;
 							}
 						}
 					}
+					
 					
 					[tmpString appendAttributedString:nodeString];
 				}
