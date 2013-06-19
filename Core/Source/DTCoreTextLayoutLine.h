@@ -144,6 +144,11 @@
 @property (nonatomic, readonly) CGFloat trailingWhitespaceWidth;
 
 /**
+ The offset for the underline in positive points measured from the baseline. This is the maximum underline value of the fonts of all glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) CGFloat underlineOffset;
+
+/**
  The baseline origin of the receiver
  */
 @property (nonatomic, assign) CGPoint baselineOrigin;
