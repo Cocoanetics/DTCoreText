@@ -219,16 +219,10 @@
 			{
 				CGFloat y;
 				
-				if (usedFont)
-				{
-					CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
-					
-					y = DTRoundWithContentScale(runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent - underlinePosition - fontUnderlineThickness/2.0f, contentScale);
-				}
-				else
-				{
-					y = DTRoundWithContentScale((runStrokeBounds.origin.y + runStrokeBounds.size.height - self.descent + 1.0f), contentScale);
-				}
+				// use lowest underline position of all glyph runs in same line
+				CGFloat underlinePosition = [_line underlineOffset];
+				
+				y = DTRoundWithContentScale(_line.baselineOrigin.y + underlinePosition - fontUnderlineThickness/2.0f, contentScale);
 				
 				if ((int)(usedUnderlineThickness/smallestPixelWidth)%2) // odd line width
 				{
@@ -238,7 +232,6 @@
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 			}
-			
 			
 			CGContextStrokePath(context);
 			

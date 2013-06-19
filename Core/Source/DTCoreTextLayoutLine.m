@@ -33,12 +33,15 @@
 	CGFloat _width;
 	CGFloat _trailingWhitespaceWidth;
 	
+	CGFloat _underlineOffset;
+	
 	NSArray *_glyphRuns;
 	
 	BOOL _didCalculateMetrics;
 	
 	BOOL _writingDirectionIsRightToLeft;
 	BOOL _needsToDetectWritingDirection;
+	BOOL _hasDeterminedUnderlineOffset;
 }
 
 - (id)initWithLine:(CTLineRef)line
@@ -433,6 +436,31 @@
 	}
 	
 	return _leading;
+}
+
+- (CGFloat)underlineOffset
+{
+	if (_hasDeterminedUnderlineOffset)
+	{
+		return _underlineOffset;
+	}
+	
+	CGFloat maxOffset = 0;
+	
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		CTFontRef usedFont = (__bridge CTFontRef)([oneRun.attributes objectForKey:(id)kCTFontAttributeName]);
+		
+		if (usedFont)
+		{
+			maxOffset = MAX(maxOffset, fabsf(CTFontGetUnderlinePosition(usedFont)));
+		}
+	}
+	
+	_underlineOffset = maxOffset;
+	_hasDeterminedUnderlineOffset = YES;
+	
+	return _underlineOffset;
 }
 
 - (CGFloat)trailingWhitespaceWidth
