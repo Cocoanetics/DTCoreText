@@ -149,6 +149,11 @@
 @property (nonatomic, readonly) CGFloat underlineOffset;
 
 /**
+ The line height of the line. This is determined by getting the maximum font size of all glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) CGFloat lineHeight;
+
+/**
  The baseline origin of the receiver
  */
 @property (nonatomic, assign) CGPoint baselineOrigin;
