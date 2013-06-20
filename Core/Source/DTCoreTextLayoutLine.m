@@ -11,6 +11,8 @@
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayouter.h"
 #import "DTTextAttachment.h"
+#import "NSDictionary+DTCoreText.h"
+#import "DTTextBlock.h"
 #import "DTCoreTextConstants.h"
 #import <UIKit/UIKit.h>
 
@@ -440,6 +442,24 @@
 	}
 	
 	return _lineHeight;
+}
+
+- (DTCoreTextParagraphStyle *)paragraphStyle
+{
+	// get paragraph style from any glyph
+	DTCoreTextGlyphRun *lastRun = [self.glyphRuns lastObject];
+	NSDictionary *attributes = lastRun.attributes;
+	
+	return [attributes paragraphStyle];
+}
+
+- (NSArray *)textBlocks
+{
+	// get text blocks from any glyph
+	DTCoreTextGlyphRun *lastRun = [self.glyphRuns lastObject];
+	NSDictionary *attributes = lastRun.attributes;
+	
+	return [attributes objectForKey:DTTextBlocksAttribute];
 }
 
 - (CGFloat)trailingWhitespaceWidth

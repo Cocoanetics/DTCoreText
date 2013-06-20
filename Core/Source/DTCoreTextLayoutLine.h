@@ -14,6 +14,8 @@
 #endif
 
 @class DTCoreTextLayoutFrame;
+@class DTCoreTextParagraphStyle;
+@class DTTextBlock;
 
 /**
  This class represents one layouted line and contains a number of glyph runs.
@@ -152,6 +154,16 @@
  The line height of the line. This is determined by getting the maximum font size of all glyph runs of the receiver.
  */
 @property (nonatomic, readonly) CGFloat lineHeight;
+
+/**
+ The paragraph style of the paragraph this line belongs to. All lines in a paragraph are supposed to have the same paragraph style, so this takes the paragraph style of the first glyph run
+ */
+@property (nonatomic, readonly) DTCoreTextParagraphStyle *paragraphStyle;
+
+/**
+ The text blocks that the receiver belongs to.
+ */
+@property (nonatomic, readonly) NSArray *textBlocks;
 
 /**
  The baseline origin of the receiver
