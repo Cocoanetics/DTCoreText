@@ -105,3 +105,8 @@ typedef enum
 	DTHTMLElementFontVariantSmallCaps
 } DTHTMLElementFontVariant;
 
+typedef enum
+{
+	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit = 1,
+	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy = 2
+} DTCoreTextLayoutFrameLinePositioningOptions;
