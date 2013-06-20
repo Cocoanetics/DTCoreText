@@ -166,6 +166,11 @@
 @property (nonatomic, readonly) NSArray *textBlocks;
 
 /**
+ The text attachments occuring in glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) NSArray *attachments;
+
+/**
  The baseline origin of the receiver
  */
 @property (nonatomic, assign) CGPoint baselineOrigin;

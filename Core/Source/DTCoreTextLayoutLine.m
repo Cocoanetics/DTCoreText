@@ -382,6 +382,29 @@
 	return _width;
 }
 
+- (NSArray *)attachments
+{
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		DTTextAttachment *attachment = oneRun.attachment;
+		
+		if (attachment)
+		{
+			[tmpArray addObject:attachment];
+		}
+	}
+	
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
+	
+	return nil;
+}
+
+
 - (CGFloat)ascent
 {
 	if (!_didCalculateMetrics)

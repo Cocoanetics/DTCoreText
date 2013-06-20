@@ -302,8 +302,22 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (previousLine)
 	{
-		baselineOrigin.y = CGRectGetMaxY(previousLine.frame) + [self _algorithmWebKit_halfLeadingOfLine:previousLine];
-
+		baselineOrigin.y = CGRectGetMaxY(previousLine.frame);
+		
+		CGFloat halfLeadingFromText = [self _algorithmWebKit_halfLeadingOfLine:previousLine];
+		
+		if (previousLine.attachments)
+		{
+			// only add half leading if there are no attachments, this prevents line from being shifted up due to negative half leading
+			if (halfLeadingFromText>0)
+			{
+				baselineOrigin.y += halfLeadingFromText;
+			}
+		}
+		else
+		{
+			baselineOrigin.y += halfLeadingFromText;
+		}
 
 		// add previous line's after paragraph spacing
 		if ([self isLineLastInParagraph:previousLine])
@@ -319,8 +333,23 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// first line in frame
 		baselineOrigin = _frame.origin;
 	}
+
+	baselineOrigin.y += line.ascent;
 	
-	baselineOrigin.y += [self _algorithmWebKit_halfLeadingOfLine:line] + line.ascent;
+	CGFloat halfLeadingFromText = [self _algorithmWebKit_halfLeadingOfLine:line];
+	
+	if (line.attachments)
+	{
+		// only add half leading if there are no attachments, this prevents line from being shifted up due to negative half leading
+		if (halfLeadingFromText>0)
+		{
+			baselineOrigin.y += halfLeadingFromText;
+		}
+	}
+	else
+	{
+		baselineOrigin.y += halfLeadingFromText;
+	}
 
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
 
