@@ -264,6 +264,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
 	
+	if (paragraphStyle.minimumLineHeight && paragraphStyle.minimumLineHeight > maxFontSize)
+	{
+		maxFontSize = paragraphStyle.minimumLineHeight;
+	}
+	
+	if (paragraphStyle.maximumLineHeight && paragraphStyle.maximumLineHeight < maxFontSize)
+	{
+		maxFontSize = paragraphStyle.maximumLineHeight;
+	}
+	
 	CGFloat leading;
 	
 	if (paragraphStyle.lineHeightMultiple > 0)
@@ -273,13 +283,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	else
 	{
 		// reasonable "normal"
-		return 0;
+		leading = maxFontSize * 1.1f;
 	}
 	
 	// subtract inline box height
 	CGFloat inlineBoxHeight = line.ascent + line.descent;
 	
-	return leading - inlineBoxHeight/2.0f;
+	return (leading - inlineBoxHeight)/2.0f;
 }
 
 
