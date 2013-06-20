@@ -32,7 +32,17 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  */
 
 /**
- Called after a layout frame or a part of it is drawn.
+ Called before a layout frame or a part of it is drawn. The text delegate can draw contents that goes under the text in this method.
+ 
+ @param attributedTextContentView The content view that will be drawing a layout frame
+ @param layoutFrame The layout frame that will be drawn for
+ @param context The graphics context that will drawn into
+ */
+- (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView willDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+
+
+/**
+ Called after a layout frame or a part of it is drawn. The text delegate can draw contents that goes over the text in this method.
  
  @param attributedTextContentView The content view that drew a layout frame
  @param layoutFrame The layout frame that was drawn for
