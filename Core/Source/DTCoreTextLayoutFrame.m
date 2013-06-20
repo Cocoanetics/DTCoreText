@@ -7,8 +7,10 @@
 //
 
 #import "DTCoreText.h"
+#import "DTCoreTextConstants.h"
 #import "DTCoreTextLayoutFrame.h"
 #import "DTVersion.h"
+#import "NSDictionary+DTCoreText.h"
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -106,8 +108,297 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return [self.lines description];
 }
 
-#pragma mark Building the Lines
-/* 
+
+#pragma mark - Positioning Lines
+
+- (CGPoint)_algorithmLegacy_BaselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	CGPoint lineOrigin = previousLine.baselineOrigin;
+	
+	NSInteger lineStartIndex = line.stringRange.location;
+	
+	CTParagraphStyleRef lineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
+																			attribute:(id)kCTParagraphStyleAttributeName
+																			atIndex:lineStartIndex effectiveRange:NULL];
+	
+	//Meet the first line in this frame
+	if (!previousLine)
+	{
+		// The first line may or may not be the start of paragraph. It depends on the the range passing to
+		// - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range;
+		// So Check it in a safe way:
+		if ([self isLineFirstInParagraph:line])
+		{
+			
+			CGFloat paraSpacingBefore = 0;
+			
+			if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paraSpacingBefore), &paraSpacingBefore))
+			{
+				lineOrigin.y += paraSpacingBefore;
+			}
+			
+			// preserve own baseline x
+			lineOrigin.x = line.baselineOrigin.x;
+			
+			// origins are rounded
+			lineOrigin.y = ceilf(lineOrigin.y);
+			
+			return lineOrigin;
+			
+		}
+		
+	}
+	
+	// get line height in px if it is specified for this line
+	CGFloat lineHeight = 0;
+	CGFloat minLineHeight = 0;
+	CGFloat maxLineHeight = 0;
+	BOOL usesForcedLineHeight = NO;
+	
+	CGFloat usedLeading = line.leading;
+	
+	if (usedLeading == 0.0f)
+	{
+		// font has no leading, so we fake one (e.g. Helvetica)
+		CGFloat tmpHeight = line.ascent + line.descent;
+		usedLeading = ceilf(0.2f * tmpHeight);
+		
+		if (usedLeading>20)
+		{
+			// we have a large image increasing the ascender too much for this calc to work
+			usedLeading = 0;
+		}
+	}
+	else
+	{
+		// make sure that we don't have less than 10% of line height as leading
+		usedLeading = ceilf(MAX((line.ascent + line.descent)*0.1f, usedLeading));
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
+	{
+		usesForcedLineHeight = YES;
+		
+		if (lineHeight<minLineHeight)
+		{
+			lineHeight = minLineHeight;
+		}
+	}
+	
+	// is absolute line height set?
+	if (lineHeight==0)
+	{
+		lineHeight = line.descent + line.ascent + usedLeading;
+	}
+	
+	if ([self isLineLastInParagraph:previousLine])
+	{
+		// need to get paragraph spacing
+		CTParagraphStyleRef previousLineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
+																						attribute:(id)kCTParagraphStyleAttributeName
+																						atIndex:previousLine.stringRange.location effectiveRange:NULL];
+		
+		// Paragraph spacings are paragraph styles and should not be multiplied by kCTParagraphStyleSpecifierLineHeightMultiple
+		// So directly add them to lineOrigin.y
+		CGFloat paraSpacing;
+		
+		if (CTParagraphStyleGetValueForSpecifier(previousLineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paraSpacing), &paraSpacing))
+		{
+			lineOrigin.y += paraSpacing;
+		}
+		
+		CGFloat paraSpacingBefore;
+		
+		if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paraSpacingBefore), &paraSpacingBefore))
+		{
+			lineOrigin.y += paraSpacingBefore;
+		}
+	}
+	
+	CGFloat lineHeightMultiplier = 0;
+	
+	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiplier), &lineHeightMultiplier))
+	{
+		if (lineHeightMultiplier>0.0f)
+		{
+			lineHeight *= lineHeightMultiplier;
+		}
+	}
+	
+	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
+	{
+		if (maxLineHeight>0 && lineHeight>maxLineHeight)
+		{
+			lineHeight = maxLineHeight;
+		}
+	}
+	
+	lineOrigin.y += lineHeight;
+	
+	// preserve own baseline x
+	lineOrigin.x = line.baselineOrigin.x;
+	
+	// prevent overlap of a line with small font size with line before it
+	if (!usesForcedLineHeight)
+	{
+		// only if there IS a line before it AND the line height is not fixed
+		CGFloat previousLineBottom = CGRectGetMaxY(previousLine.frame);
+		
+		if (lineOrigin.y - line.ascent < previousLineBottom)
+		{
+			// move baseline origin down far enough
+			lineOrigin.y = previousLineBottom + line.ascent;
+		}
+	}
+	
+	// origins are rounded
+	lineOrigin.y = ceilf(lineOrigin.y);
+	
+	return lineOrigin;
+}
+
+// determins the "half leading"
+- (CGFloat)_algorithmWebKit_halfLeadingOfLine:(DTCoreTextLayoutLine *)line
+{
+	CGFloat maxFontSize = [line lineHeight];
+	
+	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
+	
+	if (paragraphStyle.minimumLineHeight && paragraphStyle.minimumLineHeight > maxFontSize)
+	{
+		maxFontSize = paragraphStyle.minimumLineHeight;
+	}
+	
+	if (paragraphStyle.maximumLineHeight && paragraphStyle.maximumLineHeight < maxFontSize)
+	{
+		maxFontSize = paragraphStyle.maximumLineHeight;
+	}
+	
+	CGFloat leading;
+	
+	if (paragraphStyle.lineHeightMultiple > 0)
+	{
+		leading = maxFontSize * paragraphStyle.lineHeightMultiple;
+	}
+	else
+	{
+		// reasonable "normal"
+		leading = maxFontSize * 1.1f;
+	}
+	
+	// subtract inline box height
+	CGFloat inlineBoxHeight = line.ascent + line.descent;
+	
+	return (leading - inlineBoxHeight)/2.0f;
+}
+
+
+- (CGPoint)_algorithmWebKit_BaselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	CGPoint baselineOrigin = previousLine.baselineOrigin;
+	
+	DTTextBlock *previousTextBlock = nil;
+	DTTextBlock *currentTextBlock = nil;
+	
+	if (previousLine)
+	{
+		baselineOrigin.y = CGRectGetMaxY(previousLine.frame);
+		
+		CGFloat halfLeadingFromText = [self _algorithmWebKit_halfLeadingOfLine:previousLine];
+		
+		if (previousLine.attachments)
+		{
+			// only add half leading if there are no attachments, this prevents line from being shifted up due to negative half leading
+			if (halfLeadingFromText>0)
+			{
+				baselineOrigin.y += halfLeadingFromText;
+			}
+		}
+		else
+		{
+			baselineOrigin.y += halfLeadingFromText;
+		}
+
+		// add previous line's after paragraph spacing
+		if ([self isLineLastInParagraph:previousLine])
+		{
+			DTCoreTextParagraphStyle *paragraphStyle = [previousLine paragraphStyle];
+			baselineOrigin.y += paragraphStyle.paragraphSpacing;
+		}
+		
+		previousTextBlock = [previousLine.textBlocks lastObject];
+	}
+	else
+	{
+		// first line in frame
+		baselineOrigin = _frame.origin;
+	}
+
+	baselineOrigin.y += line.ascent;
+	
+	CGFloat halfLeadingFromText = [self _algorithmWebKit_halfLeadingOfLine:line];
+	
+	if (line.attachments)
+	{
+		// only add half leading if there are no attachments, this prevents line from being shifted up due to negative half leading
+		if (halfLeadingFromText>0)
+		{
+			baselineOrigin.y += halfLeadingFromText;
+		}
+	}
+	else
+	{
+		baselineOrigin.y += halfLeadingFromText;
+	}
+
+	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
+
+	// add current line's before paragraph spacing
+	if ([self isLineFirstInParagraph:line])
+	{
+		baselineOrigin.y += paragraphStyle.paragraphSpacingBefore;
+	}
+	
+	currentTextBlock = [line.textBlocks lastObject];
+	
+	if (currentTextBlock != previousTextBlock)
+	{
+		baselineOrigin.y  += previousTextBlock.padding.bottom;
+		baselineOrigin.y  += currentTextBlock.padding.top;
+	}
+	
+	// origins are rounded
+	baselineOrigin.y = ceilf(baselineOrigin.y);
+	
+	return baselineOrigin;
+}
+
+
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine options:(DTCoreTextLayoutFrameLinePositioningOptions)options
+{
+	if (options & DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit)
+	{
+		return [self _algorithmWebKit_BaselineOriginToPositionLine:line afterLine:previousLine];
+	}
+	
+	if (options & DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy)
+	{
+		return [self _algorithmLegacy_BaselineOriginToPositionLine:line afterLine:previousLine];
+	}
+	
+	NSLog(@"Invalid Option for %s", __PRETTY_FUNCTION__);
+	return CGPointZero;
+}
+
+// deprecated
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine
+{
+	return [self baselineOriginToPositionLine:line afterLine:previousLine options:DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit];
+}
+
+#pragma mark - Building the Lines
+
+/*
  Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place. This version supports text boxes.
  */
 - (void)_buildLinesWithTypesetter
@@ -134,14 +425,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
 	NSUInteger fittingLength = 0;
 	
-	typedef struct 
-	{
-		CGFloat ascent;
-		CGFloat descent;
-		CGFloat width;
-		CGFloat leading;
-		CGFloat trailingWhitespaceWidth;
-	} lineMetrics;
+//	typedef struct 
+//	{
+//		CGFloat ascent;
+//		CGFloat descent;
+//		CGFloat width;
+//		CGFloat leading;
+//		CGFloat trailingWhitespaceWidth;
+//	} lineMetrics;
 	
 	typedef struct
 	{
@@ -153,7 +444,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	paragraphMetrics currentParaMetrics = {0,0,0};
 	paragraphMetrics previousParaMetrics = {0,0,0};
 	
-	lineMetrics currentLineMetrics;
+//	lineMetrics currentLineMetrics;
 	
 	DTTextBlock *currentTextBlock = nil;
 	DTTextBlock *previousTextBlock = nil;
@@ -284,134 +575,134 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		// we need all metrics so get the at once
-		currentLineMetrics.width = (CGFloat)CTLineGetTypographicBounds(line, &currentLineMetrics.ascent, &currentLineMetrics.descent, &currentLineMetrics.leading);
+		CGFloat currentLineWidth = (CGFloat)CTLineGetTypographicBounds(line, NULL, NULL, NULL);
 		
 		// get line height in px if it is specified for this line
-		CGFloat lineHeight = 0;
-		CGFloat minLineHeight = 0;
-		CGFloat maxLineHeight = 0;
+//		CGFloat lineHeight = 0;
+//		CGFloat minLineHeight = 0;
+//		CGFloat maxLineHeight = 0;
 		
-		BOOL usesSyntheticLeading = NO;
-		BOOL usesForcedLineHeight = NO;
+//		BOOL usesSyntheticLeading = NO;
+//		BOOL usesForcedLineHeight = NO;
+//		
+//		if (currentLineMetrics.leading == 0.0f)
+//		{
+//			// font has no leading, so we fake one (e.g. Helvetica)
+//			CGFloat tmpHeight = currentLineMetrics.ascent + currentLineMetrics.descent;
+//			currentLineMetrics.leading = ceilf(0.2f * tmpHeight);
+//			
+//			if (currentLineMetrics.leading>20)
+//			{
+//				// we have a large image increasing the ascender too much for this calc to work
+//				currentLineMetrics.leading = 0;
+//			}
+//			
+//			usesSyntheticLeading = YES;
+//		}
+//		else
+//		{
+//			// make sure that we don't have less than 10% of line height as leading
+//			currentLineMetrics.leading = ceilf(MAX((currentLineMetrics.ascent + currentLineMetrics.descent)*0.1f, currentLineMetrics.leading));
+//		}
+//		
+//		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
+//		{
+//			if (lineHeight<minLineHeight)
+//			{
+//				usesForcedLineHeight = YES;
+//				lineHeight = minLineHeight;
+//			}
+//		}
+//		
+//		// get the correct baseline origin
+//		if (previousLine)
+//		{
+//			if (lineHeight==0)
+//			{
+//				lineHeight = currentLineMetrics.descent + currentLineMetrics.ascent;
+//			}
+//			
+//			if (isAtBeginOfParagraph)
+//			{
+//				lineOrigin.y += previousParaMetrics.paragraphSpacing;
+//				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
+//			}
+//			
+//			if (usesSyntheticLeading)
+//			{
+//				lineHeight += currentLineMetrics.leading;
+//			}
+//		}
+//		else 
+//		{
+//			// on the first line the maximum line height is the ascender of an attachment if there is any
+//			
+//			__block CGFloat maxAttachmentAscender = 0;
+//			__block BOOL lineHasAttachments = NO;
+//			[_attributedStringFragment enumerateAttribute:NSAttachmentAttributeName inRange:lineRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
+//				if (attachment)
+//				{
+//					CGFloat attachmentAscender = [attachment ascentForLayout];
+//					
+//					if (attachmentAscender>maxAttachmentAscender)
+//					{
+//						maxAttachmentAscender = attachmentAscender;
+//						lineHasAttachments = YES;
+//					}
+//				}
+//			}];
+//			
+//			if (lineHasAttachments && currentLineMetrics.ascent <= maxAttachmentAscender)
+//			{
+//				// an attachment could have a lesser ascent than the surrounding text
+//				lineHeight = maxAttachmentAscender;
+//			}
+//			else
+//			{
+//				/*
+//				 NOTE: CoreText does weird tricks for the first lines of a layout frame
+//				 I don't know why, but somehow it is always shifting the first line slightly higher.
+//				 These values seem to work ok.
+//				 */
+//				
+//				if (lineHeight>0)
+//				{
+//					lineHeight -= currentLineMetrics.descent;
+//				}
+//				else
+//				{
+//					lineHeight = currentLineMetrics.ascent + currentLineMetrics.leading - currentLineMetrics.descent/2.0f;
+//				}
+//				
+//				// leading is included in the lineHeight
+//				if(_noLeadingOnFirstLine == NO)
+//					lineHeight += currentLineMetrics.leading;
+//			}
+//		}
 		
-		if (currentLineMetrics.leading == 0.0f)
-		{
-			// font has no leading, so we fake one (e.g. Helvetica)
-			CGFloat tmpHeight = currentLineMetrics.ascent + currentLineMetrics.descent;
-			currentLineMetrics.leading = ceilf(0.2f * tmpHeight);
-			
-			if (currentLineMetrics.leading>20)
-			{
-				// we have a large image increasing the ascender too much for this calc to work
-				currentLineMetrics.leading = 0;
-			}
-			
-			usesSyntheticLeading = YES;
-		}
-		else
-		{
-			// make sure that we don't have less than 10% of line height as leading
-			currentLineMetrics.leading = ceilf(MAX((currentLineMetrics.ascent + currentLineMetrics.descent)*0.1f, currentLineMetrics.leading));
-		}
+//		if (isAtBeginOfParagraph)
+//		{
+//			lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
+//		}
 		
-		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
-		{
-			if (lineHeight<minLineHeight)
-			{
-				usesForcedLineHeight = YES;
-				lineHeight = minLineHeight;
-			}
-		}
-		
-		// get the correct baseline origin
-		if (previousLine)
-		{
-			if (lineHeight==0)
-			{
-				lineHeight = currentLineMetrics.descent + currentLineMetrics.ascent;
-			}
-			
-			if (isAtBeginOfParagraph)
-			{
-				lineOrigin.y += previousParaMetrics.paragraphSpacing;
-				lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
-			}
-			
-			if (usesSyntheticLeading)
-			{
-				lineHeight += currentLineMetrics.leading;
-			}
-		}
-		else 
-		{
-			// on the first line the maximum line height is the ascender of an attachment if there is any
-			
-			__block CGFloat maxAttachmentAscender = 0;
-			__block BOOL lineHasAttachments = NO;
-			[_attributedStringFragment enumerateAttribute:NSAttachmentAttributeName inRange:lineRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
-				if (attachment)
-				{
-					CGFloat attachmentAscender = [attachment ascentForLayout];
-					
-					if (attachmentAscender>maxAttachmentAscender)
-					{
-						maxAttachmentAscender = attachmentAscender;
-						lineHasAttachments = YES;
-					}
-				}
-			}];
-			
-			if (lineHasAttachments && currentLineMetrics.ascent <= maxAttachmentAscender)
-			{
-				// an attachment could have a lesser ascent than the surrounding text
-				lineHeight = maxAttachmentAscender;
-			}
-			else
-			{
-				/*
-				 NOTE: CoreText does weird tricks for the first lines of a layout frame
-				 I don't know why, but somehow it is always shifting the first line slightly higher.
-				 These values seem to work ok.
-				 */
-				
-				if (lineHeight>0)
-				{
-					lineHeight -= currentLineMetrics.descent;
-				}
-				else
-				{
-					lineHeight = currentLineMetrics.ascent + currentLineMetrics.leading - currentLineMetrics.descent/2.0f;
-				}
-				
-				// leading is included in the lineHeight
-				if(_noLeadingOnFirstLine == NO)
-					lineHeight += currentLineMetrics.leading;
-			}
-		}
-		
-		if (isAtBeginOfParagraph)
-		{
-			lineOrigin.y += currentParaMetrics.paragraphSpacingBefore;
-		}
-		
-		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(currentParaMetrics.lineHeightMultiplier), &currentParaMetrics.lineHeightMultiplier))
-		{
-			if (currentParaMetrics.lineHeightMultiplier>0.0f)
-			{
-				lineHeight *= currentParaMetrics.lineHeightMultiplier;
-			}
-		}
-		
-		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
-		{
-			if (maxLineHeight>0 && lineHeight>maxLineHeight)
-			{
-				usesForcedLineHeight = YES;
-				lineHeight = maxLineHeight;
-			}
-		}
-		
-		lineOrigin.y += lineHeight;
+//		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(currentParaMetrics.lineHeightMultiplier), &currentParaMetrics.lineHeightMultiplier))
+//		{
+//			if (currentParaMetrics.lineHeightMultiplier>0.0f)
+//			{
+//				lineHeight *= currentParaMetrics.lineHeightMultiplier;
+//			}
+//		}
+//		
+//		if (CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
+//		{
+//			if (maxLineHeight>0 && lineHeight>maxLineHeight)
+//			{
+//				usesForcedLineHeight = YES;
+//				lineHeight = maxLineHeight;
+//			}
+//		}
+//		
+//		lineOrigin.y += lineHeight;
 		
 		// adjust lineOrigin based on paragraph text alignment
 		CTTextAlignment textAlignment;
@@ -471,7 +762,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
 				// avoids over-stretching
-				if( !isAtEndOfParagraph && (currentLineMetrics.width > 0.60 * _frame.size.width) ) 
+				if( !isAtEndOfParagraph && (currentLineWidth > 0.60 * _frame.size.width) )
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
@@ -496,30 +787,17 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
+		newLine.writingDirectionIsRightToLeft = isRTL;
 		CFRelease(line);
 		
-		newLine.writingDirectionIsRightToLeft = isRTL;
+		// determine position of line based on line before it
 		
-		// prevent overlap of a line with small font size with line before it
-		if (previousLine && !usesForcedLineHeight)
-		{
-			// only if there IS a line before it AND the line height is not fixed
-			CGFloat previousLineBottom = CGRectGetMaxY(previousLine.frame);
-			
-			if (lineOrigin.y - newLine.ascent < previousLineBottom)
-			{
-				// move baseline origin down far enough
-				lineOrigin.y = previousLineBottom + newLine.ascent;
-			}
-		}
-		
-		// baseline origin is rounded
-		lineOrigin.y = ceilf(lineOrigin.y);
-		
-		newLine.baselineOrigin = lineOrigin;
+		CGPoint newLineBaselineOrigin = [self _algorithmWebKit_BaselineOriginToPositionLine:newLine afterLine:previousLine];
+		newLineBaselineOrigin.x = lineOrigin.x;
+		newLine.baselineOrigin = newLineBaselineOrigin;
 		
 		// abort layout if we left the configured frame
-		CGFloat lineBottom = lineOrigin.y + currentLineMetrics.descent;
+		CGFloat lineBottom = lineOrigin.y + newLine.descent;
 		
 		if (lineBottom>maxY)
 		{
@@ -599,6 +877,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		newLine.baselineOrigin = lineOrigin;
 		
 		[tmpLines addObject:newLine];
+		
+		NSLog(@"%d: %f %f %f, %@", lineIndex+1, newLine.leading, newLine.ascent, newLine.descent, NSStringFromCGPoint(newLine.baselineOrigin));
 		
 		lineIndex++;
 	}
@@ -707,7 +987,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return tmpArray;
 }
 
-#pragma mark Drawing
+#pragma mark - Drawing
 
 - (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary additionalOffset:(CGSize)additionalOffset
 {
@@ -1178,7 +1458,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGContextRestoreGState(context);
 }
 
-#pragma mark Text Attachments
+#pragma mark - Text Attachments
 
 - (NSArray *)textAttachments
 {
@@ -1211,7 +1491,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return [[self textAttachments] filteredArrayUsingPredicate:predicate];
 }
 
-#pragma mark Calculations
+#pragma mark - Calculations
 
 - (NSRange)visibleStringRange
 {
@@ -1423,154 +1703,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return NO;
 }
 
-// finds the appropriate baseline origin for a line to position it at the correct distance from a previous line
-- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine
-{
-	CGPoint lineOrigin = previousLine.baselineOrigin;
-	
-	NSInteger lineStartIndex = line.stringRange.location;
-	
-	CTParagraphStyleRef lineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
-																									attribute:(id)kCTParagraphStyleAttributeName
-																									atIndex:lineStartIndex effectiveRange:NULL];
-	
-	//Meet the first line in this frame
-	if (!previousLine)
-	{
-		// The first line may or may not be the start of paragraph. It depends on the the range passing to
-		// - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range;
-		// So Check it in a safe way:
-		if ([self isLineFirstInParagraph:line])
-		{
-			
-			CGFloat paraSpacingBefore = 0;
-			
-			if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paraSpacingBefore), &paraSpacingBefore))
-			{
-				lineOrigin.y += paraSpacingBefore;
-			}
-			
-			// preserve own baseline x
-			lineOrigin.x = line.baselineOrigin.x;
-			
-			// origins are rounded
-			lineOrigin.y = ceilf(lineOrigin.y);
-			
-			return lineOrigin;
-			
-		}
-		
-	}
-	
-	// get line height in px if it is specified for this line
-	CGFloat lineHeight = 0;
-	CGFloat minLineHeight = 0;
-	CGFloat maxLineHeight = 0;
-	BOOL usesForcedLineHeight = NO;
-	
-	CGFloat usedLeading = line.leading;
-	
-	if (usedLeading == 0.0f)
-	{
-		// font has no leading, so we fake one (e.g. Helvetica)
-		CGFloat tmpHeight = line.ascent + line.descent;
-		usedLeading = ceilf(0.2f * tmpHeight);
-		
-		if (usedLeading>20)
-		{
-			// we have a large image increasing the ascender too much for this calc to work
-			usedLeading = 0;
-		}
-	}
-	else
-	{
-		// make sure that we don't have less than 10% of line height as leading
-		usedLeading = ceilf(MAX((line.ascent + line.descent)*0.1f, usedLeading));
-	}
-	
-	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(minLineHeight), &minLineHeight))
-	{
-		usesForcedLineHeight = YES;
-		
-		if (lineHeight<minLineHeight)
-		{
-			lineHeight = minLineHeight;
-		}
-	}
-	
-	// is absolute line height set?
-	if (lineHeight==0)
-	{
-		lineHeight = line.descent + line.ascent + usedLeading;
-	}
-	
-	if ([self isLineLastInParagraph:previousLine])
-	{
-		// need to get paragraph spacing
-		CTParagraphStyleRef previousLineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
-																												  attribute:(id)kCTParagraphStyleAttributeName
-																												  atIndex:previousLine.stringRange.location effectiveRange:NULL];
-		
-		// Paragraph spacings are paragraph styles and should not be multiplied by kCTParagraphStyleSpecifierLineHeightMultiple
-		// So directly add them to lineOrigin.y
-		CGFloat paraSpacing;
-		
-		if (CTParagraphStyleGetValueForSpecifier(previousLineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacing, sizeof(paraSpacing), &paraSpacing))
-		{
-			lineOrigin.y += paraSpacing;
-		}
-		
-		CGFloat paraSpacingBefore;
-		
-		if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(paraSpacingBefore), &paraSpacingBefore))
-		{
-			lineOrigin.y += paraSpacingBefore;
-		}
-	}
-	
-	CGFloat lineHeightMultiplier = 0;
-	
-	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(lineHeightMultiplier), &lineHeightMultiplier))
-	{
-		if (lineHeightMultiplier>0.0f)
-		{
-			lineHeight *= lineHeightMultiplier;
-		}
-	}
-	
-	if (CTParagraphStyleGetValueForSpecifier(lineParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(maxLineHeight), &maxLineHeight))
-	{
-		if (maxLineHeight>0 && lineHeight>maxLineHeight)
-		{
-			lineHeight = maxLineHeight;
-		}
-	}
-	
-	lineOrigin.y += lineHeight;
-	
-	// preserve own baseline x
-	lineOrigin.x = line.baselineOrigin.x;
-	
-	// prevent overlap of a line with small font size with line before it
-	if (!usesForcedLineHeight)
-	{
-		// only if there IS a line before it AND the line height is not fixed
-		CGFloat previousLineBottom = CGRectGetMaxY(previousLine.frame);
-		
-		if (lineOrigin.y - line.ascent < previousLineBottom)
-		{
-			// move baseline origin down far enough
-			lineOrigin.y = previousLineBottom + line.ascent;
-		}
-	}
-	
-	// origins are rounded
-	lineOrigin.y = ceilf(lineOrigin.y);
-	
-	return lineOrigin;
-}
-
-#pragma mark Paragraphs
+#pragma mark - Paragraphs
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex
 {
 	for (NSValue *oneValue in self.paragraphRanges)
@@ -1604,7 +1737,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return NSMakeRange(firstParagraphIndex, lastParagraphIndex - firstParagraphIndex + 1);
 }
 
-#pragma mark Debugging
+#pragma mark - Debugging
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames
 {
 	_DTCoreTextLayoutFramesShouldDrawDebugFrames = debugFrames;
@@ -1615,7 +1748,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return _DTCoreTextLayoutFramesShouldDrawDebugFrames;
 }
 
-#pragma mark Properties
+#pragma mark - Properties
 - (NSAttributedString *)attributedStringFragment
 {
 	return _attributedStringFragment;
