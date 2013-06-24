@@ -424,6 +424,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger fittingLength = 0;
 	BOOL shouldTruncateLine = NO;
 	
+	DTTextBlock *currentTextBlock;  // global because bottom padding will be added at bottom of frame
+	
 	do  // for each line
 	{
 		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
@@ -454,7 +456,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(tailIndent), &tailIndent);
 		
 		// add left padding to offset
-		DTTextBlock *currentTextBlock = [[_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:lineRange.location effectiveRange:NULL] lastObject];
+		currentTextBlock = [[_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:lineRange.location effectiveRange:NULL] lastObject];
 		CGFloat lineOriginX = _frame.origin.x + headIndent + currentTextBlock.padding.left;
 		
 		CGFloat availableSpace;
