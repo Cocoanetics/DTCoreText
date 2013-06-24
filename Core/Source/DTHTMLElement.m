@@ -1083,20 +1083,23 @@ NSDictionary *_classesForNames = nil;
 			newBlock.backgroundColor = _backgroundColor;
 			_backgroundColor = nil;
 			
-			NSMutableArray *blocks = [self.paragraphStyle.textBlocks mutableCopy];
-			
-			if (blocks)
+			if (self.paragraphStyle.textBlocks)
 			{
+				// make mutable version
+				NSMutableArray *mutableBlocks = [self.paragraphStyle.textBlocks mutableCopy];
+				
 				// add new block to the array
-				[blocks addObject:newBlock];
+				[mutableBlocks addObject:newBlock];
+				
+				// set non-mutable version
+				self.paragraphStyle.textBlocks = [mutableBlocks copy];
 			}
 			else
 			{
 				// didn't have any blocks before, start new array
-				blocks = [NSArray arrayWithObject:newBlock];
+				NSArray *blocks = [NSArray arrayWithObject:newBlock];
+				self.paragraphStyle.textBlocks = blocks;
 			}
-			
-			self.paragraphStyle.textBlocks = blocks;
 		}
 	}
 	else if (_displayStyle == DTHTMLElementDisplayStyleListItem)
