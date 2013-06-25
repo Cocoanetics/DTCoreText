@@ -1213,7 +1213,7 @@ NSDictionary *_classesForNames = nil;
 
 + (NSSet *)attributesToIgnoreForCustomAttributesAttribute
 {
-	return [NSSet setWithObjects:@"style", @"dir", @"align", nil];
+	return [NSSet setWithObjects:@"style", @"dir", @"align", @"src", @"href", @"color", @"face", @"size", @"name", @"height", @"width", nil];
 }
 
 - (NSString *)attributeForKey:(NSString *)key
