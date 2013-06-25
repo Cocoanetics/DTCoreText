@@ -356,7 +356,6 @@ NSDictionary *_classesForNames = nil;
 				{
 					[classNamesToKeep addObject:oneClassName];
 				}
-
 			}
 			
 			if ([classNamesToKeep count])
