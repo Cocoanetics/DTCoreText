@@ -48,8 +48,6 @@
 	
 	NSMutableDictionary *_fontCache;
 	
-	NSMutableDictionary *_additionalAttributes;
-	
 	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle _floatStyle;
 	
@@ -243,13 +241,6 @@
  @returns The dictionary
  */
 - (NSDictionary *)attributesDictionary;
-
-/**
- Adds an additional attribute key/value pair to the attributes dictionary of the receiver
- @param attribute The attribute string to set
- @param key The key to set it for
- */
-- (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
 
 /**
  Retrieves an attribute with a given key

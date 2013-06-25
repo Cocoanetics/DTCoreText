@@ -100,12 +100,6 @@ NSDictionary *_classesForNames = nil;
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
-	// copy additional attributes
-	if (_additionalAttributes)
-	{
-		[tmpDict setDictionary:_additionalAttributes];
-	}
-	
 	// add text attachment
 	if (_textAttachment)
 	{
@@ -1121,16 +1115,6 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	return style;
-}
-
-- (void)addAdditionalAttribute:(id)attribute forKey:(id)key
-{
-	if (!_additionalAttributes)
-	{
-		_additionalAttributes = [[NSMutableDictionary alloc] init];
-	}
-	
-	[_additionalAttributes setObject:attribute forKey:key];
 }
 
 - (NSString *)attributeForKey:(NSString *)key
