@@ -103,4 +103,85 @@
 	}
 }
 
+
+#pragma mark - Working with Custom HTML Attributes
+
+- (void)addHTMLAttribute:(NSString *)name value:(id)value range:(NSRange)range replaceExisting:(BOOL)replaceExisting
+{
+	NSRange safeRange = NSIntersectionRange(range, NSMakeRange(0, [self length]));
+
+	[self beginEditing];
+	
+	NSMutableIndexSet *indexesToSetThis = [NSMutableIndexSet indexSetWithIndexesInRange:range];
+	
+	[self enumerateAttribute:DTCustomAttributesAttribute inRange:safeRange options:0 usingBlock:^(NSDictionary *dictionary, NSRange effectiveRange, BOOL *stop) {
+		
+		id existingValue = [dictionary objectForKey:name];
+		
+		if (existingValue && !replaceExisting)
+		{
+			// exempt this range
+			[indexesToSetThis removeIndexesInRange:effectiveRange];
+		}
+	}];
+	
+	// now our mutable index set should contain the ranges where we want to set this
+	
+	[indexesToSetThis enumerateRangesInRange:safeRange options:0 usingBlock:^(NSRange indexRange, BOOL *stop) {
+		
+		// for each such range, we need to add this to the attribute
+		[self enumerateAttribute:DTCustomAttributesAttribute inRange:indexRange options:0 usingBlock:^(NSDictionary *dictionary, NSRange effectiveRange, BOOL *stop) {
+			
+			if (dictionary)
+			{
+				// need to make it mutable and add the value
+				NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
+				[mutableDictionary setObject:value forKey:name];
+				
+				// substitute attribute
+				[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+				[self addAttribute:DTCustomAttributesAttribute value:[mutableDictionary copy] range:effectiveRange];
+			}
+			else
+			{
+				// create new dictionary with the value
+				dictionary = [NSDictionary dictionaryWithObject:value forKey:name];
+				[self addAttribute:DTCustomAttributesAttribute value:dictionary range:effectiveRange];
+			}
+		}];
+	}];
+	
+	[self endEditing];
+}
+
+- (void)removeHTMLAttribute:(NSString *)name range:(NSRange)range
+{
+	NSRange safeRange = NSIntersectionRange(range, NSMakeRange(0, [self length]));
+	
+	[self beginEditing];
+	
+	[self enumerateAttribute:DTCustomAttributesAttribute inRange:safeRange options:0 usingBlock:^(NSDictionary *dictionary, NSRange effectiveRange, BOOL *stop) {
+		
+		id existingValue = [dictionary objectForKey:name];
+		
+		if (existingValue)
+		{
+			// need to make it mutable and remove the value
+			NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
+			[mutableDictionary removeObjectForKey:name];
+			
+			// substitute attribute
+			[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+			
+			// only re-add modified dictionary if it is not empty
+			if ([mutableDictionary count])
+			{
+				[self addAttribute:DTCustomAttributesAttribute value:[dictionary copy] range:effectiveRange];
+			}
+		}
+	}];
+	
+	[self endEditing];
+}
+
 @end
