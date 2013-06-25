@@ -333,7 +333,7 @@ NSDictionary *_classesForNames = nil;
 		
 		if ([attributesToIgnore containsObject:key]) return;
 
-		if ([key isEqualToString:@"class"] && _CSSClassNamesToIgnoreForCustomAttributesAttributes)
+		if (_CSSClassNamesToIgnoreForCustomAttributesAttributes && [key isEqualToString:@"class"])
 		{
 			NSMutableArray *classNamesToKeep = [NSMutableArray array];
 			
