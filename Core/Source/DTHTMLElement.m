@@ -33,6 +33,9 @@ NSDictionary *_classesForNames = nil;
 
 
 @implementation DTHTMLElement
+{
+	NSSet *_CSSClassNamesToIgnoreForCustomAttributesAttributes;
+}
 
 + (void)initialize
 {
@@ -275,6 +278,7 @@ NSDictionary *_classesForNames = nil;
 	{
 		[tmpDict setObject:_paragraphStyle.textBlocks forKey:DTTextBlocksAttribute];
 	}
+		
 	return tmpDict;
 }
 
@@ -317,6 +321,57 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	return YES;
+}
+
+// adds the attributes that have not been "dealt with" to the DTCustomAttributesAttribute
+- (void)_addCustomHTMLAttributesToAttributedString:(NSMutableAttributedString *)attributedString
+{
+	NSSet *attributesToIgnore = [[self class] attributesToIgnoreForCustomAttributesAttribute];
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	
+	[_attributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+		
+		if ([attributesToIgnore containsObject:key]) return;
+
+		if ([key isEqualToString:@"class"] && _CSSClassNamesToIgnoreForCustomAttributesAttributes)
+		{
+			NSMutableArray *classNamesToKeep = [NSMutableArray array];
+			
+			NSArray *components = nil;
+			
+			if ([value isKindOfClass:[NSString class]])
+			{
+				// split the class string
+				components = [value componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			}
+			else if ([value isKindOfClass:[NSArray class]])
+			{
+				// already an array
+				components = value;
+			}
+			
+			for (NSString *oneClassName in components)
+			{
+				if (![_CSSClassNamesToIgnoreForCustomAttributesAttributes containsObject:oneClassName])
+				{
+					[classNamesToKeep addObject:oneClassName];
+				}
+
+			}
+			
+			if ([classNamesToKeep count])
+			{
+				value = [classNamesToKeep componentsJoinedByString:@" "];
+			}
+			else
+			{
+				return; // continue enumeration, class attribute would be empty
+			}
+		}
+		
+		// we preserve existing because they are from children
+		[attributedString addHTMLAttribute:key value:value range:entireString replaceExisting:NO];
+	}];
 }
 
 - (NSAttributedString *)attributedString
@@ -465,6 +520,9 @@ NSDictionary *_classesForNames = nil;
 				}
 			}
 		}
+		
+		// add the custom attributes
+		[self _addCustomHTMLAttributesToAttributedString:tmpString];
 		
 		return tmpString;
 	}
@@ -1153,6 +1211,11 @@ NSDictionary *_classesForNames = nil;
 
 #pragma mark - Working with HTML Attributes
 
++ (NSSet *)attributesToIgnoreForCustomAttributesAttribute
+{
+	return [NSSet setWithObjects:@"style", @"dir", @"align", nil];
+}
+
 - (NSString *)attributeForKey:(NSString *)key
 {
 	return [_attributes objectForKey:key];
@@ -1360,6 +1423,8 @@ NSDictionary *_classesForNames = nil;
 @synthesize padding = _padding;
 @synthesize linkGUID = _linkGUID;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
+
+@synthesize CSSClassNamesToIgnoreForCustomAttributesAttributes = _CSSClassNamesToIgnoreForCustomAttributesAttributes;
 
 @end
 

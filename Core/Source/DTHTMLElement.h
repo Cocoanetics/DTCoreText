@@ -259,6 +259,15 @@
  */
 - (void)interpretAttributes;
 
+/**
+ The HTML attributes that should be attached to the generated attributed string. Typically all attributes that were processed by -interpretAttributes are in this list. All other attributes get added to the generated attributed string with the DTCustomAttributesAttribute key.
+ */
++ (NSSet *)attributesToIgnoreForCustomAttributesAttribute;
+
+/**
+ The CSS class names that are not to be added to the "class" custom attribute in the DTCustomAttributesAttribute key. Those are usually the class names 
+ */
+@property(nonatomic, strong) NSSet *CSSClassNamesToIgnoreForCustomAttributesAttributes;
 
 /**
  @name Working with CSS Styles
