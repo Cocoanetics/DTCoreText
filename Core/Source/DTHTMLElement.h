@@ -99,6 +99,11 @@
  */
 - (NSAttributedString *)attributedString;
 
+/**
+ The dictionary of Core Text attributes for creating an `NSAttributedString` representation for the receiver
+ @returns The dictionary of attributes
+ */
+- (NSDictionary *)attributesForAttributedStringRepresentation;
 
 /**
  Creates a <DTCSSListStyle> to match the CSS styles
@@ -237,12 +242,6 @@
  */
 
 /**
- The dictionary of attributes of the receiver
- @returns The dictionary
- */
-- (NSDictionary *)attributesDictionary;
-
-/**
  Retrieves an attribute with a given key
  @param key The attribute name to retrieve
  @returns the attribute string
@@ -270,11 +269,6 @@
  @param styles A style dictionary
  */
 - (void)applyStyleDictionary:(NSDictionary *)styles;
-
-/**
- The most recently applied styles dictionary
- */
-//- (NSDictionary *)styles;
 
 
 /**

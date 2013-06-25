@@ -22,16 +22,15 @@
 @property (nonatomic, strong) NSMutableDictionary *fontCache;
 @property (nonatomic, strong) NSString *linkGUID;
 
-- (DTCSSListStyle *)calculatedListStyle;
-
 // internal initializer
 - (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options;
 
 @end
 
+// global variables
 BOOL ___shouldUseiOS6Attributes = NO;
-
 NSDictionary *_classesForNames = nil;
+
 
 @implementation DTHTMLElement
 
@@ -59,7 +58,7 @@ NSDictionary *_classesForNames = nil;
 	_classesForNames = [tmpDict copy];
 }
 
-+ (DTHTMLElement *)elementWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
++ (instancetype)elementWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
 {
 	// look for specialized class
 	Class class = [_classesForNames objectForKey:name];
@@ -85,7 +84,7 @@ NSDictionary *_classesForNames = nil;
 	return element;
 }
 
-- (id)initWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
+- (instancetype)initWithName:(NSString *)name attributes:(NSDictionary *)attributes options:(NSDictionary *)options
 {
 	// node does not need the options, but it needs the name and attributes
 	self = [super initWithName:name attributes:attributes];
@@ -96,7 +95,9 @@ NSDictionary *_classesForNames = nil;
 	return self;
 }
 
-- (NSDictionary *)attributesDictionary
+#pragma mark - Creating Attributed Strings
+
+- (NSDictionary *)attributesForAttributedStringRepresentation
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
@@ -327,7 +328,7 @@ NSDictionary *_classesForNames = nil;
 			return nil;
 		}
 		
-		NSDictionary *attributes = [self attributesDictionary];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 		
 		NSMutableAttributedString *tmpString;
 		
@@ -403,7 +404,8 @@ NSDictionary *_classesForNames = nil;
 			{
 				if (![[tmpString string] hasSuffix:@"\n"])
 				{
-					NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:[self attributesDictionary]];
+					NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+					NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 					[tmpString appendAttributedString:attributedString];
 				}
 			}
@@ -468,11 +470,7 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
-- (DTHTMLElement *)parentElement
-{
-	return (DTHTMLElement *)self.parentNode;
-}
-
+#pragma mark - Working with CSS Styles
 
 // decodes the edgeInsets for padding or margin
 - (BOOL)_parseEdgeInsetsFromStyleDictionary:(NSDictionary *)styles forAttributesWithPrefix:(NSString *)prefix writingDirection:(CTWritingDirection)writingDirection intoEdgeInsets:(DTEdgeInsets *)intoEdgeInsets
@@ -827,11 +825,11 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([decoration isEqualToString:@"overline"])
 		{
-			//TODO: add support for overline decoration
+			NSLog(@"Note: 'overline' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"blink"])
 		{
-			//TODO: add support for blink decoration
+			NSLog(@"Note: 'blink' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"inherit"])
 		{
@@ -1036,7 +1034,6 @@ NSDictionary *_classesForNames = nil;
 	
 	if (hasPadding)
 	{
-		// FIXME: this is a workaround because having a text block padding in addition to list ident messes up indenting of the list
 		if ([self.name isEqualToString:@"ul"] || [self.name isEqualToString:@"ol"])
 		{
 			_listIndent = _padding.left;
@@ -1058,7 +1055,6 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.paragraphSpacing = _margins.bottom;
 			
 			// we increase the inherited values for the time being
-			// TODO: it would be preferred to calculate these from the margins values of the parent elements
 			self.paragraphStyle.headIndent += _margins.left;
 			self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
 			
@@ -1117,12 +1113,7 @@ NSDictionary *_classesForNames = nil;
 	return style;
 }
 
-- (NSString *)attributeForKey:(NSString *)key
-{
-	return [_attributes objectForKey:key];
-}
-
-#pragma mark Calulcating Properties
+#pragma mark - Calulcating Properties
 
 - (id)valueForKeyPathWithInheritance:(NSString *)keyPath
 {
@@ -1160,23 +1151,12 @@ NSDictionary *_classesForNames = nil;
 	return value;
 }
 
+#pragma mark - Working with HTML Attributes
 
-- (DTCSSListStyle *)calculatedListStyle
+- (NSString *)attributeForKey:(NSString *)key
 {
-	DTCSSListStyle *style = [[DTCSSListStyle alloc] init];
-	
-	id calcType = [self valueForKeyPathWithInheritance:@"listStyle.type"];
-	id calcPos = [self valueForKeyPathWithInheritance:@"listStyle.position"];
-	id calcImage = [self valueForKeyPathWithInheritance:@"listStyle.imageName"];
-	
-	style.type = (DTCSSListStyleType)[calcType integerValue];
-	style.position = (DTCSSListStylePosition)[calcPos integerValue];
-	style.imageName = calcImage;
-	
-	return style;
+	return [_attributes objectForKey:key];
 }
-
-#pragma mark - Inheriting Attributes
 
 - (void)inheritAttributesFromElement:(DTHTMLElement *)element
 {
@@ -1277,7 +1257,7 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
-#pragma mark Properties
+#pragma mark - Properties
 
 - (void)setTextColor:(DTColor *)textColor
 {
@@ -1349,6 +1329,11 @@ NSDictionary *_classesForNames = nil;
 	{
 		return _didOutput;
 	}
+}
+
+- (DTHTMLElement *)parentElement
+{
+	return (DTHTMLElement *)self.parentNode;
 }
 
 @synthesize fontDescriptor = _fontDescriptor;
