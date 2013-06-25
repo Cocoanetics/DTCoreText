@@ -267,7 +267,7 @@
 /**
  The CSS class names that are not to be added to the "class" custom attribute in the DTCustomAttributesAttribute key. Those are usually the class names 
  */
-@property(nonatomic, strong) NSSet *CSSClassNamesToIgnoreForCustomAttributesAttributes;
+@property(nonatomic, strong) NSSet *CSSClassNamesToIgnoreForCustomAttributes;
 
 /**
  @name Working with CSS Styles

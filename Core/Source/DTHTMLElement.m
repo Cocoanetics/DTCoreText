@@ -34,7 +34,7 @@ NSDictionary *_classesForNames = nil;
 
 @implementation DTHTMLElement
 {
-	NSSet *_CSSClassNamesToIgnoreForCustomAttributesAttributes;
+	NSSet *_CSSClassNamesToIgnoreForCustomAttributes;
 }
 
 + (void)initialize
@@ -1423,7 +1423,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize linkGUID = _linkGUID;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
 
-@synthesize CSSClassNamesToIgnoreForCustomAttributesAttributes = _CSSClassNamesToIgnoreForCustomAttributesAttributes;
+@synthesize CSSClassNamesToIgnoreForCustomAttributes = _CSSClassNamesToIgnoreForCustomAttributes;
 
 @end
 

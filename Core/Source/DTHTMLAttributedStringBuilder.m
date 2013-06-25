@@ -707,7 +707,7 @@
 				
 				if ([classNamesToIgnoreForCustomAttributes count])
 				{
-					newNode.CSSClassNamesToIgnoreForCustomAttributesAttributes = classNamesToIgnoreForCustomAttributes;
+					newNode.CSSClassNamesToIgnoreForCustomAttributes = classNamesToIgnoreForCustomAttributes;
 				}
 			}
 		}
