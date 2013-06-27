@@ -65,10 +65,12 @@
 	// replace everything
 	[attributedString addHTMLAttribute:@"class" value:@"foo" range:entireString replaceExisting:YES];
 	
-	dict = [attributedString attribute:DTCustomAttributesAttribute atIndex:0 effectiveRange:&effectiveRange];
+	effectiveRange = [attributedString rangeOfHTMLAttribute:@"class" atIndex:0];
 	
 	expectedRange=NSMakeRange(0, 10);
 	STAssertEquals(expectedRange, effectiveRange, @"Effective Range does not match");
+	
+	dict = [attributedString HTMLAttributesAtIndex:4];
 	
 	value = [dict objectForKey:@"class"];
 	STAssertEqualObjects(value, @"foo", @"Attribute should be foo");
@@ -103,6 +105,50 @@
 	
 	id value = [dict objectForKey:@"class"];
 	STAssertEqualObjects(value, @"oli", @"Attribute should be oli");
+}
+
+- (void)testRangeOfCustomHTMLAttribute
+{
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"1234567890"];
+	
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	
+	// have a range with an attribute
+	[attributedString addHTMLAttribute:@"class" value:@"oli" range:NSMakeRange(3, 2) replaceExisting:YES];
+	
+	// add longer range
+	[attributedString addHTMLAttribute:@"class" value:@"bar" range:entireString replaceExisting:NO];
+	
+	// add a second one on top of it all
+	[attributedString addHTMLAttribute:@"foo" value:@"bar" range:entireString replaceExisting:YES];
+	
+	// class element in middle is only valid for that range
+	NSRange expectedRange = NSMakeRange(3, 2);
+	NSRange queriedRange = [attributedString rangeOfHTMLAttribute:@"class" atIndex:3];
+	
+	STAssertEquals(expectedRange, queriedRange, @"Range is incorrect");
+	
+	// global foo is entire range
+	queriedRange = [attributedString rangeOfHTMLAttribute:@"foo" atIndex:3];
+	
+	STAssertEquals(queriedRange, entireString, @"Range is incorrect");
+
+	// global foo is entire range no matter where you query it
+	queriedRange = [attributedString rangeOfHTMLAttribute:@"foo" atIndex:9];
+
+	STAssertEquals(queriedRange, entireString, @"Range is incorrect");
+
+	// the right part of class (with 'bar')
+	queriedRange = [attributedString rangeOfHTMLAttribute:@"class" atIndex:5];
+	expectedRange = NSMakeRange(5, 5);
+
+	STAssertEquals(queriedRange, expectedRange, @"Range is incorrect");
+	
+	// the left part of class (with 'bar')
+	queriedRange = [attributedString rangeOfHTMLAttribute:@"class" atIndex:1];
+	expectedRange = NSMakeRange(0, 3);
+	
+	STAssertEquals(queriedRange, expectedRange, @"Range is incorrect");
 }
 
 @end

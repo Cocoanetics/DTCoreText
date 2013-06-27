@@ -72,7 +72,7 @@
 	element.fontDescriptor = [[DTCoreTextFontDescriptor alloc] init]; // need to have just any font descriptor
 	element.textScale = 1.0;
 	
-	NSDictionary *styles = [stylesheet mergedStyleDictionaryForElement:element];
+	NSDictionary *styles = [stylesheet mergedStyleDictionaryForElement:element matchedSelectors:NULL];
 	[element applyStyleDictionary:styles];
 	
 	STAssertEquals(element.displayStyle, DTHTMLElementDisplayStyleBlock, @"Style merging lost block display style");

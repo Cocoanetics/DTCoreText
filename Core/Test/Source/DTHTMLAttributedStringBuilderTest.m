@@ -300,16 +300,16 @@
 // Issue 437, strikethrough bleeding into NL
 - (void)testBleedingOutAttributes
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>" options:nil];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc</del></p>" options:nil];
 	
-	STAssertTrue([attributedString length] == 5, @"Attributed String should be 5 characters long");
+	STAssertTrue([attributedString length] == 4, @"Attributed String should be 4 characters long");
 	
 	NSRange effectiveRange;
 	NSNumber *strikethroughStyle = [attributedString attribute:DTStrikeOutAttribute atIndex:0 effectiveRange:&effectiveRange];
 	
 	STAssertNotNil(strikethroughStyle, @"There should be a strikethrough style");
 	
-	NSRange expectedRange = NSMakeRange(0, 4);
+	NSRange expectedRange = NSMakeRange(0, 3);
 	
 	STAssertEquals(effectiveRange, expectedRange, @"Strikethrough style should only contain abc, not the NL");
 }
