@@ -300,7 +300,7 @@
 // Issue 437, strikethrough bleeding into NL
 - (void)testBleedingOutAttributes
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>" options:nil];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc</del></p>" options:nil];
 	
 	STAssertTrue([attributedString length] == 5, @"Attributed String should be 5 characters long");
 	
