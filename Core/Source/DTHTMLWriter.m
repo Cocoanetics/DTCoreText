@@ -414,22 +414,38 @@
 			}
 		}
 		
-		// Add dir="auto" if the writing direction is unknown
-		NSString *directionAttributeString = @"";
+		// find which custom attributes are for the entire paragraph
+		NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:paragraphRange.location];
+		NSMutableDictionary *paragraphLevelHTMLAttributes = [NSMutableDictionary dictionary];
 		
+		if ([HTMLAttributes count])
+		{
+			[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+				
+				// check if range is longer than current paragraph
+				NSRange effectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:paragraphRange.location];
+				
+				if (NSIntersectionRange(effectiveRange, paragraphRange).length == effectiveRange.length)
+				{
+					[paragraphLevelHTMLAttributes setObject:value forKey:key];
+				}
+			}];
+		}
+		
+		// Add dir="auto" if the writing direction is unknown
 		if (paragraphStyle)
 		{
 			switch (paragraphStyle.baseWritingDirection)
 			{
 				case kCTWritingDirectionNatural:
 				{
-					directionAttributeString = @" dir=\"auto\"";
+					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
 					break;
 				}
 					
 				case kCTWritingDirectionRightToLeft:
 				{
-					directionAttributeString = @" dir=\"rtl\"";
+					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
 					break;
 				}
 					
@@ -441,20 +457,47 @@
 			}
 		}
 		
+
+		// start paragraph start tag
+		[retString appendFormat:@"<%@", blockElement];
+		
+		// do we have style info?
 		if ([paraStyleString length])
 		{
-			NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
-			
-			if (fragment) {
-				[retString appendFormat:@"<%@ style=\"%@\"%@>", blockElement, paraStyleString, directionAttributeString];
-			} else {
-				[retString appendFormat:@"<%@ class=\"%@\"%@>", blockElement, className, directionAttributeString];
+			if (fragment)
+			{
+				// stays style for fragment mode
+				[paragraphLevelHTMLAttributes setObject:paraStyleString forKey:@"style"];
+			}
+			else
+			{
+				// compress style for document mode
+				NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
+				
+				NSString *existingClasses = [paragraphLevelHTMLAttributes objectForKey:@"class"];
+				
+				if (existingClasses)
+				{
+					NSMutableArray *individualClasses = [[existingClasses componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] mutableCopy];
+					
+					// insert compressed class at index 0
+					[individualClasses insertObject:className atIndex:0];
+					
+					// rejoin
+					className = [individualClasses componentsJoinedByString:@" "];
+				}
+				
+				[paragraphLevelHTMLAttributes setObject:className forKey:@"class"];
 			}
 		}
-		else
-		{
-			[retString appendFormat:@"<%@%@>", blockElement, directionAttributeString];
-		}
+		
+		// add paragraph level attributes
+		[paragraphLevelHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+			[retString appendFormat:@" %@=\"%@\"", key, value];
+		}];
+		
+		// end paragraph start tag
+		[retString appendString:@">"];
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
 		NSRange effectiveRange;
