@@ -136,6 +136,8 @@
 		A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
+		A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
+		A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -874,6 +876,8 @@
 		A76E5B4812DD9AF500711782 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A776DBE61716A8EE00E71F36 /* NSStringParagraphTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringParagraphTest.h; sourceTree = "<group>"; };
 		A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringParagraphTest.m; sourceTree = "<group>"; };
+		A77A3E401779BF03000B290B /* NSMutableAttributedStringHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMutableAttributedStringHTMLTest.h; sourceTree = "<group>"; };
+		A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSMutableAttributedStringHTMLTest.m; sourceTree = "<group>"; };
 		A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextCell.h; sourceTree = "<group>"; };
 		A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
@@ -1567,6 +1571,8 @@
 				A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */,
 				9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */,
 				9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */,
+				A77A3E401779BF03000B290B /* NSMutableAttributedStringHTMLTest.h */,
+				A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2473,6 +2479,7 @@
 				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */,
+				A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2488,6 +2495,7 @@
 				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,
 				A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
+				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

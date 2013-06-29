@@ -679,10 +679,37 @@
 		}
 		
 		// apply style from merged style sheet
-		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode];
+		NSSet *matchedSelectors;
+		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors];
+		
 		if (mergedStyles)
 		{
 			[newNode applyStyleDictionary:mergedStyles];
+			
+			// do not add the matched class names to 'class' custom attribute 
+			if (matchedSelectors)
+			{
+				NSMutableSet *classNamesToIgnoreForCustomAttributes = [NSMutableSet set];
+				
+				for (NSString *oneSelector in matchedSelectors)
+				{
+					// class selectors have a period
+					NSRange periodRange = [oneSelector rangeOfString:@"."];
+					
+					if (periodRange.location != NSNotFound)
+					{
+						NSString *className = [oneSelector substringFromIndex:periodRange.location+1];
+						
+						// add this to ignored classes
+						[classNamesToIgnoreForCustomAttributes addObject:className];
+					}
+				}
+				
+				if ([classNamesToIgnoreForCustomAttributes count])
+				{
+					newNode.CSSClassNamesToIgnoreForCustomAttributes = classNamesToIgnoreForCustomAttributes;
+				}
+			}
 		}
 		
 		// adding a block element eliminates previous trailing white space text node
