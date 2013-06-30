@@ -333,7 +333,7 @@ NSDictionary *_classesForNames = nil;
 		
 		if ([attributesToIgnore containsObject:key]) return;
 
-		if (_CSSClassNamesToIgnoreForCustomAttributesAttributes && [key isEqualToString:@"class"])
+		if (_CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
 		{
 			NSMutableArray *classNamesToKeep = [NSMutableArray array];
 			
@@ -352,7 +352,7 @@ NSDictionary *_classesForNames = nil;
 			
 			for (NSString *oneClassName in components)
 			{
-				if (![_CSSClassNamesToIgnoreForCustomAttributesAttributes containsObject:oneClassName])
+				if (![_CSSClassNamesToIgnoreForCustomAttributes containsObject:oneClassName])
 				{
 					[classNamesToKeep addObject:oneClassName];
 				}
