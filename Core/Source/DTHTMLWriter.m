@@ -506,20 +506,15 @@
 		
 		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stop) {
 
-			// end link range if there was an early loop
-			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
-			{
-				currentLinkRange = NSMakeRange(NSNotFound, 0);
-			}
-			
 			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
+			
 			BOOL isFirstPartOfHyperlink = NO;
+			BOOL isLastPartOfHyperlink = NO;
 			
 			if (spanURL && (currentLinkRange.location == NSNotFound))
 			{
-				isFirstPartOfHyperlink = YES;
-				
 				currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+				isFirstPartOfHyperlink = YES;
 				
 				// build the attributes for the A tag
 				linkLevelHTMLAttributes = [NSMutableDictionary dictionary];
@@ -539,6 +534,12 @@
 						[linkLevelHTMLAttributes setObject:value forKey:key];
 					}
 				}];
+			}
+			
+			// check if previous link is over yet
+			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			{
+				isLastPartOfHyperlink = YES;
 			}
 			
 			NSString *plainSubString =[plainString substringWithRange:spanRange];
@@ -566,6 +567,11 @@
 			
 			if (!subString)
 			{
+				if (isLastPartOfHyperlink)
+				{
+					currentLinkRange = NSMakeRange(NSNotFound, 0);
+				}
+				
 				return;
 			}
 			
@@ -585,6 +591,11 @@
 					}
 				}
 				
+				if (isLastPartOfHyperlink)
+				{
+					currentLinkRange = NSMakeRange(NSNotFound, 0);
+				}
+
 				return;
 			}
 			
@@ -797,8 +808,7 @@
 				[retString appendFormat:@"</%@>", spanTagName];
 			}
 			
-			// check if end of link
-			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			if (isLastPartOfHyperlink)
 			{
 				[retString appendFormat:@"</a>"];
 				currentLinkRange = NSMakeRange(NSNotFound, 0);
