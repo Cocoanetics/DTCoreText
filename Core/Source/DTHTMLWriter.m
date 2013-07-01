@@ -280,7 +280,7 @@
 			}
 		}
 		
-		BOOL needsToRemovePrefix = NO;
+		__block BOOL needsToRemovePrefix = NO;
 		
 		BOOL fontIsBlockLevel = NO;
 		
@@ -497,26 +497,61 @@
 		[retString appendString:@">"];
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
-		NSRange effectiveRange;
-		NSUInteger index = paragraphRange.location;
 		
-		NSUInteger paragraphRangeEnd = NSMaxRange(paragraphRange);
+		__block NSRange currentLinkRange = {NSNotFound, 0};
 		
-		while (index < paragraphRangeEnd)
-		{
-			NSDictionary *attributes = [_attributedString attributesAtIndex:index longestEffectiveRange:&effectiveRange inRange:paragraphRange];
+		__block NSMutableDictionary *linkLevelHTMLAttributes = nil;
+		
+		// ----- SPAN enumeration
+		
+		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stop) {
+
+			// end link range if there was an early loop
+			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			{
+				currentLinkRange = NSMakeRange(NSNotFound, 0);
+			}
 			
-			NSString *plainSubString =[plainString substringWithRange:effectiveRange];
+			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
+			BOOL isFirstPartOfHyperlink = NO;
+			
+			if (spanURL && (currentLinkRange.location == NSNotFound))
+			{
+				isFirstPartOfHyperlink = YES;
+				
+				currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+				
+				// build the attributes for the A tag
+				linkLevelHTMLAttributes = [NSMutableDictionary dictionary];
+				
+				[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
+				
+				// find which custom attributes are for the link
+				NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
+				
+				[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+					
+					// check if range is longer than current paragraph
+					NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:currentLinkRange.location];
+					
+					if (NSEqualRanges(attributeEffectiveRange, currentLinkRange))
+					{
+						[linkLevelHTMLAttributes setObject:value forKey:key];
+					}
+				}];
+			}
+			
+			NSString *plainSubString =[plainString substringWithRange:spanRange];
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
-				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:effectiveRange.location];
+				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:spanRange.location];
 				
 				if (prefixRange.location != NSNotFound)
 				{
 					if (NSMaxRange(prefixRange)<plainSubString.length)
 					{
-						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
+						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - spanRange.location];
 					}
 					else
 					{
@@ -527,17 +562,14 @@
 				needsToRemovePrefix = NO;
 			}
 			
-			index += effectiveRange.length;
-			
 			NSString *subString = [plainSubString stringByAddingHTMLEntities];
 			
 			if (!subString)
 			{
-				continue;
+				return;
 			}
 			
 			DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
-			
 			
 			if (attachment)
 			{
@@ -553,7 +585,7 @@
 					}
 				}
 				
-				continue;
+				return;
 			}
 			
 			NSString *fontStyle = nil;
@@ -653,8 +685,6 @@
 				}
 			}
 			
-			NSURL *url = [attributes objectForKey:DTLinkAttribute];
-			
 			NSString *spanTagName = @"span";
 			
 			__block BOOL needsSpanTag = NO;
@@ -689,18 +719,15 @@
 					}
 				}
 				
-				[spanLevelHTMLAttributes setObject:value forKey:key];
-				needsSpanTag = YES;
+				NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:spanRange.location];
+				
+				if (currentLinkRange.location==NSNotFound || !NSEqualRanges(attributeEffectiveRange, currentLinkRange))
+				{
+					[spanLevelHTMLAttributes setObject:value forKey:key];
+					needsSpanTag = YES;
+				}
 			}];
 
-			if (url)
-			{
-				spanTagName = @"a";
-				
-				[spanLevelHTMLAttributes setObject:[url relativeString] forKey:@"href"];
-				needsSpanTag = YES;
-			}
-			
 			if ([fontStyle length])
 			{
 				needsSpanTag = YES;
@@ -732,6 +759,21 @@
 				}
 			}
 			
+			if (isFirstPartOfHyperlink)
+			{
+				// start link start tag
+				[retString appendString:@"<a"];
+				
+				// add span level attributes
+				[linkLevelHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+					[retString appendFormat:@" %@=\"%@\"", key, value];
+				}];
+				
+				// end span start tag
+				[retString appendString:@">"];
+			}
+			
+			
 			if (needsSpanTag)
 			{
 				// start span start tag
@@ -754,13 +796,20 @@
 				// span end tag
 				[retString appendFormat:@"</%@>", spanTagName];
 			}
-		}
+			
+			// check if end of link
+			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			{
+				[retString appendFormat:@"</a>"];
+				currentLinkRange = NSMakeRange(NSNotFound, 0);
+			}
+		}];  // end of SPAN loop
 
-		// end of paragraph loop
 		[retString appendFormat:@"</%@>", blockElement];
 		
 		previousListStyles = [currentListStyles copy];
-	}
+	}  // end of P loop
+
 	
 	// close list if still open
 	if ([previousListStyles count])
