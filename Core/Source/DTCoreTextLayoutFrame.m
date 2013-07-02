@@ -34,7 +34,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 @synthesize numberOfLines = _numberOfLines;
 @synthesize lineBreakMode = _lineBreakMode;
 @synthesize truncationString = _truncationString;
-@synthesize noLeadingOnFirstLine = _noLeadingOnFirstLine;
 
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range

@@ -253,13 +253,6 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  */
 @property (nonatomic) UIEdgeInsets edgeInsets;
 
-
-/**
- Specifies if the receiver should add extra leading the first line of its content
- 
- */
-@property (nonatomic) BOOL shouldAddFirstLineLeading;
-
 /**
  Specifies if the receiver should draw image text attachments.
  
