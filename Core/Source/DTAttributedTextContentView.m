@@ -45,6 +45,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 		unsigned int delegateSupportsCustomViewsForAttachments:1;
 		unsigned int delegateSupportsCustomViewsForLinks:1;
 		unsigned int delegateSupportsGenericCustomViews:1;
+		unsigned int delegateSupportsNotificationBeforeDrawing:1;
 		unsigned int delegateSupportsNotificationAfterDrawing:1;
 		unsigned int delegateSupportsNotificationBeforeTextBoxDrawing:1;
 	} _delegateFlags;
@@ -436,6 +437,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		options |= DTCoreTextLayoutFrameDrawingOmitLinks;
 	}
 	
+	if (_delegateFlags.delegateSupportsNotificationBeforeDrawing)
+	{
+		[_delegate attributedTextContentView:self willDrawLayoutFrame:theLayoutFrame inContext:ctx];
+	}
+	
 	// need to prevent updating of string and drawing at the same time
 	[theLayoutFrame drawInContext:ctx options:options];
 	
@@ -599,7 +605,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	tmpLayoutFrame.numberOfLines = _numberOfLines;
 	tmpLayoutFrame.lineBreakMode = _lineBreakMode;
 	tmpLayoutFrame.truncationString = _truncationString;
-	tmpLayoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
 	
 	//  we have a layout frame and from this we get the needed size
 	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
@@ -798,7 +803,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-				_layoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
 				_layoutFrame.numberOfLines = _numberOfLines;
 				_layoutFrame.lineBreakMode = _lineBreakMode;
 				_layoutFrame.truncationString = _truncationString;
@@ -894,6 +898,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegateFlags.delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
 	_delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
 	_delegateFlags.delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+	_delegateFlags.delegateSupportsNotificationBeforeDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:willDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:shouldDrawBackgroundForTextBlock:frame:context:forLayoutFrame:)];
 	
@@ -978,7 +983,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize attributedString = _attributedString;
 @synthesize delegate = _delegate;
 @synthesize edgeInsets = _edgeInsets;
-@synthesize shouldAddFirstLineLeading = _shouldAddFirstLineLeading;
 @synthesize shouldDrawImages = _shouldDrawImages;
 @synthesize shouldDrawLinks = _shouldDrawLinks;
 @synthesize shouldLayoutCustomSubviews = _shouldLayoutCustomSubviews;

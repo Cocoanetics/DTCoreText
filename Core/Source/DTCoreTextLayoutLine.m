@@ -11,6 +11,8 @@
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayouter.h"
 #import "DTTextAttachment.h"
+#import "NSDictionary+DTCoreText.h"
+#import "DTTextBlock.h"
 #import "DTCoreTextConstants.h"
 #import <UIKit/UIKit.h>
 
@@ -33,12 +35,17 @@
 	CGFloat _width;
 	CGFloat _trailingWhitespaceWidth;
 	
+	CGFloat _underlineOffset;
+	CGFloat _lineHeight;
+	
 	NSArray *_glyphRuns;
 	
 	BOOL _didCalculateMetrics;
 	
 	BOOL _writingDirectionIsRightToLeft;
 	BOOL _needsToDetectWritingDirection;
+	
+	BOOL _hasScannedGlyphRunsForValues;
 }
 
 - (id)initWithLine:(CTLineRef)line
@@ -256,53 +263,6 @@
 	}
 }
 
-// calculates the extra space that is before every line even though the leading is zero
-// http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
-- (CGFloat)calculatedLeading
-{
-	CGFloat maxLeading = 0;
-	
-	NSArray *glyphRuns = self.glyphRuns;
-	DTCoreTextGlyphRun *lastRunInLine = [glyphRuns lastObject];
-	
-	for (DTCoreTextGlyphRun *oneRun in glyphRuns)
-	{
-		CGFloat runLeading = 0;
-		
-		if (oneRun.leading>0)
-		{
-			// take actual leading
-			runLeading = oneRun.leading;
-		}
-		else
-		{
-			// calculate a run leading as 20% from line height
-			
-			// for attachments the ascent equals the image height
-			// so we don't add the 20%
-			if (!oneRun.attachment)
-			{
-				if (oneRun == lastRunInLine && (oneRun.width==self.trailingWhitespaceWidth))
-				{
-					// a whitespace glyph, e.g. \n
-				}
-				else
-				{
-					// calculate a leading as 20% of the line height
-					CGFloat lineHeight = roundf(oneRun.ascent) + roundf(oneRun.descent);
-					runLeading = roundf(0.2f * lineHeight);
-				}
-			}
-		}
-		
-		// remember the max
-		maxLeading = MAX(maxLeading, runLeading);
-	}
-	
-	return maxLeading;
-}
-
-
 - (BOOL)isHorizontalRule
 {
 	// HR is only a single \n
@@ -330,6 +290,35 @@
 	
 	return NO;
 }
+
+#pragma mark Determining Values from the glyph runs
+
+- (void)_scanGlyphRunsForValues
+{
+	@synchronized(self)
+	{
+		CGFloat maxOffset = 0;
+		CGFloat maxFontSize = 0;
+		
+		for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+		{
+			CTFontRef usedFont = (__bridge CTFontRef)([oneRun.attributes objectForKey:(id)kCTFontAttributeName]);
+			
+			if (usedFont)
+			{
+				maxOffset = MAX(maxOffset, fabsf(CTFontGetUnderlinePosition(usedFont)));
+				
+				maxFontSize = MAX(maxFontSize, CTFontGetSize(usedFont));
+			}
+		}
+		
+		_underlineOffset = maxOffset;
+		_lineHeight = maxFontSize;
+		
+		_hasScannedGlyphRunsForValues= YES;
+	}
+}
+
 
 #pragma mark - Properties
 - (NSArray *)glyphRuns
@@ -393,6 +382,29 @@
 	return _width;
 }
 
+- (NSArray *)attachments
+{
+	NSMutableArray *tmpArray = [NSMutableArray array];
+	
+	for (DTCoreTextGlyphRun *oneRun in self.glyphRuns)
+	{
+		DTTextAttachment *attachment = oneRun.attachment;
+		
+		if (attachment)
+		{
+			[tmpArray addObject:attachment];
+		}
+	}
+	
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
+	
+	return nil;
+}
+
+
 - (CGFloat)ascent
 {
 	if (!_didCalculateMetrics)
@@ -433,6 +445,44 @@
 	}
 	
 	return _leading;
+}
+
+- (CGFloat)underlineOffset
+{
+	if (!_hasScannedGlyphRunsForValues)
+	{
+		[self _scanGlyphRunsForValues];
+	}
+	
+	return _underlineOffset;
+}
+
+- (CGFloat)lineHeight
+{
+	if (!_hasScannedGlyphRunsForValues)
+	{
+		[self _scanGlyphRunsForValues];
+	}
+	
+	return _lineHeight;
+}
+
+- (DTCoreTextParagraphStyle *)paragraphStyle
+{
+	// get paragraph style from any glyph
+	DTCoreTextGlyphRun *lastRun = [self.glyphRuns lastObject];
+	NSDictionary *attributes = lastRun.attributes;
+	
+	return [attributes paragraphStyle];
+}
+
+- (NSArray *)textBlocks
+{
+	// get text blocks from any glyph
+	DTCoreTextGlyphRun *lastRun = [self.glyphRuns lastObject];
+	NSDictionary *attributes = lastRun.attributes;
+	
+	return [attributes objectForKey:DTTextBlocksAttribute];
 }
 
 - (CGFloat)trailingWhitespaceWidth

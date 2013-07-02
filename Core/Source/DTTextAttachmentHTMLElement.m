@@ -58,7 +58,7 @@
 {
 	@synchronized(self)
 	{
-		NSDictionary *attributes = [self attributesDictionary];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 		
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];

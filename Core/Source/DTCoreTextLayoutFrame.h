@@ -13,6 +13,8 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
+#import "DTCoreTextConstants.h"
+
 @class DTCoreTextLayoutLine;
 @class DTTextBlock;
 
@@ -239,12 +241,27 @@ typedef enum
 /**
  Finds the appropriate baseline origin for a line to position it at the correct distance from a previous line.
  
+ Support Layout options are:
+ 
+ - DTCoreTextLayoutFrameLinePositioningAlgorithmWebKit,
+ - DTCoreTextLayoutFrameLinePositioningAlgorithmLegacy
+ 
+ @param line The line
+ @param previousLine The line after which to position the line.
+ @param options The layout options to employ for positioning lines
+ @returns The correct baseline origin for the line.
+ */
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine options:(DTCoreTextLayoutFrameLinePositioningOptions)options;
+
+/**
+ Finds the appropriate baseline origin for a line to position it at the correct distance from a previous line using the DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy algorithm.
+ 
+ @warning This method is deprecated, use -[baselineOriginToPositionLine:afterLine:algorithm:] instead
  @param line The line
  @param previousLine The line after which to position the line.
  @returns The correct baseline origin for the line.
  */
-- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine;
-
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine __attribute__((deprecated("use use -[baselineOriginToPositionLine:afterLine:algorithm:] instead")));;
 
 /**
  @name Text Attachments
@@ -345,10 +362,5 @@ typedef enum
  */
 @property(nonatomic, strong)NSAttributedString *truncationString;
 
-
-/**
- Flag to supress leading whitespace above fist line
- */
-@property(nonatomic, assign)BOOL noLeadingOnFirstLine;
 
 @end
