@@ -13,6 +13,7 @@ Pod::Spec.new do |spec|
   spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
   spec.summary      = 'Methods to allow using HTML code with CoreText.'
   spec.author       = { 'Oliver Drobnik' => 'oliver@cocoanetics.com' }
+  spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
 
   spec.pre_install do |pod_representation, library_representation|
     Dir.chdir(pod_representation.root + 'Core/Source/') do
