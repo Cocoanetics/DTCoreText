@@ -67,7 +67,7 @@
 			text = [_text stringByNormalizingWhitespace];
 		}
 		
-		NSDictionary *attributes = [self attributesDictionary];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 		
 		if (self.fontVariant == DTHTMLElementFontVariantNormal)
 		{

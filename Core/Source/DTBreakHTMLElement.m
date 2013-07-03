@@ -14,7 +14,7 @@
 {
 	@synchronized(self)
 	{
-		NSDictionary *attributes = [self attributesDictionary];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
 		return [[NSAttributedString alloc] initWithString:UNICODE_LINE_FEED attributes:attributes];
 	}
 }

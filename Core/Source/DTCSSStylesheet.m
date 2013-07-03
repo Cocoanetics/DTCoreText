@@ -601,7 +601,7 @@ extern unsigned int default_css_len;
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,
@@ -621,6 +621,13 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
+	NSMutableSet *tmpMatchedSelectors;
+	
+	if (matchedSelectors)
+	{
+		tmpMatchedSelectors = [[NSMutableSet alloc] init];
+	}
+	
 	for (NSString *class in classes) 
 	{
 		NSString *classRule = [NSString stringWithFormat:@".%@", class];
@@ -632,11 +639,14 @@ extern unsigned int default_css_len;
 		if (byClass) 
 		{
 			[tmpDict addEntriesFromDictionary:byClass];
+			
+			[tmpMatchedSelectors addObject:classRule];
 		}
 		
 		if (byClassAndName) 
 		{
 			[tmpDict addEntriesFromDictionary:byClassAndName];
+			[tmpMatchedSelectors addObject:classAndTagRule];
 		}
 	}
 	
@@ -647,6 +657,7 @@ extern unsigned int default_css_len;
 	if (byID)
 	{
 		[tmpDict addEntriesFromDictionary:byID];
+		[tmpMatchedSelectors addObject:idRule];
 	}
 	
 	// Get tag's local style attribute
@@ -664,6 +675,11 @@ extern unsigned int default_css_len;
 	
 	if ([tmpDict count])
 	{
+		if (matchedSelectors && [tmpMatchedSelectors count])
+		{
+			*matchedSelectors = [tmpMatchedSelectors copy];
+		}
+		
 		return tmpDict;
 	}
 	else

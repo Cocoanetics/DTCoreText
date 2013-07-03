@@ -60,7 +60,7 @@ static DTCoreTextFontCollection *_availableFontsCollection = nil;
 - (DTCoreTextFontDescriptor *)matchingFontDescriptorForFontDescriptor:(DTCoreTextFontDescriptor *)descriptor
 {
 	DTCoreTextFontDescriptor *firstMatch = nil;
-	NSNumber *cacheKey = [NSString stringWithFormat:@"fontFamily BEGINSWITH[cd] %@ and boldTrait == %d and italicTrait == %d", descriptor.fontFamily, descriptor.boldTrait, descriptor.italicTrait];
+	NSString *cacheKey = [NSString stringWithFormat:@"fontFamily BEGINSWITH[cd] %@ and boldTrait == %d and italicTrait == %d", descriptor.fontFamily, descriptor.boldTrait, descriptor.italicTrait];
 	
 	// try cache
 	firstMatch = [self.fontMatchCache objectForKey:cacheKey];

@@ -93,6 +93,9 @@
 			break;
 		case UITableViewCellAccessoryNone:
 			break;
+		default:
+			NSLog(@"Warning: Sizing for UITableViewCellAccessoryDetailButton not implemented on %@", NSStringFromClass([self class]));
+			break;
 	}
 	
 	// reduce width for grouped table views

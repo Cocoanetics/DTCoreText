@@ -41,6 +41,7 @@ NSString * const DTShadowsAttribute = @"DTShadows";
 NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
+NSString * const DTCustomAttributesAttribute = @"DTCustomAttributes";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";

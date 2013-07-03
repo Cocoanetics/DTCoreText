@@ -48,8 +48,6 @@
 	
 	NSMutableDictionary *_fontCache;
 	
-	NSMutableDictionary *_additionalAttributes;
-	
 	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle _floatStyle;
 	
@@ -101,6 +99,11 @@
  */
 - (NSAttributedString *)attributedString;
 
+/**
+ The dictionary of Core Text attributes for creating an `NSAttributedString` representation for the receiver
+ @returns The dictionary of attributes
+ */
+- (NSDictionary *)attributesForAttributedStringRepresentation;
 
 /**
  Creates a <DTCSSListStyle> to match the CSS styles
@@ -239,19 +242,6 @@
  */
 
 /**
- The dictionary of attributes of the receiver
- @returns The dictionary
- */
-- (NSDictionary *)attributesDictionary;
-
-/**
- Adds an additional attribute key/value pair to the attributes dictionary of the receiver
- @param attribute The attribute string to set
- @param key The key to set it for
- */
-- (void)addAdditionalAttribute:(id)attribute forKey:(id)key;
-
-/**
  Retrieves an attribute with a given key
  @param key The attribute name to retrieve
  @returns the attribute string
@@ -269,6 +259,15 @@
  */
 - (void)interpretAttributes;
 
+/**
+ The HTML attributes that should be attached to the generated attributed string. Typically all attributes that were processed by -interpretAttributes are in this list. All other attributes get added to the generated attributed string with the DTCustomAttributesAttribute key.
+ */
++ (NSSet *)attributesToIgnoreForCustomAttributesAttribute;
+
+/**
+ The CSS class names that are not to be added to the "class" custom attribute in the DTCustomAttributesAttribute key. Those are usually the class names 
+ */
+@property(nonatomic, strong) NSSet *CSSClassNamesToIgnoreForCustomAttributes;
 
 /**
  @name Working with CSS Styles
@@ -279,11 +278,6 @@
  @param styles A style dictionary
  */
 - (void)applyStyleDictionary:(NSDictionary *)styles;
-
-/**
- The most recently applied styles dictionary
- */
-//- (NSDictionary *)styles;
 
 
 /**
