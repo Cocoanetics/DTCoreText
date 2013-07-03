@@ -30,6 +30,24 @@
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
+		A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; };
+		A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; };
+		A04CF1A61738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; };
+		A04CF1A71738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
+		A04CF1A81738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
+		A04CF1A91738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
+		A04CF1AA1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; };
+		A04CF1AB1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; };
+		A04CF1AC1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; };
+		A04CF1AD1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
+		A04CF1AE1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
+		A04CF1AF1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
+		A04CF1B01738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04CF1B21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04CF1B31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
+		A04CF1B41738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
+		A04CF1B51738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
 		A060479216A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A060479316A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A060479416A8B5770000CAA1 /* DTAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A060479016A8B5770000CAA1 /* DTAttributedLabel.h */; };
@@ -824,6 +842,12 @@
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementTest.h; sourceTree = "<group>"; };
 		9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementTest.m; sourceTree = "<group>"; };
+		A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAccessibilityElement.h; sourceTree = "<group>"; };
+		A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAccessibilityElement.m; sourceTree = "<group>"; };
+		A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAccessibilityViewProxy.h; sourceTree = "<group>"; };
+		A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAccessibilityViewProxy.m; sourceTree = "<group>"; };
+		A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextLayoutFrameAccessibilityElementGenerator.h; sourceTree = "<group>"; };
+		A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutFrameAccessibilityElementGenerator.m; sourceTree = "<group>"; };
 		A060479016A8B5770000CAA1 /* DTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedLabel.h; sourceTree = "<group>"; };
 		A060479116A8B5770000CAA1 /* DTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedLabel.m; sourceTree = "<group>"; };
 		A700289716FB220B00AFEDA3 /* DTAnchorHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAnchorHTMLElement.h; sourceTree = "<group>"; };
@@ -1196,6 +1220,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A04CF1971738BBF00036E735 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */,
+				A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */,
+				A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */,
+				A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */,
+				A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */,
+				A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */,
+			);
+			name = Accessibility;
+			sourceTree = "<group>";
+		};
 		A70B4C9A1486518E00873A4A /* Layouting */ = {
 			isa = PBXGroup;
 			children = (
@@ -1387,6 +1424,7 @@
 		A788CAA71486490600E1AFD9 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A04CF1971738BBF00036E735 /* Accessibility */,
 				A70E62CC16C248C2009B47BF /* Editing */,
 				A060479016A8B5770000CAA1 /* DTAttributedLabel.h */,
 				A060479116A8B5770000CAA1 /* DTAttributedLabel.m */,
@@ -1672,6 +1710,9 @@
 				A7AE582B1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
 				A7675E77172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */,
 				A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */,
+				A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */,
+				A04CF1AA1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */,
+				A04CF1B01738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1736,6 +1777,9 @@
 				A7AE582C1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
 				A7675E78172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */,
 				A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */,
+				A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */,
+				A04CF1AB1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */,
+				A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1800,6 +1844,9 @@
 				A7AE582D1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
 				A7675E79172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */,
 				A76D45151732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */,
+				A04CF1A61738BC080036E735 /* DTAccessibilityElement.h in Headers */,
+				A04CF1AC1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */,
+				A04CF1B21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2401,6 +2448,9 @@
 				A7AE582F1725391900A9BF61 /* DTObjectTextAttachment.m in Sources */,
 				A7675E7B172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */,
 				A76D45171732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
+				A04CF1A71738BC080036E735 /* DTAccessibilityElement.m in Sources */,
+				A04CF1AD1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */,
+				A04CF1B31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2463,6 +2513,9 @@
 				A7AE58301725391900A9BF61 /* DTObjectTextAttachment.m in Sources */,
 				A7675E7C172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */,
 				A76D45181732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
+				A04CF1A81738BC080036E735 /* DTAccessibilityElement.m in Sources */,
+				A04CF1AE1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */,
+				A04CF1B41738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2557,6 +2610,9 @@
 				A7AE58311725391900A9BF61 /* DTObjectTextAttachment.m in Sources */,
 				A7675E7D172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */,
 				A76D45191732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
+				A04CF1A91738BC080036E735 /* DTAccessibilityElement.m in Sources */,
+				A04CF1AF1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */,
+				A04CF1B51738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,6 +24,19 @@ In the following "Mac" means the initWithHTML: methods there, "DTCoreText" means
 - Mac does not properly encode a double list start. iOS prints the empty list prefix.
 - Mac seems to ignore list-style-position:outside, iOS does the right thing.
 
+### Using NS-Style Attributes
+
+You can have DTCoreText produce iOS 6-compatible output. This only covers the functionality that is supported by this platform.
+
+- Support for changing the line height is broken in iOS 6. As soon as you have more than one font in the attributed string the minimum and maximum line height attributes of the paragraph style are being ignored.
+- Hyperlinks are not supported. UITextView does not have the NSLink attribute Mac has and there is no delegate protocol to deal with clicking on links.
+- Since there is no way to reserve extra space on a glyph there is no way to display custom views or inline images
+- Horizontal Rule (hr) is not supported.
+- Native lists and text boxes are private to NSParagraphStyle
+- The tab stops list is also private in NSParagraphStyle, lists only work by using the first standard tab stop as list indent. This causes additional space to be between the list prefix and the text.
+
+You should only use iOS 6 compatible tags if you are targetting UIKit views.
+
 ### Differences between UITextView/UIWebView and DTCoreText
 
 There are also some notable differences between display of an attributed string via DTCoreText versus UITextView or UIWebView (UIKit).

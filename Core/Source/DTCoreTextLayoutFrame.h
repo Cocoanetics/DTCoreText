@@ -363,9 +363,4 @@ typedef enum
 @property(nonatomic, strong)NSAttributedString *truncationString;
 
 
-/**
- Flag to supress leading whitespace above fist line
- */
-@property(nonatomic, assign)BOOL noLeadingOnFirstLine;
-
 @end
