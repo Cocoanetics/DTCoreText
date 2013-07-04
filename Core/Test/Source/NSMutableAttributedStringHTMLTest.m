@@ -8,6 +8,7 @@
 
 #import "NSMutableAttributedStringHTMLTest.h"
 #import "NSMutableAttributedString+HTML.h"
+#import "NSAttributedString+HTML.h"
 
 
 @implementation NSMutableAttributedStringHTMLTest
@@ -105,6 +106,34 @@
 	
 	id value = [dict objectForKey:@"class"];
 	STAssertEqualObjects(value, @"oli", @"Attribute should be oli");
+}
+
+- (void)testRemoveMultipleCustomHTMLAttribute
+{
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"1234567890"];
+	
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	
+	// have a range with an attribute
+	[attributedString addHTMLAttribute:@"class" value:@"oli" range:entireString replaceExisting:YES];
+	[attributedString addHTMLAttribute:@"foo" value:@"bar" range:entireString replaceExisting:YES];
+	
+	// there should be two
+	NSDictionary *attributes = [attributedString HTMLAttributesAtIndex:2];
+	NSUInteger count = [attributes count];
+	NSUInteger expectedCount = 2;
+	
+	STAssertEquals(count, expectedCount, @"There should be 2 custom attributes");
+
+	// now remove one
+	[attributedString removeHTMLAttribute:@"foo" range:entireString];
+	
+	// there should be one
+	attributes = [attributedString HTMLAttributesAtIndex:2];
+	count = [attributes count];
+	expectedCount = 1;
+
+	STAssertEquals(count, expectedCount, @"There should be only 1 custom attribute");
 }
 
 - (void)testRangeOfCustomHTMLAttribute

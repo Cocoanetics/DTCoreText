@@ -176,7 +176,7 @@
 			// only re-add modified dictionary if it is not empty
 			if ([mutableDictionary count])
 			{
-				[self addAttribute:DTCustomAttributesAttribute value:[dictionary copy] range:effectiveRange];
+				[self addAttribute:DTCustomAttributesAttribute value:[mutableDictionary copy] range:effectiveRange];
 			}
 		}
 	}];
