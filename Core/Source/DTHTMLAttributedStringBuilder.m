@@ -361,9 +361,18 @@
 			_currentTag.isColorInherited = NO;
 		}
 		
+		// the name attribute of A becomes an anchor
+		_currentTag.anchorName = [_currentTag attributeForKey:@"name"];
+
 		// remove line breaks and whitespace in links
 		NSString *cleanString = [[_currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 		cleanString = [cleanString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		
+		if (![cleanString length])
+		{
+			// no valid href
+			return;
+		}
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
 		
@@ -389,9 +398,6 @@
 		}
 		
 		_currentTag.link = link;
-		
-		// the name attribute of A becomes an anchor
-		_currentTag.anchorName = [_currentTag attributeForKey:@"name"];
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
