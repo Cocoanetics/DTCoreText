@@ -746,7 +746,7 @@
 				if (fragment)
 				{
 					// stays style for fragment mode
-					[spanLevelHTMLAttributes setObject:paraStyleString forKey:@"style"];
+					[spanLevelHTMLAttributes setObject:fontStyle forKey:@"style"];
 				}
 				else
 				{
