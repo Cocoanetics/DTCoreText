@@ -141,6 +141,26 @@
 	[self setNeedsLayout];
 }
 
+#pragma mark - Working with a Cursor
+
+- (NSInteger)closestCursorIndexToPoint:(CGPoint)point
+{
+	// the point is in the coordinate system of the receiver, need to convert into those of the content view first
+	CGPoint pointInContentView = [self.attributedTextContentView convertPoint:point fromView:self];
+	
+	return [self.attributedTextContentView closestCursorIndexToPoint:pointInContentView];
+}
+
+- (CGRect)cursorRectAtIndex:(NSInteger)index
+{
+	CGRect rectInContentView = [self.attributedTextContentView cursorRectAtIndex:index];
+	
+	// the point is in the coordinate system of the content view, need to convert into those of the receiver first
+	CGRect rect = [self.attributedTextContentView convertRect:rectInContentView toView:self];
+	
+	return rect;
+}
+
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
