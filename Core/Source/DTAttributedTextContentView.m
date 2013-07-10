@@ -87,6 +87,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @end
 
 
+@implementation DTAttributedTextContentView (Cursor)
+
+- (NSInteger)closestCursorIndexToPoint:(CGPoint)point
+{
+	return [self.layoutFrame closestCursorIndexToPoint:point];
+}
+
+- (CGRect)cursorRectAtIndex:(NSInteger)index
+{
+	return [self.layoutFrame cursorRectAtIndex:index];
+}
+
+@end
+
+
 @implementation DTAttributedTextContentView
 
 - (void)setup
