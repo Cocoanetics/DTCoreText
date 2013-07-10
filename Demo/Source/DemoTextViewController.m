@@ -117,6 +117,10 @@
 	_textView.shouldDrawLinks = NO;
 	_textView.textDelegate = self; // delegate for custom sub views
 	
+	// gesture for testing cursor positions
+	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	[_textView addGestureRecognizer:tap];
+	
 	// set an inset. Since the bottom is below a toolbar inset by 44px
 	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
 	_textView.contentInset = UIEdgeInsetsMake(10, 10, 54, 10);
@@ -558,6 +562,31 @@
 			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.URL absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
+	}
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture
+{
+	if (gesture.state == UIGestureRecognizerStateRecognized)
+	{
+		CGPoint location = [gesture locationInView:_textView];
+		NSUInteger tappedIndex = [_textView closestCursorIndexToPoint:location];
+		
+		NSString *plainText = [_textView.attributedString string];
+		NSString *tappedChar = [plainText substringWithRange:NSMakeRange(tappedIndex, 1)];
+		
+		__block NSRange wordRange = NSMakeRange(0, 0);
+		
+		[plainText enumerateSubstringsInRange:NSMakeRange(0, [plainText length]) options:NSStringEnumerationByWords usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+			if (NSLocationInRange(tappedIndex, enclosingRange))
+			{
+				*stop = YES;
+				wordRange = substringRange;
+			}
+		}];
+		
+		NSString *word = [plainText substringWithRange:wordRange];
+		NSLog(@"%d: '%@' word: '%@'", tappedIndex, tappedChar, word);
 	}
 }
 
