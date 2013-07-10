@@ -64,6 +64,7 @@
 #import "DTCoreTextFontCollection.h"
 #import "DTCoreTextGlyphRun.h"
 #import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextLayoutFrame+Cursor.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayouter.h"
 
