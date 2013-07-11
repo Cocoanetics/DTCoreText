@@ -25,6 +25,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTHTMLAttributedStringBuilder.h"
 #import "DTHTMLElement.h"
+#import "DTHTMLWriter.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSDictionary+DTCoreText.h"
 #import "NSAttributedString+HTML.h"

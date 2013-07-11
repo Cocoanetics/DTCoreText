@@ -70,7 +70,7 @@
 	
 	NSDictionary *attributes = [self attribute:DTCustomAttributesAttribute atIndex:index effectiveRange:&rangeSoFar];
 	
-	NSAssert(attributes, @"No custom attribute '%@' at index %d", name, index);
+	NSAssert(attributes, @"No custom attribute '%@' at index %d", name, (int)index);
 	
 	// check if there is a value for this custom attribute name
 	id value = [attributes objectForKey:name];
