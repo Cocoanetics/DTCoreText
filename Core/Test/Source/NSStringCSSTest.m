@@ -123,5 +123,48 @@
 	STAssertTrue(isCSSLength, @"Should be a valid font size value");
 }
 
+- (void)testMultiFontFamily
+{
+	NSString *style = @"font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	STAssertTrue([font count] == 6, @"6 fonts should be returned");
+}
+
+- (void)testSimpleQuotedFontFamily
+{
+	NSString *style = @"font-family: 'Courier New'";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertTrue([font isEqualToString:@"Courier New"], @"Font count should be a string");
+}
+
+- (void)testSimpleUnquotedFontFamily
+{
+	NSString *style = @"font-family: Courier New";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertTrue([font isEqualToString:@"Courier New"], @"Font count should be a string");
+}
+
+- (void)testMultiFontFamilyWithSize
+{
+	NSString *style = @"font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace; font-size: 60px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	NSString *size = dictionary[@"font-size"];
+	
+	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	STAssertTrue([font count] == 6, @"6 fonts should be returned");
+	STAssertTrue([size isEqualToString:@"60px"], @"Font size should be 60px");
+}
 
 @end
