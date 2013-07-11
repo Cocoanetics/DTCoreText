@@ -52,7 +52,7 @@ extern NSString * const DTDefaultHeadIndent;
 extern NSString * const DTDefaultStyleSheet;
 extern NSString * const DTUseiOS6Attributes;
 extern NSString * const DTWillFlushBlockCallBack;
-extern NSString * const DTIgnoreCustomHTMLAttributes;
+extern NSString * const DTProcessCustomHTMLAttributes;
 
 // attributed string attribute constants
 

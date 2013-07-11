@@ -74,7 +74,7 @@
 	// indent of lists
 	CGFloat _listIndent;
 	
-	BOOL _ignoreCustomHTMLAttributes;
+	BOOL _shouldProcessCustomHTMLAttributes;
 }
 
 /**
@@ -242,7 +242,7 @@
 /**
  Prevents adding custom HTML attributes to output
  */
-@property (nonatomic, assign) BOOL ignoreCustomHTMLAttributes;
+@property (nonatomic, assign) BOOL shouldProcessCustomHTMLAttributes;
 
 /**
  @name Working with HTML Attributes

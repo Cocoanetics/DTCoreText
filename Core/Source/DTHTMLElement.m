@@ -521,7 +521,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		
 		// add the custom attributes
-		if (!_ignoreCustomHTMLAttributes)
+		if (_shouldProcessCustomHTMLAttributes)
 		{
 			[self _addCustomHTMLAttributesToAttributedString:tmpString];
 		}
@@ -1426,7 +1426,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize linkGUID = _linkGUID;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
 @synthesize CSSClassNamesToIgnoreForCustomAttributes = _CSSClassNamesToIgnoreForCustomAttributes;
-@synthesize ignoreCustomHTMLAttributes = _ignoreCustomHTMLAttributes;
+@synthesize shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
 
 @end
 

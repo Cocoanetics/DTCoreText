@@ -58,7 +58,7 @@
 	NSMutableDictionary *_tagEndHandlers;
 	
 	DTHTMLAttributedStringBuilderWillFlushCallback _willFlushCallback;
-	BOOL _ignoreCustomHTMLAttributes;
+	BOOL _shouldProcessCustomHTMLAttributes;
 	
 	// new parsing
 	DTHTMLElement *_rootNode;
@@ -295,7 +295,7 @@
 		}
 	}
 	
-	_ignoreCustomHTMLAttributes = [[_options objectForKey:DTIgnoreCustomHTMLAttributes] boolValue];
+	_shouldProcessCustomHTMLAttributes = [[_options objectForKey:DTProcessCustomHTMLAttributes] boolValue];
 	
 	// create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
@@ -673,9 +673,9 @@
 				_bodyElement = newNode;
 			}
 			
-			if (_ignoreCustomHTMLAttributes)
+			if (_shouldProcessCustomHTMLAttributes)
 			{
-				newNode.ignoreCustomHTMLAttributes = _ignoreCustomHTMLAttributes;
+				newNode.shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
 			}
 		}
 		else
