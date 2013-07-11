@@ -84,7 +84,7 @@
 		{
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
 			
-			// if the attribute is a short hand font style, parse it the old way
+			// if the attribute has some special reliance on commas, parse it the old way
 			if ([attrName isEqualToString:@"font"] || [attrName isEqualToString:@"text-shadow"] || [attrName isEqualToString:@"color"]) {
 				NSMutableString *attrValue = [NSMutableString stringWithString:@""];
 				
