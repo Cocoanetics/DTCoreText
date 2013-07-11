@@ -521,7 +521,10 @@ NSDictionary *_classesForNames = nil;
 		}
 		
 		// add the custom attributes
-		[self _addCustomHTMLAttributesToAttributedString:tmpString];
+		if (_shouldProcessCustomHTMLAttributes)
+		{
+			[self _addCustomHTMLAttributesToAttributedString:tmpString];
+		}
 		
 		return tmpString;
 	}
@@ -1422,8 +1425,8 @@ NSDictionary *_classesForNames = nil;
 @synthesize padding = _padding;
 @synthesize linkGUID = _linkGUID;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
-
 @synthesize CSSClassNamesToIgnoreForCustomAttributes = _CSSClassNamesToIgnoreForCustomAttributes;
+@synthesize shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
 
 @end
 

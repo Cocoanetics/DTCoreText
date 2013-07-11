@@ -31,6 +31,8 @@
 	NSString *_fileName;
 	
 	UISegmentedControl *_segmentedControl;
+	UISegmentedControl *_htmlOutputTypeSegment;
+	
 	DTAttributedTextView *_textView;
 	UITextView *_rangeView;
 	UITextView *_charsView;
@@ -65,9 +67,8 @@
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
 		self.navigationItem.titleView = _segmentedControl;	
 		
-		UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
-		NSArray *toolbarItems = [NSArray arrayWithObject:debug];
-		[self setToolbarItems:toolbarItems];
+		[self _updateToolbarForMode];
+
 	}
 	return self;
 }
@@ -85,6 +86,35 @@
 
 
 #pragma mark UIViewController
+
+- (void)_updateToolbarForMode
+{
+	NSMutableArray *toolbarItems = [NSMutableArray array];
+	
+	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
+	[toolbarItems addObject:debug];
+	
+	if (_segmentedControl.selectedSegmentIndex == 3)
+	{
+		if (!_htmlOutputTypeSegment)
+		{
+			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[@"Document", @"Fragment"]];
+			_htmlOutputTypeSegment.segmentedControlStyle = UISegmentedControlStyleBar;
+			_htmlOutputTypeSegment.selectedSegmentIndex = 0;
+			
+			[_htmlOutputTypeSegment addTarget:self action:@selector(_htmlModeChanged:) forControlEvents:UIControlEventValueChanged];
+		}
+	
+		UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
+		[toolbarItems addObject:spacer];
+	
+		UIBarButtonItem *htmlMode = [[UIBarButtonItem alloc] initWithCustomView:_htmlOutputTypeSegment];
+	
+		[toolbarItems addObject:htmlMode];
+	}
+
+	[self setToolbarItems:toolbarItems];
+}
 
 - (void)loadView {
 	[super loadView];
@@ -116,6 +146,10 @@
 	_textView.shouldDrawImages = NO;
 	_textView.shouldDrawLinks = NO;
 	_textView.textDelegate = self; // delegate for custom sub views
+	
+	// gesture for testing cursor positions
+	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	[_textView addGestureRecognizer:tap];
 	
 	// set an inset. Since the bottom is below a toolbar inset by 44px
 	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
@@ -263,7 +297,15 @@
 		}
 		case 3:
 		{
-			_htmlView.text = [_textView.attributedString htmlString];
+			if (_htmlOutputTypeSegment.selectedSegmentIndex == 0)
+			{
+				_htmlView.text = [_textView.attributedString htmlString];
+			}
+			else
+			{
+				_htmlView.text = [_textView.attributedString htmlFragment];
+			}
+			
 			break;
 		}
 		case 4:
@@ -296,6 +338,7 @@
 		case 3:
 		{
 			selectedView = _htmlView;
+			
 			break;
 		}
 			
@@ -316,6 +359,14 @@
 	
 	[self.view bringSubviewToFront:selectedView];
 	[selectedView flashScrollIndicators];
+	
+	[self _updateToolbarForMode];
+}
+
+- (void)_htmlModeChanged:(id)sender
+{
+	// refresh only this tab
+	[self updateDetailViewForIndex:_segmentedControl.selectedSegmentIndex];
 }
 
 
@@ -558,6 +609,31 @@
 			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.URL absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
 			[action showFromRect:button.frame inView:button.superview animated:YES];
 		}
+	}
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture
+{
+	if (gesture.state == UIGestureRecognizerStateRecognized)
+	{
+		CGPoint location = [gesture locationInView:_textView];
+		NSUInteger tappedIndex = [_textView closestCursorIndexToPoint:location];
+		
+		NSString *plainText = [_textView.attributedString string];
+		NSString *tappedChar = [plainText substringWithRange:NSMakeRange(tappedIndex, 1)];
+		
+		__block NSRange wordRange = NSMakeRange(0, 0);
+		
+		[plainText enumerateSubstringsInRange:NSMakeRange(0, [plainText length]) options:NSStringEnumerationByWords usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+			if (NSLocationInRange(tappedIndex, enclosingRange))
+			{
+				*stop = YES;
+				wordRange = substringRange;
+			}
+		}];
+		
+		NSString *word = [plainText substringWithRange:wordRange];
+		NSLog(@"%d: '%@' word: '%@'", tappedIndex, tappedChar, word);
 	}
 }
 

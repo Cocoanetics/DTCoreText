@@ -1144,13 +1144,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				runIndex ++;
 			}
 			
+			DTTextAttachment *attachment = oneRun.attachment;
+			
+			if (drawImages && [attachment conformsToProtocol:@protocol(DTTextAttachmentDrawing)])
+			{
+				id<DTTextAttachmentDrawing> drawableAttachment = (id<DTTextAttachmentDrawing>)attachment;
+				
+				// frame might be different due to image vertical alignment
+				CGFloat ascender = [attachment ascentForLayout];
+				CGRect rect = CGRectMake(oneRun.frame.origin.x, oneLine.baselineOrigin.y - ascender, attachment.displaySize.width, attachment.displaySize.height);
+				
+				[drawableAttachment drawInRect:rect context:context];
+			}
+			
 			if (!drawLinks && oneRun.isHyperlink)
 			{
 				continue;
 			}
 			
 			// don't draw decorations on images
-			if (oneRun.attachment)
+			if (attachment)
 			{
 				continue;
 			}
@@ -1210,26 +1223,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 			
-			DTTextAttachment *attachment = oneRun.attachment;
-			
-			if (attachment)
-			{
-				if (drawImages && [attachment conformsToProtocol:@protocol(DTTextAttachmentDrawing)])
-				{
-					id<DTTextAttachmentDrawing> drawableAttachment = (id<DTTextAttachmentDrawing>)attachment;
-					
-					// frame might be different due to image vertical alignment
-					CGFloat ascender = [attachment ascentForLayout];
-					CGFloat descender = [attachment descentForLayout];
-					
-					CGPoint origin = oneRun.frame.origin;
-					origin.y = self.frame.size.height - origin.y - ascender - descender;
-					CGRect flippedRect = CGRectMake(roundf(origin.x), roundf(origin.y), attachment.displaySize.width, attachment.displaySize.height);
-					
-					[drawableAttachment drawInRect:flippedRect context:context];
-				}
-			}
-			else
+			if (!oneRun.attachment)
 			{
 				NSArray *shadows = [oneRun.attributes objectForKey:DTShadowsAttribute];
 				

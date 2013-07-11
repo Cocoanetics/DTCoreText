@@ -73,6 +73,8 @@
 	
 	// indent of lists
 	CGFloat _listIndent;
+	
+	BOOL _shouldProcessCustomHTMLAttributes;
 }
 
 /**
@@ -236,6 +238,11 @@
  */
 @property (nonatomic, assign) BOOL supressWhitespaceChildren;
 
+
+/**
+ Prevents adding custom HTML attributes to output
+ */
+@property (nonatomic, assign) BOOL shouldProcessCustomHTMLAttributes;
 
 /**
  @name Working with HTML Attributes

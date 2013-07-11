@@ -25,6 +25,7 @@ NSString * const DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
+NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes";
 
 // attributed string attribute constants
 

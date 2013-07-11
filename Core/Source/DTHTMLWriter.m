@@ -507,19 +507,37 @@
 		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stop) {
 
 			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
+			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
 			
 			BOOL isFirstPartOfHyperlink = NO;
 			BOOL isLastPartOfHyperlink = NO;
 			
-			if (spanURL && (currentLinkRange.location == NSNotFound))
+			if ((spanURL || spanAnchorName) && (currentLinkRange.location == NSNotFound))
 			{
-				currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+				if (spanURL)
+				{
+					currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+				}
+				else if (spanAnchorName)
+				{
+					currentLinkRange = [_attributedString rangeOfAnchorNamed:spanAnchorName];
+				}
+				
 				isFirstPartOfHyperlink = YES;
 				
 				// build the attributes for the A tag
 				linkLevelHTMLAttributes = [NSMutableDictionary dictionary];
 				
-				[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
+				if (spanURL)
+				{
+					[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
+				}
+				
+				// add anchor name if present
+				if (spanAnchorName)
+				{
+					[linkLevelHTMLAttributes setObject:spanAnchorName forKey:@"name"];
+				}
 				
 				// find which custom attributes are for the link
 				NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
@@ -746,7 +764,7 @@
 				if (fragment)
 				{
 					// stays style for fragment mode
-					[spanLevelHTMLAttributes setObject:paraStyleString forKey:@"style"];
+					[spanLevelHTMLAttributes setObject:fontStyle forKey:@"style"];
 				}
 				else
 				{
