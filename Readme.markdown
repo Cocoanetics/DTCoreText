@@ -21,6 +21,8 @@ Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to
 
 #### Changelog
 
+- [Version 1.6.1](http://www.cocoanetics.com/2013/07/dtcoretext-1-6-1/)
+- [Version 1.6.0](http://www.cocoanetics.com/2013/07/dtcoretext-1-6/)
 - [Version 1.5.3](http://www.cocoanetics.com/2013/06/dtcoretext-1-5-3/)
 - [Version 1.5.2](http://www.cocoanetics.com/2013/05/dtcoretext-1-5-2/)
 - [Version 1.5](http://www.cocoanetics.com/2013/05/rich-text-update-1-5/)
