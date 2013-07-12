@@ -141,7 +141,7 @@
 	
 	id font =  dictionary[@"font-family"];
 	
-	STAssertTrue([font isEqualToString:@"Courier New"], @"Font count should be a string");
+	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
 }
 
 - (void)testSimpleUnquotedFontFamily
@@ -151,7 +151,7 @@
 	
 	id font =  dictionary[@"font-family"];
 	
-	STAssertTrue([font isEqualToString:@"Courier New"], @"Font count should be a string");
+	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
 }
 
 - (void)testMultiFontFamilyWithSize
@@ -173,6 +173,7 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id shadow = dictionary[@"text-shadow"];
 	
+	STAssertEqualObjects(@"-1px -1px #555, 1px 1px #EEE", shadow, @"Shadow should be \"-1px -1px #555, 1px 1px #EEE\"");
 	STAssertTrue([shadow isKindOfClass:[NSString class]], @"shadow count should be a string");
 }
 
@@ -182,6 +183,7 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id color = dictionary[@"color"];
 	
+	STAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Color should be \"rgb(255, 0, 0)\"");
 	STAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
 }
 
