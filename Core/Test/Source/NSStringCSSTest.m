@@ -167,4 +167,22 @@
 	STAssertTrue([size isEqualToString:@"60px"], @"Font size should be 60px");
 }
 
+- (void)testTextShadow
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id shadow = dictionary[@"text-shadow"];
+	
+	STAssertTrue([shadow isKindOfClass:[NSString class]], @"shadow count should be a string");
+}
+
+- (void)testColor
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;color:rgb(255, 0, 0);font-size:30px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id color = dictionary[@"color"];
+	
+	STAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
+}
+
 @end

@@ -71,8 +71,20 @@
 			{
 				[self setScanLocation:initialScanLocation];
 				return NO;
-			} else {
-				[results addObject:quotedValue];
+			}
+			else
+			{
+				if (nextIterationAddsNewEntry)
+				{
+					[results addObject:quotedValue];
+					nextIterationAddsNewEntry = NO;
+				}
+				else
+				{
+					quotedValue = [NSString stringWithFormat:@"%@ %@%@%@", [results lastObject], quote, quotedValue, quote];
+					[results removeLastObject];
+					[results addObject:quotedValue];
+				}
 			}
 			
 			// skip ending quote
@@ -83,69 +95,37 @@
 		else
 		{
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
+			NSString *value = nil;
 			
-			// if the attribute has some special reliance on commas, parse it the old way
-			if ([attrName isEqualToString:@"font"] || [attrName isEqualToString:@"text-shadow"] || [attrName isEqualToString:@"color"]) {
-				NSMutableString *attrValue = [NSMutableString stringWithString:@""];
-				
-				while (![self isAtEnd])
+			if ([self scanString:@"," intoString:&value])
+			{
+				if (![value isEqualToString:@","])
 				{
-					NSString *value = nil;
-					if (![self scanCharactersFromSet:nonWhiteCharacterSet intoString:&value])
-					{
-						// skip ending characters
-						[self scanString:@";" intoString:NULL];
-						
-						break;
-					}
-					
-					// interleave a space if there are multiple parts
-					if ([attrValue length])
-					{
-						[attrValue appendString:@" "];
-					}
-					
-					[attrValue appendString:value];
-					
-					// skip whitespace
-					[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
-					
-					[results removeAllObjects];
-					[results addObject:attrValue];
-					
-					if ([self scanString:@";" intoString:NULL])
-					{
-						// reached end of attribute
-						break;
-					}
+					[results addObject:value];
 				}
-			} else {
-				NSString *value = nil;
-				
-				if ([self scanString:@"," intoString:&value])
+				else if ([attrName isEqualToString:@"font"] || [attrName isEqualToString:@"color"] || [attrName isEqualToString:@"text-shadow"])
 				{
-					if ([value length] && ![value isEqualToString:@","])
-					{
+					value = [NSString stringWithFormat:@"%@%@", [results lastObject], value];
+					[results removeLastObject];
+					[results addObject:value];
+				}
+				
+				if ([value isEqualToString:@","] && ![attrName isEqualToString:@"font"] && ![attrName isEqualToString:@"color"] && ![attrName isEqualToString:@"text-shadow"])
+				{
+					nextIterationAddsNewEntry = YES;
+				}
+			}
+			else if ([self scanCharactersFromSet:nonWhiteCommaCharacterSet intoString:&value])
+			{
+				if ([value length] && ![value isEqualToString:@","])
+				{
+					if (nextIterationAddsNewEntry) {
 						[results addObject:value];
-					}
-					
-					if ([value isEqualToString:@","])
-					{
-						nextIterationAddsNewEntry = YES;
-					}
-				}
-				else if ([self scanCharactersFromSet:nonWhiteCommaCharacterSet intoString:&value])
-				{
-					if ([value length] && ![value isEqualToString:@","])
-					{
-						if (nextIterationAddsNewEntry) {
-							[results addObject:value];
-							nextIterationAddsNewEntry = NO;
-						} else {
-							value = [NSString stringWithFormat:@"%@ %@", [results lastObject], value];
-							[results removeLastObject];
-							[results addObject:value];
-						}
+						nextIterationAddsNewEntry = NO;
+					} else {
+						value = [NSString stringWithFormat:@"%@ %@", [results lastObject], value];
+						[results removeLastObject];
+						[results addObject:value];
 					}
 				}
 			}
