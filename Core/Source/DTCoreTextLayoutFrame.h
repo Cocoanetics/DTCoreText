@@ -264,6 +264,11 @@ typedef enum
 - (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine __attribute__((deprecated("use use -[baselineOriginToPositionLine:afterLine:algorithm:] instead")));;
 
 /**
+ The ratio to decide when to create a justified line
+ */
+@property (nonatomic, readwrite) CGFloat justifyRatio;
+
+/**
  @name Text Attachments
  */
 

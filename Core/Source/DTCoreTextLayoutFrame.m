@@ -78,6 +78,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// Strange, should have gotten a valid framesetter
 			return nil;
 		}
+		
+		_justifyRatio = 0.6f;
 	}
 	
 	return self;
@@ -607,9 +609,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				BOOL isAtEndOfParagraph  = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length ||
 					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);
 
-				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
+				// only justify if not last line, not <br>, and if the line width is longer than _justifyRatio of the frame
 				// avoids over-stretching
-				if( !isAtEndOfParagraph && (currentLineWidth > 0.60 * _frame.size.width) )
+				if( !isAtEndOfParagraph && (currentLineWidth > _justifyRatio * _frame.size.width) )
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
@@ -1663,9 +1665,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
 }
 
+- (void) setJustifyRatio:(CGFloat)justifyRatio
+{
+	if( _justifyRatio != justifyRatio )
+	{
+		_justifyRatio = justifyRatio;
+        // clear lines cache
+        _lines = nil;
+    }
+}
+
 @synthesize frame = _frame;
 @synthesize lines = _lines;
 @synthesize paragraphRanges = _paragraphRanges;
 @synthesize textBlockHandler = _textBlockHandler;
+@synthesize justifyRatio = _justifyRatio;
 
 @end
