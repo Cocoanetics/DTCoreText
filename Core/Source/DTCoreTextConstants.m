@@ -43,6 +43,7 @@ NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
 NSString * const DTCustomAttributesAttribute = @"DTCustomAttributes";
+NSString * const DTAscentMultiplierAttribute = @"DTAscentMultiplierAttribute";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";

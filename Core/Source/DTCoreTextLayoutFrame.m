@@ -1207,16 +1207,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 			
+			NSNumber *ascentMultiplier = [oneRun.attributes objectForKey:(id)DTAscentMultiplierAttribute];
+			
+
 			switch (superscriptStyle)
 			{
 				case 1:
 				{
-					textPosition.y += oneRun.ascent * 0.47f;
+					textPosition.y += oneRun.ascent * (ascentMultiplier ? [ascentMultiplier floatValue] : 0.47f);
 					break;
 				}
 				case -1:
 				{
-					textPosition.y -= oneRun.ascent * 0.25f;
+					textPosition.y -= oneRun.ascent * (ascentMultiplier ? [ascentMultiplier floatValue] : 0.25f);
 					break;
 				}
 				default:
