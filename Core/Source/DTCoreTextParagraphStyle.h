@@ -191,7 +191,7 @@ The distance in points from the margin of a text container to the end of lines.
  */
 
 /** 
- Text lists containing the paragraph, nested from outermost to innermost, to array.
+ Text lists containing the paragraph, nested from outermost to innermost. Each text list is a DTCSSListStyle object.
 */
 @property (nonatomic, copy) NSArray *textLists;
 
@@ -202,7 +202,7 @@ The distance in points from the margin of a text container to the end of lines.
  */
 
 /** 
- Text lists containing the paragraph, nested from outermost to innermost, to array.
+ Text blocks containing the paragraph, nested from outermost to innermost, to array. Each text block is a DTTextBlock object.
  */
 @property (nonatomic, copy) NSArray *textBlocks;
 
