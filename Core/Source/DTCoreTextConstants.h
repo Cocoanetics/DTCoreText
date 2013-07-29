@@ -70,6 +70,7 @@ extern NSString * const DTHorizontalRuleStyleAttribute;
 extern NSString * const DTTextBlocksAttribute;
 extern NSString * const DTFieldAttribute;
 extern NSString * const DTCustomAttributesAttribute;
+extern NSString * const DTAscentMultiplierAttribute;
 
 // field constants
 
