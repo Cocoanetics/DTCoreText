@@ -668,6 +668,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		A70C4FE617AA7E3100000DF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A79D999C1792D1F50082BC06;
+			remoteInfo = "DTAWS (iOS)";
+		};
 		A70E62F616C253C6009B47BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
@@ -1648,6 +1655,7 @@
 				A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */,
 				A7B4E2D21686FDB300717707 /* UnitTests.octest */,
 				A7B4E2D41686FDB300717707 /* libDTFoundation_Mac.a */,
+				A70C4FE717AA7E3100000DF5 /* libDTAWS.a */,
 				A7B4E2D61686FDB300717707 /* libDTHTMLParser_iOS.a */,
 				A7B4E2D81686FDB300717707 /* libDTHTMLParser_Mac.a */,
 				A7B4E2DA1686FDB300717707 /* libDTZipArchive_iOS.a */,
@@ -2109,6 +2117,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A70C4FE717AA7E3100000DF5 /* libDTAWS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTAWS.a;
+			remoteRef = A70C4FE617AA7E3100000DF5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A74F6FD316DB9AF600C12307 /* libDTUTI_Mac.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2878,6 +2893,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;
@@ -2897,6 +2913,7 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SKIP_INSTALL = YES;

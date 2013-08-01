@@ -78,6 +78,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// Strange, should have gotten a valid framesetter
 			return nil;
 		}
+		
+		_justifyRatio = 0.6f;
 	}
 	
 	return self;
@@ -486,6 +488,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						(_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		
 		CTLineRef line;
+		BOOL isHyphenatedString = NO;
 		
 		if (!shouldTruncateLine)
 		{
@@ -498,6 +501,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
                 [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
                 line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+				isHyphenatedString = YES;
             }
             else
             {
@@ -607,14 +611,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				BOOL isAtEndOfParagraph  = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length ||
 					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);
 
-				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
+				// only justify if not last line, not <br>, and if the line width is longer than _justifyRatio of the frame
 				// avoids over-stretching
-				if( !isAtEndOfParagraph && (currentLineWidth > 0.60 * _frame.size.width) )
+				if( !isAtEndOfParagraph && (currentLineWidth > _justifyRatio * _frame.size.width) )
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
-					CFRelease(line);
-					line = justifiedLine;
+					
+					// CTLineCreateJustifiedLine sometimes fails if the line ends with 0x00AD (soft hyphen) and contains cyrillic chars
+					if (justifiedLine)
+					{
+						CFRelease(line);
+						line = justifiedLine;
+					}
 				}
 				
 				if (isRTL)
@@ -633,7 +642,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		// wrap it
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
+															  stringLocationOffset:isHyphenatedString ? lineRange.location : 0];
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		CFRelease(line);
 		
@@ -1205,16 +1215,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 			
+			NSNumber *ascentMultiplier = [oneRun.attributes objectForKey:(id)DTAscentMultiplierAttribute];
+			
+
 			switch (superscriptStyle)
 			{
 				case 1:
 				{
-					textPosition.y += oneRun.ascent * 0.47f;
+					textPosition.y += oneRun.ascent * (ascentMultiplier ? [ascentMultiplier floatValue] : 0.47f);
 					break;
 				}
 				case -1:
 				{
-					textPosition.y -= oneRun.ascent * 0.25f;
+					textPosition.y -= oneRun.ascent * (ascentMultiplier ? [ascentMultiplier floatValue] : 0.25f);
 					break;
 				}
 				default:
@@ -1663,9 +1676,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
 }
 
+- (void) setJustifyRatio:(CGFloat)justifyRatio
+{
+	if( _justifyRatio != justifyRatio )
+	{
+		_justifyRatio = justifyRatio;
+        // clear lines cache
+        _lines = nil;
+    }
+}
+
 @synthesize frame = _frame;
 @synthesize lines = _lines;
 @synthesize paragraphRanges = _paragraphRanges;
 @synthesize textBlockHandler = _textBlockHandler;
+@synthesize justifyRatio = _justifyRatio;
 
 @end
