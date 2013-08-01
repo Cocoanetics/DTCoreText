@@ -488,6 +488,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						(_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		
 		CTLineRef line;
+		BOOL isHyphenatedString = NO;
 		
 		if (!shouldTruncateLine)
 		{
@@ -500,6 +501,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
                 [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
                 line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+				isHyphenatedString = YES;
             }
             else
             {
@@ -615,8 +617,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
-					CFRelease(line);
-					line = justifiedLine;
+					
+					// CTLineCreateJustifiedLine sometimes fails if the line ends with 0x00AD (soft hyphen) and contains cyrillic chars
+					if (justifiedLine)
+					{
+						CFRelease(line);
+						line = justifiedLine;
+					}
 				}
 				
 				if (isRTL)
@@ -635,7 +642,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		// wrap it
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
+															  stringLocationOffset:isHyphenatedString ? lineRange.location : 0];
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		CFRelease(line);
 		
