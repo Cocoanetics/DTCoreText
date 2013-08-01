@@ -488,6 +488,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 						(_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		
 		CTLineRef line;
+		BOOL isHyphenatedString = NO;
 		
 		if (!shouldTruncateLine)
 		{
@@ -500,6 +501,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
                 NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
                 [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
                 line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+				isHyphenatedString = YES;
             }
             else
             {
@@ -635,7 +637,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		// wrap it
-		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line];
+		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
+															  stringLocationOffset:isHyphenatedString ? lineRange.location : 0];
 		newLine.writingDirectionIsRightToLeft = isRTL;
 		CFRelease(line);
 		
