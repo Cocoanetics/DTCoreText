@@ -164,7 +164,7 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	if (![NSThread mainThread])
+	if (![NSThread isMainThread])
 	{
 		[self performSelectorOnMainThread:@selector(contentViewDidLayout:) withObject:notification waitUntilDone:YES];
 		return;
