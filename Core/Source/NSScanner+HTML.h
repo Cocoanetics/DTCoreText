@@ -20,10 +20,10 @@
 /**
  Scans for a CSS attribute used in CSS style sheets
  @param name An optional output parameter that will contain the name of the scanned attribute if successful
- @param value An optional output parameter that will contain the value of the scanned attribute if successful
+ @param value An optional output parameter that will contain the value of the scanned attribute if successful. This value may be a string or an array.
  @returns `YES` if an URL String could be scanned
  */
-- (BOOL)scanCSSAttribute:(NSString **)name value:(NSString **)value;
+- (BOOL)scanCSSAttribute:(NSString **)name value:(id *)value;
 
 
 /**
