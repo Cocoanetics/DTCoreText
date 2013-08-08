@@ -37,6 +37,15 @@
 - (id)initWithLine:(CTLineRef)line;
 
 /**
+ Creates a layout line from a given `CTLine`
+ @param line The Core Text line to wrap
+ @param stringLocationOffset Offset to modify internal string location to get actual location
+ @returns A prepared layout line
+ */
+
+- (id)initWithLine:(CTLineRef)line stringLocationOffset:(NSInteger)stringLocationOffset;
+
+/**
  @name Drawing Layout Lines
  */
 

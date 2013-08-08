@@ -257,7 +257,7 @@ static NSCache *imageCache = nil;
 - (void)drawInRect:(CGRect)rect context:(CGContextRef)context
 {
 #if TARGET_OS_IPHONE
-	CGContextDrawImage(context, rect, self.image.CGImage);
+	[self.image drawInRect:rect];
 #endif
 }
 

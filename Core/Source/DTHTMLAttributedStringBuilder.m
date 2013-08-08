@@ -58,6 +58,7 @@
 	NSMutableDictionary *_tagEndHandlers;
 	
 	DTHTMLAttributedStringBuilderWillFlushCallback _willFlushCallback;
+	BOOL _shouldProcessCustomHTMLAttributes;
 	
 	// new parsing
 	DTHTMLElement *_rootNode;
@@ -294,6 +295,8 @@
 		}
 	}
 	
+	_shouldProcessCustomHTMLAttributes = [[_options objectForKey:DTProcessCustomHTMLAttributes] boolValue];
+	
 	// create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
@@ -361,9 +364,18 @@
 			_currentTag.isColorInherited = NO;
 		}
 		
+		// the name attribute of A becomes an anchor
+		_currentTag.anchorName = [_currentTag attributeForKey:@"name"];
+
 		// remove line breaks and whitespace in links
 		NSString *cleanString = [[_currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 		cleanString = [cleanString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		
+		if (![cleanString length])
+		{
+			// no valid href
+			return;
+		}
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
 		
@@ -389,9 +401,6 @@
 		}
 		
 		_currentTag.link = link;
-		
-		// the name attribute of A becomes an anchor
-		_currentTag.anchorName = [_currentTag attributeForKey:@"name"];
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
@@ -662,6 +671,11 @@
 			if (!_bodyElement && [newNode.name isEqualToString:@"body"])
 			{
 				_bodyElement = newNode;
+			}
+			
+			if (_shouldProcessCustomHTMLAttributes)
+			{
+				newNode.shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
 			}
 		}
 		else
