@@ -762,17 +762,21 @@ NSDictionary *_classesForNames = nil;
 	
 	if (fontFamily)
 	{
-		NSArray *fontFamilies = @[];;
+		NSArray *fontFamilies;
 		
-		if ([fontFamily isKindOfClass:[NSString class]]) {
-			fontFamilies = @[fontFamily];
-		} else if ([fontFamily isKindOfClass:[NSArray class]]) {
+		if ([fontFamily isKindOfClass:[NSString class]])
+		{
+			fontFamilies = [NSArray arrayWithObject:fontFamily];
+		}
+		else if ([fontFamily isKindOfClass:[NSArray class]])
+		{
 			fontFamilies = fontFamily;
 		}
 				
 		BOOL foundFontFamily = NO;
 		
-		for (NSString *fontFamily in fontFamilies) {
+		for (NSString *fontFamily in fontFamilies)
+		{
 			NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 			
 			if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
@@ -825,14 +829,16 @@ NSDictionary *_classesForNames = nil;
 				foundFontFamily = YES;
 			}
 			
-			if (foundFontFamily) {
+			if (foundFontFamily)
+			{
 				break;
 			}
 		}
 		
-		if (!foundFontFamily) {
+		if (!foundFontFamily)
+		{
 			// probably custom font registered in info.plist
-			_fontDescriptor.fontFamily = fontFamilies[0];
+			_fontDescriptor.fontFamily = [fontFamilies objectAtIndex:0];
 		}
 	}
 	
