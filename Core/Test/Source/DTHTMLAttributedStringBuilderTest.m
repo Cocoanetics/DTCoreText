@@ -480,9 +480,25 @@
 }
 
 // issue 537
-- (void)testMultipleFontFamilies
+- (void)testMultipleFontFamiliesCrash
 {
 	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica,sans-serif\">Text</p>" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
+// issue 538
+- (void)testMultipleFontFamiliesSelection
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:'American Typewriter',sans-serif\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
 }
 
 #pragma mark - Nested Lists
