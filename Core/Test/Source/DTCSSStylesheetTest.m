@@ -97,4 +97,19 @@
 	STAssertEqualObjects(styles[@"margin-bottom"], @"30px", @"Margin Bottom should be 30px");
 }
 
+// issue 535
+
+- (void)testMultipleFontFamiliesCrash
+{
+	STAssertTrueNoThrow([[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif;}"]!=nil, @"Should be able to parse without crash");
+}
+
+- (void)testMultipleFontFamilies
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif !important;}"];
+	NSDictionary *styles = [stylesheet.styles objectForKey:@"p"];
+	NSArray *expected = @[@"Helvetica", @"sans-serif"];
+	STAssertEqualObjects(styles[@"font-family"], expected, @"Font Family should be [Helvetica, sans-serif]");
+}
+
 @end

@@ -415,16 +415,51 @@ extern unsigned int default_css_len;
 		// remove !important, we're ignoring these
 		for (NSString *oneKey in [ruleDictionary allKeys])
 		{
-			NSString *value = [ruleDictionary objectForKey:oneKey];
-			
-			NSRange rangeOfImportant = [value rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
-			
-			if (rangeOfImportant.location != NSNotFound)
+			id value = [ruleDictionary objectForKey:oneKey];
+			if ([value isKindOfClass:[NSString class]])
 			{
-				value = [value stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
-				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				NSRange rangeOfImportant = [value rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
 				
-				[ruleDictionary setObject:value forKey:oneKey];
+				if (rangeOfImportant.location != NSNotFound)
+				{
+					value = [value stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
+					value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+					
+					[ruleDictionary setObject:value forKey:oneKey];
+				}
+				
+			} else if ([value isKindOfClass:[NSArray class]]) {
+				
+				NSMutableArray *newVal;
+				
+				for (NSUInteger i = 0; i < [value count]; ++i)
+				{
+					NSString *s = [value objectAtIndex:i];
+					
+					NSRange rangeOfImportant = [s rangeOfString:@"!important" options:NSCaseInsensitiveSearch];
+					
+					if (rangeOfImportant.location != NSNotFound)
+					{
+						s = [s stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
+						s = [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+						
+						if (!newVal) {
+							
+							if ([value isKindOfClass:[NSMutableArray class]]) {
+								newVal = value;
+							} else {
+								newVal = [value mutableCopy];
+							}
+						}
+						
+						newVal[i] = s;
+					}
+				}
+				
+				if (newVal) {
+					
+					[ruleDictionary setObject:newVal forKey:oneKey];
+				}
 			}
 		}
 
@@ -443,17 +478,8 @@ extern unsigned int default_css_len;
 			// prefix all rules with the pseudo-selector
 			for (NSString *oneRuleKey in [ruleDictionary allKeys])
 			{
-				// remove double quotes 
-				NSString *value = [ruleDictionary objectForKey:oneRuleKey];
-				
-				if ([value hasPrefix:@"\""] && [value hasSuffix:@"\""])
-				{
-					// treat as HTML string, remove quotes
-					NSRange range = NSMakeRange(1, [value length]-2);
-					
-					value = [[value substringWithRange:range] stringByAddingHTMLEntities];
-				}
-				
+				id value = [ruleDictionary objectForKey:oneRuleKey];
+							
 				// prefix key with the pseudo selector
 				NSString *prefixedKey = [NSString stringWithFormat:@"%@:%@", pseudoSelector, oneRuleKey];
 				[ruleDictionary setObject:value forKey:prefixedKey];
