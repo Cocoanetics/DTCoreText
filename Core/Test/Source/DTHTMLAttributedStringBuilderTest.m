@@ -479,6 +479,12 @@
 	}];
 }
 
+// issue 537
+- (void)testMultipleFontFamilies
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica,sans-serif\">Text</p>" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
