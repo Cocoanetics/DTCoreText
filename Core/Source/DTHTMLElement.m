@@ -777,6 +777,18 @@ NSDictionary *_classesForNames = nil;
 		
 		for (NSString *fontFamily in fontFamilies)
 		{
+			_fontDescriptor.fontFamily = fontFamily;
+			
+			// check if this is a known font family
+			CTFontRef font = [_fontDescriptor newMatchingFont];
+			NSString *foundFamily = CFBridgingRelease(CTFontCopyFamilyName(font));
+			
+			if ([foundFamily isEqualToString:fontFamily])
+			{
+				foundFontFamily = YES;
+				break;
+			}
+			
 			NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 			
 			if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
