@@ -501,6 +501,22 @@
 	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
 }
 
+// issue 538
+- (void)testMultipleFontFamiliesSelectionLaterPosition
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:foo,'American Typewriter'\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
