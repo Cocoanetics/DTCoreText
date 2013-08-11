@@ -758,7 +758,7 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	id fontFamily = [[styles objectForKey:@"font-family"] stringByTrimmingCharactersInSet:[NSCharacterSet quoteCharacterSet]];
+	id fontFamily = [styles objectForKey:@"font-family"];
 	
 	if (fontFamily)
 	{
