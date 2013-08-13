@@ -882,6 +882,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (CGRect)_frameForTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
 {
+	// workaround for crash that otherwise occurs from enumerating attributes on different threads
+	if (![NSThread isMainThread])
+	{
+		__block CGRect frame;
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			frame = [self _frameForTextBlock:textBlock atIndex:location];
+		});
+		
+		return frame;
+	}
+	// -- end workaround
+	
 	NSRange blockRange = [_attributedStringFragment rangeOfTextBlock:textBlock atIndex:location];
 	
 	// need to reduce to actually visible string range in layout frame
@@ -1005,6 +1017,77 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGContextSetStrokeColorWithColor(context, color.CGColor);
 }
 
+// draws the text blocks that should be visible within the mentioned range
+- (void)_drawTextBlocksInContext:(CGContextRef)context inRange:(NSRange)range
+{
+	// FIXME: enumerating the blocks and then inside this block enumerating the blocks to get their ranges on a background thread is causing a crash if this doesn't happen on main thread.
+	
+	// workaround for racing crash
+	if (![NSThread isMainThread])
+	{
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[self _drawTextBlocksInContext:context inRange:range];
+		});
+		
+		return;
+	}
+	
+	CGRect clipRect = CGContextGetClipBoundingBox(context);
+	
+	__block NSMutableSet *handledBlocks = [NSMutableSet set];
+	
+	// enumerate all text blocks in this range
+	[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:range options:0
+									   usingBlock:^(NSArray *blockArray, NSRange blockArrayRange, BOOL *stop) {
+										   for (DTTextBlock *oneBlock in blockArray)
+										   {
+											   // make sure we only handle it once
+											   if (![handledBlocks containsObject:oneBlock])
+											   {
+												   CGRect frame = [self _frameForTextBlock:oneBlock atIndex:blockArrayRange.location];
+												   CGRect visiblePart = CGRectIntersection(frame, clipRect);
+												   
+												   // do not draw boxes which are not in the current clip rect
+												   if (!CGRectIsInfinite(visiblePart))
+												   {
+													   BOOL shouldDrawStandardBackground = YES;
+													   if (_textBlockHandler)
+													   {
+														   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
+													   }
+													   
+													   // draw standard background if necessary
+													   if (shouldDrawStandardBackground)
+													   {
+														   oneBlock.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
+														   
+														   if (oneBlock.backgroundColor)
+														   {
+															   CGColorRef color = [oneBlock.backgroundColor CGColor];
+															   CGContextSetFillColorWithColor(context, color);
+															   CGContextFillRect(context, frame);
+														   }
+													   }
+													   
+													   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+													   {
+														   CGContextSaveGState(context);
+														   
+														   // draw line bounds
+														   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
+														   CGContextSetLineWidth(context, 2);
+														   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
+														   
+														   CGContextRestoreGState(context);
+													   }
+												   }
+												   
+												   [handledBlocks addObject:oneBlock];
+											   }
+										   }
+									   }];
+}
+
 - (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
 	BOOL drawLinks = !(options & DTCoreTextLayoutFrameDrawingOmitLinks);
@@ -1053,63 +1136,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return;
 	}
 	
+	DTCoreTextLayoutLine *firstLine = [visibleLines objectAtIndex:0];
+	DTCoreTextLayoutLine *lastLine = [visibleLines lastObject];
+	
+	NSRange stringRangeToDraw = firstLine.stringRange;
+	stringRangeToDraw = NSUnionRange(stringRangeToDraw, lastLine.stringRange);
 	
 	CGContextSaveGState(context);
 	
 	// need to push the CG context so that the UI* based colors can be set
 	UIGraphicsPushContext(context);
 	
-	// text block handling
-	__block NSMutableSet *handledBlocks = [NSMutableSet set];
-	
-	// enumerate all text blocks in this range
-	[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
-									   usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
-										   for (DTTextBlock *oneBlock in blockArray)
-										   {
-											   // make sure we only handle it once
-											   if (![handledBlocks containsObject:oneBlock])
-											   {
-												   CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
-												   
-												   BOOL shouldDrawStandardBackground = YES;
-												   if (_textBlockHandler)
-												   {
-													   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
-												   }
-												   
-												   // draw standard background if necessary
-												   if (shouldDrawStandardBackground)
-												   {
-													   if (oneBlock.backgroundColor)
-													   {
-														   CGColorRef color = [oneBlock.backgroundColor CGColor];
-														   CGContextSetFillColorWithColor(context, color);
-														   CGContextFillRect(context, frame);
-													   }
-												   }
-												   
-												   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
-												   {
-													   CGContextSaveGState(context);
-													   
-													   // draw line bounds
-													   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
-													   CGContextSetLineWidth(context, 2);
-													   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
-													   
-													   CGContextRestoreGState(context);
-												   }
-												   
-												   [handledBlocks addObject:oneBlock];
-											   }
-										   }
-										   
-										   
-									   }];
+	[self _drawTextBlocksInContext:context inRange:stringRangeToDraw];
 
-	
-	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
 		if ([oneLine isHorizontalRule])
