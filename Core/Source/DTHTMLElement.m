@@ -489,8 +489,11 @@ NSDictionary *_classesForNames = nil;
 						// make new paragraph style
 						NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
 						
-						// remove old (works around iOS 4.3 leak)
-						[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+						if (NSFoundationVersionNumber <=  751.49)
+						{
+							// remove old (works around iOS 4.3 leak)
+							[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+						}
 						
 						// set new
 						[tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
@@ -510,8 +513,11 @@ NSDictionary *_classesForNames = nil;
 						// make new paragraph style
 						CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
 						
-						// remove old (works around iOS 4.3 leak)
-						[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+						if (NSFoundationVersionNumber <=  751.49)
+						{
+							// remove old (works around iOS 4.3 leak)
+							[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+						}
 						
 						// set new
 						[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
