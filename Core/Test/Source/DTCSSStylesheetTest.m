@@ -51,7 +51,7 @@
 	
 	NSDictionary *styles = [stylesheet.styles objectForKey:@"p"];
 	
-	STAssertEquals([styles count], 2u, @"There should be 2 styles");
+	STAssertEquals([styles count], (NSUInteger)2, @"There should be 2 styles");
 	
 	NSString *alignStyle = [styles objectForKey:@"align"];
 	
