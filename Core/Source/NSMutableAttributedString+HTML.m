@@ -151,6 +151,22 @@
 		}
 	}
 	
+	// transfer blocks
+	NSArray *blocks = [attributes objectForKey:DTTextBlocksAttribute];
+	
+	if (blocks)
+	{
+		[appendAttributes setObject:blocks forKey:DTTextBlocksAttribute];
+	}
+	
+	// transfer lists
+	NSArray *lists = [attributes objectForKey:DTTextListsAttribute];
+	
+	if (lists)
+	{
+		[appendAttributes setObject:lists forKey:DTTextListsAttribute];
+	}
+	
 	NSAttributedString *newlineString = [[NSAttributedString alloc] initWithString:@"\n" attributes:appendAttributes];
 	[self appendAttributedString:newlineString];
 }
