@@ -458,9 +458,18 @@ NSDictionary *_classesForNames = nil;
 			{
 				if (![[tmpString string] hasSuffix:@"\n"])
 				{
-					NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
-					NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
-					[tmpString appendAttributedString:attributedString];
+					if ([tmpString length])
+					{
+						// extend font and paragraph style with the \n
+						[tmpString appendEndOfParagraph];
+					}
+					else
+					{
+						// string is empty, need a new attributed string so that we have the attributes
+						NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
+						[tmpString appendAttributedString:attributedString];
+					}
 				}
 			}
 		}

@@ -103,6 +103,58 @@
 	}
 }
 
+- (void)appendEndOfParagraph
+{
+	NSUInteger length = [self length];
+	
+	NSAssert(length, @"Cannot append end of paragraph to empty string");
+
+	NSRange effectiveRange;
+	NSDictionary *attributes = [self attributesAtIndex:length-1 effectiveRange:&effectiveRange];
+	
+	
+	NSMutableDictionary *appendAttributes = [NSMutableDictionary dictionary];
+
+	
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	if (___useiOS6Attributes)
+	{
+		id font = [attributes objectForKey:NSFontAttributeName];
+		
+		if (font)
+		{
+			[appendAttributes setObject:font forKey:NSFontAttributeName];
+		}
+		
+		id paragraphStyle = [attributes objectForKey:NSParagraphStyleAttributeName];
+		
+		if (paragraphStyle)
+		{
+			[appendAttributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+		}
+	}
+	else
+#endif
+	{
+		CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+		
+		if (font)
+		{
+			[appendAttributes setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+		}
+		
+		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
+		
+		if (paragraphStyle)
+		{
+			[appendAttributes setObject:(__bridge id)(paragraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
+		}
+	}
+	
+	NSAttributedString *newlineString = [[NSAttributedString alloc] initWithString:@"\n" attributes:appendAttributes];
+	[self appendAttributedString:newlineString];
+}
+
 
 #pragma mark - Working with Custom HTML Attributes
 
