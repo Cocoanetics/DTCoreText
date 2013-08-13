@@ -139,7 +139,12 @@
 				[mutableDictionary setObject:value forKey:name];
 				
 				// substitute attribute
-				[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+				if (NSFoundationVersionNumber <=  751.49)
+				{
+					// remove old (works around iOS 4.3 leak)
+					[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+				}
+
 				[self addAttribute:DTCustomAttributesAttribute value:[mutableDictionary copy] range:effectiveRange];
 			}
 			else
@@ -171,7 +176,11 @@
 			[mutableDictionary removeObjectForKey:name];
 			
 			// substitute attribute
-			[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+			if (NSFoundationVersionNumber <=  751.49)
+			{
+				// remove old (works around iOS 4.3 leak)
+				[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
+			}
 			
 			// only re-add modified dictionary if it is not empty
 			if ([mutableDictionary count])
