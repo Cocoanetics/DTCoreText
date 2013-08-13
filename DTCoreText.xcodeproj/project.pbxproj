@@ -156,6 +156,7 @@
 		A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
 		A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
+		A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -709,6 +710,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = A7E889A416A9B190009EF0DF;
 			remoteInfo = "DTUTI (Mac)";
+		};
+		A785FA0E17BA111200BB758E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FA9CB80C17ABDEF200A596C5;
+			remoteInfo = "DTASN1 (iOS)";
+		};
+		A785FA1017BA111200BB758E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E383AB160DFEA700CF72D6 /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FAF37A2017AFDD93009AC27C;
+			remoteInfo = DTZipArchiveDemo;
 		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1656,6 +1671,7 @@
 				A7B4E2D21686FDB300717707 /* UnitTests.octest */,
 				A7B4E2D41686FDB300717707 /* libDTFoundation_Mac.a */,
 				A70C4FE717AA7E3100000DF5 /* libDTAWS.a */,
+				A785FA0F17BA111200BB758E /* libDTASN1.a */,
 				A7B4E2D61686FDB300717707 /* libDTHTMLParser_iOS.a */,
 				A7B4E2D81686FDB300717707 /* libDTHTMLParser_Mac.a */,
 				A7B4E2DA1686FDB300717707 /* libDTZipArchive_iOS.a */,
@@ -1668,6 +1684,7 @@
 				A7FB12AD175E23BC00D4B7F0 /* libDTSQLite_Mac.a */,
 				A7FB12AF175E23BC00D4B7F0 /* DTSidePanels Demo.app */,
 				A7FB12B1175E23BC00D4B7F0 /* DTReachability Demo.app */,
+				A785FA1117BA111200BB758E /* DTZipArchive.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2129,6 +2146,20 @@
 			fileType = archive.ar;
 			path = libDTUTI_Mac.a;
 			remoteRef = A74F6FD216DB9AF600C12307 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A785FA0F17BA111200BB758E /* libDTASN1.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTASN1.a;
+			remoteRef = A785FA0E17BA111200BB758E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A785FA1117BA111200BB758E /* DTZipArchive.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DTZipArchive.app;
+			remoteRef = A785FA1017BA111200BB758E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A7B4E2D21686FDB300717707 /* UnitTests.octest */ = {
@@ -2598,6 +2629,7 @@
 				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
 				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 				A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */,
+				A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3029,10 +3061,7 @@
 				INFOPLIST_FILE = "Core/Test/MacUnitTest-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
@@ -3060,10 +3089,7 @@
 				);
 				INFOPLIST_FILE = "Core/Test/MacUnitTest-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Externals\"/** \"$(SRCROOT)/Core/Source\"";
