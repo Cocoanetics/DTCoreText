@@ -172,20 +172,6 @@ typedef struct {
 
 		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
-		
-//		if (_lineHeightMultiple)
-//		{
-//			// paragraph space is pre-multiplied
-//			if (_paragraphSpacing)
-//			{
-//				_paragraphSpacing /= _lineHeightMultiple;
-//			}
-//			
-//			if (_paragraphSpacingBefore)
-//			{
-//				_paragraphSpacingBefore /= _lineHeightMultiple;
-//			}
-//		}
 	}
 	
 	return self;
@@ -263,16 +249,6 @@ typedef struct {
 	{
 		return cachedParagraphStyle; // +1 reference
 	}
-	
-//	// need to multiple paragraph spacing with line height multiplier
-//	float tmpParagraphSpacing = _paragraphSpacing;
-//	float tmpParagraphSpacingBefore = _paragraphSpacingBefore;
-//	
-//	if (_lineHeightMultiple&&(_lineHeightMultiple!=1.0))
-//	{
-//		tmpParagraphSpacing *= _lineHeightMultiple;
-//		tmpParagraphSpacingBefore *= _lineHeightMultiple;
-//	}
 	
 	// This just makes it that much easier to track down memory issues with tabstops
 	CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
