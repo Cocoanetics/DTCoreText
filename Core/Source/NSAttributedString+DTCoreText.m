@@ -127,6 +127,8 @@
 
 - (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
+	@synchronized(self)
+	{
 	NSUInteger searchIndex = location;
 	
 	NSArray *arrayAtIndex;
@@ -189,6 +191,7 @@
 	}
 	
 	return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+	}
 }
 
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
