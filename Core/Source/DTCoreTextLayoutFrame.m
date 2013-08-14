@@ -1059,8 +1059,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 													   // draw standard background if necessary
 													   if (shouldDrawStandardBackground)
 													   {
-														   oneBlock.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
-														   
 														   if (oneBlock.backgroundColor)
 														   {
 															   CGColorRef color = [oneBlock.backgroundColor CGColor];
