@@ -874,54 +874,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark - Text Block Helpers
 
-
-- (CGRect)_frameForTextBlock:(DTTextBlock *)textBlock withEffectiveRange:(NSRange)blockRange
-{
-	// need to reduce to actually visible string range in layout frame
-	blockRange = NSIntersectionRange(blockRange, self.visibleStringRange);
-	
-	DTCoreTextLayoutLine *firstBlockLine = [self lineContainingIndex:blockRange.location];
-	DTCoreTextLayoutLine *lastBlockLine = [self lineContainingIndex:NSMaxRange(blockRange)-1];
-	
-	CGRect frame;
-	frame.origin = firstBlockLine.frame.origin;
-	frame.origin.x = _frame.origin.x; // currently all boxes are full with
-	frame.origin.y -= textBlock.padding.top;
-	
-	CGFloat maxWidth = 0;
-	
-	for (NSUInteger index = blockRange.location; index<NSMaxRange(blockRange);)
-	{
-		DTCoreTextLayoutLine *oneLine = [self lineContainingIndex:index];
-		
-		// avoid potential endless loop and log warning because this should never happen
-		if (!oneLine)
-		{
-			NSLog(@"No line found containing index %ld of block range %@. This should never happen, please report that to oliver@cocoanetics.com", (unsigned long)index, NSStringFromRange(blockRange));
-			break;
-		}
-		
-		if (maxWidth<oneLine.frame.size.width)
-		{
-			maxWidth = oneLine.frame.size.width;
-		}
-		
-		index += oneLine.stringRange.length;
-	}
-	
-	frame.size.width = _frame.size.width; // currently all blocks are 100% wide
-	frame.size.height = CGRectGetMaxY(lastBlockLine.frame) - frame.origin.y + textBlock.padding.bottom;
-	
-	return CGRectIntegral(frame);
-}
-
+// find effective range of all blocks affecting the given string range
 - (NSRange)_effectiveRangeOfOutermostTextBlocksInRange:(NSRange)range
 {
-	NSLog(@"find with range: %@", NSStringFromRange(range));
-	
-	
-	// find actual start of all blocks
-	
 	NSRange effectiveRange = NSMakeRange(0, 0);
 	NSUInteger length = [_attributedStringFragment length];
 	
@@ -1048,11 +1003,66 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+// determines the frame to use for a text block with a given effect range at a specific block level
+- (CGRect)_blockFrameForEffectiveRange:(NSRange)effectiveRange level:(NSUInteger)level
+{
+	CGRect blockFrame;
+	
+    // we know extent of block, get frame
+    DTCoreTextLayoutLine *firstBlockLine = [self lineContainingIndex:effectiveRange.location];
+    DTCoreTextLayoutLine *lastBlockLine = [self lineContainingIndex:NSMaxRange(effectiveRange)-1];
+    
+    // start with frame spanned from these lines
+    blockFrame.origin = firstBlockLine.frame.origin;
+    blockFrame.origin.x = _frame.origin.x;
+    blockFrame.size.width = _frame.size.width;
+    blockFrame.size.height = CGRectGetMaxY(lastBlockLine.frame) - blockFrame.origin.y;
+    
+    // top paddings we get from first line
+    for (int i = [firstBlockLine.textBlocks count]-1; i>=level;i--)
+    {
+        if (i<0)
+        {
+            break;
+        }
+        
+        DTTextBlock *oneTextBlock = [firstBlockLine.textBlocks objectAtIndex:i];
+        
+        blockFrame.origin.y -= oneTextBlock.padding.top;
+        blockFrame.size.height += oneTextBlock.padding.top;
+    }
+    
+    // top padding we get from last line
+    for (int i = [lastBlockLine.textBlocks count]-1; i>=level;i--)
+    {
+        if (i<0)
+        {
+            break;
+        }
+        
+        DTTextBlock *oneTextBlock = [lastBlockLine.textBlocks objectAtIndex:i];
+        
+        blockFrame.size.height += oneTextBlock.padding.bottom;
+    }
+    
+    // adjust left and right margins with block stack padding
+    for (int i=0; i<level; i++)
+    {
+        DTTextBlock *textBlock = [firstBlockLine.textBlocks objectAtIndex:i];
+        
+        blockFrame.origin.x += textBlock.padding.left;
+        blockFrame.size.width -= (textBlock.padding.left + textBlock.padding.right);
+    }
+	
+	return CGRectIntegral(blockFrame);
+}
 
 // only enumerate blocks at a given level
 // returns YES if there was at least one block enumerated at this level
 - (BOOL)_enumerateTextBlocksAtLevel:(NSUInteger)level inRange:(NSRange)range usingBlock:(void (^)(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop))block
 {
+	NSParameterAssert(block);
+	
 	NSUInteger length = [_attributedStringFragment length];
 	NSUInteger index = range.location;
 	
@@ -1074,7 +1084,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		foundBlockAtLevel = YES;
 		
 		// find extent of outermost block
-		DTTextBlock *outermostBlock = [textBlocks objectAtIndex:level];
+		DTTextBlock *blockAtLevelToHandle = [textBlocks objectAtIndex:level];
 		
 		NSUInteger searchIndex = NSMaxRange(textBlocksArrayRange);
 		
@@ -1086,7 +1096,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			NSRange laterBlocksRange;
 			NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
 			
-			if (![laterBlocks containsObject:outermostBlock])
+			if (![laterBlocks containsObject:blockAtLevelToHandle])
 			{
 				break;
 			}
@@ -1097,27 +1107,24 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		index = searchIndex;
-		// we know extent of block, get frame
-		
-		CGRect blockFrame = [self _frameForTextBlock:outermostBlock withEffectiveRange:currentBlockEffectiveRange];
+        CGRect blockFrame = [self _blockFrameForEffectiveRange:currentBlockEffectiveRange level:level];
 		
 		BOOL shouldStop = NO;
 		
-		block(outermostBlock, blockFrame, currentBlockEffectiveRange, &shouldStop);
+		block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop);
 		
 		if (shouldStop)
 		{
 			return YES;
 		}
-		
-		NSLog(@"%d %@ - %@ - %@", level, outermostBlock, NSStringFromRange(currentBlockEffectiveRange), NSStringFromCGRect(blockFrame));
 	}
 	
 	return foundBlockAtLevel;
 }
 
 
-- (void)enumerateTextBlocksInRange:(NSRange)range usingBlock:(void (^)(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop))block
+// enumerates the text blocks in effect for a given string range
+- (void)_enumerateTextBlocksInRange:(NSRange)range usingBlock:(void (^)(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop))block
 {
 	// get range of text blocks relevant for this range
 	NSRange effectiveRange = [self _effectiveRangeOfOutermostTextBlocksInRange:range];
@@ -1128,8 +1135,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return;
 	}
 
-	NSLog(@"range: %@, effective range: %@", NSStringFromRange(range), NSStringFromRange(effectiveRange));
-	
 	__block NSUInteger level = 0;
 	
 	while ([self _enumerateTextBlocksAtLevel:level inRange:effectiveRange usingBlock:block])
@@ -1138,6 +1143,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+#pragma mark - Drawing
+
+// draw and individual text block to a graphics context and frame
 - (void)_drawTextBlock:(DTTextBlock *)textBlock inContext:(CGContextRef)context frame:(CGRect)frame
 {
 	BOOL shouldDrawStandardBackground = YES;
@@ -1170,12 +1178,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
-// draws the text blocks that should be visible within the mentioned range
+// draws the text blocks that should be visible within the mentioned range and inside the clipping rect of the context
 - (void)_drawTextBlocksInContext:(CGContextRef)context inRange:(NSRange)range
 {
 	CGRect clipRect = CGContextGetClipBoundingBox(context);
 	
-	[self enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
+	[self _enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
 		
 		CGRect visiblePart = CGRectIntersection(frame, clipRect);
 		
@@ -1186,8 +1194,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 	}];
 }
-
-#pragma mark - Drawing
 
 - (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary additionalOffset:(CGSize)additionalOffset
 {
