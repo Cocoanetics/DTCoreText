@@ -358,7 +358,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// add padding for closed text blocks
 	for (DTTextBlock *previousTextBlock in previousLine.textBlocks)
 	{
-		if (![line.textBlocks containsObject:previousLine])
+		if (![line.textBlocks containsObject:previousTextBlock])
 		{
 			baselineOrigin.y  += previousTextBlock.padding.bottom;
 		}
@@ -430,8 +430,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger fittingLength = 0;
 	BOOL shouldTruncateLine = NO;
 	
-	//DTTextBlock *currentTextBlock;  // global because bottom padding will be added at bottom of frame
-	
 	do  // for each line
 	{
 		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
@@ -462,7 +460,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(tailIndent), &tailIndent);
 		
 		// add left padding to offset
-		//currentTextBlock = [[_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:lineRange.location effectiveRange:NULL] lastObject];
 		CGFloat lineOriginX = _frame.origin.x + headIndent; // + currentTextBlock.padding.left;
 		
 		CGFloat availableSpace;
