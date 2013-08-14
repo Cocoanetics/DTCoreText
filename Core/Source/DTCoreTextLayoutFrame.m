@@ -1017,6 +1017,38 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGContextSetStrokeColorWithColor(context, color.CGColor);
 }
 
+- (void)_drawTextBlock:(DTTextBlock *)textBlock inContext:(CGContextRef)context frame:(CGRect)frame
+{
+	BOOL shouldDrawStandardBackground = YES;
+	if (_textBlockHandler)
+	{
+		_textBlockHandler(textBlock, frame, context, &shouldDrawStandardBackground);
+	}
+	
+	// draw standard background if necessary
+	if (shouldDrawStandardBackground)
+	{
+		if (textBlock.backgroundColor)
+		{
+			CGColorRef color = [textBlock.backgroundColor CGColor];
+			CGContextSetFillColorWithColor(context, color);
+			CGContextFillRect(context, frame);
+		}
+	}
+	
+	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+	{
+		CGContextSaveGState(context);
+		
+		// draw line bounds
+		CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
+		CGContextSetLineWidth(context, 2);
+		CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
+		
+		CGContextRestoreGState(context);
+	}
+}
+
 // draws the text blocks that should be visible within the mentioned range
 - (void)_drawTextBlocksInContext:(CGContextRef)context inRange:(NSRange)range
 {
@@ -1050,34 +1082,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 												   // do not draw boxes which are not in the current clip rect
 												   if (!CGRectIsInfinite(visiblePart))
 												   {
-													   BOOL shouldDrawStandardBackground = YES;
-													   if (_textBlockHandler)
-													   {
-														   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
-													   }
-													   
-													   // draw standard background if necessary
-													   if (shouldDrawStandardBackground)
-													   {
-														   if (oneBlock.backgroundColor)
-														   {
-															   CGColorRef color = [oneBlock.backgroundColor CGColor];
-															   CGContextSetFillColorWithColor(context, color);
-															   CGContextFillRect(context, frame);
-														   }
-													   }
-													   
-													   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
-													   {
-														   CGContextSaveGState(context);
-														   
-														   // draw line bounds
-														   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
-														   CGContextSetLineWidth(context, 2);
-														   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
-														   
-														   CGContextRestoreGState(context);
-													   }
+													   [self _drawTextBlock:oneBlock inContext:context frame:frame];
 												   }
 												   
 												   [handledBlocks addObject:oneBlock];
