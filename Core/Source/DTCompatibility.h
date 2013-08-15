@@ -29,6 +29,11 @@
 		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
 	#endif
 
+	// iOS 7 bug (rdar://14684188) workaround, can be removed once this bug is fixed
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		#define DTCORETEXT_FIX_14684188 1
+	#endif
+
 #endif
 
 
