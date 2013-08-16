@@ -458,9 +458,18 @@ NSDictionary *_classesForNames = nil;
 			{
 				if (![[tmpString string] hasSuffix:@"\n"])
 				{
-					NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
-					NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
-					[tmpString appendAttributedString:attributedString];
+					if ([tmpString length])
+					{
+						// extend font and paragraph style with the \n
+						[tmpString appendEndOfParagraph];
+					}
+					else
+					{
+						// string is empty, need a new attributed string so that we have the attributes
+						NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
+						[tmpString appendAttributedString:attributedString];
+					}
 				}
 			}
 		}
@@ -489,8 +498,13 @@ NSDictionary *_classesForNames = nil;
 						// make new paragraph style
 						NSParagraphStyle *newParaStyle = [paragraphStyle NSParagraphStyle];
 						
-						// remove old (works around iOS 4.3 leak)
-						[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+#if DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX
+						if (NSFoundationVersionNumber <=  NSFoundationVersionNumber10_6_8)  // less than OS X 10.7 and less than iOS 5
+						{
+							// remove old (works around iOS 4.3 leak)
+							[tmpString removeAttribute:NSParagraphStyleAttributeName range:paragraphRange];
+						}
+#endif
 						
 						// set new
 						[tmpString addAttribute:NSParagraphStyleAttributeName value:newParaStyle range:paragraphRange];
@@ -509,9 +523,14 @@ NSDictionary *_classesForNames = nil;
 						
 						// make new paragraph style
 						CTParagraphStyleRef newParaStyle = [paragraphStyle createCTParagraphStyle];
-						
-						// remove old (works around iOS 4.3 leak)
-						[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+
+#if DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX
+						if (NSFoundationVersionNumber <=  NSFoundationVersionNumber10_6_8)  // less than OS X 10.7 and less than iOS 5
+						{
+							// remove old (works around iOS 4.3 leak)
+							[tmpString removeAttribute:(id)kCTParagraphStyleAttributeName range:paragraphRange];
+						}
+#endif
 						
 						// set new
 						[tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
@@ -758,21 +777,37 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	id fontFamily = [[styles objectForKey:@"font-family"] stringByTrimmingCharactersInSet:[NSCharacterSet quoteCharacterSet]];
+	id fontFamily = [styles objectForKey:@"font-family"];
 	
 	if (fontFamily)
 	{
-		NSArray *fontFamilies = @[];;
+		NSArray *fontFamilies;
 		
-		if ([fontFamily isKindOfClass:[NSString class]]) {
-			fontFamilies = @[fontFamily];
-		} else if ([fontFamily isKindOfClass:[NSArray class]]) {
+		if ([fontFamily isKindOfClass:[NSString class]])
+		{
+			fontFamilies = [NSArray arrayWithObject:fontFamily];
+		}
+		else if ([fontFamily isKindOfClass:[NSArray class]])
+		{
 			fontFamilies = fontFamily;
 		}
 				
 		BOOL foundFontFamily = NO;
 		
-		for (NSString *fontFamily in fontFamilies) {
+		for (NSString *fontFamily in fontFamilies)
+		{
+			_fontDescriptor.fontFamily = fontFamily;
+			
+			// check if this is a known font family
+			CTFontRef font = [_fontDescriptor newMatchingFont];
+			NSString *foundFamily = CFBridgingRelease(CTFontCopyFamilyName(font));
+			
+			if ([foundFamily isEqualToString:fontFamily])
+			{
+				foundFontFamily = YES;
+				break;
+			}
+			
 			NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 			
 			if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
@@ -825,14 +860,16 @@ NSDictionary *_classesForNames = nil;
 				foundFontFamily = YES;
 			}
 			
-			if (foundFontFamily) {
+			if (foundFontFamily)
+			{
 				break;
 			}
 		}
 		
-		if (!foundFontFamily) {
+		if (!foundFontFamily)
+		{
 			// probably custom font registered in info.plist
-			_fontDescriptor.fontFamily = fontFamilies[0];
+			_fontDescriptor.fontFamily = [fontFamilies objectAtIndex:0];
 		}
 	}
 	

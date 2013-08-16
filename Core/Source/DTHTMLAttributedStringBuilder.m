@@ -280,6 +280,11 @@
 	_defaultTag.paragraphStyle = _defaultParagraphStyle;
 	_defaultTag.textScale = _textScale;
 	
+#if DTCORETEXT_FIX_14684188
+	// workaround, only necessary while rdar://14684188 is not fixed
+	_defaultTag.textColor = [UIColor blackColor];
+#endif
+	
 	id defaultColor = [_options objectForKey:DTDefaultTextColor];
 	if (defaultColor)
 	{

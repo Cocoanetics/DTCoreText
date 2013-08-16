@@ -479,6 +479,44 @@
 	}];
 }
 
+// issue 537
+- (void)testMultipleFontFamiliesCrash
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica,sans-serif\">Text</p>" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
+// issue 538
+- (void)testMultipleFontFamiliesSelection
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:'American Typewriter',sans-serif\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
+// issue 538
+- (void)testMultipleFontFamiliesSelectionLaterPosition
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:foo,'American Typewriter'\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
@@ -543,6 +581,71 @@
 		
 		lineNumber++;
 	}];
+}
+
+#pragma mark - CSS Tests
+
+// issue 544
+- (void)testCascading
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"CSSCascading"];
+	
+	NSUInteger index1 = 0;
+	NSUInteger index2 = 3;
+	NSUInteger index3 = 6;
+	NSUInteger index4 = 8;
+	
+	// check first "me"
+	NSDictionary *attributes1 = [output attributesAtIndex:index1 effectiveRange:NULL];
+	NSNumber *underLine1 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index1 effectiveRange:NULL];
+	STAssertTrue([underLine1 integerValue]==1, @"First item should be underlined");
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
+	BOOL isBold1 = [[attributes1 fontDescriptor] boldTrait];
+	STAssertTrue(isBold1, @"First item should be bold");
+	BOOL isItalic1 = [[attributes1 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic1, @"First item should not be italic");
+
+	// check first "ow"
+	NSDictionary *attributes2 = [output attributesAtIndex:index2 effectiveRange:NULL];
+	NSNumber *underLine2 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index2 effectiveRange:NULL];
+	STAssertTrue([underLine2 integerValue]==1, @"Second item should be underlined");
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk2, @"Second item should be orange");
+	BOOL isBold2 = [[attributes2 fontDescriptor] boldTrait];
+	STAssertTrue(isBold2, @"Second item should be bold");
+	BOOL isItalic2 = [[attributes2 fontDescriptor] italicTrait];
+	STAssertTrue(isItalic2, @"Second item should be italic");
+
+	// check second "me"
+	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
+	NSNumber *underLine3 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	STAssertTrue([underLine3 integerValue]==0, @"Third item should not be underlined");
+	DTColor *foreground3 = [attributes3 foregroundColor];
+	NSString *foreground3HTML = [foreground3 htmlHexString];
+	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ff0000"]);
+	STAssertTrue(colorOk3, @"Third item should be red");
+	BOOL isBold3 = [[attributes3 fontDescriptor] boldTrait];
+	STAssertFalse(isBold3, @"Third item should not be bold");
+	BOOL isItalic3 = [[attributes3 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic3, @"Third item should not be italic");
+	
+	// check second "ow"
+	NSDictionary *attributes4 = [output attributesAtIndex:index4 effectiveRange:NULL];
+	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
+	STAssertTrue([underLine4 integerValue]==1, @"Fourth item should be underlined");
+	DTColor *foreground4 = [attributes4 foregroundColor];
+	NSString *foreground4HTML = [foreground4 htmlHexString];
+	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk4, @"Fourth item should be green");
+	BOOL isBold4 = [[attributes4 fontDescriptor] boldTrait];
+	STAssertTrue(isBold4, @"Fourth item should be bold");
+	BOOL isItalic4 = [[attributes4 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic4, @"Fourth item should not be italic");
 }
 
 @end
