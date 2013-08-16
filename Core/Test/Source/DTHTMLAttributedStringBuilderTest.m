@@ -583,4 +583,53 @@
 	}];
 }
 
+#pragma mark - CSS Tests
+
+// issue 544
+- (void)testCascading
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"CSSCascading"];
+	
+	NSUInteger index1 = 0;
+	NSUInteger index2 = 3;
+	NSUInteger index3 = 6;
+	NSUInteger index4 = 8;
+	
+	// check first "me"
+	NSDictionary *attributes1 = [output attributesAtIndex:index1 effectiveRange:NULL];
+	NSNumber *underLine1 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index1 effectiveRange:NULL];
+	STAssertTrue([underLine1 integerValue]==1, @"First item should be underlined");
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
+
+	// check first "ow"
+	NSDictionary *attributes2 = [output attributesAtIndex:index2 effectiveRange:NULL];
+	NSNumber *underLine2 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index2 effectiveRange:NULL];
+	STAssertTrue([underLine2 integerValue]==1, @"Second item should be underlined");
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk2, @"Second item should be orange");
+
+	// check second "me"
+	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
+	NSNumber *underLine3 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	STAssertTrue([underLine3 integerValue]==0, @"Third item should not be underlined");
+	DTColor *foreground3 = [attributes3 foregroundColor];
+	NSString *foreground3HTML = [foreground3 htmlHexString];
+	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ff0000"]);
+	STAssertTrue(colorOk3, @"Third item should be red");
+	
+	// check second "ow"
+	NSDictionary *attributes4 = [output attributesAtIndex:index4 effectiveRange:NULL];
+	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
+	STAssertTrue([underLine4 integerValue]==1, @"First item should be underlined");
+	DTColor *foreground4 = [attributes4 foregroundColor];
+	NSString *foreground4HTML = [foreground4 htmlHexString];
+	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk4, @"First item should be green");
+}
+
 @end

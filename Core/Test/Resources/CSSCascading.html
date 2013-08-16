@@ -1,0 +1,39 @@
+<head>
+    <style>
+        .foo .bar {
+            font-size: 25pt;
+        }
+
+        .foo .bar .bing {
+            color: green;
+        }
+
+        .foo .bing {
+            font-weight: bold;
+        }
+
+        .bar .bing {
+            text-decoration: underline;
+        }
+        .zing {
+            color:orange;
+        }
+        .bar .zing {
+            font-style:italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="foo">
+        <div>
+            <div class="bar">
+                <div class="bing">
+                    me
+                    <span class="zing">ow</span>
+                </div>
+                <span style="color:red;">Me<span class="bing">ow</span></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
