@@ -603,6 +603,10 @@
 	NSString *foreground1HTML = [foreground1 htmlHexString];
 	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
 	STAssertTrue(colorOk1, @"First item should be green");
+	BOOL isBold1 = [[attributes1 fontDescriptor] boldTrait];
+	STAssertTrue(isBold1, @"First item should be bold");
+	BOOL isItalic1 = [[attributes1 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic1, @"First item should not be italic");
 
 	// check first "ow"
 	NSDictionary *attributes2 = [output attributesAtIndex:index2 effectiveRange:NULL];
@@ -612,6 +616,10 @@
 	NSString *foreground2HTML = [foreground2 htmlHexString];
 	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"ffa500"]);
 	STAssertTrue(colorOk2, @"Second item should be orange");
+	BOOL isBold2 = [[attributes2 fontDescriptor] boldTrait];
+	STAssertTrue(isBold2, @"Second item should be bold");
+	BOOL isItalic2 = [[attributes2 fontDescriptor] italicTrait];
+	STAssertTrue(isItalic2, @"Second item should be italic");
 
 	// check second "me"
 	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
@@ -621,15 +629,23 @@
 	NSString *foreground3HTML = [foreground3 htmlHexString];
 	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ff0000"]);
 	STAssertTrue(colorOk3, @"Third item should be red");
+	BOOL isBold3 = [[attributes3 fontDescriptor] boldTrait];
+	STAssertFalse(isBold3, @"Third item should not be bold");
+	BOOL isItalic3 = [[attributes3 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic3, @"Third item should not be italic");
 	
 	// check second "ow"
 	NSDictionary *attributes4 = [output attributesAtIndex:index4 effectiveRange:NULL];
 	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
-	STAssertTrue([underLine4 integerValue]==1, @"First item should be underlined");
+	STAssertTrue([underLine4 integerValue]==1, @"Fourth item should be underlined");
 	DTColor *foreground4 = [attributes4 foregroundColor];
 	NSString *foreground4HTML = [foreground4 htmlHexString];
 	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"008000"]);
-	STAssertTrue(colorOk4, @"First item should be green");
+	STAssertTrue(colorOk4, @"Fourth item should be green");
+	BOOL isBold4 = [[attributes4 fontDescriptor] boldTrait];
+	STAssertTrue(isBold4, @"Fourth item should be bold");
+	BOOL isItalic4 = [[attributes4 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic4, @"Fourth item should not be italic");
 }
 
 @end
