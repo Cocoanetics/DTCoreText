@@ -592,9 +592,12 @@
 	
 	NSUInteger index1 = 0;
 	NSUInteger index2 = 3;
-	NSUInteger index3 = 6;
-	NSUInteger index4 = 8;
-	
+	NSUInteger index3 = 10;
+	NSUInteger index4 = 16;
+	NSUInteger index5 = 18;
+	NSUInteger index6 = 47;
+	NSUInteger index7 = 98;
+
 	// check first "me"
 	NSDictionary *attributes1 = [output attributesAtIndex:index1 effectiveRange:NULL];
 	NSNumber *underLine1 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index1 effectiveRange:NULL];
@@ -608,44 +611,83 @@
 	BOOL isItalic1 = [[attributes1 fontDescriptor] italicTrait];
 	STAssertFalse(isItalic1, @"First item should not be italic");
 
-	// check first "ow"
+	// check first "buzz"
 	NSDictionary *attributes2 = [output attributesAtIndex:index2 effectiveRange:NULL];
 	NSNumber *underLine2 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index2 effectiveRange:NULL];
 	STAssertTrue([underLine2 integerValue]==1, @"Second item should be underlined");
 	DTColor *foreground2 = [attributes2 foregroundColor];
 	NSString *foreground2HTML = [foreground2 htmlHexString];
-	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"ffa500"]);
-	STAssertTrue(colorOk2, @"Second item should be orange");
+	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"800080"]);
+	STAssertTrue(colorOk2, @"Second item should be purple");
 	BOOL isBold2 = [[attributes2 fontDescriptor] boldTrait];
 	STAssertTrue(isBold2, @"Second item should be bold");
-	BOOL isItalic2 = [[attributes2 fontDescriptor] italicTrait];
-	STAssertTrue(isItalic2, @"Second item should be italic");
 
-	// check second "me"
+	// check second "owzers"
 	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
 	NSNumber *underLine3 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index3 effectiveRange:NULL];
-	STAssertTrue([underLine3 integerValue]==0, @"Third item should not be underlined");
+	STAssertTrue([underLine3 integerValue]==1, @"Third item should be underlined");
+	NSNumber *strikeThrough3 = [output attribute:NSStrikethroughStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	STAssertTrue([strikeThrough3 integerValue]==1, @"Third item should have strike through");
 	DTColor *foreground3 = [attributes3 foregroundColor];
 	NSString *foreground3HTML = [foreground3 htmlHexString];
-	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ff0000"]);
-	STAssertTrue(colorOk3, @"Third item should be red");
+	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk3, @"Third item should be orange");
 	BOOL isBold3 = [[attributes3 fontDescriptor] boldTrait];
 	STAssertFalse(isBold3, @"Third item should not be bold");
 	BOOL isItalic3 = [[attributes3 fontDescriptor] italicTrait];
-	STAssertFalse(isItalic3, @"Third item should not be italic");
+	STAssertTrue(isItalic3, @"Third item should be italic");
 	
-	// check second "ow"
+	// check second "Me"
 	NSDictionary *attributes4 = [output attributesAtIndex:index4 effectiveRange:NULL];
 	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
-	STAssertTrue([underLine4 integerValue]==1, @"Fourth item should be underlined");
+	STAssertFalse([underLine4 integerValue]==1, @"Fourth item should be not underlined");
 	DTColor *foreground4 = [attributes4 foregroundColor];
 	NSString *foreground4HTML = [foreground4 htmlHexString];
-	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"008000"]);
-	STAssertTrue(colorOk4, @"Fourth item should be green");
+	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"ff0000"]);
+	STAssertTrue(colorOk4, @"Fourth item should be red");
 	BOOL isBold4 = [[attributes4 fontDescriptor] boldTrait];
-	STAssertTrue(isBold4, @"Fourth item should be bold");
+	STAssertFalse(isBold4, @"Fourth item should not be bold");
 	BOOL isItalic4 = [[attributes4 fontDescriptor] italicTrait];
 	STAssertFalse(isItalic4, @"Fourth item should not be italic");
+
+	// check second "ow"
+	NSDictionary *attributes5 = [output attributesAtIndex:index5 effectiveRange:NULL];
+	NSNumber *underLine5 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index5 effectiveRange:NULL];
+	STAssertTrue([underLine5 integerValue]==1, @"Fifth item should be underlined");
+	DTColor *foreground5 = [attributes5 foregroundColor];
+	NSString *foreground5HTML = [foreground5 htmlHexString];
+	BOOL colorOk5 = ([foreground5HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk5, @"Fifth item should be green");
+	BOOL isBold5 = [[attributes5 fontDescriptor] boldTrait];
+	STAssertTrue(isBold5, @"Fifth item should be bold");
+	BOOL isItalic5 = [[attributes5 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic5, @"Fifth item should not be italic");
+
+	// check second "this is a test of by tag name..."
+	NSDictionary *attributes6 = [output attributesAtIndex:index6 effectiveRange:NULL];
+	NSNumber *underLine6 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index6 effectiveRange:NULL];
+	STAssertTrue([underLine6 integerValue]==1, @"Sixth item should be underlined");
+	DTColor *foreground6 = [attributes6 foregroundColor];
+	NSString *foreground6HTML = [foreground6 htmlHexString];
+	BOOL colorOk6 = ([foreground6HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk6, @"Sixth item should be orange");
+	BOOL isBold6 = [[attributes6 fontDescriptor] boldTrait];
+	STAssertFalse(isBold6, @"Sixth item should not be bold");
+	BOOL isItalic6 = [[attributes6 fontDescriptor] italicTrait];
+	STAssertTrue(isItalic6, @"Sixth item should be italic");
+
+	// check second "i'm gray text"
+	NSDictionary *attributes7 = [output attributesAtIndex:index7 effectiveRange:NULL];
+	NSNumber *underLine7 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index7 effectiveRange:NULL];
+	STAssertFalse([underLine7 integerValue]==1, @"Seventh item should not be underlined");
+	DTColor *foreground7 = [attributes7 foregroundColor];
+	NSString *foreground7HTML = [foreground7 htmlHexString];
+	BOOL colorOk7 = ([foreground7HTML isEqualToString:@"777777"]);
+	STAssertTrue(colorOk7, @"Seventh item should be gray");
+	BOOL isBold7 = [[attributes7 fontDescriptor] boldTrait];
+	STAssertFalse(isBold7, @"Seventh item should not be bold");
+	BOOL isItalic7 = [[attributes7 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
 @end

@@ -661,9 +661,7 @@ extern unsigned int default_css_len;
 	// Find all classes by walking up the heirarchy and compute possible selector combinations
 	NSArray *ancestorSelectorArrays = [self findAncestorSelectorArraysForElement:element];
 	NSArray *cascadedSelectors = [self computeCascadedSelectorsWithAncestorSelectors:ancestorSelectorArrays];
-	
-	NSLog(@"NAME: %@ -- POSSIBLE SELECTORS: %@", element.name, cascadedSelectors);
-	
+		
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
