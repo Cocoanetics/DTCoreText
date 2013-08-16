@@ -566,8 +566,18 @@ extern unsigned int default_css_len;
 			
 			if (braceLevel == 0)
 			{
-				// Grab the selector (we'll process it in a moment)
+				// Grab the selector and clean up extraneous spaces (we'll process it in a moment)
 				selector = [css substringWithRange:NSMakeRange(braceMarker, i-braceMarker)];
+				NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
+				NSMutableArray *cleanSelectorParts = [NSMutableArray array];
+				for (NSString *partialSelector in selectorParts)
+				{
+					if (partialSelector.length)
+					{
+						[cleanSelectorParts addObject:partialSelector];
+					}
+				}
+				selector = [cleanSelectorParts componentsJoinedByString:@" "];
 				
 				// And mark our position so we can grab the rule's CSS when it is closed
 				braceMarker = i + 1;
@@ -647,9 +657,12 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
+	
 	// Find all classes by walking up the heirarchy and compute possible selector combinations
-	NSArray *ancestorClassArrays = [self findAncestorClassArraysForElement:element];
-	NSArray *cascadedSelectors = [self computeCascadedClassSelectorsWithAncestorClasses:ancestorClassArrays];
+	NSArray *ancestorSelectorArrays = [self findAncestorSelectorArraysForElement:element];
+	NSArray *cascadedSelectors = [self computeCascadedSelectorsWithAncestorSelectors:ancestorSelectorArrays];
+	
+	NSLog(@"NAME: %@ -- POSSIBLE SELECTORS: %@", element.name, cascadedSelectors);
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -668,16 +681,16 @@ extern unsigned int default_css_len;
 			[tmpDict addEntriesFromDictionary:byClassAndName];
 			[tmpMatchedSelectors addObject:classAndTagRule];
 		}
-		
-		//This covers the "by class" only case (e.g. .foo)
-		for (NSString *cascadedSelector in cascadedSelectors)
+	}
+	
+	//This covers the "by class" only case (e.g. .foo)
+	for (NSString *cascadedSelector in cascadedSelectors)
+	{
+		NSDictionary *byCascadedClassName = [_styles objectForKey:cascadedSelector];
+		if (byCascadedClassName)
 		{
-			NSDictionary *byCascadedClassName = [_styles objectForKey:cascadedSelector];
-			if (byCascadedClassName)
-			{
-				[tmpDict addEntriesFromDictionary:byCascadedClassName];
-				[tmpMatchedSelectors addObject:cascadedSelector];
-			}
+			[tmpDict addEntriesFromDictionary:byCascadedClassName];
+			[tmpMatchedSelectors addObject:cascadedSelector];
 		}
 	}
 	
@@ -724,47 +737,79 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
-- (NSArray *)findAncestorClassArraysForElement:(DTHTMLElement *)element
+- (NSArray *)findAncestorSelectorArraysForElement:(DTHTMLElement *)element
 {
 	// Walk up the heirarchy looking for parents with class attributes then compute cascades
-	NSMutableArray *ancestorClassArrays = [NSMutableArray array];
+	NSMutableArray *ancestorSelectorArrays = [NSMutableArray array];
 	
 	DTHTMLElement *currentElement = element;
 	while (currentElement != nil)
 	{
 		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
 		NSArray *currentElementClasses = [currentElementClassString componentsSeparatedByString:@" "];
-		if (currentElementClasses.count)
+		NSString *ancestorId = [currentElement.attributes objectForKey:@"id"];
+		
+		NSMutableArray *selectors = [NSMutableArray array];
+		
+		if (ancestorId && ancestorId.length)
 		{
-			[ancestorClassArrays insertObject:currentElementClasses atIndex:0];
+			[selectors insertObject:[NSString stringWithFormat:@"#%@", ancestorId] atIndex:0];
+		}
+		
+		for (NSString *class in currentElementClasses)
+		{
+			if (class.length)
+			{
+				[selectors insertObject:[NSString stringWithFormat:@".%@", class] atIndex:0];
+			}
+		}
+		
+		// We add the element's tag name so the computed cascades include things like "div .foo" and "div #bar"
+		[selectors addObject:currentElement.name];
+		
+		if (selectors.count)
+		{
+			[ancestorSelectorArrays insertObject:selectors atIndex:0];
 		}
 		
 		currentElement = currentElement.parentElement;
 	}
 	
-	return ancestorClassArrays;
+	return ancestorSelectorArrays;
 }
 
-- (NSArray *)computeCascadedClassSelectorsWithAncestorClasses:(NSArray *)ancestorClasses
+- (NSArray *)computeCascadedSelectorsWithAncestorSelectors:(NSArray *)ancestorSelectors
 {
 	NSMutableOrderedSet *cascadedSelectors = [[NSMutableOrderedSet alloc] init];
 	
-	if (ancestorClasses.count) {
-		NSArray *classes = ancestorClasses[0];
+	if (ancestorSelectors.count) {
+		NSArray *outerMostAncestorSelectors = ancestorSelectors[0];
 		
 		// Find selector combinations for all ancestors that are leaves of the ancesor the current class array belongs to
-		NSArray *remainingAncessorClasses = [ancestorClasses subarrayWithRange:NSMakeRange(1, ancestorClasses.count - 1)];
-		NSArray *descendentSelectors = [self computeCascadedClassSelectorsWithAncestorClasses:remainingAncessorClasses];
+		NSArray *remainingAncessorSelectors = [ancestorSelectors subarrayWithRange:NSMakeRange(1, ancestorSelectors.count - 1)];
+		NSArray *descendantSelectors = [self computeCascadedSelectorsWithAncestorSelectors:remainingAncessorSelectors];
 		
-		for (NSString *class in classes)
+		for (NSString *selector in outerMostAncestorSelectors)
 		{
-			[cascadedSelectors addObject:[NSString stringWithFormat:@".%@", class]];
-			
-			for (NSString *descendentSelector in descendentSelectors)
-			{
-				[cascadedSelectors addObject:[NSString stringWithFormat:@"%@", descendentSelector]];
-				[cascadedSelectors addObject:[NSString stringWithFormat:@".%@ %@", class, descendentSelector]];
+			// Although we include tag names (in findAncestorSelectorArraysForElement:) so we can compute their cascades,
+			// we already handle them elsewhere differently from more complex selectors (e.g. id, class, and combinations of all 3)
+			// so don't add them to our list of cascadedSelectors
+			if ([selector hasPrefix:@"."] || [selector hasPrefix:@"#"]) {
+				[cascadedSelectors addObject:selector];
 			}
+		}
+		
+		for (NSString *selector in outerMostAncestorSelectors)
+		{
+			for (NSString *descendantSelector in descendantSelectors)
+			{
+				[cascadedSelectors addObject:[NSString stringWithFormat:@"%@ %@", selector, descendantSelector]];
+			}
+		}
+		
+		for (NSString *descendantSelector in descendantSelectors)
+		{
+			[cascadedSelectors addObject:descendantSelector];
 		}
 	}
 	
