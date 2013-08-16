@@ -661,7 +661,7 @@ extern unsigned int default_css_len;
 	// Find all classes by walking up the heirarchy and compute possible selector combinations
 	NSArray *ancestorSelectorArrays = [self findAncestorSelectorArraysForElement:element];
 	NSArray *cascadedSelectors = [self computeCascadedSelectorsWithAncestorSelectors:ancestorSelectorArrays];
-		
+	
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
@@ -778,21 +778,25 @@ extern unsigned int default_css_len;
 
 - (NSArray *)computeCascadedSelectorsWithAncestorSelectors:(NSArray *)ancestorSelectors
 {
-	NSMutableOrderedSet *cascadedSelectors = [[NSMutableOrderedSet alloc] init];
+	NSMutableArray *cascadedSelectors = [NSMutableArray array];
 	
-	if (ancestorSelectors.count) {
+	if (ancestorSelectors.count)
+	{
 		NSArray *outerMostAncestorSelectors = ancestorSelectors[0];
 		
 		// Find selector combinations for all ancestors that are leaves of the ancesor the current class array belongs to
 		NSArray *remainingAncessorSelectors = [ancestorSelectors subarrayWithRange:NSMakeRange(1, ancestorSelectors.count - 1)];
 		NSArray *descendantSelectors = [self computeCascadedSelectorsWithAncestorSelectors:remainingAncessorSelectors];
+		// Deduplicate computed selectors from recursive calls
+		descendantSelectors = [[NSOrderedSet orderedSetWithArray:descendantSelectors] array];
 		
 		for (NSString *selector in outerMostAncestorSelectors)
 		{
 			// Although we include tag names (in findAncestorSelectorArraysForElement:) so we can compute their cascades,
 			// we already handle them elsewhere differently from more complex selectors (e.g. id, class, and combinations of all 3)
 			// so don't add them to our list of cascadedSelectors
-			if ([selector hasPrefix:@"."] || [selector hasPrefix:@"#"]) {
+			if ([selector hasPrefix:@"."] || [selector hasPrefix:@"#"])
+			{
 				[cascadedSelectors addObject:selector];
 			}
 		}
@@ -801,7 +805,12 @@ extern unsigned int default_css_len;
 		{
 			for (NSString *descendantSelector in descendantSelectors)
 			{
-				[cascadedSelectors addObject:[NSString stringWithFormat:@"%@ %@", selector, descendantSelector]];
+				// Profiled this as it's the slowest part of this method.
+				// Using NSMutableString is significantly faster than [NSArray componentsJoinedByString:] or [NSString stringWithFormat:]
+				NSMutableString *combinedSelector = [NSMutableString stringWithString:selector];
+				[combinedSelector appendString:@" "];
+				[combinedSelector appendString:descendantSelector];
+				[cascadedSelectors addObject:combinedSelector];
 			}
 		}
 		
@@ -811,7 +820,7 @@ extern unsigned int default_css_len;
 		}
 	}
 	
-	return [cascadedSelectors array];
+	return cascadedSelectors;
 }
 
 #pragma mark NSCopying
