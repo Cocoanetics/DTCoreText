@@ -99,18 +99,22 @@
 			
 			if ([self scanString:@"," intoString:&value])
 			{
+                BOOL isStringOnlyCSSProperty = NO;
+                
 				if (![value isEqualToString:@","])
 				{
 					[results addObject:value];
 				}
-				else if ([attrName isEqualToString:@"font"] || [attrName isEqualToString:@"color"] || [attrName isEqualToString:@"text-shadow"])
+				else if ([attrName isEqualToString:@"font"] || ([attrName rangeOfString:@"color"].location != NSNotFound) || ([attrName rangeOfString:@"shadow"].location != NSNotFound))
 				{
 					value = [NSString stringWithFormat:@"%@%@", [results lastObject], value];
 					[results removeLastObject];
 					[results addObject:value];
+                    
+                    isStringOnlyCSSProperty = YES;
 				}
 				
-				if ([value isEqualToString:@","] && ![attrName isEqualToString:@"font"] && ![attrName isEqualToString:@"color"] && ![attrName isEqualToString:@"text-shadow"])
+				if ([value isEqualToString:@","] && !isStringOnlyCSSProperty)
 				{
 					nextIterationAddsNewEntry = YES;
 				}
