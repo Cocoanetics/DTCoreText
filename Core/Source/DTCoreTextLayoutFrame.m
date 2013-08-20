@@ -943,6 +943,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	BOOL foundEndBlocks = NO;
 	
 	index = NSMaxRange(range)-1;
+
+	// nothing to search backwards, blocks at end of range == blocks at start
+	if (index <= effectiveRange.location)
+	{
+		return effectiveRange;
+	}
 	
 	do
 	{
@@ -952,15 +958,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			break;
 		}
 		
-        NSUInteger attributeIndex = index;
-		
-        if (attributeIndex > 0)
-        {
-            attributeIndex = attributeIndex - 1;
-        }
-		
 		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:attributeIndex effectiveRange:&effectiveRangeOfBlocksArray];
+		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
 		
 		// skip a range of empty blocks at start
 		if (!textBlocks)
