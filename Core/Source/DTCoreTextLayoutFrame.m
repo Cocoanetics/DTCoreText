@@ -952,8 +952,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			break;
 		}
 		
+        NSUInteger attributeIndex = index;
+		
+        if (attributeIndex > 0)
+        {
+            attributeIndex = attributeIndex - 1;
+        }
+		
 		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index-1 effectiveRange:&effectiveRangeOfBlocksArray];
+		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:attributeIndex effectiveRange:&effectiveRangeOfBlocksArray];
 		
 		// skip a range of empty blocks at start
 		if (!textBlocks)
