@@ -42,6 +42,7 @@
 	<array>
 		<string>./Documentation/Setup Guide-template.markdown</string>
 		<string>./Documentation/Known Issues-template.markdown</string>
+		<string>./Documentation/Programming Guide-template.markdown</string>
 		<string>./Documentation/DTCoreText_Demo_App.png</string>
 		<string>./Documentation/DTCoreText_Linker_Flags.png</string>
 		<string>./Documentation/DTCoreText_Search_Paths.png</string>
