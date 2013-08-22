@@ -91,7 +91,7 @@ typedef NS_ENUM(NSUInteger, DTCSSListStyleType)
 /**
  List Marker Positions
  */
-typedef NS_ENUM(NSUInteger, DTCSSListStylePosition
+typedef NS_ENUM(NSUInteger, DTCSSListStylePosition)
 {
 	/**
 	 List position should be inherited
