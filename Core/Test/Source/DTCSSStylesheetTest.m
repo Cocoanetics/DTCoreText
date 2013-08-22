@@ -51,7 +51,7 @@
 	
 	NSDictionary *styles = [stylesheet.styles objectForKey:@"p"];
 	
-	STAssertEquals([styles count], 2u, @"There should be 2 styles");
+	STAssertEquals([styles count], (NSUInteger)2, @"There should be 2 styles");
 	
 	NSString *alignStyle = [styles objectForKey:@"align"];
 	
@@ -95,6 +95,21 @@
 	STAssertEqualObjects(styles[@"font-variant"], @"small-caps", @"Font Variant should be small-caps");
 	STAssertEqualObjects(styles[@"line-height"], @"100px", @"Line Height should be 100px");
 	STAssertEqualObjects(styles[@"margin-bottom"], @"30px", @"Margin Bottom should be 30px");
+}
+
+// issue 535
+
+- (void)testMultipleFontFamiliesCrash
+{
+	STAssertTrueNoThrow([[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif;}"]!=nil, @"Should be able to parse without crash");
+}
+
+- (void)testMultipleFontFamilies
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif !important;}"];
+	NSDictionary *styles = [stylesheet.styles objectForKey:@"p"];
+	NSArray *expected = @[@"Helvetica", @"sans-serif"];
+	STAssertEqualObjects(styles[@"font-family"], expected, @"Font Family should be [Helvetica, sans-serif]");
 }
 
 @end

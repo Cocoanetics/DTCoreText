@@ -30,6 +30,11 @@
 - (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor;
 
 /**
+ Adds the paragraph terminator `\n` and makes sure that the previous font and paragraph styles extend to include it
+ */
+- (void)appendEndOfParagraph;
+
+/**
  @name Working with Custom HTML Attributes
  */
 

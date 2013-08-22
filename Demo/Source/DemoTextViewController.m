@@ -249,6 +249,50 @@
 	[super viewWillDisappear:animated];
 }
 
+// this is only called on >= iOS 5
+- (void)viewDidLayoutSubviews
+{
+	[super viewDidLayoutSubviews];
+	
+	if (![self respondsToSelector:@selector(topLayoutGuide)])
+	{
+		return;
+	}
+	
+	// this also compiles with iOS 6 SDK, but will work with later SDKs too
+	CGFloat topInset = [[self valueForKeyPath:@"topLayoutGuide.length"] floatValue];
+	CGFloat bottomInset = [[self valueForKeyPath:@"bottomLayoutGuide.length"] floatValue];
+	
+	UIEdgeInsets outerInsets = UIEdgeInsetsMake(topInset, 0, bottomInset, 0);
+	UIEdgeInsets innerInsets = outerInsets;
+	innerInsets.left += 10;
+	innerInsets.right += 10;
+	innerInsets.top += 10;
+	innerInsets.bottom += 10;
+	
+	CGPoint innerScrollOffset = CGPointMake(-innerInsets.left, -innerInsets.top);
+	CGPoint outerScrollOffset = CGPointMake(-outerInsets.left, -outerInsets.top);
+	
+	_textView.contentInset = innerInsets;
+	_textView.contentOffset = innerScrollOffset;
+	_textView.scrollIndicatorInsets = outerInsets;
+	
+	_iOS6View.contentInset = outerInsets;
+	_iOS6View.contentOffset = outerScrollOffset;
+	_iOS6View.scrollIndicatorInsets = outerInsets;
+
+	_charsView.contentInset = outerInsets;
+	_charsView.contentOffset = outerScrollOffset;
+	_charsView.scrollIndicatorInsets = outerInsets;
+	
+	_rangeView.contentInset = outerInsets;
+	_rangeView.contentOffset = outerScrollOffset;
+	_rangeView.scrollIndicatorInsets = outerInsets;
+	
+	_htmlView.contentInset = outerInsets;
+	_htmlView.contentOffset = outerScrollOffset;
+	_htmlView.scrollIndicatorInsets = outerInsets;
+}
 
 #pragma mark Private Methods
 

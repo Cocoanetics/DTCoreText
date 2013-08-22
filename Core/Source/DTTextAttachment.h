@@ -14,14 +14,31 @@
 
 @class DTHTMLElement;
 
-typedef enum
+/**
+ Text Attachment vertical alignment
+ */
+typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
 {
+	/**
+	 Baseline alignment (default)
+	 */
 	DTTextAttachmentVerticalAlignmentBaseline = 0,
+	
+	/**
+	 Align with top edge
+	 */
 	DTTextAttachmentVerticalAlignmentTop,
+	
+	/**
+	 Align with center
+	 */
 	DTTextAttachmentVerticalAlignmentCenter,
+	
+	/**
+	 Align with bottom edge
+	 */
 	DTTextAttachmentVerticalAlignmentBottom
-} DTTextAttachmentVerticalAlignment;
-
+};
 
 /**
  Methods to implement for attachments to support inline drawing.

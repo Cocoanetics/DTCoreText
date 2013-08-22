@@ -123,5 +123,77 @@
 	STAssertTrue(isCSSLength, @"Should be a valid font size value");
 }
 
+- (void)testMultiFontFamily
+{
+	NSString *style = @"font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	STAssertTrue([font count] == 6, @"6 fonts should be returned");
+}
+
+- (void)testSimpleQuotedFontFamily
+{
+	NSString *style = @"font-family: 'Courier New'";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
+}
+
+- (void)testSimpleUnquotedFontFamily
+{
+	NSString *style = @"font-family: Courier New";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	
+	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
+}
+
+- (void)testMultiFontFamilyWithSize
+{
+	NSString *style = @"font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace; font-size: 60px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id font =  dictionary[@"font-family"];
+	NSString *size = dictionary[@"font-size"];
+	
+	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	STAssertTrue([font count] == 6, @"6 fonts should be returned");
+	STAssertTrue([size isEqualToString:@"60px"], @"Font size should be 60px");
+}
+
+- (void)testTextShadow
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id shadow = dictionary[@"text-shadow"];
+	
+	STAssertEqualObjects(@"-1px -1px #555, 1px 1px #EEE", shadow, @"Shadow should be \"-1px -1px #555, 1px 1px #EEE\"");
+	STAssertTrue([shadow isKindOfClass:[NSString class]], @"shadow count should be a string");
+}
+
+- (void)testColor
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;color:rgb(255, 0, 0);font-size:30px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id color = dictionary[@"color"];
+	
+	STAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Color should be \"rgb(255, 0, 0)\"");
+	STAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
+}
+
+- (void)textBackgroundColor
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;background-color:rgb(255, 88, 44);font-size:30px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id color = dictionary[@"background-color"];
+	
+	STAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+}
 
 @end

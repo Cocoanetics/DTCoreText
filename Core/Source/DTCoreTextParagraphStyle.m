@@ -11,29 +11,6 @@
 #import "DTCSSListStyle.h"
 #import "DTWeakSupport.h"
 
-#if !TARGET_OS_IPHONE
-#import <CommonCrypto/CommonDigest.h>
-#endif
-
-// global cache for returning previously created immutable paragraph styles
-static NSCache *_CTParagraphStyleCache = nil;
-
-// a struct that takes on all sub-values, used for fast hash
-typedef struct {
-	CGFloat firstLineHeadIndent;
-	CGFloat defaultTabInterval;
-	CGFloat paragraphSpacingBefore;
-	CGFloat paragraphSpacing;
-	CGFloat headIndent;
-	CGFloat tailIndent;
-	CGFloat lineHeightMultiple;
-	CGFloat minimumLineHeight;
-	CGFloat maximumLineHeight;
-	NSInteger alignment; // make it full width, origin is uint8
-	NSInteger baseWritingDirection; // make it full width, origin is int8
-	NSUInteger tabsBlocksListsHash;
-} allvalues_t;
-
 @implementation DTCoreTextParagraphStyle
 {
 	CGFloat _firstLineHeadIndent;
@@ -50,11 +27,6 @@ typedef struct {
 	CTWritingDirection _baseWritingDirection;
 	
 	NSMutableArray *_tabStops;
-}
-
-+ (void)initialize
-{
-	_CTParagraphStyleCache = [[NSCache alloc] init];
 }
 
 + (DTCoreTextParagraphStyle *)defaultParagraphStyle
@@ -172,108 +144,13 @@ typedef struct {
 
 		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
-		
-//		if (_lineHeightMultiple)
-//		{
-//			// paragraph space is pre-multiplied
-//			if (_paragraphSpacing)
-//			{
-//				_paragraphSpacing /= _lineHeightMultiple;
-//			}
-//			
-//			if (_paragraphSpacingBefore)
-//			{
-//				_paragraphSpacingBefore /= _lineHeightMultiple;
-//			}
-//		}
 	}
 	
 	return self;
 }
 
-// creates a fast hash for the properties
-- (id <NSCopying>)_cacheKey
-{
-	NSMutableString *tabsBlocksListsDescription = [NSMutableString string];
-	
-	for (id tab in _tabStops)
-	{
-		CTTextTabRef tabStop = (__bridge CTTextTabRef)tab;
-		
-		CTTextAlignment alignment = CTTextTabGetAlignment(tabStop);
-		double location = CTTextTabGetLocation(tabStop);
-		
-		[tabsBlocksListsDescription appendFormat:@"-tab:%d-%f", alignment, location];
-	}
-	
-	for (DTTextBlock *textBlock in _textBlocks)
-	{
-		[tabsBlocksListsDescription appendFormat:@"-block:%lx", (unsigned long)[textBlock hash]];
-	}
-	
-	for (DTCSSListStyle *listStyle in _textLists)
-	{
-		[tabsBlocksListsDescription appendFormat:@"-list:%lx", (unsigned long)[listStyle hash]];
-	}
-	
-#if TARGET_OS_IPHONE
-	// on iOS we use NSData's hashing function because we have less than 80 bytes (48)
-	allvalues_t *allvalues = malloc(sizeof(allvalues_t)); // will not be freed
-#else
-	// on MAC this struct is 96 bytes, so we use CommonCrypto's MD5 to reduce from > 80 bytes to less
-	allvalues_t allvalues_stack; // create tmp variable on stack 
-	allvalues_t *allvalues = &allvalues_stack; // pointer so that we can use the arrow operator
-#endif
-	
-	*allvalues = (allvalues_t){0,0,0,0,0,0,0,0,0,0,0,0};
-
-	// pack all values in the struct
-	allvalues->firstLineHeadIndent = _firstLineHeadIndent;
-	allvalues->defaultTabInterval = _defaultTabInterval;
-	allvalues->paragraphSpacingBefore = _paragraphSpacingBefore;
-	allvalues->paragraphSpacing = _paragraphSpacing;
-	allvalues->headIndent = _headIndent;
-	allvalues->tailIndent = _tailIndent;
-	allvalues->lineHeightMultiple = _lineHeightMultiple;
-	allvalues->minimumLineHeight = _minimumLineHeight;
-	allvalues->maximumLineHeight = _maximumLineHeight;
-	allvalues->baseWritingDirection = _baseWritingDirection;
-	allvalues->alignment = _alignment;
-	allvalues->tabsBlocksListsHash = [tabsBlocksListsDescription hash];
-
-#if TARGET_OS_IPHONE
-	// wrap it in NSData
-	return [NSData dataWithBytesNoCopy:allvalues length:sizeof(allvalues_t) freeWhenDone:YES];
-#else
-	//	Alternate Implementation using MD5
-	void *digest = malloc(CC_MD5_DIGEST_LENGTH); // will not be freed
-	CC_MD5(allvalues, (CC_LONG)sizeof(allvalues_t), digest);
-	
-	return [NSData dataWithBytesNoCopy:digest length:CC_MD5_DIGEST_LENGTH freeWhenDone:YES];
-#endif
-}
-
 - (CTParagraphStyleRef)createCTParagraphStyle
 {
-	id cacheKey = [self _cacheKey];
-	
-	CTParagraphStyleRef cachedParagraphStyle = CFBridgingRetain([_CTParagraphStyleCache objectForKey:cacheKey]);
-	
-	if (cachedParagraphStyle)
-	{
-		return cachedParagraphStyle; // +1 reference
-	}
-	
-//	// need to multiple paragraph spacing with line height multiplier
-//	float tmpParagraphSpacing = _paragraphSpacing;
-//	float tmpParagraphSpacingBefore = _paragraphSpacingBefore;
-//	
-//	if (_lineHeightMultiple&&(_lineHeightMultiple!=1.0))
-//	{
-//		tmpParagraphSpacing *= _lineHeightMultiple;
-//		tmpParagraphSpacingBefore *= _lineHeightMultiple;
-//	}
-	
 	// This just makes it that much easier to track down memory issues with tabstops
 	CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
 	
@@ -298,11 +175,12 @@ typedef struct {
 	};	
 	
 	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 12);
-	if (stops) CFRelease(stops);
-
-	// cache it for next time
-	[_CTParagraphStyleCache setObject:(__bridge id)ret forKey:cacheKey];
 	
+	if (stops)
+	{
+		CFRelease(stops);
+	}
+
 	return ret;
 }
 

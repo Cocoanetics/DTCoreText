@@ -24,6 +24,16 @@
 		#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
 	#endif
 
+	// iOS before 5.0 has leak in CoreText replacing attributes
+	#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0
+		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
+	#endif
+
+	// iOS 7 bug (rdar://14684188) workaround, can be removed once this bug is fixed
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		#define DTCORETEXT_FIX_14684188 1
+	#endif
+
 #endif
 
 
@@ -43,6 +53,11 @@
 
 	// Mac supports NS-Style Text Attributes since 10.0
 	#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
+
+	// theoretically MacOS before 10.8 might have a leak in CoreText replacing attributes
+	#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_7
+		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
+	#endif
 
 	// NSValue has sizeValue on Mac, CGSizeValue on iOS
 	#define CGSizeValue sizeValue

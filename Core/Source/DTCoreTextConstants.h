@@ -85,31 +85,93 @@ extern BOOL ___useiOS6Attributes;
 
 // types
 
-typedef enum
+/**
+ DTHTMLElement display style
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementDisplayStyle)
 {
+	/**
+	 The element is inline text
+	 */
 	DTHTMLElementDisplayStyleInline = 0, // default
+	
+	/**
+	 The element is not displayed
+	 */
 	DTHTMLElementDisplayStyleNone,
+	
+	/**
+	 The element is a block
+	 */
 	DTHTMLElementDisplayStyleBlock,
+	
+	/**
+	 The element is an item in a list
+	 */
 	DTHTMLElementDisplayStyleListItem,
+	
+	/**
+	 The element is a table
+	 */
 	DTHTMLElementDisplayStyleTable,
-} DTHTMLElementDisplayStyle;
+};
 
-typedef enum
+/**
+ DTHTMLElement floating style
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementFloatStyle)
 {
+	/**
+	 The element does not float
+	 */
 	DTHTMLElementFloatStyleNone = 0,
+	
+	
+	/**
+	 The element should float left-aligned
+	 */
 	DTHTMLElementFloatStyleLeft,
+	
+	
+	/**
+	 The element should float right-aligned
+	 */
 	DTHTMLElementFloatStyleRight
-} DTHTMLElementFloatStyle;
+};
 
-typedef enum
+/**
+ DTHTMLElement font variants
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementFontVariant)
 {
+	/**
+	 The element inherts the font variant
+	 */
 	DTHTMLElementFontVariantInherit = 0,
+	
+	/**
+	 The element uses the normal font variant
+	 */
 	DTHTMLElementFontVariantNormal,
+	
+	/**
+	 The element should display in small caps
+	 */
 	DTHTMLElementFontVariantSmallCaps
-} DTHTMLElementFontVariant;
+};
 
-typedef enum
+/**
+ The algorithm that DTCoreTextLayoutFrame uses for positioning lines
+ */
+typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameLinePositioningOptions)
 {
+	/**
+	 The line positioning algorithm is similar to how Safari positions lines
+	 */
 	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit = 1,
+	
+	/**
+	 The line positioning algorithm is how it was before the implementation of DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit
+	 */
 	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy = 2
-} DTCoreTextLayoutFrameLinePositioningOptions;
+};

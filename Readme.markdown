@@ -21,6 +21,9 @@ Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to
 
 #### Changelog
 
+- [Version 1.6.4](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-4/)
+- [Version 1.6.3](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-3-dtrichtexteditor-1-6-2/)
+- [Version 1.6.2](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-2/)
 - [Version 1.6.1](http://www.cocoanetics.com/2013/07/dtcoretext-1-6-1/)
 - [Version 1.6.0](http://www.cocoanetics.com/2013/07/dtcoretext-1-6/)
 - [Version 1.5.3](http://www.cocoanetics.com/2013/06/dtcoretext-1-5-3/)
