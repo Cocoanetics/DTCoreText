@@ -734,7 +734,7 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
-- (NSSet *)findPartialSelectorElementNamesForElement:(DTHTMLElement *)element
+- (NSSet *)findRelevantSelectorElementNamesForElement:(DTHTMLElement *)element
 {
     // NSSet has quick lookup time so it'll be our return type
     NSMutableSet *possibleElementNames = [NSMutableSet set];
@@ -761,7 +761,7 @@ extern unsigned int default_css_len;
 
 - (NSArray *)findAncestorSelectorArraysForElement:(DTHTMLElement *)element
 {
-    NSSet *possibleElementNames = [self findPartialSelectorElementNamesForElement:element];
+    NSSet *possibleElementNames = [self findRelevantSelectorElementNamesForElement:element];
 	
     // Walk up the heirarchy looking for parents with class attributes then compute cascades
 	NSMutableArray *ancestorSelectorArrays = [NSMutableArray array];
