@@ -657,11 +657,10 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
-	
 	// Find all classes by walking up the heirarchy and compute possible selector combinations
 	NSArray *ancestorSelectorArrays = [self findAncestorSelectorArraysForElement:element];
 	NSArray *cascadedSelectors = [self computeCascadedSelectorsWithAncestorSelectors:ancestorSelectorArrays];
-	
+    
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
@@ -735,9 +734,36 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
+- (NSSet *)findRelevantSelectorElementNamesForElement:(DTHTMLElement *)element
+{
+    // NSSet has quick lookup time so it'll be our return type
+    NSMutableSet *possibleElementNames = [NSMutableSet set];
+    
+    // Sort the array of defined selectors so we can binary search
+    DTHTMLElement *currentElement = element;
+    while (currentElement != nil)
+    {
+        if (![possibleElementNames containsObject:currentElement.name] && ![currentElement.name isEqualToString:@"html"]) {
+            for (NSString *selector in _styles.allKeys)
+            {
+                if ([selector rangeOfString:currentElement.name].location != NSNotFound)
+                {
+                    [possibleElementNames addObject:currentElement.name];
+                    break;
+                }
+            }
+        }
+        
+        currentElement = currentElement.parentElement;
+    }
+    return possibleElementNames;
+}
+
 - (NSArray *)findAncestorSelectorArraysForElement:(DTHTMLElement *)element
 {
-	// Walk up the heirarchy looking for parents with class attributes then compute cascades
+    NSSet *possibleElementNames = [self findRelevantSelectorElementNamesForElement:element];
+	
+    // Walk up the heirarchy looking for parents with class attributes then compute cascades
 	NSMutableArray *ancestorSelectorArrays = [NSMutableArray array];
 	
 	DTHTMLElement *currentElement = element;
@@ -762,8 +788,11 @@ extern unsigned int default_css_len;
 			}
 		}
 		
-		// We add the element's tag name so the computed cascades include things like "div .foo" and "div #bar"
-		[selectors addObject:currentElement.name];
+        // Optimization: only add element names that are in the known selectors to our ancestor array
+        if ([possibleElementNames containsObject:currentElement.name]) {
+            // We add the element's tag name so the computed cascades include things like "div .foo" and "div #bar"
+            [selectors addObject:currentElement.name];
+        }
 		
 		if (selectors.count)
 		{
