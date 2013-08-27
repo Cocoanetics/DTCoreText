@@ -690,4 +690,14 @@
 	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
+
+// issue 555
+- (void)testCascadingOutOfMemory
+{
+	NSDate *startTime = [NSDate date];
+	NSAttributedString *attributedString = [self _attributedStringFromTestFileName:@"CSSOOMCrash"];
+	STAssertTrueNoThrow(attributedString != nil, @"Should be able to parse without running out of memory");
+	STAssertTrue(([[NSDate date] timeIntervalSinceDate:startTime]) < 0.5f, @"Test should run in less than 0.5 seconds. Prior to fix, it took 16.85 seconds to run this test.");
+}
+
 @end
