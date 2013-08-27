@@ -534,4 +534,6 @@
 @synthesize baselineOrigin = _baselineOrigin;
 @synthesize writingDirectionIsRightToLeft = _writingDirectionIsRightToLeft;
 
+@synthesize stringLocationOffset = _stringLocationOffset;
+
 @end
