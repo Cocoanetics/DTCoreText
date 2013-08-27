@@ -209,6 +209,11 @@
 @property (nonatomic, assign) DTHTMLElementFontVariant fontVariant;
 
 /**
+ The current unscaled font size (used when inheriting font size). You're probably looking for fontDescriptor.pointSize.
+ */
+@property (nonatomic, assign) CGFloat currentTextSize;
+
+/**
  The scale by which all fonts are scaled
  */
 @property (nonatomic, assign) CGFloat textScale;
