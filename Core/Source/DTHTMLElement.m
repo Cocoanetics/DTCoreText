@@ -620,29 +620,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			didModify = YES;
 		}
 	}
@@ -742,8 +742,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isCSSLengthValue])
 		{
-			_currentTextSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
-			_fontDescriptor.pointSize = _currentTextSize;
+			_fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 		}
 	}
 	
@@ -1049,7 +1048,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else // interpret as length
 		{
-			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			self.paragraphStyle.minimumLineHeight = lineHeightValue;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
@@ -1075,13 +1074,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
-		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
-		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
