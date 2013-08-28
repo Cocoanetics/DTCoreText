@@ -657,7 +657,8 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
-	NSArray *matchingCascadedSelectors = [self matchingCascadingSelectorsForElement:element];
+	NSArray *matchingComplexCascadedSelectors = [self matchingComplexCascadingSelectorsForElement:element];
+	NSArray *matchingSimpleCascadedSelectors = [self matchingSimpleCascadedSelectors:element];
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -666,19 +667,23 @@ extern unsigned int default_css_len;
 		tmpMatchedSelectors = [[NSMutableSet alloc] init];
 	}
 	
-	// Apply cascading selectors first, then apply most specific selectors
-	for (NSString *cascadingSelector in matchingCascadedSelectors)
+	// Apply complex cascading selectors first, then apply most specific selectors
+	for (NSString *cascadingSelector in matchingComplexCascadedSelectors)
 	{
 		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
-		
-		if (byCascadingSelector)
-		{
-			[tmpDict addEntriesFromDictionary:byCascadingSelector];
-			[tmpMatchedSelectors addObject:cascadingSelector];
-		}
+		[tmpDict addEntriesFromDictionary:byCascadingSelector];
+		[tmpMatchedSelectors addObject:cascadingSelector];
 	}
 	
-	// Applied after cascades since immediate classes are most specific
+	// Cascade simple single class selectors from ancestors
+	for (NSString *cascadingSelector in matchingSimpleCascadedSelectors)
+	{
+		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
+		[tmpDict addEntriesFromDictionary:byCascadingSelector];
+		[tmpMatchedSelectors addObject:cascadingSelector];
+	}
+	
+	// Applied the parameter element's classes last
 	for (NSString *class in classes)
 	{
 		NSString *classRule = [NSString stringWithFormat:@".%@", class];
@@ -743,7 +748,7 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
-- (NSMutableArray *)matchingCascadingSelectorsForElement:(DTHTMLElement *)element
+- (NSMutableArray *)matchingComplexCascadingSelectorsForElement:(DTHTMLElement *)element
 {
 	__block NSMutableArray *matchedSelectors = [NSMutableArray array];
 	
@@ -819,6 +824,29 @@ extern unsigned int default_css_len;
 	}
 	
 	return matchedSelectors;
+}
+
+- (NSArray *)matchingSimpleCascadedSelectors:(DTHTMLElement *)element
+{
+	NSMutableArray *simpleSelectors = [NSMutableArray array];
+	
+	DTHTMLElement *currentElement = element.parentElement;
+	while (currentElement != nil)
+	{
+		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
+		NSArray *selectorParts = [currentElementClassString componentsSeparatedByString:@" "];
+		if (selectorParts.count == 1 && ([selectorParts[0] length] > 0)) {
+			NSString *ancessorClassRule = [NSString stringWithFormat:@".%@", selectorParts[0]];
+			
+			if (_styles[ancessorClassRule]) {
+				[simpleSelectors insertObject:ancessorClassRule atIndex:0];
+			}
+		}
+		
+		currentElement = currentElement.parentElement;
+	}
+	
+	return simpleSelectors;
 }
 
 #pragma mark NSCopying
