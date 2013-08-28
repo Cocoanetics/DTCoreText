@@ -25,7 +25,7 @@
 	if (self)
 	{
 		// make appropriate attachment
-		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:self options:options];
+		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:self andClassName:[attributes objectForKey:@"class"] options:options];
 		
 		// add it to tag
 		_textAttachment = attachment;

@@ -45,26 +45,30 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	_classForTagNameLookup = [[NSMutableDictionary alloc] init];
 	
 	// register standard tags
-	[DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"img"];
-	[DTTextAttachment registerClass:[DTVideoTextAttachment class] forTagName:@"video"];
-	[DTTextAttachment registerClass:[DTIframeTextAttachment class] forTagName:@"iframe"];
-	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"object"];
+	[DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"img" withClassName:nil];
+	[DTTextAttachment registerClass:[DTVideoTextAttachment class] forTagName:@"video" withClassName:nil];
+	[DTTextAttachment registerClass:[DTIframeTextAttachment class] forTagName:@"iframe" withClassName:nil];
+	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"object" withClassName:nil];
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
-	Class class = [DTTextAttachment registeredClassForTagName:element.name];
+	[DTTextAttachment textAttachmentWithElement:element andClassName:nil options:options];
+}
+
++ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element andClassName:(NSString *)className options:(NSDictionary *)options
+{
+    Class class = [DTTextAttachment registeredClassForTagName:element.name withClassName:className];
 	
 	if (!class)
 	{
 		return nil;
 	}
-
+    
 	DTTextAttachment *attachment = [class alloc];
 	
 	return [attachment initWithElement:element options:options];
 }
-
 
 - (id)initWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
@@ -158,19 +162,65 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 + (void)registerClass:(Class)class forTagName:(NSString *)tagName
 {
-	Class previousClass = [DTTextAttachment registeredClassForTagName:tagName];
+	[DTTextAttachment registerClass:class forTagName:tagName withClassName:nil];
+}
 
-	if (previousClass)
-	{
-		NSLog(@"Warning: replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName withClassName:(NSString *)className
+{
+	if (className == nil)
+		className = @"";
+	if (tagName == nil)
+		tagName = @"";
+
+	Class previousClass = [DTTextAttachment registeredClassForTagName:tagName withClassName:className];
+
+	if (previousClass) {
+		NSLog(@"Warning: replacing previously registered class '%@' for tag name '%@' and DOM class '%@' with '%@'", NSStringFromClass(previousClass), tagName, className, NSStringFromClass(class));
 	}
-	
-	[_classForTagNameLookup setObject:class forKey:tagName];
+
+	NSMutableDictionary *tagDict = [_classForTagNameLookup objectForKey:tagName];
+	if (!tagDict) {
+		tagDict = [NSMutableDictionary dictionaryWithObject:class forKey:className];
+	} else {
+		[tagDict setObject:class forKey:className];
+	}
+
+	[_classForTagNameLookup setObject:tagDict forKey:tagName];
 }
 
 + (Class)registeredClassForTagName:(NSString *)tagName
 {
-	return [_classForTagNameLookup objectForKey:tagName];
+	return [DTTextAttachment registeredClassForTagName:tagName withClassName:nil];
+}
+
++ (Class)registeredClassForTagName:(NSString *)tagName withClassName:(NSString *)className
+{
+	if (className == nil)
+		className = @"";
+	if (tagName == nil)
+		tagName = @"";
+
+	NSMutableDictionary *tagDict = [_classForTagNameLookup objectForKey:tagName];
+
+    if (tagDict) {
+        Class obj = [tagDict objectForKey:className];
+        
+        if ([className isEqualToString:@""] && !obj) {
+            return nil;
+        }
+        
+        if (!obj) {
+            obj = [DTTextAttachment registeredClassForTagName:nil withClassName:className];
+            if (!obj) {
+                obj = [DTTextAttachment registeredClassForTagName:tagName withClassName:nil];
+                if (!obj) return nil;
+            }
+        }
+        
+        return obj;
+    } else {
+        return nil;
+    }
 }
 
 #pragma mark Properties
