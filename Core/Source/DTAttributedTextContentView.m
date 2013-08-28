@@ -10,6 +10,9 @@
 #import "DTCoreText.h"
 #import "DTDictationPlaceholderTextAttachment.h"
 #import <QuartzCore/QuartzCore.h>
+#import "DTAccessibilityViewProxy.h"
+#import "DTAccessibilityElement.h"
+#import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
@@ -17,7 +20,7 @@
 
 NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAttributedTextContentViewDidFinishLayoutNotification";
 
-@interface DTAttributedTextContentView ()
+@interface DTAttributedTextContentView () <DTAccessibilityViewProxyDelegate>
 {
 	BOOL _shouldAddFirstLineLeading;
 	BOOL _shouldDrawImages;
@@ -42,16 +45,19 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 		unsigned int delegateSupportsCustomViewsForAttachments:1;
 		unsigned int delegateSupportsCustomViewsForLinks:1;
 		unsigned int delegateSupportsGenericCustomViews:1;
+		unsigned int delegateSupportsNotificationBeforeDrawing:1;
 		unsigned int delegateSupportsNotificationAfterDrawing:1;
 		unsigned int delegateSupportsNotificationBeforeTextBoxDrawing:1;
 	} _delegateFlags;
 	
-	__unsafe_unretained id <DTAttributedTextContentViewDelegate> _delegate;
+	DT_WEAK_VARIABLE id <DTAttributedTextContentViewDelegate> _delegate;
 }
 
 @property (nonatomic, strong) NSMutableDictionary *customViewsForLinksIndex;
 @property (nonatomic, strong) NSMutableDictionary *customViewsForAttachmentsIndex;
 @property (nonatomic, strong) NSMutableSet *customViews;
+
+@property (nonatomic, strong) NSArray *accessibilityElements;
 
 - (void)removeAllCustomViews;
 - (void)removeAllCustomViewsForLinks;
@@ -76,6 +82,21 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	return [CALayer class];
+}
+
+@end
+
+
+@implementation DTAttributedTextContentView (Cursor)
+
+- (NSInteger)closestCursorIndexToPoint:(CGPoint)point
+{
+	return [self.layoutFrame closestCursorIndexToPoint:point];
+}
+
+- (CGRect)cursorRectAtIndex:(NSInteger)index
+{
+	return [self.layoutFrame cursorRectAtIndex:index];
 }
 
 @end
@@ -239,7 +260,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				// if there is an attachment then we continue even with empty frame, might be a lazily loaded image
-				if (CGRectIsEmpty(frameForSubview) && !attachment)
+				if ((frameForSubview.size.width<=0 || frameForSubview.size.height<=0) && !attachment)
 				{
 					continue;
 				}
@@ -431,6 +452,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		options |= DTCoreTextLayoutFrameDrawingOmitLinks;
 	}
 	
+	if (_delegateFlags.delegateSupportsNotificationBeforeDrawing)
+	{
+		[_delegate attributedTextContentView:self willDrawLayoutFrame:theLayoutFrame inContext:ctx];
+	}
+	
 	// need to prevent updating of string and drawing at the same time
 	[theLayoutFrame drawInContext:ctx options:options];
 	
@@ -545,7 +571,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		return neededSize;
 	}
 	
-	return size;
+	// return empty size plus padding
+	return CGSizeMake(_edgeInsets.left + _edgeInsets.right, _edgeInsets.bottom + _edgeInsets.top);
 }
 
 - (CGRect)_frameForLayoutFrameConstraintedToWidth:(CGFloat)constrainWidth
@@ -593,7 +620,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	tmpLayoutFrame.numberOfLines = _numberOfLines;
 	tmpLayoutFrame.lineBreakMode = _lineBreakMode;
 	tmpLayoutFrame.truncationString = _truncationString;
-	tmpLayoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
 	
 	//  we have a layout frame and from this we get the needed size
 	return CGSizeMake(tmpLayoutFrame.frame.size.width + _edgeInsets.left + _edgeInsets.right, CGRectGetMaxY(tmpLayoutFrame.frame) + _edgeInsets.bottom);
@@ -792,7 +818,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];
-				_layoutFrame.noLeadingOnFirstLine = !_shouldAddFirstLineLeading;
 				_layoutFrame.numberOfLines = _numberOfLines;
 				_layoutFrame.lineBreakMode = _lineBreakMode;
 				_layoutFrame.truncationString = _truncationString;
@@ -807,10 +832,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				
 				if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 				{
-					__unsafe_unretained DTAttributedTextContentView *weakself = self;
+					DT_WEAK_VARIABLE DTAttributedTextContentView *weakself = self;
 					
 					[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
-						BOOL result = [weakself->_delegate attributedTextContentView:weakself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:weakself->_layoutFrame];
+						
+						DTAttributedTextContentView *strongself = weakself;
+						
+						BOOL result = [strongself->_delegate attributedTextContentView:strongself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:strongself->_layoutFrame];
 						
 						if (shouldDrawDefaultBackground)
 						{
@@ -819,6 +847,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						
 					}];
 				}
+
+				[self invalidateAccessibilityElements];
 			}
 		}
 	
@@ -840,6 +870,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[self setNeedsDisplayInRect:self.bounds];
 			}
 			_layoutFrame = layoutFrame;
+			
+			[self invalidateAccessibilityElements];
 		}
 	};
 }
@@ -881,6 +913,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegateFlags.delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
 	_delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
 	_delegateFlags.delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
+	_delegateFlags.delegateSupportsNotificationBeforeDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:willDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:shouldDrawBackgroundForTextBlock:frame:context:forLayoutFrame:)];
 	
@@ -901,12 +934,70 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 }
 
+#pragma mark - Accessibility
+
+- (void)invalidateAccessibilityElements
+{
+	_accessibilityElements = nil;
+}
+
+- (BOOL)isAccessibilityElement
+{
+	return NO;
+}
+
+- (NSInteger)accessibilityElementCount
+{
+	return [[self accessibilityElements] count];
+}
+
+- (id)accessibilityElementAtIndex:(NSInteger)index
+{
+	DTAccessibilityElement *element = [[self accessibilityElements] objectAtIndex:index];
+	return element;
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element
+{
+	// It seems like indexOfObject: is failing for the proxy views, even though isEqual: and hash are both implemented
+	// on the proxy.  Perhaps UIView doesn't like isEqual: with our proxy view.  Regardless, this implementation seems to work.
+	NSInteger index = [[self accessibilityElements] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+		BOOL equal = [obj isEqual:element];
+		*stop = equal;
+		return equal;
+	}];
+
+	return index;
+}
+
+- (NSArray *)accessibilityElements
+{
+	if (!_accessibilityElements)
+	{
+		DTCoreTextLayoutFrameAccessibilityElementGenerator *generator = [[DTCoreTextLayoutFrameAccessibilityElementGenerator alloc] init];
+		_accessibilityElements = [generator accessibilityElementsForLayoutFrame:self.layoutFrame view:self attachmentViewProvider:^id(DTTextAttachment *attachment) {
+			// Since we actually take the views out of the view hierarchy when they're off screen, create a proxy object that stands
+			// in for the view until it's needed by VoiceOver.  By the time VoiceOver asks for the view, it should already be onscreen.
+			return [[DTAccessibilityViewProxy alloc] initWithTextAttachment:attachment delegate:self];
+		}];
+	}
+	return _accessibilityElements;
+}
+
+#pragma mark - DTAccessibilityViewProxyDelegate
+
+- (UIView *)viewForTextAttachment:(DTTextAttachment *)textAttachment proxy:(DTAccessibilityViewProxy *)proxy
+{
+	NSNumber *indexKey = [NSNumber numberWithInteger:[textAttachment hash]];
+	UIView *existingAttachmentView = [self.customViewsForAttachmentsIndex objectForKey:indexKey];
+	return existingAttachmentView;
+}
+
 @synthesize layouter = _layouter;
 @synthesize layoutFrame = _layoutFrame;
 @synthesize attributedString = _attributedString;
 @synthesize delegate = _delegate;
 @synthesize edgeInsets = _edgeInsets;
-@synthesize shouldAddFirstLineLeading = _shouldAddFirstLineLeading;
 @synthesize shouldDrawImages = _shouldDrawImages;
 @synthesize shouldDrawLinks = _shouldDrawLinks;
 @synthesize shouldLayoutCustomSubviews = _shouldLayoutCustomSubviews;
@@ -917,6 +1008,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize customViewsForLinksIndex;
 @synthesize customViewsForAttachmentsIndex;
 @synthesize relayoutMask = _relayoutMask;
+
+@synthesize accessibilityElements = _accessibilityElements;
 
 @end
 

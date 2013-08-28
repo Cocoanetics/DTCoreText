@@ -25,6 +25,7 @@ NSString * const DTDefaultHeadIndent = @"DTDefaultHeadIndent";
 NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
+NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes";
 
 // attributed string attribute constants
 
@@ -35,13 +36,14 @@ NSString * const DTLinkHighlightColorAttribute = @"DTLinkHighlightColor";
 NSString * const DTAnchorAttribute = @"DTAnchor";
 NSString * const DTGUIDAttribute = @"DTGUID";
 NSString * const DTHeaderLevelAttribute = @"DTHeaderLevel";
-NSString * const DTPreserveNewlinesAttribute = @"DTPreserveNewlines";
 NSString * const DTStrikeOutAttribute = @"NSStrikethrough";
 NSString * const DTBackgroundColorAttribute = @"DTBackgroundColor";
 NSString * const DTShadowsAttribute = @"DTShadows";
 NSString * const DTHorizontalRuleStyleAttribute = @"DTHorizontalRuleStyle";
 NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
+NSString * const DTCustomAttributesAttribute = @"DTCustomAttributes";
+NSString * const DTAscentMultiplierAttribute = @"DTAscentMultiplierAttribute";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";

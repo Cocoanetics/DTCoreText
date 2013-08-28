@@ -20,7 +20,7 @@
 - (NSDictionary *)dictionaryOfCSSStyles;
 
 /**
- Determines if the receiver contains a CSS length value, that is a number (with optional period) and a unit (em, pt, px).
+ Determines if the receiver contains a CSS length value, that is a number with optional period and unit (em, pt, px).
  @returns `YES` if this is a CSS length value
  */
 - (BOOL)isCSSLengthValue;

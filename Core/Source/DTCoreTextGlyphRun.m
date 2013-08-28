@@ -13,12 +13,13 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
+#import "DTWeakSupport.h"
 
 @interface DTCoreTextGlyphRun ()
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
-@property (nonatomic, unsafe_unretained, readwrite) NSDictionary *attributes;
+@property (nonatomic, DT_WEAK_PROPERTY, readwrite) NSDictionary *attributes;
 
 @end
 
@@ -42,8 +43,8 @@
 	
 	const CGPoint *_glyphPositionPoints;
 	
-	__unsafe_unretained DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
-	__unsafe_unretained NSDictionary *_attributes;
+	DT_WEAK_VARIABLE DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+	DT_WEAK_VARIABLE NSDictionary *_attributes;
     NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;
@@ -133,7 +134,13 @@
 	{
 		// calculate area covered by non-whitespace
 		CGRect lineFrame = _line.frame;
-		lineFrame.size.width -= _line.trailingWhitespaceWidth;
+		
+		// LTR line frames include trailing whitespace in width
+		// we need to subtract it so that we don't highlight/underline it
+		if (!_line.writingDirectionIsRightToLeft)
+		{
+			lineFrame.size.width -= _line.trailingWhitespaceWidth;
+		}
 		
 		// exclude trailing whitespace so that we don't underline too much
 		CGRect runStrokeBounds = CGRectIntersection(lineFrame, self.frame);
@@ -212,16 +219,10 @@
 			{
 				CGFloat y;
 				
-				if (usedFont)
-				{
-					CGFloat underlinePosition = CTFontGetUnderlinePosition(usedFont);
-					
-					y = DTRoundWithContentScale(runStrokeBounds.origin.y + runStrokeBounds.size.height - _descent - underlinePosition - fontUnderlineThickness/2.0f, contentScale);
-				}
-				else
-				{
-					y = DTRoundWithContentScale((runStrokeBounds.origin.y + runStrokeBounds.size.height - self.descent + 1.0f), contentScale);
-				}
+				// use lowest underline position of all glyph runs in same line
+				CGFloat underlinePosition = [_line underlineOffset];
+				
+				y = DTRoundWithContentScale(_line.baselineOrigin.y + underlinePosition - fontUnderlineThickness/2.0f, contentScale);
 				
 				if ((int)(usedUnderlineThickness/smallestPixelWidth)%2) // odd line width
 				{
@@ -231,7 +232,6 @@
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 			}
-			
 			
 			CGContextStrokePath(context);
 			
@@ -378,7 +378,18 @@
 		return _isTrailingWhitespace;
 	}
 	
-	if (self == [[_line glyphRuns] lastObject])
+	BOOL isTrailing;
+	
+	if (_line.writingDirectionIsRightToLeft)
+	{
+		isTrailing = (self == [[_line glyphRuns] objectAtIndex:0]);
+	}
+	else
+	{
+		isTrailing = (self == [[_line glyphRuns] lastObject]);
+	}
+	
+	if (isTrailing)
 	{
 		if (!_didCalculateMetrics)
 		{

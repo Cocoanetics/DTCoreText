@@ -24,7 +24,6 @@
 	self.relayoutMask = DTAttributedTextContentViewRelayoutOnHeightChanged | DTAttributedTextContentViewRelayoutOnWidthChanged;
 	
 	self.layoutFrameHeightIsConstrainedByBounds = YES; // height is not flexible
-	self.shouldAddFirstLineLeading = NO;
 }
 
 - (id)initWithFrame:(CGRect)frame

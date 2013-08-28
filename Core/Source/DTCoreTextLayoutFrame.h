@@ -13,6 +13,8 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
+#import "DTCoreTextConstants.h"
+
 @class DTCoreTextLayoutLine;
 @class DTTextBlock;
 
@@ -22,14 +24,31 @@
 
 typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground); 
 
-// the drawing options
-typedef enum
+/**
+ The drawing options for DTCoreTextLayoutFrame
+ */
+typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 {
+	/**
+	 The default method for drawing draws links and attachments. Links are drawn non-highlighted
+	 */
 	DTCoreTextLayoutFrameDrawingDefault              = 1<<0,
+	
+	/**
+	 Links are not drawn, e.g. if they are displayed via custom buttons
+	 */
 	DTCoreTextLayoutFrameDrawingOmitLinks            = 1<<1,
+	
+	/**
+	 Text attachments are omitted from drawing, e.g. if they are displayed via custom views
+	 */
 	DTCoreTextLayoutFrameDrawingOmitAttachments      = 1<<2,
+	
+	/**
+	 If links are drawn they are displayed with the highlighted variant
+	 */
 	DTCoreTextLayoutFrameDrawingDrawLinksHighlighted = 1<<3
-} DTCoreTextLayoutFrameDrawingOptions;
+} ;
 
 
 @class DTCoreTextLayouter;
@@ -136,15 +155,8 @@ typedef enum
 /**
  Draws the receiver into the given graphics context.
  
- Possible options are the following, you may combine them with a binary OR.
- 
- - DTCoreTextLayoutFrameDrawingDefault or 0
- - DTCoreTextLayoutFrameDrawingOmitLinks
- - DTCoreTextLayoutFrameDrawingOmitAttachments
- - DTCoreTextLayoutFrameDrawingDrawLinksHighlighted
- 
  @param context A graphics context to draw into
- @param options The drawing options. Use DTCoreTextLayoutFrameDrawingDefault or 0 to draw everything
+ @param options The drawing options. See DTCoreTextLayoutFrameDrawingOptions for available options.
  */
 - (void)drawInContext:(CGContextRef)context options:(DTCoreTextLayoutFrameDrawingOptions)options;
 
@@ -239,12 +251,32 @@ typedef enum
 /**
  Finds the appropriate baseline origin for a line to position it at the correct distance from a previous line.
  
+ Support Layout options are:
+ 
+ - DTCoreTextLayoutFrameLinePositioningAlgorithmWebKit,
+ - DTCoreTextLayoutFrameLinePositioningAlgorithmLegacy
+ 
+ @param line The line
+ @param previousLine The line after which to position the line.
+ @param options The layout options to employ for positioning lines
+ @returns The correct baseline origin for the line.
+ */
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine options:(DTCoreTextLayoutFrameLinePositioningOptions)options;
+
+/**
+ Finds the appropriate baseline origin for a line to position it at the correct distance from a previous line using the DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy algorithm.
+ 
+ @warning This method is deprecated, use -[baselineOriginToPositionLine:afterLine:algorithm:] instead
  @param line The line
  @param previousLine The line after which to position the line.
  @returns The correct baseline origin for the line.
  */
-- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine;
+- (CGPoint)baselineOriginToPositionLine:(DTCoreTextLayoutLine *)line afterLine:(DTCoreTextLayoutLine *)previousLine __attribute__((deprecated("use use -[baselineOriginToPositionLine:afterLine:algorithm:] instead")));;
 
+/**
+ The ratio to decide when to create a justified line
+ */
+@property (nonatomic, readwrite) CGFloat justifyRatio;
 
 /**
  @name Text Attachments
@@ -345,10 +377,5 @@ typedef enum
  */
 @property(nonatomic, strong)NSAttributedString *truncationString;
 
-
-/**
- Flag to supress leading whitespace above fist line
- */
-@property(nonatomic, assign)BOOL noLeadingOnFirstLine;
 
 @end

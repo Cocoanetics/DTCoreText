@@ -9,36 +9,110 @@
 /**
  List Styles
  */
-
-typedef enum
+typedef NS_ENUM(NSUInteger, DTCSSListStyleType)
 {
+	/**
+	 The list style should be inherited from the parent
+	 */
     DTCSSListStyleTypeInherit = 0,
+	
+	/**
+	 No list style
+	 */
     DTCSSListStyleTypeNone,
+	
+	/**
+	 Circle bullet list style
+	 */
     DTCSSListStyleTypeCircle,
+	
+	/**
+	 Decimal number list style
+	 */
     DTCSSListStyleTypeDecimal,
+
+	/**
+	 Decimal number list style with a leading zero
+	 */
     DTCSSListStyleTypeDecimalLeadingZero,
+	
+	/**
+	 Disc bullet list style
+	 */
     DTCSSListStyleTypeDisc,
+	
+	/**
+	 Square bullet list style
+	 */
 	DTCSSListStyleTypeSquare,
+	
+	/**
+	 Numbered list style with uppercase letters
+	 */
     DTCSSListStyleTypeUpperAlpha,
+	
+	/**
+	 Numbered list style with uppercase letters
+	 */
     DTCSSListStyleTypeUpperLatin,
+	
+	/**
+	 Numbered list style with lowercase letters
+	 */
     DTCSSListStyleTypeLowerAlpha,
+	
+	/**
+	 Numbered list style with lowercase letters
+	 */
     DTCSSListStyleTypeLowerLatin,
+	
+	/**
+	 Plus bullet list style
+	 */
     DTCSSListStyleTypePlus,
+	
+	/**
+	 Underscore bullet list style
+	 */
     DTCSSListStyleTypeUnderscore,
-	DTCSSListStyleTypeImage, 
+	
+	
+	/**
+	 Image bullet list style
+	 */
+	DTCSSListStyleTypeImage,
+	
+	/**
+	 Value used to represent an invalid list style
+	 */
 	DTCSSListStyleTypeInvalid = NSIntegerMax
-} DTCSSListStyleType;
+};
 
 /**
  List Marker Positions
  */
-typedef enum
+typedef NS_ENUM(NSUInteger, DTCSSListStylePosition)
 {
+	/**
+	 List position should be inherited
+	 */
 	DTCSSListStylePositionInherit = 0,
+	
+	/**
+	 List prefix position inside
+	 */
 	DTCSSListStylePositionInside,
+	
+	/**
+	 List prefix position outside
+	 */
 	DTCSSListStylePositionOutside,
+	
+	/**
+	 Value used to represent an invalid list style position
+	 */
 	DTCSSListStylePositionInvalid = NSIntegerMax
-} DTCSSListStylePosition;
+};
 
 
 /**
@@ -148,13 +222,13 @@ typedef enum
 
 
 /**
- The type of the text list
+ The type of the text list. See DTCSSListStyleType for available types
  */
 @property (nonatomic, assign) DTCSSListStyleType type;
 
 
 /**
- The position of the marker in the prefix.
+ The position of the marker in the prefix. See DTCSSListStylePosition for available positions.
  */
 @property (nonatomic, assign) DTCSSListStylePosition position;
 

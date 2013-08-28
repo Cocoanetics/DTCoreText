@@ -78,10 +78,10 @@
 // creates an attributed list prefix
 - (NSAttributedString *)_listPrefix
 {
-	DTCoreTextParagraphStyle *paragraphStyle = [[self attributesDictionary] paragraphStyle];
+	DTCoreTextParagraphStyle *paragraphStyle = [[self attributesForAttributedStringRepresentation] paragraphStyle];
 	NSParameterAssert(paragraphStyle);
 	
-	DTCoreTextFontDescriptor *fontDescriptor = [[self attributesDictionary] fontDescriptor];
+	DTCoreTextFontDescriptor *fontDescriptor = [[self attributesForAttributedStringRepresentation] fontDescriptor];
 	NSParameterAssert(fontDescriptor);
 	
 	DTCSSListStyle *effectiveList = [self.paragraphStyle.textLists lastObject];
@@ -107,7 +107,7 @@
 		[effectiveList updateFromStyleDictionary:styles];
 	}
 	
-	NSDictionary *attributes = [tmpCopy attributesDictionary];
+	NSDictionary *attributes = [tmpCopy attributesForAttributedStringRepresentation];
 	
 	// modify paragraph style
 	paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent - _margins.left - _padding.left;;  // first line has prefix and starts at list indent;

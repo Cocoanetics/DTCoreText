@@ -127,6 +127,8 @@
 
 - (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
+	@synchronized(self)
+	{
 	NSUInteger searchIndex = location;
 	
 	NSArray *arrayAtIndex;
@@ -189,6 +191,7 @@
 	}
 	
 	return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+	}
 }
 
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
@@ -223,6 +226,57 @@
 	}];
 	
 	return foundRange;
+}
+
+- (NSRange)rangeOfLinkAtIndex:(NSUInteger)location URL:(NSURL **)URL
+{
+	NSRange rangeSoFar;
+	
+	NSURL *foundURL = [self attribute:DTLinkAttribute atIndex:location effectiveRange:&rangeSoFar];
+	
+	if (!foundURL)
+	{
+		return NSMakeRange(NSNotFound, 0);
+	}
+	
+	// search towards beginning
+	while (rangeSoFar.location>0)
+	{
+		NSRange extendedRange;
+		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:rangeSoFar.location-1 effectiveRange:&extendedRange];
+		
+		// abort search if key not found or value not identical
+		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		{
+			break;
+		}
+		
+		rangeSoFar = NSUnionRange(rangeSoFar, extendedRange);
+	}
+	
+	NSUInteger length = [self length];
+	
+	// search towards end
+	while (NSMaxRange(rangeSoFar)<length)
+	{
+		NSRange extendedRange;
+		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:NSMaxRange(rangeSoFar) effectiveRange:&extendedRange];
+		
+		// abort search if key not found or value not identical
+		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		{
+			break;
+		}
+		
+		rangeSoFar = NSUnionRange(rangeSoFar, extendedRange);
+	}
+	
+	if (URL)
+	{
+		*URL = foundURL;
+	}
+	
+	return rangeSoFar;
 }
 
 - (NSRange)rangeOfFieldAtIndex:(NSUInteger)location

@@ -44,8 +44,7 @@
 	return [builder generatedAttributedString];
 }
 
-
-#pragma mark - Tests
+#pragma mark - Whitespace
 
 - (void)testSpaceBetweenUnderlines
 {
@@ -61,7 +60,7 @@
 - (void)testWhitspaceAfterParagraphPromotedImage
 {
 	NSAttributedString *output = [self _attributedStringFromTestFileName:@"WhitespaceFollowingImagePromotedToParagraph"];
-
+	
 	STAssertTrue([output length]==6, @"Generated String should be 6 characters");
 	
 	NSMutableString *expectedOutput = [NSMutableString stringWithFormat:@"1\n%@\n2\n", UNICODE_OBJECT_PLACEHOLDER];
@@ -78,6 +77,32 @@
 	
 	STAssertTrue([expectedOutput isEqualToString:[output string]], @"Expected output not matching");
 }
+
+// issue 466: Support Encoding of Tabs in HTML
+- (void)testTabDecodingAndPreservation
+{
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"Some text and then 2 encoded<span style=\"white-space:pre\">&#9;&#9</span>tabs and 2 non-encoded		tabs" options:nil];
+	
+	NSString *plainString = [output string];
+	NSRange range = [plainString rangeOfString:@"encoded"];
+	
+	STAssertTrue(range.location != NSNotFound, @"Should find 'encoded' in the string");
+	
+	NSString *tabs = [plainString substringWithRange:NSMakeRange(range.location+range.length, 2)];
+	
+	BOOL hasTabs = [tabs isEqualToString:@"\t\t"];
+	
+	STAssertTrue(hasTabs, @"There should be two tabs");
+	
+	range = [plainString rangeOfString:@"non-encoded"];
+	NSString *compressedTabs = [plainString substringWithRange:NSMakeRange(range.location+range.length, 2)];
+	
+	BOOL hasCompressed = [compressedTabs isEqualToString:@" t"];
+	
+	STAssertTrue(hasCompressed, @"The second two tabs should be compressed to a single whitespace");
+}
+
+#pragma mark - General Tests
 
 // tests functionality of dir attribute
 - (void)testWritingDirection
@@ -275,16 +300,16 @@
 // Issue 437, strikethrough bleeding into NL
 - (void)testBleedingOutAttributes
 {
-	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc<br/></del></p>" options:nil];
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p><del>abc</del></p>" options:nil];
 	
-	STAssertTrue([attributedString length] == 5, @"Attributed String should be 5 characters long");
+	STAssertTrue([attributedString length] == 4, @"Attributed String should be 4 characters long");
 	
 	NSRange effectiveRange;
 	NSNumber *strikethroughStyle = [attributedString attribute:DTStrikeOutAttribute atIndex:0 effectiveRange:&effectiveRange];
 	
 	STAssertNotNil(strikethroughStyle, @"There should be a strikethrough style");
 	
-	NSRange expectedRange = NSMakeRange(0, 4);
+	NSRange expectedRange = NSMakeRange(0, 3);
 	
 	STAssertEquals(effectiveRange, expectedRange, @"Strikethrough style should only contain abc, not the NL");
 }
@@ -303,6 +328,20 @@
 	CGSize expectedSize = CGSizeMake(200, 200);
 	
 	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
+}
+
+#pragma mark - Non-Wellformed Content
+
+// issue 462: Assertion Failure when attempting to parse beyond final </html> tag
+- (void)testCharactersAfterEndOfHTML
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html>bla bla bla" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
+// issue 447: EXC_BAD_ACCESS on Release build when accessing -[DTHTMLElement parentElement] with certain HTML data
+- (void)testTagAfterEndOfHTML
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<html><body><p>text</p></body></html><img>" options:nil]!=nil, @"Should be able to parse without crash");
 }
 
 #pragma mark - Fonts
@@ -440,6 +479,44 @@
 	}];
 }
 
+// issue 537
+- (void)testMultipleFontFamiliesCrash
+{
+	STAssertTrueNoThrow([self _attributedStringFromHTMLString:@"<p style=\"font-family:Helvetica,sans-serif\">Text</p>" options:nil]!=nil, @"Should be able to parse without crash");
+}
+
+// issue 538
+- (void)testMultipleFontFamiliesSelection
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:'American Typewriter',sans-serif\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
+// issue 538
+- (void)testMultipleFontFamiliesSelectionLaterPosition
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:foo,'American Typewriter'\">Text</p>" options:nil];
+	
+	NSRange fontRange;
+	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
@@ -504,6 +581,138 @@
 		
 		lineNumber++;
 	}];
+}
+
+#pragma mark - CSS Tests
+
+// issue 544
+- (void)testCascading
+{
+	NSAttributedString *output = [self _attributedStringFromTestFileName:@"CSSCascading"];
+	
+	NSUInteger index1 = 0;
+	NSUInteger index2 = 3;
+	NSUInteger index3 = 10;
+	NSUInteger index4 = 16;
+	NSUInteger index5 = 18;
+	NSUInteger index6 = 47;
+	NSUInteger index7 = 98;
+
+	// check first "me"
+	NSDictionary *attributes1 = [output attributesAtIndex:index1 effectiveRange:NULL];
+	NSNumber *underLine1 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index1 effectiveRange:NULL];
+	STAssertTrue([underLine1 integerValue]==1, @"First item should be underlined");
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
+	BOOL isBold1 = [[attributes1 fontDescriptor] boldTrait];
+	STAssertTrue(isBold1, @"First item should be bold");
+	BOOL isItalic1 = [[attributes1 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic1, @"First item should not be italic");
+
+	// check first "buzz"
+	NSDictionary *attributes2 = [output attributesAtIndex:index2 effectiveRange:NULL];
+	NSNumber *underLine2 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index2 effectiveRange:NULL];
+	STAssertTrue([underLine2 integerValue]==1, @"Second item should be underlined");
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"800080"]);
+	STAssertTrue(colorOk2, @"Second item should be purple");
+	BOOL isBold2 = [[attributes2 fontDescriptor] boldTrait];
+	STAssertTrue(isBold2, @"Second item should be bold");
+
+	// check second "owzers"
+	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
+	NSNumber *underLine3 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	STAssertTrue([underLine3 integerValue]==1, @"Third item should be underlined");
+	NSNumber *strikeThrough3 = [output attribute:NSStrikethroughStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	STAssertTrue([strikeThrough3 integerValue]==1, @"Third item should have strike through");
+	DTColor *foreground3 = [attributes3 foregroundColor];
+	NSString *foreground3HTML = [foreground3 htmlHexString];
+	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk3, @"Third item should be orange");
+	BOOL isBold3 = [[attributes3 fontDescriptor] boldTrait];
+	STAssertFalse(isBold3, @"Third item should not be bold");
+	BOOL isItalic3 = [[attributes3 fontDescriptor] italicTrait];
+	STAssertTrue(isItalic3, @"Third item should be italic");
+	
+	// check second "Me"
+	NSDictionary *attributes4 = [output attributesAtIndex:index4 effectiveRange:NULL];
+	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
+	STAssertFalse([underLine4 integerValue]==1, @"Fourth item should be not underlined");
+	DTColor *foreground4 = [attributes4 foregroundColor];
+	NSString *foreground4HTML = [foreground4 htmlHexString];
+	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"ff0000"]);
+	STAssertTrue(colorOk4, @"Fourth item should be red");
+	BOOL isBold4 = [[attributes4 fontDescriptor] boldTrait];
+	STAssertFalse(isBold4, @"Fourth item should not be bold");
+	BOOL isItalic4 = [[attributes4 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic4, @"Fourth item should not be italic");
+
+	// check second "ow"
+	NSDictionary *attributes5 = [output attributesAtIndex:index5 effectiveRange:NULL];
+	NSNumber *underLine5 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index5 effectiveRange:NULL];
+	STAssertTrue([underLine5 integerValue]==1, @"Fifth item should be underlined");
+	DTColor *foreground5 = [attributes5 foregroundColor];
+	NSString *foreground5HTML = [foreground5 htmlHexString];
+	BOOL colorOk5 = ([foreground5HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk5, @"Fifth item should be green");
+	BOOL isBold5 = [[attributes5 fontDescriptor] boldTrait];
+	STAssertTrue(isBold5, @"Fifth item should be bold");
+	BOOL isItalic5 = [[attributes5 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic5, @"Fifth item should not be italic");
+
+	// check second "this is a test of by tag name..."
+	NSDictionary *attributes6 = [output attributesAtIndex:index6 effectiveRange:NULL];
+	NSNumber *underLine6 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index6 effectiveRange:NULL];
+	STAssertTrue([underLine6 integerValue]==1, @"Sixth item should be underlined");
+	DTColor *foreground6 = [attributes6 foregroundColor];
+	NSString *foreground6HTML = [foreground6 htmlHexString];
+	BOOL colorOk6 = ([foreground6HTML isEqualToString:@"ffa500"]);
+	STAssertTrue(colorOk6, @"Sixth item should be orange");
+	BOOL isBold6 = [[attributes6 fontDescriptor] boldTrait];
+	STAssertFalse(isBold6, @"Sixth item should not be bold");
+	BOOL isItalic6 = [[attributes6 fontDescriptor] italicTrait];
+	STAssertTrue(isItalic6, @"Sixth item should be italic");
+
+	// check second "i'm gray text"
+	NSDictionary *attributes7 = [output attributesAtIndex:index7 effectiveRange:NULL];
+	NSNumber *underLine7 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index7 effectiveRange:NULL];
+	STAssertFalse([underLine7 integerValue]==1, @"Seventh item should not be underlined");
+	DTColor *foreground7 = [attributes7 foregroundColor];
+	NSString *foreground7HTML = [foreground7 htmlHexString];
+	BOOL colorOk7 = ([foreground7HTML isEqualToString:@"777777"]);
+	STAssertTrue(colorOk7, @"Seventh item should be gray");
+	BOOL isBold7 = [[attributes7 fontDescriptor] boldTrait];
+	STAssertFalse(isBold7, @"Seventh item should not be bold");
+	BOOL isItalic7 = [[attributes7 fontDescriptor] italicTrait];
+	STAssertFalse(isItalic7, @"Seventh item should not be italic");
+}
+
+
+// issue 555
+- (void)testCascadingOutOfMemory
+{
+	NSDate *startTime = [NSDate date];
+	NSAttributedString *attributedString = [self _attributedStringFromTestFileName:@"CSSOOMCrash"];
+	STAssertTrueNoThrow(attributedString != nil, @"Should be able to parse without running out of memory");
+	STAssertTrue(([[NSDate date] timeIntervalSinceDate:startTime]) < 0.5f, @"Test should run in less than 0.5 seconds. Prior to fix, it took 16.85 seconds to run this test.");
+}
+
+// issue 557
+- (void)testIncorrectFontSizeInheritance
+{
+	NSString *html = @"<html><head><style>.sample { font-size: 2em; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text1FontDescriptor = [attributes1 fontDescriptor];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text2FontDescriptor = [attributes2 fontDescriptor];
+	
+	STAssertEquals(text1FontDescriptor.pointSize, text2FontDescriptor.pointSize, @"Point size should be the same when font-size is cascaded and inherited.");
 }
 
 @end

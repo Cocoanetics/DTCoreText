@@ -54,18 +54,26 @@
 
 #pragma mark - Generating HTML
 
-// checks the style against previous styles and returns the style class for this
-- (NSString *)_styleClassForElement:(NSString *)elementName style:(NSString *)style
+- (NSMutableArray *)_styleArrayForElement:(NSString *)elementName
 {
 	// get array of styles for element
 	NSMutableArray *_styleArray = [_styleLookup objectForKey:elementName];
-
+	
 	if (!_styleArray)
 	{
 		// first time we see this element
 		_styleArray = [[NSMutableArray alloc] init];
 		[_styleLookup setObject:_styleArray forKey:elementName];
 	}
+	
+	return _styleArray;
+}
+
+// checks the style against previous styles and returns the style class for this
+- (NSString *)_styleClassForElement:(NSString *)elementName style:(NSString *)style
+{
+	// get array of styles for element
+	NSMutableArray *_styleArray = [self _styleArrayForElement:elementName];
 	
 	NSInteger index = [_styleArray indexOfObject:style];
 	
@@ -272,7 +280,7 @@
 			}
 		}
 		
-		BOOL needsToRemovePrefix = NO;
+		__block BOOL needsToRemovePrefix = NO;
 		
 		BOOL fontIsBlockLevel = NO;
 		
@@ -406,22 +414,35 @@
 			}
 		}
 		
-		// Add dir="auto" if the writing direction is unknown
-		NSString *directionAttributeString = @"";
+		// find which custom attributes are for the entire paragraph
+		NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:paragraphRange.location];
+		NSMutableDictionary *paragraphLevelHTMLAttributes = [NSMutableDictionary dictionary];
 		
+		[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+			
+			// check if range is longer than current paragraph
+			NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:paragraphRange.location];
+			
+			if (NSIntersectionRange(attributeEffectiveRange, paragraphRange).length == paragraphRange.length)
+			{
+				[paragraphLevelHTMLAttributes setObject:value forKey:key];
+			}
+		}];
+		
+		// Add dir="auto" if the writing direction is unknown
 		if (paragraphStyle)
 		{
 			switch (paragraphStyle.baseWritingDirection)
 			{
 				case kCTWritingDirectionNatural:
 				{
-					directionAttributeString = @" dir=\"auto\"";
+					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
 					break;
 				}
 					
 				case kCTWritingDirectionRightToLeft:
 				{
-					directionAttributeString = @" dir=\"rtl\"";
+					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
 					break;
 				}
 					
@@ -433,42 +454,123 @@
 			}
 		}
 		
+
+		// start paragraph start tag
+		[retString appendFormat:@"<%@", blockElement];
+		
+		// do we have style info?
 		if ([paraStyleString length])
 		{
-			NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
-			
-			if (fragment) {
-				[retString appendFormat:@"<%@ style=\"%@\"%@>", blockElement, paraStyleString, directionAttributeString];
-			} else {
-				[retString appendFormat:@"<%@ class=\"%@\"%@>", blockElement, className, directionAttributeString];
+			if (fragment)
+			{
+				// stays style for fragment mode
+				[paragraphLevelHTMLAttributes setObject:paraStyleString forKey:@"style"];
+			}
+			else
+			{
+				// compress style for document mode
+				NSString *className = [self _styleClassForElement:blockElement style:paraStyleString];
+				
+				NSString *existingClasses = [paragraphLevelHTMLAttributes objectForKey:@"class"];
+				
+				if (existingClasses)
+				{
+					NSMutableArray *individualClasses = [[existingClasses componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] mutableCopy];
+					
+					// insert compressed class at index 0
+					[individualClasses insertObject:className atIndex:0];
+					
+					// rejoin
+					className = [individualClasses componentsJoinedByString:@" "];
+				}
+				
+				[paragraphLevelHTMLAttributes setObject:className forKey:@"class"];
 			}
 		}
-		else
-		{
-			[retString appendFormat:@"<%@%@>", blockElement, directionAttributeString];
-		}
+		
+		// add paragraph level attributes
+		[paragraphLevelHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+			[retString appendFormat:@" %@=\"%@\"", key, value];
+		}];
+		
+		// end paragraph start tag
+		[retString appendString:@">"];
 		
 		// add the attributed string ranges in this paragraph to the paragraph container
-		NSRange effectiveRange;
-		NSUInteger index = paragraphRange.location;
 		
-		NSUInteger paragraphRangeEnd = NSMaxRange(paragraphRange);
+		__block NSRange currentLinkRange = {NSNotFound, 0};
 		
-		while (index < paragraphRangeEnd)
-		{
-			NSDictionary *attributes = [_attributedString attributesAtIndex:index longestEffectiveRange:&effectiveRange inRange:paragraphRange];
+		__block NSMutableDictionary *linkLevelHTMLAttributes = nil;
+		
+		// ----- SPAN enumeration
+		
+		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stop) {
+
+			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
+			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
 			
-			NSString *plainSubString =[plainString substringWithRange:effectiveRange];
+			BOOL isFirstPartOfHyperlink = NO;
+			BOOL isLastPartOfHyperlink = NO;
+			
+			if ((spanURL || spanAnchorName) && (currentLinkRange.location == NSNotFound))
+			{
+				if (spanURL)
+				{
+					currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+				}
+				else if (spanAnchorName)
+				{
+					currentLinkRange = [_attributedString rangeOfAnchorNamed:spanAnchorName];
+				}
+				
+				isFirstPartOfHyperlink = YES;
+				
+				// build the attributes for the A tag
+				linkLevelHTMLAttributes = [NSMutableDictionary dictionary];
+				
+				if (spanURL)
+				{
+					[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
+				}
+				
+				// add anchor name if present
+				if (spanAnchorName)
+				{
+					[linkLevelHTMLAttributes setObject:spanAnchorName forKey:@"name"];
+				}
+				
+				// find which custom attributes are for the link
+				NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
+				
+				[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+					
+					// check if range is longer than current paragraph
+					NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:currentLinkRange.location];
+					
+					if (NSEqualRanges(attributeEffectiveRange, currentLinkRange))
+					{
+						[linkLevelHTMLAttributes setObject:value forKey:key];
+					}
+				}];
+			}
+			
+			// check if previous link is over yet
+			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			{
+				isLastPartOfHyperlink = YES;
+			}
+			
+			NSString *plainSubString =[plainString substringWithRange:spanRange];
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
-				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:effectiveRange.location];
+				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:spanRange.location];
 				
 				if (prefixRange.location != NSNotFound)
 				{
 					if (NSMaxRange(prefixRange)<plainSubString.length)
 					{
-						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - effectiveRange.location];
+						plainSubString = [plainSubString substringFromIndex:NSMaxRange(prefixRange) - spanRange.location];
 					}
 					else
 					{
@@ -479,17 +581,19 @@
 				needsToRemovePrefix = NO;
 			}
 			
-			index += effectiveRange.length;
-			
 			NSString *subString = [plainSubString stringByAddingHTMLEntities];
 			
 			if (!subString)
 			{
-				continue;
+				if (isLastPartOfHyperlink)
+				{
+					currentLinkRange = NSMakeRange(NSNotFound, 0);
+				}
+				
+				return;
 			}
 			
 			DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
-			
 			
 			if (attachment)
 			{
@@ -505,7 +609,12 @@
 					}
 				}
 				
-				continue;
+				if (isLastPartOfHyperlink)
+				{
+					currentLinkRange = NSMakeRange(NSNotFound, 0);
+				}
+
+				return;
 			}
 			
 			NSString *fontStyle = nil;
@@ -605,53 +714,130 @@
 				}
 			}
 			
-			NSURL *url = [attributes objectForKey:DTLinkAttribute];
+			NSString *spanTagName = @"span";
 			
-			if (url)
-			{
-				if ([fontStyle length])
+			__block BOOL needsSpanTag = NO;
+			
+			// find which custom attributes are only for this span
+			NSDictionary *HTMLAttributes = [attributes objectForKey:DTCustomAttributesAttribute];
+			NSMutableDictionary *spanLevelHTMLAttributes = [NSMutableDictionary dictionary];
+			
+			[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+				
+				// check if there is already an identical paragraph attribute
+				id valueForParagraph = [paragraphLevelHTMLAttributes objectForKey:key];
+
+				if (valueForParagraph)
 				{
-					NSString *className = [self _styleClassForElement:@"a" style:fontStyle];
-					
-					if (fragment) {
-						[retString appendFormat:@"<a style=\"%@\" href=\"%@\">%@</a>", fontStyle, [url relativeString], subString];
-					} else {
-						[retString appendFormat:@"<a class=\"%@\" href=\"%@\">%@</a>", className, [url relativeString], subString];
-					}
-				}
-				else
-				{
-					[retString appendFormat:@"<a href=\"%@\">%@</a>", [url relativeString], subString];
-				}
-			}
-			else
-			{
-				if ([fontStyle length])
-				{
-					NSString *className = [self _styleClassForElement:@"span" style:fontStyle];
-					
 					if (fragment)
 					{
-						[retString appendFormat:@"<span style=\"%@\">%@</span>", fontStyle, subString];
+						if ([valueForParagraph isEqual:value])
+						{
+							return;
+						}
 					}
 					else
 					{
-						[retString appendFormat:@"<span class=\"%@\">%@</span>", className, subString];
+						// need to check components
+						NSArray *paragraphClassComponents = [valueForParagraph componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+						
+						if ([paragraphClassComponents containsObject:value])
+						{
+							return;
+						}
 					}
+				}
+				
+				NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:spanRange.location];
+				
+				if (currentLinkRange.location==NSNotFound || !NSEqualRanges(attributeEffectiveRange, currentLinkRange))
+				{
+					[spanLevelHTMLAttributes setObject:value forKey:key];
+					needsSpanTag = YES;
+				}
+			}];
+
+			if ([fontStyle length])
+			{
+				needsSpanTag = YES;
+				
+				if (fragment)
+				{
+					// stays style for fragment mode
+					[spanLevelHTMLAttributes setObject:fontStyle forKey:@"style"];
 				}
 				else
 				{
-					[retString appendString:subString];
+					// compress style for document mode
+					NSString *className = [self _styleClassForElement:spanTagName style:fontStyle];
+					
+					NSString *existingClasses = [spanLevelHTMLAttributes objectForKey:@"class"];
+					
+					if (existingClasses)
+					{
+						NSMutableArray *individualClasses = [[existingClasses componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] mutableCopy];
+						
+						// insert compressed class at index 0
+						[individualClasses insertObject:className atIndex:0];
+						
+						// rejoin
+						className = [individualClasses componentsJoinedByString:@" "];
+					}
+					
+					[spanLevelHTMLAttributes setObject:className forKey:@"class"];
 				}
 			}
-		}
+			
+			if (isFirstPartOfHyperlink)
+			{
+				// start link start tag
+				[retString appendString:@"<a"];
+				
+				// add span level attributes
+				[linkLevelHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+					[retString appendFormat:@" %@=\"%@\"", key, value];
+				}];
+				
+				// end span start tag
+				[retString appendString:@">"];
+			}
+			
+			
+			if (needsSpanTag)
+			{
+				// start span start tag
+				[retString appendFormat:@"<%@", spanTagName];
+				
+				// add span level attributes
+				[spanLevelHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+					[retString appendFormat:@" %@=\"%@\"", key, value];
+				}];
+				
+				// end span start tag
+				[retString appendString:@">"];
+			}
+			
+			// add string in span
+			[retString appendString:subString];
+			
+			if (needsSpanTag)
+			{
+				// span end tag
+				[retString appendFormat:@"</%@>", spanTagName];
+			}
+			
+			if (isLastPartOfHyperlink)
+			{
+				[retString appendFormat:@"</a>"];
+				currentLinkRange = NSMakeRange(NSNotFound, 0);
+			}
+		}];  // end of SPAN loop
+
+		[retString appendFormat:@"</%@>", blockElement];
 		
-		[retString appendFormat:@"</%@>\n", blockElement];
-		
-		
-		// end of paragraph loop
 		previousListStyles = [currentListStyles copy];
-	}
+	}  // end of P loop
+
 	
 	// close list if still open
 	if ([previousListStyles count])
@@ -672,7 +858,9 @@
 	}
 		
 	NSMutableString *output = [NSMutableString string];
-
+	
+	BOOL hasTab = ([retString rangeOfString:@"\t"].location != NSNotFound);
+	
 	if (!fragment)
 	{
 		// append style block before text
@@ -690,12 +878,34 @@
 			}];
 		}
 		
+		if (hasTab)
+		{
+			[styleBlock appendString:@"span.Apple-tab-span {white-space:pre;}"];
+		}
+		
 		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
+	}
+
+
+	if (hasTab)
+	{
+		NSRange range = NSMakeRange(0, [retString length]);
+		
+		if (fragment)
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span style=\"white-space:pre;\">\t</span>" options:0 range:range];
+		}
+		else
+		{
+			[retString replaceOccurrencesOfString:@"\t" withString:@"<span class=\"Apple-tab-span\">\t</span>" options:0 range:range];
+		}
 	}
 	
 	if (_useAppleConvertedSpace)
 	{
-		[output appendString:[retString stringByAddingAppleConvertedSpace]];
+		NSString *convertedSpaces = [retString stringByAddingAppleConvertedSpace];
+		
+		[output appendString:convertedSpaces];
 	}
 	else
 	{

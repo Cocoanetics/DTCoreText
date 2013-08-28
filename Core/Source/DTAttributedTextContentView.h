@@ -7,6 +7,7 @@
 //
 
 #import "DTCoreTextLayoutFrame.h"
+#import "DTWeakSupport.h"
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
@@ -31,7 +32,17 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  */
 
 /**
- Called after a layout frame or a part of it is drawn.
+ Called before a layout frame or a part of it is drawn. The text delegate can draw contents that goes under the text in this method.
+ 
+ @param attributedTextContentView The content view that will be drawing a layout frame
+ @param layoutFrame The layout frame that will be drawn for
+ @param context The graphics context that will drawn into
+ */
+- (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView willDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+
+
+/**
+ Called after a layout frame or a part of it is drawn. The text delegate can draw contents that goes over the text in this method.
  
  @param attributedTextContentView The content view that drew a layout frame
  @param layoutFrame The layout frame that was drawn for
@@ -231,8 +242,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  The delegate that is in charge of supplying custom behavior for the receiver. It must conform to <DTAttributedTextContentViewDelegate> and provide custom subviews, link buttons, etc.
  */
 
-@property (nonatomic, assign) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;	// subtle simulator bug - use assign not __unsafe_unretained
-
+@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet id <DTAttributedTextContentViewDelegate> delegate;
 
 /**
  @name Customizing Content Display
@@ -242,13 +252,6 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  The insets to apply around the text content
  */
 @property (nonatomic) UIEdgeInsets edgeInsets;
-
-
-/**
- Specifies if the receiver should add extra leading the first line of its content
- 
- */
-@property (nonatomic) BOOL shouldAddFirstLineLeading;
 
 /**
  Specifies if the receiver should draw image text attachments.
@@ -336,3 +339,26 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 
 @end
 
+
+/**
+ Methods for getting cursor position and frame. Those are convenience methods that call through to the layoutFrame property which has the same coordinate system as the receiver.
+ */
+@interface DTAttributedTextContentView (Cursor)
+
+/**
+ Determines the closest string index to a point in the receiver's frame.
+ 
+ This can be used to find the cursor position to position an input caret at.
+ @param point The point
+ @returns The resulting string index
+ */
+- (NSInteger)closestCursorIndexToPoint:(CGPoint)point;
+
+/**
+ The rectangle to draw a caret for a given index
+ @param index The string index for which to determine a cursor frame
+ @returns The cursor rectangle
+ */
+- (CGRect)cursorRectAtIndex:(NSInteger)index;
+
+@end

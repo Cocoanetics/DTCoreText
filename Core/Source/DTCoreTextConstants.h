@@ -52,6 +52,7 @@ extern NSString * const DTDefaultHeadIndent;
 extern NSString * const DTDefaultStyleSheet;
 extern NSString * const DTUseiOS6Attributes;
 extern NSString * const DTWillFlushBlockCallBack;
+extern NSString * const DTProcessCustomHTMLAttributes;
 
 // attributed string attribute constants
 
@@ -62,13 +63,14 @@ extern NSString * const DTLinkHighlightColorAttribute;
 extern NSString * const DTAnchorAttribute;
 extern NSString * const DTGUIDAttribute;
 extern NSString * const DTHeaderLevelAttribute;
-extern NSString * const DTPreserveNewlinesAttribute;
 extern NSString * const DTStrikeOutAttribute;
 extern NSString * const DTBackgroundColorAttribute;
 extern NSString * const DTShadowsAttribute;
 extern NSString * const DTHorizontalRuleStyleAttribute;
 extern NSString * const DTTextBlocksAttribute;
 extern NSString * const DTFieldAttribute;
+extern NSString * const DTCustomAttributesAttribute;
+extern NSString * const DTAscentMultiplierAttribute;
 
 // field constants
 
@@ -83,26 +85,93 @@ extern BOOL ___useiOS6Attributes;
 
 // types
 
-typedef enum
+/**
+ DTHTMLElement display style
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementDisplayStyle)
 {
+	/**
+	 The element is inline text
+	 */
 	DTHTMLElementDisplayStyleInline = 0, // default
+	
+	/**
+	 The element is not displayed
+	 */
 	DTHTMLElementDisplayStyleNone,
+	
+	/**
+	 The element is a block
+	 */
 	DTHTMLElementDisplayStyleBlock,
+	
+	/**
+	 The element is an item in a list
+	 */
 	DTHTMLElementDisplayStyleListItem,
+	
+	/**
+	 The element is a table
+	 */
 	DTHTMLElementDisplayStyleTable,
-} DTHTMLElementDisplayStyle;
+};
 
-typedef enum
+/**
+ DTHTMLElement floating style
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementFloatStyle)
 {
+	/**
+	 The element does not float
+	 */
 	DTHTMLElementFloatStyleNone = 0,
+	
+	
+	/**
+	 The element should float left-aligned
+	 */
 	DTHTMLElementFloatStyleLeft,
+	
+	
+	/**
+	 The element should float right-aligned
+	 */
 	DTHTMLElementFloatStyleRight
-} DTHTMLElementFloatStyle;
+};
 
-typedef enum
+/**
+ DTHTMLElement font variants
+ */
+typedef NS_ENUM(NSUInteger, DTHTMLElementFontVariant)
 {
+	/**
+	 The element inherts the font variant
+	 */
 	DTHTMLElementFontVariantInherit = 0,
+	
+	/**
+	 The element uses the normal font variant
+	 */
 	DTHTMLElementFontVariantNormal,
+	
+	/**
+	 The element should display in small caps
+	 */
 	DTHTMLElementFontVariantSmallCaps
-} DTHTMLElementFontVariant;
+};
 
+/**
+ The algorithm that DTCoreTextLayoutFrame uses for positioning lines
+ */
+typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameLinePositioningOptions)
+{
+	/**
+	 The line positioning algorithm is similar to how Safari positions lines
+	 */
+	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit = 1,
+	
+	/**
+	 The line positioning algorithm is how it was before the implementation of DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit
+	 */
+	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy = 2
+};
