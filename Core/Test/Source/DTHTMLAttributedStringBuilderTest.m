@@ -730,4 +730,15 @@
 	STAssertEqualObjects(foreground1HTML, foreground2HTML, @"Color should be inherited via cascaded selector.");
 }
 
+- (void)testSubstringCascadedSelectorsBeingProperlyApplied
+{
+	NSString *html = @"<html><head><style> body .sample { color: red;} body .samples { color: green;}</style></head><body><div class=\"samples\">Text</div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+}
+
 @end

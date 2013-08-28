@@ -785,10 +785,16 @@ extern unsigned int default_css_len;
 						}
 					} else if ([selectorPart characterAtIndex:0] == '.')
 					{
-						NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
-						if (currentElementClassString && ([currentElementClassString rangeOfString:[selectorPart substringFromIndex:1]].location != NSNotFound))
-						{
-							matched = YES;
+						NSString *currentElementClassesString = [currentElement.attributes objectForKey:@"class"];
+						NSArray *currentElementClasses = [currentElementClassesString componentsSeparatedByString:@" "];
+						for (NSString *currentElementClass in currentElementClasses) {
+							if ([currentElementClass isEqualToString:[selectorPart substringFromIndex:1]]) {
+								matched = YES;
+								break;
+							}
+						}
+						
+						if (matched) {
 							break;
 						}
 					} else if ([selectorPart isEqualToString:currentElement.name])
