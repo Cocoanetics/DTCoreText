@@ -690,7 +690,6 @@
 	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
-
 // issue 555
 - (void)testCascadingOutOfMemory
 {
@@ -713,6 +712,22 @@
 	DTCoreTextFontDescriptor *text2FontDescriptor = [attributes2 fontDescriptor];
 	
 	STAssertEquals(text1FontDescriptor.pointSize, text2FontDescriptor.pointSize, @"Point size should be the same when font-size is cascaded and inherited.");
+}
+
+- (void)testIncorrectSimpleSelectorCascade
+{
+	NSString *html = @"<html><head><style>.sample { color: green; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+
+	STAssertEqualObjects(foreground1HTML, foreground2HTML, @"Color should be inherited via cascaded selector.");
 }
 
 @end
