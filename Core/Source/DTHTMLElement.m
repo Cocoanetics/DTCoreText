@@ -620,29 +620,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 			didModify = YES;
 		}
 	}
@@ -742,8 +742,8 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isCSSLengthValue])
 		{
-			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
-			_fontDescriptor.pointSize = fontSizeValue;
+			_currentTextSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
+			_fontDescriptor.pointSize = _currentTextSize;
 		}
 	}
 	
@@ -1049,7 +1049,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else // interpret as length
 		{
-			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 			self.paragraphStyle.minimumLineHeight = lineHeightValue;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
@@ -1075,13 +1075,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
-		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
-		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
@@ -1307,6 +1307,8 @@ NSDictionary *_classesForNames = nil;
 	_isColorInherited = YES;
 	
 	_preserveNewlines = element.preserveNewlines;
+
+	_currentTextSize = element.currentTextSize;
 	_textScale = element.textScale;
 	
 	// only inherit background-color from inline elements
@@ -1458,6 +1460,20 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
+- (void)setCurrentTextSize:(CGFloat)currentTextSize {
+	_currentTextSize = currentTextSize;
+}
+
+- (CGFloat)currentTextSize {
+	CGFloat textSize = _currentTextSize;
+	
+	if ((_currentTextSize == 0) && self.parentElement) {
+		textSize = self.parentElement.currentTextSize;
+	}
+	
+	return textSize;
+}
+
 - (DTHTMLElement *)parentElement
 {
 	return (DTHTMLElement *)self.parentNode;
@@ -1481,6 +1497,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize preserveNewlines = _preserveNewlines;
 @synthesize displayStyle = _displayStyle;
 @synthesize fontVariant = _fontVariant;
+@synthesize currentTextSize = _currentTextSize;
 @synthesize textScale = _textScale;
 @synthesize size = _size;
 @synthesize margins = _margins;

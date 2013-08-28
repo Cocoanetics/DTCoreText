@@ -690,4 +690,29 @@
 	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
+
+// issue 555
+- (void)testCascadingOutOfMemory
+{
+	NSDate *startTime = [NSDate date];
+	NSAttributedString *attributedString = [self _attributedStringFromTestFileName:@"CSSOOMCrash"];
+	STAssertTrueNoThrow(attributedString != nil, @"Should be able to parse without running out of memory");
+	STAssertTrue(([[NSDate date] timeIntervalSinceDate:startTime]) < 0.5f, @"Test should run in less than 0.5 seconds. Prior to fix, it took 16.85 seconds to run this test.");
+}
+
+// issue 557
+- (void)testIncorrectFontSizeInheritance
+{
+	NSString *html = @"<html><head><style>.sample { font-size: 2em; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text1FontDescriptor = [attributes1 fontDescriptor];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text2FontDescriptor = [attributes2 fontDescriptor];
+	
+	STAssertEquals(text1FontDescriptor.pointSize, text2FontDescriptor.pointSize, @"Point size should be the same when font-size is cascaded and inherited.");
+}
+
 @end

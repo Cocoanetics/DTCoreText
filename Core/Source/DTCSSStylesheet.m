@@ -657,10 +657,7 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
-	
-	// Find all classes by walking up the heirarchy and compute possible selector combinations
-	NSArray *ancestorSelectorArrays = [self findAncestorSelectorArraysForElement:element];
-	NSArray *cascadedSelectors = [self computeCascadedSelectorsWithAncestorSelectors:ancestorSelectorArrays];
+	NSArray *matchingCascadedSelectors = [self matchingCascadingSelectorsForElement:element];
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -669,8 +666,30 @@ extern unsigned int default_css_len;
 		tmpMatchedSelectors = [[NSMutableSet alloc] init];
 	}
 	
+	// Apply cascading selectors first, then apply most specific selectors
+	for (NSString *cascadingSelector in matchingCascadedSelectors)
+	{
+		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
+		
+		if (byCascadingSelector)
+		{
+			[tmpDict addEntriesFromDictionary:byCascadingSelector];
+			[tmpMatchedSelectors addObject:cascadingSelector];
+		}
+	}
+	
+	// Applied after cascades since immediate classes are most specific
 	for (NSString *class in classes)
 	{
+		NSString *classRule = [NSString stringWithFormat:@".%@", class];
+		NSDictionary *byClass = [_styles objectForKey: classRule];
+		
+		if (byClass)
+		{
+			[tmpDict addEntriesFromDictionary:byClass];
+			[tmpMatchedSelectors addObject:class];
+		}
+		
 		NSString *classAndTagRule = [NSString stringWithFormat:@"%@.%@", element.name, class];
 		NSDictionary *byClassAndName = [_styles objectForKey:classAndTagRule];
 		
@@ -678,17 +697,6 @@ extern unsigned int default_css_len;
 		{
 			[tmpDict addEntriesFromDictionary:byClassAndName];
 			[tmpMatchedSelectors addObject:classAndTagRule];
-		}
-	}
-	
-	//This covers the "by class" only case (e.g. .foo)
-	for (NSString *cascadedSelector in cascadedSelectors)
-	{
-		NSDictionary *byCascadedClassName = [_styles objectForKey:cascadedSelector];
-		if (byCascadedClassName)
-		{
-			[tmpDict addEntriesFromDictionary:byCascadedClassName];
-			[tmpMatchedSelectors addObject:cascadedSelector];
 		}
 	}
 	
@@ -735,92 +743,82 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
-- (NSArray *)findAncestorSelectorArraysForElement:(DTHTMLElement *)element
+- (NSMutableArray *)matchingCascadingSelectorsForElement:(DTHTMLElement *)element
 {
-	// Walk up the heirarchy looking for parents with class attributes then compute cascades
-	NSMutableArray *ancestorSelectorArrays = [NSMutableArray array];
+	__block NSMutableArray *matchedSelectors = [NSMutableArray array];
 	
-	DTHTMLElement *currentElement = element;
-	while (currentElement != nil)
+	for (NSString *selector in _styles.allKeys)
 	{
-		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
-		NSArray *currentElementClasses = [currentElementClassString componentsSeparatedByString:@" "];
-		NSString *ancestorId = [currentElement.attributes objectForKey:@"id"];
+		NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 		
-		NSMutableArray *selectors = [NSMutableArray array];
-		
-		if (ancestorId && ancestorId.length)
-		{
-			[selectors insertObject:[NSString stringWithFormat:@"#%@", ancestorId] atIndex:0];
+		// We only process the selector if our selector has more than 1 part to it (e.g. ".foo" would be skipped and ".foo .bar" would not)
+		if (selectorParts.count < 2) {
+			continue;
 		}
 		
-		for (NSString *class in currentElementClasses)
+		DTHTMLElement *currentElement = element;
+		
+		// Walking up the hierarchy so start at the right side of the selector and work to the left
+		// Aside: Manual for loop here is 100ms faster than for in with reverseObjectEnumerator
+		for (int j = selectorParts.count - 1; j >= 0; j--)
 		{
-			if (class.length)
+			NSString *selectorPart = selectorParts[j];
+			BOOL matched = NO;
+			
+			if (selectorPart.length)
 			{
-				[selectors insertObject:[NSString stringWithFormat:@".%@", class] atIndex:0];
+				while (currentElement != nil)
+				{
+					if ([selectorPart characterAtIndex:0] == '#')
+					{
+						// If we're at an id and it doesn't match the current element then the style doesn't apply
+						NSString *currentElementId = [currentElement.attributes objectForKey:@"id"];
+						if (currentElementId && [[selectorPart substringFromIndex:1] isEqualToString:currentElementId])
+						{
+							matched = YES;
+							break;
+						}
+					} else if ([selectorPart characterAtIndex:0] == '.')
+					{
+						NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
+						if (currentElementClassString && ([currentElementClassString rangeOfString:[selectorPart substringFromIndex:1]].location != NSNotFound))
+						{
+							matched = YES;
+							break;
+						}
+					} else if ([selectorPart isEqualToString:currentElement.name])
+					{
+						// This condition depends on the "if (selectorParts.count < 2)" conditional above. If that's removed, we must make sure selectorParts
+						// contains > 1 item for this to be matched (we want the element name alone to be matched last).
+						matched = YES;
+						break;
+					}
+					
+					currentElement = currentElement.parentElement;
+				}
 			}
-		}
-		
-		// We add the element's tag name so the computed cascades include things like "div .foo" and "div #bar"
-		[selectors addObject:currentElement.name];
-		
-		if (selectors.count)
-		{
-			[ancestorSelectorArrays insertObject:selectors atIndex:0];
-		}
-		
-		currentElement = currentElement.parentElement;
-	}
-	
-	return ancestorSelectorArrays;
-}
-
-- (NSArray *)computeCascadedSelectorsWithAncestorSelectors:(NSArray *)ancestorSelectors
-{
-	NSMutableArray *cascadedSelectors = [NSMutableArray array];
-	
-	if (ancestorSelectors.count)
-	{
-		NSArray *outerMostAncestorSelectors = ancestorSelectors[0];
-		
-		// Find selector combinations for all ancestors that are leaves of the ancesor the current class array belongs to
-		NSArray *remainingAncessorSelectors = [ancestorSelectors subarrayWithRange:NSMakeRange(1, ancestorSelectors.count - 1)];
-		NSArray *descendantSelectors = [self computeCascadedSelectorsWithAncestorSelectors:remainingAncessorSelectors];
-		// Deduplicate computed selectors from recursive calls
-		descendantSelectors = [[NSOrderedSet orderedSetWithArray:descendantSelectors] array];
-		
-		for (NSString *selector in outerMostAncestorSelectors)
-		{
-			// Although we include tag names (in findAncestorSelectorArraysForElement:) so we can compute their cascades,
-			// we already handle them elsewhere differently from more complex selectors (e.g. id, class, and combinations of all 3)
-			// so don't add them to our list of cascadedSelectors
-			if ([selector hasPrefix:@"."] || [selector hasPrefix:@"#"])
+			
+			if (!matched)
 			{
-				[cascadedSelectors addObject:selector];
+				break;
 			}
-		}
-		
-		for (NSString *selector in outerMostAncestorSelectors)
-		{
-			for (NSString *descendantSelector in descendantSelectors)
+			
+			if ([selectorPart isEqualToString:[selectorParts objectAtIndex:0]])
 			{
-				// Profiled this as it's the slowest part of this method.
-				// Using NSMutableString is significantly faster than [NSArray componentsJoinedByString:] or [NSString stringWithFormat:]
-				NSMutableString *combinedSelector = [NSMutableString stringWithString:selector];
-				[combinedSelector appendString:@" "];
-				[combinedSelector appendString:descendantSelector];
-				[cascadedSelectors addObject:combinedSelector];
+				if (matched)
+				{
+					[matchedSelectors insertObject:selector atIndex:0];
+				}
 			}
-		}
-		
-		for (NSString *descendantSelector in descendantSelectors)
-		{
-			[cascadedSelectors addObject:descendantSelector];
 		}
 	}
 	
-	return cascadedSelectors;
+	if (_styles[element.name])
+	{
+		[matchedSelectors addObject:element.name];
+	}
+	
+	return matchedSelectors;
 }
 
 #pragma mark NSCopying
