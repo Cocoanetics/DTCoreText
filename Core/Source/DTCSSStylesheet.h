@@ -81,6 +81,6 @@
 /**
  Returns an ordered (by declaration) set of the selectors for all of the styles.
  */
-- (NSOrderedSet *)orderedSelectors;
+- (NSArray *)orderedSelectors;
 
 @end
