@@ -23,6 +23,7 @@ extern unsigned int default_css_len;
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
+	NSMutableOrderedSet *_orderedSelectors;
 }
 
 #pragma mark Creating Stylesheets
@@ -56,7 +57,8 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
-		
+		_orderedSelectors = [[NSMutableOrderedSet alloc] init];
+
 		[self parseStyleBlock:css];
 	}
 	
@@ -70,7 +72,8 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
-		
+		_orderedSelectors = [[NSMutableOrderedSet alloc] init];
+
 		[self mergeStylesheet:stylesheet];
 	}
 	
@@ -499,10 +502,12 @@ extern unsigned int default_css_len;
 			
 			// save it
 			[_styles setObject:tmpDict forKey:cleanSelector];
+			[_orderedSelectors addObject:cleanSelector];
 		}
 		else
 		{
 			[_styles setObject:ruleDictionary forKey:cleanSelector];
+			[_orderedSelectors addObject:cleanSelector];
 		}
 	}
 }
@@ -608,7 +613,7 @@ extern unsigned int default_css_len;
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	NSArray *otherStylesheetStyleKeys = [[stylesheet styles] allKeys];
+	NSOrderedSet *otherStylesheetStyleKeys = stylesheet.orderedSelectors;
 	
 	for (NSString *oneKey in otherStylesheetStyleKeys)
 	{
@@ -626,11 +631,13 @@ extern unsigned int default_css_len;
 			}
 			
 			[_styles setObject:mutableStyles forKey:oneKey];
+			[_orderedSelectors addObject:oneKey];
 		}
 		else
 		{
 			// nothing to worry
 			[_styles setObject:stylesToMerge forKey:oneKey];
+			[_orderedSelectors addObject:oneKey];
 		}
 	}
 }
@@ -664,7 +671,7 @@ extern unsigned int default_css_len;
 	
 	if (matchedSelectors)
 	{
-		tmpMatchedSelectors = [[NSMutableSet alloc] init];
+		tmpMatchedSelectors = [NSMutableSet set];
 	}
 	
 	// Apply complex cascading selectors first, then apply most specific selectors
@@ -748,11 +755,16 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
+- (NSOrderedSet *)orderedSelectors
+{
+	return _orderedSelectors;
+}
+
 - (NSMutableArray *)matchingComplexCascadingSelectorsForElement:(DTHTMLElement *)element
 {
 	__block NSMutableArray *matchedSelectors = [NSMutableArray array];
 	
-	for (NSString *selector in _styles.allKeys)
+	for (NSString *selector in _orderedSelectors)
 	{
 		NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 		
@@ -764,8 +776,8 @@ extern unsigned int default_css_len;
 		DTHTMLElement *currentElement = element;
 		
 		// Walking up the hierarchy so start at the right side of the selector and work to the left
-		// Aside: Manual for loop here is 100ms faster than for in with reverseObjectEnumerator
-		for (int j = selectorParts.count - 1; j >= 0; j--)
+		// Aside: Manual for loop here is faster than for in with reverseObjectEnumerator
+		for (NSUInteger j = selectorParts.count; j-- > 0;)
 		{
 			NSString *selectorPart = selectorParts[j];
 			BOOL matched = NO;
@@ -818,7 +830,7 @@ extern unsigned int default_css_len;
 			{
 				if (matched)
 				{
-					[matchedSelectors insertObject:selector atIndex:0];
+					[matchedSelectors addObject:selector];
 				}
 			}
 		}
@@ -845,7 +857,7 @@ extern unsigned int default_css_len;
 			NSString *ancessorClassRule = [NSString stringWithFormat:@".%@", selectorParts[0]];
 			
 			if (_styles[ancessorClassRule]) {
-				[simpleSelectors insertObject:ancessorClassRule atIndex:0];
+				[simpleSelectors addObject:ancessorClassRule];
 			}
 		}
 		
