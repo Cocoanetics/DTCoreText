@@ -23,7 +23,7 @@ extern unsigned int default_css_len;
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
-	NSMutableOrderedSet *_orderedSelectors;
+	NSMutableArray *_orderedSelectors;
 }
 
 #pragma mark Creating Stylesheets
@@ -57,7 +57,7 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
-		_orderedSelectors = [[NSMutableOrderedSet alloc] init];
+		_orderedSelectors = [[NSMutableArray alloc] init];
 
 		[self parseStyleBlock:css];
 	}
@@ -72,7 +72,7 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
-		_orderedSelectors = [[NSMutableOrderedSet alloc] init];
+		_orderedSelectors = [[NSMutableArray alloc] init];
 
 		[self mergeStylesheet:stylesheet];
 	}
@@ -613,7 +613,7 @@ extern unsigned int default_css_len;
 
 - (void)mergeStylesheet:(DTCSSStylesheet *)stylesheet
 {
-	NSOrderedSet *otherStylesheetStyleKeys = stylesheet.orderedSelectors;
+	NSArray *otherStylesheetStyleKeys = stylesheet.orderedSelectors;
 	
 	for (NSString *oneKey in otherStylesheetStyleKeys)
 	{
@@ -755,7 +755,7 @@ extern unsigned int default_css_len;
 	return _styles;
 }
 
-- (NSOrderedSet *)orderedSelectors
+- (NSArray *)orderedSelectors
 {
 	return _orderedSelectors;
 }
