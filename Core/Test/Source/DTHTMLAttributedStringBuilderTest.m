@@ -583,6 +583,58 @@
 	}];
 }
 
+// issue 574
+- (void)testCorrectListBullets
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>1</li><ul><li>2</li><ul><li>3</li></ul></ul></ul>" options:nil];
+	
+
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		prefixRange.location++;
+		prefixRange.length = 1;
+		NSString *bulletChar = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		NSString *expectedChar = nil;
+		
+		switch (lineNumber)
+		{
+			case 0:
+			{
+				expectedChar = @"\u2022"; // disc
+				break;
+			}
+				
+			case 1:
+			{
+				expectedChar = @"\u25e6"; // circle
+				break;
+			}
+				
+			case 2:
+			{
+				expectedChar = @"\u25aa"; // square
+				break;
+			}
+		}
+		
+		BOOL characterIsCorrect = [bulletChar isEqualToString:expectedChar];
+		STAssertTrue(characterIsCorrect, @"Bullet Character on UL level %d should be '%@' but is '%@'", lineNumber+1, expectedChar, bulletChar);
+		
+		lineNumber++;
+	}];
+	
+	
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
