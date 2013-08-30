@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 
-xctool -scheme DemoApp build test
+xctool project DTCoreText.xcodeproj -scheme DemoApp build test
