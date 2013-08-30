@@ -434,8 +434,8 @@ extern unsigned int default_css_len;
 					[ruleDictionary setObject:value forKey:oneKey];
 				}
 				
-			} else if ([value isKindOfClass:[NSArray class]]) {
-				
+			} else if ([value isKindOfClass:[NSArray class]])
+			{
 				NSMutableArray *newVal;
 				
 				for (NSUInteger i = 0; i < [value count]; ++i)
@@ -449,11 +449,13 @@ extern unsigned int default_css_len;
 						s = [s stringByReplacingCharactersInRange:rangeOfImportant withString:@""];
 						s = [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 						
-						if (!newVal) {
-							
-							if ([value isKindOfClass:[NSMutableArray class]]) {
+						if (!newVal)
+						{
+							if ([value isKindOfClass:[NSMutableArray class]])
+							{
 								newVal = value;
-							} else {
+							} else
+							{
 								newVal = [value mutableCopy];
 							}
 						}
@@ -462,8 +464,8 @@ extern unsigned int default_css_len;
 					}
 				}
 				
-				if (newVal) {
-					
+				if (newVal)
+				{
 					[ruleDictionary setObject:newVal forKey:oneKey];
 				}
 			}
@@ -644,7 +646,8 @@ extern unsigned int default_css_len;
 - (void)_addStyles:(NSDictionary *)styles withSelector:(NSString *)selector {
 	[_styles setObject:styles forKey:selector];
 	
-	if (![_orderedSelectors containsObject:selector]) {
+	if (![_orderedSelectors containsObject:selector])
+	{
 		[_orderedSelectors addObject:selector];
 		_orderedSelectorWeights[selector] = @([self weightForSelector:selector]);
 	}
@@ -672,21 +675,36 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
+	// Cascaded selectors with more than one part are sorted by specificity
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
-	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
-
-	NSArray *sortedCascadingSelectors = [matchingCascadingSelectors sortedArrayUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2) {
+	NSArray *sortedCascadingSelectors = [matchingCascadingSelectors sortedArrayUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
+	{
 		NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
 		NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
 		
-		if (weightForSelector1 == weightForSelector2) {
+		if (weightForSelector1 == weightForSelector2)
+		{
 			weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
 			weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
 		}
 		
-		return (weightForSelector1 >= weightForSelector2);
+		if (weightForSelector1 > weightForSelector2)
+		{
+			return (NSComparisonResult)NSOrderedDescending;
+		}
+		
+		if (weightForSelector1 < weightForSelector2)
+		{
+			return (NSComparisonResult)NSOrderedAscending;
+		}
+		
+		return (NSComparisonResult)NSOrderedSame;
 	}];
 	
+	// Single part selectors are also weighted by specificity, but since they all have the same weight,
+	//we apply them in order of least specific to most specific.
+	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
+
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
@@ -782,7 +800,8 @@ extern unsigned int default_css_len;
 		NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 		
 		// We only process the selector if our selector has more than 1 part to it (e.g. ".foo" would be skipped and ".foo .bar" would not)
-		if (selectorParts.count < 2) {
+		if (selectorParts.count < 2)
+		{
 			continue;
 		}
 		
@@ -812,14 +831,17 @@ extern unsigned int default_css_len;
 					{
 						NSString *currentElementClassesString = [currentElement.attributes objectForKey:@"class"];
 						NSArray *currentElementClasses = [currentElementClassesString componentsSeparatedByString:@" "];
-						for (NSString *currentElementClass in currentElementClasses) {
-							if ([currentElementClass isEqualToString:[selectorPart substringFromIndex:1]]) {
+						for (NSString *currentElementClass in currentElementClasses)
+						{
+							if ([currentElementClass isEqualToString:[selectorPart substringFromIndex:1]])
+							{
 								matched = YES;
 								break;
 							}
 						}
 						
-						if (matched) {
+						if (matched)
+						{
 							break;
 						}
 					} else if ([selectorPart isEqualToString:currentElement.name] && (selectorParts.count > 1))
@@ -868,7 +890,7 @@ extern unsigned int default_css_len;
 			
 			if (_styles[ancessorClassRule])
 			{
-				[simpleSelectors addObject:ancessorClassRule];
+				[simpleSelectors insertObject:ancessorClassRule atIndex:0];
 			}
 		}
 		
@@ -880,17 +902,21 @@ extern unsigned int default_css_len;
 
 // This computes the specificity for a given selector
 - (NSUInteger)weightForSelector:(NSString *)selector {
-	if ((selector == nil) || (selector.length == 0)) {
+	if ((selector == nil) || (selector.length == 0))
+	{
 		return 0;
 	}
 	
 	NSUInteger weight = 0;
 	
 	NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
-	for (NSString *selectorPart in selectorParts) {
-		if ([selectorPart characterAtIndex:0] == '#') {
+	for (NSString *selectorPart in selectorParts)
+	{
+		if ([selectorPart characterAtIndex:0] == '#')
+		{
 			weight += 100;
-		} else if ([selectorPart characterAtIndex:0] == '.') {
+		} else if ([selectorPart characterAtIndex:0] == '.')
+		{
 			weight += 10;
 		} else {
 			weight += 1;
