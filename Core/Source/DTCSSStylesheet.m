@@ -856,6 +856,11 @@ extern unsigned int default_css_len;
 						matched = YES;
 						break;
 					}
+					
+					// break if the right most portion of the selector doesn't match the target element
+					if (!matched && ([currentElement isEqual:element])) {
+						break;
+					}
 				}
 			}
 			
