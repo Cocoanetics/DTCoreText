@@ -868,4 +868,16 @@
 	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
 }
 
+// text should be green even though there is a span following the div-div.
+- (void)testDivDivSpan
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<html><head><style>div div {color:green;}</style></head><body><div><div><span>FOO</span></div></div></body></html>" options:nil];
+	
+	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
+}
+
 @end
