@@ -23,6 +23,7 @@ extern unsigned int default_css_len;
 @implementation DTCSSStylesheet
 {
 	NSMutableDictionary *_styles;
+	NSMutableDictionary *_orderedSelectorWeights;
 	NSMutableArray *_orderedSelectors;
 }
 
@@ -57,8 +58,9 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
+		_orderedSelectorWeights = [[NSMutableDictionary alloc] init];
 		_orderedSelectors = [[NSMutableArray alloc] init];
-
+		
 		[self parseStyleBlock:css];
 	}
 	
@@ -72,8 +74,9 @@ extern unsigned int default_css_len;
 	if (self)
 	{
 		_styles	= [[NSMutableDictionary alloc] init];
+		_orderedSelectorWeights = [[NSMutableDictionary alloc] init];
 		_orderedSelectors = [[NSMutableArray alloc] init];
-
+		
 		[self mergeStylesheet:stylesheet];
 	}
 	
@@ -501,13 +504,11 @@ extern unsigned int default_css_len;
 			[tmpDict addEntriesFromDictionary:ruleDictionary];
 			
 			// save it
-			[_styles setObject:tmpDict forKey:cleanSelector];
-			[_orderedSelectors addObject:cleanSelector];
+			[self _addStyles:tmpDict withSelector:cleanSelector];
 		}
 		else
 		{
-			[_styles setObject:ruleDictionary forKey:cleanSelector];
-			[_orderedSelectors addObject:cleanSelector];
+			[self _addStyles:ruleDictionary withSelector:cleanSelector];
 		}
 	}
 }
@@ -630,15 +631,22 @@ extern unsigned int default_css_len;
 				[mutableStyles setObject:mergingStyleString forKey:oneStyleKey];
 			}
 			
-			[_styles setObject:mutableStyles forKey:oneKey];
-			[_orderedSelectors addObject:oneKey];
+			[self _addStyles:mutableStyles withSelector:oneKey];
 		}
 		else
 		{
 			// nothing to worry
-			[_styles setObject:stylesToMerge forKey:oneKey];
-			[_orderedSelectors addObject:oneKey];
+			[self _addStyles:stylesToMerge withSelector:oneKey];
 		}
+	}
+}
+
+- (void)_addStyles:(NSDictionary *)styles withSelector:(NSString *)selector {
+	[_styles setObject:styles forKey:selector];
+	
+	if (![_orderedSelectors containsObject:selector]) {
+		[_orderedSelectors addObject:selector];
+		_orderedSelectorWeights[selector] = @([self weightForSelector:selector]);
 	}
 }
 
@@ -664,8 +672,20 @@ extern unsigned int default_css_len;
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
-	NSArray *matchingComplexCascadedSelectors = [self matchingComplexCascadingSelectorsForElement:element];
-	NSArray *matchingSimpleCascadedSelectors = [self matchingSimpleCascadedSelectors:element];
+	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
+	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
+	
+	[matchingCascadingSelectors sortedArrayUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2) {
+		NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
+		NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
+		
+		if (weightForSelector1 == weightForSelector2) {
+			weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
+			weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
+		}
+		
+		return (weightForSelector1 >= weightForSelector2);
+	}];
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -675,15 +695,7 @@ extern unsigned int default_css_len;
 	}
 	
 	// Apply complex cascading selectors first, then apply most specific selectors
-	for (NSString *cascadingSelector in matchingComplexCascadedSelectors)
-	{
-		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
-		[tmpDict addEntriesFromDictionary:byCascadingSelector];
-		[tmpMatchedSelectors addObject:cascadingSelector];
-	}
-	
-	// Cascade simple single class selectors from ancestors
-	for (NSString *cascadingSelector in matchingSimpleCascadedSelectors)
+	for (NSString *cascadingSelector in matchingCascadingSelectors)
 	{
 		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
 		[tmpDict addEntriesFromDictionary:byCascadingSelector];
@@ -760,6 +772,7 @@ extern unsigned int default_css_len;
 	return _orderedSelectors;
 }
 
+// This looks for cascaded selectors with more than one part to them
 - (NSMutableArray *)matchingComplexCascadingSelectorsForElement:(DTHTMLElement *)element
 {
 	__block NSMutableArray *matchedSelectors = [NSMutableArray array];
@@ -809,7 +822,7 @@ extern unsigned int default_css_len;
 						if (matched) {
 							break;
 						}
-					} else if ([selectorPart isEqualToString:currentElement.name])
+					} else if ([selectorPart isEqualToString:currentElement.name] && (selectorParts.count > 1))
 					{
 						// This condition depends on the "if (selectorParts.count < 2)" conditional above. If that's removed, we must make sure selectorParts
 						// contains > 1 item for this to be matched (we want the element name alone to be matched last).
@@ -828,7 +841,7 @@ extern unsigned int default_css_len;
 			
 			if ([selectorPart isEqualToString:[selectorParts objectAtIndex:0]])
 			{
-				if (matched)
+				if (matched && ![matchedSelectors containsObject:selector])
 				{
 					[matchedSelectors addObject:selector];
 				}
@@ -836,14 +849,10 @@ extern unsigned int default_css_len;
 		}
 	}
 	
-	if (_styles[element.name])
-	{
-		[matchedSelectors addObject:element.name];
-	}
-	
 	return matchedSelectors;
 }
 
+// This looks for cascaded single classes
 - (NSArray *)matchingSimpleCascadedSelectors:(DTHTMLElement *)element
 {
 	NSMutableArray *simpleSelectors = [NSMutableArray array];
@@ -853,10 +862,12 @@ extern unsigned int default_css_len;
 	{
 		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
 		NSArray *selectorParts = [currentElementClassString componentsSeparatedByString:@" "];
-		if (selectorParts.count == 1 && ([selectorParts[0] length] > 0)) {
+		if (selectorParts.count == 1 && ([selectorParts[0] length] > 0))
+		{
 			NSString *ancessorClassRule = [NSString stringWithFormat:@".%@", selectorParts[0]];
 			
-			if (_styles[ancessorClassRule]) {
+			if (_styles[ancessorClassRule])
+			{
 				[simpleSelectors addObject:ancessorClassRule];
 			}
 		}
@@ -865,6 +876,28 @@ extern unsigned int default_css_len;
 	}
 	
 	return simpleSelectors;
+}
+
+// This computes the specificity for a given selector
+- (NSUInteger)weightForSelector:(NSString *)selector {
+	if ((selector == nil) || (selector.length == 0)) {
+		return 0;
+	}
+	
+	NSUInteger weight = 0;
+	
+	NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
+	for (NSString *selectorPart in selectorParts) {
+		if ([selectorPart characterAtIndex:0] == '#') {
+			weight += 100;
+		} else if ([selectorPart characterAtIndex:0] == '.') {
+			weight += 10;
+		} else {
+			weight += 1;
+		}
+	}
+	
+	return weight;
 }
 
 #pragma mark NSCopying
