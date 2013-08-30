@@ -288,12 +288,12 @@
 		}
 		case DTCSSListStyleTypeCircle:
 		{
-			token = @"a";
+			token = @"\u25e6";
 			break;
 		}
 		case DTCSSListStyleTypeSquare:
 		{
-			token = @"b";
+			token = @"\u25aa";
 			break;
 		}
 		case DTCSSListStyleTypeDecimal:
