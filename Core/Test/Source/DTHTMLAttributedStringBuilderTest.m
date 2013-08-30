@@ -763,12 +763,12 @@
 	NSString *foregroundHTML = [foreground htmlHexString];
 	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
 
-	NSString *html2 = @"<html><head><style>.foo { color: red; } .foo { color: green; }</style> </head><body><div class=\"foo\"><div>Text</div></div></body></html>";
+	NSString *html2 = @"<html><head><style>.bar { color: red; } .foo { color: green; } </style> </head><body><div class=\"foo\"><div class=\"bar\"><div>Text</div></div></div></body></html>";
 	NSAttributedString *output2 = [self _attributedStringFromHTMLString:html2 options:nil];
 	NSDictionary *attributes2 = [output2 attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground2 = [attributes2 foregroundColor];
 	NSString *foregroundHTML2 = [foreground2 htmlHexString];
-	STAssertEqualObjects(foregroundHTML2, @"008000", @"Color should be green and not red.");
+	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
 }
 
 @end
