@@ -129,10 +129,10 @@
 		// tab stops
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(_defaultTabInterval), &_defaultTabInterval);
 		
-		DT_WEAK_VARIABLE NSArray *stops; // Could use a CFArray too, leave as a reminder how to do this in the future
+		CFArrayRef stops; // Could use a CFArray too, leave as a reminder how to do this in the future
 		if (CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops))
 		{
-			self.tabStops = stops;
+			self.tabStops = (__bridge NSArray *) stops;
 		}
 		
 		
