@@ -741,4 +741,27 @@
 	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
 }
 
+- (void)testCascadedSelectorSpecificity {
+	NSString *html = @"<html><head><style> #foo .bar { font-size: 225px; color: green; } body #foo .bar { font-size: 24px; } #foo .bar { font-size: 100px; color: red; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"ff0000", @"Color should be red and not green.");
+
+	DTCoreTextFontDescriptor *textFontDescriptor = [attributes fontDescriptor];
+	STAssertTrue(textFontDescriptor.pointSize == 24.0f, @"Point size should 24 and not 225 or 100.");
+}
+
+- (void)testCascadedSelectorsWithEqualSpecificityLastDeclarationWins {
+	NSString *html = @"<html><head><style>#foo .bar { color: red; } #foo .bar { color: green; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+}
+
 @end
