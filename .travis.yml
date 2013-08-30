@@ -1,3 +1,5 @@
-language: objective-c
-xcode_sdk: iphonesimulator
-scheme: DemoApp
+---
+  language: objective-c
+
+  before_script: Travis-CI/before_script.sh
+  script: Travis-CI/script.sh
