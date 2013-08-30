@@ -22,6 +22,8 @@
  */
 @interface DTCoreTextLayoutLine : NSObject
 {
+	// IVAR required by DTRichTextEditor, used in category
+		NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
 /**
