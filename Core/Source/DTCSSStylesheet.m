@@ -864,8 +864,8 @@ extern unsigned int default_css_len;
 				break;
 			}
 			
-			//Only match if we really are on the last part of the selector
-			if ([selectorPart isEqualToString:[selectorParts objectAtIndex:0]] && (j == 0))
+			//Only match if we really are on the last part of the selector and all other parts have matched so far
+			if (j == 0)
 			{
 				if (matched && ![matchedSelectors containsObject:selector])
 				{
