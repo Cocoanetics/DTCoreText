@@ -677,34 +677,34 @@ extern unsigned int default_css_len;
 	
 	// Cascaded selectors with more than one part are sorted by specificity
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
-	NSArray *sortedCascadingSelectors = [matchingCascadingSelectors sortedArrayUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
-	{
-		NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
-		NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
-		
-		if (weightForSelector1 == weightForSelector2)
-		{
-			weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
-			weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
-		}
-		
-		if (weightForSelector1 > weightForSelector2)
-		{
-			return (NSComparisonResult)NSOrderedDescending;
-		}
-		
-		if (weightForSelector1 < weightForSelector2)
-		{
-			return (NSComparisonResult)NSOrderedAscending;
-		}
-		
-		return (NSComparisonResult)NSOrderedSame;
-	}];
+	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
+	 {
+		 NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
+		 NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
+		 
+		 if (weightForSelector1 == weightForSelector2)
+		 {
+			 weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
+			 weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
+		 }
+		 
+		 if (weightForSelector1 > weightForSelector2)
+		 {
+			 return (NSComparisonResult)NSOrderedDescending;
+		 }
+		 
+		 if (weightForSelector1 < weightForSelector2)
+		 {
+			 return (NSComparisonResult)NSOrderedAscending;
+		 }
+		 
+		 return (NSComparisonResult)NSOrderedSame;
+	 }];
 	
 	// Single part selectors are also weighted by specificity, but since they all have the same weight,
 	//we apply them in order of least specific to most specific.
 	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
-
+	
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
@@ -713,7 +713,7 @@ extern unsigned int default_css_len;
 	}
 	
 	// Apply complex cascading selectors first, then apply most specific selectors
-	for (NSString *cascadingSelector in sortedCascadingSelectors)
+	for (NSString *cascadingSelector in matchingCascadingSelectors)
 	{
 		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
 		[tmpDict addEntriesFromDictionary:byCascadingSelector];
@@ -805,7 +805,7 @@ extern unsigned int default_css_len;
 			continue;
 		}
 		
-		DTHTMLElement *currentElement = element;
+		DTHTMLElement *nextElement = element;
 		
 		// Walking up the hierarchy so start at the right side of the selector and work to the left
 		// Aside: Manual for loop here is faster than for in with reverseObjectEnumerator
@@ -816,8 +816,13 @@ extern unsigned int default_css_len;
 			
 			if (selectorPart.length)
 			{
-				while (currentElement != nil)
+				while (nextElement != nil)
 				{
+					DTHTMLElement *currentElement = nextElement;
+					
+					//This must be set to advance here, above all of the breaks, so the loop properly advances.
+					nextElement = currentElement.parentElement;
+
 					if ([selectorPart characterAtIndex:0] == '#')
 					{
 						// If we're at an id and it doesn't match the current element then the style doesn't apply
@@ -852,7 +857,10 @@ extern unsigned int default_css_len;
 						break;
 					}
 					
-					currentElement = currentElement.parentElement;
+					// break if the right most portion of the selector doesn't match the target element
+					if (!matched && ([currentElement isEqual:element])) {
+						break;
+					}
 				}
 			}
 			
@@ -861,7 +869,8 @@ extern unsigned int default_css_len;
 				break;
 			}
 			
-			if ([selectorPart isEqualToString:[selectorParts objectAtIndex:0]])
+			//Only match if we really are on the last part of the selector and all other parts have matched so far
+			if (j == 0)
 			{
 				if (matched && ![matchedSelectors containsObject:selector])
 				{

@@ -1,0 +1,4 @@
+---
+  language: objective-c
+
+  script: Travis-CI/script.sh

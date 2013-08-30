@@ -583,6 +583,103 @@
 	}];
 }
 
+// issue 574
+- (void)testCorrectListBullets
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>1</li><ul><li>2</li><ul><li>3</li></ul></ul></ul>" options:nil];
+	
+
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		prefixRange.location++;
+		prefixRange.length = 1;
+		NSString *bulletChar = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		NSString *expectedChar = nil;
+		
+		switch (lineNumber)
+		{
+			case 0:
+			{
+				expectedChar = @"\u2022"; // disc
+				break;
+			}
+				
+			case 1:
+			{
+				expectedChar = @"\u25e6"; // circle
+				break;
+			}
+				
+			case 2:
+			{
+				expectedChar = @"\u25aa"; // square
+				break;
+			}
+		}
+		
+		BOOL characterIsCorrect = [bulletChar isEqualToString:expectedChar];
+		STAssertTrue(characterIsCorrect, @"Bullet Character on UL level %d should be '%@' but is '%@'", lineNumber+1, expectedChar, bulletChar);
+		
+		lineNumber++;
+	}];
+}
+
+// issue 574
+- (void)testMixedListPrefix
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a<ol><li>3a</li></ol></li></ul></li></ol>" options:nil];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		NSString *prefix = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		NSString *expectedPrefix = nil;
+		
+		switch (lineNumber)
+		{
+			case 0:
+			{
+				expectedPrefix = @"\t1.\t"; // one
+				break;
+			}
+				
+			case 1:
+			{
+				expectedPrefix = @"\t\u25e6\t"; // circle
+				break;
+			}
+				
+			case 2:
+			{
+				expectedPrefix = @"\t1.\t"; // one
+				break;
+			}
+		}
+		
+		BOOL prefixIsCorrect = [prefix isEqualToString:expectedPrefix];
+		STAssertTrue(prefixIsCorrect, @"Prefix level %d should be '%@' but is '%@'", lineNumber+1, expectedPrefix, prefix);
+		
+		lineNumber++;
+	}];
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
@@ -769,6 +866,18 @@
 	DTColor *foreground2 = [attributes2 foregroundColor];
 	NSString *foregroundHTML2 = [foreground2 htmlHexString];
 	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
+}
+
+// text should be green even though there is a span following the div-div.
+- (void)testDivDivSpan
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<html><head><style>div div {color:green;}</style></head><body><div><div><span>FOO</span></div></div></body></html>" options:nil];
+	
+	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
 }
 
 @end
