@@ -427,35 +427,6 @@
 		
 		[textLists addObject:newListStyle];
 		
-		// workaround for different styles on stacked lists
-		if ([textLists count]>1) // not necessary for first
-		{
-			// find out if each list is ordered or unordered
-			NSMutableArray *tmpArray = [NSMutableArray array];
-			for (DTCSSListStyle *oneList in textLists)
-			{
-				if ([oneList isOrdered])
-				{
-					[tmpArray addObject:@"ol"];
-				}
-				else
-				{
-					[tmpArray addObject:@"ul"];
-				}
-			}
-			
-			// build a CSS selector
-			NSString *selector = [tmpArray componentsJoinedByString:@" "];
-			
-			// find style
-			NSDictionary *style = [[_globalStyleSheet styles] objectForKey:selector];
-			
-			if (style)
-			{
-				[newListStyle updateFromStyleDictionary:style];
-			}
-		}
-		
 		_currentTag.paragraphStyle.textLists = textLists;
 	};
 	
