@@ -1,1 +1,2 @@
 language: objective-c
+xcode_sdk: iphonesimulator
