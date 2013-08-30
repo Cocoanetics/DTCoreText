@@ -677,34 +677,34 @@ extern unsigned int default_css_len;
 	
 	// Cascaded selectors with more than one part are sorted by specificity
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
-	NSArray *sortedCascadingSelectors = [matchingCascadingSelectors sortedArrayUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
-	{
-		NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
-		NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
-		
-		if (weightForSelector1 == weightForSelector2)
-		{
-			weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
-			weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
-		}
-		
-		if (weightForSelector1 > weightForSelector2)
-		{
-			return (NSComparisonResult)NSOrderedDescending;
-		}
-		
-		if (weightForSelector1 < weightForSelector2)
-		{
-			return (NSComparisonResult)NSOrderedAscending;
-		}
-		
-		return (NSComparisonResult)NSOrderedSame;
-	}];
+	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
+	 {
+		 NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
+		 NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
+		 
+		 if (weightForSelector1 == weightForSelector2)
+		 {
+			 weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
+			 weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
+		 }
+		 
+		 if (weightForSelector1 > weightForSelector2)
+		 {
+			 return (NSComparisonResult)NSOrderedDescending;
+		 }
+		 
+		 if (weightForSelector1 < weightForSelector2)
+		 {
+			 return (NSComparisonResult)NSOrderedAscending;
+		 }
+		 
+		 return (NSComparisonResult)NSOrderedSame;
+	 }];
 	
 	// Single part selectors are also weighted by specificity, but since they all have the same weight,
 	//we apply them in order of least specific to most specific.
 	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
-
+	
 	NSMutableSet *tmpMatchedSelectors;
 	
 	if (matchedSelectors)
@@ -713,7 +713,7 @@ extern unsigned int default_css_len;
 	}
 	
 	// Apply complex cascading selectors first, then apply most specific selectors
-	for (NSString *cascadingSelector in sortedCascadingSelectors)
+	for (NSString *cascadingSelector in matchingCascadingSelectors)
 	{
 		NSDictionary *byCascadingSelector = [_styles objectForKey:cascadingSelector];
 		[tmpDict addEntriesFromDictionary:byCascadingSelector];
