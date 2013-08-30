@@ -742,8 +742,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isCSSLengthValue])
 		{
-			CGFloat fontSizeValue = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
-			_fontDescriptor.pointSize = fontSizeValue;
+			_fontDescriptor.pointSize = [fontSize pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 		}
 	}
 	
@@ -1049,7 +1048,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else // interpret as length
 		{
-			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_fontDescriptor.pointSize textScale:_textScale];
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 			self.paragraphStyle.minimumLineHeight = lineHeightValue;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
@@ -1307,6 +1306,8 @@ NSDictionary *_classesForNames = nil;
 	_isColorInherited = YES;
 	
 	_preserveNewlines = element.preserveNewlines;
+
+	_currentTextSize = element.currentTextSize;
 	_textScale = element.textScale;
 	
 	// only inherit background-color from inline elements
@@ -1458,6 +1459,20 @@ NSDictionary *_classesForNames = nil;
 	}
 }
 
+- (void)setCurrentTextSize:(CGFloat)currentTextSize {
+	_currentTextSize = currentTextSize;
+}
+
+- (CGFloat)currentTextSize {
+	CGFloat textSize = _currentTextSize;
+	
+	if ((_currentTextSize == 0) && self.parentElement) {
+		textSize = self.parentElement.currentTextSize;
+	}
+	
+	return textSize;
+}
+
 - (DTHTMLElement *)parentElement
 {
 	return (DTHTMLElement *)self.parentNode;
@@ -1481,6 +1496,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize preserveNewlines = _preserveNewlines;
 @synthesize displayStyle = _displayStyle;
 @synthesize fontVariant = _fontVariant;
+@synthesize currentTextSize = _currentTextSize;
 @synthesize textScale = _textScale;
 @synthesize size = _size;
 @synthesize margins = _margins;

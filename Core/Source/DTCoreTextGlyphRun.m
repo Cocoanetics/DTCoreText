@@ -351,7 +351,7 @@
 	{
 		CFRange range = CTRunGetStringRange(_run);
 
-		_stringRange = NSMakeRange(range.location, range.length);
+		_stringRange = NSMakeRange(range.location + _line.stringLocationOffset, range.length);
 	}
 	
 	return _stringRange;

@@ -690,4 +690,85 @@
 	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
+// issue 555
+- (void)testCascadingOutOfMemory
+{
+	NSDate *startTime = [NSDate date];
+	NSAttributedString *attributedString = [self _attributedStringFromTestFileName:@"CSSOOMCrash"];
+	STAssertTrueNoThrow(attributedString != nil, @"Should be able to parse without running out of memory");
+	STAssertTrue(([[NSDate date] timeIntervalSinceDate:startTime]) < 0.5f, @"Test should run in less than 0.5 seconds. Prior to fix, it took 16.85 seconds to run this test.");
+}
+
+// issue 557
+- (void)testIncorrectFontSizeInheritance
+{
+	NSString *html = @"<html><head><style>.sample { font-size: 2em; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text1FontDescriptor = [attributes1 fontDescriptor];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTCoreTextFontDescriptor *text2FontDescriptor = [attributes2 fontDescriptor];
+	
+	STAssertEquals(text1FontDescriptor.pointSize, text2FontDescriptor.pointSize, @"Point size should be the same when font-size is cascaded and inherited.");
+}
+
+- (void)testIncorrectSimpleSelectorCascade
+{
+	NSString *html = @"<html><head><style>.sample { color: green; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+
+	STAssertEqualObjects(foreground1HTML, foreground2HTML, @"Color should be inherited via cascaded selector.");
+}
+
+- (void)testSubstringCascadedSelectorsBeingProperlyApplied
+{
+	NSString *html = @"<html><head><style> body .sample { color: red;} body .samples { color: green;}</style></head><body><div class=\"samples\">Text</div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+}
+
+- (void)testCascadedSelectorSpecificity {
+	NSString *html = @"<html><head><style> #foo .bar { font-size: 225px; color: green; } body #foo .bar { font-size: 24px; } #foo .bar { font-size: 100px; color: red; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"ff0000", @"Color should be red and not green.");
+
+	DTCoreTextFontDescriptor *textFontDescriptor = [attributes fontDescriptor];
+	STAssertTrue(textFontDescriptor.pointSize == 24.0f, @"Point size should 24 and not 225 or 100.");
+}
+
+- (void)testCascadedSelectorsWithEqualSpecificityLastDeclarationWins {
+	NSString *html = @"<html><head><style>#foo .bar { color: red; } #foo .bar { color: green; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+
+	NSString *html2 = @"<html><head><style>.bar { color: red; } .foo { color: green; } </style> </head><body><div class=\"foo\"><div class=\"bar\"><div>Text</div></div></div></body></html>";
+	NSAttributedString *output2 = [self _attributedStringFromHTMLString:html2 options:nil];
+	NSDictionary *attributes2 = [output2 attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foregroundHTML2 = [foreground2 htmlHexString];
+	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
+}
+
 @end
