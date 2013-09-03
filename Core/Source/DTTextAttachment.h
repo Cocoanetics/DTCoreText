@@ -89,11 +89,24 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
 /**
  Initialize and return a DTTextAttachment with the specified DTHTMLElement and options. Convenience initializer. 
 	The element must have a valid tagName. The size of the returned text attachment is determined by the element, constrained by the option's key for DTMaxImageSize. Any valid image resource included in the element (denoted by the method attributeForKey: "src") is loaded and determines the text attachment size if it was not known before. If a size is too large the image is downsampled with sizeThatFitsKeepingAspectRatio() which preserves the aspect ratio. 
+ 
+ This method is deprecated. Use `+ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element andClassName:(NSString *)className options:(NSDictionary *)options` instead.
+ 
  @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements. 
  @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize. 
  @returns Returns the appropriate subclass of the class cluster
  */
-+ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options;
++ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options DEPRECATED_ATTRIBUTE;
+
+/**
+ Initialize and return a DTTextAttachment with the specified DTHTMLElement and options. Convenience initializer.
+ The element must have a valid tagName. The size of the returned text attachment is determined by the element, constrained by the option's key for DTMaxImageSize. Any valid image resource included in the element (denoted by the method attributeForKey: "src") is loaded and determines the text attachment size if it was not known before. If a size is too large the image is downsampled with sizeThatFitsKeepingAspectRatio() which preserves the aspect ratio.
+ @param element A DTHTMLElement that must have a valid tag name and should have a size. Any element attributes are copied to the text attachment's elements.
+ @param className The DOM class name of the element
+ @param options An NSDictionary of options. Used to specify the max image size with the key DTMaxImageSize.
+ @returns Returns the appropriate subclass of the class cluster
+ */
++ (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element andClassName:(NSString *)className options:(NSDictionary *)options;
 
 /**
  The designated initializer for members of the DTTextAttachment class cluster. If you need additional setup for custom subclasses then you should override this initializer.
@@ -178,19 +191,44 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
  */
 
 /**
- Registers your own class for use when encountering a specific tag Name. If you register a class for a previously registered class (or one of the predefined ones (img, iframe, object, video) then this replaces this with the newer registration.
+ Registers your own class for use when encountering a specific tag Name. If you register a class for a previously registered class (or one of the predefined ones (img, iframe, object, video)) then this replaces this with the newer registration.
  
  These registrations are permanent during the run time of your app. Custom attachment classes must implement the initWithElement:options: initializer and can implement the DTTextAttachmentDrawing and/or DTTextAttachmentHTMLPersistence protocols.
+
+ This method is deprecated. Use `+ (void) registerClass:(Class)class forTagName:(NSString *)tagName withClassName(NSString *)className` instead.
+
  @param class The class to instantiate in textAttachmentWithElement:options: when encountering a tag with this name
  @param tagName The tag name to use this class for
  */
-+ (void)registerClass:(Class)class forTagName:(NSString *)tagName;
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName DEPRECATED_ATTRIBUTE;
+
+/**
+ Registers your own class for use when encountering a specific tag Name and class. If you register a class for a previously registered class (or one of the predefined ones (img, iframe, object, video)), or with a previously registered unique DOM class, then this replaces this with the newer registration.
+
+ These registrations are permanent during the run time of your app. Custom attachment classes must implement the initWithElement:options: initializer and can implement the DTTextAttachmentDrawing and/or DTTextAttachmentHTMLPersistence protocols.
+ @param class The class to instantiate in textAttachmentWithElement:options: when encountering a tag with this name
+ @param tagName The tag name to use this class for
+ @param className The additional DOM class that this attachment should be registered for
+ */
++ (void) registerClass:(Class)class forTagName:(NSString *)tagName withClassName:(NSString *)className;
+ 
 
 /**
  The class to use for a tag name
+
+ This method is deprecated. Use `+ (Class)registeredClassForTagName:(NSString *)tagName withClassName:(NSString *)className` instead.
+ 
  @param tagName The tag name
  @returns The class to use for attachments with with tag name, or `nil` if this should not be an attachment
  */
-+ (Class)registeredClassForTagName:(NSString *)tagName;
++ (Class)registeredClassForTagName:(NSString *)tagName DEPRECATED_ATTRIBUTE;
+
+/**
+ The class to use for a tag name and DOM class
+ @param tagName The tag name
+ @param className The DOM class name
+ @returns The class to use for attachments with this combination of tag name and class, or `nil` if this should not be an attachment
+ */
++ (Class)registeredClassForTagName:(NSString *)tagName withClassName:(NSString *)className;
 
 @end

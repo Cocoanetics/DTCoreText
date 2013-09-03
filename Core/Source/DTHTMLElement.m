@@ -69,7 +69,7 @@ NSDictionary *_classesForNames = nil;
 	if (!class)
 	{
 		// see if this is a custom attachment class
-		Class attachmentClass = [DTTextAttachment registeredClassForTagName:name];
+		Class attachmentClass = [DTTextAttachment registeredClassForTagName:name withClassName:[attributes objectForKey:@"class"]];
 		
 		if (attachmentClass)
 		{
