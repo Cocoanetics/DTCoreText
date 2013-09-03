@@ -583,6 +583,103 @@
 	}];
 }
 
+// issue 574
+- (void)testCorrectListBullets
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li>1</li><ul><li>2</li><ul><li>3</li></ul></ul></ul>" options:nil];
+	
+
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		prefixRange.location++;
+		prefixRange.length = 1;
+		NSString *bulletChar = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		NSString *expectedChar = nil;
+		
+		switch (lineNumber)
+		{
+			case 0:
+			{
+				expectedChar = @"\u2022"; // disc
+				break;
+			}
+				
+			case 1:
+			{
+				expectedChar = @"\u25e6"; // circle
+				break;
+			}
+				
+			case 2:
+			{
+				expectedChar = @"\u25aa"; // square
+				break;
+			}
+		}
+		
+		BOOL characterIsCorrect = [bulletChar isEqualToString:expectedChar];
+		STAssertTrue(characterIsCorrect, @"Bullet Character on UL level %d should be '%@' but is '%@'", lineNumber+1, expectedChar, bulletChar);
+		
+		lineNumber++;
+	}];
+}
+
+// issue 574
+- (void)testMixedListPrefix
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a<ol><li>3a</li></ol></li></ul></li></ol>" options:nil];
+	
+	NSString *string = [attributedString string];
+	NSRange entireStringRange = NSMakeRange(0, [string length]);
+	
+	__block NSUInteger lineNumber = 0;
+	
+	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+		
+		NSAttributedString *attributedSubstring = [attributedString attributedSubstringFromRange:enclosingRange];
+		
+		NSRange prefixRange = [attributedSubstring rangeOfFieldAtIndex:0];
+		NSString *prefix = [[attributedSubstring string] substringWithRange:prefixRange];
+		
+		NSString *expectedPrefix = nil;
+		
+		switch (lineNumber)
+		{
+			case 0:
+			{
+				expectedPrefix = @"\t1.\t"; // one
+				break;
+			}
+				
+			case 1:
+			{
+				expectedPrefix = @"\t\u25e6\t"; // circle
+				break;
+			}
+				
+			case 2:
+			{
+				expectedPrefix = @"\t1.\t"; // one
+				break;
+			}
+		}
+		
+		BOOL prefixIsCorrect = [prefix isEqualToString:expectedPrefix];
+		STAssertTrue(prefixIsCorrect, @"Prefix level %d should be '%@' but is '%@'", lineNumber+1, expectedPrefix, prefix);
+		
+		lineNumber++;
+	}];
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
@@ -690,7 +787,6 @@
 	STAssertFalse(isItalic7, @"Seventh item should not be italic");
 }
 
-
 // issue 555
 - (void)testCascadingOutOfMemory
 {
@@ -713,6 +809,75 @@
 	DTCoreTextFontDescriptor *text2FontDescriptor = [attributes2 fontDescriptor];
 	
 	STAssertEquals(text1FontDescriptor.pointSize, text2FontDescriptor.pointSize, @"Point size should be the same when font-size is cascaded and inherited.");
+}
+
+- (void)testIncorrectSimpleSelectorCascade
+{
+	NSString *html = @"<html><head><style>.sample { color: green; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	
+	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foreground2HTML = [foreground2 htmlHexString];
+
+	STAssertEqualObjects(foreground1HTML, foreground2HTML, @"Color should be inherited via cascaded selector.");
+}
+
+- (void)testSubstringCascadedSelectorsBeingProperlyApplied
+{
+	NSString *html = @"<html><head><style> body .sample { color: red;} body .samples { color: green;}</style></head><body><div class=\"samples\">Text</div></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+}
+
+- (void)testCascadedSelectorSpecificity {
+	NSString *html = @"<html><head><style> #foo .bar { font-size: 225px; color: green; } body #foo .bar { font-size: 24px; } #foo .bar { font-size: 100px; color: red; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"ff0000", @"Color should be red and not green.");
+
+	DTCoreTextFontDescriptor *textFontDescriptor = [attributes fontDescriptor];
+	STAssertTrue(textFontDescriptor.pointSize == 24.0f, @"Point size should 24 and not 225 or 100.");
+}
+
+- (void)testCascadedSelectorsWithEqualSpecificityLastDeclarationWins {
+	NSString *html = @"<html><head><style>#foo .bar { color: red; } #foo .bar { color: green; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>";
+	NSAttributedString *output = [self _attributedStringFromHTMLString:html options:nil];
+	
+	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground = [attributes foregroundColor];
+	NSString *foregroundHTML = [foreground htmlHexString];
+	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
+
+	NSString *html2 = @"<html><head><style>.bar { color: red; } .foo { color: green; } </style> </head><body><div class=\"foo\"><div class=\"bar\"><div>Text</div></div></div></body></html>";
+	NSAttributedString *output2 = [self _attributedStringFromHTMLString:html2 options:nil];
+	NSDictionary *attributes2 = [output2 attributesAtIndex:1 effectiveRange:NULL];
+	DTColor *foreground2 = [attributes2 foregroundColor];
+	NSString *foregroundHTML2 = [foreground2 htmlHexString];
+	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
+}
+
+// text should be green even though there is a span following the div-div.
+- (void)testDivDivSpan
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<html><head><style>div div {color:green;}</style></head><body><div><div><span>FOO</span></div></div></body></html>" options:nil];
+	
+	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	DTColor *foreground1 = [attributes1 foregroundColor];
+	NSString *foreground1HTML = [foreground1 htmlHexString];
+	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
+	STAssertTrue(colorOk1, @"First item should be green");
 }
 
 @end

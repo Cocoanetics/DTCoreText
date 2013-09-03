@@ -78,4 +78,9 @@
  */
 - (NSDictionary *)styles;
 
+/**
+ Returns an ordered (by declaration) set of the selectors for all of the styles.
+ */
+- (NSArray *)orderedSelectors;
+
 @end

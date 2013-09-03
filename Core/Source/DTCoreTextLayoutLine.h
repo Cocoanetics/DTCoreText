@@ -22,7 +22,8 @@
  */
 @interface DTCoreTextLayoutLine : NSObject
 {
-	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
+	// IVAR required by DTRichTextEditor, used in category
+		NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
 /**
@@ -188,6 +189,12 @@
  `YES` if the writing direction is Right-to-Left, otherwise `NO`
  */
 @property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
+
+/**
+ The offset to modify internal string location to get actual location
+*/
+
+@property (nonatomic, readonly) NSInteger stringLocationOffset;
 
 /**
  Method to efficiently determine if the receiver is a horizontal rule.
