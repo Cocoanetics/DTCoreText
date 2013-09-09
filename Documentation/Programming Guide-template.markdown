@@ -33,3 +33,5 @@ If you don't know the set of fonts used by your app you can trigger an asynchron
 
     // preload font matching table
     [DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
+	 
+Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.

@@ -21,6 +21,9 @@
 	// register a custom class for a tag
 	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"oliver"];
 	
+	// preload font matching table
+	[DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
+	
 	// for debugging, we make sure that UIView methods are only called on main thread
 	[UIView toggleViewMainThreadChecking];
 	
