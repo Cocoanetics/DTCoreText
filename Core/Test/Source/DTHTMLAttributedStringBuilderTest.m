@@ -102,6 +102,22 @@
 	STAssertTrue(hasCompressed, @"The second two tabs should be compressed to a single whitespace");
 }
 
+// issue 588: P inside LI
+- (void)testParagraphInsideListItem
+{
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<ul><li><p>First Item</p></li></ul>" options:nil];
+	NSString *plainText = [output string];
+	
+	NSRange firstRange = [plainText rangeOfString:@"First"];
+	
+	STAssertTrue(firstRange.location>0, @"Location should be greater than 0");
+	
+	NSString *characterBeforeFirstRange = [plainText substringWithRange:NSMakeRange(firstRange.location-1, 1)];
+	
+	STAssertTrue([characterBeforeFirstRange isEqualToString:@"\t"], @"Character before First should be tab");
+	STAssertTrue(![characterBeforeFirstRange isEqualToString:@"\n"], @"Character before First should not be \n");
+}
+
 #pragma mark - General Tests
 
 // tests functionality of dir attribute
