@@ -23,10 +23,15 @@ You should see that this executes and that the NSLog outputs a description of th
 Font Matching Performance
 -------------------------
 
-DTCoreText uses the `DTCoreTextFontOverrides.plist` file - if present in your app bundle - to pre-populate the font matching table. This table has the desired font name for each combination of font family name, italic and bold traits.
+DTCoreText employs an internal lookup table which contains a font face name for each combination of font family and bold and italic traits. This lookup table can be initialized by including a `DTCoreTextFontOverrides.plist` in your app bundle and/or prepopulating it with all available system fonts. Which of these you want to use depends on your app.
 
-Depending on your use case you may want to add your own custom fonts to the plist or use the plist that is part of the DTCoreText demo app.
+If you only use a very limited number of fonts you should have the plist file contain only these.
 
-The override table is populated when a DTCoreTextFontDescriptor class is instantiated for the first time. To start the loading process you can add the following to your app delegate.
+For most normal use cases you can use the overrides plist that is part of the DTCoreText demo app. This contains most commonly used fonts on iOS.
 
-    [DTCoreTextFontDescriptor class]; // preload font matching table
+If you don't know the set of fonts used by your app you can trigger an asynchronous pre-loading of the internal lookup table. To start the loading process you add the following to your app delegate.
+
+    // preload font matching table
+    [DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
+	 
+Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.

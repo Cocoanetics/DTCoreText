@@ -167,6 +167,13 @@
  */
 
 /**
+ A call to the method is ideally placed into your app delegate. This loads all available system fonts into a look up table to allow DTCoreText to quickly find a specific combination of font-family and italic and bold attributes. Please refer to the [Programming Guide](../docs/Programming%20Guide.html) for information when you should be using this.
+ 
+ Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
+ */
++ (void)asyncPreloadFontLookupTable;
+
+/**
  Sets the font family to use if the font family in a font descriptor is invalid.
  
  The fallback font family cannot be `nil` and must be a valid font family. The default is **Times New Roman**. 
