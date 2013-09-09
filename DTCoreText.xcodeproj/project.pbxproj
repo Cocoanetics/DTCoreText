@@ -2030,7 +2030,6 @@
 				A788CA631486456100E1AFD9 /* Sources */,
 				A788CA641486456100E1AFD9 /* Frameworks */,
 				A788CA651486456100E1AFD9 /* Resources */,
-				A788CA661486456100E1AFD9 /* ShellScript */,
 			);
 			buildRules = (
 				A758FC9D14DBD76E007DF8B2 /* PBXBuildRule */,
@@ -2050,7 +2049,6 @@
 				A7949A5314CC456000A8CCDE /* Sources */,
 				A7949A5414CC456000A8CCDE /* Frameworks */,
 				A7949A5514CC456000A8CCDE /* Resources */,
-				A7949A5614CC456000A8CCDE /* ShellScript */,
 			);
 			buildRules = (
 				A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */,
@@ -2439,32 +2437,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/appledoc --print-settings --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\necho \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"";
 			showEnvVarsInLog = 0;
-		};
-		A788CA661486456100E1AFD9 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		A7949A5614CC456000A8CCDE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
