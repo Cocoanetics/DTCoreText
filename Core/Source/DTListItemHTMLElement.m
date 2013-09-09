@@ -276,22 +276,12 @@
 {
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
-	
 	// apend list prefix
 	NSAttributedString *listPrefix = [self _listPrefix];
 	
 	if (listPrefix)
 	{
 		[tmpString appendAttributedString:listPrefix];
-		
-		if ([self.childNodes count])
-		{
-			DTHTMLElement *firstchild = [self.childNodes objectAtIndex:0];
-			if (firstchild.displayStyle != DTHTMLElementDisplayStyleInline)
-			{
-				[tmpString appendString:@"\n"];
-			}
-		}
 	}
 	
 	// append child elements
