@@ -716,7 +716,7 @@
 	NSNumber *underLine1 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index1 effectiveRange:NULL];
 	STAssertTrue([underLine1 integerValue]==1, @"First item should be underlined");
 	DTColor *foreground1 = [attributes1 foregroundColor];
-	NSString *foreground1HTML = [foreground1 htmlHexString];
+	NSString *foreground1HTML =  DTHexStringFromDTColor(foreground1);
 	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
 	STAssertTrue(colorOk1, @"First item should be green");
 	BOOL isBold1 = [[attributes1 fontDescriptor] boldTrait];
@@ -729,7 +729,7 @@
 	NSNumber *underLine2 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index2 effectiveRange:NULL];
 	STAssertTrue([underLine2 integerValue]==1, @"Second item should be underlined");
 	DTColor *foreground2 = [attributes2 foregroundColor];
-	NSString *foreground2HTML = [foreground2 htmlHexString];
+	NSString *foreground2HTML = DTHexStringFromDTColor(foreground2);
 	BOOL colorOk2 = ([foreground2HTML isEqualToString:@"800080"]);
 	STAssertTrue(colorOk2, @"Second item should be purple");
 	BOOL isBold2 = [[attributes2 fontDescriptor] boldTrait];
@@ -742,7 +742,7 @@
 	NSNumber *strikeThrough3 = [output attribute:NSStrikethroughStyleAttributeName atIndex:index3 effectiveRange:NULL];
 	STAssertTrue([strikeThrough3 integerValue]==1, @"Third item should have strike through");
 	DTColor *foreground3 = [attributes3 foregroundColor];
-	NSString *foreground3HTML = [foreground3 htmlHexString];
+	NSString *foreground3HTML = DTHexStringFromDTColor(foreground3);
 	BOOL colorOk3 = ([foreground3HTML isEqualToString:@"ffa500"]);
 	STAssertTrue(colorOk3, @"Third item should be orange");
 	BOOL isBold3 = [[attributes3 fontDescriptor] boldTrait];
@@ -755,7 +755,7 @@
 	NSNumber *underLine4 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index4 effectiveRange:NULL];
 	STAssertFalse([underLine4 integerValue]==1, @"Fourth item should be not underlined");
 	DTColor *foreground4 = [attributes4 foregroundColor];
-	NSString *foreground4HTML = [foreground4 htmlHexString];
+	NSString *foreground4HTML = DTHexStringFromDTColor(foreground4);
 	BOOL colorOk4 = ([foreground4HTML isEqualToString:@"ff0000"]);
 	STAssertTrue(colorOk4, @"Fourth item should be red");
 	BOOL isBold4 = [[attributes4 fontDescriptor] boldTrait];
@@ -768,7 +768,7 @@
 	NSNumber *underLine5 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index5 effectiveRange:NULL];
 	STAssertTrue([underLine5 integerValue]==1, @"Fifth item should be underlined");
 	DTColor *foreground5 = [attributes5 foregroundColor];
-	NSString *foreground5HTML = [foreground5 htmlHexString];
+	NSString *foreground5HTML = DTHexStringFromDTColor(foreground5);
 	BOOL colorOk5 = ([foreground5HTML isEqualToString:@"008000"]);
 	STAssertTrue(colorOk5, @"Fifth item should be green");
 	BOOL isBold5 = [[attributes5 fontDescriptor] boldTrait];
@@ -781,7 +781,7 @@
 	NSNumber *underLine6 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index6 effectiveRange:NULL];
 	STAssertTrue([underLine6 integerValue]==1, @"Sixth item should be underlined");
 	DTColor *foreground6 = [attributes6 foregroundColor];
-	NSString *foreground6HTML = [foreground6 htmlHexString];
+	NSString *foreground6HTML = DTHexStringFromDTColor(foreground6);
 	BOOL colorOk6 = ([foreground6HTML isEqualToString:@"ffa500"]);
 	STAssertTrue(colorOk6, @"Sixth item should be orange");
 	BOOL isBold6 = [[attributes6 fontDescriptor] boldTrait];
@@ -794,7 +794,7 @@
 	NSNumber *underLine7 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index7 effectiveRange:NULL];
 	STAssertFalse([underLine7 integerValue]==1, @"Seventh item should not be underlined");
 	DTColor *foreground7 = [attributes7 foregroundColor];
-	NSString *foreground7HTML = [foreground7 htmlHexString];
+	NSString *foreground7HTML = DTHexStringFromDTColor(foreground7);
 	BOOL colorOk7 = ([foreground7HTML isEqualToString:@"777777"]);
 	STAssertTrue(colorOk7, @"Seventh item should be gray");
 	BOOL isBold7 = [[attributes7 fontDescriptor] boldTrait];
@@ -834,11 +834,11 @@
 	
 	NSDictionary *attributes1 = [output attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground1 = [attributes1 foregroundColor];
-	NSString *foreground1HTML = [foreground1 htmlHexString];
+	NSString *foreground1HTML = DTHexStringFromDTColor(foreground1);
 	
 	NSDictionary *attributes2 = [output attributesAtIndex:7 effectiveRange:NULL];
 	DTColor *foreground2 = [attributes2 foregroundColor];
-	NSString *foreground2HTML = [foreground2 htmlHexString];
+	NSString *foreground2HTML = DTHexStringFromDTColor(foreground2);
 
 	STAssertEqualObjects(foreground1HTML, foreground2HTML, @"Color should be inherited via cascaded selector.");
 }
@@ -850,7 +850,7 @@
 	
 	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground = [attributes foregroundColor];
-	NSString *foregroundHTML = [foreground htmlHexString];
+	NSString *foregroundHTML = DTHexStringFromDTColor(foreground);
 	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
 }
 
@@ -860,7 +860,7 @@
 	
 	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground = [attributes foregroundColor];
-	NSString *foregroundHTML = [foreground htmlHexString];
+	NSString *foregroundHTML = DTHexStringFromDTColor(foreground);
 	STAssertEqualObjects(foregroundHTML, @"ff0000", @"Color should be red and not green.");
 
 	DTCoreTextFontDescriptor *textFontDescriptor = [attributes fontDescriptor];
@@ -873,14 +873,14 @@
 	
 	NSDictionary *attributes = [output attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground = [attributes foregroundColor];
-	NSString *foregroundHTML = [foreground htmlHexString];
+	NSString *foregroundHTML = DTHexStringFromDTColor(foreground);
 	STAssertEqualObjects(foregroundHTML, @"008000", @"Color should be green and not red.");
 
 	NSString *html2 = @"<html><head><style>.bar { color: red; } .foo { color: green; } </style> </head><body><div class=\"foo\"><div class=\"bar\"><div>Text</div></div></div></body></html>";
 	NSAttributedString *output2 = [self _attributedStringFromHTMLString:html2 options:nil];
 	NSDictionary *attributes2 = [output2 attributesAtIndex:1 effectiveRange:NULL];
 	DTColor *foreground2 = [attributes2 foregroundColor];
-	NSString *foregroundHTML2 = [foreground2 htmlHexString];
+	NSString *foregroundHTML2 = DTHexStringFromDTColor(foreground2);
 	STAssertEqualObjects(foregroundHTML2, @"ff0000", @"Color should be red and not green.");
 }
 
@@ -891,7 +891,7 @@
 	
 	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	DTColor *foreground1 = [attributes1 foregroundColor];
-	NSString *foreground1HTML = [foreground1 htmlHexString];
+	NSString *foreground1HTML = DTHexStringFromDTColor(foreground1);
 	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
 	STAssertTrue(colorOk1, @"First item should be green");
 }

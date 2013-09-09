@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreText.h"
 #import "DTAnchorHTMLElement.h"
-#import "DTColor+HTML.h"
 
 @implementation DTAnchorHTMLElement
 {
@@ -23,7 +23,7 @@
 	
 	if (activeColor)
 	{
-		self.highlightedTextColor = [DTColor colorWithHTMLName:activeColor];
+		self.highlightedTextColor = DTColorCreateWithHTMLName(activeColor);
 	}
 }
 

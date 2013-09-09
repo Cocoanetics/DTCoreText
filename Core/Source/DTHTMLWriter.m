@@ -651,7 +651,7 @@
 			{
 				DTColor *color = [DTColor colorWithCGColor:textColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;",  DTHexStringFromDTColor(color)];
 			}
 			
 			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
@@ -667,7 +667,7 @@
 			{
 				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", DTHexStringFromDTColor(color)];
 			}
 			
 			NSNumber *underline = [attributes objectForKey:(id)kCTUnderlineStyleAttributeName];

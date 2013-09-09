@@ -204,11 +204,11 @@
 		if ([_defaultLinkColor isKindOfClass:[NSString class]])
 		{
 			// convert from string to color
-			_defaultLinkColor = [DTColor colorWithHTMLName:(NSString *)_defaultLinkColor];
+			_defaultLinkColor = DTColorCreateWithHTMLName((NSString *)_defaultLinkColor);
 		}
 		
 		// get hex code for the passed color
-		NSString *colorHex = [_defaultLinkColor htmlHexString];
+		NSString *colorHex = DTHexStringFromDTColor(_defaultLinkColor);
 		
 		// overwrite the style
 		NSString *styleBlock = [NSString stringWithFormat:@"a {color:#%@;}", colorHex];
@@ -234,11 +234,11 @@
 		if ([defaultLinkHighlightColor isKindOfClass:[NSString class]])
 		{
 			// convert from string to color
-			defaultLinkHighlightColor = [DTColor colorWithHTMLName:(NSString *)defaultLinkHighlightColor];
+			defaultLinkHighlightColor = DTColorCreateWithHTMLName((NSString *)defaultLinkHighlightColor);
 		}
 		
 		// get hex code for the passed color
-		NSString *colorHex = [defaultLinkHighlightColor htmlHexString];
+		NSString *colorHex = DTHexStringFromDTColor(defaultLinkHighlightColor);
 		
 		// overwrite the style
 		NSString *styleBlock = [NSString stringWithFormat:@"a:active {color:#%@;}", colorHex];
@@ -297,7 +297,7 @@
 		else
 		{
 			// need to convert first
-			_defaultTag.textColor = [DTColor colorWithHTMLName:defaultColor];
+			_defaultTag.textColor = DTColorCreateWithHTMLName(defaultColor);
 		}
 	}
 	
@@ -542,7 +542,7 @@
 		
 		if (color)
 		{
-			_currentTag.textColor = [DTColor colorWithHTMLName:color];
+			_currentTag.textColor = DTColorCreateWithHTMLName(color);
 		}
 	};
 	
