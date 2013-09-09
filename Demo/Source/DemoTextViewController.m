@@ -569,7 +569,7 @@
 	{
 		// somecolorparameter has a HTML color
 		NSString *colorName = [attachment.attributes objectForKey:@"somecolorparameter"];
-		UIColor *someColor = [UIColor colorWithHTMLName:colorName];
+		UIColor *someColor = DTColorCreateWithHTMLName(colorName);
 		
 		UIView *someView = [[UIView alloc] initWithFrame:frame];
 		someView.backgroundColor = someColor;

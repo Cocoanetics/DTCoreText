@@ -9,6 +9,7 @@
 #import "DTCoreText.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
+#import "DTColorFunctions.h"
 
 @implementation NSScanner (HTML)
 
@@ -253,7 +254,7 @@
 	
 	if (colorName)
 	{
-		foundColor = [DTColor colorWithHTMLName:colorName];
+		foundColor = DTColorCreateWithHTMLName(colorName);
 	}
 	
 	if (!foundColor)
