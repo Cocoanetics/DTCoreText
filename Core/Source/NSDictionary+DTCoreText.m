@@ -159,29 +159,26 @@
 
 - (DTColor *)foregroundColor
 {
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	// try NSParagraphStyle to see if "modern tags" are possible
+	
+	if ([NSParagraphStyle class])
+	{
+		DTColor *color = [self objectForKey:NSForegroundColorAttributeName];
+		
+		if (color)
+		{
+			return color;
+		}
+	}
+#endif
+	
 	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:(id)kCTForegroundColorAttributeName];
 	
 	if (cgColor)
 	{
 		return [DTColor colorWithCGColor:cgColor];
 	}
-
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if (![NSParagraphStyle class])
-	{
-		// unknown class
-		return nil;
-	}
-	
-	DTColor *color = [self objectForKey:NSForegroundColorAttributeName];
-	
-	if (color)
-	{
-		return color;
-	}
-#endif
 	
 	// default foreground is black
 	return [DTColor blackColor];
