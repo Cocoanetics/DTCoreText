@@ -9,6 +9,7 @@
 #import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
+#import "DTVersion.h"
 
 @implementation DTAttributedTextCell
 {
@@ -85,6 +86,15 @@
 	[super didMoveToSuperview];
 	
 	_containingTableView = [self _findContainingTableView];
+	
+	// on < iOS 7 we need to make the background translucent to avoid artefacts at rounded edges
+	if (_containingTableView.style == UITableViewStyleGrouped)
+	{
+		if ([DTVersion osVersionIsLessThen:@"7.0"])
+		{
+			_attributedTextContextView.backgroundColor = [UIColor clearColor];
+		}
+	}
 }
 
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
@@ -116,9 +126,15 @@
 	// reduce width for grouped table views
 	if (tableView.style == UITableViewStyleGrouped)
 	{
-		// left and right 10 px margins on grouped table views
-		contentWidth -= 20;
+		if ([DTVersion osVersionIsLessThen:@"7.0"])
+		{
+			// left and right 10 px margins on grouped table views before iOS 7
+			contentWidth -= 20;
+		}
 	}
+
+	_attributedTextContextView.layer.borderColor = [UIColor redColor].CGColor;
+	_attributedTextContextView.layer.borderWidth = 1;
 	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
