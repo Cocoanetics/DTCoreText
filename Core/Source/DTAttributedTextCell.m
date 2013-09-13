@@ -49,7 +49,7 @@
 	{
 		return;
 	}
-
+	
 	if (_hasFixedRowHeight)
 	{
 		self.attributedTextContextView.frame = self.contentView.bounds;
@@ -57,10 +57,15 @@
 	else
 	{
 		CGFloat neededContentHeight = [self requiredRowHeightInTableView:_containingTableView];
-	
+		
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 		self.attributedTextContextView.frame = frame;
+		
+		//UIView *scroll = (UIView *)self.subviews[0];
+		UIView *scroll = self;
+		NSLog(@"acc %@ %@", scroll.subviews, NSStringFromCGRect(self.accessoryView.frame));
+
 	}
 }
 
@@ -97,6 +102,28 @@
 	}
 }
 
+// http://stackoverflow.com/questions/4708085/how-to-determine-margin-of-a-grouped-uitableview-or-better-how-to-set-it/4872199#4872199
+- (CGFloat)_groupedCellMarginWithTableWidth:(CGFloat)tableViewWidth
+{
+    CGFloat marginWidth;
+    if(tableViewWidth > 20)
+    {
+        if(tableViewWidth < 400 || [UIDevice currentDevice].userInterfaceIdiom==UIUserInterfaceIdiomPhone)
+        {
+            marginWidth = 10;
+        }
+        else
+        {
+            marginWidth = MAX(31.f, MIN(45.f, tableViewWidth*0.06f));
+        }
+    }
+    else
+    {
+        marginWidth = tableViewWidth - 10;
+    }
+    return marginWidth;
+}
+
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
 {
 	if (_hasFixedRowHeight)
@@ -104,35 +131,44 @@
 		NSLog(@"Warning: you are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
 	}
 	
+	BOOL ios6Style = [DTVersion osVersionIsLessThen:@"7.0"];
 	CGFloat contentWidth = tableView.frame.size.width;
 	
+	// reduce width for grouped table views
+	if (ios6Style && tableView.style == UITableViewStyleGrouped)
+	{
+		contentWidth -= [self _groupedCellMarginWithTableWidth:contentWidth] * 2;
+	}
+	
 	// reduce width for accessories
+	
 	switch (self.accessoryType)
 	{
 		case UITableViewCellAccessoryDisclosureIndicator:
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 8.0f + 15.0f;
+			break;
+			
 		case UITableViewCellAccessoryCheckmark:
-			contentWidth -= 20.0f;
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
+			
 		case UITableViewCellAccessoryDetailDisclosureButton:
-			contentWidth -= 33.0f;
+			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
 			break;
+			
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		case UITableViewCellAccessoryDetailButton:
+			contentWidth -= 10.0f + 22.0f + 15.0f;
+#endif
+			
 		case UITableViewCellAccessoryNone:
 			break;
+			
 		default:
-			NSLog(@"Warning: Sizing for UITableViewCellAccessoryDetailButton not implemented on %@", NSStringFromClass([self class]));
+			NSLog(@"Warning: accessoryType %d not implemented on %@", self.accessoryType, NSStringFromClass([self class]));
 			break;
 	}
 	
-	// reduce width for grouped table views
-	if (tableView.style == UITableViewStyleGrouped)
-	{
-		if ([DTVersion osVersionIsLessThen:@"7.0"])
-		{
-			// left and right 10 px margins on grouped table views before iOS 7
-			contentWidth -= 20;
-		}
-	}
-
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
 	// note: non-integer row heights caused trouble < iOS 5.0
