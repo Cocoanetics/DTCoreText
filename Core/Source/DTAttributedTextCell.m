@@ -19,21 +19,25 @@
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
 	
 	BOOL _hasFixedRowHeight;
+	DT_WEAK_VARIABLE UITableView *_containingTableView;
 }
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+	
     if (self)
 	{
 		// content view created lazily
     }
+	
     return self;
 }
 
 - (void)dealloc
 {
 	_textDelegate = nil;
+	_containingTableView = nil;
 }
 
 - (void)layoutSubviews
@@ -51,7 +55,7 @@
 	}
 	else
 	{
-		CGFloat neededContentHeight = [self requiredRowHeightInTableView:[self _containingTableView]];
+		CGFloat neededContentHeight = [self requiredRowHeightInTableView:_containingTableView];
 	
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
@@ -59,7 +63,7 @@
 	}
 }
 
-- (UITableView *)_containingTableView
+- (UITableView *)_findContainingTableView
 {
 	UIView *tableView = self.superview;
 	
@@ -76,25 +80,12 @@
 	return nil;
 }
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+- (void)didMoveToSuperview
 {
-	UITableView *tableView = (UITableView *)newSuperview;
+	[super didMoveToSuperview];
 	
-	if (![tableView isKindOfClass:[UITableView class]])
-	{
-		tableView = (UITableView *)tableView.superview;
-	}
-	
-	if ([self _containingTableView].style == UITableViewStyleGrouped)
-	{
-		// need no background because otherwise this would overlap the rounded corners
-		_attributedTextContextView.backgroundColor = [DTColor clearColor];
-	}
-	
-	[super willMoveToSuperview:newSuperview];
+	_containingTableView = [self _findContainingTableView];
 }
-
-
 
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
 {
@@ -136,7 +127,6 @@
 }
 
 #pragma mark Properties
-
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
