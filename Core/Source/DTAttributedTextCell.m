@@ -49,7 +49,7 @@
 	{
 		return;
 	}
-
+	
 	if (_hasFixedRowHeight)
 	{
 		self.attributedTextContextView.frame = self.contentView.bounds;
@@ -57,7 +57,7 @@
 	else
 	{
 		CGFloat neededContentHeight = [self requiredRowHeightInTableView:_containingTableView];
-	
+		
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 		self.attributedTextContextView.frame = frame;
@@ -97,6 +97,28 @@
 	}
 }
 
+// http://stackoverflow.com/questions/4708085/how-to-determine-margin-of-a-grouped-uitableview-or-better-how-to-set-it/4872199#4872199
+- (CGFloat)groupedCellMarginWithTableWidth:(CGFloat)tableViewWidth
+{
+    CGFloat marginWidth;
+    if(tableViewWidth > 20)
+    {
+        if(tableViewWidth < 400 || [UIDevice currentDevice].userInterfaceIdiom==UIUserInterfaceIdiomPhone)
+        {
+            marginWidth = 10;
+        }
+        else
+        {
+            marginWidth = MAX(31.f, MIN(45.f, tableViewWidth*0.06f));
+        }
+    }
+    else
+    {
+        marginWidth = tableViewWidth - 10;
+    }
+    return marginWidth;
+}
+
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
 {
 	if (_hasFixedRowHeight)
@@ -105,6 +127,15 @@
 	}
 	
 	CGFloat contentWidth = tableView.frame.size.width;
+	
+	// reduce width for grouped table views
+	if (tableView.style == UITableViewStyleGrouped)
+	{
+		if ([DTVersion osVersionIsLessThen:@"7.0"])
+		{
+			contentWidth -= [self groupedCellMarginWithTableWidth:contentWidth] * 2;
+		}
+	}
 	
 	// reduce width for accessories
 	switch (self.accessoryType)
@@ -123,16 +154,7 @@
 			break;
 	}
 	
-	// reduce width for grouped table views
-	if (tableView.style == UITableViewStyleGrouped)
-	{
-		if ([DTVersion osVersionIsLessThen:@"7.0"])
-		{
-			// left and right 10 px margins on grouped table views before iOS 7
-			contentWidth -= 20;
-		}
-	}
-
+	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
 	// note: non-integer row heights caused trouble < iOS 5.0
