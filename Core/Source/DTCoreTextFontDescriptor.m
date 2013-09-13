@@ -605,8 +605,12 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	{
 		matchingFont = CTFontCreateWithFontDescriptor(matchingFontDescriptor, _pointSize, NULL);
 		
-		CFRelease(searchingFontDescriptor);
 		CFRelease(matchingFontDescriptor);
+	}
+	
+	if (searchingFontDescriptor)
+	{
+		CFRelease(searchingFontDescriptor);
 	}
 	
 	// check if we indeed got an oblique font if we wanted one
