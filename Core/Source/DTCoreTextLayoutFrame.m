@@ -460,8 +460,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(tailIndent), &tailIndent);
 		
 		// add left padding to offset
-		CGFloat lineOriginX = _frame.origin.x + headIndent; // + currentTextBlock.padding.left;
-		
+		CGFloat lineOriginX;
 		CGFloat availableSpace;
 		
 		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:lineRange.location effectiveRange:NULL];
@@ -1360,12 +1359,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		return;
 	}
-	
-	DTCoreTextLayoutLine *firstLine = [visibleLines objectAtIndex:0];
-	DTCoreTextLayoutLine *lastLine = [visibleLines lastObject];
-	
-	NSRange stringRangeToDraw = firstLine.stringRange;
-	stringRangeToDraw = NSUnionRange(stringRangeToDraw, lastLine.stringRange);
 	
 	CGContextSaveGState(context);
 	
