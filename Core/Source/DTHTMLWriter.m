@@ -229,19 +229,17 @@
 			blockElement = @"ul";
 		}
 		
-		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';\">", typeString];
+		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';", typeString];
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
 		
-		NSString *listElementString = nil;
 		if (inlineStyles)
 		{
-			listElementString = [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
+			return [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
 		}
 		else
 		{
-			listElementString = [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
+			return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 		}
-		return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 	}
 }
 
