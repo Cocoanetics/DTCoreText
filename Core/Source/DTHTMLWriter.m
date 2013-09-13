@@ -572,7 +572,8 @@
 					}
 					else
 					{
-						plainSubString = @"";
+						// avoid output of empty span tag, issue #601
+						return;
 					}
 				}
 				
