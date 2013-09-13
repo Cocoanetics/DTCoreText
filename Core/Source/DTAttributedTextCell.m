@@ -61,6 +61,11 @@
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 		self.attributedTextContextView.frame = frame;
+		
+		//UIView *scroll = (UIView *)self.subviews[0];
+		UIView *scroll = self;
+		NSLog(@"acc %@ %@", scroll.subviews, NSStringFromCGRect(self.accessoryView.frame));
+
 	}
 }
 
@@ -126,34 +131,43 @@
 		NSLog(@"Warning: you are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
 	}
 	
+	BOOL ios6Style = [DTVersion osVersionIsLessThen:@"7.0"];
 	CGFloat contentWidth = tableView.frame.size.width;
 	
 	// reduce width for grouped table views
-	if (tableView.style == UITableViewStyleGrouped)
+	if (ios6Style && tableView.style == UITableViewStyleGrouped)
 	{
-		if ([DTVersion osVersionIsLessThen:@"7.0"])
-		{
-			contentWidth -= [self _groupedCellMarginWithTableWidth:contentWidth] * 2;
-		}
+		contentWidth -= [self _groupedCellMarginWithTableWidth:contentWidth] * 2;
 	}
 	
 	// reduce width for accessories
+	
 	switch (self.accessoryType)
 	{
 		case UITableViewCellAccessoryDisclosureIndicator:
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 8.0f + 15.0f;
+			break;
+			
 		case UITableViewCellAccessoryCheckmark:
-			contentWidth -= 20.0f;
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
+			
 		case UITableViewCellAccessoryDetailDisclosureButton:
-			contentWidth -= 33.0f;
+			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
 			break;
+			
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		case UITableViewCellAccessoryDetailButton:
+			contentWidth -= 10.0f + 22.0f + 15.0f;
+#endif
+			
 		case UITableViewCellAccessoryNone:
 			break;
+			
 		default:
-			NSLog(@"Warning: Sizing for UITableViewCellAccessoryDetailButton not implemented on %@", NSStringFromClass([self class]));
+			NSLog(@"Warning: accessoryType %d not implemented on %@", self.accessoryType, NSStringFromClass([self class]));
 			break;
 	}
-	
 	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
