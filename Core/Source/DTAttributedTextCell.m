@@ -98,7 +98,7 @@
 }
 
 // http://stackoverflow.com/questions/4708085/how-to-determine-margin-of-a-grouped-uitableview-or-better-how-to-set-it/4872199#4872199
-- (CGFloat)groupedCellMarginWithTableWidth:(CGFloat)tableViewWidth
+- (CGFloat)_groupedCellMarginWithTableWidth:(CGFloat)tableViewWidth
 {
     CGFloat marginWidth;
     if(tableViewWidth > 20)
@@ -133,7 +133,7 @@
 	{
 		if ([DTVersion osVersionIsLessThen:@"7.0"])
 		{
-			contentWidth -= [self groupedCellMarginWithTableWidth:contentWidth] * 2;
+			contentWidth -= [self _groupedCellMarginWithTableWidth:contentWidth] * 2;
 		}
 	}
 	
