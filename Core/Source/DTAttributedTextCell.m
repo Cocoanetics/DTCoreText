@@ -133,9 +133,6 @@
 		}
 	}
 
-	_attributedTextContextView.layer.borderColor = [UIColor redColor].CGColor;
-	_attributedTextContextView.layer.borderWidth = 1;
-	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
 	
 	// note: non-integer row heights caused trouble < iOS 5.0
