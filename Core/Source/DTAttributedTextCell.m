@@ -61,11 +61,6 @@
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 		self.attributedTextContextView.frame = frame;
-		
-		//UIView *scroll = (UIView *)self.subviews[0];
-		UIView *scroll = self;
-		NSLog(@"acc %@ %@", scroll.subviews, NSStringFromCGRect(self.accessoryView.frame));
-
 	}
 }
 
