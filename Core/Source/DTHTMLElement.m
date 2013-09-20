@@ -16,6 +16,7 @@
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextHTMLElement.h"
 #import "NSString+DTUtilities.h"
+#import "DTColorFunctions.h"
 
 @interface DTHTMLElement ()
 
@@ -749,13 +750,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *color = [styles objectForKey:@"color"];
 	if (color)
 	{
-		self.textColor = [DTColor colorWithHTMLName:color];
+		self.textColor = DTColorCreateWithHTMLName(color);
 	}
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];
 	if (bgColor)
 	{
-		self.backgroundColor = [DTColor colorWithHTMLName:bgColor];
+		self.backgroundColor = DTColorCreateWithHTMLName(bgColor);
 	}
 	
 	NSString *floatString = [styles objectForKey:@"float"];
@@ -1311,7 +1312,7 @@ NSDictionary *_classesForNames = nil;
 	_textScale = element.textScale;
 	
 	// only inherit background-color from inline elements
-	if (element.displayStyle == DTHTMLElementDisplayStyleInline)
+	if (element.displayStyle == DTHTMLElementDisplayStyleInline || element.displayStyle == DTHTMLElementDisplayStyleListItem)
 	{
 		self.backgroundColor = element.backgroundColor;
 	}

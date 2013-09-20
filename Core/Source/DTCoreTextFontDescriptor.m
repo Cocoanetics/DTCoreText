@@ -87,7 +87,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		_needsChineseFontCascadeFix = YES;
 	}
 #endif
-	
+}
+
+// preloads all available system fonts for faster font matching
++ (void)asyncPreloadFontLookupTable
+{
 	// asynchronically load all available fonts into override table
 	[self _createDictionaryOfAllAvailableFontOverrideNamesWithCompletion:^(NSDictionary *dictionary) {
 		
@@ -601,8 +605,12 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	{
 		matchingFont = CTFontCreateWithFontDescriptor(matchingFontDescriptor, _pointSize, NULL);
 		
-		CFRelease(searchingFontDescriptor);
 		CFRelease(matchingFontDescriptor);
+	}
+	
+	if (searchingFontDescriptor)
+	{
+		CFRelease(searchingFontDescriptor);
 	}
 	
 	// check if we indeed got an oblique font if we wanted one
@@ -646,7 +654,55 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (BOOL)isEqual:(id)object
 {
-	return (([object isKindOfClass:[DTCoreTextFontDescriptor class]]) && ([self hash] == [object hash]));
+	if (!object)
+	{
+		return NO;
+	}
+	
+	if (object == self)
+	{
+		return YES;
+	}
+	
+	if (![object isKindOfClass:[DTCoreTextFontDescriptor class]])
+	{
+		return NO;
+	}
+	
+	DTCoreTextFontDescriptor *otherFontDescriptor = object;
+	
+	if (_pointSize != otherFontDescriptor->_pointSize)
+	{
+		return NO;
+	}
+	
+	if (_stylisticClass != otherFontDescriptor->_stylisticClass)
+	{
+		return NO;
+	}
+	
+	if (_stylisticTraits != otherFontDescriptor->_stylisticTraits)
+	{
+		return NO;
+	}
+
+	if (_fontName != otherFontDescriptor->_fontName)
+	{
+		if (![_fontName isEqualToString:_fontName])
+		{
+			return NO;
+		}
+	}
+	
+	if (_fontFamily != otherFontDescriptor->_fontFamily)
+	{
+		if (![_fontFamily isEqualToString:_fontFamily])
+		{
+			return NO;
+		}
+	}
+	
+	return YES;
 }
 
 

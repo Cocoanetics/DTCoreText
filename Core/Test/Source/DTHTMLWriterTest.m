@@ -8,6 +8,7 @@
 
 #import "DTHTMLWriterTest.h"
 #import "DTCoreText.h"
+#import "DTColorFunctions.h"
 
 @implementation DTHTMLWriterTest
 
@@ -18,10 +19,9 @@
 	NSRange range = [attributedText.string rangeOfString:@"World"];
 	if (range.location != NSNotFound)
 	{
-		DTColor *color = [DTColor colorWithHexString:@"FFFF00"];
-		[attributedText addAttribute:DTBackgroundColorAttribute
-							   value:(id)color.CGColor
-							   range:range];
+		DTColor *color = DTColorCreateWithHexString(@"FFFF00");
+		
+		[attributedText addAttribute:DTBackgroundColorAttribute value:(id)color.CGColor range:range];
 	}
 	
 	// generate html

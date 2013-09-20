@@ -460,8 +460,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierTailIndent, sizeof(tailIndent), &tailIndent);
 		
 		// add left padding to offset
-		CGFloat lineOriginX = _frame.origin.x + headIndent; // + currentTextBlock.padding.left;
-		
+		CGFloat lineOriginX;
 		CGFloat availableSpace;
 		
 		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:lineRange.location effectiveRange:NULL];
@@ -484,7 +483,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding;
 		}
 		
-		CGFloat offset = headIndent + totalLeftPadding;
+		
+		CGFloat offset = totalLeftPadding;
+		
+		// if first character is a tab, then it is positioned without the indentation
+		if (![[[_attributedStringFragment string] substringWithRange:NSMakeRange(lineRange.location, 1)] isEqualToString:@"\t"])
+		{
+			offset += headIndent;
+		}
 		
 		// find how many characters we get into this line
 		lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, availableSpace);
@@ -1360,12 +1366,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		return;
 	}
-	
-	DTCoreTextLayoutLine *firstLine = [visibleLines objectAtIndex:0];
-	DTCoreTextLayoutLine *lastLine = [visibleLines lastObject];
-	
-	NSRange stringRangeToDraw = firstLine.stringRange;
-	stringRangeToDraw = NSUnionRange(stringRangeToDraw, lastLine.stringRange);
 	
 	CGContextSaveGState(context);
 	

@@ -166,6 +166,14 @@
 	{
 		[appendAttributes setObject:lists forKey:DTTextListsAttribute];
 	}
+
+	// transfer foreground color
+	id foregroundColor = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
+	
+	if (foregroundColor)
+	{
+		[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
+	}
 	
 	NSAttributedString *newlineString = [[NSAttributedString alloc] initWithString:@"\n" attributes:appendAttributes];
 	[self appendAttributedString:newlineString];

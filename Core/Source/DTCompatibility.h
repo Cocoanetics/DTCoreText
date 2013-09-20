@@ -13,7 +13,7 @@
 	// Compatibility Aliases
 	@compatibility_alias DTColor	UIColor;
 	@compatibility_alias DTImage	UIImage;
-	@compatibility_alias DTFont	UIFont;
+	@compatibility_alias DTFont		UIFont;
 
 	// Edge Insets
 	#define DTEdgeInsets UIEdgeInsets
@@ -22,6 +22,11 @@
 	// NS-style text attributes are possible with iOS SDK 6.0 or higher
 	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
+	#endif
+
+	// NSParagraphStyle supports tabs as of iOS SDK 7.0 or higher
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		#define DTCORETEXT_SUPPORT_NSPARAGRAPHSTYLE_TABS 1
 	#endif
 
 	// iOS before 5.0 has leak in CoreText replacing attributes
@@ -45,7 +50,7 @@
 	// Compatibility Aliases
 	@compatibility_alias DTColor	NSColor;
 	@compatibility_alias DTImage	NSImage;
-	@compatibility_alias DTFont	NSFont;
+	@compatibility_alias DTFont		NSFont;
 
 	// Edge Insets
 	#define DTEdgeInsets NSEdgeInsets
@@ -53,6 +58,7 @@
 
 	// Mac supports NS-Style Text Attributes since 10.0
 	#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
+	#define DTCORETEXT_SUPPORT_NSPARAGRAPHSTYLE_TABS 1
 
 	// theoretically MacOS before 10.8 might have a leak in CoreText replacing attributes
 	#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_7
@@ -77,12 +83,5 @@
 	{
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
-
-	// Text Alignment Enums
-	#define NSTextAlignmentLeft		NSLeftTextAlignment
-	#define NSTextAlignmentRight		NSRightTextAlignment
-	#define NSTextAlignmentCenter		NSCenterTextAlignment
-	#define NSTextAlignmentJustified	NSJustifiedTextAlignment
-	#define NSTextAlignmentNatural	NSNaturalTextAlignment
 
 #endif

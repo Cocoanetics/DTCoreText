@@ -111,6 +111,7 @@
 	
 	// modify paragraph style
 	paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent - _margins.left - _padding.left;;  // first line has prefix and starts at list indent;
+	paragraphStyle.defaultTabInterval = 100;
 	
 	// resets tabs
 	paragraphStyle.tabStops = nil;
@@ -124,12 +125,12 @@
 		}
 		
 		// first tab is to right-align bullet, numbering against
-		CGFloat tabOffset = _margins.left - (CGFloat)5.0; // TODO: change with font size
+		CGFloat tabOffset = paragraphStyle.headIndent - (CGFloat)5.0; // TODO: change with font size
 		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 	}
 	
 	// second tab is for the beginning of first line after bullet
-	[paragraphStyle addTabStopAtPosition:_margins.left + _padding.left alignment:kCTLeftTextAlignment];
+	[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];
 	
 	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
 	
@@ -276,22 +277,12 @@
 {
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 	
-	
 	// apend list prefix
 	NSAttributedString *listPrefix = [self _listPrefix];
 	
 	if (listPrefix)
 	{
 		[tmpString appendAttributedString:listPrefix];
-		
-		if ([self.childNodes count])
-		{
-			DTHTMLElement *firstchild = [self.childNodes objectAtIndex:0];
-			if (firstchild.displayStyle != DTHTMLElementDisplayStyleInline)
-			{
-				[tmpString appendString:@"\n"];
-			}
-		}
 	}
 	
 	// append child elements

@@ -9,7 +9,7 @@
 #import "DTCompatibility.h"
 #import "NSStringCSSTest.h"
 #import "NSString+CSS.h"
-#import "DTColor+HTML.h"
+#import "DTColor+Compatibility.h"
 
 @implementation NSStringCSSTest
 

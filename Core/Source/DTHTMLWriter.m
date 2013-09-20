@@ -229,19 +229,17 @@
 			blockElement = @"ul";
 		}
 		
-		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';\">", typeString];
+		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';", typeString];
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
 		
-		NSString *listElementString = nil;
 		if (inlineStyles)
 		{
-			listElementString = [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
+			return [NSString stringWithFormat:@"<%@ style=\"%@\">", blockElement, listStyleString];
 		}
 		else
 		{
-			listElementString = [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
+			return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 		}
-		return [NSString stringWithFormat:@"<%@ class=\"%@\">", blockElement, className];
 	}
 }
 
@@ -574,7 +572,8 @@
 					}
 					else
 					{
-						plainSubString = @"";
+						// avoid output of empty span tag, issue #601
+						return;
 					}
 				}
 				
@@ -651,7 +650,7 @@
 			{
 				DTColor *color = [DTColor colorWithCGColor:textColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;",  DTHexStringFromDTColor(color)];
 			}
 			
 			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
@@ -667,7 +666,7 @@
 			{
 				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
 				
-				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", [color htmlHexString]];
+				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", DTHexStringFromDTColor(color)];
 			}
 			
 			NSNumber *underline = [attributes objectForKey:(id)kCTUnderlineStyleAttributeName];

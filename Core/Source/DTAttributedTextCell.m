@@ -9,6 +9,7 @@
 #import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
+#import "DTVersion.h"
 
 @implementation DTAttributedTextCell
 {
@@ -19,21 +20,25 @@
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
 	
 	BOOL _hasFixedRowHeight;
+	DT_WEAK_VARIABLE UITableView *_containingTableView;
 }
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+	
     if (self)
 	{
 		// content view created lazily
     }
+	
     return self;
 }
 
 - (void)dealloc
 {
 	_textDelegate = nil;
+	_containingTableView = nil;
 }
 
 - (void)layoutSubviews
@@ -44,22 +49,22 @@
 	{
 		return;
 	}
-
+	
 	if (_hasFixedRowHeight)
 	{
 		self.attributedTextContextView.frame = self.contentView.bounds;
 	}
 	else
 	{
-		CGFloat neededContentHeight = [self requiredRowHeightInTableView:[self _containingTableView]];
-	
+		CGFloat neededContentHeight = [self requiredRowHeightInTableView:_containingTableView];
+		
 		// after the first call here the content view size is correct
 		CGRect frame = CGRectMake(0, 0, self.contentView.bounds.size.width, neededContentHeight);
 		self.attributedTextContextView.frame = frame;
 	}
 }
 
-- (UITableView *)_containingTableView
+- (UITableView *)_findContainingTableView
 {
 	UIView *tableView = self.superview;
 	
@@ -76,25 +81,43 @@
 	return nil;
 }
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+- (void)didMoveToSuperview
 {
-	UITableView *tableView = (UITableView *)newSuperview;
+	[super didMoveToSuperview];
 	
-	if (![tableView isKindOfClass:[UITableView class]])
+	_containingTableView = [self _findContainingTableView];
+	
+	// on < iOS 7 we need to make the background translucent to avoid artefacts at rounded edges
+	if (_containingTableView.style == UITableViewStyleGrouped)
 	{
-		tableView = (UITableView *)tableView.superview;
+		if ([DTVersion osVersionIsLessThen:@"7.0"])
+		{
+			_attributedTextContextView.backgroundColor = [UIColor clearColor];
+		}
 	}
-	
-	if ([self _containingTableView].style == UITableViewStyleGrouped)
-	{
-		// need no background because otherwise this would overlap the rounded corners
-		_attributedTextContextView.backgroundColor = [DTColor clearColor];
-	}
-	
-	[super willMoveToSuperview:newSuperview];
 }
 
-
+// http://stackoverflow.com/questions/4708085/how-to-determine-margin-of-a-grouped-uitableview-or-better-how-to-set-it/4872199#4872199
+- (CGFloat)_groupedCellMarginWithTableWidth:(CGFloat)tableViewWidth
+{
+    CGFloat marginWidth;
+    if(tableViewWidth > 20)
+    {
+        if(tableViewWidth < 400 || [UIDevice currentDevice].userInterfaceIdiom==UIUserInterfaceIdiomPhone)
+        {
+            marginWidth = 10;
+        }
+        else
+        {
+            marginWidth = MAX(31.f, MIN(45.f, tableViewWidth*0.06f));
+        }
+    }
+    else
+    {
+        marginWidth = tableViewWidth - 10;
+    }
+    return marginWidth;
+}
 
 - (CGFloat)requiredRowHeightInTableView:(UITableView *)tableView
 {
@@ -103,30 +126,42 @@
 		NSLog(@"Warning: you are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
 	}
 	
+	BOOL ios6Style = [DTVersion osVersionIsLessThen:@"7.0"];
 	CGFloat contentWidth = tableView.frame.size.width;
 	
+	// reduce width for grouped table views
+	if (ios6Style && tableView.style == UITableViewStyleGrouped)
+	{
+		contentWidth -= [self _groupedCellMarginWithTableWidth:contentWidth] * 2;
+	}
+	
 	// reduce width for accessories
+	
 	switch (self.accessoryType)
 	{
 		case UITableViewCellAccessoryDisclosureIndicator:
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 8.0f + 15.0f;
+			break;
+			
 		case UITableViewCellAccessoryCheckmark:
-			contentWidth -= 20.0f;
+			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
+			
 		case UITableViewCellAccessoryDetailDisclosureButton:
-			contentWidth -= 33.0f;
+			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
 			break;
+			
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		case UITableViewCellAccessoryDetailButton:
+			contentWidth -= 10.0f + 22.0f + 15.0f;
+#endif
+			
 		case UITableViewCellAccessoryNone:
 			break;
+			
 		default:
-			NSLog(@"Warning: Sizing for UITableViewCellAccessoryDetailButton not implemented on %@", NSStringFromClass([self class]));
+			NSLog(@"Warning: accessoryType %d not implemented on %@", self.accessoryType, NSStringFromClass([self class]));
 			break;
-	}
-	
-	// reduce width for grouped table views
-	if (tableView.style == UITableViewStyleGrouped)
-	{
-		// left and right 10 px margins on grouped table views
-		contentWidth -= 20;
 	}
 	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];
@@ -136,7 +171,6 @@
 }
 
 #pragma mark Properties
-
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
