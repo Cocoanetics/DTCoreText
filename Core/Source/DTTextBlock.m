@@ -15,6 +15,19 @@
 	DTColor *_backgroundColor;
 }
 
+- (NSUInteger)hash
+{
+	NSUInteger calcHash = 7;
+	
+	calcHash = calcHash*31 + [_backgroundColor hash];
+	calcHash = calcHash*31 + (NSUInteger)_padding.left;
+	calcHash = calcHash*31 + (NSUInteger)_padding.top;
+	calcHash = calcHash*31 + (NSUInteger)_padding.right;
+	calcHash = calcHash*31 + (NSUInteger)_padding.bottom;
+	
+	return calcHash;
+}
+
 - (BOOL)isEqual:(id)object
 {
 	if (!object)
