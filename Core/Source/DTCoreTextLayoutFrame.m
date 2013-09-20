@@ -483,7 +483,14 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding;
 		}
 		
-		CGFloat offset = headIndent + totalLeftPadding;
+		
+		CGFloat offset = totalLeftPadding;
+		
+		// if first character is a tab, then it is positioned without the indentation
+		if (![[[_attributedStringFragment string] substringWithRange:NSMakeRange(lineRange.location, 1)] isEqualToString:@"\t"])
+		{
+			offset += headIndent;
+		}
 		
 		// find how many characters we get into this line
 		lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, availableSpace);
