@@ -44,6 +44,41 @@
 	return [builder generatedAttributedString];
 }
 
+- (NSRange)_effectiveRangeOfFontAtIndex:(NSUInteger)index inAttributedString:(NSAttributedString *)attributedString font:(CTFontRef *)font
+{
+	NSRange totalEffectiveRange = NSMakeRange(index, 0);
+	CTFontRef searchFont = NULL;
+	
+	while (index < [attributedString length])
+	{
+		NSRange range;
+		CTFontRef foundFont = (__bridge CTFontRef)([attributedString attribute:(id)kCTFontAttributeName atIndex:index effectiveRange:&range]);
+		
+		if (searchFont)
+		{
+			if (searchFont != foundFont)
+			{
+				break;
+			}
+		}
+		else
+		{
+			searchFont = foundFont;
+		}
+		
+		totalEffectiveRange = NSUnionRange(totalEffectiveRange, range);
+		
+		index = NSMaxRange(range);
+	}
+	
+	if (font)
+	{
+		*font = searchFont;
+	}
+	
+	return totalEffectiveRange;
+}
+
 #pragma mark - Whitespace
 
 - (void)testSpaceBetweenUnderlines
@@ -228,8 +263,8 @@
 	NSRange thirdParagraphRange = [[output string] rangeOfParagraphsContainingRange:NSMakeRange(paraEndIndex, 0) parBegIndex:NULL parEndIndex:NULL];
 	STAssertEquals(NSMakeRange(3, 1), thirdParagraphRange, @"Second Paragraph Range should be {14,14}");
 	
-	NSRange firstParagraphFontRange;
-	CTFontRef firstParagraphFont = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:firstParagraphRange.location effectiveRange:&firstParagraphFontRange]);
+	CTFontRef firstParagraphFont;
+	NSRange firstParagraphFontRange = [self _effectiveRangeOfFontAtIndex:firstParagraphRange.location inAttributedString:output font:&firstParagraphFont];
 	
 	STAssertNotNil((__bridge id)firstParagraphFont, @"First paragraph font is missing");
 	
@@ -238,8 +273,8 @@
 		STAssertEquals(firstParagraphRange, firstParagraphFontRange, @"Range Font in first paragraph is not full paragraph");
 	}
 
-	NSRange secondParagraphFontRange;
-	CTFontRef secondParagraphFont = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:secondParagraphRange.location effectiveRange:&secondParagraphFontRange]);
+	CTFontRef secondParagraphFont;
+	NSRange secondParagraphFontRange = [self _effectiveRangeOfFontAtIndex:secondParagraphRange.location inAttributedString:output font:&secondParagraphFont];
 	
 	STAssertNotNil((__bridge id)secondParagraphFont, @"Second paragraph font is missing");
 	
@@ -248,8 +283,8 @@
 		STAssertEquals(secondParagraphFontRange, secondParagraphRange, @"Range Font in second paragraph is not full paragraph");
 	}
 	
-	NSRange thirdParagraphFontRange;
-	CTFontRef thirdParagraphFont = (__bridge CTFontRef)([output attribute:(id)kCTFontAttributeName atIndex:thirdParagraphRange.location effectiveRange:&thirdParagraphFontRange]);
+	CTFontRef thirdParagraphFont;
+	NSRange thirdParagraphFontRange = [self _effectiveRangeOfFontAtIndex:thirdParagraphRange.location inAttributedString:output font:&thirdParagraphFont];
 	
 	STAssertNotNil((__bridge id)secondParagraphFont, @"Third paragraph font is missing");
 	
@@ -454,8 +489,8 @@
 	
 	[string enumerateSubstringsInRange:entireStringRange options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
 		
-		NSRange fontRange;
-		CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(id)kCTFontAttributeName atIndex:substringRange.location effectiveRange:&fontRange]);
+		CTFontRef font;
+		NSRange fontRange = [self _effectiveRangeOfFontAtIndex:substringRange.location inAttributedString:attributedString font:&font];
 		
 		STAssertEquals(enclosingRange, fontRange, @"Font should be on entire string");
 		
@@ -506,8 +541,8 @@
 {
 	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:'American Typewriter',sans-serif\">Text</p>" options:nil];
 	
-	NSRange fontRange;
-	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	CTFontRef font;
+	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
 	
 	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
 	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
@@ -522,8 +557,8 @@
 {
 	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<p style=\"font-family:foo,'American Typewriter'\">Text</p>" options:nil];
 	
-	NSRange fontRange;
-	CTFontRef font = (__bridge CTFontRef)([attributedString attribute:(__bridge id)kCTFontAttributeName atIndex:0 effectiveRange:&fontRange]);
+	CTFontRef font;
+	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
 	
 	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
 	STAssertEquals(fontRange, expectedRange, @"Font should be entire length");
@@ -739,7 +774,7 @@
 	NSDictionary *attributes3 = [output attributesAtIndex:index3 effectiveRange:NULL];
 	NSNumber *underLine3 = [output attribute:(id)kCTUnderlineStyleAttributeName atIndex:index3 effectiveRange:NULL];
 	STAssertTrue([underLine3 integerValue]==1, @"Third item should be underlined");
-	NSNumber *strikeThrough3 = [output attribute:NSStrikethroughStyleAttributeName atIndex:index3 effectiveRange:NULL];
+	NSNumber *strikeThrough3 = [output attribute:DTStrikeOutAttribute atIndex:index3 effectiveRange:NULL];
 	STAssertTrue([strikeThrough3 integerValue]==1, @"Third item should have strike through");
 	DTColor *foreground3 = [attributes3 foregroundColor];
 	NSString *foreground3HTML = DTHexStringFromDTColor(foreground3);
