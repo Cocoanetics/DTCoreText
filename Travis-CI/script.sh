@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
 
-xctool project DTCoreText.xcodeproj -scheme DemoApp build -sdk iphonesimulator
-xctool project DTCoreText.xcodeproj -scheme DemoApp test -sdk iphonesimulator
-xctool project DTCoreText.xcodeproj -scheme MacUnitTest test
+xctool project DTCoreText.xcodeproj -scheme DemoApp build -sdk iphonesimulator -arch i386
+xctool project DTCoreText.xcodeproj -scheme DemoApp test -sdk iphonesimulator -arch i386
+xctool project DTCoreText.xcodeproj -scheme MacUnitTest test -arch x86_64
