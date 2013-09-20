@@ -1312,7 +1312,7 @@ NSDictionary *_classesForNames = nil;
 	_textScale = element.textScale;
 	
 	// only inherit background-color from inline elements
-	if (element.displayStyle == DTHTMLElementDisplayStyleInline)
+	if (element.displayStyle == DTHTMLElementDisplayStyleInline || element.displayStyle == DTHTMLElementDisplayStyleListItem)
 	{
 		self.backgroundColor = element.backgroundColor;
 	}
