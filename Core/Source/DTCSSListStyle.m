@@ -246,6 +246,53 @@
 	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, (int)_type, (int)_position];
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (!object)
+	{
+		return NO;
+	}
+	
+	if (object == self)
+	{
+		return YES;
+	}
+	
+	if (![object isKindOfClass:[DTCSSListStyle class]])
+	{
+		return NO;
+	}
+	
+	DTCSSListStyle *otherListStyle = object;
+	
+	if (_inherit != otherListStyle->_inherit)
+	{
+		return NO;
+	}
+	
+	if (_type != otherListStyle->_type)
+	{
+		return NO;
+	}
+	
+	if (_position != otherListStyle->_position)
+	{
+		return NO;
+	}
+	
+	if (_startingItemNumber != otherListStyle->_startingItemNumber)
+	{
+		return NO;
+	}
+	
+	if (_imageName == otherListStyle->_imageName)
+	{
+		return YES;
+	}
+	
+	return ([_imageName isEqualToString:otherListStyle->_imageName]);
+}
+
 #pragma mark Copying
 
 - (id)copyWithZone:(NSZone *)zone
