@@ -15,14 +15,22 @@
 	DTColor *_backgroundColor;
 }
 
-- (BOOL) isEqual:(id)object
+- (BOOL)isEqual:(id)object
 {
-	if (object == self)
-		return YES;
-	
-	if (!object ||
-		![object isKindOfClass:[DTTextBlock class]])
+	if (!object)
+	{
 		return NO;
+	}
+	
+	if (object == self)
+	{
+		return YES;
+	}
+	
+	if (![object isKindOfClass:[DTTextBlock class]])
+	{
+		return NO;
+	}
 	
 	DTTextBlock *other = object;
 	
@@ -35,7 +43,9 @@
 	}
 	
 	if (other->_backgroundColor == _backgroundColor)
+	{
 		return YES;
+	}
 	
 	return [other->_backgroundColor isEqual:_backgroundColor];
 }
