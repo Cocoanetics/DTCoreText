@@ -731,6 +731,27 @@
 	}];
 }
 
+// issue 613
+- (void)testBackgroundColorTransferFromListItemToText
+{
+	NSAttributedString *attributedString = [self _attributedStringFromHTMLString:@"<ul><li style=\"background-color:red\">12345" options:nil];
+	
+	NSRange effectiveRange;
+	NSDictionary *attributes = [attributedString attributesAtIndex:4 effectiveRange:&effectiveRange];
+	
+	DTColor *backgroundColor = [attributes backgroundColor];
+	
+	STAssertNotNil(backgroundColor, @"Missing Background Color");
+	
+	NSRange expectedRange = NSMakeRange(3, 5);
+	
+	STAssertEquals(effectiveRange, expectedRange, @"Range is not correct");
+	
+	NSString *colorHex = DTHexStringFromDTColor(backgroundColor);
+	
+	STAssertEqualObjects(colorHex, @"ff0000", @"Color should be red");
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
