@@ -246,6 +246,19 @@
 	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, (int)_type, (int)_position];
 }
 
+- (NSUInteger)hash
+{
+	NSUInteger calcHash = 7;
+	
+	calcHash = calcHash*31 + [_imageName hash];
+	calcHash = calcHash*31 + (NSUInteger)_type;
+	calcHash = calcHash*31 + (NSUInteger)_position;
+	calcHash = calcHash*31 + (NSUInteger)_startingItemNumber;
+	calcHash = calcHash*31 + (NSUInteger)_inherit;
+	
+	return calcHash;
+}
+
 - (BOOL)isEqual:(id)object
 {
 	if (!object)
