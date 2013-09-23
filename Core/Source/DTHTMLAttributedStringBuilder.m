@@ -776,7 +776,7 @@
 									if ([_tmpString length] && ![[_tmpString string] hasSuffix:@"\n"])
 									{
 										// trim off whitespace
-										while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+										while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
 										{
 											[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
 										}

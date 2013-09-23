@@ -49,7 +49,7 @@ static NSCharacterSet *_cssLengthUnitCharacterSet = nil;
 	static dispatch_once_t predicate;
 	
 	dispatch_once(&predicate, ^{
-		NSMutableCharacterSet *tmpSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		NSMutableCharacterSet *tmpSet = [NSMutableCharacterSet whitespaceAndNewlineCharacterSet];
 		
 		// remove all special unicode space characters
 		[tmpSet removeCharactersInString:UNICODE_NON_BREAKING_SPACE];
