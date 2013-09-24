@@ -72,7 +72,8 @@
 		
 		STAssertEqualObjects(paraStyle1, paraStyle2, @"Paragraph Styles in range %@ should be equal", NSStringFromRange(substringRange));
 		
-		NSString *prefix1 = [attributes1 objectForKey:DTListPrefixField];
+		NSRange prefixRange;
+		NSString *prefix1 = [string1 attribute:DTListPrefixField atIndex:substringRange.location effectiveRange:&prefixRange];
 		NSString *prefix2 = [attributes1 objectForKey:DTListPrefixField];
 		
 		STAssertEqualObjects(prefix1, prefix2, @"List prefix fields should be equal in range %@", NSStringFromRange(substringRange));
@@ -81,6 +82,18 @@
 		NSArray *lists2 = [attributes2 objectForKey:DTTextListsAttribute];
 		
 		STAssertEqualObjects(lists1, lists2, @"Lists should be equal in range %@", NSStringFromRange(substringRange));
+		
+		
+		if (NSMaxRange(prefixRange) < NSMaxRange(enclosingRange))
+		{
+			attributes1 = [string1 attributesAtIndex:NSMaxRange(prefixRange) effectiveRange:NULL];
+			attributes2 = [string2 attributesAtIndex:NSMaxRange(prefixRange) effectiveRange:NULL];
+			
+			paraStyle1 = [attributes1 paragraphStyle];
+			paraStyle2 = [attributes2 paragraphStyle];
+			
+			STAssertEqualObjects(paraStyle1, paraStyle2, @"Paragraph Styles following prefix in range %@ should be equal", NSStringFromRange(substringRange));
+		}
 	}];
 }
 
