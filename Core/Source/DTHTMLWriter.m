@@ -91,7 +91,7 @@
 	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],(int)index];
 }
 
-- (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag inlineStyles:(BOOL)inlineStyles
+- (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag paragraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle inlineStyles:(BOOL)inlineStyles
 {
 	BOOL isOrdered = NO;
 	
@@ -229,7 +229,13 @@
 			blockElement = @"ul";
 		}
 		
-		NSString *listStyleString = [NSString stringWithFormat:@"list-style='%@';", typeString];
+		NSString *listStyleString = [NSString stringWithFormat:@"list-style:'%@';", typeString];
+		
+		if (paragraphStyle.headIndent>0)
+		{
+			listStyleString = [listStyleString stringByAppendingFormat:@"-webkit-padding-start:%.0fpx;padding-left:%.0fpx;", paragraphStyle.headIndent, paragraphStyle.headIndent];
+		}
+		
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
 		
 		if (inlineStyles)
@@ -263,6 +269,8 @@
 	NSInteger location = 0;
 	
 	NSArray *previousListStyles = nil;
+	
+	NSMutableArray *tagStack = [NSMutableArray array];
 	
 	for (NSUInteger i=0; i<[paragraphs count]; i++)
 	{
@@ -305,7 +313,7 @@
 		DTCoreTextParagraphStyle *paragraphStyle = [paraAttributes paragraphStyle];
 		NSString *paraStyleString = nil;
 		
-		if (paragraphStyle)
+		if (paragraphStyle && !effectiveListStyle)
 		{
 			if (_textScale!=1.0f)
 			{
@@ -365,10 +373,12 @@
 				}
 				
 				// end of a list block
-				[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES inlineStyles:fragment]];
+				[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES paragraphStyle:paragraphStyle inlineStyles:fragment]];
 				[retString appendString:@"\n"];
 				
 				[closingStyles removeLastObject];
+				
+				[tagStack removeLastObject];
 				
 				previousListStyles = closingStyles;
 			}
@@ -382,8 +392,46 @@
 			
 			if (![previousListStyles containsObject:effectiveListStyle])
 			{
+				NSString *name;
+				
+				if ([effectiveListStyle isOrdered])
+				{
+					name = @"ol";
+				}
+				else
+				{
+					name = @"ul";
+				}
+				
+				DTHTMLElement *listElement = [[DTHTMLElement alloc] initWithName:name attributes:nil];
+				DTHTMLElement *parentElement = [tagStack lastObject];
+				
+				if (parentElement)
+				{
+					[parentElement addChildNode:listElement];
+				}
+				
+				[tagStack addObject:listElement];
+				
+				if (paragraphStyle)
+				{
+					CGFloat indentOfParents = 0;
+					
+					DTHTMLElement *parent = listElement.parentElement;
+					while (parent)
+					{
+						indentOfParents += parent.padding.left;
+						
+						parent = parent.parentElement;
+					}
+					
+					listElement.padding = DTEdgeInsetsMake(0, paragraphStyle.headIndent - indentOfParents, 0, 0);
+				}
+				
+				paragraphStyle.headIndent = listElement.padding.left;
+				
 				// beginning of a list block
-				[retString appendString:[self _tagRepresentationForListStyle:effectiveListStyle closingTag:NO inlineStyles:fragment]];
+				[retString appendString:[self _tagRepresentationForListStyle:effectiveListStyle closingTag:NO paragraphStyle:paragraphStyle inlineStyles:fragment]];
 				[retString appendString:@"\n"];
 			}
 			
@@ -848,8 +896,10 @@
 			DTCSSListStyle *closingStyle = [closingStyles lastObject];
 			
 			// end of a list block
-			[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES inlineStyles:fragment]];
+			[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES paragraphStyle:nil inlineStyles:fragment]];
 			[retString appendString:@"\n"];
+			
+			[tagStack removeLastObject];
 			
 			[closingStyles removeLastObject];
 		}
