@@ -6,8 +6,11 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import "DTCoreTextTestCase.h"
 
-@interface DTHTMLWriterTest : SenTestCase
+/**
+ Unit tests related to DTHTMLWriter
+ */
+@interface DTHTMLWriterTest : DTCoreTextTestCase
 
 @end
