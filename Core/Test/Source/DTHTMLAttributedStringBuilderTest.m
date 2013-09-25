@@ -781,6 +781,32 @@
 	STAssertEquals(innerParagraph, list2Range, @"Inner list range should be equal to inner paragraph");
 }
 
+
+// issue 625
+- (void)testEmptyListItemWithSubList
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>" options:NULL];
+	
+	NSRange firstParagraphRange = [[attributedString string] paragraphRangeForRange:NSMakeRange(0, 1)];
+	
+	// first paragraph should have two lists
+	NSArray *firstParagraphLists = [attributedString attribute:DTTextListsAttribute atIndex:0 effectiveRange:NULL];
+	
+	NSUInteger firstListsCount = [firstParagraphLists count];
+	
+	STAssertTrue(firstListsCount == 2, @"There should be two lists on the first paragraph");
+	
+	// all lists in the first paragraph should be at least covering the entire paragraph
+	
+	[firstParagraphLists enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
+		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:0];
+		
+		NSRange commonRange = NSIntersectionRange(listRange, firstParagraphRange);
+		
+		STAssertTrue(NSEqualRanges(commonRange, firstParagraphRange), @"List %d does not cover entire paragraph", idx+1);
+	}];
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
