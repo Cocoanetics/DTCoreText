@@ -832,7 +832,35 @@
 			}
 		}];  // end of SPAN loop
 
-		[retString appendFormat:@"</%@>", blockElement];
+		
+		if ([blockElement isEqualToString:@"li"])
+		{
+			BOOL shouldCloseLI = YES;
+
+			NSUInteger nextParagraphStart = NSMaxRange([plainString paragraphRangeForRange:paragraphRange]);
+			
+			if (nextParagraphStart < [plainString length])
+			{
+				NSArray *nextListStyles = [_attributedString attribute:DTTextListsAttribute atIndex:nextParagraphStart effectiveRange:NULL];
+				
+				// LI are only closed if there is not a deeper list level following
+				if (nextListStyles && [nextListStyles containsObject:effectiveListStyle] && [nextListStyles count] > [currentListStyles count])
+				{
+					// deeper list following
+					shouldCloseLI = NO;
+				}
+			}
+			
+			if (shouldCloseLI)
+			{
+				[retString appendString:@"</li>"];
+			}
+		}
+		else
+		{
+			// other blocks are always closed
+			[retString appendFormat:@"</%@>", blockElement];
+		}
 		
 		previousListStyles = [currentListStyles copy];
 	}  // end of P loop
@@ -850,6 +878,11 @@
 			// end of a list block
 			[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES inlineStyles:fragment]];
 			[retString appendString:@"\n"];
+			
+			if ([closingStyles count]>1)
+			{
+				[retString appendString:@"</li>"];
+			}
 			
 			[closingStyles removeLastObject];
 		}
