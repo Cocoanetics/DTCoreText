@@ -110,7 +110,7 @@
 		 // calculate the actual range
 		 NSRange actualRange = enclosingRange;  // includes a potential \n
 		 actualRange.location += totalRange.location;
-
+		 
 		 if (NSLocationInRange(location, actualRange))
 		 {
 			 *stop = YES;
@@ -124,73 +124,70 @@
 	return [currentCounterNum integerValue];
 }
 
-
 - (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
 	@synchronized(self)
 	{
-	NSUInteger searchIndex = location;
-	
-	NSArray *arrayAtIndex;
-	NSUInteger minFoundIndex = NSUIntegerMax;
-	NSUInteger maxFoundIndex = 0;
-	
-	BOOL foundList = NO;
-	
-	do 
-	{
-		NSRange effectiveRange;
-		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
+		NSUInteger searchIndex = location;
 		
-		if([arrayAtIndex containsObject:object])
+		NSArray *arrayAtIndex;
+		NSUInteger minFoundIndex = NSUIntegerMax;
+		NSUInteger maxFoundIndex = 0;
+		
+		BOOL foundList = NO;
+		
+		do
 		{
-			foundList = YES;
+			NSRange effectiveRange;
+			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 			
-			searchIndex = effectiveRange.location;
+			if ([arrayAtIndex indexOfObjectIdenticalTo:object] != NSNotFound)
+			{
+				foundList = YES;
+				
+				searchIndex = effectiveRange.location;
+				
+				minFoundIndex = MIN(minFoundIndex, searchIndex);
+				maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			}
 			
-			minFoundIndex = MIN(minFoundIndex, searchIndex);
+			if (!searchIndex || !foundList)
+			{
+				// reached beginning of string
+				break;
+			}
+			
+			searchIndex--;
+		}
+		while (foundList && searchIndex>0);
+		
+		// if we didn't find the list at all, return
+		if (!foundList)
+		{
+			return NSMakeRange(0, NSNotFound);
+		}
+		
+		// now search forward
+		
+		searchIndex = maxFoundIndex;
+		
+		while (searchIndex < [self length])
+		{
+			NSRange effectiveRange;
+			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
+			
+			if ([arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
+			{
+				break;
+			}
+			
+			searchIndex = NSMaxRange(effectiveRange);
+			
+			minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
 			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
 		}
 		
-		if (!searchIndex || !foundList)
-		{
-			// reached beginning of string
-			break;
-		}
-		
-		searchIndex--;
-	} 
-	while (foundList && searchIndex>0);
-	
-	// if we didn't find the list at all, return 
-	if (!foundList)
-	{
-		return NSMakeRange(0, NSNotFound);
-	}
-	
-	// now search forward
-	
-	searchIndex = maxFoundIndex;
-	
-	while (searchIndex < [self length])
-	{
-		NSRange effectiveRange;
-		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
-		
-		foundList = [arrayAtIndex containsObject:object];
-		
-		if (!foundList)
-		{
-			break;
-		}
-		
-		searchIndex = NSMaxRange(effectiveRange);
-		
-		minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
-		maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
-	}
-	
-	return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+		return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
 	}
 }
 
@@ -209,7 +206,7 @@
 - (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
 {
 	NSParameterAssert(textBlock);
-
+	
 	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
@@ -349,7 +346,7 @@
 		}
 		
 		// second tab is for the beginning of first line after bullet
-		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];	
+		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];
 	}
 	
 	if (font)
@@ -471,7 +468,7 @@
 #endif
 			
 			// add attachment
-			[newAttributes setObject:attachment forKey:NSAttachmentAttributeName];				
+			[newAttributes setObject:attachment forKey:NSAttachmentAttributeName];
 			
 			if (listStyle.position == DTCSSListStylePositionInside)
 			{
