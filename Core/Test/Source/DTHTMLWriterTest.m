@@ -63,7 +63,7 @@
 	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
 	NSRange twoAOutsideOL = [html rangeOfString:@"2a</span><ol"];
-	STAssertTrue(twoAOutsideOL.location != NSNotFound, @"List item 2a should not be outside the ordered list");
+	STAssertTrue(twoAOutsideOL.location == NSNotFound, @"List item 2a should not be outside the ordered list");
 }
 
 @end
