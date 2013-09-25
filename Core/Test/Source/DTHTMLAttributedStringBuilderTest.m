@@ -752,6 +752,37 @@
 	STAssertEqualObjects(colorHex, @"ff0000", @"Color should be red");
 }
 
+- (void)testTextListRanges
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>" options:NULL];
+	
+	NSArray *lists = [attributedString attribute:DTTextListsAttribute atIndex:0 effectiveRange:NULL];
+	
+	STAssertTrue([lists count]==1, @"There should be 1 outer list");
+	
+	DTCSSListStyle *outerList = [lists lastObject];
+	
+	NSRange list1Range = [attributedString rangeOfTextList:outerList atIndex:0];
+	
+	STAssertTrue(!list1Range.location, @"lists should start at index 0");
+	STAssertTrue(list1Range.length, @"lists should range for entire string");
+	
+	NSRange innerRange = [[attributedString string] rangeOfString:@"2a"];
+	NSArray *innerLists = [attributedString attribute:DTTextListsAttribute atIndex:innerRange.location effectiveRange:NULL];
+	
+	STAssertTrue([innerLists count]==2, @"There should be 2 inner lists");
+	
+	if ([innerLists count])
+	{
+		STAssertTrue([innerLists objectAtIndex:0] == outerList , @"list at index 0 in inner lists should be same as outer list");
+	}
+	
+	NSRange list2Range = [attributedString rangeOfTextList:[innerLists lastObject] atIndex:innerRange.location];
+	NSRange innerParagraph = [[attributedString string] paragraphRangeForRange:innerRange];
+	
+	STAssertEquals(innerParagraph, list2Range, @"Inner list range should be equal to inner paragraph");
+}
+
 #pragma mark - CSS Tests
 
 // issue 544
