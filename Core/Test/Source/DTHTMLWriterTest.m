@@ -49,6 +49,9 @@
 	
 	NSRange rangeLIUL = [html rangeOfString:@"</li><ul"];
 	STAssertTrue(rangeLIUL.location == NSNotFound, @"List Items should not be closed before UL");
+	
+	NSRange rangeSpanUL = [html rangeOfString:@"</span></ul"];
+	STAssertTrue(rangeSpanUL.location == NSNotFound, @"Missing LI between span and UL");
 }
 
 @end
