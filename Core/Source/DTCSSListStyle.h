@@ -202,6 +202,18 @@ typedef NS_ENUM(NSUInteger, DTCSSListStylePosition)
 
 
 /**
+ @name Comparing Lists
+ */
+
+/**
+ Determine if another list style has equivalent settings. Note that this does not mean that they are identical, only that they look the same.
+ @param otherListStyle The other list style to compare the receiver with
+ @returns `YES` if the other list style has the same values
+ */
+- (BOOL)isEqualToListStyle:(DTCSSListStyle *)otherListStyle;
+
+
+/**
  @name Getting Information about Lists
  */
 
@@ -211,7 +223,6 @@ typedef NS_ENUM(NSUInteger, DTCSSListStylePosition)
  @returns `YES` if the receiver is ordered, `NO` if it is unordered
  */
 - (BOOL)isOrdered;
-
 
 /**
  If the list style is inherited.

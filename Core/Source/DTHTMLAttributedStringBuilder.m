@@ -420,6 +420,7 @@
 		
 		// append this list style to the current paragraph style text lists
 		NSMutableArray *textLists = [_currentTag.paragraphStyle.textLists mutableCopy];
+		
 		if (!textLists)
 		{
 			textLists = [NSMutableArray array];

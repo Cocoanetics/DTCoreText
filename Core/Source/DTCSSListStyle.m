@@ -259,24 +259,25 @@
 	return calcHash;
 }
 
-- (BOOL)isEqual:(id)object
+/*
+ Note: this is not isEqual: because on iOS 7 -[NSMutableAttributedString initWithString:attributes:] calls this via -[NSArray isEqualToArray:]. There isEqual: needs to be returning NO, because otherwise there is some weird internal caching side effect where it reuses previous list arrays
+ */
+- (BOOL)isEqualToListStyle:(DTCSSListStyle *)otherListStyle
 {
-	if (!object)
+	if (!otherListStyle)
 	{
 		return NO;
 	}
 	
-	if (object == self)
+	if (otherListStyle == self)
 	{
 		return YES;
 	}
 	
-	if (![object isKindOfClass:[DTCSSListStyle class]])
+	if (![otherListStyle isKindOfClass:[DTCSSListStyle class]])
 	{
 		return NO;
 	}
-	
-	DTCSSListStyle *otherListStyle = object;
 	
 	if (_inherit != otherListStyle->_inherit)
 	{
