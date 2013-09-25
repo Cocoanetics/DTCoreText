@@ -66,6 +66,8 @@
 		A7081EA415036460002987F1 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7081EA515036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
 		A7081EA615036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
+		A709184A17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A709184917F2CF200092F436 /* DTCoreTextTestCase.m */; };
+		A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A709184917F2CF200092F436 /* DTCoreTextTestCase.m */; };
 		A70B4C9F1486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70B4CA01486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70E62D616C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -900,6 +902,8 @@
 		A704C93913901FDB0045CFC6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A7081EA11503645F002987F1 /* DTTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextBlock.h; sourceTree = "<group>"; };
 		A7081EA215036460002987F1 /* DTTextBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextBlock.m; sourceTree = "<group>"; };
+		A709184817F2CF200092F436 /* DTCoreTextTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextTestCase.h; sourceTree = "<group>"; };
+		A709184917F2CF200092F436 /* DTCoreTextTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextTestCase.m; sourceTree = "<group>"; };
 		A70B4C9C1486525200873A4A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		A70B4C9D1486525200873A4A /* Readme.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.markdown; path = ../Readme.markdown; sourceTree = "<group>"; };
 		A70B4C9E1486558200873A4A /* DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = DTCoreText.h; path = Core/Source/DTCoreText.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1662,6 +1666,8 @@
 				A7985E1D178ECEFE005D40B2 /* Utilities */,
 				A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */,
 				A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */,
+				A709184817F2CF200092F436 /* DTCoreTextTestCase.h */,
+				A709184917F2CF200092F436 /* DTCoreTextTestCase.m */,
 				A7E3346C16837482002EFCBE /* DTCSSStylesheetTest.h */,
 				A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */,
 				A7DBC1B51689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.h */,
@@ -2618,6 +2624,7 @@
 				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */,
+				A709184A17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 				A7985E0D178ECD86005D40B2 /* DTHTMLWriterTest.m in Sources */,
 			);
@@ -2636,6 +2643,7 @@
 				A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
 				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
+				A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */,
 				A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */,
 			);

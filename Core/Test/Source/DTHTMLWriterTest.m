@@ -12,22 +12,6 @@
 
 @implementation DTHTMLWriterTest
 
-- (NSAttributedString *)_attributedStringFromHTMLString:(NSString *)HTMLString options:(NSDictionary *)options
-{
-	NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-	
-	// set the base URL so that resources are found in the resource bundle
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSURL *baseURL = [bundle resourceURL];
-	
-	NSMutableDictionary *mutableOptions = [[NSMutableDictionary alloc] initWithDictionary:options];
-	mutableOptions[NSBaseURLDocumentOption] = baseURL;
-	
-	
-	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:mutableOptions documentAttributes:NULL];
-	return [builder generatedAttributedString];
-}
-
 - (void)testBackgroundColor
 {
 	// create attributed string
@@ -43,7 +27,7 @@
 	// generate html
 	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedText];
 	writer.useAppleConvertedSpace = NO;
-	NSString* html = [writer HTMLFragment];
+	NSString *html = [writer HTMLFragment];
 	
 	NSRange colorRange = [html rangeOfString:@"background-color:#ffff00"];
 
@@ -52,13 +36,13 @@
 	
 - (void)_testListIndentRoundTripFromHTML:(NSString *)HTML
 {
-	NSAttributedString *string1 = [self _attributedStringFromHTMLString:HTML options:nil];
+	NSAttributedString *string1 = [self attributedStringFromHTMLString:HTML options:nil];
 	
 	// generate html
 	DTHTMLWriter *writer1 = [[DTHTMLWriter alloc] initWithAttributedString:string1];
 	NSString* html1 = [writer1 HTMLFragment];
 	
-	NSAttributedString *string2 = [self _attributedStringFromHTMLString:html1 options:nil];
+	NSAttributedString *string2 = [self attributedStringFromHTMLString:html1 options:nil];
 	
 	STAssertTrue([string1 length] == [string2 length], @"Roundtripped string should be of equal length");
 
@@ -112,17 +96,37 @@
 	[self _testListIndentRoundTripFromHTML:@"<ul><li>fooo</li><li>fooo</li><li>fooo</li></ul>"];
 }
 
-/*
- --- needs fix for nested list writing first, the first LI gets closed before the UL opening
+
+// --- needs fix for nested list writing first, the first LI gets closed before the UL opening
 - (void)testNestedListRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ol><li>1a<ul><li>2a<ol><li>3a</li></ol></li></ul></li></ol>"];
+	[self _testListIndentRoundTripFromHTML:@"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"];
 }
- */
+
 
 - (void)testNestedListWithPaddingRoundTrip
 {
 	[self _testListIndentRoundTripFromHTML:@"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>"];
+}
+
+#pragma mark - List Output
+
+- (void)testNestedListOutput
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></ul></li></ol>" options:NULL];
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+	
+	NSRange rangeLILI = [html rangeOfString:@"</li></ul></li></ol>"];
+	STAssertTrue(rangeLILI.location != NSNotFound, @"List Items should be closed next to each other");
+	
+	NSRange rangeLIUL = [html rangeOfString:@"</li><ul"];
+	STAssertTrue(rangeLIUL.location == NSNotFound, @"List Items should not be closed before UL");
+	
+	NSRange rangeSpanUL = [html rangeOfString:@"</span></ul"];
+	STAssertTrue(rangeSpanUL.location == NSNotFound, @"Missing LI between span and UL");
 }
 
 @end
