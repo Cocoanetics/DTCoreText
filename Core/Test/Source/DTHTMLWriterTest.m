@@ -132,6 +132,11 @@
 	[self _testListIndentRoundTripFromHTML:@"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>"];
 }
 
+- (void)testNestedListOutputWithoutTextNodeRoundTrip
+{
+	[self _testListIndentRoundTripFromHTML:@"<ul><li><ol><li>2a</li><li>2b</li></ol></li><li>1a</li></ul>"];
+}
+
 - (void)testNestedListOutput
 {
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></ul></li></ol>" options:NULL];
