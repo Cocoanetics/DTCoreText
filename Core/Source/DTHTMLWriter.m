@@ -390,7 +390,7 @@
 			// next text needs to have list prefix removed
 			needsToRemovePrefix = YES;
 			
-			if (![previousListStyles containsObject:effectiveListStyle])
+			if (!previousListStyles || ([previousListStyles indexOfObjectIdenticalTo:effectiveListStyle] == NSNotFound))
 			{
 				NSString *name;
 				
@@ -892,7 +892,7 @@
 				NSArray *nextListStyles = [_attributedString attribute:DTTextListsAttribute atIndex:nextParagraphStart effectiveRange:NULL];
 				
 				// LI are only closed if there is not a deeper list level following
-				if (nextListStyles && [nextListStyles containsObject:effectiveListStyle] && [nextListStyles count] > [currentListStyles count])
+				if (nextListStyles && ([nextListStyles indexOfObjectIdenticalTo:effectiveListStyle]!=NSNotFound) && [nextListStyles count] > [currentListStyles count])
 				{
 					// deeper list following
 					shouldCloseLI = NO;
