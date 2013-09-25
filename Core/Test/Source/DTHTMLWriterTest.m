@@ -57,7 +57,6 @@
 - (void)testNestedListOutputWithoutTextNode
 {
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ul><li><ol><li>2a</li><li>2b</li></ol></li><li>1a</li></ul>" options:NULL];
-//	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li><ul><li>1a</li></ul></li><li>1b</li></ol>" options:NULL];
 	
 	// generate html
 	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
