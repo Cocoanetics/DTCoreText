@@ -27,11 +27,28 @@
 	// generate html
 	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedText];
 	writer.useAppleConvertedSpace = NO;
-	NSString* html = [writer HTMLFragment];
+	NSString *html = [writer HTMLFragment];
 	
 	NSRange colorRange = [html rangeOfString:@"background-color:#ffff00"];
 
 	STAssertTrue(colorRange.location != NSNotFound,  @"html should contains background-color:#ffff00");
+}
+
+#pragma mark - List Output
+
+- (void)testNestedListOutput
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></li></ol>" options:NULL];
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	NSString* html = [writer HTMLFragment];
+	
+	NSRange rangeLILI = [html rangeOfString:@"</li></li>"];
+	STAssertTrue(rangeLILI.location != NSNotFound, @"List Items should be closed next to each other");
+	
+	NSRange rangeLIUL = [html rangeOfString:@"</li><ul"];
+	STAssertTrue(rangeLIUL.location == NSNotFound, @"List Items should not be closed before UL");
 }
 
 @end
