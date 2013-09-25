@@ -38,13 +38,13 @@
 
 - (void)testNestedListOutput
 {
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></li></ol>" options:NULL];
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></ul></li></ol>" options:NULL];
 	
 	// generate html
 	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
-	NSString* html = [writer HTMLFragment];
+	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
-	NSRange rangeLILI = [html rangeOfString:@"</li></li>"];
+	NSRange rangeLILI = [html rangeOfString:@"</li></ul></li></ol>"];
 	STAssertTrue(rangeLILI.location != NSNotFound, @"List Items should be closed next to each other");
 	
 	NSRange rangeLIUL = [html rangeOfString:@"</li><ul"];
