@@ -153,6 +153,19 @@
 	STAssertTrue(![characterBeforeFirstRange isEqualToString:@"\n"], @"Character before First should not be \n");
 }
 
+// issue 617: extra \n causes paragraph break
+- (void)testSuperfluousParagraphBreakAfterBR
+{
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps;\">one<br>\ntwo</h1>" options:nil];
+	NSString *plainText = [output string];
+	
+	NSRange twoRange = [plainText rangeOfString:@"TWO"];
+	
+	NSString *charBeforeTwo = [plainText substringWithRange:NSMakeRange(twoRange.location-1, 1)];
+	
+	STAssertFalse([charBeforeTwo isEqualToString:@"\n"], @"Superfluous NL following BR");
+}
+
 #pragma mark - General Tests
 
 // tests functionality of dir attribute
