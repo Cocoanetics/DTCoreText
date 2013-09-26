@@ -426,7 +426,10 @@ NSDictionary *_classesForNames = nil;
 						// we already have a white space in the string so far
 						if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
 						{
-							while ([[nodeString string] hasPrefix:@" "])
+							// following e.g. a BR we don't want a space or NL
+							NSCharacterSet *charactersToIgnore = [NSCharacterSet characterSetWithCharactersInString:@" \n"];
+							
+							while ([[nodeString string] hasPrefixCharacterFromSet:charactersToIgnore])
 							{
 								nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
 							}
