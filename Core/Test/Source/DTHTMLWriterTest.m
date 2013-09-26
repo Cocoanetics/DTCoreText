@@ -126,6 +126,23 @@
 	[self _testListIndentRoundTripFromHTML:@"<ul><li>fooo</li><li>fooo</li><li>fooo</li></ul>"];
 }
 
+- (void)testSimpleListRoundTripWithTextScale
+{
+	CGFloat textSize = 32.0f;
+	CGFloat textScale = 1.5f;
+	
+	//Artificially scale up the text size
+	NSString *html = [NSString stringWithFormat:@"<ul style=\"-webkit-padding-start:%fpx;padding-left:%fpx;\"><li>fooo</li><li>fooo</li><li>fooo</li></ul>", (textSize * textScale), (textSize * textScale)];
+	NSAttributedString *string = [self attributedStringFromHTMLString:html options:nil];
+
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:string];
+	//Give the writer the artificial scale
+	writer.textScale = textScale;
+	NSString *writtenHTML = [writer HTMLFragment];
+	
+	STAssertTrue([writtenHTML rangeOfString:@"-webkit-padding-start:32px;padding-left:32px;"].location != NSNotFound, @"Text scale should not affect list indention amount");
+}
+
 - (void)testNestedListRoundTrip
 {
 	[self _testListIndentRoundTripFromHTML:@"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"];
