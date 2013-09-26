@@ -276,17 +276,25 @@
 - (NSAttributedString *)attributedString
 {
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
-	
+
+	// append child elements
+	NSAttributedString *childrenString = [super attributedString];
+
 	// apend list prefix
 	NSAttributedString *listPrefix = [self _listPrefix];
 	
 	if (listPrefix)
 	{
 		[tmpString appendAttributedString:listPrefix];
+		
+		// only add the prefix if the children don't have a prefix already from a sub-list
+		NSString *field = [childrenString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
+		
+		if ([field isEqualToString:DTListPrefixField])
+		{
+			[tmpString appendEndOfParagraph];
+		}
 	}
-	
-	// append child elements
-	NSAttributedString *childrenString = [super attributedString];
 	
 	if (childrenString)
 	{

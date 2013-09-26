@@ -12,6 +12,10 @@
 
 @implementation DTHTMLWriterTest
 
+
+
+#pragma mark - Tests
+
 - (void)testBackgroundColor
 {
 	// create attributed string
@@ -132,6 +136,11 @@
 	[self _testListIndentRoundTripFromHTML:@"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>"];
 }
 
+- (void)testNestedListOutputWithoutTextNodeRoundTrip
+{
+	[self _testListIndentRoundTripFromHTML:@"<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"];
+}
+
 - (void)testNestedListOutput
 {
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1a<ul><li>2a</li></ul></li></ol>" options:NULL];
@@ -148,6 +157,18 @@
 	
 	NSRange rangeSpanUL = [html rangeOfString:@"</span></ul"];
 	STAssertTrue(rangeSpanUL.location == NSNotFound, @"Missing LI between span and UL");
+}
+
+- (void)testNestedListOutputWithoutTextNode
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ul><li><ol><li>2a</li><li>2b</li></ol></li><li>1a</li></ul>" options:NULL];
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+	
+	NSRange twoAOutsideOL = [html rangeOfString:@"2a</span><ol"];
+	STAssertTrue(twoAOutsideOL.location == NSNotFound, @"List item 2a should not be outside the ordered list");
 }
 
 @end

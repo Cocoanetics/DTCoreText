@@ -91,7 +91,7 @@
 	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],(int)index];
 }
 
-- (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag paragraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle inlineStyles:(BOOL)inlineStyles
+- (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag listPadding:(CGFloat)listPadding inlineStyles:(BOOL)inlineStyles
 {
 	BOOL isOrdered = NO;
 	
@@ -231,9 +231,9 @@
 		
 		NSString *listStyleString = [NSString stringWithFormat:@"list-style:'%@';", typeString];
 		
-		if (paragraphStyle.headIndent>0)
+		if (listPadding>0)
 		{
-			listStyleString = [listStyleString stringByAppendingFormat:@"-webkit-padding-start:%.0fpx;padding-left:%.0fpx;", paragraphStyle.headIndent, paragraphStyle.headIndent];
+			listStyleString = [listStyleString stringByAppendingFormat:@"-webkit-padding-start:%.0fpx;padding-left:%.0fpx;", listPadding, listPadding];
 		}
 		
 		NSString *className = [self _styleClassForElement:blockElement style:listStyleString];
@@ -269,8 +269,6 @@
 	NSInteger location = 0;
 	
 	NSArray *previousListStyles = nil;
-	
-	NSMutableArray *tagStack = [NSMutableArray array];
 	
 	for (NSUInteger i=0; i<[paragraphs count]; i++)
 	{
@@ -373,12 +371,10 @@
 				}
 				
 				// end of a list block
-				[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES paragraphStyle:paragraphStyle inlineStyles:fragment]];
+				[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES listPadding:0 inlineStyles:fragment]];
 				[retString appendString:@"\n"];
 				
 				[closingStyles removeLastObject];
-				
-				[tagStack removeLastObject];
 				
 				previousListStyles = closingStyles;
 			}
@@ -390,11 +386,40 @@
 			// next text needs to have list prefix removed
 			needsToRemovePrefix = YES;
 			
-			if (!previousListStyles || ([previousListStyles indexOfObjectIdenticalTo:effectiveListStyle] == NSNotFound))
+			
+			// get lists that need to be opened here
+			NSArray *listsToOpen = nil;
+			
+			if (!previousListStyles)
 			{
+				listsToOpen = currentListStyles;
+			}
+			else
+			{
+				NSMutableArray *tmpArray = [NSMutableArray array];
+				
+				for (DTCSSListStyle *oneList in currentListStyles)
+				{
+					NSRange listRange = [_attributedString rangeOfTextList:oneList atIndex:paragraphRange.location];
+					
+					if (listRange.location == paragraphRange.location)
+					{
+						// lists starts here
+						[tmpArray addObject:oneList];
+					}
+				}
+
+				if ([tmpArray count])
+				{
+					listsToOpen = [tmpArray copy];
+				}
+			}
+			
+			[listsToOpen enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
+				
 				NSString *name;
 				
-				if ([effectiveListStyle isOrdered])
+				if ([oneList isOrdered])
 				{
 					name = @"ol";
 				}
@@ -403,37 +428,19 @@
 					name = @"ul";
 				}
 				
-				DTHTMLElement *listElement = [[DTHTMLElement alloc] initWithName:name attributes:nil];
-				DTHTMLElement *parentElement = [tagStack lastObject];
-				
-				if (parentElement)
-				{
-					[parentElement addChildNode:listElement];
-				}
-				
-				[tagStack addObject:listElement];
-				
-				if (paragraphStyle)
-				{
-					CGFloat indentOfParents = 0;
-					
-					DTHTMLElement *parent = listElement.parentElement;
-					while (parent)
-					{
-						indentOfParents += parent.padding.left;
-						
-						parent = parent.parentElement;
-					}
-					
-					listElement.padding = DTEdgeInsetsMake(0, paragraphStyle.headIndent - indentOfParents, 0, 0);
-				}
-				
-				paragraphStyle.headIndent = listElement.padding.left;
+				// only padding can be reconstructed so far
+				CGFloat listPadding = paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent;
 				
 				// beginning of a list block
-				[retString appendString:[self _tagRepresentationForListStyle:effectiveListStyle closingTag:NO paragraphStyle:paragraphStyle inlineStyles:fragment]];
+				[retString appendString:[self _tagRepresentationForListStyle:oneList closingTag:NO listPadding:listPadding inlineStyles:fragment]];
 				[retString appendString:@"\n"];
-			}
+				
+				// all but the effective list need an extra LI
+				if (oneList != effectiveListStyle)
+				{
+					[retString appendString:@"<li>"];
+				}
+			}];
 			
 			blockElement = @"li";
 		}
@@ -924,10 +931,8 @@
 			DTCSSListStyle *closingStyle = [closingStyles lastObject];
 			
 			// end of a list block
-			[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES paragraphStyle:nil inlineStyles:fragment]];
+			[retString appendString:[self _tagRepresentationForListStyle:closingStyle closingTag:YES listPadding:0 inlineStyles:fragment]];
 			[retString appendString:@"\n"];
-			
-			[tagStack removeLastObject];
 			
 			if ([closingStyles count]>1)
 			{
@@ -967,7 +972,6 @@
 		
 		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
 	}
-
 
 	if (hasTab)
 	{
