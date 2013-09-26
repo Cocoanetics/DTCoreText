@@ -429,7 +429,7 @@
 				}
 				
 				// only padding can be reconstructed so far
-				CGFloat listPadding = paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent;
+				CGFloat listPadding = (paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent) / _textScale;
 				
 				// beginning of a list block
 				[retString appendString:[self _tagRepresentationForListStyle:oneList closingTag:NO listPadding:listPadding inlineStyles:fragment]];
