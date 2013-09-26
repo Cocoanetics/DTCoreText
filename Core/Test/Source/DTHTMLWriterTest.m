@@ -134,7 +134,7 @@
 
 - (void)testNestedListOutputWithoutTextNodeRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ul><li><ol><li>2a</li><li>2b</li></ol></li><li>1a</li></ul>"];
+	[self _testListIndentRoundTripFromHTML:@"<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"];
 }
 
 - (void)testNestedListOutput
