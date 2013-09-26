@@ -285,12 +285,14 @@
 	
 	if (listPrefix)
 	{
+		[tmpString appendAttributedString:listPrefix];
+		
 		// only add the prefix if the children don't have a prefix already from a sub-list
 		NSString *field = [childrenString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
 		
-		if (![field isEqualToString:DTListPrefixField])
+		if ([field isEqualToString:DTListPrefixField])
 		{
-			[tmpString appendAttributedString:listPrefix];
+			[tmpString appendEndOfParagraph];
 		}
 	}
 	

@@ -12,6 +12,10 @@
 
 @implementation DTHTMLWriterTest
 
+
+
+#pragma mark - Tests
+
 - (void)testBackgroundColor
 {
 	// create attributed string
