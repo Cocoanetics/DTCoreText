@@ -1009,9 +1009,15 @@
 	STAssertTrue(colorOk1, @"First item should be green");
 }
 
-- (void)letterSpacing
+- (void)testLetterSpacing
 {
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>" options:NULL];
 	
+	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	CGFloat kerning = [attributes1 kerningValue];
+	
+	STAssertTrue(kerning == 10, @"Kerning should be 10px");
 }
 
 @end
