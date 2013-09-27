@@ -128,7 +128,8 @@
 {
 	@synchronized(self)
 	{
-		NSUInteger searchIndex = location;
+		NSUInteger stringLength = [self length];
+		NSInteger searchIndex = location;
 		
 		NSArray *arrayAtIndex;
 		NSUInteger minFoundIndex = NSUIntegerMax;
@@ -141,17 +142,19 @@
 			NSRange effectiveRange;
 			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 			
-			if ([arrayAtIndex indexOfObjectIdenticalTo:object] != NSNotFound)
+			if ([arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
 			{
-				foundList = YES;
-				
-				searchIndex = effectiveRange.location;
-				
-				minFoundIndex = MIN(minFoundIndex, searchIndex);
-				maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+				break;
 			}
 			
-			if (!searchIndex || !foundList)
+			searchIndex = effectiveRange.location;
+			foundList = YES;
+			
+			// enhance found range
+			minFoundIndex = MIN(minFoundIndex, searchIndex);
+			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			
+			if (searchIndex <= 0)
 			{
 				// reached beginning of string
 				break;
@@ -159,7 +162,7 @@
 			
 			searchIndex--;
 		}
-		while (foundList && searchIndex>0);
+		while (foundList);
 		
 		// if we didn't find the list at all, return
 		if (!foundList)
@@ -169,9 +172,9 @@
 		
 		// now search forward
 		
-		searchIndex = maxFoundIndex;
+		searchIndex = maxFoundIndex + 1;
 		
-		while (searchIndex < [self length])
+		while (searchIndex < stringLength)
 		{
 			NSRange effectiveRange;
 			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
@@ -183,6 +186,7 @@
 			
 			searchIndex = NSMaxRange(effectiveRange);
 			
+			// enhance found range
 			minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
 			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
 		}
