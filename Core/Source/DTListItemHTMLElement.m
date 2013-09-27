@@ -16,7 +16,8 @@
 	{
 		NSInteger index = -1;
 		
-		for (DTHTMLElement *oneElement in listRoot.childNodes)
+		NSArray *childNodes = [listRoot.childNodes copy];
+ 		for (DTHTMLElement *oneElement in childNodes)
 		{
 			if ([oneElement isKindOfClass:[DTListItemHTMLElement class]])
 			{
