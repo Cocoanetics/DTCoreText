@@ -156,7 +156,7 @@
 // issue 617: extra \n causes paragraph break
 - (void)testSuperfluousParagraphBreakAfterBR
 {
-	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps;\">one<br>\ntwo</h1>" options:nil];
+	NSAttributedString *output = [self _attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps;\">one<br>\n\ttwo</h1>" options:nil];
 	NSString *plainText = [output string];
 	
 	NSRange twoRange = [plainText rangeOfString:@"TWO"];
@@ -1033,6 +1033,11 @@
 	NSString *foreground1HTML = DTHexStringFromDTColor(foreground1);
 	BOOL colorOk1 = ([foreground1HTML isEqualToString:@"008000"]);
 	STAssertTrue(colorOk1, @"First item should be green");
+}
+
+- (void)letterSpacing
+{
+	
 }
 
 @end
