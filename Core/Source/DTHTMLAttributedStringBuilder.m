@@ -583,6 +583,37 @@
 	
 	[_tagEndHandlers setObject:[objectBlock copy] forKey:@"object"];
 
+	void (^videoBlock)(void) = ^
+	{
+		if ([_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
+		{
+			DTTextAttachmentHTMLElement *attachmentElement = (DTTextAttachmentHTMLElement *)_currentTag;
+			
+			if ([attachmentElement.textAttachment isKindOfClass:[DTVideoTextAttachment class]])
+			{
+				DTVideoTextAttachment *videoAttachment = (DTVideoTextAttachment *)attachmentElement.textAttachment;
+				
+				// find first child that has a source
+				if (!videoAttachment.contentURL)
+				{
+					for (DTHTMLElement *child in attachmentElement.childNodes)
+					{
+						if ([child.name isEqualToString:@"source"])
+						{
+							NSString *src = [child attributeForKey:@"src"];
+							
+							// content URL
+							videoAttachment.contentURL = [NSURL URLWithString:src relativeToURL:_baseURL];
+							
+							break;
+						}
+					}
+				}
+			}
+		}
+	};
+	
+	[_tagEndHandlers setObject:[videoBlock copy] forKey:@"video"];
 	
 	void (^styleBlock)(void) = ^
 	{
