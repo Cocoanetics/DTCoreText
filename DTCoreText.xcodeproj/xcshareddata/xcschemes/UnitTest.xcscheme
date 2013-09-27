@@ -21,6 +21,11 @@
                BlueprintName = "UnitTest"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "DTCoreTextTestCase">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
