@@ -35,3 +35,17 @@ If you don't know the set of fonts used by your app you can trigger an asynchron
     [DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
 	 
 Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
+
+
+Visible String Range
+--------------------
+
+To retrieve the string range in the `NSAttributedString` you set on an DTAttributedTextView you have to get the scroll view bounds. Then you retrieve an array of lines visible in this rectangle from the DTCoreTextLayoutFrame. Finally you retrieve and create a union of the string ranges.
+
+    CGRect visibleRect = _textView.bounds;
+    NSArray *visibleLines = [_textView.attributedTextContentView.layoutFrame linesVisibleInRect:visibleRect];
+	
+    NSRange stringRange = [visibleLines[0] stringRange];
+    stringRange = NSUnionRange([[visibleLines lastObject] stringRange], stringRange);
+	
+    NSLog(@"visible string range: %@", NSStringFromRange(stringRange));
