@@ -692,6 +692,13 @@
 				fontStyle = @"";
 			}
 			
+			CGFloat kerning = [attributes kerning] / _textScale;
+			
+			if (kerning)
+			{
+				fontStyle = [fontStyle stringByAppendingFormat:@"letter-spacing:%.0fpx;", kerning];
+			}
+			
 			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
 			
 			if (!textColor && _iOS6TagsPossible)

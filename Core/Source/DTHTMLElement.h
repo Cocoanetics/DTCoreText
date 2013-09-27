@@ -153,6 +153,11 @@
 @property (nonatomic, strong) DTColor *backgroundColor;
 
 /**
+ The custom letter spacing of the receiver, default is 0px
+ */
+@property (nonatomic, assign) CGFloat letterSpacing;
+
+/**
  Additional text to be inserted before the text content of the receiver
  */
 @property (nonatomic, copy) NSString *beforeContent;
