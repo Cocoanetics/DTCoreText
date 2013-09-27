@@ -195,9 +195,7 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	self.image = image;
 	_fullWidth = image.size.width;
 	_fullHeight = image.size.height;
-	
-	self.bounds = CGRectMake(0, 0, _fullWidth, _fullHeight);
-	
+
 	[self _notifyDelegate];
 	
 	static dispatch_once_t predicate;
