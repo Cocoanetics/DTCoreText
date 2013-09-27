@@ -14,8 +14,7 @@ After having integrated DTCoreText and its dependencies into your project you sh
     NSString *html = @"<p>Some Text</p>";
     NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTMLData:data
-                                                               documentAttributes:NULL];
+    NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTMLData:data documentAttributes:NULL];
     NSLog(@"%@", attrString);
 
 You should see that this executes and that the NSLog outputs a description of the generated attributed string.
@@ -36,6 +35,33 @@ If you don't know the set of fonts used by your app you can trigger an asynchron
 	 
 Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
 
+Getting a Tapped Word
+-----------------------
+
+To retrieve the word a user tapped on you get the closest cursor position to the tapped point. Then you iterate over the plain text's words until you find the one that contains the cursor position's string index.
+
+    - (void)handleTap:(UITapGestureRecognizer *)gesture
+    {
+        if (gesture.state == UIGestureRecognizerStateRecognized)
+        {
+            CGPoint location = [gesture locationInView:_textView];
+            NSUInteger tappedIndex = [_textView closestCursorIndexToPoint:location];
+		
+            __block NSRange wordRange = NSMakeRange(0, 0);
+		
+            [plainText enumerateSubstringsInRange:NSMakeRange(0, [plainText length]) options:NSStringEnumerationByWords usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+                if (NSLocationInRange(tappedIndex, enclosingRange))
+                {
+                    *stop = YES;
+                    wordRange = substringRange;
+                }
+            }];
+		
+            NSString *word = [plainText substringWithRange:wordRange];
+            NSLog(@"%d: '%@' word: '%@'", tappedIndex, tappedChar, word);
+        }
+    }
+    
 
 Visible String Range
 --------------------
@@ -49,3 +75,4 @@ To retrieve the string range in the `NSAttributedString` you set on an DTAttribu
     stringRange = NSUnionRange([[visibleLines lastObject] stringRange], stringRange);
 	
     NSLog(@"visible string range: %@", NSStringFromRange(stringRange));
+
