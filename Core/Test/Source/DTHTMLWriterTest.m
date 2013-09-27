@@ -148,6 +148,11 @@
 	[self _testListIndentRoundTripFromHTML:@"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"];
 }
 
+- (void)testNestedListRoundTripWithPrecedingElement
+{
+	[self _testListIndentRoundTripFromHTML:@"<p>This breaks writing nested lists</p><ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"];
+}
+
 - (void)testNestedListWithPaddingRoundTrip
 {
 	[self _testListIndentRoundTripFromHTML:@"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>"];
