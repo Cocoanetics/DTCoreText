@@ -21,7 +21,7 @@
 
 /**
  Parse the HTML in the file with the give name
- @param testfileName The name of the test file in the OCTest bundle
+ @param testFileName The name of the test file in the OCTest bundle
  @returns the attributed string, generated with DTCoreText
  */
 - (NSAttributedString *)attributedStringFromTestFileName:(NSString *)testFileName;
