@@ -880,133 +880,136 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 // find effective range of all blocks affecting the given string range
 - (NSRange)_effectiveRangeOfOutermostTextBlocksInRange:(NSRange)range
 {
-	NSRange effectiveRange = NSMakeRange(0, 0);
-	NSUInteger length = [_attributedStringFragment length];
-	
-	BOOL foundStartBlocks = NO;
-	
-	NSUInteger index = range.location;
-	
-	do
+	@synchronized(self)
 	{
-		// stop searching for blocks if we are past end of range
-		if (index>=NSMaxRange(range))
+		NSRange effectiveRange = NSMakeRange(0, 0);
+		NSUInteger length = [_attributedStringFragment length];
+		
+		BOOL foundStartBlocks = NO;
+		
+		NSUInteger index = range.location;
+		
+		do
 		{
-			break;
+			// stop searching for blocks if we are past end of range
+			if (index>=NSMaxRange(range))
+			{
+				break;
+			}
+			
+			NSRange effectiveRangeOfBlocksArray;
+			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
+			
+			// skip a range of empty blocks at start
+			if (!textBlocks)
+			{
+				index += effectiveRangeOfBlocksArray.length;
+				continue;
+			}
+			
+			foundStartBlocks = YES;
+			
+			// first text block is outermost, i.e. longest
+			DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
+			
+			if (effectiveRange.length)
+			{
+				effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
+			}
+			else
+			{
+				effectiveRange = effectiveRangeOfBlocksArray;
+			}
+			
+			NSUInteger searchIndex = effectiveRangeOfBlocksArray.location;
+			
+			// search backward for actual start of block
+			while (searchIndex > 0)
+			{
+				NSRange earlierBlocksRange;
+				NSArray *earlierBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex-1 effectiveRange:&earlierBlocksRange];
+				
+				if (![earlierBlocks containsObject:outermostBlock])
+				{
+					break;
+				}
+				
+				effectiveRange = NSUnionRange(effectiveRange, earlierBlocksRange);
+				
+				searchIndex = earlierBlocksRange.location;
+			}
+		}
+		while (!foundStartBlocks);
+		
+		// no text blocks in range
+		if (!foundStartBlocks)
+		{
+			return NSMakeRange(NSNotFound, 0);
 		}
 		
-		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
+		// search for the end blocks for this range
+		BOOL foundEndBlocks = NO;
 		
-		// skip a range of empty blocks at start
-		if (!textBlocks)
+		// set index on last character before end of searched range
+		index = NSMaxRange(range)-1;
+		
+		do
 		{
-			index += effectiveRangeOfBlocksArray.length;
-			continue;
+			// stop searching for blocks if we are past end of range
+			if (index >= length)
+			{
+				break;
+			}
+			
+			NSRange effectiveRangeOfBlocksArray;
+			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
+			
+			// search of backwards from end of range until we find blocks
+			if (!textBlocks)
+			{
+				// set index on last character before this region without text blocks
+				index = effectiveRangeOfBlocksArray.location-1;
+				NSAssert(index>=effectiveRange.location, @"we should never need to search before the beginning text blocks");
+				
+				continue;
+			}
+			
+			foundEndBlocks = YES;
+			
+			// first text block is outermost, i.e. longest
+			DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
+			
+			effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
+			
+			NSUInteger searchIndex = NSMaxRange(effectiveRangeOfBlocksArray);
+			
+			// search forward for actual end of block
+			while (searchIndex < length)
+			{
+				NSRange laterBlocksRange;
+				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+				
+				if (![laterBlocks containsObject:outermostBlock])
+				{
+					break;
+				}
+				
+				effectiveRange = NSUnionRange(effectiveRange, laterBlocksRange);
+				
+				searchIndex = NSMaxRange(laterBlocksRange);
+			}
 		}
+		while (!foundEndBlocks);
 		
-		foundStartBlocks = YES;
-		
-		// first text block is outermost, i.e. longest
-		DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
 		
 		if (effectiveRange.length)
 		{
-			effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
+			return effectiveRange;
 		}
 		else
 		{
-			effectiveRange = effectiveRangeOfBlocksArray;
+			return NSMakeRange(NSNotFound, 0);
 		}
-		
-		NSUInteger searchIndex = effectiveRangeOfBlocksArray.location;
-		
-		// search backward for actual start of block
-		while (searchIndex > 0)
-		{
-			NSRange earlierBlocksRange;
-			NSArray *earlierBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex-1 effectiveRange:&earlierBlocksRange];
-			
-			if (![earlierBlocks containsObject:outermostBlock])
-			{
-				break;
-			}
-			
-			effectiveRange = NSUnionRange(effectiveRange, earlierBlocksRange);
-			
-			searchIndex = earlierBlocksRange.location;
-		}
-	}
-	while (!foundStartBlocks);
-	
-	// no text blocks in range
-	if (!foundStartBlocks)
-	{
-		return NSMakeRange(NSNotFound, 0);
-	}
-	
-	// search for the end blocks for this range
-	BOOL foundEndBlocks = NO;
-	
-	// set index on last character before end of searched range
-	index = NSMaxRange(range)-1;
-	
-	do
-	{
-		// stop searching for blocks if we are past end of range
-		if (index >= length)
-		{
-			break;
-		}
-		
-		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
-		
-		// search of backwards from end of range until we find blocks
-		if (!textBlocks)
-		{
-			// set index on last character before this region without text blocks
-			index = effectiveRangeOfBlocksArray.location-1;
-			NSAssert(index>=effectiveRange.location, @"we should never need to search before the beginning text blocks");
-			
-			continue;
-		}
-		
-		foundEndBlocks = YES;
-		
-		// first text block is outermost, i.e. longest
-		DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
-		
-		effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
-		
-		NSUInteger searchIndex = NSMaxRange(effectiveRangeOfBlocksArray);
-		
-		// search forward for actual end of block
-		while (searchIndex < length)
-		{
-			NSRange laterBlocksRange;
-			NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
-			
-			if (![laterBlocks containsObject:outermostBlock])
-			{
-				break;
-			}
-			
-			effectiveRange = NSUnionRange(effectiveRange, laterBlocksRange);
-			
-			searchIndex = NSMaxRange(laterBlocksRange);
-		}
-	}
-	while (!foundEndBlocks);
-	
-	
-	if (effectiveRange.length)
-	{
-		return effectiveRange;
-	}
-	else
-	{
-		return NSMakeRange(NSNotFound, 0);
 	}
 }
 

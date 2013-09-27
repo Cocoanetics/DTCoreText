@@ -264,6 +264,22 @@ NSDictionary *_classesForNames = nil;
 			[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
 		}
 	}
+	
+	if (_letterSpacing)
+	{
+		NSNumber *letterSpacingNum = [NSNumber numberWithFloat:_letterSpacing];
+		
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:letterSpacingNum forKey:NSKernAttributeName];
+		}
+		else
+#endif
+		{
+			[tmpDict setObject:letterSpacingNum forKey:(id)kCTKernAttributeName];
+		}
+	}
 
 	if (_headerLevel)
 	{
@@ -427,10 +443,17 @@ NSDictionary *_classesForNames = nil;
 						if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
 						{
 							// following e.g. a BR we don't want a space or NL
-							NSCharacterSet *charactersToIgnore = [NSCharacterSet characterSetWithCharactersInString:@" \n"];
+							NSCharacterSet *charactersToIgnore = [NSCharacterSet characterSetWithCharactersInString:@" \n\t"];
 							
 							while ([[nodeString string] hasPrefixCharacterFromSet:charactersToIgnore])
 							{
+								NSString *field = [nodeString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
+								
+								if ([field isEqualToString:DTListPrefixField])
+								{
+									break;
+								}
+								
 								nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
 							}
 						}
@@ -929,7 +952,6 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	
 	NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
 	if (decoration)
 	{
@@ -1020,6 +1042,23 @@ NSDictionary *_classesForNames = nil;
 		else if ([verticalAlignment isEqualToString:@"baseline"])
 		{
 			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
+		}
+	}
+	
+	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
+	if (letterSpacing)
+	{
+		if ([letterSpacing isEqualToString:@"normal"])
+		{
+			_letterSpacing = 0;
+		}
+		else if ([letterSpacing isEqualToString:@"inherit"])
+		{
+			// no op, we already inherited it
+		}
+		else // interpret as length
+		{
+			_letterSpacing = [letterSpacing pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 		}
 	}
 	
@@ -1299,6 +1338,7 @@ NSDictionary *_classesForNames = nil;
 	_underlineStyle = element.underlineStyle;
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
+	_letterSpacing = element.letterSpacing;
 	
 	_shadows = [element.shadows copy];
 	

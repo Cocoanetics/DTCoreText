@@ -214,4 +214,22 @@
 	return nil;
 }
 
+- (CGFloat)kerning
+{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	// try NSParagraphStyle to see if "modern tags" are possible
+	
+	if ([NSParagraphStyle class])
+	{
+		NSNumber *kerningNum = [self objectForKey:NSKernAttributeName];
+		
+		return [kerningNum floatValue];
+	}
+#endif
+	
+	NSNumber *kerningNum = [self objectForKey:(id)kCTKernAttributeName];
+	
+	return [kerningNum floatValue];
+}
+
 @end
