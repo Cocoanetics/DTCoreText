@@ -1015,7 +1015,7 @@
 	
 	NSDictionary *attributes1 = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	CGFloat kerning = [attributes1 kerningValue];
+	CGFloat kerning = [attributes1 kerning];
 	
 	STAssertTrue(kerning == 10, @"Kerning should be 10px");
 }
