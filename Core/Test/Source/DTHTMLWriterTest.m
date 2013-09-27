@@ -218,4 +218,35 @@
 	STAssertTrue(twoAOutsideOL.location == NSNotFound, @"List item 2a should not be outside the ordered list");
 }
 
+#pragma mark - Kerning
+
+- (void)testKerning
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>" options:NULL];
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	NSString *html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+	
+	NSRange letterSpacingRange = [html rangeOfString:@"letter-spacing:10px;"];
+	STAssertTrue(letterSpacingRange.location != NSNotFound, @"Letter-spacing missing");
+}
+
+- (void)testKerningWithTextScale
+{
+	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:3], NSTextSizeMultiplierDocumentOption, nil];
+	
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>" options:options];
+	
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	CGFloat kerning = [attributes kerning];
+	STAssertTrue(kerning == 30, @"Scaled up kerning should be 30");
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	NSString *html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+	
+	NSRange letterSpacingRange = [html rangeOfString:@"letter-spacing:10px;"];
+	STAssertTrue(letterSpacingRange.location == NSNotFound, @"Letter-spacing missing");
+}
 @end
