@@ -13,48 +13,32 @@
 @implementation DTHTMLWriterTest
 
 
+#pragma mark - Helpers
 
-#pragma mark - Tests
-
-- (void)testBackgroundColor
-{
-	// create attributed string
-	NSMutableAttributedString* attributedText = [[NSMutableAttributedString alloc] initWithString:@"Hello World"];
-	NSRange range = [attributedText.string rangeOfString:@"World"];
-	if (range.location != NSNotFound)
-	{
-		DTColor *color = DTColorCreateWithHexString(@"FFFF00");
-		
-		[attributedText addAttribute:DTBackgroundColorAttribute value:(id)color.CGColor range:range];
-	}
-	
-	// generate html
-	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedText];
-	writer.useAppleConvertedSpace = NO;
-	NSString *html = [writer HTMLFragment];
-	
-	NSRange colorRange = [html rangeOfString:@"background-color:#ffff00"];
-
-	STAssertTrue(colorRange.location != NSNotFound,  @"html should contains background-color:#ffff00");
-}
-
-#pragma mark - List Output
-
-- (void)_testListIndentRoundTripFromHTML:(NSString *)HTML
+- (void)_testListIndentRoundTripFromHTML:(NSString *)HTML fragmentMode:(BOOL)fragmentMode
 {
 	NSAttributedString *string1 = [self attributedStringFromHTMLString:HTML options:nil];
 	
 	
 	// generate html
 	DTHTMLWriter *writer1 = [[DTHTMLWriter alloc] initWithAttributedString:string1];
-	NSString* html1 = [writer1 HTMLFragment];
+	NSString *html1;
+	
+	if (fragmentMode)
+	{
+		html1 = [writer1 HTMLFragment];
+	}
+	else
+	{
+		html1 = [writer1 HTMLString];
+	}
 	
 	NSAttributedString *string2 = [self attributedStringFromHTMLString:html1 options:nil];
 	
 	BOOL stringsHaveSameLength = [string1 length] == [string2 length];
 	
 	STAssertTrue(stringsHaveSameLength, @"Roundtripped string should be of equal length, but string1 is %d, string2 is %d", [string1 length], [string2 length]);
-
+	
 	if (!stringsHaveSameLength)
 	{
 		return;
@@ -70,13 +54,13 @@
 		
 		BOOL equal = [paraStyle1 isEqual:paraStyle2];
 		
-//		if (!equal)
-//		{
-//			NSLog(@"html input: ================ \n%@", HTML);
-//			NSLog(@"string1: ================ \n%@", string1);
-//			NSLog(@"html input2: ================ \n%@", html1);
-//			NSLog(@"string2: ================ \n%@ \n ================", string2);
-//		}
+		//		if (!equal)
+		//		{
+		//			NSLog(@"html input: ================ \n%@", HTML);
+		//			NSLog(@"string1: ================ \n%@", string1);
+		//			NSLog(@"html input2: ================ \n%@", html1);
+		//			NSLog(@"string2: ================ \n%@ \n ================", string2);
+		//		}
 		
 		STAssertTrue(equal, @"Paragraph Styles in range %@ should be equal", NSStringFromRange(substringRange));
 		
@@ -104,7 +88,7 @@
 				STAssertTrue([list1 isEqualToListStyle:list2], @"List Style at index %d is not equal", index);
 			}
 		}
-			
+		
 		if (NSMaxRange(prefixRange) < NSMaxRange(enclosingRange))
 		{
 			attributes1 = [string1 attributesAtIndex:NSMaxRange(prefixRange) effectiveRange:NULL];
@@ -121,9 +105,38 @@
 	}];
 }
 
+#pragma mark - Color
+
+- (void)testBackgroundColor
+{
+	// create attributed string
+	NSMutableAttributedString* attributedText = [[NSMutableAttributedString alloc] initWithString:@"Hello World"];
+	NSRange range = [attributedText.string rangeOfString:@"World"];
+	if (range.location != NSNotFound)
+	{
+		DTColor *color = DTColorCreateWithHexString(@"FFFF00");
+		
+		[attributedText addAttribute:DTBackgroundColorAttribute value:(id)color.CGColor range:range];
+	}
+	
+	// generate html
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedText];
+	writer.useAppleConvertedSpace = NO;
+	NSString *html = [writer HTMLFragment];
+	
+	NSRange colorRange = [html rangeOfString:@"background-color:#ffff00"];
+
+	STAssertTrue(colorRange.location != NSNotFound,  @"html should contains background-color:#ffff00");
+}
+
+#pragma mark - List Output
+
 - (void)testSimpleListRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ul><li>fooo</li><li>fooo</li><li>fooo</li></ul>"];
+	NSString *HTML = @"<ul><li>fooo</li><li>fooo</li><li>fooo</li></ul>";
+	
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:NO];
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:YES];
 }
 
 - (void)testSimpleListRoundTripWithTextScale
@@ -145,17 +158,34 @@
 
 - (void)testNestedListRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"];
+	NSString *HTML = @"<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>";
+	
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:NO];
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:YES];
+}
+
+- (void)testNestedListRoundTripWithPrecedingElement
+{
+	NSString *HTML = @"<p>This breaks writing nested lists</p><ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>";
+	
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:NO];
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:YES];
 }
 
 - (void)testNestedListWithPaddingRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>"];
+	NSString *HTML = @"<ul style=\"padding-left:55px\"><li>fooo<ul style=\"padding-left:66px\"><li>bar</li></ul></li></ul>";
+	
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:NO];
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:YES];
 }
 
 - (void)testNestedListOutputWithoutTextNodeRoundTrip
 {
-	[self _testListIndentRoundTripFromHTML:@"<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"];
+	NSString *HTML = @"<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>";
+	
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:NO];
+	[self _testListIndentRoundTripFromHTML:HTML fragmentMode:YES];
 }
 
 - (void)testNestedListOutput

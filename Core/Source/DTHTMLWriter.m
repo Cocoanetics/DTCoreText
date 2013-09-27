@@ -914,7 +914,7 @@
 		else
 		{
 			// other blocks are always closed
-			[retString appendFormat:@"</%@>", blockElement];
+			[retString appendFormat:@"</%@>\n", blockElement];
 		}
 		
 		previousListStyles = [currentListStyles copy];
