@@ -9,10 +9,10 @@ generateGcov()
 {
 	#  doesn't set output dir to gcov...
 	cd "${gcov_dir}"
-	echo "---- dir: ${gcov_dir}"
-
-	find "${OBJROOT}" -name "*.gcda" -exec gcov-4.2 {} -o "${gcov_dir}" \;
-
+	for file in *.gcda
+	do
+		gcov "${file}" -o "${gcov_dir}"
+	done
 	cd -
 }
 
@@ -30,7 +30,11 @@ main()
 {
 # generate + copy
 	generateGcov
+	copyGcovToProjectDir
+# post
 	coveralls ${@+"$@"}
+# clean up
+	removeGcov
 }
 
 main ${@+"$@"}
