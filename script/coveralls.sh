@@ -11,7 +11,7 @@ generateGcov()
 	cd "${gcov_dir}"
 	for file in *.gcda
 	do
-		gcov "${file}" -o "${gcov_dir}"
+		gcov "${file}" -p -o "${gcov_dir}"
 	done
 	cd -
 }
