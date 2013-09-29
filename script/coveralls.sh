@@ -32,7 +32,7 @@ main()
 	generateGcov
 	copyGcovToProjectDir
 # post
-	coveralls ${@+"$@"}
+	coveralls -e Core/Externals -e Core/Test ${@+"$@"}
 # clean up
 	removeGcov
 }
