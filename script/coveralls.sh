@@ -30,8 +30,7 @@ main()
 {
 # generate + copy
 	generateGcov
-	coveralls -t ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
-	#coveralls ${@+"$@"}
+	coveralls ${@+"$@"}
 }
 
 main ${@+"$@"}
