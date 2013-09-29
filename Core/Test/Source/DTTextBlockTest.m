@@ -20,10 +20,14 @@
 	
 	DTTextBlock *block2 = [[DTTextBlock alloc] init];
 	block2.padding = DTEdgeInsetsMake(10, 20, 30, 40);
-	block2.backgroundColor = DTColorCreateWithHTMLName(@"blue");
+	block2.backgroundColor = DTColorCreateWithHTMLName(@"red");
 
 	STAssertEqualObjects(block1, block2, @"Both blocks should be equal");
 	STAssertEqualObjects(block1, block1, @"Should be true against itself");
+	
+	// different color
+	block2.backgroundColor = DTColorCreateWithHTMLName(@"blue");
+	STAssertFalse([block1 isEqual:block2], @"same padding different color should be different");
 	
 	STAssertFalse([block1 isEqual:nil], @"isEqual:nil should be false");
 	STAssertFalse([block1 isEqual:@"bla"], @"isEqual: to string should be false");
