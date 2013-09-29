@@ -21,6 +21,11 @@ extern void __gcov_flush(void);
 	[super initialize];
 }
 
++ (void)testSuiteDidStart:(NSNotification *)aNotification
+{
+	[super testSuiteDidStart:aNotification];
+}
+
 + (void)testSuiteDidStop:(NSNotification *)notification
 {
 	[super testSuiteDidStop:notification];
