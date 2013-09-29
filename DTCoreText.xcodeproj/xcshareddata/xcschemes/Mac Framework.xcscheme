@@ -5,6 +5,22 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E2262DC51638331500BFDAD7"
+               BuildableName = "DTCoreText.framework"
+               BlueprintName = "Mac Framework"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
    </BuildAction>
    <TestAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -21,11 +37,6 @@
                BlueprintName = "MacUnitTest"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "DTCoreTextTestCase">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
