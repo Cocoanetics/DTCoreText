@@ -5,7 +5,7 @@ before_script:
   - sudo easy_install cpp-coveralls
 
 script:
-  - xctool project DTCoreText.xcodeproj -scheme MacUnitTest test -arch x86_64 ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES -configuration Coverage
+  - xctool project DTCoreText.xcodeproj -scheme MacUnitTest test -arch x86_64 ONLY_ACTIVE_ARCH=NO
 
 after_success:
   - ./script/coveralls.sh
