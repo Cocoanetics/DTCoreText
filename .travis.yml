@@ -2,7 +2,7 @@
 language: objective-c
 
 before_script:
-  - sudo easy_install cpp-coveralls
+  - sudo easy_install cpp-coveralls pyyaml
 
 script:
   - xctool project DTCoreText.xcodeproj -scheme "Static Library" clean test -configuration Coverage -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO
