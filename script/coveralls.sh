@@ -8,12 +8,12 @@ declare -r gcov_dir="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/"
 generateGcov()
 {
 	#  doesn't set output dir to gcov...
-	#cd "${gcov_dir}"
+	cd "${gcov_dir}"
 	echo "---- dir: ${gcov_dir}"
 
 	find "${OBJROOT}" -name "*.gcda" -exec gcov-4.2 {} -o "${gcov_dir}" \;
 
-	#cd -
+	cd -
 }
 
 copyGcovToProjectDir()
@@ -30,8 +30,8 @@ main()
 {
 # generate + copy
 	generateGcov
-	#coveralls -t ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
-	coveralls ${@+"$@"}
+	coveralls -t ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
+	#coveralls ${@+"$@"}
 }
 
 main ${@+"$@"}
