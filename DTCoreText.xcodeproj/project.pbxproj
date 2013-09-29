@@ -2038,6 +2038,7 @@
 				A70F11DA148632CD009202BF /* Sources */,
 				A70F11DB148632CD009202BF /* Frameworks */,
 				A70F11DC148632CD009202BF /* Headers */,
+				A7DC5D2C17F8679F006ADDF5 /* ShellScript */,
 			);
 			buildRules = (
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
@@ -2468,6 +2469,19 @@
 			showEnvVarsInLog = 0;
 		};
 		A7DC5D2B17F865D6006ADDF5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = script/exportenv.sh;
+		};
+		A7DC5D2C17F8679F006ADDF5 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
