@@ -111,6 +111,8 @@
 		A7343F3317BDF64A00EF9B83 /* CSSCascading.html in Resources */ = {isa = PBXBuildFile; fileRef = A7343F3217BDF64A00EF9B83 /* CSSCascading.html */; };
 		A7343F3417BDF64A00EF9B83 /* CSSCascading.html in Resources */ = {isa = PBXBuildFile; fileRef = A7343F3217BDF64A00EF9B83 /* CSSCascading.html */; };
 		A7358D701680F2B0005F1352 /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E383B9160DFEA800CF72D6 /* libDTFoundation.a */; };
+		A738664117F8B16200E3CDFC /* DTTextBlockTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A738664017F8B16200E3CDFC /* DTTextBlockTest.m */; };
+		A738664217F8B16200E3CDFC /* DTTextBlockTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A738664017F8B16200E3CDFC /* DTTextBlockTest.m */; };
 		A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A73885A41606E9B2001D60C4 /* EmojiTest.html */; };
 		A73AE7911686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A73AE7921686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -928,6 +930,8 @@
 		A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFunctions.m; sourceTree = "<group>"; };
 		A730BCD616D29588003B849F /* Languages.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Languages.html; sourceTree = "<group>"; };
 		A7343F3217BDF64A00EF9B83 /* CSSCascading.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSCascading.html; sourceTree = "<group>"; };
+		A738663F17F8B16200E3CDFC /* DTTextBlockTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextBlockTest.h; sourceTree = "<group>"; };
+		A738664017F8B16200E3CDFC /* DTTextBlockTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTextBlockTest.m; sourceTree = "<group>"; };
 		A73885A41606E9B2001D60C4 /* EmojiTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EmojiTest.html; sourceTree = "<group>"; };
 		A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriter.h; sourceTree = "<group>"; };
 		A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLWriter.m; sourceTree = "<group>"; };
@@ -1680,6 +1684,8 @@
 				9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */,
 				A7985E0C178ECD86005D40B2 /* DTHTMLWriterTest.h */,
 				A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */,
+				A738663F17F8B16200E3CDFC /* DTTextBlockTest.h */,
+				A738664017F8B16200E3CDFC /* DTTextBlockTest.m */,
 				A7C7AD0614DA7C17005A9C69 /* MacUnitTest.h */,
 				A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */,
 				A7C7AD0914DA7C2B005A9C69 /* NSAttributedStringHTMLTest.h */,
@@ -2656,6 +2662,7 @@
 				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */,
+				A738664117F8B16200E3CDFC /* DTTextBlockTest.m in Sources */,
 				A709184A17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 				A7985E0D178ECD86005D40B2 /* DTHTMLWriterTest.m in Sources */,
@@ -2675,6 +2682,7 @@
 				A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
 				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
+				A738664217F8B16200E3CDFC /* DTTextBlockTest.m in Sources */,
 				A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */,
 				A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */,
