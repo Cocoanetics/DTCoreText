@@ -2,10 +2,10 @@
 language: objective-c
 
 before_script:
-  - sudo easy_install cpp-coveralls pyyaml gcovr
+  - sudo easy_install cpp-coveralls
 
 script:
-  - xctool project DTCoreText.xcodeproj -scheme "Static Library" clean build test -configuration Coverage -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO
+  - xctool project DTCoreText.xcodeproj -scheme "Static Library" clean build test -configuration Coverage -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES
 
 after_success:
-  - ./script/coveralls.sh
+  - coveralls
