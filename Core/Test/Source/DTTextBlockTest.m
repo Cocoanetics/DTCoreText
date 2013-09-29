@@ -16,14 +16,22 @@
 {
 	DTTextBlock *block1 = [[DTTextBlock alloc] init];
 	block1.padding = DTEdgeInsetsMake(10, 20, 30, 40);
-
+	block1.backgroundColor = DTColorCreateWithHTMLName(@"red");
+	
 	DTTextBlock *block2 = [[DTTextBlock alloc] init];
 	block2.padding = DTEdgeInsetsMake(10, 20, 30, 40);
+	block2.backgroundColor = DTColorCreateWithHTMLName(@"blue");
 
 	STAssertEqualObjects(block1, block2, @"Both blocks should be equal");
+	STAssertEqualObjects(block1, block1, @"Should be true against itself");
 	
 	STAssertFalse([block1 isEqual:nil], @"isEqual:nil should be false");
 	STAssertFalse([block1 isEqual:@"bla"], @"isEqual: to string should be false");
+	
+	// same color different padding
+	block2.padding = DTEdgeInsetsMake(10, 20, 30, 50);
+	block2.backgroundColor = DTColorCreateWithHTMLName(@"red");
+	STAssertFalse([block1 isEqual:block2], @"different padding same color should be different");
 }
 
 - (void)testHash
