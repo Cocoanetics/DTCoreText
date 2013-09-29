@@ -33,7 +33,7 @@
 	
 	NSUInteger hash = [block1 hash];
 	
-	STAssertEquals(hash, 201010757, @"hash should be 201010757");
+	STAssertEquals(hash, (NSUInteger)201010757, @"hash should be 201010757");
 }
 
 @end
