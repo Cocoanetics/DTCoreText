@@ -11,7 +11,7 @@ generateGcov()
 	#cd "${gcov_dir}"
 	echo "---- dir: ${gcov_dir}"
 
-	find "${gcov_dir}" -name "*.gcda" -exec gcov-4.2 {} -o "${gcov_dir}" \;
+	find "${OBJROOT}" -name "*.gcda" -exec gcov-4.2 {} -o "${gcov_dir}" \;
 
 	#cd -
 }
