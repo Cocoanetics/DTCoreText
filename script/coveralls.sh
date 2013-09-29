@@ -32,7 +32,7 @@ main()
 	generateGcov
 	copyGcovToProjectDir
 # post
-	coveralls --repo-token ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
+	coveralls -t ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
 # clean up
 	removeGcov
 }
