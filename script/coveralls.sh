@@ -30,11 +30,7 @@ main()
 {
 # generate + copy
 	generateGcov
-	copyGcovToProjectDir
-# post
 	coveralls -t ej4JgHAYsL05jJxzWGNKIikXXqteOGZC4 ${@+"$@"}
-# clean up
-	removeGcov
 }
 
 main ${@+"$@"}
