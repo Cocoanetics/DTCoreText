@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source script/env.sh
+source script/exportenv.sh
 declare -r gcov_dir="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/"
 
 ## ======
