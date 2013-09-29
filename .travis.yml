@@ -2,6 +2,7 @@
 language: objective-c
 
 before_script:
+  - gcovr --version
   - sudo easy_install cpp-coveralls
 
 script:
