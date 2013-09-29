@@ -112,4 +112,11 @@
 	STAssertEqualObjects(styles[@"font-family"], expected, @"Font Family should be [Helvetica, sans-serif]");
 }
 
+- (void)testDescription
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif !important;}"];
+	
+	STAssertNotNil([stylesheet description], @"Description should not be nil");
+}
+
 @end
