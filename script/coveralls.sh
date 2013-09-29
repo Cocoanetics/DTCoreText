@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source script/exportenv.sh
+source script/env.sh
 declare -r gcov_dir="${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/"
 
 ## ======
@@ -9,9 +9,9 @@ generateGcov()
 {
 	#  doesn't set output dir to gcov...
 	cd "${gcov_dir}"
-	echo "dir: ${gcov_dir}"
+	echo "---- dir: ${gcov_dir}"
 
-	for file in ${gcov_dir}/*.gcda
+	for file in *.gcda
 	do
 		gcov-4.2 "${file}" -o "${gcov_dir}"
 	done
