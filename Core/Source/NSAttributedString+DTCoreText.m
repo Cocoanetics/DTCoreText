@@ -167,7 +167,7 @@
 		// if we didn't find the list at all, return
 		if (!foundList)
 		{
-			return NSMakeRange(0, NSNotFound);
+			return NSMakeRange(NSNotFound, 0);
 		}
 		
 		// now search forward
@@ -200,6 +200,12 @@
 	NSParameterAssert(list);
 	
 	NSRange listRange = [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+	
+	if (listRange.location == NSNotFound)
+	{
+		// list was not found
+		return listRange;
+	}
 	
 	// extend list range to full paragraphs to be safe
 	listRange = [self.string rangeOfParagraphsContainingRange:listRange parBegIndex:NULL parEndIndex:NULL];
