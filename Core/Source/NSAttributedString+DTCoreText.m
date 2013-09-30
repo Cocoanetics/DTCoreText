@@ -216,7 +216,7 @@
 
 - (NSRange)rangeOfAnchorNamed:(NSString *)anchorName
 {
-	__block NSRange foundRange = NSMakeRange(0, NSNotFound);
+	__block NSRange foundRange = NSMakeRange(NSNotFound, 0);
 	
 	[self enumerateAttribute:DTAnchorAttribute inRange:NSMakeRange(0, [self length]) options:0 usingBlock:^(NSString *value, NSRange range, BOOL *stop) {
 		if ([value isEqualToString:anchorName])
