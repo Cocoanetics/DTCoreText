@@ -91,6 +91,8 @@
 		A70E630316C25736009B47BF /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
 		A70E630516C25AC6009B47BF /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
+		A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */; };
+		A70ED6CF17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */; };
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		A71B927114E0165000360C30 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
 		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
@@ -920,6 +922,8 @@
 		A70E62D516C24905009B47BF /* DTDictationPlaceholderTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTDictationPlaceholderTextAttachment.m; sourceTree = "<group>"; };
 		A70E62DE16C24DDF009B47BF /* DTDictationPlaceholderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTDictationPlaceholderView.h; sourceTree = "<group>"; };
 		A70E62DF16C24DDF009B47BF /* DTDictationPlaceholderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTDictationPlaceholderView.m; sourceTree = "<group>"; };
+		A70ED6CC17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringDTCoreTextTest.h; sourceTree = "<group>"; };
+		A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringDTCoreTextTest.m; sourceTree = "<group>"; };
 		A70F119B14863198009202BF /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A70F11DE148632CD009202BF /* libDTCoreText.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A71B927014E0165000360C30 /* PreWhitespace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PreWhitespace.html; sourceTree = "<group>"; };
@@ -1690,6 +1694,8 @@
 				A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */,
 				A7C7AD0914DA7C2B005A9C69 /* NSAttributedStringHTMLTest.h */,
 				A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */,
+				A70ED6CC17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.h */,
+				A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */,
 				A77A3E401779BF03000B290B /* NSMutableAttributedStringHTMLTest.h */,
 				A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */,
 				A7C7AD0B14DA7C2C005A9C69 /* NSStringHTMLTest.h */,
@@ -2044,7 +2050,6 @@
 				A70F11DA148632CD009202BF /* Sources */,
 				A70F11DB148632CD009202BF /* Frameworks */,
 				A70F11DC148632CD009202BF /* Headers */,
-				A7DC5D2C17F8679F006ADDF5 /* ShellScript */,
 			);
 			buildRules = (
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
@@ -2487,19 +2492,6 @@
 			shellPath = /bin/sh;
 			shellScript = script/exportenv.sh;
 		};
-		A7DC5D2C17F8679F006ADDF5 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = script/exportenv.sh;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2656,6 +2648,7 @@
 				A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */,
 				A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */,
 				A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */,
+				A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
 				A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */,
 				A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
@@ -2676,6 +2669,7 @@
 				A758FCA114DBD7AF007DF8B2 /* default.css in Sources */,
 				A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */,
 				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
+				A70ED6CF17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
 				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,
