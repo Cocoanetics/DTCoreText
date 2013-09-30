@@ -783,7 +783,8 @@
 	// all lists in the first paragraph should be at least covering the entire paragraph
 	
 	[firstParagraphLists enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
-		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:0];
+		
+		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:firstParagraphRange.location];
 		
 		NSRange commonRange = NSIntersectionRange(listRange, firstParagraphRange);
 		
@@ -800,7 +801,8 @@
 	// all lists in the second paragraph should be at least covering the entire paragraph
 	
 	[secondParagraphLists enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
-		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:0];
+		
+		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:secondParagraphRange.location];
 		
 		NSRange commonRange = NSIntersectionRange(listRange, secondParagraphRange);
 		
