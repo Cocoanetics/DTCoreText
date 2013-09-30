@@ -142,7 +142,7 @@
 			NSRange effectiveRange;
 			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 			
-			if ([arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
+			if (!arrayAtIndex || [arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
 			{
 				break;
 			}
@@ -179,7 +179,7 @@
 			NSRange effectiveRange;
 			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
 			
-			if ([arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
+			if (!arrayAtIndex || [arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
 			{
 				break;
 			}
