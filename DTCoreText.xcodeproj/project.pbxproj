@@ -2127,7 +2127,6 @@
 				E2262DC21638331500BFDAD7 /* Frameworks */,
 				E2262DC31638331500BFDAD7 /* Headers */,
 				E2262DC41638331500BFDAD7 /* Resources */,
-				A738660717F8822300E3CDFC /* ShellScript */,
 			);
 			buildRules = (
 				E2262E001638341B00BFDAD7 /* PBXBuildRule */,
@@ -2478,19 +2477,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/appledoc --print-settings --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\necho \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"";
 			showEnvVarsInLog = 0;
-		};
-		A738660717F8822300E3CDFC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = script/exportenv.sh;
 		};
 /* End PBXShellScriptBuildPhase section */
 
