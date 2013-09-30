@@ -104,7 +104,7 @@
 {
 	NSRange range = [self.attributedTextContentView.attributedString rangeOfAnchorNamed:anchorName];
 	
-	if (range.length != NSNotFound)
+	if (range.location != NSNotFound)
 	{
 		[self scrollRangeToVisible:range animated:animated];
 	}
