@@ -1028,7 +1028,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><head><style>	.container { display: block; }	span.test { font-style:italic; }</style></head><body><div class='container'>\n    before  <span class='test'>test</span> after\n</div></body></html>" options:NULL];
 	
 	
-	NSArray *lines = [[attributedString string] componentsSeparatedByString:@"\n"];
+	NSArray *lines = [[[attributedString string] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsSeparatedByString:@"\n"];
 	STAssertTrue([lines count]==1, @"There should only be one line, display style block should not be inherited");
 }
 @end
