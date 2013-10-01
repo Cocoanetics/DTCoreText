@@ -9,17 +9,22 @@ require 'optparse'
 excludedFolders = []
 coveralls_cmd = "coveralls"
 
+excludeHeaders = false
+
 # create option parser
 opts = OptionParser.new
 opts.banner = "Usage: coveralls.rb [options]"
 
-opts.on('-e', '--exclude FOLDER', 'Folder to exclude') do |v|
+opts.on('-e', '--exclude-folder FOLDER', 'Folder to exclude') do |v|
    excludedFolders << v
-   
    coveralls_cmd.concat(" -e #{v}")
 end
+
+opts.on('-h', '--exclude-headers', 'Ignores headers') do |v|
+  excludeHeaders = true
+end
   
-opts.on_tail("-h", "--help", "Show this message") do
+opts.on_tail("-?", "--help", "Show this message") do
   puts opts
   exit
 end
@@ -51,7 +56,7 @@ Find.find(derivedDataDir) do |gcda_file|
     
       #get just the folder name
       gcov_dir = File.dirname(gcda_file)
-
+ 
       # cut off absolute working dir to get relative source path
       relative_input_path = gcda_file.slice(derivedDataDir.length, gcda_file.length)
       puts "\nINPUT: #{relative_input_path}"
@@ -69,8 +74,11 @@ Find.find(derivedDataDir) do |gcda_file|
           source_path = match[1]
 
           if (source_path.start_with? workingDir)
+            
             # cut off absolute working dir to get relative source path
             relative_path = source_path.slice(workingDir.length+1, source_path.length)
+            
+            extension = File.extname(relative_path)
             
             # get the path components
             path_comps = relative_path.split(File::SEPARATOR)
@@ -79,8 +87,13 @@ Find.find(derivedDataDir) do |gcda_file|
               puts "   - ignore:  #{relative_path} (excluded via option)"
               FileUtils.rm gcov_file
             else
-              puts "   - process: #{relative_path}"
-              FileUtils.mv(gcov_file, outputDir)
+              if (excludeHeaders && extension == '.h')
+                puts "   - ignore:  #{relative_path} (excluded header)"
+                FileUtils.rm gcov_file
+              else
+                puts "   - process: #{relative_path}"
+                FileUtils.mv(gcov_file, outputDir)
+              end
             end
           else
             puts "   - ignore:  #{gcov_file} (outside source folder)"
