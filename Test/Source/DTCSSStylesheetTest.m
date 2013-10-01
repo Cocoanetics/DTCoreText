@@ -192,7 +192,7 @@
 	
 	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
 	
-	[styles setObject:@"italic bold 12px/30px Georgia" forKey:@"font"];
+	[styles setObject:@"italic bold 12px/30px Georgia caption" forKey:@"font"];
 	
 	[stylesheet _uncompressShorthands:styles];
 	
@@ -210,6 +210,58 @@
 
 	NSString *fontLineHeight = [styles objectForKey:@"line-height"];
 	STAssertTrue([fontLineHeight isEqualToString:@"30px"], @"line-height should be 30px");
+}
+
+- (void)testUncompressFontShorthandWordSize
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"xx-small Georgia" forKey:@"font"];
+	
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *fontFamily = [styles objectForKey:@"font-family"];
+	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
+	
+	NSString *fontVariant = [styles objectForKey:@"font-variant"];
+	STAssertTrue([fontVariant isEqualToString:@"normal"], @"font-variant should be normal");
+	
+	NSString *fontWeight = [styles objectForKey:@"font-weight"];
+	STAssertTrue([fontWeight isEqualToString:@"normal"], @"font-weight should be normal");
+	
+	NSString *fontSize = [styles objectForKey:@"font-size"];
+	STAssertTrue([fontSize isEqualToString:@"xx-small"], @"font-size should be xx-small");
+	
+	NSString *fontLineHeight = [styles objectForKey:@"line-height"];
+	STAssertTrue([fontLineHeight isEqualToString:@"normal"], @"line-height should be normal");
+}
+
+- (void)testUncompressFontShorthandLengthFirst
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"1.0em Georgia" forKey:@"font"];
+	
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *fontFamily = [styles objectForKey:@"font-family"];
+	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
+	
+	NSString *fontVariant = [styles objectForKey:@"font-variant"];
+	STAssertTrue([fontVariant isEqualToString:@"normal"], @"font-variant should be normal");
+	
+	NSString *fontWeight = [styles objectForKey:@"font-weight"];
+	STAssertTrue([fontWeight isEqualToString:@"normal"], @"font-weight should be normal");
+	
+	NSString *fontSize = [styles objectForKey:@"font-size"];
+	STAssertTrue([fontSize isEqualToString:@"1.0em"], @"font-size should be 1.0em");
+	
+	NSString *fontLineHeight = [styles objectForKey:@"line-height"];
+	STAssertTrue([fontLineHeight isEqualToString:@"normal"], @"line-height should be normal");
 }
 
 - (void)testUncompressListShorthand
