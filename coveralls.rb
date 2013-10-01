@@ -83,17 +83,25 @@ Find.find(derivedDataDir) do |gcda_file|
             # get the path components
             path_comps = relative_path.split(File::SEPARATOR)
             
+            shouldProcess = false
+            exclusionMsg =""
+            
             if (excludedFolders.include?(path_comps[0]))
-              puts "   - ignore:  #{relative_path} (excluded via option)"
-              FileUtils.rm gcov_file
+              exclusionMsg = "excluded via option"
             else
               if (excludeHeaders && extension == '.h')
-                puts "   - ignore:  #{relative_path} (excluded header)"
-                FileUtils.rm gcov_file
+                exclusionMsg = "excluded header"
               else
-                puts "   - process: #{relative_path}"
-                FileUtils.mv(gcov_file, outputDir)
+                shouldProcess = true
               end
+            end
+            
+            if (shouldProcess)
+              puts "   - process: #{relative_path}"
+              FileUtils.mv(gcov_file, outputDir)
+            else
+              puts "   - ignore:  #{relative_path} (#{exclusionMsg})"
+              FileUtils.rm gcov_file
             end
           else
             puts "   - ignore:  #{gcov_file} (outside source folder)"
