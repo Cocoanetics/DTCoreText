@@ -7,6 +7,7 @@ require 'optparse'
 
 # arraw of source subfolders to exclude
 excludedFolders = []
+coveralls_cmd = "coveralls"
 
 # create option parser
 opts = OptionParser.new
@@ -14,6 +15,8 @@ opts.banner = "Usage: coveralls.rb [options]"
 
 opts.on('-e', '--exclude FOLDER', 'Folder to exclude') do |v|
    excludedFolders << v
+   
+   coveralls_cmd.concat(" -e #{v}")
 end
   
 opts.on_tail("-h", "--help", "Show this message") do
@@ -89,7 +92,7 @@ Find.find(derivedDataDir) do |gcda_file|
 end
 
 #call the coveralls, exclude some files
-system 'coveralls'
+system coveralls_cmd
 
 #clean up
 FileUtils.rm_rf outputDir
