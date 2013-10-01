@@ -16,6 +16,7 @@
 #import "DTImageTextAttachment.h"
 #import "DTObjectTextAttachment.h"
 #import "DTVideoTextAttachment.h"
+#import "DTLog.h"
 
 static NSMutableDictionary *_classForTagNameLookup = nil;
 
@@ -162,7 +163,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 	if (previousClass)
 	{
-		NSLog(@"Warning: replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
+		DTLogWarning(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
 	}
 	
 	[_classForTagNameLookup setObject:class forKey:tagName];

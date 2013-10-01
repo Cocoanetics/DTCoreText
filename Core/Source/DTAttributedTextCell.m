@@ -10,6 +10,7 @@
 #import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
 #import "DTVersion.h"
+#import "DTLog.h"
 
 @implementation DTAttributedTextCell
 {
@@ -123,7 +124,7 @@
 {
 	if (_hasFixedRowHeight)
 	{
-		NSLog(@"Warning: you are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
+		DTLogWarning(@"You are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
 	}
 	
 	BOOL ios6Style = [DTVersion osVersionIsLessThen:@"7.0"];
@@ -140,28 +141,41 @@
 	switch (self.accessoryType)
 	{
 		case UITableViewCellAccessoryDisclosureIndicator:
+		{
 			contentWidth -= ios6Style ? 20.0f : 10.0f + 8.0f + 15.0f;
 			break;
+		}
 			
 		case UITableViewCellAccessoryCheckmark:
+		{
 			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
+		}
 			
 		case UITableViewCellAccessoryDetailDisclosureButton:
+		{
 			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
 			break;
+		}
 			
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
 		case UITableViewCellAccessoryDetailButton:
+		{
 			contentWidth -= 10.0f + 22.0f + 15.0f;
+			break;
+		}
 #endif
 			
 		case UITableViewCellAccessoryNone:
+		{
 			break;
+		}
 			
 		default:
-			NSLog(@"Warning: accessoryType %d not implemented on %@", self.accessoryType, NSStringFromClass([self class]));
+		{
+			DTLogWarning(@"AccessoryType %d not implemented on %@", self.accessoryType, NSStringFromClass([self class]));
 			break;
+		}
 	}
 	
 	CGSize neededSize = [self.attributedTextContextView suggestedFrameSizeToFitEntireStringConstraintedToWidth:contentWidth];

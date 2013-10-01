@@ -54,14 +54,6 @@
 		
 		BOOL equal = [paraStyle1 isEqual:paraStyle2];
 		
-		//		if (!equal)
-		//		{
-		//			NSLog(@"html input: ================ \n%@", HTML);
-		//			NSLog(@"string1: ================ \n%@", string1);
-		//			NSLog(@"html input2: ================ \n%@", html1);
-		//			NSLog(@"string2: ================ \n%@ \n ================", string2);
-		//		}
-		
 		STAssertTrue(equal, @"Paragraph Styles in range %@ should be equal", NSStringFromRange(substringRange));
 		
 		NSRange prefixRange;

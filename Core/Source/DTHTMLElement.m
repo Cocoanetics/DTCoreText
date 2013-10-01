@@ -17,6 +17,7 @@
 #import "DTTextHTMLElement.h"
 #import "NSString+DTUtilities.h"
 #import "DTColorFunctions.h"
+#import "DTLog.h"
 
 @interface DTHTMLElement ()
 
@@ -971,11 +972,11 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([decoration isEqualToString:@"overline"])
 		{
-			NSLog(@"Note: 'overline' text decoration not supported");
+			DTLogInfo(@"Note: 'overline' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"blink"])
 		{
-			NSLog(@"Note: 'blink' text decoration not supported");
+			DTLogInfo(@"Note: 'blink' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"inherit"])
 		{

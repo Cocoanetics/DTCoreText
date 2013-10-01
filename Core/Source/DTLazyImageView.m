@@ -8,6 +8,7 @@
 
 #import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
+#import "DTLog.h"
 
 static NSCache *_imageCache = nil;
 
@@ -213,10 +214,9 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 		}
 		else
 		{
-			NSLog(@"Warning, %@ did not get an image for %@", NSStringFromClass([self class]), [_url absoluteString]);
+			DTLogWarning(@"Warning, %@ did not get an image for %@", NSStringFromClass([self class]), [_url absoluteString]);
 		}
 	}
-	
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
