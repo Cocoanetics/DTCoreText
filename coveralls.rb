@@ -7,6 +7,7 @@ require 'optparse'
 
 # arraw of source subfolders to exclude
 excludedFolders = []
+extensionsToProcess = []
 coveralls_cmd = "coveralls"
 
 excludeHeaders = false
@@ -24,6 +25,11 @@ opts.on('-h', '--exclude-headers', 'Ignores headers') do |v|
   excludeHeaders = true
 end
   
+opts.on('-x', '--extension EXT', 'Source file extension to process') do |v|
+   extensionsToProcess << v
+   coveralls_cmd.concat(" -x #{v}")
+end
+
 opts.on_tail("-?", "--help", "Show this message") do
   puts opts
   exit
@@ -71,7 +77,10 @@ Find.find(derivedDataDir) do |gcda_file|
         match = GCOV_SOURCE_PATTERN.match(firstLine)
         
         if (match)
+          
           source_path = match[1]
+
+          puts "source: #{source_path} - #{workingDir}"
 
           if (source_path.start_with? workingDir)
             
@@ -79,6 +88,9 @@ Find.find(derivedDataDir) do |gcda_file|
             relative_path = source_path.slice(workingDir.length+1, source_path.length)
             
             extension = File.extname(relative_path)
+      			extension = extension.slice(1, extension.length-1)
+            
+            puts "#{extension}"
             
             # get the path components
             path_comps = relative_path.split(File::SEPARATOR)
@@ -89,10 +101,15 @@ Find.find(derivedDataDir) do |gcda_file|
             if (excludedFolders.include?(path_comps[0]))
               exclusionMsg = "excluded via option"
             else
-              if (excludeHeaders && extension == '.h')
+              if (excludeHeaders == true && extension == 'h')
                 exclusionMsg = "excluded header"
               else
-                shouldProcess = true
+                if (extensionsToProcess.count == 0 || extensionsToProcess.include?(extension))
+                  shouldProcess = true
+                else
+                   exclusionMsg = "excluded extension"
+                   shouldProcess = false
+                end
               end
             end
             
