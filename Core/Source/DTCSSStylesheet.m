@@ -204,7 +204,7 @@ extern unsigned int default_css_len;
 			{
 				// font-size / line-height
 				
-				fontSize = [oneComponent substringToIndex:slashIndex-1];
+				fontSize = [oneComponent substringToIndex:slashIndex];
 				fontSizeSet = YES;
 				
 				lineHeight = [oneComponent substringFromIndex:slashIndex+1];
