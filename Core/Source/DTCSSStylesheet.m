@@ -661,6 +661,8 @@ extern unsigned int default_css_len;
 	// (Note that when styles are applied, the later styles take precedence,
 	//  so the order in which we grab them matters!)
 	
+	NSLog(@"%@", element);
+	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
 	// Get based on element
@@ -700,10 +702,6 @@ extern unsigned int default_css_len;
 		 
 		 return (NSComparisonResult)NSOrderedSame;
 	 }];
-	
-	// Single part selectors are also weighted by specificity, but since they all have the same weight,
-	//we apply them in order of least specific to most specific.
-	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -881,32 +879,6 @@ extern unsigned int default_css_len;
 	}
 	
 	return matchedSelectors;
-}
-
-// This looks for cascaded single classes
-- (NSArray *)matchingSimpleCascadedSelectors:(DTHTMLElement *)element
-{
-	NSMutableArray *simpleSelectors = [NSMutableArray array];
-	
-	DTHTMLElement *currentElement = element.parentElement;
-	while (currentElement != nil)
-	{
-		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
-		NSArray *selectorParts = [currentElementClassString componentsSeparatedByString:@" "];
-		if (selectorParts.count == 1 && ([selectorParts[0] length] > 0))
-		{
-			NSString *ancessorClassRule = [NSString stringWithFormat:@".%@", selectorParts[0]];
-			
-			if (_styles[ancessorClassRule])
-			{
-				[simpleSelectors insertObject:ancessorClassRule atIndex:0];
-			}
-		}
-		
-		currentElement = currentElement.parentElement;
-	}
-	
-	return simpleSelectors;
 }
 
 // This computes the specificity for a given selector
