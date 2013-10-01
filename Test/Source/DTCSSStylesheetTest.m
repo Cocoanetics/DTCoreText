@@ -15,6 +15,7 @@
 
 @interface DTCSSStylesheet()
 - (NSInteger)_weightForSelector:(NSString *)selector;
+- (void)_uncompressShorthands:(NSMutableDictionary *)styles;
 @end
 
 @implementation DTCSSStyleSheetTest
@@ -181,6 +182,211 @@
 	
 	NSInteger weight = [stylesheet _weightForSelector:@" .foo  #div    bar  "];
 	STAssertTrue((weight == 111), @"Weight should be 111");
+}
+
+#pragma mark - Shorthands
+- (void)testUncompressListShorthand
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"inherit" forKey:@"list-style"];
+	[styles setObject:@"url('sqpurple.gif')" forKey:@"list-style-image"];
+	
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *stylePosition = [styles objectForKey:@"list-style-position"];
+	NSString *styleType = [styles objectForKey:@"list-style-type"];
+	
+	STAssertTrue([stylePosition isEqualToString:@"inherit"], @"list-style-position should be inherit");
+	STAssertTrue([styleType isEqualToString:@"inherit"], @"list-style-type should be inherit");
+}
+
+- (void)testUncompressListImageShorthand
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"image" forKey:@"list-style"];
+	[styles setObject:@"image url('sqpurple.gif')" forKey:@"list-style"];
+	
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *styleImage = [styles objectForKey:@"list-style-image"];
+	NSString *styleType = [styles objectForKey:@"list-style-type"];
+	
+	STAssertTrue([styleImage isEqualToString:@"url('sqpurple.gif')"], @"list-style-position should be inherit");
+	STAssertTrue([styleType isEqualToString:@"image"], @"list-style-type should be inherit");
+}
+
+- (void)testUncompressMarginShorthandOne
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+
+	[styles setObject:@"10px" forKey:@"margin"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *marginTop = [styles objectForKey:@"margin-top"];
+	STAssertTrue([marginTop isEqualToString:@"10px"], @"margin-top should be 10px");
+
+	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
+	STAssertTrue([marginBottom isEqualToString:@"10px"], @"margin-bottom should be 10px");
+
+	NSString *marginLeft = [styles objectForKey:@"margin-left"];
+	STAssertTrue([marginLeft isEqualToString:@"10px"], @"margin-left should be 10px");
+
+	NSString *marginRight = [styles objectForKey:@"margin-right"];
+	STAssertTrue([marginRight isEqualToString:@"10px"], @"margin-right should be 10px");
+}
+
+- (void)testUncompressMarginShorthandTwo
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px" forKey:@"margin"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *marginTop = [styles objectForKey:@"margin-top"];
+	STAssertTrue([marginTop isEqualToString:@"10px"], @"margin-top should be 10px");
+	
+	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
+	STAssertTrue([marginBottom isEqualToString:@"10px"], @"margin-bottom should be 10px");
+	
+	NSString *marginLeft = [styles objectForKey:@"margin-left"];
+	STAssertTrue([marginLeft isEqualToString:@"20px"], @"margin-left should be 20px");
+	
+	NSString *marginRight = [styles objectForKey:@"margin-right"];
+	STAssertTrue([marginRight isEqualToString:@"20px"], @"margin-right should be 20px");
+}
+
+- (void)testUncompressMarginShorthandThree
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px 30px" forKey:@"margin"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *marginTop = [styles objectForKey:@"margin-top"];
+	STAssertTrue([marginTop isEqualToString:@"10px"], @"margin-top should be 10px");
+	
+	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
+	STAssertTrue([marginBottom isEqualToString:@"30px"], @"margin-bottom should be 30px");
+	
+	NSString *marginLeft = [styles objectForKey:@"margin-left"];
+	STAssertTrue([marginLeft isEqualToString:@"20px"], @"margin-left should be 20px");
+	
+	NSString *marginRight = [styles objectForKey:@"margin-right"];
+	STAssertTrue([marginRight isEqualToString:@"20px"], @"margin-right should be 20px");
+}
+
+- (void)testUncompressMarginShorthandFour
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px 30px 40px" forKey:@"margin"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *marginTop = [styles objectForKey:@"margin-top"];
+	STAssertTrue([marginTop isEqualToString:@"10px"], @"margin-top should be 10px");
+	
+	NSString *marginBottom = [styles objectForKey:@"margin-bottom"];
+	STAssertTrue([marginBottom isEqualToString:@"30px"], @"margin-bottom should be 30px");
+	
+	NSString *marginLeft = [styles objectForKey:@"margin-left"];
+	STAssertTrue([marginLeft isEqualToString:@"40px"], @"margin-left should be 40px");
+	
+	NSString *marginRight = [styles objectForKey:@"margin-right"];
+	STAssertTrue([marginRight isEqualToString:@"20px"], @"margin-right should be 20px");
+}
+
+- (void)testUncompressPaddingShorthandOne
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px" forKey:@"padding"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *paddingTop = [styles objectForKey:@"padding-top"];
+	STAssertTrue([paddingTop isEqualToString:@"10px"], @"padding-top should be 10px");
+	
+	NSString *paddingBottom = [styles objectForKey:@"padding-bottom"];
+	STAssertTrue([paddingBottom isEqualToString:@"10px"], @"padding-bottom should be 10px");
+	
+	NSString *paddingLeft = [styles objectForKey:@"padding-left"];
+	STAssertTrue([paddingLeft isEqualToString:@"10px"], @"padding-left should be 10px");
+	
+	NSString *paddingRight = [styles objectForKey:@"padding-right"];
+	STAssertTrue([paddingRight isEqualToString:@"10px"], @"padding-right should be 10px");
+}
+
+- (void)testUncompressPaddingShorthandTwo
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px" forKey:@"padding"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *paddingTop = [styles objectForKey:@"padding-top"];
+	STAssertTrue([paddingTop isEqualToString:@"10px"], @"padding-top should be 10px");
+	
+	NSString *paddingBottom = [styles objectForKey:@"padding-bottom"];
+	STAssertTrue([paddingBottom isEqualToString:@"10px"], @"padding-bottom should be 10px");
+	
+	NSString *paddingLeft = [styles objectForKey:@"padding-left"];
+	STAssertTrue([paddingLeft isEqualToString:@"20px"], @"padding-left should be 20px");
+	
+	NSString *paddingRight = [styles objectForKey:@"padding-right"];
+	STAssertTrue([paddingRight isEqualToString:@"20px"], @"padding-right should be 20px");
+}
+
+- (void)testUncompressPaddingShorthandThree
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px 30px" forKey:@"padding"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *paddingTop = [styles objectForKey:@"padding-top"];
+	STAssertTrue([paddingTop isEqualToString:@"10px"], @"padding-top should be 10px");
+	
+	NSString *paddingBottom = [styles objectForKey:@"padding-bottom"];
+	STAssertTrue([paddingBottom isEqualToString:@"30px"], @"padding-bottom should be 30px");
+	
+	NSString *paddingLeft = [styles objectForKey:@"padding-left"];
+	STAssertTrue([paddingLeft isEqualToString:@"20px"], @"padding-left should be 20px");
+	
+	NSString *paddingRight = [styles objectForKey:@"padding-right"];
+	STAssertTrue([paddingRight isEqualToString:@"20px"], @"padding-right should be 20px");
+}
+
+- (void)testUncompressPaddingShorthandFour
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"10px 20px 30px 40px" forKey:@"padding"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *paddingTop = [styles objectForKey:@"padding-top"];
+	STAssertTrue([paddingTop isEqualToString:@"10px"], @"padding-top should be 10px");
+	
+	NSString *paddingBottom = [styles objectForKey:@"padding-bottom"];
+	STAssertTrue([paddingBottom isEqualToString:@"30px"], @"padding-bottom should be 30px");
+	
+	NSString *paddingLeft = [styles objectForKey:@"padding-left"];
+	STAssertTrue([paddingLeft isEqualToString:@"40px"], @"padding-left should be 40px");
+	
+	NSString *paddingRight = [styles objectForKey:@"padding-right"];
+	STAssertTrue([paddingRight isEqualToString:@"20px"], @"margin-right should be 20px");
 }
 
 @end
