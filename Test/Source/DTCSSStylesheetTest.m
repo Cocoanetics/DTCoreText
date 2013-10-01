@@ -13,6 +13,10 @@
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
 
+@interface DTCSSStylesheet()
+- (NSInteger)_weightForSelector:(NSString *)selector;
+@end
+
 @implementation DTCSSStyleSheetTest
 
 - (void)testAttributeWithWhitespace
@@ -117,6 +121,66 @@
 	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif !important;}"];
 	
 	STAssertNotNil([stylesheet description], @"Description should not be nil");
+}
+
+- (void)testInvalidSelectorHasNoWeight
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@""];
+	STAssertTrue((weight == 0), @"Weight should be 0");
+
+	NSInteger weight2 = [stylesheet _weightForSelector:nil];
+	STAssertTrue((weight2 == 0), @"Weight should be 0");
+}
+
+- (void)testClassesWeighTen
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@".foo"];
+	STAssertTrue((weight == 10), @"Weight should be 10");
+
+	NSInteger weight2 = [stylesheet _weightForSelector:@".foo .bar"];
+	STAssertTrue((weight2 == 20), @"Weight should be 20");
+}
+
+- (void)testIdsWeightOneHundred
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@"#foo"];
+	STAssertTrue((weight == 100), @"Weight should be 100");
+	
+	NSInteger weight2 = [stylesheet _weightForSelector:@"#foo #bar"];
+	STAssertTrue((weight2 == 200), @"Weight should be 200");
+}
+
+- (void)testElementNamesWeightOne
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@"div"];
+	STAssertTrue((weight == 1), @"Weight should be 1");
+	
+	NSInteger weight2 = [stylesheet _weightForSelector:@"span div"];
+	STAssertTrue((weight2 == 2), @"Weight should be 2");
+}
+
+- (void)testWeightsAreSummed
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@".foo #div bar"];
+	STAssertTrue((weight == 111), @"Weight should be 111");
+}
+
+- (void)testSpacesDoNotAffectWeight
+{
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@""];
+	
+	NSInteger weight = [stylesheet _weightForSelector:@" .foo  #div    bar  "];
+	STAssertTrue((weight == 111), @"Weight should be 111");
 }
 
 @end
