@@ -185,6 +185,33 @@
 }
 
 #pragma mark - Shorthands
+
+- (void)testUncompressFontShorthand
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"italic bold 12px/30px Georgia" forKey:@"font"];
+	
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *fontFamily = [styles objectForKey:@"font-family"];
+	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
+
+	NSString *fontVariant = [styles objectForKey:@"font-variant"];
+	STAssertTrue([fontVariant isEqualToString:@"normal"], @"font-variant should be normal");
+
+	NSString *fontWeight = [styles objectForKey:@"font-weight"];
+	STAssertTrue([fontWeight isEqualToString:@"bold"], @"font-weight should be bold");
+
+	NSString *fontSize = [styles objectForKey:@"font-size"];
+	STAssertTrue([fontSize isEqualToString:@"12px"], @"font-size should be 12px");
+
+	NSString *fontLineHeight = [styles objectForKey:@"line-height"];
+	STAssertTrue([fontLineHeight isEqualToString:@"30px"], @"line-height should be 30px");
+}
+
 - (void)testUncompressListShorthand
 {
 	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
