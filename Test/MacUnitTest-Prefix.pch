@@ -6,7 +6,7 @@
 	#import <Cocoa/Cocoa.h>
 	#import <Foundation/Foundation.h>
 	#import <AppKit/AppKit.h>
-#import "DTCoreText.h"
+	#import "DTCoreText.h"
 #endif
 
 #define CGSizeValue sizeValue
