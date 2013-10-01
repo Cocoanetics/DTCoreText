@@ -14,6 +14,7 @@
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
 #import "DTWeakSupport.h"
+#import "DTLog.h"
 
 @interface DTCoreTextGlyphRun ()
 
@@ -247,7 +248,7 @@
 
 	if (!font)
 	{
-		NSLog(@"CTFont missing on %@", self);
+		DTLogError(@"CTFont missing on %@", self);
 		return NULL;
 	}
 	

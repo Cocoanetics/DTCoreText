@@ -11,6 +11,7 @@
 #import "DTCoreTextLayoutFrame.h"
 #import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
+#import "DTLog.h"
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -391,8 +392,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		return [self _algorithmLegacy_BaselineOriginToPositionLine:line afterLine:previousLine];
 	}
-	
-	NSLog(@"Invalid Option for %s", __PRETTY_FUNCTION__);
+
 	return CGPointZero;
 }
 
@@ -764,8 +764,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		newLine.baselineOrigin = lineOrigin;
 		
 		[tmpLines addObject:newLine];
-		
-		NSLog(@"%d: %f %f %f, %@", lineIndex+1, newLine.leading, newLine.ascent, newLine.descent, NSStringFromCGPoint(newLine.baselineOrigin));
 		
 		lineIndex++;
 	}
