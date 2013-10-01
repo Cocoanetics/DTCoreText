@@ -649,7 +649,7 @@ extern unsigned int default_css_len;
 	if (![_orderedSelectors containsObject:selector])
 	{
 		[_orderedSelectors addObject:selector];
-		_orderedSelectorWeights[selector] = @([self weightForSelector:selector]);
+		_orderedSelectorWeights[selector] = @([self _weightForSelector:selector]);
 	}
 }
 
@@ -882,7 +882,7 @@ extern unsigned int default_css_len;
 }
 
 // This computes the specificity for a given selector
-- (NSUInteger)weightForSelector:(NSString *)selector {
+- (NSUInteger)_weightForSelector:(NSString *)selector {
 	if ((selector == nil) || (selector.length == 0))
 	{
 		return 0;
@@ -893,6 +893,10 @@ extern unsigned int default_css_len;
 	NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 	for (NSString *selectorPart in selectorParts)
 	{
+		if (selectorPart.length == 0) {
+			continue;
+		}
+		
 		if ([selectorPart characterAtIndex:0] == '#')
 		{
 			weight += 100;
