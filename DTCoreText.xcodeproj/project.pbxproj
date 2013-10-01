@@ -31,19 +31,19 @@
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; };
+		A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A04CF1A61738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; };
 		A04CF1A71738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
 		A04CF1A81738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
 		A04CF1A91738BC080036E735 /* DTAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF19F1738BC080036E735 /* DTAccessibilityElement.m */; };
 		A04CF1AA1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A04CF1AB1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; };
+		A04CF1AB1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A04CF1AC1738BC080036E735 /* DTAccessibilityViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A01738BC080036E735 /* DTAccessibilityViewProxy.h */; };
 		A04CF1AD1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
 		A04CF1AE1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
 		A04CF1AF1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A11738BC080036E735 /* DTAccessibilityViewProxy.m */; };
 		A04CF1B01738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
+		A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A04CF1B21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF1A21738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h */; };
 		A04CF1B31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
 		A04CF1B41738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A04CF1A31738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m */; };
@@ -141,7 +141,7 @@
 		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A762704017155420005F0CEC /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */; };
 		A7675E77172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7675E78172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; };
+		A7675E78172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7675E79172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; };
 		A7675E7A172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; };
 		A7675E7B172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
@@ -150,7 +150,7 @@
 		A7675E7E172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; };
+		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45151732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; };
 		A76D45161732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; };
 		A76D45171732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */; };
@@ -302,7 +302,7 @@
 		A788CAA5148648D700E1AFD9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A78C241115073BC50045651E /* TextBoxes.html in Resources */ = {isa = PBXBuildFile; fileRef = A78C241015073BC50045651E /* TextBoxes.html */; };
 		A78E3C51178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A78E3C52178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; };
+		A78E3C52178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A78E3C53178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; };
 		A78E3C54178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; };
 		A78E3C55178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.m in Sources */ = {isa = PBXBuildFile; fileRef = A78E3C50178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.m */; };
@@ -340,7 +340,7 @@
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7AE580D1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7AE580E1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; };
+		A7AE580E1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE580F1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; };
 		A7AE58101725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE58111725374C00A9BF61 /* DTImageTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE580C1725374C00A9BF61 /* DTImageTextAttachment.m */; };
@@ -348,7 +348,7 @@
 		A7AE58131725374C00A9BF61 /* DTImageTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE580C1725374C00A9BF61 /* DTImageTextAttachment.m */; };
 		A7AE58141725374C00A9BF61 /* DTImageTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE580C1725374C00A9BF61 /* DTImageTextAttachment.m */; };
 		A7AE58171725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58151725381E00A9BF61 /* DTVideoTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7AE58181725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58151725381E00A9BF61 /* DTVideoTextAttachment.h */; };
+		A7AE58181725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58151725381E00A9BF61 /* DTVideoTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE58191725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58151725381E00A9BF61 /* DTVideoTextAttachment.h */; };
 		A7AE581A1725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58151725381E00A9BF61 /* DTVideoTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE581B1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE58161725381E00A9BF61 /* DTVideoTextAttachment.m */; };
@@ -356,7 +356,7 @@
 		A7AE581D1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE58161725381E00A9BF61 /* DTVideoTextAttachment.m */; };
 		A7AE581E1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE58161725381E00A9BF61 /* DTVideoTextAttachment.m */; };
 		A7AE5821172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE581F172538CC00A9BF61 /* DTIframeTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7AE5822172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE581F172538CC00A9BF61 /* DTIframeTextAttachment.h */; };
+		A7AE5822172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE581F172538CC00A9BF61 /* DTIframeTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE5823172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE581F172538CC00A9BF61 /* DTIframeTextAttachment.h */; };
 		A7AE5824172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE581F172538CC00A9BF61 /* DTIframeTextAttachment.h */; };
 		A7AE5825172538CC00A9BF61 /* DTIframeTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE5820172538CC00A9BF61 /* DTIframeTextAttachment.m */; };
@@ -364,7 +364,7 @@
 		A7AE5827172538CC00A9BF61 /* DTIframeTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE5820172538CC00A9BF61 /* DTIframeTextAttachment.m */; };
 		A7AE5828172538CC00A9BF61 /* DTIframeTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE5820172538CC00A9BF61 /* DTIframeTextAttachment.m */; };
 		A7AE582B1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58291725391900A9BF61 /* DTObjectTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7AE582C1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58291725391900A9BF61 /* DTObjectTextAttachment.h */; };
+		A7AE582C1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58291725391900A9BF61 /* DTObjectTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE582D1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58291725391900A9BF61 /* DTObjectTextAttachment.h */; };
 		A7AE582E1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE58291725391900A9BF61 /* DTObjectTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE582F1725391900A9BF61 /* DTObjectTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE582A1725391900A9BF61 /* DTObjectTextAttachment.m */; };
@@ -406,7 +406,7 @@
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
 		A7DDF87717DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7DDF87817DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; };
+		A7DDF87817DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7DDF87917DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; };
 		A7DDF87A17DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; };
 		A7DDF87C17DDEB780005D62D /* DTColorFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DDF87B17DDEB780005D62D /* DTColorFunctions.m */; };
@@ -2039,7 +2039,6 @@
 				A060479316A8B5770000CAA1 /* DTAttributedLabel.h in Headers */,
 				A70E62D716C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */,
 				A70E62E116C24DDF009B47BF /* DTDictationPlaceholderView.h in Headers */,
-				A700289A16FB220B00AFEDA3 /* DTAnchorHTMLElement.h in Headers */,
 				A7AE580E1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */,
 				A7AE58181725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */,
 				A7AE5822172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */,
@@ -2051,6 +2050,7 @@
 				A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 				A78E3C52178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */,
 				A7DDF87817DDEB630005D62D /* DTColorFunctions.h in Headers */,
+				A700289A16FB220B00AFEDA3 /* DTAnchorHTMLElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
