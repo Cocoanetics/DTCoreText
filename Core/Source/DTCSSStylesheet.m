@@ -661,8 +661,6 @@ extern unsigned int default_css_len;
 	// (Note that when styles are applied, the later styles take precedence,
 	//  so the order in which we grab them matters!)
 	
-	NSLog(@"%@", element);
-	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
 	// Get based on element
