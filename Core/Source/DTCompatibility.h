@@ -17,7 +17,7 @@
 
 	// Edge Insets
 	#define DTEdgeInsets UIEdgeInsets
-	#define DTEdgeInsetsMake(a, b, c, d) UIEdgeInsetsMake(a, b, c, d)
+	#define DTEdgeInsetsMake(top, left, bottom, right) UIEdgeInsetsMake(top, left, bottom, right)
 
 	// NS-style text attributes are possible with iOS SDK 6.0 or higher
 	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
@@ -60,7 +60,7 @@
 
 	// Edge Insets
 	#define DTEdgeInsets NSEdgeInsets
-	#define DTEdgeInsetsMake(a, b, c, d) NSEdgeInsetsMake(a, b, c, d)
+	#define DTEdgeInsetsMake(top, left, bottom, right) NSEdgeInsetsMake(top, left, bottom, right)
 
 	// Mac supports NS-Style Text Attributes since 10.0
 	#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
