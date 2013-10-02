@@ -9,7 +9,6 @@
 #import "DTCoreText.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextLayoutFrame.h"
-#import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
 #import "DTLog.h"
 
@@ -32,14 +31,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGFloat _longestLayoutLineWidth;
 }
 
-@synthesize numberOfLines = _numberOfLines;
-@synthesize lineBreakMode = _lineBreakMode;
-@synthesize truncationString = _truncationString;
-
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
 	self = [super init];
+	
 	if (self)
 	{
 		_frame = frame;
@@ -1961,16 +1957,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
 }
 
-- (void) setJustifyRatio:(CGFloat)justifyRatio
+- (void)setJustifyRatio:(CGFloat)justifyRatio
 {
-	if( _justifyRatio != justifyRatio )
+	if (_justifyRatio != justifyRatio)
 	{
 		_justifyRatio = justifyRatio;
+		
         // clear lines cache
         _lines = nil;
     }
 }
 
+@synthesize numberOfLines = _numberOfLines;
+@synthesize lineBreakMode = _lineBreakMode;
+@synthesize truncationString = _truncationString;
 @synthesize frame = _frame;
 @synthesize lines = _lines;
 @synthesize paragraphRanges = _paragraphRanges;
