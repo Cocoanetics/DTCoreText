@@ -30,6 +30,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
 	
 	CGFloat _longestLayoutLineWidth;
+	
+	dispatch_queue_t _layoutQueue;
 }
 
 @synthesize numberOfLines = _numberOfLines;
@@ -80,6 +82,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			return nil;
 		}
 		
+		// queue for serializing all layout operations
+		_layoutQueue = dispatch_queue_create("DTCoreTextLayoutFrame Layout Queue", 0);
+		
 		_justifyRatio = 0.6f;
 	}
 	
@@ -103,6 +108,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		CFRelease(_framesetter);
 	}
+	
+#if !OS_OBJECT_USE_OBJC
+		dispatch_release(_layoutQueue);
+#endif
 }
 
 #ifndef COVERAGE
