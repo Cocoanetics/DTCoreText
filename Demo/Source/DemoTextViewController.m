@@ -10,7 +10,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <MediaPlayer/MediaPlayer.h>
 
-#import "DTVersion.h"
 #import "DTTiledLayerWithoutFade.h"
 
 @interface DemoTextViewController ()
@@ -56,10 +55,12 @@
 	{
 		NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
 		
-		if (![DTVersion osVersionIsLessThen:@"6.0"])
+#ifdef DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (floor(NSFoundationVersionNumber) >= NSFoundationVersionNumber_iOS_6_0)
 		{
 			[items addObject:@"iOS 6"];
 		}
+#endif
 		
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
