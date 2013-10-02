@@ -806,12 +806,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSArray *)lines
 {
-	if (!_lines)
+	@synchronized(_attributedStringFragment)
 	{
-		[self _buildLines];
+		if (!_lines)
+		{
+			[self _buildLines];
+		}
+		
+		return _lines;
 	}
-	
-	return _lines;
 }
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect
@@ -1202,18 +1205,21 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 // draws the text blocks that should be visible within the mentioned range and inside the clipping rect of the context
 - (void)_drawTextBlocksInContext:(CGContextRef)context inRange:(NSRange)range
 {
-	CGRect clipRect = CGContextGetClipBoundingBox(context);
-	
-	[self _enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
+	@synchronized(_attributedStringFragment)
+	{
+		CGRect clipRect = CGContextGetClipBoundingBox(context);
 		
-		CGRect visiblePart = CGRectIntersection(frame, clipRect);
-		
-		// do not draw boxes which are not in the current clip rect
-		if (!CGRectIsInfinite(visiblePart))
-		{
-			[self _drawTextBlock:textBlock inContext:context frame:frame];
-		}
-	}];
+		[self _enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
+			
+			CGRect visiblePart = CGRectIntersection(frame, clipRect);
+			
+			// do not draw boxes which are not in the current clip rect
+			if (!CGRectIsInfinite(visiblePart))
+			{
+				[self _drawTextBlock:textBlock inContext:context frame:frame];
+			}
+		}];
+	}
 }
 
 - (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary additionalOffset:(CGSize)additionalOffset
@@ -1628,18 +1634,21 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSRange)visibleStringRange
 {
-	if (!_textFrame)
+	@synchronized(_attributedStringFragment)
 	{
-		return NSMakeRange(0, 0);
+		if (!_textFrame)
+		{
+			return NSMakeRange(0, 0);
+		}
+		
+		if (!_lines)
+		{
+			// need to build lines to know range
+			[self _buildLines];
+		}
+		
+		return _stringRange;
 	}
-	
-	// need to build lines to know range
-	if (!_lines)
-	{
-		[self _buildLines];
-	}
-	
-	return _stringRange;
 }
 
 - (NSArray *)stringIndices
@@ -1695,60 +1704,66 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (CGRect)frame
 {
-	if (!_lines)
+	@synchronized(_attributedStringFragment)
 	{
-		[self _buildLines];
+		if (!_lines)
+		{
+			[self _buildLines];
+		}
+		
+		if (![self.lines count])
+		{
+			return CGRectZero;
+		}
+		
+		if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
+		{
+			// actual frame is spanned between first and last lines
+			DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+			
+			_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
+		}
+		
+		return _frame;
 	}
-	
-	if (![self.lines count])
-	{
-		return CGRectZero;
-	}
-	
-	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
-	{
-		// actual frame is spanned between first and last lines
-		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-	
-		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
-	}
-	
-	return _frame;
 }
 
 - (CGRect)intrinsicContentFrame
 {
-	if (!_lines)
+	@synchronized(_attributedStringFragment)
 	{
-		[self _buildLines];
-	}
-	
-	if (![self.lines count])
-	{
-		return CGRectZero;
-	}
-	
-	DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
-	
-	CGRect outerFrame = self.frame;
-	
-	CGRect frameOverAllLines = firstLine.frame;
-	
-	// move up to frame origin because first line usually does not go all the ways up
-	frameOverAllLines.origin.y = outerFrame.origin.y;
-	
-	for (DTCoreTextLayoutLine *oneLine in _lines)
-	{
-		// need to limit frame to outer frame, otherwise HR causes too long lines
-		CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
+		if (!_lines)
+		{
+			[self _buildLines];
+		}
 		
-		frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
+		if (![self.lines count])
+		{
+			return CGRectZero;
+		}
+		
+		DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
+		
+		CGRect outerFrame = self.frame;
+		
+		CGRect frameOverAllLines = firstLine.frame;
+		
+		// move up to frame origin because first line usually does not go all the ways up
+		frameOverAllLines.origin.y = outerFrame.origin.y;
+		
+		for (DTCoreTextLayoutLine *oneLine in _lines)
+		{
+			// need to limit frame to outer frame, otherwise HR causes too long lines
+			CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
+			
+			frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
+		}
+		
+		// extend height same method as frame
+		frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
+		
+		return CGRectIntegral(frameOverAllLines);
 	}
-	
-	// extend height same method as frame
-	frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
-	
-	return CGRectIntegral(frameOverAllLines);
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
