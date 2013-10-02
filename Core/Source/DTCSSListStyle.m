@@ -241,6 +241,9 @@
 	}
 }
 
+#ifndef COVERAGE
+// exclude methods from coverage testing
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ %p type=%d position=%d>", NSStringFromClass([self class]), self, (int)_type, (int)_position];
@@ -258,6 +261,8 @@
 	
 	return calcHash;
 }
+
+#endif
 
 /*
  Note: this is not isEqual: because on iOS 7 -[NSMutableAttributedString initWithString:attributes:] calls this via -[NSArray isEqualToArray:]. There isEqual: needs to be returning NO, because otherwise there is some weird internal caching side effect where it reuses previous list arrays

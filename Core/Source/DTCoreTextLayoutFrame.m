@@ -105,11 +105,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+#ifndef COVERAGE
+// exclude method from coverage testing
+
 - (NSString *)description
 {
 	return [self.lines description];
 }
 
+#endif
 
 #pragma mark - Positioning Lines
 

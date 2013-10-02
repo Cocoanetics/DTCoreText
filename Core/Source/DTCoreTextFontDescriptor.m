@@ -289,6 +289,9 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	return self;
 }
 
+#ifndef COVERAGE
+// exclude method from coverage testing
+
 - (NSString *)description
 {
 	NSMutableString *string = [NSMutableString string];
@@ -356,6 +359,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	
 	return string;
 }
+
+#endif
 
 - (NSDictionary *)fontAttributes
 {

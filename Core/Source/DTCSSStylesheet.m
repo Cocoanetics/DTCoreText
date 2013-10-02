@@ -83,10 +83,14 @@ extern unsigned int default_css_len;
 	return self;
 }
 
+#ifndef COVERAGE
+
 - (NSString *)description
 {
 	return [_styles description];
+	
 }
+#endif
 
 #pragma mark Working with Style Blocks
 

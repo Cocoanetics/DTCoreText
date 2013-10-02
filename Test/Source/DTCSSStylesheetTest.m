@@ -117,12 +117,30 @@
 	STAssertEqualObjects(styles[@"font-family"], expected, @"Font Family should be [Helvetica, sans-serif]");
 }
 
-- (void)testDescription
+- (void)testMergeByID
 {
-	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"p {font-family:Helvetica,sans-serif !important;}"];
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:@"#foo {color:red;} #bar {color:blue;} .foo {color:yellow;}"];
+
+	NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"foo" forKey:@"id"];
+	DTHTMLElement *element = [[DTHTMLElement alloc] initWithName:@"dummy" attributes:attributes];
 	
-	STAssertNotNil([stylesheet description], @"Description should not be nil");
+	NSSet *matchedSelectors;
+	NSDictionary *styles = [stylesheet mergedStyleDictionaryForElement:element matchedSelectors:&matchedSelectors];
+	
+	STAssertTrue([styles count]==1, @"There should be exactly one style");
+	STAssertTrue([matchedSelectors count]==1, @"There should be exactly one matched selector");
+	
+	if ([matchedSelectors count]==1)
+	{
+		NSString *selector = [matchedSelectors anyObject];
+		STAssertTrue([selector isEqualToString:@"#foo"], @"Matched Selector should be foo");
+	}
+	
+	NSString *style = [styles objectForKey:@"color"];
+	STAssertTrue([style isEqualToString:@"red"], @"Applied style should be color:red");
 }
+
+#pragma mark - CSS Cascading
 
 - (void)testInvalidSelectorHasNoWeight
 {

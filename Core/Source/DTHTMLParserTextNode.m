@@ -28,6 +28,9 @@
 	return self;
 }
 
+#ifndef COVERAGE
+// exclude methods from coverage testing
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ content='%@'>", NSStringFromClass([self class]), _characters];
@@ -43,6 +46,8 @@
 	
 	[string appendFormat:@"\"%@\"\n", [_characters stringByNormalizingWhitespace]];
 }
+
+#endif
 
 #pragma mark - Properties
 
