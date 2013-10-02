@@ -53,7 +53,7 @@
 	#if TARGET_OS_IPHONE
 	
 	// this test doesn't work running before iOS 7
-	if (NSFoundationVersionNumber <= DTNSFoundationVersionNumber_iOS_7_0)
+	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0)
 	{
 		return;
 	}
