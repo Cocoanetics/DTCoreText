@@ -41,16 +41,14 @@
 
 - (void)testNSUnderline
 {
-#if TARGET_OS_IPHONE
-	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_6_0)
+	if (!DTCoreTextModernAttributesPossible())
 	{
-		// this test not possible below iOS 6
 		return;
 	}
-#endif
+
 	
-	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<u>underline</u>" options:options];
+	NSDictionary *buildAttributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:NSUnderlineStyleAttributeName];
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
 	STAssertTrue([attributes isUnderline], @"Attributes should be underlined");
@@ -66,16 +64,13 @@
 
 - (void)testNSStrikethrough
 {
-#if TARGET_OS_IPHONE
-	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_6_0)
+	if (!DTCoreTextModernAttributesPossible())
 	{
-		// this test not possible below iOS 6
 		return;
 	}
-#endif
 
-	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<del>strikethrough</del>" options:options];
+	NSDictionary *buildAttributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:NSStrikethroughStyleAttributeName];
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
 	STAssertTrue([attributes isStrikethrough], @"Attributes should be strikethrough");
@@ -119,16 +114,16 @@
 
 - (void)testNSParagraphStyle
 {
-#if TARGET_OS_IPHONE
-	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_6_0)
+	if (!DTCoreTextModernAttributesPossible())
 	{
-		// this test not possible below iOS 6
 		return;
 	}
-#endif
+
+
+	NSMutableParagraphStyle *nsParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+	NSDictionary *buildAttributes = [NSDictionary dictionaryWithObject:nsParagraphStyle forKey:NSParagraphStyleAttributeName];
 	
-	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>Paragraph</p>" options:options];
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
@@ -187,16 +182,13 @@
 
 - (void)testNSValidColors
 {
-#if TARGET_OS_IPHONE
-	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_6_0)
+	if (!DTCoreTextModernAttributesPossible())
 	{
-		// this test not possible below iOS 6
 		return;
 	}
-#endif
 	
-	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<span style=\"color:red;background-color:blue;\">Paragraph</span>" options:options];
+	NSDictionary *buildAttributes = [NSDictionary dictionaryWithObjectsAndKeys:DTColorCreateWithHTMLName(@"red"), NSForegroundColorAttributeName, DTColorCreateWithHTMLName(@"blue"), NSBackgroundColorAttributeName, nil];
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
 	DTColor *color = [attributes foregroundColor];

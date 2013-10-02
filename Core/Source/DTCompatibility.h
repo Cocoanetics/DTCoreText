@@ -45,6 +45,19 @@
 	// constant for checking for iOS 7
 	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
 
+
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		{
+			return YES;
+		}
+#endif
+		return NO;
+	}
+
 #endif
 
 
@@ -90,4 +103,9 @@
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
 
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+		return YES;
+	}
 #endif

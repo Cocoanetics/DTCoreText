@@ -40,21 +40,15 @@
 		return [underlineStyle integerValue] != kCTUnderlineStyleNone;
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return NO;
-	}
+		underlineStyle = [self objectForKey:NSUnderlineStyleAttributeName];
 	
-	underlineStyle = [self objectForKey:NSUnderlineStyleAttributeName];
-	
-	if (underlineStyle)
-	{
-		return [underlineStyle integerValue] != NSUnderlineStyleNone;
+		if (underlineStyle)
+		{
+			return [underlineStyle integerValue] != NSUnderlineStyleNone;
+		}
 	}
-#endif
 	
 	return NO;
 }
@@ -68,21 +62,15 @@
 		return [strikethroughStyle boolValue];
 	}
 
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return NO;
+		strikethroughStyle = [self objectForKey:NSStrikethroughStyleAttributeName];
+		
+		if (strikethroughStyle)
+		{
+			return [strikethroughStyle boolValue];
+		}
 	}
-	
-	strikethroughStyle = [self objectForKey:NSStrikethroughStyleAttributeName];
-	
-	if (strikethroughStyle)
-	{
-		return [strikethroughStyle boolValue];
-	}
-#endif
 	
 	return NO;
 }
@@ -101,29 +89,22 @@
 
 - (DTCoreTextParagraphStyle *)paragraphStyle
 {
-    CTParagraphStyleRef ctParagraphStyle = (__bridge CTParagraphStyleRef)[self objectForKey:(id)kCTParagraphStyleAttributeName];
+	if (DTCoreTextModernAttributesPossible())
+	{
+		NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
+		
+		if (nsParagraphStyle && [nsParagraphStyle isKindOfClass:[NSParagraphStyle class]])
+		{
+			return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
+		}
+	}
+	
+	CTParagraphStyleRef ctParagraphStyle = (__bridge CTParagraphStyleRef)[self objectForKey:(id)kCTParagraphStyleAttributeName];
 	
 	if (ctParagraphStyle)
 	{
 		return [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:ctParagraphStyle];
 	}
-	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle
-	
-	if (![NSParagraphStyle class])
-	{
-		// unknown class
-		return nil;
-	}
-	
-	NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
-	
-	if (nsParagraphStyle)
-	{
-		return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
-	}
-#endif
 	
 	return nil;
 }
@@ -137,9 +118,9 @@
 		return [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-	if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+	if (DTCoreTextModernAttributesPossible())
 	{
+#if TARGET_OS_IPHONE
 		UIFont *uiFont = [self objectForKey:NSFontAttributeName];
 		
 		if (!uiFont)
@@ -158,18 +139,17 @@
 			
 			return fontDescriptor;
 		}
-	}
+#else
+#warning Creating an NSFont in modern style for Mac not implemented yet
 #endif
+	}
 	
 	return nil;
 }
 
 - (DTColor *)foregroundColor
 {
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if ([NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
 		DTColor *color = [self objectForKey:NSForegroundColorAttributeName];
 		
@@ -178,7 +158,6 @@
 			return color;
 		}
 	}
-#endif
 	
 	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:(id)kCTForegroundColorAttributeName];
 	
@@ -211,22 +190,15 @@
 		return [DTColor colorWithCGColor:cgColor];
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return nil;
-	}
+		DTColor *color = [self objectForKey:NSBackgroundColorAttributeName];
 	
-	DTColor *color = [self objectForKey:NSBackgroundColorAttributeName];
-	
-	if (color)
-	{
-		return color;
+		if (color)
+		{
+			return color;
+		}
 	}
-#endif
 	
 	// default background is nil
 	return nil;
@@ -234,16 +206,15 @@
 
 - (CGFloat)kerning
 {
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if ([NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
 		NSNumber *kerningNum = [self objectForKey:NSKernAttributeName];
 		
-		return [kerningNum floatValue];
+		if (kerningNum)
+		{
+			return [kerningNum floatValue];
+		}
 	}
-#endif
 	
 	NSNumber *kerningNum = [self objectForKey:(id)kCTKernAttributeName];
 	
