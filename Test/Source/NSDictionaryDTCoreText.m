@@ -95,7 +95,7 @@
 	STAssertNil([attributes fontDescriptor], @"There should be no font descriptor");
 }
 
-- (void)testForegroundColorDefault
+- (void)testColorDefaults
 {
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
@@ -104,6 +104,10 @@
 	NSString *hexColor = DTHexStringFromDTColor(color);
 	
 	STAssertTrue([hexColor isEqualToString:@"000000"], @"Default Color should be black");
+	
+	color = [attributes backgroundColor];
+	
+	STAssertNil(color, @"Background Color should be nil");
 }
 
 @end

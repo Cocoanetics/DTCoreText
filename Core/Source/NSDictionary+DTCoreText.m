@@ -181,13 +181,18 @@
 	
 	if (cgColor)
 	{
+#if DTCORETEXT_FIX_14684188
 		// test if this a valid color, workaround for iOS 7 bug
 		size_t componentCount = CGColorGetNumberOfComponents(cgColor);
 		
 		if (componentCount)
+
 		{
 			return [DTColor colorWithCGColor:cgColor];
 		}
+#else
+		return [DTColor colorWithCGColor:cgColor];
+#endif
 	}
 	
 	// default foreground is black
