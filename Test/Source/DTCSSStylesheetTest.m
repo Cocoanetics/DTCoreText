@@ -196,8 +196,13 @@
 	
 	[stylesheet _uncompressShorthands:styles];
 	
+	STAssertTrue([styles count]==6, @"There should be 6 entries in style");
+	
 	NSString *fontFamily = [styles objectForKey:@"font-family"];
 	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
+	
+	NSString *fontStyle = [styles objectForKey:@"font-style"];
+	STAssertTrue([fontStyle isEqualToString:@"italic"], @"font-style should be italic");
 
 	NSString *fontVariant = [styles objectForKey:@"font-variant"];
 	STAssertTrue([fontVariant isEqualToString:@"normal"], @"font-variant should be normal");
@@ -218,9 +223,11 @@
 	
 	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
 	
-	[styles setObject:@"xx-small Georgia" forKey:@"font"];
+	[styles setObject:@"xx-small Georgia icon" forKey:@"font"];
 	
 	[stylesheet _uncompressShorthands:styles];
+	
+	STAssertTrue([styles count]==6, @"There should be 6 entries in style");
 	
 	NSString *fontFamily = [styles objectForKey:@"font-family"];
 	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
@@ -244,9 +251,11 @@
 	
 	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
 	
-	[styles setObject:@"1.0em Georgia" forKey:@"font"];
+	[styles setObject:@"1.0em Georgia menu" forKey:@"font"];
 	
 	[stylesheet _uncompressShorthands:styles];
+	
+	STAssertTrue([styles count]==6, @"There should be 6 entries in style");
 	
 	NSString *fontFamily = [styles objectForKey:@"font-family"];
 	STAssertTrue([fontFamily isEqualToString:@"Georgia"], @"font-family should be Georgia");
