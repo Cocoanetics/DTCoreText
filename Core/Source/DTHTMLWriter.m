@@ -15,11 +15,8 @@
 {
 	NSAttributedString *_attributedString;
 	NSString *_HTMLString;
-	
 	CGFloat _textScale;
 	BOOL _useAppleConvertedSpace;
-	BOOL _iOS6TagsPossible;
-	
 	NSMutableDictionary *_styleLookup;
 }
 
@@ -35,18 +32,6 @@
 
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
-		
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		// if running on iOS6 or higher
-		if ([DTVersion osVersionIsLessThen:@"6.0"])
-		{
-			_iOS6TagsPossible = NO;
-		}
-		else
-		{
-			_iOS6TagsPossible = YES;
-		}
-#endif
 	}
 	
 	return self;
@@ -699,36 +684,18 @@
 				fontStyle = [fontStyle stringByAppendingFormat:@"letter-spacing:%.0fpx;", kerning];
 			}
 			
-			CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
-			
-			if (!textColor && _iOS6TagsPossible)
-			{
-				// could also be the iOS 6 color
-				DTColor *color = [attributes objectForKey:NSForegroundColorAttributeName];
-				textColor = color.CGColor;
-			}
+			DTColor *textColor = [attributes foregroundColor];
 			
 			if (textColor)
 			{
-				DTColor *color = [DTColor colorWithCGColor:textColor];
-				
-				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;",  DTHexStringFromDTColor(color)];
+				fontStyle = [fontStyle stringByAppendingFormat:@"color:#%@;",  DTHexStringFromDTColor(textColor)];
 			}
 			
-			CGColorRef backgroundColor = (__bridge CGColorRef)[attributes objectForKey:DTBackgroundColorAttribute];
-			
-			if (!backgroundColor && _iOS6TagsPossible)
-			{
-					// could also be the iOS 6 background color
-					DTColor *color = [attributes objectForKey:NSBackgroundColorAttributeName];
-					backgroundColor = color.CGColor;
-			}
+			DTColor *backgroundColor = [attributes backgroundColor];
 			
 			if (backgroundColor)
 			{
-				DTColor *color = [DTColor colorWithCGColor:backgroundColor];
-				
-				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", DTHexStringFromDTColor(color)];
+				fontStyle = [fontStyle stringByAppendingFormat:@"background-color:#%@;", DTHexStringFromDTColor(backgroundColor)];
 			}
 			
 			NSNumber *underline = [attributes objectForKey:(id)kCTUnderlineStyleAttributeName];
