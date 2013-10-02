@@ -1256,8 +1256,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */,
-				A79CA82317FC9648001EBA6E /* UIKit.framework */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A788CA1114863E9D00E1AFD9 /* Test */,
@@ -1283,9 +1281,11 @@
 				A704C93913901FDB0045CFC6 /* ImageIO.framework */,
 				A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */,
 				A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */,
+				A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */,
 				A76E5B4812DD9AF500711782 /* QuartzCore.framework */,
 				A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				A79CA82317FC9648001EBA6E /* UIKit.framework */,
 				A7949A5C14CC456000A8CCDE /* Other Frameworks */,
 			);
 			name = Frameworks;
