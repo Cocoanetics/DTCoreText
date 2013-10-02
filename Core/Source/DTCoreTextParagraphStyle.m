@@ -43,6 +43,8 @@
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 + (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
+	NSParameterAssert(paragraphStyle);
+	
 	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
 	
 	retStyle.firstLineHeadIndent = paragraphStyle.firstLineHeadIndent;

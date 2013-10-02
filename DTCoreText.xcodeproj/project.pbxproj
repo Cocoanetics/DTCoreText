@@ -148,6 +148,8 @@
 		A7675E7C172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
 		A7675E7D172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
 		A7675E7E172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
+		A768BE4717FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
+		A768BE4817FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -950,6 +952,7 @@
 		A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTDebug.h"; sourceTree = "<group>"; };
 		A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTDebug.m"; sourceTree = "<group>"; };
+		A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryDTCoreText.m; sourceTree = "<group>"; };
 		A76994F614DBB3DD0047CC8D /* NavTag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = NavTag.html; sourceTree = "<group>"; };
 		A76994F914DBB5F70047CC8D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+DTCoreText.h"; sourceTree = "<group>"; };
@@ -1713,6 +1716,7 @@
 				A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */,
 				A70ED6CC17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.h */,
 				A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */,
+				A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */,
 				A77A3E401779BF03000B290B /* NSMutableAttributedStringHTMLTest.h */,
 				A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */,
 				A7C7AD0B14DA7C2C005A9C69 /* NSStringHTMLTest.h */,
@@ -2613,6 +2617,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A768BE4717FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */,
 				A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */,
 				A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */,
 				A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */,
@@ -2634,6 +2639,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A768BE4817FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */,
 				A758FCA114DBD7AF007DF8B2 /* default.css in Sources */,
 				A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */,
 				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
