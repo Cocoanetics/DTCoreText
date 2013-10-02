@@ -39,6 +39,9 @@
 		#define DTCORETEXT_FIX_14684188 1
 	#endif
 
+	// constant for checking for iOS 7
+	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
+
 #endif
 
 
