@@ -138,23 +138,26 @@
 	}
 	
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-	UIFont *uiFont = [self objectForKey:NSFontAttributeName];
-	
-	if (!uiFont)
+	if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
 	{
-		return nil;
-	}
-	
-	// convert font
-	ctFont = DTCTFontCreateWithUIFont(uiFont);
-	
-	if (ctFont)
-	{
-		DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
-	
-		CFRelease(ctFont);
-	
-		return fontDescriptor;
+		UIFont *uiFont = [self objectForKey:NSFontAttributeName];
+		
+		if (!uiFont)
+		{
+			return nil;
+		}
+		
+		// convert font
+		ctFont = DTCTFontCreateWithUIFont(uiFont);
+		
+		if (ctFont)
+		{
+			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
+			
+			CFRelease(ctFont);
+			
+			return fontDescriptor;
+		}
 	}
 #endif
 	

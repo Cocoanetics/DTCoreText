@@ -68,7 +68,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>Paragraph</p>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes paragraphStyle], @"There should be a paragraph style");
+	STAssertNotNil([attributes paragraphStyle], @"There should be a paragraph style");
 }
 
 - (void)testParagraphStyleNil
@@ -84,7 +84,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>Paragraph</p>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes fontDescriptor], @"There should be a font descriptor");
+	STAssertNotNil([attributes fontDescriptor], @"There should be a font descriptor");
 }
 
 - (void)testFontDescriptorNil

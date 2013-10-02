@@ -132,8 +132,8 @@
 		NSInteger searchIndex = location;
 		
 		NSArray *arrayAtIndex;
-		NSUInteger minFoundIndex = NSUIntegerMax;
-		NSUInteger maxFoundIndex = 0;
+		
+		NSRange totalRange = NSMakeRange(NSNotFound, 0);
 		
 		BOOL foundList = NO;
 		
@@ -151,8 +151,14 @@
 			foundList = YES;
 			
 			// enhance found range
-			minFoundIndex = MIN(minFoundIndex, searchIndex);
-			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			if (totalRange.location == NSNotFound)
+			{
+				totalRange = effectiveRange;
+			}
+			else
+			{
+				totalRange = NSUnionRange(totalRange, effectiveRange);
+			}
 			
 			if (searchIndex <= 0)
 			{
@@ -172,7 +178,7 @@
 		
 		// now search forward
 		
-		searchIndex = maxFoundIndex + 1;
+		searchIndex = NSMaxRange(totalRange);
 		
 		while (searchIndex < stringLength)
 		{
@@ -187,11 +193,10 @@
 			searchIndex = NSMaxRange(effectiveRange);
 			
 			// enhance found range
-			minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
-			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			totalRange = NSUnionRange(totalRange, effectiveRange);
 		}
 		
-		return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+		return totalRange;
 	}
 }
 

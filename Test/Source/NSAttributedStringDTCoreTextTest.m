@@ -59,7 +59,7 @@
 	// test effective block outside range
 	NSRange foundRange = [attributedString rangeOfTextBlock:effectiveBlock atIndex:innerRange.location];
 	expectedRange = innerRange;
-	STAssertEquals(foundRange, expectedRange, @"Should find effective block around 'inner'");
+	STAssertEquals(foundRange, expectedRange, @"Should find effective block around 'inside'");
 }
 
 #pragma mark - Lists
