@@ -118,10 +118,14 @@
 	}
 	
 	NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
-	return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
-#else
-	return nil;
+	
+	if (nsParagraphStyle)
+	{
+		return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
+	}
 #endif
+	
+	return nil;
 }
 
 - (DTCoreTextFontDescriptor *)fontDescriptor
@@ -177,7 +181,13 @@
 	
 	if (cgColor)
 	{
-		return [DTColor colorWithCGColor:cgColor];
+		// test if this a valid color, workaround for iOS 7 bug
+		size_t componentCount = CGColorGetNumberOfComponents(cgColor);
+		
+		if (componentCount)
+		{
+			return [DTColor colorWithCGColor:cgColor];
+		}
 	}
 	
 	// default foreground is black
