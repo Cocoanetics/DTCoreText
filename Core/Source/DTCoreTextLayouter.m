@@ -12,19 +12,10 @@
 
 @property (nonatomic, strong) NSMutableArray *frames;
 
-#if OS_OBJECT_USE_OBJC
-@property (nonatomic, strong) dispatch_semaphore_t selfLock;  // GCD objects use ARC
-#else
-@property (nonatomic, assign) dispatch_semaphore_t selfLock;  // GCD objects don't use ARC
-#endif
-
-- (CTFramesetterRef)framesetter;
 - (void)_discardFramesetter;
 
 @end
 
-#define SYNCHRONIZE_START(obj) dispatch_semaphore_wait(selfLock, DISPATCH_TIME_FOREVER);
-#define SYNCHRONIZE_END(obj) dispatch_semaphore_signal(selfLock);
 
 @implementation DTCoreTextLayouter
 {
@@ -33,8 +24,6 @@
 	BOOL _shouldCacheLayoutFrames;
 	NSCache *_layoutFrameCache;
 }
-
-@synthesize selfLock;
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString
 {
@@ -45,7 +34,6 @@
 			return nil;
 		}
 		
-		selfLock = dispatch_semaphore_create(1);
 		self.attributedString = attributedString;
 	}
 	
@@ -54,13 +42,7 @@
 
 - (void)dealloc
 {
-	SYNCHRONIZE_START(self)	// just to be sure
 	[self _discardFramesetter];
-	SYNCHRONIZE_END(self)
-
-#if !OS_OBJECT_USE_OBJC
-	dispatch_release(selfLock);
-#endif
 }
 
 - (DTCoreTextLayoutFrame *)layoutFrameWithRect:(CGRect)frame range:(NSRange)range
@@ -86,7 +68,8 @@
 		}
 	}
 
-	@autoreleasepool {
+	@autoreleasepool
+	{
 		newFrame = [[DTCoreTextLayoutFrame alloc] initWithFrame:frame layouter:self range:range];
 	};
 	
@@ -100,36 +83,33 @@
 
 - (void)_discardFramesetter
 {
+	// framesetter needs to go
+	if (_framesetter)
 	{
-		// framesetter needs to go
-		if (_framesetter)
-		{
-			CFRelease(_framesetter);
-			_framesetter = NULL;
-		}
+		CFRelease(_framesetter);
+		_framesetter = NULL;
 	}
 }
 
 #pragma mark Properties
+
 - (CTFramesetterRef)framesetter
 {
-	if (!_framesetter) // Race condition, could be null now but set when we get into the SYNCHRONIZE block - so do the test twice
+	@synchronized(self)
 	{
-		SYNCHRONIZE_START(self)
+		if (!_framesetter)
 		{
-			if (!_framesetter)
-			{
-				_framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
-			}
+			_framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
 		}
-		SYNCHRONIZE_END(self)
+		
+		
+		return _framesetter;
 	}
-	return _framesetter;
 }
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
 {
-	SYNCHRONIZE_START(self)
+	@synchronized(self)
 	{
 		if (_attributedString != attributedString)
 		{
@@ -141,7 +121,6 @@
 			[_layoutFrameCache removeAllObjects];
 		}
 	}
-	SYNCHRONIZE_END(self)
 }
 
 - (NSAttributedString *)attributedString
