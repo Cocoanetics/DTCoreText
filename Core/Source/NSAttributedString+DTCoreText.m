@@ -90,7 +90,7 @@
 		 
 		 DTCSSListStyle *currentEffectiveList = [textLists lastObject];
 		 
-		 NSNumber *key = [NSNumber numberWithInteger:[currentEffectiveList hash]]; // hash defaults to address
+		 NSNumber *key = [NSNumber numberWithInteger:(NSInteger)currentEffectiveList]; // list address is identifier
 		 NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 		 
 		 NSInteger currentCounter=0;
@@ -118,7 +118,7 @@
      }
      ];
 	
-	NSNumber *key = [NSNumber numberWithInteger:[list hash]]; // hash defaults to address
+	NSNumber *key = [NSNumber numberWithInteger:(NSInteger)list]; // list address is identifier
 	NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 	
 	return [currentCounterNum integerValue];
