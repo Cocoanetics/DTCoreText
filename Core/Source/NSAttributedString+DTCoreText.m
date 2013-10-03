@@ -310,6 +310,9 @@
 
 #pragma mark HTML Encoding
 
+#ifndef COVERAGE
+// exclude method from coverage testing, those are just convenience methods
+
 - (NSString *)htmlString
 {
 	// create a writer
@@ -334,6 +337,8 @@
 	
 	return [tmpString stringByReplacingOccurrencesOfString:UNICODE_OBJECT_PLACEHOLDER withString:@""];
 }
+
+#endif
 
 #pragma mark Generating Special Attributed Strings
 + (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
