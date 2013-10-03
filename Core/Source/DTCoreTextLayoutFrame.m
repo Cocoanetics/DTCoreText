@@ -793,15 +793,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSArray *)lines
 {
-	@synchronized(_attributedStringFragment)
+	if (!_lines)
 	{
-		if (!_lines)
-		{
-			[self _buildLines];
-		}
-		
-		return _lines;
+		[self _buildLines];
 	}
+	
+	return _lines;
 }
 
 - (NSArray *)linesVisibleInRect:(CGRect)rect
@@ -878,142 +875,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark - Text Block Helpers
 
-// find effective range of all blocks affecting the given string range
-- (NSRange)_effectiveRangeOfOutermostTextBlocksInRange:(NSRange)range
-{
-	@synchronized(_attributedStringFragment)
-	{
-		NSRange effectiveRange = NSMakeRange(0, 0);
-		NSUInteger length = [_attributedStringFragment length];
-		
-		BOOL foundStartBlocks = NO;
-		
-		NSUInteger index = range.location;
-		
-		do
-		{
-			// stop searching for blocks if we are past end of range
-			if (index>=NSMaxRange(range))
-			{
-				break;
-			}
-			
-			NSRange effectiveRangeOfBlocksArray;
-			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
-			
-			// skip a range of empty blocks at start
-			if (!textBlocks)
-			{
-				index += effectiveRangeOfBlocksArray.length;
-				continue;
-			}
-			
-			foundStartBlocks = YES;
-			
-			// first text block is outermost, i.e. longest
-			DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
-			
-			if (effectiveRange.length)
-			{
-				effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
-			}
-			else
-			{
-				effectiveRange = effectiveRangeOfBlocksArray;
-			}
-			
-			NSUInteger searchIndex = effectiveRangeOfBlocksArray.location;
-			
-			// search backward for actual start of block
-			while (searchIndex > 0)
-			{
-				NSRange earlierBlocksRange;
-				NSArray *earlierBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex-1 effectiveRange:&earlierBlocksRange];
-				
-				if (![earlierBlocks containsObject:outermostBlock])
-				{
-					break;
-				}
-				
-				effectiveRange = NSUnionRange(effectiveRange, earlierBlocksRange);
-				
-				searchIndex = earlierBlocksRange.location;
-			}
-		}
-		while (!foundStartBlocks);
-		
-		// no text blocks in range
-		if (!foundStartBlocks)
-		{
-			return NSMakeRange(NSNotFound, 0);
-		}
-		
-		// search for the end blocks for this range
-		BOOL foundEndBlocks = NO;
-		
-		// set index on last character before end of searched range
-		index = NSMaxRange(range)-1;
-		
-		do
-		{
-			// stop searching for blocks if we are past end of range
-			if (index >= length)
-			{
-				break;
-			}
-			
-			NSRange effectiveRangeOfBlocksArray;
-			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
-			
-			// search of backwards from end of range until we find blocks
-			if (!textBlocks)
-			{
-				// set index on last character before this region without text blocks
-				index = effectiveRangeOfBlocksArray.location-1;
-				NSAssert(index>=effectiveRange.location, @"we should never need to search before the beginning text blocks");
-				
-				continue;
-			}
-			
-			foundEndBlocks = YES;
-			
-			// first text block is outermost, i.e. longest
-			DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
-			
-			effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
-			
-			NSUInteger searchIndex = NSMaxRange(effectiveRangeOfBlocksArray);
-			
-			// search forward for actual end of block
-			while (searchIndex < length)
-			{
-				NSRange laterBlocksRange;
-				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
-				
-				if (![laterBlocks containsObject:outermostBlock])
-				{
-					break;
-				}
-				
-				effectiveRange = NSUnionRange(effectiveRange, laterBlocksRange);
-				
-				searchIndex = NSMaxRange(laterBlocksRange);
-			}
-		}
-		while (!foundEndBlocks);
-		
-		
-		if (effectiveRange.length)
-		{
-			return effectiveRange;
-		}
-		else
-		{
-			return NSMakeRange(NSNotFound, 0);
-		}
-	}
-}
-
 // determines the frame to use for a text block with a given effect range at a specific block level
 - (CGRect)_blockFrameForEffectiveRange:(NSRange)effectiveRange level:(NSUInteger)level
 {
@@ -1074,81 +935,76 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	NSParameterAssert(block);
 	
-	NSUInteger length = [_attributedStringFragment length];
-	NSUInteger index = range.location;
-	
-	BOOL foundBlockAtLevel = NO;
-	
-	while (index<NSMaxRange(range))
+	// synchronize globally to work around crashing bug in iOS accessing attributes concurrently in 2 separate layout frames, with separate attributed strings, but coming from same layouter.
+	@synchronized((__bridge id)_framesetter)
 	{
-		NSRange textBlocksArrayRange;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&textBlocksArrayRange];
+		NSUInteger length = [_attributedStringFragment length];
+		NSUInteger index = range.location;
 		
-		index += textBlocksArrayRange.length;
+		BOOL foundBlockAtLevel = NO;
 		
-		if ([textBlocks count] <= level)
+		while (index<NSMaxRange(range))
 		{
-			// has no blocks at this level
-			continue;
-		}
-		
-		foundBlockAtLevel = YES;
-		
-		// find extent of outermost block
-		DTTextBlock *blockAtLevelToHandle = [textBlocks objectAtIndex:level];
-		
-		NSUInteger searchIndex = NSMaxRange(textBlocksArrayRange);
-		
-		NSRange currentBlockEffectiveRange = textBlocksArrayRange;
-		
-		// search forward for actual end of block
-		while (searchIndex < length && searchIndex < NSMaxRange(range))
-		{
-			NSRange laterBlocksRange;
-			NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+			NSRange textBlocksArrayRange;
+			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&textBlocksArrayRange];
 			
-			if (![laterBlocks containsObject:blockAtLevelToHandle])
+			index += textBlocksArrayRange.length;
+			
+			if ([textBlocks count] <= level)
 			{
-				break;
+				// has no blocks at this level
+				continue;
 			}
 			
-			currentBlockEffectiveRange = NSUnionRange(currentBlockEffectiveRange, laterBlocksRange);
+			foundBlockAtLevel = YES;
 			
-			searchIndex = NSMaxRange(laterBlocksRange);
+			// find extent of outermost block
+			DTTextBlock *blockAtLevelToHandle = [textBlocks objectAtIndex:level];
+			
+			NSUInteger searchIndex = NSMaxRange(textBlocksArrayRange);
+			
+			NSRange currentBlockEffectiveRange = textBlocksArrayRange;
+			
+			// search forward for actual end of block
+			while (searchIndex < length && searchIndex < NSMaxRange(range))
+			{
+				NSRange laterBlocksRange;
+				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+				
+				if (![laterBlocks containsObject:blockAtLevelToHandle])
+				{
+					break;
+				}
+				
+				currentBlockEffectiveRange = NSUnionRange(currentBlockEffectiveRange, laterBlocksRange);
+				
+				searchIndex = NSMaxRange(laterBlocksRange);
+			}
+			
+			index = searchIndex;
+			CGRect blockFrame = [self _blockFrameForEffectiveRange:currentBlockEffectiveRange level:level];
+			
+			BOOL shouldStop = NO;
+			
+			block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop);
+			
+			if (shouldStop)
+			{
+				return YES;
+			}
 		}
 		
-		index = searchIndex;
-		CGRect blockFrame = [self _blockFrameForEffectiveRange:currentBlockEffectiveRange level:level];
-		
-		BOOL shouldStop = NO;
-		
-		block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop);
-		
-		if (shouldStop)
-		{
-			return YES;
-		}
+		return foundBlockAtLevel;
 	}
-	
-	return foundBlockAtLevel;
 }
 
 
 // enumerates the text blocks in effect for a given string range
 - (void)_enumerateTextBlocksInRange:(NSRange)range usingBlock:(void (^)(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop))block
 {
-	// get range of text blocks relevant for this range
-	NSRange effectiveRange = [self _effectiveRangeOfOutermostTextBlocksInRange:range];
-	
-	// no text blocks in range
-	if (effectiveRange.location == NSNotFound)
-	{
-		return;
-	}
-	
 	__block NSUInteger level = 0;
 	
-	while ([self _enumerateTextBlocksAtLevel:level inRange:effectiveRange usingBlock:block])
+	while ([self _enumerateTextBlocksAtLevel:level inRange:range usingBlock:block])
 	{
 		level++;
 	}
@@ -1192,21 +1048,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 // draws the text blocks that should be visible within the mentioned range and inside the clipping rect of the context
 - (void)_drawTextBlocksInContext:(CGContextRef)context inRange:(NSRange)range
 {
-	@synchronized(_attributedStringFragment)
-	{
-		CGRect clipRect = CGContextGetClipBoundingBox(context);
+	CGRect clipRect = CGContextGetClipBoundingBox(context);
+	
+	[self _enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
 		
-		[self _enumerateTextBlocksInRange:range usingBlock:^(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop) {
-			
-			CGRect visiblePart = CGRectIntersection(frame, clipRect);
-			
-			// do not draw boxes which are not in the current clip rect
-			if (!CGRectIsInfinite(visiblePart))
-			{
-				[self _drawTextBlock:textBlock inContext:context frame:frame];
-			}
-		}];
-	}
+		CGRect visiblePart = CGRectIntersection(frame, clipRect);
+		
+		// do not draw boxes which are not in the current clip rect
+		if (!CGRectIsInfinite(visiblePart))
+		{
+			[self _drawTextBlock:textBlock inContext:context frame:frame];
+		}
+	}];
 }
 
 - (void)_setShadowInContext:(CGContextRef)context fromDictionary:(NSDictionary *)dictionary additionalOffset:(CGSize)additionalOffset
@@ -1621,21 +1474,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (NSRange)visibleStringRange
 {
-	@synchronized(_attributedStringFragment)
+	if (!_textFrame)
 	{
-		if (!_textFrame)
-		{
-			return NSMakeRange(0, 0);
-		}
-		
-		if (!_lines)
-		{
-			// need to build lines to know range
-			[self _buildLines];
-		}
-		
-		return _stringRange;
+		return NSMakeRange(0, 0);
 	}
+	
+	if (!_lines)
+	{
+		// need to build lines to know range
+		[self _buildLines];
+	}
+	
+	return _stringRange;
 }
 
 - (NSArray *)stringIndices
@@ -1691,66 +1541,60 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 - (CGRect)frame
 {
-	@synchronized(_attributedStringFragment)
+	if (!_lines)
 	{
-		if (!_lines)
-		{
-			[self _buildLines];
-		}
-		
-		if (![self.lines count])
-		{
-			return CGRectZero;
-		}
-		
-		if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
-		{
-			// actual frame is spanned between first and last lines
-			DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-			
-			_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
-		}
-		
-		return _frame;
+		[self _buildLines];
 	}
+	
+	if (![self.lines count])
+	{
+		return CGRectZero;
+	}
+	
+	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	{
+		// actual frame is spanned between first and last lines
+		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
+		
+		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
+	}
+	
+	return _frame;
 }
 
 - (CGRect)intrinsicContentFrame
 {
-	@synchronized(_attributedStringFragment)
+	if (!_lines)
 	{
-		if (!_lines)
-		{
-			[self _buildLines];
-		}
-		
-		if (![self.lines count])
-		{
-			return CGRectZero;
-		}
-		
-		DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
-		
-		CGRect outerFrame = self.frame;
-		
-		CGRect frameOverAllLines = firstLine.frame;
-		
-		// move up to frame origin because first line usually does not go all the ways up
-		frameOverAllLines.origin.y = outerFrame.origin.y;
-		
-		for (DTCoreTextLayoutLine *oneLine in _lines)
-		{
-			// need to limit frame to outer frame, otherwise HR causes too long lines
-			CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
-			
-			frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
-		}
-		
-		// extend height same method as frame
-		frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
-		
-		return CGRectIntegral(frameOverAllLines);
+		[self _buildLines];
 	}
+	
+	if (![self.lines count])
+	{
+		return CGRectZero;
+	}
+	
+	DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
+	
+	CGRect outerFrame = self.frame;
+	
+	CGRect frameOverAllLines = firstLine.frame;
+	
+	// move up to frame origin because first line usually does not go all the ways up
+	frameOverAllLines.origin.y = outerFrame.origin.y;
+	
+	for (DTCoreTextLayoutLine *oneLine in _lines)
+	{
+		// need to limit frame to outer frame, otherwise HR causes too long lines
+		CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
+		
+		frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
+	}
+	
+	// extend height same method as frame
+	frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
+	
+	return CGRectIntegral(frameOverAllLines);
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
