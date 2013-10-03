@@ -87,6 +87,8 @@
  */
 - (NSRange)rangeOfFieldAtIndex:(NSUInteger)location;
 
+#ifndef COVERAGE
+// exclude method from coverage testing, those are just convenience methods
 
 /**
  @name Converting to Other Representations
@@ -116,6 +118,7 @@
  */
 - (NSString *)plainTextString;
 
+#endif
 
 /**
  @name Creating Special Attributed Strings
