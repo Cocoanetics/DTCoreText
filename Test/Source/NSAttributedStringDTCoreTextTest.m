@@ -101,4 +101,45 @@
 	STAssertEquals(nonFoundRange, expectedRange, @"Should not find effective list at index 1");
 }
 
+#pragma mark - Links
+
+- (void)testLinkRange
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>some <a href=\"http://www.cocoanetics.com\">li<b>nk</b></a> text</p>" options:NULL];
+	
+	NSRange innerRange = [[attributedString string] rangeOfString:@"link"];
+	
+	// test inside
+	NSURL *foundURL = nil;
+	NSRange linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location URL:&foundURL];
+	
+	STAssertNotNil(foundURL, @"No link found inside");
+	
+	if (foundURL)
+	{
+		STAssertTrue([[foundURL absoluteString] isEqualToString:@"http://www.cocoanetics.com"], @"found URL invalid");
+	}
+	
+	STAssertEquals(linkRange, innerRange, @"Link should enclose inner text");
+	
+	
+	// test outside before
+	foundURL = nil;
+	linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location-1 URL:&foundURL];
+	
+	STAssertNil(foundURL, @"There should be no link before");
+	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
+	
+	STAssertEquals(linkRange, expectedRange, @"range should not found range");
+
+	// test outside after
+	foundURL = nil;
+	linkRange = [attributedString rangeOfLinkAtIndex:NSMaxRange(innerRange) URL:&foundURL];
+	
+	STAssertNil(foundURL, @"There should be no link after");
+	expectedRange = NSMakeRange(NSNotFound, 0);
+	
+	STAssertEquals(linkRange, expectedRange, @"range should not found range");
+}
+
 @end
