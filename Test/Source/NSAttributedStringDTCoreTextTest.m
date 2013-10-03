@@ -142,6 +142,26 @@
 	STAssertTrue([effectiveList isEqualToListStyle:listStyle], @"Effective list style should be equal");
 }
 
+- (void)testItemNumber
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1</li><li>2</li><li>3</li></ol>" options:NULL];
+
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	[[attributedString string] enumerateSubstringsInRange:entireString options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+
+		NSDictionary *attributes = [attributedString attributesAtIndex:substringRange.location effectiveRange:NULL];
+		DTCSSListStyle *list = [[attributes objectForKey:DTTextListsAttribute] lastObject];
+		
+		NSRange prefixRange = [attributedString rangeOfFieldAtIndex:substringRange.location];
+		substring = [substring substringFromIndex:prefixRange.length];
+		NSInteger number = [substring integerValue];
+		
+		NSInteger index = [attributedString itemNumberInTextList:list atIndex:substringRange.location];
+		
+		STAssertEquals(number, index, @"Item number should match the text but doesn't for range %@", NSStringFromRange(substringRange));
+	}];
+}
+
 #pragma mark - Links
 
 - (void)testLinkRange
