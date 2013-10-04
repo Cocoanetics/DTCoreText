@@ -1,15 +1,29 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.6.7'
-  spec.platform     = :ios, '4.3'
+  spec.version      = '1.7.0'
+
+  spec.ios.deployment_target = '4.3'
+  spec.osx.deployment_target = '10.8'
+
   spec.license      = 'BSD'
-  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
+#  spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
+  spec.source       = { :git => "git@github.com:artifacts/DTCoreText.git", :branch => 'develop' }
+
   spec.source_files = 'Core/Source/*.{h,m,c}'
-  spec.dependency 'DTFoundation/Core', '~>1.5.3'
-  spec.dependency 'DTFoundation/UIKit', '~>1.5.3'
-  spec.dependency 'DTFoundation/DTHTMLParser', '~>1.5.3'
-  spec.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
-  spec.requires_arc = true
+  spec.exclude_files = 'Core/Source/OSX/**/*.*', 'Core/Source/iOS/**/*.*'
+  spec.ios.source_files = 'Core/Source/iOS/*.{h,m,c}'
+  spec.osx.source_files = 'Core/Source/OSX/*.{h,m,c}'
+
+  spec.ios.dependency 'DTFoundation/UIKit', '~> 1.7.0'
+
+  spec.dependency 'DTFoundation/Core', '~> 1.7.0'
+  spec.dependency 'DTFoundation/DTHTMLParser', '~> 1.7.0'
+  
+  spec.ios.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+  spec.osx.frameworks   = 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+  
+  spec.ios.requires_arc = true
+
   spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
   spec.summary      = 'Methods to allow using HTML code with CoreText.'
   spec.author       = { 'Oliver Drobnik' => 'oliver@cocoanetics.com' }
