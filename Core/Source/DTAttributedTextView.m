@@ -6,10 +6,13 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "DTAttributedTextView.h"
 #import "DTCoreText.h"
-#import <QuartzCore/QuartzCore.h>
 #import "DTTiledLayerWithoutFade.h"
+#import "DTBlockFunctions.h"
+
 
 @interface DTAttributedTextView ()
 
@@ -104,7 +107,7 @@
 {
 	NSRange range = [self.attributedTextContentView.attributedString rangeOfAnchorNamed:anchorName];
 	
-	if (range.length != NSNotFound)
+	if (range.location != NSNotFound)
 	{
 		[self scrollRangeToVisible:range animated:animated];
 	}
@@ -125,20 +128,17 @@
 
 - (void)relayoutText
 {
-	if (![NSThread isMainThread])
-	{
-		[self performSelectorOnMainThread:@selector(relayoutText) withObject:nil waitUntilDone:YES];
-		return;
-	}
-	
-	// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
-	_attributedTextContentView.layouter=nil;
-	
-	// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
-	[_attributedTextContentView relayoutText];
-	
-	// layout custom subviews for visible area
-	[self setNeedsLayout];
+	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+		
+		// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
+		_attributedTextContentView.layouter=nil;
+		
+		// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
+		[_attributedTextContentView relayoutText];
+		
+		// layout custom subviews for visible area
+		[self setNeedsLayout];
+	});
 }
 
 #pragma mark - Working with a Cursor
@@ -164,23 +164,20 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	if (![NSThread isMainThread])
-	{
-		[self performSelectorOnMainThread:@selector(contentViewDidLayout:) withObject:notification waitUntilDone:YES];
-		return;
-	}
-	
-	NSDictionary *userInfo = [notification userInfo];
-	CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
-	
-	CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
-	
-	// ignore possibly delayed layout notification for a different width
-	if (optimalFrame.size.width == frame.size.width)
-	{
-		_attributedTextContentView.frame = optimalFrame;
-		self.contentSize = [_attributedTextContentView intrinsicContentSize];
-	}
+	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+		
+		NSDictionary *userInfo = [notification userInfo];
+		CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
+		
+		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+		
+		// ignore possibly delayed layout notification for a different width
+		if (optimalFrame.size.width == frame.size.width)
+		{
+			_attributedTextContentView.frame = optimalFrame;
+			self.contentSize = [_attributedTextContentView intrinsicContentSize];
+		}
+	});
 }
 
 #pragma mark Properties

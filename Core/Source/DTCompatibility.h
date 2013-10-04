@@ -17,7 +17,7 @@
 
 	// Edge Insets
 	#define DTEdgeInsets UIEdgeInsets
-	#define DTEdgeInsetsMake(a, b, c, d) UIEdgeInsetsMake(a, b, c, d)
+	#define DTEdgeInsetsMake(top, left, bottom, right) UIEdgeInsetsMake(top, left, bottom, right)
 
 	// NS-style text attributes are possible with iOS SDK 6.0 or higher
 	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
@@ -39,6 +39,25 @@
 		#define DTCORETEXT_FIX_14684188 1
 	#endif
 
+	// constant for checking for iOS 6
+	#define DTNSFoundationVersionNumber_iOS_6_0  993.00
+
+	// constant for checking for iOS 7
+	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
+
+
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		{
+			return YES;
+		}
+#endif
+		return NO;
+	}
+
 #endif
 
 
@@ -54,7 +73,7 @@
 
 	// Edge Insets
 	#define DTEdgeInsets NSEdgeInsets
-	#define DTEdgeInsetsMake(a, b, c, d) NSEdgeInsetsMake(a, b, c, d)
+	#define DTEdgeInsetsMake(top, left, bottom, right) NSEdgeInsetsMake(top, left, bottom, right)
 
 	// Mac supports NS-Style Text Attributes since 10.0
 	#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
@@ -84,4 +103,9 @@
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
 
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+		return YES;
+	}
 #endif

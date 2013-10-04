@@ -10,7 +10,6 @@
 #import "DTCoreTextParagraphStyle.h"
 
 #import "DTCompatibility.h"
-#import "DTVersion.h"
 
 @interface DTCoreTextParagraphStyle ()
 
@@ -51,12 +50,14 @@
 
 - (void)testTabsOnNSParagraphStyle
 {
-	// this test doesn't work running before iOS 7
 	#if TARGET_OS_IPHONE
-	if ([DTVersion osVersionIsLessThen:@"7.0"])
+	
+	// this test doesn't work running before iOS 7
+	if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0)
 	{
 		return;
 	}
+	
 	#endif
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [[DTCoreTextParagraphStyle alloc] init];

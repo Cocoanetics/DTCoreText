@@ -40,21 +40,15 @@
 		return [underlineStyle integerValue] != kCTUnderlineStyleNone;
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return NO;
-	}
+		underlineStyle = [self objectForKey:NSUnderlineStyleAttributeName];
 	
-	underlineStyle = [self objectForKey:NSUnderlineStyleAttributeName];
-	
-	if (underlineStyle)
-	{
-		return [underlineStyle integerValue] != NSUnderlineStyleNone;
+		if (underlineStyle)
+		{
+			return [underlineStyle integerValue] != NSUnderlineStyleNone;
+		}
 	}
-#endif
 	
 	return NO;
 }
@@ -68,21 +62,15 @@
 		return [strikethroughStyle boolValue];
 	}
 
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return NO;
+		strikethroughStyle = [self objectForKey:NSStrikethroughStyleAttributeName];
+		
+		if (strikethroughStyle)
+		{
+			return [strikethroughStyle boolValue];
+		}
 	}
-	
-	strikethroughStyle = [self objectForKey:NSStrikethroughStyleAttributeName];
-	
-	if (strikethroughStyle)
-	{
-		return [strikethroughStyle boolValue];
-	}
-#endif
 	
 	return NO;
 }
@@ -101,27 +89,24 @@
 
 - (DTCoreTextParagraphStyle *)paragraphStyle
 {
-    CTParagraphStyleRef ctParagraphStyle = (__bridge CTParagraphStyleRef)[self objectForKey:(id)kCTParagraphStyleAttributeName];
+	if (DTCoreTextModernAttributesPossible())
+	{
+		NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
+		
+		if (nsParagraphStyle && [nsParagraphStyle isKindOfClass:[NSParagraphStyle class]])
+		{
+			return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
+		}
+	}
+	
+	CTParagraphStyleRef ctParagraphStyle = (__bridge CTParagraphStyleRef)[self objectForKey:(id)kCTParagraphStyleAttributeName];
 	
 	if (ctParagraphStyle)
 	{
 		return [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:ctParagraphStyle];
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle
-	
-	if (![NSParagraphStyle class])
-	{
-		// unknown class
-		return nil;
-	}
-	
-	NSParagraphStyle *nsParagraphStyle = [self objectForKey:NSParagraphStyleAttributeName];
-	return [DTCoreTextParagraphStyle paragraphStyleWithNSParagraphStyle:nsParagraphStyle];
-#else
 	return nil;
-#endif
 }
 
 - (DTCoreTextFontDescriptor *)fontDescriptor
@@ -133,36 +118,38 @@
 		return [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-	UIFont *uiFont = [self objectForKey:NSFontAttributeName];
-	
-	if (!uiFont)
+	if (DTCoreTextModernAttributesPossible())
 	{
-		return nil;
-	}
-	
-	// convert font
-	ctFont = DTCTFontCreateWithUIFont(uiFont);
-	
-	if (ctFont)
-	{
-		DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
-	
-		CFRelease(ctFont);
-	
-		return fontDescriptor;
-	}
+#if TARGET_OS_IPHONE
+		UIFont *uiFont = [self objectForKey:NSFontAttributeName];
+		
+		if (!uiFont)
+		{
+			return nil;
+		}
+		
+		// convert font
+		ctFont = DTCTFontCreateWithUIFont(uiFont);
+		
+		if (ctFont)
+		{
+			DTCoreTextFontDescriptor *fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
+			
+			CFRelease(ctFont);
+			
+			return fontDescriptor;
+		}
+#else
+#warning Creating an NSFont in modern style for Mac not implemented yet
 #endif
+	}
 	
 	return nil;
 }
 
 - (DTColor *)foregroundColor
 {
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if ([NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
 		DTColor *color = [self objectForKey:NSForegroundColorAttributeName];
 		
@@ -171,13 +158,23 @@
 			return color;
 		}
 	}
-#endif
 	
 	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:(id)kCTForegroundColorAttributeName];
 	
 	if (cgColor)
 	{
+#if DTCORETEXT_FIX_14684188
+		// test if this a valid color, workaround for iOS 7 bug
+		size_t componentCount = CGColorGetNumberOfComponents(cgColor);
+		
+		if (componentCount)
+
+		{
+			return [DTColor colorWithCGColor:cgColor];
+		}
+#else
 		return [DTColor colorWithCGColor:cgColor];
+#endif
 	}
 	
 	// default foreground is black
@@ -193,25 +190,35 @@
 		return [DTColor colorWithCGColor:cgColor];
 	}
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	// try NSParagraphStyle to see if "modern tags" are possible
-	
-	if (![NSParagraphStyle class])
+	if (DTCoreTextModernAttributesPossible())
 	{
-		// unknown class
-		return nil;
-	}
+		DTColor *color = [self objectForKey:NSBackgroundColorAttributeName];
 	
-	DTColor *color = [self objectForKey:NSBackgroundColorAttributeName];
-	
-	if (color)
-	{
-		return color;
+		if (color)
+		{
+			return color;
+		}
 	}
-#endif
 	
 	// default background is nil
 	return nil;
+}
+
+- (CGFloat)kerning
+{
+	if (DTCoreTextModernAttributesPossible())
+	{
+		NSNumber *kerningNum = [self objectForKey:NSKernAttributeName];
+		
+		if (kerningNum)
+		{
+			return [kerningNum floatValue];
+		}
+	}
+	
+	NSNumber *kerningNum = [self objectForKey:(id)kCTKernAttributeName];
+	
+	return [kerningNum floatValue];
 }
 
 @end

@@ -10,7 +10,7 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      buildConfiguration = "Coverage">
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -21,6 +21,11 @@
                BlueprintName = "MacUnitTest"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "DTCoreTextTestCase">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

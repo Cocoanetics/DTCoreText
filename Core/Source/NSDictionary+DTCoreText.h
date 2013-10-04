@@ -84,5 +84,10 @@
  */
 - (DTColor *)backgroundColor;
 
+/**
+ The text kerning value
+ @returns the kerning value
+ */
+- (CGFloat)kerning;
 
 @end

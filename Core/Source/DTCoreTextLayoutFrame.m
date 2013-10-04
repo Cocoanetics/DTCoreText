@@ -9,8 +9,8 @@
 #import "DTCoreText.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextLayoutFrame.h"
-#import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
+#import "DTLog.h"
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -31,14 +31,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	CGFloat _longestLayoutLineWidth;
 }
 
-@synthesize numberOfLines = _numberOfLines;
-@synthesize lineBreakMode = _lineBreakMode;
-@synthesize truncationString = _truncationString;
-
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
 	self = [super init];
+	
 	if (self)
 	{
 		_frame = frame;
@@ -104,11 +101,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 }
 
+#ifndef COVERAGE
+// exclude method from coverage testing
+
 - (NSString *)description
 {
 	return [self.lines description];
 }
 
+#endif
 
 #pragma mark - Positioning Lines
 
@@ -316,7 +317,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			baselineOrigin.y += halfLeadingFromText;
 		}
-
+		
 		// add previous line's after paragraph spacing
 		if ([self isLineLastInParagraph:previousLine])
 		{
@@ -329,7 +330,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// first line in frame
 		baselineOrigin = _frame.origin;
 	}
-
+	
 	baselineOrigin.y += line.ascent;
 	
 	CGFloat halfLeadingFromText = [self _algorithmWebKit_halfLeadingOfLine:line];
@@ -346,15 +347,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		baselineOrigin.y += halfLeadingFromText;
 	}
-
+	
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
-
+	
 	// add current line's before paragraph spacing
 	if ([self isLineFirstInParagraph:line])
 	{
 		baselineOrigin.y += paragraphStyle.paragraphSpacingBefore;
 	}
-
+	
 	// add padding for closed text blocks
 	for (DTTextBlock *previousTextBlock in previousLine.textBlocks)
 	{
@@ -392,7 +393,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return [self _algorithmLegacy_BaselineOriginToPositionLine:line afterLine:previousLine];
 	}
 	
-	NSLog(@"Invalid Option for %s", __PRETTY_FUNCTION__);
 	return CGPointZero;
 }
 
@@ -432,7 +432,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	do  // for each line
 	{
-		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
+		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length))
 		{
 			// we are outside of this paragraph, so we go to the next
 			[paragraphRanges removeObjectAtIndex:0];
@@ -503,30 +503,29 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		
 		// determine whether this is a normal line or if it should be truncated
-		shouldTruncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
-						(_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
+		shouldTruncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) || (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		
 		CTLineRef line;
 		BOOL isHyphenatedString = NO;
 		
 		if (!shouldTruncateLine)
 		{
-            static const unichar softHypen = 0x00AD;
-            NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
-            unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
-            if (softHypen == lastChar)
-            {
-                NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
-                NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
-                [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
-                line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+			static const unichar softHypen = 0x00AD;
+			NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
+			unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
+			if (softHypen == lastChar)
+			{
+				NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
+				NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
+				[hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
+				line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
 				isHyphenatedString = YES;
-            }
-            else
-            {
-                // create a line to fit
-                line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
-            }
+			}
+			else
+			{
+				// create a line to fit
+				line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+			}
 		}
 		else
 		{
@@ -547,13 +546,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				NSRange range;
 				int index = oldLineRange.location;
 				if (truncationType == kCTLineTruncationEnd)
-                {
-                    index += (oldLineRange.length > 0 ? oldLineRange.length - 1 : 0);
-                }
-                else if (truncationType == kCTLineTruncationMiddle)
-                {
-                    index += (oldLineRange.length > 1 ? (oldLineRange.length/2.0 - 1) : 0);
-                }
+				{
+					index += (oldLineRange.length > 0 ? oldLineRange.length - 1 : 0);
+				}
+				else if (truncationType == kCTLineTruncationMiddle)
+				{
+					index += (oldLineRange.length > 1 ? (oldLineRange.length/2.0 - 1) : 0);
+				}
 				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
 				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
 			}
@@ -578,7 +577,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			textAlignment = kCTNaturalTextAlignment;
 		}
-
+		
 		// determine writing direction
 		BOOL isRTL = NO;
 		CTWritingDirection baseWritingDirection;
@@ -630,8 +629,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			case kCTJustifiedTextAlignment:
 			{
 				BOOL isAtEndOfParagraph  = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length ||
-					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);
-
+											[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);
+				
 				// only justify if not last line, not <br>, and if the line width is longer than _justifyRatio of the frame
 				// avoids over-stretching
 				if( !isAtEndOfParagraph && (currentLineWidth > _justifyRatio * _frame.size.width) )
@@ -683,6 +682,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			{
 				_numberLinesFitInFrame = [typesetLines count];
 				[self _buildLinesWithTypesetter];
+				
 				return;
 			}
 			else
@@ -765,8 +765,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		[tmpLines addObject:newLine];
 		
-		NSLog(@"%d: %f %f %f, %@", lineIndex+1, newLine.leading, newLine.ascent, newLine.descent, NSStringFromCGPoint(newLine.baselineOrigin));
-		
 		lineIndex++;
 	}
 	free(origins);
@@ -826,7 +824,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			break;
 		}
-
+		
 		// CGRectIntersectsRect returns false if the frame has 0 width, which
 		// lines that consist only of line-breaks have. Set the min-width
 		// to one to work-around.
@@ -876,139 +874,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 
 #pragma mark - Text Block Helpers
-
-// find effective range of all blocks affecting the given string range
-- (NSRange)_effectiveRangeOfOutermostTextBlocksInRange:(NSRange)range
-{
-	NSRange effectiveRange = NSMakeRange(0, 0);
-	NSUInteger length = [_attributedStringFragment length];
-	
-	BOOL foundStartBlocks = NO;
-	
-	NSUInteger index = range.location;
-	
-	do
-	{
-		// stop searching for blocks if we are past end of range
-		if (index>=NSMaxRange(range))
-		{
-			break;
-		}
-		
-		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
-		
-		// skip a range of empty blocks at start
-		if (!textBlocks)
-		{
-			index += effectiveRangeOfBlocksArray.length;
-			continue;
-		}
-		
-		foundStartBlocks = YES;
-		
-		// first text block is outermost, i.e. longest
-		DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
-		
-		if (effectiveRange.length)
-		{
-			effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
-		}
-		else
-		{
-			effectiveRange = effectiveRangeOfBlocksArray;
-		}
-		
-		NSUInteger searchIndex = effectiveRangeOfBlocksArray.location;
-		
-		// search backward for actual start of block
-		while (searchIndex > 0)
-		{
-			NSRange earlierBlocksRange;
-			NSArray *earlierBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex-1 effectiveRange:&earlierBlocksRange];
-			
-			if (![earlierBlocks containsObject:outermostBlock])
-			{
-				break;
-			}
-			
-			effectiveRange = NSUnionRange(effectiveRange, earlierBlocksRange);
-			
-			searchIndex = earlierBlocksRange.location;
-		}
-	}
-	while (!foundStartBlocks);
-	
-	// no text blocks in range
-	if (!foundStartBlocks)
-	{
-		return NSMakeRange(NSNotFound, 0);
-	}
-	
-	// search for the end blocks for this range
-	BOOL foundEndBlocks = NO;
-	
-	// set index on last character before end of searched range
-	index = NSMaxRange(range)-1;
-	
-	do
-	{
-		// stop searching for blocks if we are past end of range
-		if (index >= length)
-		{
-			break;
-		}
-		
-		NSRange effectiveRangeOfBlocksArray;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&effectiveRangeOfBlocksArray];
-		
-		// search of backwards from end of range until we find blocks
-		if (!textBlocks)
-		{
-			// set index on last character before this region without text blocks
-			index = effectiveRangeOfBlocksArray.location-1;
-			NSAssert(index>=effectiveRange.location, @"we should never need to search before the beginning text blocks");
-			
-			continue;
-		}
-		
-		foundEndBlocks = YES;
-		
-		// first text block is outermost, i.e. longest
-		DTTextBlock *outermostBlock = [textBlocks objectAtIndex:0];
-		
-		effectiveRange = NSUnionRange(effectiveRange, effectiveRangeOfBlocksArray);
-		
-		NSUInteger searchIndex = NSMaxRange(effectiveRangeOfBlocksArray);
-		
-		// search forward for actual end of block
-		while (searchIndex < length)
-		{
-			NSRange laterBlocksRange;
-			NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
-			
-			if (![laterBlocks containsObject:outermostBlock])
-			{
-				break;
-			}
-			
-			effectiveRange = NSUnionRange(effectiveRange, laterBlocksRange);
-			
-			searchIndex = NSMaxRange(laterBlocksRange);
-		}
-	}
-	while (!foundEndBlocks);
-	
-	
-	if (effectiveRange.length)
-	{
-		return effectiveRange;
-	}
-	else
-	{
-		return NSMakeRange(NSNotFound, 0);
-	}
-}
 
 // determines the frame to use for a text block with a given effect range at a specific block level
 - (CGRect)_blockFrameForEffectiveRange:(NSRange)effectiveRange level:(NSUInteger)level
@@ -1070,81 +935,76 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	NSParameterAssert(block);
 	
-	NSUInteger length = [_attributedStringFragment length];
-	NSUInteger index = range.location;
-	
-	BOOL foundBlockAtLevel = NO;
-	
-	while (index<NSMaxRange(range))
+	// synchronize globally to work around crashing bug in iOS accessing attributes concurrently in 2 separate layout frames, with separate attributed strings, but coming from same layouter.
+	@synchronized((__bridge id)_framesetter)
 	{
-		NSRange textBlocksArrayRange;
-		NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&textBlocksArrayRange];
+		NSUInteger length = [_attributedStringFragment length];
+		NSUInteger index = range.location;
 		
-		index += textBlocksArrayRange.length;
+		BOOL foundBlockAtLevel = NO;
 		
-		if ([textBlocks count] <= level)
+		while (index<NSMaxRange(range))
 		{
-			// has no blocks at this level
-			continue;
-		}
-		
-		foundBlockAtLevel = YES;
-		
-		// find extent of outermost block
-		DTTextBlock *blockAtLevelToHandle = [textBlocks objectAtIndex:level];
-		
-		NSUInteger searchIndex = NSMaxRange(textBlocksArrayRange);
-		
-		NSRange currentBlockEffectiveRange = textBlocksArrayRange;
-		
-		// search forward for actual end of block
-		while (searchIndex < length && searchIndex < NSMaxRange(range))
-		{
-			NSRange laterBlocksRange;
-			NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+			NSRange textBlocksArrayRange;
+			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&textBlocksArrayRange];
 			
-			if (![laterBlocks containsObject:blockAtLevelToHandle])
+			index += textBlocksArrayRange.length;
+			
+			if ([textBlocks count] <= level)
 			{
-				break;
+				// has no blocks at this level
+				continue;
 			}
 			
-			currentBlockEffectiveRange = NSUnionRange(currentBlockEffectiveRange, laterBlocksRange);
+			foundBlockAtLevel = YES;
 			
-			searchIndex = NSMaxRange(laterBlocksRange);
+			// find extent of outermost block
+			DTTextBlock *blockAtLevelToHandle = [textBlocks objectAtIndex:level];
+			
+			NSUInteger searchIndex = NSMaxRange(textBlocksArrayRange);
+			
+			NSRange currentBlockEffectiveRange = textBlocksArrayRange;
+			
+			// search forward for actual end of block
+			while (searchIndex < length && searchIndex < NSMaxRange(range))
+			{
+				NSRange laterBlocksRange;
+				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+				
+				if (![laterBlocks containsObject:blockAtLevelToHandle])
+				{
+					break;
+				}
+				
+				currentBlockEffectiveRange = NSUnionRange(currentBlockEffectiveRange, laterBlocksRange);
+				
+				searchIndex = NSMaxRange(laterBlocksRange);
+			}
+			
+			index = searchIndex;
+			CGRect blockFrame = [self _blockFrameForEffectiveRange:currentBlockEffectiveRange level:level];
+			
+			BOOL shouldStop = NO;
+			
+			block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop);
+			
+			if (shouldStop)
+			{
+				return YES;
+			}
 		}
 		
-		index = searchIndex;
-        CGRect blockFrame = [self _blockFrameForEffectiveRange:currentBlockEffectiveRange level:level];
-		
-		BOOL shouldStop = NO;
-		
-		block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop);
-		
-		if (shouldStop)
-		{
-			return YES;
-		}
+		return foundBlockAtLevel;
 	}
-	
-	return foundBlockAtLevel;
 }
 
 
 // enumerates the text blocks in effect for a given string range
 - (void)_enumerateTextBlocksInRange:(NSRange)range usingBlock:(void (^)(DTTextBlock *textBlock, CGRect frame, NSRange effectiveRange, BOOL *stop))block
 {
-	// get range of text blocks relevant for this range
-	NSRange effectiveRange = [self _effectiveRangeOfOutermostTextBlocksInRange:range];
-	
-	// no text blocks in range
-	if (effectiveRange.location == NSNotFound)
-	{
-		return;
-	}
-
 	__block NSUInteger level = 0;
 	
-	while ([self _enumerateTextBlocksAtLevel:level inRange:effectiveRange usingBlock:block])
+	while ([self _enumerateTextBlocksAtLevel:level inRange:range usingBlock:block])
 	{
 		level++;
 	}
@@ -1340,7 +1200,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
 		CGContextSaveGState(context);
-
+		
 		// stroke the frame because the layout frame might be open ended
 		CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
@@ -1374,7 +1234,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	// need to draw all text boxes because the the there might be the padding region of a box outside the clip rect visible
 	[self _drawTextBlocksInContext:context inRange:NSMakeRange(0, [_attributedStringFragment length])];
-
+	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
 	{
 		if ([oneLine isHorizontalRule])
@@ -1410,7 +1270,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				{
 					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2f);
 				}
-				else 
+				else
 				{
 					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2f);
 				}
@@ -1482,7 +1342,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			NSNumber *ascentMultiplier = [oneRun.attributes objectForKey:(id)DTAscentMultiplierAttribute];
 			
-
+			
 			switch (superscriptStyle)
 			{
 				case 1:
@@ -1561,7 +1421,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				else // no shadows
 				{
 					[self _setForgroundColorInContext:context forGlyphRun:oneRun options:options];
-
+					
 					[oneRun drawInContext:context];
 				}
 			}
@@ -1619,20 +1479,20 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return NSMakeRange(0, 0);
 	}
 	
-	// need to build lines to know range
 	if (!_lines)
 	{
+		// need to build lines to know range
 		[self _buildLines];
 	}
 	
 	return _stringRange;
 }
 
-- (NSArray *)stringIndices 
+- (NSArray *)stringIndices
 {
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self.lines count]];
 	
-	for (DTCoreTextLayoutLine *oneLine in self.lines) 
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
 		[array addObjectsFromArray:[oneLine stringIndices]];
 	}
@@ -1650,7 +1510,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			index -= count;
 		}
-		else 
+		else
 		{
 			return retIndex;
 		}
@@ -1670,7 +1530,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			index -= count;
 		}
-		else 
+		else
 		{
 			return [oneLine frameOfGlyphAtIndex:index];
 		}
@@ -1695,7 +1555,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		// actual frame is spanned between first and last lines
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-	
+		
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
 	}
 	
@@ -1882,9 +1742,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		NSUInteger length = [plainString length];
 		
 		NSRange paragraphRange = [plainString rangeOfParagraphsContainingRange:NSMakeRange(0, 0) parBegIndex:NULL parEndIndex:NULL];
-
+		
 		NSMutableArray *tmpArray = [NSMutableArray array];
-
+		
 		while (paragraphRange.length)
 		{
 			NSValue *value = [NSValue valueWithRange:paragraphRange];
@@ -1910,7 +1770,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
     if( _numberOfLines != numberOfLines )
-	 {
+	{
 		_numberOfLines = numberOfLines;
         // clear lines cache
         _lines = nil;
@@ -1920,7 +1780,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)setLineBreakMode:(NSLineBreakMode)lineBreakMode
 {
     if( _lineBreakMode != lineBreakMode )
-	 {
+	{
         _lineBreakMode = lineBreakMode;
         // clear lines cache
         _lines = nil;
@@ -1930,27 +1790,31 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)setTruncationString:(NSAttributedString *)truncationString
 {
     if( ![_truncationString isEqualToAttributedString:truncationString] )
-	 {
+	{
         _truncationString = truncationString;
 		
         if( self.numberOfLines > 0 )
-		  {
+		{
             // clear lines cache
             _lines = nil;
         }
     }
 }
 
-- (void) setJustifyRatio:(CGFloat)justifyRatio
+- (void)setJustifyRatio:(CGFloat)justifyRatio
 {
-	if( _justifyRatio != justifyRatio )
+	if (_justifyRatio != justifyRatio)
 	{
 		_justifyRatio = justifyRatio;
+		
         // clear lines cache
         _lines = nil;
     }
 }
 
+@synthesize numberOfLines = _numberOfLines;
+@synthesize lineBreakMode = _lineBreakMode;
+@synthesize truncationString = _truncationString;
 @synthesize frame = _frame;
 @synthesize lines = _lines;
 @synthesize paragraphRanges = _paragraphRanges;

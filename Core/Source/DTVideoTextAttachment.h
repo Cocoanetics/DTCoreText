@@ -12,6 +12,6 @@
  A specialized subclass in the DTTextAttachment class cluster to represent an embedded video
  */
 
-@interface DTVideoTextAttachment : DTTextAttachment
+@interface DTVideoTextAttachment : DTTextAttachment <DTTextAttachmentHTMLPersistence>
 
 @end

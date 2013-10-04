@@ -16,7 +16,8 @@
 	{
 		NSInteger index = -1;
 		
-		for (DTHTMLElement *oneElement in listRoot.childNodes)
+		NSArray *childNodes = [listRoot.childNodes copy];
+ 		for (DTHTMLElement *oneElement in childNodes)
 		{
 			if ([oneElement isKindOfClass:[DTListItemHTMLElement class]])
 			{
@@ -276,17 +277,25 @@
 - (NSAttributedString *)attributedString
 {
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
-	
+
+	// append child elements
+	NSAttributedString *childrenString = [super attributedString];
+
 	// apend list prefix
 	NSAttributedString *listPrefix = [self _listPrefix];
 	
 	if (listPrefix)
 	{
 		[tmpString appendAttributedString:listPrefix];
+		
+		// add NL if there is immediately another list prefix following
+		NSString *field = [childrenString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
+		
+		if ([field isEqualToString:DTListPrefixField])
+		{
+			[tmpString appendEndOfParagraph];
+		}
 	}
-	
-	// append child elements
-	NSAttributedString *childrenString = [super attributedString];
 	
 	if (childrenString)
 	{

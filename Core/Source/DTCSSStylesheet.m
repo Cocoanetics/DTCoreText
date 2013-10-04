@@ -83,10 +83,14 @@ extern unsigned int default_css_len;
 	return self;
 }
 
+#ifndef COVERAGE
+
 - (NSString *)description
 {
 	return [_styles description];
+	
 }
+#endif
 
 #pragma mark Working with Style Blocks
 
@@ -204,7 +208,7 @@ extern unsigned int default_css_len;
 			{
 				// font-size / line-height
 				
-				fontSize = [oneComponent substringToIndex:slashIndex-1];
+				fontSize = [oneComponent substringToIndex:slashIndex];
 				fontSizeSet = YES;
 				
 				lineHeight = [oneComponent substringFromIndex:slashIndex+1];
@@ -649,7 +653,7 @@ extern unsigned int default_css_len;
 	if (![_orderedSelectors containsObject:selector])
 	{
 		[_orderedSelectors addObject:selector];
-		_orderedSelectorWeights[selector] = @([self weightForSelector:selector]);
+		_orderedSelectorWeights[selector] = @([self _weightForSelector:selector]);
 	}
 }
 
@@ -700,10 +704,6 @@ extern unsigned int default_css_len;
 		 
 		 return (NSComparisonResult)NSOrderedSame;
 	 }];
-	
-	// Single part selectors are also weighted by specificity, but since they all have the same weight,
-	//we apply them in order of least specific to most specific.
-	[matchingCascadingSelectors addObjectsFromArray:[self matchingSimpleCascadedSelectors:element]];
 	
 	NSMutableSet *tmpMatchedSelectors;
 	
@@ -883,34 +883,8 @@ extern unsigned int default_css_len;
 	return matchedSelectors;
 }
 
-// This looks for cascaded single classes
-- (NSArray *)matchingSimpleCascadedSelectors:(DTHTMLElement *)element
-{
-	NSMutableArray *simpleSelectors = [NSMutableArray array];
-	
-	DTHTMLElement *currentElement = element.parentElement;
-	while (currentElement != nil)
-	{
-		NSString *currentElementClassString = [currentElement.attributes objectForKey:@"class"];
-		NSArray *selectorParts = [currentElementClassString componentsSeparatedByString:@" "];
-		if (selectorParts.count == 1 && ([selectorParts[0] length] > 0))
-		{
-			NSString *ancessorClassRule = [NSString stringWithFormat:@".%@", selectorParts[0]];
-			
-			if (_styles[ancessorClassRule])
-			{
-				[simpleSelectors insertObject:ancessorClassRule atIndex:0];
-			}
-		}
-		
-		currentElement = currentElement.parentElement;
-	}
-	
-	return simpleSelectors;
-}
-
 // This computes the specificity for a given selector
-- (NSUInteger)weightForSelector:(NSString *)selector {
+- (NSUInteger)_weightForSelector:(NSString *)selector {
 	if ((selector == nil) || (selector.length == 0))
 	{
 		return 0;
@@ -921,6 +895,10 @@ extern unsigned int default_css_len;
 	NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 	for (NSString *selectorPart in selectorParts)
 	{
+		if (selectorPart.length == 0) {
+			continue;
+		}
+		
 		if ([selectorPart characterAtIndex:0] == '#')
 		{
 			weight += 100;

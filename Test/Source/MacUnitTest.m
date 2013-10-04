@@ -8,7 +8,6 @@
 
 #import "MacUnitTest.h"
 #import "DTHTMLAttributedStringBuilder.h"
-#import "NSString+SlashEscaping.h"
 #import "NSObject+DTRuntime.h"
 
 #define TESTCASE_FILE_EXTENSION @"html"

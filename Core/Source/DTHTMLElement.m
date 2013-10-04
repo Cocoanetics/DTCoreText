@@ -17,6 +17,7 @@
 #import "DTTextHTMLElement.h"
 #import "NSString+DTUtilities.h"
 #import "DTColorFunctions.h"
+#import "DTLog.h"
 
 @interface DTHTMLElement ()
 
@@ -264,6 +265,22 @@ NSDictionary *_classesForNames = nil;
 			[tmpDict setObject:_shadows forKey:DTShadowsAttribute];
 		}
 	}
+	
+	if (_letterSpacing)
+	{
+		NSNumber *letterSpacingNum = [NSNumber numberWithFloat:_letterSpacing];
+		
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (___useiOS6Attributes)
+		{
+			[tmpDict setObject:letterSpacingNum forKey:NSKernAttributeName];
+		}
+		else
+#endif
+		{
+			[tmpDict setObject:letterSpacingNum forKey:(id)kCTKernAttributeName];
+		}
+	}
 
 	if (_headerLevel)
 	{
@@ -426,8 +443,18 @@ NSDictionary *_classesForNames = nil;
 						// we already have a white space in the string so far
 						if ([[tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet ignorableWhitespaceCharacterSet]])
 						{
-							while ([[nodeString string] hasPrefix:@" "])
+							// following e.g. a BR we don't want a space or NL
+							NSCharacterSet *charactersToIgnore = [NSCharacterSet characterSetWithCharactersInString:@" \n\t"];
+							
+							while ([[nodeString string] hasPrefixCharacterFromSet:charactersToIgnore])
 							{
+								NSString *field = [nodeString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
+								
+								if ([field isEqualToString:DTListPrefixField])
+								{
+									break;
+								}
+								
 								nodeString = [nodeString attributedSubstringFromRange:NSMakeRange(1, [nodeString length]-1)];
 							}
 						}
@@ -926,7 +953,6 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	
 	NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
 	if (decoration)
 	{
@@ -946,11 +972,11 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([decoration isEqualToString:@"overline"])
 		{
-			NSLog(@"Note: 'overline' text decoration not supported");
+			DTLogInfo(@"Note: 'overline' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"blink"])
 		{
-			NSLog(@"Note: 'blink' text decoration not supported");
+			DTLogInfo(@"Note: 'blink' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"inherit"])
 		{
@@ -1017,6 +1043,23 @@ NSDictionary *_classesForNames = nil;
 		else if ([verticalAlignment isEqualToString:@"baseline"])
 		{
 			_textAttachmentAlignment = DTTextAttachmentVerticalAlignmentBaseline;
+		}
+	}
+	
+	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
+	if (letterSpacing)
+	{
+		if ([letterSpacing isEqualToString:@"normal"])
+		{
+			_letterSpacing = 0;
+		}
+		else if ([letterSpacing isEqualToString:@"inherit"])
+		{
+			// no op, we already inherited it
+		}
+		else // interpret as length
+		{
+			_letterSpacing = [letterSpacing pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 		}
 	}
 	
@@ -1296,6 +1339,7 @@ NSDictionary *_classesForNames = nil;
 	_underlineStyle = element.underlineStyle;
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
+	_letterSpacing = element.letterSpacing;
 	
 	_shadows = [element.shadows copy];
 	
