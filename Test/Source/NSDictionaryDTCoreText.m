@@ -201,9 +201,6 @@
 	
 	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
-
-
-
  
 // this crashes or hangs issue #648
 - (void)testNSValidColorsFromHTML
@@ -227,7 +224,6 @@
 	
 	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
-
 
 - (void)testKerning
 {
