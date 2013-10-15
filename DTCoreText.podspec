@@ -22,7 +22,7 @@ Pod::Spec.new do |spec|
   spec.ios.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
   spec.osx.frameworks   = 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
   
-  spec.ios.requires_arc = true
+  spec.requires_arc = true
 
   spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
   spec.summary      = 'Methods to allow using HTML code with CoreText.'
