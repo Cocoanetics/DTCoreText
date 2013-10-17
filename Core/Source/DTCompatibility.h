@@ -39,18 +39,27 @@
 		#define DTCORETEXT_FIX_14684188 1
 	#endif
 
+	/*
+	 *  System Versioning Preprocessor Macros
+	 */
+
+	#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+	#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+	#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+	#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+	#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
 	// constant for checking for iOS 6
 	#define DTNSFoundationVersionNumber_iOS_6_0  993.00
 
 	// constant for checking for iOS 7
 	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
 
-
 	// runtime-check if NS-style attributes are allowed
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0"))
 		{
 			return YES;
 		}
