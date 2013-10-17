@@ -135,7 +135,7 @@
 	{
 #if TARGET_OS_IPHONE
 		// NS-attributes only supported running on iOS 6.0 or greater
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0"))
 		{
 			___useiOS6Attributes = YES;
 		}

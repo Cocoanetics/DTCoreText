@@ -56,12 +56,10 @@
 	{
 		NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
 		
-#ifdef DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		if (DTCoreTextModernAttributesPossible())
 		{
 			[items addObject:@"iOS 6"];
 		}
-#endif
 		
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
