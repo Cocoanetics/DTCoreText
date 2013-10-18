@@ -570,6 +570,14 @@
 		A7F7EFC81573603100F5A4D0 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F842F416D38BC300BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
 		A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
+		B3572D9E17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */; };
+		B3572D9F17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */; };
+		B3572DA017FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */; };
+		B3572DA117FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */; };
+		B3572DA217FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */; };
+		B3572DA317FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */; };
+		B3572DA417FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */; };
+		B3572DA517FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */; };
 		C2CDBAEC17CCD5E5000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
 		C2CDBAED17CCD5EA000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
 		DDCCEB1E17005A4F009FF923 /* css.css in Resources */ = {isa = PBXBuildFile; fileRef = DDCCEB1D17005A4F009FF923 /* css.css */; };
@@ -1145,6 +1153,8 @@
 		A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+SmallCaps.h"; sourceTree = "<group>"; };
 		A7F5672614D8506C00D1F167 /* NSAttributedString+SmallCaps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+SmallCaps.m"; sourceTree = "<group>"; };
 		A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText_no_DTFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTTextAttachment.h"; sourceTree = "<group>"; };
+		B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTTextAttachment.m"; sourceTree = "<group>"; };
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1322,6 +1332,8 @@
 				A788CAA81486492200E1AFD9 /* Utils */,
 				A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */,
 				A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */,
+				B3572D9C17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h */,
+				B3572D9D17FF5C8200475917 /* NSAttributedString+DTTextAttachment.m */,
 				A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */,
 				A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */,
 				A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */,
@@ -1756,6 +1768,7 @@
 				A788C99914863E8700E1AFD9 /* DTCSSStylesheet.h in Headers */,
 				A788C99E14863E8700E1AFD9 /* DTHTMLElement.h in Headers */,
 				A788C9A314863E8700E1AFD9 /* DTLazyImageView.h in Headers */,
+				B3572D9E17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */,
 				A788C9A814863E8700E1AFD9 /* DTLinkButton.h in Headers */,
 				A788C9B714863E8700E1AFD9 /* DTTextAttachment.h in Headers */,
 				A788C9BC14863E8700E1AFD9 /* DTWebVideoView.h in Headers */,
@@ -1820,6 +1833,7 @@
 				A788C99514863E8700E1AFD9 /* DTCSSListStyle.h in Headers */,
 				A788C99A14863E8700E1AFD9 /* DTCSSStylesheet.h in Headers */,
 				A788C99F14863E8700E1AFD9 /* DTHTMLElement.h in Headers */,
+				B3572D9F17FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */,
 				A788C9B814863E8700E1AFD9 /* DTTextAttachment.h in Headers */,
 				A788C9C714863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
 				A788C9D114863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */,
@@ -1889,6 +1903,7 @@
 				A7F7EFA91573603100F5A4D0 /* DTCSSListStyle.h in Headers */,
 				A7F7EFAA1573603100F5A4D0 /* DTCSSStylesheet.h in Headers */,
 				A7F7EFAB1573603100F5A4D0 /* DTHTMLElement.h in Headers */,
+				B3572DA017FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */,
 				A7F7EFAC1573603100F5A4D0 /* DTTextAttachment.h in Headers */,
 				A7F7EFAD1573603100F5A4D0 /* NSAttributedString+HTML.h in Headers */,
 				A7F7EFAE1573603100F5A4D0 /* NSAttributedStringRunDelegates.h in Headers */,
@@ -1976,6 +1991,7 @@
 				A7EB84CE168B9A8500D686B7 /* DTTextAttachmentHTMLElement.h in Headers */,
 				A7EB84D8168B9B1300D686B7 /* DTHorizontalRuleHTMLElement.h in Headers */,
 				A7EB84E8168C657100D686B7 /* DTListItemHTMLElement.h in Headers */,
+				B3572DA117FF5C8200475917 /* NSAttributedString+DTTextAttachment.h in Headers */,
 				A70E62D916C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */,
 				A700289C16FB220B00AFEDA3 /* DTAnchorHTMLElement.h in Headers */,
 				A7AE5824172538CC00A9BF61 /* DTIframeTextAttachment.h in Headers */,
@@ -2498,6 +2514,7 @@
 				A788C98814863E8700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
 				A788C98D14863E8700E1AFD9 /* DTCoreTextLayoutLine.m in Sources */,
 				A788C99214863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
+				B3572DA217FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */,
 				A788C99714863E8700E1AFD9 /* DTCSSListStyle.m in Sources */,
 				A788C99C14863E8700E1AFD9 /* DTCSSStylesheet.m in Sources */,
 				A788C9A114863E8700E1AFD9 /* DTHTMLElement.m in Sources */,
@@ -2565,6 +2582,7 @@
 				A788C98914863E8700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
 				A788C98E14863E8700E1AFD9 /* DTCoreTextLayoutLine.m in Sources */,
 				A788C99314863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
+				B3572DA317FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */,
 				A788C99814863E8700E1AFD9 /* DTCSSListStyle.m in Sources */,
 				A788C99D14863E8700E1AFD9 /* DTCSSStylesheet.m in Sources */,
 				A788C9A214863E8700E1AFD9 /* DTHTMLElement.m in Sources */,
@@ -2666,6 +2684,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7F7EF781573603100F5A4D0 /* default.css in Sources */,
+				B3572DA417FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */,
 				A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */,
 				A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */,
 				A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */,
@@ -2743,6 +2762,7 @@
 				E2262DE71638337D00BFDAD7 /* NSString+CSS.m in Sources */,
 				E2262DE91638337D00BFDAD7 /* DTCoreTextFontDescriptor.m in Sources */,
 				E2262DEB1638337D00BFDAD7 /* DTCoreTextParagraphStyle.m in Sources */,
+				B3572DA517FF5C8200475917 /* NSAttributedString+DTTextAttachment.m in Sources */,
 				E2262DEF1638338B00BFDAD7 /* NSString+Paragraphs.m in Sources */,
 				E2262DF11638339E00BFDAD7 /* NSAttributedString+DTCoreText.m in Sources */,
 				E2262DF31638339E00BFDAD7 /* NSAttributedString+SmallCaps.m in Sources */,
