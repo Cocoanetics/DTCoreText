@@ -27,7 +27,7 @@
  @param class The class that attachments need to have, or `nil` for all attachments regardless of class
  @returns The filtered array of attachments
  */
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)class;
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)theClass;
 
 /**
  @name Calculating Ranges
