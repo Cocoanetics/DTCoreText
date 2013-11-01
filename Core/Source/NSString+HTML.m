@@ -768,7 +768,7 @@ static NSDictionary *entityReverseLookup = nil;
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
 				// alternate nbsp; and normal space
-				for (int i=0; i<numSpaces;i++)
+				for (NSUInteger i=0; i<numSpaces;i++)
 				{
 					if (i%2)
 					{
