@@ -442,7 +442,7 @@ extern unsigned int default_css_len;
 			{
 				NSMutableArray *newVal;
 				
-				for (NSUInteger i = 0; i < [value count]; ++i)
+				for (NSUInteger i = 0; i < [(NSArray*)value count]; ++i)
 				{
 					NSString *s = [value objectAtIndex:i];
 					
