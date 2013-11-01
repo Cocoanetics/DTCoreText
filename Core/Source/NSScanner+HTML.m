@@ -151,7 +151,7 @@
 		if (results.count == 0) {
 			*value = @"";
 		} else if (results.count == 1) {
-			*value = results[0];
+			*value = [results objectAtIndex:0];
 		} else {
 			*value = results;
 		}

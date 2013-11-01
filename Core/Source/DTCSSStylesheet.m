@@ -464,7 +464,7 @@ extern unsigned int default_css_len;
 							}
 						}
 						
-						newVal[i] = s;
+						[newVal insertObject:s atIndex:i];
 					}
 				}
 				
@@ -653,7 +653,7 @@ extern unsigned int default_css_len;
 	if (![_orderedSelectors containsObject:selector])
 	{
 		[_orderedSelectors addObject:selector];
-		_orderedSelectorWeights[selector] = @([self _weightForSelector:selector]);
+		[_orderedSelectorWeights setObject:@([self _weightForSelector:selector]) forKey:selector];
 	}
 }
 
@@ -683,8 +683,8 @@ extern unsigned int default_css_len;
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
 	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
 	 {
-		 NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
-		 NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
+		 NSInteger weightForSelector1 = [[_orderedSelectorWeights objectForKey:selector1] integerValue];
+		 NSInteger weightForSelector2 = [[_orderedSelectorWeights objectForKey:selector2] integerValue];
 		 
 		 if (weightForSelector1 == weightForSelector2)
 		 {
@@ -811,7 +811,7 @@ extern unsigned int default_css_len;
 		// Aside: Manual for loop here is faster than for in with reverseObjectEnumerator
 		for (NSUInteger j = selectorParts.count; j-- > 0;)
 		{
-			NSString *selectorPart = selectorParts[j];
+			NSString *selectorPart = [selectorParts objectAtIndex:j];
 			BOOL matched = NO;
 			
 			if (selectorPart.length)
