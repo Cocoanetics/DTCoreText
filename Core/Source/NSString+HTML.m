@@ -595,6 +595,7 @@ static NSDictionary *entityReverseLookup = nil;
 							 @"\u2018", @"lsquo",
 							 @"\u2019", @"rsquo",
 							 @"\u201a", @"sbquo",
+							 @"\u201a", @"bsquo",
 							 @"\u201c", @"ldquo",
 							 @"\u201d", @"rdquo",
 							 @"\u201e", @"bdquo",
