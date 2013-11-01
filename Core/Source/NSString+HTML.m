@@ -17,9 +17,9 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (NSUInteger)integerValueFromHex 
 {
-	int result = 0;
-	sscanf([self UTF8String], "%x", &result);
-	return result;
+	unsigned long result = 0;
+	sscanf([self UTF8String], "%lx", &result);
+	return (NSUInteger)result;
 }
 
 - (BOOL)isNumeric
