@@ -77,7 +77,7 @@
 	@synchronized(self)
 	{
 		// indent to the level
-		for (int i=0; i<indentLevel; i++)
+		for (NSUInteger i=0; i<indentLevel; i++)
 		{
 			[string appendString:@"   "];
 		}
@@ -109,7 +109,7 @@
 		}
 		
 		// indent to the level
-		for (int i=0; i<indentLevel; i++)
+		for (NSUInteger i=0; i<indentLevel; i++)
 		{
 			[string appendString:@"   "];
 		}
