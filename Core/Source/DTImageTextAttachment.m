@@ -108,7 +108,7 @@ static NSCache *imageCache = nil;
 				else
 				{
 					// file in app bundle
-					NSBundle *bundle = [NSBundle mainBundle];
+					NSBundle *bundle = [NSBundle bundleForClass:[self class]];
 					NSString *path = [bundle pathForResource:src ofType:nil];
 					
 					if (path)

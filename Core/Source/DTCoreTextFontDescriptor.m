@@ -54,7 +54,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	_fontOverrides = [[NSMutableDictionary alloc] init];
 	
 	// then - if it exists - we override from the plist
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
+	NSString *path = [[NSBundle bundleForClass:self] pathForResource:@"DTCoreTextFontOverrides" ofType:@"plist"];
 	NSArray *fileArray = [NSArray arrayWithContentsOfFile:path];
 	
 	for (NSDictionary *oneOverride in fileArray)
