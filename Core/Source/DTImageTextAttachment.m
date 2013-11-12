@@ -89,49 +89,66 @@ static NSCache *imageCache = nil;
 			}
 		}
 		else // normal URL
-		{
-			contentURL = [NSURL URLWithString:src];
-			
-			if(!contentURL)
+        {
+            // Absolute local path
+            if ([src hasPrefix:@"/"])
 			{
-				src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
-			}
-			
-			if (![contentURL scheme])
-			{
-				// possibly a relative url
-				if (baseURL)
+                contentURL = [NSURL fileURLWithPath:src];
+            } else {
+                contentURL = [NSURL URLWithString:src];
+				
+                if (!contentURL)
 				{
-					contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
-				}
-				else
+                    src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
+                }
+				
+                if (![contentURL scheme])
 				{
-					// file in app bundle
-					NSBundle *bundle = [NSBundle mainBundle];
-					NSString *path = [bundle pathForResource:src ofType:nil];
-					
-					if (path)
+                    if (baseURL)
 					{
-						// Prevent a crash if path turns up nil.
-						contentURL = [NSURL fileURLWithPath:path];
-					}
-					else
+                        contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
+                    }
+                    else
 					{
-						// might also be in a different bundle, e.g. when unit testing
-						bundle = [NSBundle bundleForClass:[DTTextAttachment class]];
+                        // file in app bundle
+                        NSBundle *bundle = [NSBundle mainBundle];
+                        NSString *filename = [src stringByDeletingPathExtension];
+                        NSString *ext = [src pathExtension];
 						
-						path = [bundle pathForResource:src ofType:nil];
-						if (path)
+                        NSString *path;
+                        if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] &&
+							[[UIScreen mainScreen] scale] == 2)
 						{
-							// Prevent a crash if path turns up nil.
-							contentURL = [NSURL fileURLWithPath:path];
-						}
-					}
-				}
-			}
-		}
-	}
+							
+                            // Load @2x if available
+                            NSString *filename2x = [filename stringByAppendingString:@"@2x"];
+                            path = [bundle pathForResource:filename2x ofType:ext];
+                        }
+						
+                        if (!path) {
+                            path = [bundle pathForResource:filename ofType:ext];
+                        }
+						
+                        if (path) {
+                            // Prevent a crash if path turns up nil.
+                            contentURL = [NSURL fileURLWithPath:path];
+                        }
+                        else {
+                            // might also be in a different bundle, e.g. when unit testing
+                            bundle = [NSBundle bundleForClass:[DTTextAttachment class]];
+							
+                            path = [bundle pathForResource:filename ofType:ext];
+                            if (path) {
+                                // Prevent a crash if path turns up nil.
+                                contentURL = [NSURL fileURLWithPath:path];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 	
 	// if it's a local file we need to inspect it to get it's dimensions
 	if (!_displaySize.width || !_displaySize.height)
@@ -206,7 +223,7 @@ static NSCache *imageCache = nil;
 		if (!_displaySize.width && _displaySize.height)
 		{
 			CGSize newDisplaySize = _displaySize;
-
+			
 			CGFloat factor = _displaySize.height/_originalSize.height;
 			newDisplaySize.width = _originalSize.height * factor;
 			
