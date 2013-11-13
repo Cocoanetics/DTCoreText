@@ -8,7 +8,7 @@
 
 #import "DTTextAttachment.h"
 #import "DTCoreText.h"
-#import "DTUtils.h"
+#import "DTCoreGraphicsUtils.h"
 
 #import "DTBase64Coding.h"
 #import "DTDictationPlaceholderTextAttachment.h"
@@ -217,7 +217,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	{
 		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)
 		{
-			displaySize = sizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
+			displaySize = DTCGSizeThatFillsKeepingAspectRatio(displaySize, maxDisplaySize);
 		}
 	}
 	
