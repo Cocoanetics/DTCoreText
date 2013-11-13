@@ -81,10 +81,15 @@
 	}
 }
 
+#ifndef COVERAGE 
+// exclude method from coverage testing
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ glyphs=%d %@>", [self class], [self numberOfGlyphs], NSStringFromCGRect(_frame)];
 }
+
+#endif
 
 #pragma mark - Drawing
 

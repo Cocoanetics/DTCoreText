@@ -90,7 +90,7 @@
 		 
 		 DTCSSListStyle *currentEffectiveList = [textLists lastObject];
 		 
-		 NSNumber *key = [NSNumber numberWithInteger:[currentEffectiveList hash]]; // hash defaults to address
+		 NSNumber *key = [NSNumber numberWithInteger:(NSInteger)currentEffectiveList]; // list address is identifier
 		 NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 		 
 		 NSInteger currentCounter=0;
@@ -118,7 +118,7 @@
      }
      ];
 	
-	NSNumber *key = [NSNumber numberWithInteger:[list hash]]; // hash defaults to address
+	NSNumber *key = [NSNumber numberWithInteger:(NSInteger)list]; // list address is identifier
 	NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 	
 	return [currentCounterNum integerValue];
@@ -132,8 +132,8 @@
 		NSInteger searchIndex = location;
 		
 		NSArray *arrayAtIndex;
-		NSUInteger minFoundIndex = NSUIntegerMax;
-		NSUInteger maxFoundIndex = 0;
+		
+		NSRange totalRange = NSMakeRange(NSNotFound, 0);
 		
 		BOOL foundList = NO;
 		
@@ -151,8 +151,14 @@
 			foundList = YES;
 			
 			// enhance found range
-			minFoundIndex = MIN(minFoundIndex, searchIndex);
-			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			if (totalRange.location == NSNotFound)
+			{
+				totalRange = effectiveRange;
+			}
+			else
+			{
+				totalRange = NSUnionRange(totalRange, effectiveRange);
+			}
 			
 			if (searchIndex <= 0)
 			{
@@ -172,7 +178,7 @@
 		
 		// now search forward
 		
-		searchIndex = maxFoundIndex + 1;
+		searchIndex = NSMaxRange(totalRange);
 		
 		while (searchIndex < stringLength)
 		{
@@ -187,11 +193,10 @@
 			searchIndex = NSMaxRange(effectiveRange);
 			
 			// enhance found range
-			minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
-			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			totalRange = NSUnionRange(totalRange, effectiveRange);
 		}
 		
-		return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
+		return totalRange;
 	}
 }
 
@@ -305,6 +310,9 @@
 
 #pragma mark HTML Encoding
 
+#ifndef COVERAGE
+// exclude method from coverage testing, those are just convenience methods
+
 - (NSString *)htmlString
 {
 	// create a writer
@@ -329,6 +337,8 @@
 	
 	return [tmpString stringByReplacingOccurrencesOfString:UNICODE_OBJECT_PLACEHOLDER withString:@""];
 }
+
+#endif
 
 #pragma mark Generating Special Attributed Strings
 + (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes

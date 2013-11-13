@@ -9,7 +9,6 @@
 #import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
-#import "DTVersion.h"
 #import "DTLog.h"
 
 @implementation DTAttributedTextCell
@@ -91,7 +90,7 @@
 	// on < iOS 7 we need to make the background translucent to avoid artefacts at rounded edges
 	if (_containingTableView.style == UITableViewStyleGrouped)
 	{
-		if ([DTVersion osVersionIsLessThen:@"7.0"])
+		if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0)
 		{
 			_attributedTextContextView.backgroundColor = [UIColor clearColor];
 		}
@@ -127,7 +126,7 @@
 		DTLogWarning(@"You are calling %s even though the cell is configured with fixed row height", (const char *)__PRETTY_FUNCTION__);
 	}
 	
-	BOOL ios6Style = [DTVersion osVersionIsLessThen:@"7.0"];
+	BOOL ios6Style = (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0);
 	CGFloat contentWidth = tableView.frame.size.width;
 	
 	// reduce width for grouped table views

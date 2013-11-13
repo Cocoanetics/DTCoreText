@@ -62,11 +62,15 @@
 	}
 }
 
+#ifndef COVERAGE
+// exclude methods from coverage testing
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ name='%@'>", NSStringFromClass([self class]), _name];
 }
 
+#endif
 
 - (void)_appendHTMLToString:(NSMutableString *)string indentLevel:(NSUInteger)indentLevel
 {

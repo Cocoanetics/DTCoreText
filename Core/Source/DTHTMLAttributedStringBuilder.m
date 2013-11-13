@@ -14,7 +14,6 @@
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
 
-#import "DTVersion.h"
 #import "NSString+DTFormatNumbers.h"
 #import "DTLog.h"
 
@@ -129,10 +128,14 @@
 		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
 	}
 	
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	
 	// custom option to use iOS 6 attributes if running on iOS 6
 	if ([[_options objectForKey:DTUseiOS6Attributes] boolValue])
 	{
-		if (![DTVersion osVersionIsLessThen:@"6.0"])
+#if TARGET_OS_IPHONE
+		// NS-attributes only supported running on iOS 6.0 or greater
+		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
 		{
 			___useiOS6Attributes = YES;
 		}
@@ -140,12 +143,14 @@
 		{
 			___useiOS6Attributes = NO;
 		}
+#else
+		// Mac generally supports it
+		___useiOS6Attributes = YES;
+#endif
 	}
-	else
-	{
-		// default is not to use them because many features are not supported
-		___useiOS6Attributes = NO;
-	}
+	
+#endif
+
 	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];

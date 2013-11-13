@@ -59,7 +59,7 @@
 	// test effective block outside range
 	NSRange foundRange = [attributedString rangeOfTextBlock:effectiveBlock atIndex:innerRange.location];
 	expectedRange = innerRange;
-	STAssertEquals(foundRange, expectedRange, @"Should find effective block around 'inner'");
+	STAssertEquals(foundRange, expectedRange, @"Should find effective block around 'inside'");
 }
 
 #pragma mark - Lists
@@ -99,6 +99,108 @@
 	nonFoundRange = [attributedString rangeOfTextList:effectiveList atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
 	STAssertEquals(nonFoundRange, expectedRange, @"Should not find effective list at index 1");
+}
+
+- (void)testListPrefix
+{
+	DTCSSListStyle *listStyle = [[DTCSSListStyle alloc] initWithStyles:nil];
+	listStyle.startingItemNumber = 3;
+	listStyle.type = DTCSSListStyleTypeDecimal;
+	listStyle.position = DTCSSListStylePositionOutside;
+	
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>some text</li></ol>" options:NULL];
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	NSAttributedString *prefix = [NSAttributedString prefixForListItemWithCounter:3 listStyle:listStyle listIndent:30 attributes:attributes];
+	
+	STAssertTrue([[prefix string] isEqualToString:@"\t3.\t"], @"Prefix should be different");
+	attributes = [prefix attributesAtIndex:0 effectiveRange:NULL];
+	
+	// prefix field should be entire length
+	NSRange fieldRange = [prefix rangeOfFieldAtIndex:0];
+	NSRange expectedRange = NSMakeRange(0, [prefix length]);
+	
+	STAssertEquals(fieldRange, expectedRange, @"Prefix Field should be entire prefix");
+	
+	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
+	STAssertEquals(paragraphStyle.headIndent, (CGFloat)30, @"head ident should be equal to 30");
+	
+	NSArray *lists = [attributes objectForKey:DTTextListsAttribute];
+	
+	STAssertTrue([lists count]==1, @"There should be one list in the prefix");
+	
+	if ([lists count]!=1)
+	{
+		return;
+	}
+	
+	DTCSSListStyle *effectiveList = [[lists lastObject] copy];
+	
+	// modify to make equal
+	effectiveList.startingItemNumber = 3;
+	
+	STAssertTrue([effectiveList isEqualToListStyle:listStyle], @"Effective list style should be equal");
+}
+
+- (void)testItemNumber
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ol><li>1</li><li>2</li><li>3</li></ol>" options:NULL];
+
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	[[attributedString string] enumerateSubstringsInRange:entireString options:NSStringEnumerationByParagraphs usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+
+		NSDictionary *attributes = [attributedString attributesAtIndex:substringRange.location effectiveRange:NULL];
+		DTCSSListStyle *list = [[attributes objectForKey:DTTextListsAttribute] lastObject];
+		
+		NSRange prefixRange = [attributedString rangeOfFieldAtIndex:substringRange.location];
+		substring = [substring substringFromIndex:prefixRange.length];
+		NSInteger number = [substring integerValue];
+		
+		NSInteger index = [attributedString itemNumberInTextList:list atIndex:substringRange.location];
+		
+		STAssertEquals(number, index, @"Item number should match the text but doesn't for range %@", NSStringFromRange(substringRange));
+	}];
+}
+
+#pragma mark - Links
+
+- (void)testLinkRange
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>some <a href=\"http://www.cocoanetics.com\">li<b>nk</b></a> text</p>" options:NULL];
+	
+	NSRange innerRange = [[attributedString string] rangeOfString:@"link"];
+	
+	// test inside
+	NSURL *foundURL = nil;
+	NSRange linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location URL:&foundURL];
+	
+	STAssertNotNil(foundURL, @"No link found inside");
+	
+	if (foundURL)
+	{
+		STAssertTrue([[foundURL absoluteString] isEqualToString:@"http://www.cocoanetics.com"], @"found URL invalid");
+	}
+	
+	STAssertEquals(linkRange, innerRange, @"Link should enclose inner text");
+	
+	
+	// test outside before
+	foundURL = nil;
+	linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location-1 URL:&foundURL];
+	
+	STAssertNil(foundURL, @"There should be no link before");
+	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
+	
+	STAssertEquals(linkRange, expectedRange, @"range should not found range");
+
+	// test outside after
+	foundURL = nil;
+	linkRange = [attributedString rangeOfLinkAtIndex:NSMaxRange(innerRange) URL:&foundURL];
+	
+	STAssertNil(foundURL, @"There should be no link after");
+	expectedRange = NSMakeRange(NSNotFound, 0);
+	
+	STAssertEquals(linkRange, expectedRange, @"range should not found range");
 }
 
 @end
