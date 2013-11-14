@@ -715,7 +715,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	_stringRange.length = fittingLength;
 	
 	// at this point we can correct the frame if it is open-ended
-	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	if (_frame.size.height == CGFLOAT_HEIGHT_UNKNOWN)
 	{
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
 		
@@ -1073,10 +1073,13 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	offset.height += additionalOffset.height;
 	
 	CGFloat scaleFactor = 1.0;
+	
+#if TARGET_OS_IPHONE
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
 	{
 		scaleFactor = [[UIScreen mainScreen] scale];
 	}
+#endif
 	
 	
 	// workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
@@ -1229,8 +1232,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	CGContextSaveGState(context);
 	
+#if TARGET_OS_IPHONE
 	// need to push the CG context so that the UI* based colors can be set
 	UIGraphicsPushContext(context);
+#endif
 	
 	// need to draw all text boxes because the the there might be the padding region of a box outside the clip rect visible
 	[self _drawTextBlocksInContext:context inRange:NSMakeRange(0, [_attributedStringFragment length])];
@@ -1433,7 +1438,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CFRelease(_textFrame);
 	}
 	
+#if TARGET_OS_IPHONE
 	UIGraphicsPopContext();
+#endif
+	
 	CGContextRestoreGState(context);
 }
 
@@ -1551,12 +1559,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		return CGRectZero;
 	}
 	
-	if (_frame.size.height == CGFLOAT_OPEN_HEIGHT)
+	if (_frame.size.height == CGFLOAT_HEIGHT_UNKNOWN)
 	{
 		// actual frame is spanned between first and last lines
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
 		
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
+	}
+	
+	if (_frame.size.width == CGFLOAT_WIDTH_UNKNOWN)
+	{
+		// actual frame width is maximum value of lines
+		CGFloat maxWidth = 0;
+		
+		for (DTCoreTextLayoutLine *oneLine in _lines)
+		{
+			CGFloat lineWidthFromFrameOrigin = CGRectGetMaxX(oneLine.frame) - _frame.origin.x;
+			maxWidth = MAX(maxWidth, lineWidthFromFrameOrigin);
+		}
+		
+		_frame.size.width = ceilf(maxWidth);
 	}
 	
 	return _frame;

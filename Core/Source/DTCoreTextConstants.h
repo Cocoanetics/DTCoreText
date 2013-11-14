@@ -175,3 +175,12 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameLinePositioningOptions)
 	 */
 	DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy = 2
 };
+
+// layouting
+
+// the value to use if the width is unknown
+#define CGFLOAT_WIDTH_UNKNOWN 16777215.0f
+
+// the value to use if the height is unknown
+#define CGFLOAT_HEIGHT_UNKNOWN 16777215.0f
+
