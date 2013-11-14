@@ -230,7 +230,7 @@
 		STAssertNotNil([imageAttachment image], @"There should be an image!");
 		NSLog(@"%@", [imageAttachment image]);
 	}
-}
+}	
 
 
 - (void)testRTLParsing
