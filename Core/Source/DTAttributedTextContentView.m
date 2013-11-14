@@ -603,7 +603,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	else
 	{
-		rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+		rect.size.height = CGFLOAT_HEIGHT_UNKNOWN; // necessary height set as soon as we know it.
 	}
 	
 	return rect;
@@ -813,7 +813,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				else
 				{
-					rect.size.height = CGFLOAT_OPEN_HEIGHT; // necessary height set as soon as we know it.
+					rect.size.height = CGFLOAT_HEIGHT_UNKNOWN; // necessary height set as soon as we know it.
 				}
 				
 				_layoutFrame = [theLayouter layoutFrameWithRect:rect range:NSMakeRange(0, 0)];

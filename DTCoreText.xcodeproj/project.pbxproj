@@ -126,6 +126,7 @@
 		A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A73FC2ED1834B25000ACF490 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
+		A73FC35B1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A73FC35A1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m */; };
 		A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */; };
 		A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */; };
 		A740369116E51C9800ECCDE0 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A740369016E51C9800ECCDE0 /* About.html */; };
@@ -952,6 +953,7 @@
 		A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriter.h; sourceTree = "<group>"; };
 		A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLWriter.m; sourceTree = "<group>"; };
 		A73BC42812DA014300F064C6 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		A73FC35A1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextLayoutFrameTest.m; sourceTree = "<group>"; };
 		A740368516E51B3A00ECCDE0 /* DemoAboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoAboutViewController.h; sourceTree = "<group>"; };
 		A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoAboutViewController.m; sourceTree = "<group>"; };
 		A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DemoAboutViewController.xib; sourceTree = "<group>"; };
@@ -1734,6 +1736,7 @@
 		A7C7ACF814DA68CE005A9C69 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A73FC35A1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m */,
 				A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */,
 				A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */,
 				A709184817F2CF200092F436 /* DTCoreTextTestCase.h */,
@@ -2689,6 +2692,7 @@
 				A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */,
 				A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */,
 				A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
+				A73FC35B1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m in Sources */,
 				A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */,
 				A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */,
