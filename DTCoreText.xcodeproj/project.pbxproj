@@ -125,6 +125,7 @@
 		A73AE79A1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */; };
 		A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
+		A73FC2ED1834B25000ACF490 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
 		A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */; };
 		A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */; };
 		A740369116E51C9800ECCDE0 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A740369016E51C9800ECCDE0 /* About.html */; };
@@ -2476,6 +2477,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A73FC2ED1834B25000ACF490 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
