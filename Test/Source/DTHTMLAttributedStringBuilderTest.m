@@ -199,16 +199,6 @@
 	
 	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Non-expected originalSize");
 	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Non-expected displaySize");
-	
-	STAssertTrue([attachment isKindOfClass:[DTImageTextAttachment class]], @"Wrong Attachment Class");
-	
-	if ([attachment isKindOfClass:[DTImageTextAttachment class]])
-	{
-		DTImageTextAttachment *imageAttachment = (DTImageTextAttachment *)attachment;
-		
-		STAssertNotNil([imageAttachment image], @"There should be an image!");
-		NSLog(@"%@", [imageAttachment image]);
-	}
 }
 
 // parser should recover from no end element being sent for this img
@@ -222,15 +212,7 @@
 	DTTextAttachment *attachment = [output attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:NULL];
 	
 	STAssertNotNil(attachment, @"No attachment found in output");
-	
-	if ([attachment isKindOfClass:[DTImageTextAttachment class]])
-	{
-		DTImageTextAttachment *imageAttachment = (DTImageTextAttachment *)attachment;
-		
-		STAssertNotNil([imageAttachment image], @"There should be an image!");
-		NSLog(@"%@", [imageAttachment image]);
-	}
-}	
+}
 
 
 - (void)testRTLParsing
