@@ -177,9 +177,9 @@
 	
 	STAssertNotNil(attachment, @"No attachment found in output");
 	
-	CGSize expectedSize = CGSizeMake(300, 300);
-	STAssertEquals(attachment.originalSize, expectedSize, @"Expected originalSize to be 300x300");
-	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
+	CGSize expectedSize = CGSizeMake(150, 150);
+	STAssertEquals(attachment.originalSize, expectedSize, @"Non-expected originalSize");
+	STAssertEquals(attachment.displaySize, expectedSize, @"Non-expected displaySize");
 }
 
 // parser should ignore "auto" value for height
@@ -194,11 +194,11 @@
 	
 	STAssertNotNil(attachment, @"No attachment found in output");
 	
-	CGSize expectedOriginalSize = CGSizeMake(300, 300);
+	CGSize expectedOriginalSize = CGSizeMake(150, 150);
 	CGSize expectedDisplaySize = CGSizeMake(260, 260);
 	
-	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Expected originalSize to be 300x300");
-	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Expected displaySize to be 260x260");
+	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Non-expected originalSize");
+	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Non-expected displaySize");
 }
 
 // parser should recover from no end element being sent for this img

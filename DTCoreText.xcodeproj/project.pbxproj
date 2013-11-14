@@ -156,6 +156,8 @@
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
+		A76C23EE1835423200F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
+		A76C23FF1835423200F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
 		A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45151732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; };
@@ -2434,6 +2436,7 @@
 				A7F842F416D38BC300BCD63F /* FontSizes.html in Resources */,
 				A7343F3317BDF64A00EF9B83 /* CSSCascading.html in Resources */,
 				C2CDBAEC17CCD5E5000E4AD7 /* CSSOOMCrash.html in Resources */,
+				A76C23FF1835423200F54F02 /* Oliver@2x.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2460,6 +2463,7 @@
 				A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */,
 				A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */,
 				A74C973E14DC5294002B5A45 /* Emoji.html in Resources */,
+				A76C23EE1835423200F54F02 /* Oliver@2x.jpg in Resources */,
 				A71B927114E0165000360C30 /* PreWhitespace.html in Resources */,
 				A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */,
 				A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */,
