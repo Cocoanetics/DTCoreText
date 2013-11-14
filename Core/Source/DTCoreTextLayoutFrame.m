@@ -946,7 +946,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		while (index<NSMaxRange(range))
 		{
 			NSRange textBlocksArrayRange;
-			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index effectiveRange:&textBlocksArrayRange];
+			NSArray *textBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:index longestEffectiveRange:&textBlocksArrayRange inRange:range];
 			
 			index += textBlocksArrayRange.length;
 			
@@ -969,7 +969,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			while (searchIndex < length && searchIndex < NSMaxRange(range))
 			{
 				NSRange laterBlocksRange;
-				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex effectiveRange:&laterBlocksRange];
+				NSArray *laterBlocks = [_attributedStringFragment attribute:DTTextBlocksAttribute atIndex:searchIndex longestEffectiveRange:&laterBlocksRange inRange:range];
 				
 				if (![laterBlocks containsObject:blockAtLevelToHandle])
 				{
