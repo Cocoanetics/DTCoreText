@@ -154,7 +154,8 @@
 		A768BE4717FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
 		A768BE4817FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
 		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
-		A76C23B2183535A300F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
+		A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
+		A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
 		A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45151732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; };
@@ -286,7 +287,6 @@
 		A788CA4414863EF100E1AFD9 /* Image.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2514863EF100E1AFD9 /* Image.html */; };
 		A788CA4514863EF100E1AFD9 /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2614863EF100E1AFD9 /* ListTest.html */; };
 		A788CA4614863EF100E1AFD9 /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2714863EF100E1AFD9 /* LoremIpsum.html */; };
-		A788CA4714863EF100E1AFD9 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A788CA4814863EF100E1AFD9 /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2914863EF100E1AFD9 /* README.html */; };
 		A788CA4914863EF100E1AFD9 /* Snippets.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2A14863EF100E1AFD9 /* Snippets.plist */; };
 		A788CA4A14863EF100E1AFD9 /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2B14863EF100E1AFD9 /* styles.html */; };
@@ -2380,12 +2380,12 @@
 				A788CA3E14863EF100E1AFD9 /* CurrentTest.html in Resources */,
 				A788CA3F14863EF100E1AFD9 /* CustomFont.html in Resources */,
 				A788CA4114863EF100E1AFD9 /* Icon.png in Resources */,
+				A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */,
 				A788CA4214863EF100E1AFD9 /* Icon@2x.png in Resources */,
 				A788CA4314863EF100E1AFD9 /* icon_smile.gif in Resources */,
 				A788CA4414863EF100E1AFD9 /* Image.html in Resources */,
 				A788CA4514863EF100E1AFD9 /* ListTest.html in Resources */,
 				A788CA4614863EF100E1AFD9 /* LoremIpsum.html in Resources */,
-				A788CA4714863EF100E1AFD9 /* Oliver.jpg in Resources */,
 				A788CA4814863EF100E1AFD9 /* README.html in Resources */,
 				A788CA4914863EF100E1AFD9 /* Snippets.plist in Resources */,
 				A788CA4A14863EF100E1AFD9 /* styles.html in Resources */,
@@ -2407,7 +2407,7 @@
 				A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */,
 				A740369116E51C9800ECCDE0 /* About.html in Resources */,
 				DDCCEB1E17005A4F009FF923 /* css.css in Resources */,
-				A76C23B2183535A300F54F02 /* Oliver@2x.jpg in Resources */,
+				A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */,
 				A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
