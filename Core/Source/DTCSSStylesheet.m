@@ -464,7 +464,8 @@ extern unsigned int default_css_len;
 							}
 						}
 						
-						[newVal insertObject:s atIndex:i];
+						// replace the value that had !important with a version without it
+						[newVal replaceObjectAtIndex:i withObject:s];
 					}
 				}
 				
