@@ -260,7 +260,7 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
+														 DTNSNumberFromCGFloat(blur), @"Blur",
 														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
@@ -306,7 +306,7 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
+														 DTNSNumberFromCGFloat(blur), @"Blur",
 														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];

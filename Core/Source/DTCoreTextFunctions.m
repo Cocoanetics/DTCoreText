@@ -47,17 +47,17 @@ CTLineTruncationType DTCTLineTruncationTypeFromNSLineBreakMode(NSLineBreakMode l
 
 CGFloat DTRoundWithContentScale(CGFloat value, CGFloat contentScale)
 {
-	return roundf(value*contentScale)/contentScale;
+	return round(value*contentScale)/contentScale;
 }
 
 CGFloat DTCeilWithContentScale(CGFloat value, CGFloat contentScale)
 {
-	return ceilf(value*contentScale)/contentScale;
+	return ceil(value*contentScale)/contentScale;
 }
 
 CGFloat DTFloorWithContentScale(CGFloat value, CGFloat contentScale)
 {
-	return floorf(value*contentScale)/contentScale;
+	return floor(value*contentScale)/contentScale;
 }
 
 #pragma mark - Alignment Functions

@@ -14,7 +14,7 @@
 #import "NSDictionary+DTCoreText.h"
 #import "DTTextBlock.h"
 #import "DTCoreTextConstants.h"
-#import <UIKit/UIKit.h>
+#import "DTCoreTextFunctions.h"
 
 @interface DTCoreTextLayoutLine ()
 
@@ -318,7 +318,7 @@
 			
 			if (usedFont)
 			{
-				maxOffset = MAX(maxOffset, fabsf(CTFontGetUnderlinePosition(usedFont)));
+				maxOffset = MAX(maxOffset, fabs(CTFontGetUnderlinePosition(usedFont)));
 				
 				maxFontSize = MAX(maxFontSize, CTFontGetSize(usedFont));
 			}

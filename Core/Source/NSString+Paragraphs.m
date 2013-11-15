@@ -60,7 +60,7 @@
 {
 	NSUInteger retValue = 0;
 	
-	for (int i=0; i<[self length]; i++)
+	for (NSUInteger i=0; i<[self length]; i++)
 	{
 		if ([self characterAtIndex:i] == '\n')
 		{

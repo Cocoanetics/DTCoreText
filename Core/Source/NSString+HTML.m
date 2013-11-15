@@ -17,9 +17,9 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (NSUInteger)integerValueFromHex 
 {
-	int result = 0;
-	sscanf([self UTF8String], "%x", &result);
-	return result;
+	unsigned long result = 0;
+	sscanf([self UTF8String], "%lx", &result);
+	return (NSUInteger)result;
 }
 
 - (BOOL)isNumeric
@@ -595,6 +595,7 @@ static NSDictionary *entityReverseLookup = nil;
 							 @"\u2018", @"lsquo",
 							 @"\u2019", @"rsquo",
 							 @"\u201a", @"sbquo",
+							 @"\u201a", @"bsquo",
 							 @"\u201c", @"ldquo",
 							 @"\u201d", @"rdquo",
 							 @"\u201e", @"bdquo",
@@ -768,7 +769,7 @@ static NSDictionary *entityReverseLookup = nil;
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
 				// alternate nbsp; and normal space
-				for (int i=0; i<numSpaces;i++)
+				for (NSUInteger i=0; i<numSpaces;i++)
 				{
 					if (i%2)
 					{

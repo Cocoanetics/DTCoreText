@@ -120,7 +120,7 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 - (DTAttributedTextCell *)tableView:(UITableView *)tableView preparedCellForIndexPath:(NSIndexPath *)indexPath
 {
 	// workaround for iOS 5 bug
-	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
+	NSString *key = [NSString stringWithFormat:@"%ld-%ld", (long)indexPath.section, (long)indexPath.row];
 	
 	DTAttributedTextCell *cell = [cellCache objectForKey:key];
 

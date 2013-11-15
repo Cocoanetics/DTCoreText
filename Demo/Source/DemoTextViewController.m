@@ -313,7 +313,7 @@
 				
 				while ((attributes = [_textView.attributedString attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange]))
 				{
-					[dumpOutput appendFormat:@"Range: (%d, %d), %@\n\n", effectiveRange.location, effectiveRange.length, attributes];
+					[dumpOutput appendFormat:@"Range: (%lu, %lu), %@\n\n", (unsigned long)effectiveRange.location, (unsigned long)effectiveRange.length, attributes];
 					effectiveRange.location += effectiveRange.length;
 					
 					if (effectiveRange.location >= [_textView.attributedString length])
@@ -335,7 +335,7 @@
 				char *bytes = (char *)[dump bytes];
 				char b = bytes[i];
 				
-				[dumpOutput appendFormat:@"%i: %x %c\n", i, b, b];
+				[dumpOutput appendFormat:@"%li: %x %c\n", (long)i, b, b];
 			}
 			_charsView.text = dumpOutput;
 			
@@ -679,7 +679,7 @@
 		}];
 		
 		NSString *word = [plainText substringWithRange:wordRange];
-		NSLog(@"%d: '%@' word: '%@'", tappedIndex, tappedChar, word);
+		NSLog(@"%lu: '%@' word: '%@'", (unsigned long)tappedIndex, tappedChar, word);
 	}
 }
 

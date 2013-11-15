@@ -129,7 +129,7 @@
 	@synchronized(self)
 	{
 		NSUInteger stringLength = [self length];
-		NSInteger searchIndex = location;
+		NSUInteger searchIndex = location;
 		
 		NSArray *arrayAtIndex;
 		
@@ -160,7 +160,7 @@
 				totalRange = NSUnionRange(totalRange, effectiveRange);
 			}
 			
-			if (searchIndex <= 0)
+			if (searchIndex == 0)
 			{
 				// reached beginning of string
 				break;

@@ -35,6 +35,15 @@ If you don't know the set of fonts used by your app you can trigger an asynchron
 	 
 Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
 
+Setting a Fallback Font Family
+------------------------------
+
+When encountering a font family in HTML that is not known to the system the fallback font family is used. This can be set like this:
+
+    [DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica Neue"];
+	
+Note that the font family name must be valid on the system that this run on, either because it is a system font or a font you have installed at runtime. If you try to set an invalid font family name an exception will be thrown.
+
 Getting a Tapped Word
 -----------------------
 
@@ -76,3 +85,16 @@ To retrieve the string range in the `NSAttributedString` you set on an DTAttribu
 	
     NSLog(@"visible string range: %@", NSStringFromRange(stringRange));
 
+Determing Size Required for an Attributed String
+------------------------------------------------
+
+When creating a DTCoreTextLayoutFrame you can specify the maximum width and height that should be filled with text. If you specify `CGFLOAT_WIDTH_UNKNOWN` for the frame size width then the needed with will be calculated. If you specify `CGFLOAT_HEIGHT_UNKNOWN` the height will be calculated. You can get the needed size from the layoutFrame's frame property.
+
+    NSAttributedString *attributedString = ...
+    DTCoreTextLayouter *layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:attributedString];
+	
+	CGRect maxRect = CGRectMake(10, 20, CGFLOAT_WIDTH_UNKNOWN, CGFLOAT_HEIGHT_UNKNOWN);
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	DTCoreTextLayoutFrame *layoutFrame = [layouter layoutFrameWithRect:maxRect range:entireString];
+	
+	CGSize sizeNeeded = [layoutFrame frame].size;

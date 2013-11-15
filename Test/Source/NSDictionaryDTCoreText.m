@@ -201,33 +201,29 @@
 	
 	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
-
-
-/*
  
- // this crashes or hangs issue #648
- - (void)testNSValidColors
- {
- if (!DTCoreTextModernAttributesPossible())
- {
- return;
- }
- 
- NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
- NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<span style=\"color:red;background-color:blue;\">Paragraph</span>" options:options];
- NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
- 
- DTColor *color = [attributes foregroundColor];
- NSString *hexColor = DTHexStringFromDTColor(color);
- 
- STAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
- 
- color = [attributes backgroundColor];
- hexColor = DTHexStringFromDTColor(color);
- 
- STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
- }
- */
+// this crashes or hangs issue #648
+- (void)testNSValidColorsFromHTML
+{
+	if (!DTCoreTextModernAttributesPossible())
+	{
+		return;
+	}
+	
+	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<span style=\"color:red;background-color:blue;\">Paragraph</span>" options:options];
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+	
+	DTColor *color = [attributes foregroundColor];
+	NSString *hexColor = DTHexStringFromDTColor(color);
+	
+	STAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
+	
+	color = [attributes backgroundColor];
+	hexColor = DTHexStringFromDTColor(color);
+	
+	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
+}
 
 - (void)testKerning
 {
