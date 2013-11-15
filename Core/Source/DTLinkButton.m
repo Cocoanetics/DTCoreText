@@ -91,7 +91,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 	
 	if (widthExtend>0 || heightExtend>0)
 	{
-		UIEdgeInsets edgeInsets = UIEdgeInsetsMake(ceilf(heightExtend/2.0f), ceilf(widthExtend/2.0f), ceilf(heightExtend/2.0f), ceilf(widthExtend/2.0f));
+		UIEdgeInsets edgeInsets = UIEdgeInsetsMake(ceil(heightExtend/2.0f), ceil(widthExtend/2.0f), ceil(heightExtend/2.0f), ceil(widthExtend/2.0f));
 		
 		// extend bounds by the calculated necessary edge insets
 		bounds.size.width += edgeInsets.left + edgeInsets.right;
