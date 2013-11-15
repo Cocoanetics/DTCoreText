@@ -58,6 +58,12 @@
 		return NO;
 	}
 
+#if TARGET_CPU_ARM64
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
+#else
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithFloat:x]
+#endif
+
 #endif
 
 
@@ -108,4 +114,9 @@
 	{
 		return YES;
 	}
+
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
 #endif
+
+// this enables generic ceil, floor, abs, round functions that work for 64 and 32 bit
+#include <tgmath.h>

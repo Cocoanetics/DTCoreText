@@ -119,7 +119,7 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
 		
 		// remember original paragraphSpacing
-		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:DTAttachmentParagraphSpacingAttribute];
+		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
 	
 	CTFontRef font = [_fontDescriptor newMatchingFont];
@@ -268,7 +268,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_letterSpacing)
 	{
-		NSNumber *letterSpacingNum = [NSNumber numberWithFloat:_letterSpacing];
+		NSNumber *letterSpacingNum = DTNSNumberFromCGFloat(_letterSpacing);
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)

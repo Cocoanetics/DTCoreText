@@ -44,7 +44,7 @@
 		}
 
 		
-		[dumpOutput appendFormat:@"%i: %@ %@\n", i, out1, out2];
+		[dumpOutput appendFormat:@"%li: %@ %@\n", (long)i, out1, out2];
 	}
 
 	NSLog(@"Dump\%@", dumpOutput);

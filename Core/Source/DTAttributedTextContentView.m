@@ -277,10 +277,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				}
 				
 				// round frame
-				frameForSubview.origin.x = floorf(frameForSubview.origin.x);
-				frameForSubview.origin.y = ceilf(frameForSubview.origin.y);
-				frameForSubview.size.width = roundf(frameForSubview.size.width);
-				frameForSubview.size.height = roundf(frameForSubview.size.height);
+				frameForSubview.origin.x = floor(frameForSubview.origin.x);
+				frameForSubview.origin.y = ceil(frameForSubview.origin.y);
+				frameForSubview.size.width = round(frameForSubview.size.width);
+				frameForSubview.size.height = round(frameForSubview.size.height);
 				
 				if (CGRectGetMinY(frameForSubview)> CGRectGetMaxY(rect) || CGRectGetMaxY(frameForSubview) < CGRectGetMinY(rect))
 				{
@@ -350,8 +350,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					// make sure that the frame height is no less than the line height for hyperlinks
 					if (frameForSubview.size.height < oneLine.frame.size.height)
 					{
-						frameForSubview.origin.y = truncf(oneLine.frame.origin.y);
-						frameForSubview.size.height = ceilf(oneLine.frame.size.height);
+						frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
+						frameForSubview.size.height = ceil(oneLine.frame.size.height);
 					}
 					
 					if (existingLinkView)
@@ -366,8 +366,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						// make sure that the frame height is no less than the line height for hyperlinks
 						if (frameForSubview.size.height < oneLine.frame.size.height)
 						{
-							frameForSubview.origin.y = truncf(oneLine.frame.origin.y);
-							frameForSubview.size.height = ceilf(oneLine.frame.size.height);
+							frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
+							frameForSubview.size.height = ceil(oneLine.frame.size.height);
 						}
 						
 						if (_delegateFlags.delegateSupportsCustomViewsForLinks)

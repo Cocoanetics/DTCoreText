@@ -415,8 +415,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 	
 	// we need size because that's what makes a font unique, for searching it's ignored anyway
-	[tmpDict setObject:[NSNumber numberWithFloat:_pointSize] forKey:(id)kCTFontSizeAttribute];
-	
+	[tmpDict setObject:DTNSNumberFromCGFloat(_pointSize) forKey:(id)kCTFontSizeAttribute];
 	
 	if (_smallCapsFeature)
 	{
@@ -993,7 +992,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (void)setPointSize:(CGFloat)pointSize
 {
-	_pointSize = roundf(pointSize);
+	_pointSize = round(pointSize);
 }
 
 @synthesize fontFamily = _fontFamily;

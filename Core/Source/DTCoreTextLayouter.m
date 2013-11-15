@@ -58,7 +58,7 @@
 	
 	if (_shouldCacheLayoutFrames)
 	{
-		cacheKey = [NSString stringWithFormat:@"%ud-%@-%@", [_attributedString hash], NSStringFromCGRect(frame), NSStringFromRange(range)];
+		cacheKey = [NSString stringWithFormat:@"%lud-%@-%@", (unsigned long)[_attributedString hash], NSStringFromCGRect(frame), NSStringFromRange(range)];
 		
 		DTCoreTextLayoutFrame *cachedLayoutFrame = [_layoutFrameCache objectForKey:cacheKey];
 		
