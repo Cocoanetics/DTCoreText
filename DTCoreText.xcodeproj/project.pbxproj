@@ -391,6 +391,14 @@
 		A7B0B56B14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B14E21183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
 		A7B14E22183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
+		A7B14E35183638200007CF27 /* DTWeakSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E34183638200007CF27 /* DTWeakSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E36183638200007CF27 /* DTWeakSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E34183638200007CF27 /* DTWeakSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E38183638350007CF27 /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E37183638350007CF27 /* DTHTMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E39183638350007CF27 /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E37183638350007CF27 /* DTHTMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E3F183638D40007CF27 /* DTBase64Coding.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E3D183638D30007CF27 /* DTBase64Coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E40183638D40007CF27 /* DTBase64Coding.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E3D183638D30007CF27 /* DTBase64Coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E41183638D40007CF27 /* DTLog.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E3E183638D30007CF27 /* DTLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7B14E42183638D40007CF27 /* DTLog.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E3E183638D30007CF27 /* DTLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7C1CC0C14D6C4F0008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		A7C1CC0D14D6C4F2008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
@@ -1106,6 +1114,10 @@
 		A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTCoreText.h"; sourceTree = "<group>"; };
 		A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTCoreText.m"; sourceTree = "<group>"; };
 		A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontDescriptorTest.m; sourceTree = "<group>"; };
+		A7B14E34183638200007CF27 /* DTWeakSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = DTWeakSupport.h; path = DTFoundation/Core/Source/DTWeakSupport.h; sourceTree = "<group>"; };
+		A7B14E37183638350007CF27 /* DTHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = DTHTMLParser.h; path = DTFoundation/Core/Source/DTHTMLParser/DTHTMLParser.h; sourceTree = "<group>"; };
+		A7B14E3D183638D30007CF27 /* DTBase64Coding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = DTBase64Coding.h; path = DTFoundation/Core/Source/DTBase64Coding.h; sourceTree = "<group>"; };
+		A7B14E3E183638D30007CF27 /* DTLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = DTLog.h; path = DTFoundation/Core/Source/DTLog.h; sourceTree = "<group>"; };
 		A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
 		A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "DTImage+HTML.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DTImage+HTML.m"; sourceTree = "<group>"; };
@@ -1472,6 +1484,7 @@
 		A7856F3917FAA69C0080AB0A /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				A7B14E33183637F10007CF27 /* Repackaged Headers for Frameworks */,
 				A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */,
 			);
 			path = Externals;
@@ -1701,6 +1714,17 @@
 			name = "HTML Writing";
 			sourceTree = "<group>";
 		};
+		A7B14E33183637F10007CF27 /* Repackaged Headers for Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A7B14E3D183638D30007CF27 /* DTBase64Coding.h */,
+				A7B14E37183638350007CF27 /* DTHTMLParser.h */,
+				A7B14E3E183638D30007CF27 /* DTLog.h */,
+				A7B14E34183638200007CF27 /* DTWeakSupport.h */,
+			);
+			name = "Repackaged Headers for Frameworks";
+			sourceTree = "<group>";
+		};
 		A7C5D00614D7DA6500AF1D75 /* Dual Platform */ = {
 			isa = PBXGroup;
 			children = (
@@ -1851,6 +1875,10 @@
 				A78E3C51178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */,
 				A7DDF87717DDEB630005D62D /* DTColorFunctions.h in Headers */,
 				A7AE582B1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
+				A7B14E38183638350007CF27 /* DTHTMLParser.h in Headers */,
+				A7B14E35183638200007CF27 /* DTWeakSupport.h in Headers */,
+				A7B14E41183638D40007CF27 /* DTLog.h in Headers */,
+				A7B14E3F183638D40007CF27 /* DTBase64Coding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2034,6 +2062,10 @@
 				A7AE58101725374C00A9BF61 /* DTImageTextAttachment.h in Headers */,
 				A7AE581A1725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */,
 				A7AE582E1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
+				A7B14E39183638350007CF27 /* DTHTMLParser.h in Headers */,
+				A7B14E36183638200007CF27 /* DTWeakSupport.h in Headers */,
+				A7B14E42183638D40007CF27 /* DTLog.h in Headers */,
+				A7B14E40183638D40007CF27 /* DTBase64Coding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
