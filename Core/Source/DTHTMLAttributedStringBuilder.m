@@ -67,6 +67,7 @@
 	DTHTMLElement *_bodyElement;
 	DTHTMLElement *_currentTag;
 	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
+	BOOL _ignoreInlineStyles; // ignores style blocks attached on elements
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -310,6 +311,9 @@
 	}
 	
 	_shouldProcessCustomHTMLAttributes = [[_options objectForKey:DTProcessCustomHTMLAttributes] boolValue];
+	
+	// ignore inline styles if option is passed
+	_ignoreInlineStyles = [[_options objectForKey:DTIgnoreInlineStylesOption] boolValue];
 	
 	// create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
@@ -712,7 +716,7 @@
 		
 		// apply style from merged style sheet
 		NSSet *matchedSelectors;
-		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors];
+		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors ignoreInlineStyle:_ignoreInlineStyles];
 		
 		if (mergedStyles)
 		{

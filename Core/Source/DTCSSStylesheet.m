@@ -660,7 +660,7 @@ extern unsigned int default_css_len;
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,
@@ -753,17 +753,20 @@ extern unsigned int default_css_len;
 		[tmpMatchedSelectors addObject:idRule];
 	}
 	
-	// Get tag's local style attribute
-	NSString *styleString = [element.attributes objectForKey:@"style"];
-	
-	if ([styleString length])
+	if (!ignoreInlineStyle)
 	{
-		NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
+		// Get tag's local style attribute
+		NSString *styleString = [element.attributes objectForKey:@"style"];
 		
-		// need to uncompress because otherwise we might get shorthands and non-shorthands together
-		[self _uncompressShorthands:localStyles];
-		
-		[tmpDict addEntriesFromDictionary:localStyles];
+		if ([styleString length])
+		{
+			NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
+			
+			// need to uncompress because otherwise we might get shorthands and non-shorthands together
+			[self _uncompressShorthands:localStyles];
+			
+			[tmpDict addEntriesFromDictionary:localStyles];
+		}
 	}
 	
 	if ([tmpDict count])
