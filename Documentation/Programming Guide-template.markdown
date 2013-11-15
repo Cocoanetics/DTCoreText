@@ -35,6 +35,15 @@ If you don't know the set of fonts used by your app you can trigger an asynchron
 	 
 Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
 
+Setting a Fallback Font Family
+------------------------------
+
+When encountering a font family in HTML that is not known to the system the fallback font family is used. This can be set like this:
+
+    [DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica Neue"];
+	
+Note that the font family name must be valid on the system that this run on, either because it is a system font or a font you have installed at runtime. If you try to set an invalid font family name an exception will be thrown.
+
 Getting a Tapped Word
 -----------------------
 

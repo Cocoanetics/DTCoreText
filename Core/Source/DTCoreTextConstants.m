@@ -51,3 +51,9 @@ NSString * const DTListPrefixField = @"{listprefix}";
 // iOS 6 compatibility
 
 BOOL ___useiOS6Attributes = NO; // this gets set globally by DTHTMLAttributedStringBuilder
+
+
+// exceptions
+
+NSString * const DTCoreTextFontDescriptorException = @"DTCoreTextFontDescriptorException";
+

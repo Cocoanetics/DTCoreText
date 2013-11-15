@@ -389,6 +389,8 @@
 		A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B0B56A14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B0B56B14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
+		A7B14E21183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
+		A7B14E22183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
 		A7C1CC0C14D6C4F0008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		A7C1CC0D14D6C4F2008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
@@ -1103,6 +1105,7 @@
 		A7AE582A1725391900A9BF61 /* DTObjectTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTObjectTextAttachment.m; sourceTree = "<group>"; };
 		A7B0B56614D9921F0091C2C9 /* NSAttributedString+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+DTCoreText.h"; sourceTree = "<group>"; };
 		A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+DTCoreText.m"; sourceTree = "<group>"; };
+		A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontDescriptorTest.m; sourceTree = "<group>"; };
 		A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
 		A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "DTImage+HTML.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DTImage+HTML.m"; sourceTree = "<group>"; };
@@ -1775,6 +1778,7 @@
 				A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */,
 				A7C7AD0D14DA7C2C005A9C69 /* UIColorHTMLTest.h */,
 				A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */,
+				A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2698,6 +2702,7 @@
 				A768BE4717FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */,
 				A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */,
 				A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */,
+				A7B14E21183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */,
 				A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */,
 				A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
 				A73FC35B1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m in Sources */,
@@ -2723,6 +2728,7 @@
 				A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */,
 				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
 				A70ED6CF17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
+				A7B14E22183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */,
 				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,

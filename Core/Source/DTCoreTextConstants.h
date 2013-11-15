@@ -79,6 +79,9 @@ extern NSString * const DTListPrefixField;
 // iOS 6 compatibility
 extern BOOL ___useiOS6Attributes;
 
+// exceptions
+extern NSString * const DTCoreTextFontDescriptorException;
+
 // macros
 
 #define IS_WHITESPACE(_c) (_c == ' ' || _c == '\t' || _c == 0xA || _c == 0xB || _c == 0xC || _c == 0xD || _c == 0x85)
