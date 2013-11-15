@@ -13,9 +13,11 @@
 #import "DTBreakHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
-
-#import "NSString+DTFormatNumbers.h"
 #import "DTLog.h"
+
+#if DEBUG_LOG_METRICS
+#import "NSString+DTFormatNumbers.h"
+#endif
 
 @interface DTHTMLAttributedStringBuilder ()
 
