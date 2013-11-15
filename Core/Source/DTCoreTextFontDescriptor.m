@@ -9,6 +9,7 @@
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextFontCollection.h"
 #import "DTCompatibility.h"
+#import "DTCoreTextConstants.h"
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
@@ -152,8 +153,36 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 + (void)setFallbackFontFamily:(NSString *)fontFamily
 {
-	NSParameterAssert(fontFamily);
+	if (!fontFamily)
+	{
+		[NSException raise:DTCoreTextFontDescriptorException format:@"Fallback Font Family cannot be nil"];
+	}
 	
+	// make sure that only valid font families can be registered
+	NSDictionary *attributes = [NSDictionary dictionaryWithObject:fontFamily forKey:(id)kCTFontFamilyNameAttribute];
+	CTFontDescriptorRef fontDesc = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)(attributes));
+	CTFontRef font = CTFontCreateWithFontDescriptor(fontDesc, 12, NULL);
+
+	BOOL isValid = NO;
+	
+	if (font)
+	{
+		NSString *usedFontFamily = CFBridgingRelease(CTFontCopyFamilyName(font));
+		
+		if ([usedFontFamily isEqualToString:fontFamily])
+		{
+			isValid = YES;
+		}
+		
+		CFRelease(fontDesc);
+		CFRelease(font);
+	}
+	
+	if (!isValid)
+	{
+		[NSException raise:DTCoreTextFontDescriptorException format:@"Fallback Font Family '%@' not registered on the system", fontFamily];
+	}
+
 	_fallbackFontFamily = [fontFamily copy];
 }
 
