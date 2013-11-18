@@ -134,6 +134,11 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
  */
 - (CGRect)intrinsicContentFrame;
 
+/**
+ Flag to enable fake leading for fonts that have none.
+ */
+@property(nonatomic, assign)BOOL syntheticLeadingEnabled;
+
 
 /**
  @name Drawing

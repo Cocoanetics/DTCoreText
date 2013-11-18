@@ -161,15 +161,17 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (usedLeading == 0.0f)
 	{
-		// font has no leading, so we fake one (e.g. Helvetica)
-		CGFloat tmpHeight = line.ascent + line.descent;
-		usedLeading = ceilf(0.2f * tmpHeight);
-		
-		if (usedLeading>20)
-		{
-			// we have a large image increasing the ascender too much for this calc to work
-			usedLeading = 0;
-		}
+        if (_syntheticLeadingEnabled == YES) {
+            // font has no leading, so we fake one (e.g. Helvetica)
+            CGFloat tmpHeight = line.ascent + line.descent;
+            usedLeading = ceilf(0.2f * tmpHeight);
+            
+            if (usedLeading>20)
+            {
+                // we have a large image increasing the ascender too much for this calc to work
+                usedLeading = 0;
+            }
+        }
 	}
 	else
 	{

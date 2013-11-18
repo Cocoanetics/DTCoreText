@@ -27,7 +27,6 @@
 
 @implementation DTHTMLAttributedStringBuilder
 {
-	NSData *_data;
 	NSDictionary *_options;
 	BOOL _shouldKeepDocumentNodeTree;
 	
@@ -65,6 +64,7 @@
 	DTHTMLElement *_bodyElement;
 	DTHTMLElement *_currentTag;
 	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
+    BOOL _hasBeenInitialized;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -101,33 +101,29 @@
 #endif
 }
 
-- (BOOL)_buildString
-{
-#if DEBUG_LOG_METRICS
-	// metrics: get start time
-	CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-#endif
-	
-	// only with valid data
-	if (![_data length])
-	{
-		return NO;
-	}
-	
+- (void)prepareForReuse {
+    [self _initDefaultTag];
+    _ignoreParseEvents = NO;
+	_bodyElement = nil;
+    _currentTag = nil;
+    _rootNode = nil;
+    _data = nil;
+    _tmpString = nil;
+    
+	_tagStartHandlers = nil;
+	_tagEndHandlers = nil;
+    
 	// register default handlers
 	[self _registerTagStartHandlers];
 	[self _registerTagEndHandlers];
-	
- 	// Specify the appropriate text encoding for the passed data, default is UTF8
-	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
-	NSStringEncoding encoding = NSUTF8StringEncoding; // default
-	
-	if (textEncodingName)
-	{
-		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
-		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
-	}
-	
+}
+
+- (void)_setupInternal {
+    
+	// register default handlers
+	[self _registerTagStartHandlers];
+	[self _registerTagEndHandlers];
+		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	
 	// custom option to use iOS 6 attributes if running on iOS 6
@@ -150,7 +146,7 @@
 	}
 	
 #endif
-
+    
 	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
@@ -172,10 +168,7 @@
 		// merge the default styles to the combined style sheet
 		[_globalStyleSheet mergeStylesheet:defaultStylesheet];
 	}
-	
-	// for performance reasons we will return this mutable string
-	_tmpString = [[NSMutableAttributedString alloc] init];
-	
+    
 	// base tag with font defaults
 	_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
 	
@@ -281,7 +274,15 @@
 		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
 	}
 	
-	_defaultTag = [[DTHTMLElement alloc] init];
+    [self _initDefaultTag];
+	
+	_shouldProcessCustomHTMLAttributes = [[_options objectForKey:DTProcessCustomHTMLAttributes] boolValue];
+	
+    _hasBeenInitialized = YES;
+}
+
+- (void)_initDefaultTag {
+    _defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;
 	_defaultTag.paragraphStyle = _defaultParagraphStyle;
 	_defaultTag.textScale = _textScale;
@@ -306,10 +307,39 @@
 			_defaultTag.textColor = DTColorCreateWithHTMLName(defaultColor);
 		}
 	}
+}
+
+- (BOOL)_buildString
+{
+#if DEBUG_LOG_METRICS
+	// metrics: get start time
+	CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
+#endif
 	
-	_shouldProcessCustomHTMLAttributes = [[_options objectForKey:DTProcessCustomHTMLAttributes] boolValue];
+	// only with valid data
+	if (![_data length])
+	{
+		return NO;
+	}
+    
+    if (_hasBeenInitialized == NO) {
+        [self _setupInternal];
+    }
+    
+	// for performance reasons we will return this mutable string
+	_tmpString = [[NSMutableAttributedString alloc] init];
+    
+ 	// Specify the appropriate text encoding for the passed data, default is UTF8
+	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
+	NSStringEncoding encoding = NSUTF8StringEncoding; // default
 	
-	// create a parser
+	if (textEncodingName)
+	{
+		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
+		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+	}
+    
+    // create a parser
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
 	

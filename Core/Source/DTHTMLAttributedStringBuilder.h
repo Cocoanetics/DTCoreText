@@ -18,6 +18,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  */
 @interface DTHTMLAttributedStringBuilder : NSObject <DTHTMLParserDelegate>
 
+
 /**
  @name Creating an Attributed String Builder
  */
@@ -61,6 +62,12 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  */
 - (NSAttributedString *)generatedAttributedString;
 
+/**
+ *  Keeps everythin except the text to allow reusing the string builder with the same CSS.
+ *
+ *  @since 1.7.0
+ */
+- (void)prepareForReuse;
 
 /**
  This block is called before the element is written to the output attributed string
@@ -71,5 +78,8 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  Setting this property to `YES` causes the tree of parse nodes to be preserved until the end of the generation process. This allows to output the HTML structure of the document for debugging.
  */
 @property (nonatomic, assign) BOOL shouldKeepDocumentNodeTree;
+
+@property (nonatomic, strong) NSData *data;
+
 
 @end
