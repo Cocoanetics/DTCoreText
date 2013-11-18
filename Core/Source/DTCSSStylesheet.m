@@ -442,7 +442,7 @@ extern unsigned int default_css_len;
 			{
 				NSMutableArray *newVal;
 				
-				for (NSUInteger i = 0; i < [value count]; ++i)
+				for (NSUInteger i = 0; i < [(NSArray*)value count]; ++i)
 				{
 					NSString *s = [value objectAtIndex:i];
 					
@@ -464,7 +464,8 @@ extern unsigned int default_css_len;
 							}
 						}
 						
-						newVal[i] = s;
+						// replace the value that had !important with a version without it
+						[newVal replaceObjectAtIndex:i withObject:s];
 					}
 				}
 				
@@ -653,13 +654,13 @@ extern unsigned int default_css_len;
 	if (![_orderedSelectors containsObject:selector])
 	{
 		[_orderedSelectors addObject:selector];
-		_orderedSelectorWeights[selector] = @([self _weightForSelector:selector]);
+		[_orderedSelectorWeights setObject:@([self _weightForSelector:selector]) forKey:selector];
 	}
 }
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,
@@ -683,8 +684,8 @@ extern unsigned int default_css_len;
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
 	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
 	 {
-		 NSInteger weightForSelector1 = [_orderedSelectorWeights[selector1] integerValue];
-		 NSInteger weightForSelector2 = [_orderedSelectorWeights[selector2] integerValue];
+		 NSInteger weightForSelector1 = [[_orderedSelectorWeights objectForKey:selector1] integerValue];
+		 NSInteger weightForSelector2 = [[_orderedSelectorWeights objectForKey:selector2] integerValue];
 		 
 		 if (weightForSelector1 == weightForSelector2)
 		 {
@@ -752,17 +753,20 @@ extern unsigned int default_css_len;
 		[tmpMatchedSelectors addObject:idRule];
 	}
 	
-	// Get tag's local style attribute
-	NSString *styleString = [element.attributes objectForKey:@"style"];
-	
-	if ([styleString length])
+	if (!ignoreInlineStyle)
 	{
-		NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
+		// Get tag's local style attribute
+		NSString *styleString = [element.attributes objectForKey:@"style"];
 		
-		// need to uncompress because otherwise we might get shorthands and non-shorthands together
-		[self _uncompressShorthands:localStyles];
-		
-		[tmpDict addEntriesFromDictionary:localStyles];
+		if ([styleString length])
+		{
+			NSMutableDictionary *localStyles = [[styleString dictionaryOfCSSStyles] mutableCopy];
+			
+			// need to uncompress because otherwise we might get shorthands and non-shorthands together
+			[self _uncompressShorthands:localStyles];
+			
+			[tmpDict addEntriesFromDictionary:localStyles];
+		}
 	}
 	
 	if ([tmpDict count])
@@ -811,7 +815,7 @@ extern unsigned int default_css_len;
 		// Aside: Manual for loop here is faster than for in with reverseObjectEnumerator
 		for (NSUInteger j = selectorParts.count; j-- > 0;)
 		{
-			NSString *selectorPart = selectorParts[j];
+			NSString *selectorPart = [selectorParts objectAtIndex:j];
 			BOOL matched = NO;
 			
 			if (selectorPart.length)

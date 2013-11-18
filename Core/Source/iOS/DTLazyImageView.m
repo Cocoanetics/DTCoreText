@@ -122,8 +122,8 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 {
 	const size_t height = CGImageGetHeight(partialImg);
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	size_t lFullWidth = lrintf(_fullWidth);
-	size_t lFullHeight = lrintf(_fullHeight);
+	size_t lFullWidth = (size_t)ceil(_fullWidth);
+	size_t lFullHeight = (size_t)ceil(_fullHeight);
 	CGContextRef bmContext = CGBitmapContextCreate(NULL, lFullWidth, lFullHeight, 8, lFullWidth * 4, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
 	CGColorSpaceRelease(colorSpace);
 	if (!bmContext)

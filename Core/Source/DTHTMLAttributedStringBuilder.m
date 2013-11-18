@@ -13,9 +13,11 @@
 #import "DTBreakHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
-
-#import "NSString+DTFormatNumbers.h"
 #import "DTLog.h"
+
+#if DEBUG_LOG_METRICS
+#import "NSString+DTFormatNumbers.h"
+#endif
 
 @interface DTHTMLAttributedStringBuilder ()
 
@@ -65,6 +67,7 @@
 	DTHTMLElement *_currentTag;
 	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
     BOOL _hasBeenInitialized;
+	BOOL _ignoreInlineStyles; // ignores style blocks attached on elements
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
@@ -340,6 +343,9 @@
 	}
     
     // create a parser
+	// ignore inline styles if option is passed
+	_ignoreInlineStyles = [[_options objectForKey:DTIgnoreInlineStylesOption] boolValue];
+	
 	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
 	parser.delegate = (id)self;
 	
@@ -740,7 +746,7 @@
 		
 		// apply style from merged style sheet
 		NSSet *matchedSelectors;
-		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors];
+		NSDictionary *mergedStyles = [_globalStyleSheet mergedStyleDictionaryForElement:newNode matchedSelectors:&matchedSelectors ignoreInlineStyle:_ignoreInlineStyles];
 		
 		if (mergedStyles)
 		{

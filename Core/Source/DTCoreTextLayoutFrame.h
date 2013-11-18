@@ -19,10 +19,7 @@
 @class DTTextBlock;
 
 
-// the value to use if the height is unknown
-#define CGFLOAT_OPEN_HEIGHT 16777215.0f
-
-typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground); 
+typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground);
 
 /**
  The drawing options for DTCoreTextLayoutFrame
@@ -56,7 +53,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 /**
  This class represents a single frame of text and basically wraps CTFrame. It provides an array of text lines that fit in the given rectangle.
  
- Both styles of layouting are supported: open ended (suitable for scroll views) and limited to a given rectangle. To use the open-ended style specify `CGFLOAT_OPEN_HEIGHT` for the <frame> height when creating a layout frame.
+ Both styles of layouting are supported: open ended (suitable for scroll views) and limited to a given rectangle. To use the open-ended style specify `CGFLOAT_HEIGHT_UNKNOWN` for the <frame> height when creating a layout frame.
  
  The array of lines is built lazily the first time it is accessed or - for open-ended frames - when the frame property is being queried.
  */
@@ -80,7 +77,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 /**
  Creates a Layout Frame with the given frame using the attributed string loaded into the layouter.
  
- @param frame The rectangle specifying origin and size of available for text. Specify `CGFLOAT_OPEN_HEIGHT` to not limit the height.
+ @param frame The rectangle specifying origin and size of available for text. Specify `CGFLOAT_WIDTH_UNKNOWN` to not limit the width. Specify `CGFLOAT_HEIGHT_UNKNOWN` to not limit the height.
  @param layouter A reference to the layouter for this text box.
  */
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter;
@@ -89,7 +86,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 /**
  Creates a Layout Frame with the given frame using the attributed string loaded into the layouter.
  
- @param frame The rectangle specifying origin and size of available for text. Specify `CGFLOAT_OPEN_HEIGHT` to not limit the height.
+ @param frame The rectangle specifying origin and size of available for text. Specify `CGFLOAT_WIDTH_UNKNOWN` to not limit the width. Specify `CGFLOAT_HEIGHT_UNKNOWN` to not limit the height.
  @param layouter A reference to the layouter for the receiver. Note: The layouter owns the attributed string.
  @param range The range within the attributed string to layout into the receiver.
  */

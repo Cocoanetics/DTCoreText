@@ -119,7 +119,7 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
 		
 		// remember original paragraphSpacing
-		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:DTAttachmentParagraphSpacingAttribute];
+		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
 	
 	CTFontRef font = [_fontDescriptor newMatchingFont];
@@ -268,7 +268,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_letterSpacing)
 	{
-		NSNumber *letterSpacingNum = [NSNumber numberWithFloat:_letterSpacing];
+		NSNumber *letterSpacingNum = DTNSNumberFromCGFloat(_letterSpacing);
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
@@ -494,7 +494,7 @@ NSDictionary *_classesForNames = nil;
 					else
 					{
 						// string is empty, need a new attributed string so that we have the attributes
-						NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+						attributes = [self attributesForAttributedStringRepresentation];
 						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 						[tmpString appendAttributedString:attributedString];
 					}
@@ -804,19 +804,19 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	id fontFamily = [styles objectForKey:@"font-family"];
+	id fontFamilyStyle = [styles objectForKey:@"font-family"];
 	
-	if (fontFamily)
+	if (fontFamilyStyle)
 	{
 		NSArray *fontFamilies;
 		
-		if ([fontFamily isKindOfClass:[NSString class]])
+		if ([fontFamilyStyle isKindOfClass:[NSString class]])
 		{
-			fontFamilies = [NSArray arrayWithObject:fontFamily];
+			fontFamilies = [NSArray arrayWithObject:fontFamilyStyle];
 		}
-		else if ([fontFamily isKindOfClass:[NSArray class]])
+		else if ([fontFamilyStyle isKindOfClass:[NSArray class]])
 		{
-			fontFamilies = fontFamily;
+			fontFamilies = fontFamilyStyle;
 		}
 				
 		BOOL foundFontFamily = NO;
