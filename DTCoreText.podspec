@@ -4,11 +4,20 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, '4.3'
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/artifacts/DTCoreText.git', :tag => spec.version.to_s }
-  spec.source_files = 'Core/Source/*.{h,m,c}', 'Core/Source/iOS/*.{h,m,c}'
+
+  spec.ios.deployment_target = '4.3'
+  spec.osx.deployment_target = '10.8'
+
+  spec.ios.source_files = 'Core/Source/*.{h,m,c}', 'Core/Source/iOS/*.{h,m,c}'
+
+  spec.ios.dependency 'DTFoundation/UIKit', '~>1.7.0'
+
   spec.dependency 'DTFoundation/Core', '~>1.7.0'
-  spec.dependency 'DTFoundation/UIKit', '~>1.7.0'
   spec.dependency 'DTFoundation/DTHTMLParser', '~>1.7.0'
-  spec.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+
+  spec.ios.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+  spec.osx.frameworks   = 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+
   spec.requires_arc = true
   spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
   spec.summary      = 'Methods to allow using HTML code with CoreText.'
@@ -19,4 +28,3 @@ Pod::Spec.new do |spec|
      /usr/bin/xxd -i default.css default.css.c
   CMD
 end
-
