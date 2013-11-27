@@ -58,7 +58,7 @@
 		return NO;
 	}
 
-#if TARGET_CPU_ARM64
+#if TARGET_CPU_ARM64 || TARGET_CPU_X86_64
 	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
 #else
 	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithFloat:x]
