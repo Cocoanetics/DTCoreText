@@ -17,6 +17,8 @@ Documentation can be [browsed online](https://docs.cocoanetics.com/DTCoreText) o
 
 A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
 
+There is also a [Programming Guide](Documentation/Programming Guide-template.markdown) with a set of solutions to common problems.
+
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
 
 #### Changelog

@@ -98,3 +98,45 @@ When creating a DTCoreTextLayoutFrame you can specify the maximum width and heig
 	DTCoreTextLayoutFrame *layoutFrame = [layouter layoutFrameWithRect:maxRect range:entireString];
 	
 	CGSize sizeNeeded = [layoutFrame frame].size;
+
+
+Displaying remote images
+------------------------
+
+The best way to display remote images is to use `DTLazyImageView`. 
+First you will need to return `DTLazyImageView` instance for your image attachments.
+
+```objective-c
+    - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame{
+        if([attachment isKindOfClass:[DTImageTextAttachment class]]){
+            DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
+            imageView.delegate = self;
+
+            // url for deferred loading
+            imageView.url = attachment.contentURL;
+            return imageView;
+        }
+        return nil;
+    }
+```
+
+Then in the in delegate method for `DTLazyImageView` reset the layout for the affected `DTAttributedContextView`.
+
+```objective-c
+    - (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size {
+        NSURL *url = lazyImageView.url;
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
+
+        // update all attachments that matching this URL
+        for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) {
+            oneAttachment.originalSize = size;
+        }
+
+        // need to reset the layouter because otherwise we get the old framesetter or cached layout frames
+        self.attributedTextContentView.layouter = nil;
+
+        // here we're layouting the entire string,
+        // might be more efficient to only relayout the paragraphs that contain these attachments
+        [self.attributedTextContentView relayoutText];
+    }
+```
