@@ -117,7 +117,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		// get all font descriptors
 		DTCoreTextFontCollection *allFonts = [DTCoreTextFontCollection availableFontsCollection];
 		
-		NSMutableDictionary *tmpDictionary = [NSMutableDictionary dictionaryWithCapacity:[allFonts.fontDescriptors count]];
+		NSMutableDictionary *tmpDictionary = [[NSMutableDictionary alloc] initWithCapacity:[allFonts.fontDescriptors count]];
 
 		// sort font descriptors by name so that shorter names are preferred
 		NSSortDescriptor *sort1 = [NSSortDescriptor sortDescriptorWithKey:@"fontFamily" ascending:YES];
