@@ -660,7 +660,7 @@
 	void (^styleBlock)(void) = ^
 	{
 		DTCSSStylesheet *localSheet = [(DTStylesheetHTMLElement *)_currentTag stylesheet];
-		[_globalStyleSheet mergeStylesheet:localSheet];
+        [_globalStyleSheet mergeStylesheet:localSheet];
 	};
 	
 	[_tagEndHandlers setObject:[styleBlock copy] forKey:@"style"];
