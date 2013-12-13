@@ -9,7 +9,9 @@
 /**
  Class to generate HTML from `NSAttributedString` instances.
  */
-@interface DTHTMLWriter : NSObject
+@interface DTHTMLWriter : NSObject {
+	NSMutableDictionary *_styleLookup;
+}
 
 /**
  @name Creating an HTML Writer
@@ -22,6 +24,13 @@
 - (id)initWithAttributedString:(NSAttributedString *)attributedString;
 
 /**
+ Creates a writer with a given `NSAttributedString` as input
+ @param attributedString An attributed string
+ @param CSSPrefix All generated CSS styles will be prefixed by this string
+ */
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix;
+
+/**
  @name Generating HTML
  */
 
@@ -31,6 +40,13 @@
  */
 - (NSString *)HTMLString;
 
+/**
+ Generates a HTML representation of the attributed string by taking an existing style lookup map into account
+ @param styleLookupMap An existing style lookup to give the developer the change to render multiple strings in one pass using the same CSS
+ @param textProcessBlock A Block where you can change the generated Text before the tag is closed (e.g. to add characters before closing a paragraph)
+ @returns The generated string
+ */
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap	textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString *tag))updateStringBlock;
 
 /**
  Generates a HTML fragment representation of the attributed string including inlined styles and no html or head elements
@@ -56,5 +72,10 @@
  The attributed string that the writer is processing.
  */
 @property (nonatomic, readonly) NSAttributedString *attributedString;
+
+/**
+ The style lookup map.
+ */
+@property (nonatomic, readonly) NSMutableDictionary *styleLookup;
 
 @end

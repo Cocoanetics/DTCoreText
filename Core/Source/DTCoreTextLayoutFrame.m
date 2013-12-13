@@ -9,6 +9,7 @@
 #import "DTCoreText.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
 #import "DTLog.h"
 
@@ -610,7 +611,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				{
 					break;
 				}
-				
+								
 				// right alignment falls through
 			}
 				
@@ -661,8 +662,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				break;
 			}
+				
 		}
-		
+				
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
 															  stringLocationOffset:isHyphenatedString ? lineRange.location : 0];

@@ -17,10 +17,16 @@
 	NSString *_HTMLString;
 	CGFloat _textScale;
 	BOOL _useAppleConvertedSpace;
-	NSMutableDictionary *_styleLookup;
+	NSString *_CSSPrefix;
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString
+@synthesize styleLookup = _styleLookup;
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString {
+	return [self initWithAttributedString:attributedString CSSPrefix:@""];
+}
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix
 {
 	self = [super init];
 	
@@ -32,6 +38,7 @@
 
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
+		_CSSPrefix = [[NSString alloc] initWithString:theCSSPrefix];
 	}
 	
 	return self;
@@ -73,7 +80,7 @@
 		index++;
 	}
 	
-	return [NSString stringWithFormat:@"%@%d", [elementName substringToIndex:1],(int)index];
+	return [NSString stringWithFormat:@"%@%@%d", _CSSPrefix, [elementName substringToIndex:1],(int)index];
 }
 
 - (NSString *)_tagRepresentationForListStyle:(DTCSSListStyle *)listStyle closingTag:(BOOL)closingTag listPadding:(CGFloat)listPadding inlineStyles:(BOOL)inlineStyles
@@ -236,13 +243,17 @@
 
 - (void)_buildOutput
 {
-	[self _buildOutputAsHTMLFragment:NO];
+	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil textProcessBlock:nil];
 }
 
-- (void)_buildOutputAsHTMLFragment:(BOOL)fragment
+- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString* tag))updateStringBlock
 {
 	// reusable styles
-	_styleLookup = [[NSMutableDictionary alloc] init];
+	if (existingStyleLookupMap) {
+		_styleLookup = [[NSMutableDictionary alloc] initWithDictionary:existingStyleLookupMap];
+	} else {
+		_styleLookup = [[NSMutableDictionary alloc] init];
+	}
 	
 	NSString *plainString = [_attributedString string];
 	
@@ -935,7 +946,7 @@
 			
 			[styleArray enumerateObjectsUsingBlock:^(NSString *style, NSUInteger idx, BOOL *stop) {
 				NSString *className = [NSString stringWithFormat:@"%@%d", [oneKey substringToIndex:1], (int)idx+1];
-				[styleBlock appendFormat:@"%@.%@ {%@}\n", oneKey, className, style];
+				[styleBlock appendFormat:@"%@.%@%@ {%@}\n", oneKey, _CSSPrefix, className, style];
 			}];
 		}
 		
@@ -992,11 +1003,21 @@
 	return _HTMLString;
 }
 
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap	textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString *tag))updateStringBlock
+{
+	if (!_HTMLString)
+	{
+		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap textProcessBlock:updateStringBlock];
+	}
+	
+	return _HTMLString;
+}
+
 - (NSString *)HTMLFragment
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:true];
+		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil textProcessBlock:nil];
 	}
 	
 	return _HTMLString;

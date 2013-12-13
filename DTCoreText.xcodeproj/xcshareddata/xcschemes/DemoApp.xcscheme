@@ -43,6 +43,16 @@
                </Test>
             </SkippedTests>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "05DDBBE3184654BC00F25A44"
+               BuildableName = "DTCoreText Mac DemoTests.xctest"
+               BlueprintName = "DTCoreText Mac DemoTests"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

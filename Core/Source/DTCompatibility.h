@@ -93,6 +93,18 @@
 	// NSValue has sizeValue on Mac, CGSizeValue on iOS
 	#define CGSizeValue sizeValue
 
+	static inline CGRect DTEdgeInsetsInsetRect(CGRect rect, DTEdgeInsets insets) {
+		rect.origin.x    += insets.left;
+		rect.origin.y    += insets.top;
+		rect.size.width  -= (insets.left + insets.right);
+		rect.size.height -= (insets.top  + insets.bottom);
+		return rect;
+	}
+
+	static inline BOOL DTEdgeInsetsEqualToEdgeInsets(DTEdgeInsets insets1, DTEdgeInsets insets2) {
+		return insets1.left == insets2.left && insets1.top == insets2.top && insets1.right == insets2.right && insets1.bottom == insets2.bottom;
+	}
+
 	// String functions named differently on Mac
 	static inline NSString *NSStringFromCGRect(const CGRect rect)
 	{

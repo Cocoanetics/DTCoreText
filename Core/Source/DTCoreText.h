@@ -51,6 +51,13 @@
 #import "DTObjectTextAttachment.h"
 #import "DTVideoTextAttachment.h"
 
+// laout (both iOS and OSX)
+#import "DTCoreTextGlyphRun.h"
+#import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextLayoutFrame+Cursor.h"
+#import "DTCoreTextLayoutLine.h"
+#import "DTCoreTextLayouter.h"
+
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
 
@@ -64,15 +71,16 @@
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
 #import "DTCoreTextFontCollection.h"
-#import "DTCoreTextGlyphRun.h"
-#import "DTCoreTextLayoutFrame.h"
-#import "DTCoreTextLayoutFrame+Cursor.h"
-#import "DTCoreTextLayoutLine.h"
-#import "DTCoreTextLayouter.h"
 
 #import "DTDictationPlaceholderView.h"
 
 #import "UIFont+DTCoreText.h"
+
+#else
+
+// OSX Port of UIView Text drawing classes
+#import "DTMacAttributedTextContentView.h"
+#import "DTMacAttributedTextView.h"
 
 #endif
 

@@ -20,8 +20,12 @@
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, assign) NSInteger numberOfGlyphs;
-@property (nonatomic, DT_WEAK_PROPERTY, readwrite) NSDictionary *attributes;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, DT_WEAK_PROPERTY, readwrite) NSDictionary *attributes;
+#else
+@property (nonatomic, assign, readwrite) NSDictionary *attributes;
+#endif
 @end
 
 
@@ -45,7 +49,13 @@
 	const CGPoint *_glyphPositionPoints;
 	
 	DT_WEAK_VARIABLE DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+
+#if TARGET_OS_IPHONE
 	DT_WEAK_VARIABLE NSDictionary *_attributes;
+#else
+	__unsafe_unretained NSDictionary *_attributes; //  cannot form weak reference to instances of class NSAttributeDictionary in OSX
+#endif
+	
     NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;
@@ -429,6 +439,7 @@
 	if (!_attributes)
 	{
 		_attributes = (__bridge NSDictionary *)CTRunGetAttributes(_run);
+		
 	}
 	
 	return _attributes;
