@@ -407,6 +407,25 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark - Building the Lines
 
+- (double)typographicBoundsForString:(NSString*)str inAttributedString:(NSAttributedString*)attributedString atLocation:(NSUInteger)location {
+    // calculate length of an hyphenation mark ("-")
+    CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[attributedString attribute:(id)kCTParagraphStyleAttributeName atIndex:location effectiveRange:NULL];
+    
+    CTFontRef font = (__bridge CTFontRef)[attributedString attribute:(id)kCTFontAttributeName atIndex:location effectiveRange:NULL];
+    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          (__bridge id)font, (const NSString*)kCTFontAttributeName,
+                          (__bridge id)paragraphStyle, (const NSString*)kCTParagraphStyleAttributeName,
+                          nil];
+    NSAttributedString *attrStr = [[NSAttributedString alloc] initWithString:str attributes:dict];
+    double strLength = 0;
+    if (attrStr) {
+        CTLineRef line = CTLineCreateWithAttributedString((__bridge CFMutableAttributedStringRef)attrStr);
+        strLength = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+        CFRelease(line);
+    }
+    return strLength;
+}
+
 /*
  Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place. This version supports text boxes.
  */
@@ -432,7 +451,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
 	NSUInteger fittingLength = 0;
 	BOOL shouldTruncateLine = NO;
-	
+    NSString *hyphenMarkString = @"-";
+    BOOL hyphenationSupport = YES;
+    
 	do  // for each line
 	{
 		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length))
@@ -451,6 +472,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// get the paragraph style at this index
 		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
 		
+        double hyphenMarkLength = 0;
+        
+        if (hyphenationSupport) {
+            hyphenMarkLength = [self typographicBoundsForString:hyphenMarkString inAttributedString:_attributedStringFragment atLocation:lineRange.location];
+        }
+        
 		if (isAtBeginOfParagraph)
 		{
 			CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(headIndent), &headIndent);
@@ -486,7 +513,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding;
 		}
 		
-		
+        if (hyphenationSupport) {
+            availableSpace -= ceilf(hyphenMarkLength); // reserve some space for hyphenation marks, so they won't get cut
+		}
+        
 		CGFloat offset = totalLeftPadding;
 		
 		// if first character is a tab, then it is positioned without the indentation
