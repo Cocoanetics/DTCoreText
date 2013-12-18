@@ -119,8 +119,10 @@ The best way to display remote images is to use `DTLazyImageView`.
 First you will need to return `DTLazyImageView` instance for your image attachments.
 
 ``` objective-c
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame{
-    if([attachment isKindOfClass:[DTImageTextAttachment class]]){
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
+{
+    if([attachment isKindOfClass:[DTImageTextAttachment class]])
+	 {
         DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
         imageView.delegate = self;
 
@@ -135,12 +137,14 @@ First you will need to return `DTLazyImageView` instance for your image attachme
 Then in the in delegate method for `DTLazyImageView` reset the layout for the affected `DTAttributedContextView`.
 
 ``` objective-c
-- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size {
+- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size 
+{
     NSURL *url = lazyImageView.url;
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 
     // update all attachments that matching this URL
-    for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) {
+    for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) 
+	 {
         oneAttachment.originalSize = size;
     }
 
