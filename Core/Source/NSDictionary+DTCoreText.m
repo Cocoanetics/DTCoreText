@@ -221,4 +221,39 @@
 	return [kerningNum floatValue];
 }
 
+- (DTColor *)backgroundStrokeColor
+{
+	CGColorRef cgColor = (__bridge CGColorRef)[self objectForKey:DTBackgroundStrokeColorAttribute];
+	
+	if (cgColor)
+	{
+		return [DTColor colorWithCGColor:cgColor];
+	}
+	return nil;
+}
+
+- (CGFloat)backgroundStrokeWidth
+{
+	NSNumber *num = [self objectForKey:DTBackgroundStrokeWidthAttribute];
+	
+	if (num)
+	{
+		return [num floatValue];
+	}
+
+	return 0.0f;
+}
+
+- (CGFloat)backgroundCornerRadius
+{
+	NSNumber *num = [self objectForKey:DTBackgroundCornerRadiusAttribute];
+	
+	if (num)
+	{
+		return [num floatValue];
+	}
+	
+	return 0.0f;
+}
+
 @end
