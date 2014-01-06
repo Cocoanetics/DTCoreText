@@ -2581,7 +2581,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc --print-settings  --exit-threshold 4 --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\necho \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"";
+			shellScript = "echo \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"\n/usr/local/bin/appledoc --print-settings  --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\nexit $?";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
