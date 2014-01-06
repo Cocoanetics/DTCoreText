@@ -26,6 +26,7 @@
 
 /**
  Convenience method for creates a font descriptor from a Core Text font
+ @param ctFont The Core Text font
  @returns An initialized font descriptor
  */
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont;
