@@ -1020,6 +1020,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
+	if(!context) {
+		return nil;
+	}
+	
 	CGContextTranslateCTM(context, -bounds.origin.x, -bounds.origin.y);
 	
 	[self.layoutFrame drawInContext:context options:options];
