@@ -36,7 +36,7 @@
  @param run The Core Text glyph run to wrap
  @param layoutLine The layout line that this glyph run belongs to
  @param offset The offset from the left line origin to place the glyph run at
- @retuns An initialized DTCoreTextGlyphRun
+ @returns An initialized DTCoreTextGlyphRun
  */
 - (id)initWithRun:(CTRunRef)run layoutLine:(DTCoreTextLayoutLine *)layoutLine offset:(CGFloat)offset;
 
