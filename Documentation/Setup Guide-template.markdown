@@ -100,7 +100,7 @@ You can move all the additional framework and library links that Xcode adds into
 
 #### Setting up Header Search Paths
 
-For Xcode to find the headers of DTCoreText add `Externals/DTCoreText/Core` to the *User Header Search Paths*. Make sure you select the *Recursive* check box.
+For Xcode to find the headers of DTCoreText add `Externals/DTCoreText/Core` to the *User Header Search Paths*. To find the headers of DTFoundation referenced by DTCoreText you also need to add `Externals/DTCoreText/Externals/DTFoundation/Core`. Make sure you select the *Recursive* check box on both.
 
 ![DTCoreText_Reference](DTCoreText_Search_Paths.png)
 
