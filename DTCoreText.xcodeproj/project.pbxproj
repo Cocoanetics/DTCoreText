@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0538B0C3185F53B200118E1A /* DTPathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0538B0C1185F53B200118E1A /* DTPathUtils.h */; };
+		0538B0C4185F53B200118E1A /* DTPathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0538B0C1185F53B200118E1A /* DTPathUtils.h */; };
+		0538B0C5185F53B200118E1A /* DTPathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0538B0C2185F53B200118E1A /* DTPathUtils.m */; };
+		0538B0C6185F53B200118E1A /* DTPathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0538B0C2185F53B200118E1A /* DTPathUtils.m */; };
 		05DDBBB418463EE100F25A44 /* DTMacAttributedTextContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 05DDBBB218463EE100F25A44 /* DTMacAttributedTextContentView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05DDBBB518463EE100F25A44 /* DTMacAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 05DDBBB318463EE100F25A44 /* DTMacAttributedTextContentView.m */; };
 		05DDBBBC18464ACA00F25A44 /* DTCoreTextGlyphRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -943,6 +947,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0538B0C1185F53B200118E1A /* DTPathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTPathUtils.h; sourceTree = "<group>"; };
+		0538B0C2185F53B200118E1A /* DTPathUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTPathUtils.m; sourceTree = "<group>"; };
 		05DDBBB218463EE100F25A44 /* DTMacAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTMacAttributedTextContentView.h; path = OSX/DTMacAttributedTextContentView.h; sourceTree = "<group>"; };
 		05DDBBB318463EE100F25A44 /* DTMacAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTMacAttributedTextContentView.m; path = OSX/DTMacAttributedTextContentView.m; sourceTree = "<group>"; };
 		05DDBBCA184654BC00F25A44 /* DTCoreText Mac Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DTCoreText Mac Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1758,6 +1764,8 @@
 				05AEB23F17FF016600683F10 /* iOS */,
 				A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */,
 				A788C94B14863E8700E1AFD9 /* NSString+Paragraphs.m */,
+				0538B0C1185F53B200118E1A /* DTPathUtils.h */,
+				0538B0C2185F53B200118E1A /* DTPathUtils.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -1999,6 +2007,7 @@
 				A7EB849D168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */,
 				A7EB84A7168B3EC000D686B7 /* DTHTMLParserTextNode.h in Headers */,
 				A7EB84B7168B948000D686B7 /* DTBreakHTMLElement.h in Headers */,
+				0538B0C3185F53B200118E1A /* DTPathUtils.h in Headers */,
 				A7EB84C1168B973A00D686B7 /* DTTextHTMLElement.h in Headers */,
 				A7EB84CB168B9A8500D686B7 /* DTTextAttachmentHTMLElement.h in Headers */,
 				A7EB84D5168B9B1300D686B7 /* DTHorizontalRuleHTMLElement.h in Headers */,
@@ -2207,6 +2216,7 @@
 				A7DDF87A17DDEB630005D62D /* DTColorFunctions.h in Headers */,
 				A7AE58101725374C00A9BF61 /* DTImageTextAttachment.h in Headers */,
 				A7AE581A1725381E00A9BF61 /* DTVideoTextAttachment.h in Headers */,
+				0538B0C4185F53B200118E1A /* DTPathUtils.h in Headers */,
 				A7AE582E1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
 				05DDBBBC18464ACA00F25A44 /* DTCoreTextGlyphRun.h in Headers */,
 				05DDBBBF1846533F00F25A44 /* DTCoreTextLayouter.h in Headers */,
@@ -2808,6 +2818,7 @@
 				A788C99214863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
 				A788C99714863E8700E1AFD9 /* DTCSSListStyle.m in Sources */,
 				A788C99C14863E8700E1AFD9 /* DTCSSStylesheet.m in Sources */,
+				0538B0C5185F53B200118E1A /* DTPathUtils.m in Sources */,
 				A788C9A114863E8700E1AFD9 /* DTHTMLElement.m in Sources */,
 				A788C9A614863E8700E1AFD9 /* DTLazyImageView.m in Sources */,
 				A788C9AB14863E8700E1AFD9 /* DTLinkButton.m in Sources */,
@@ -3072,6 +3083,7 @@
 				E2262DF9163833AD00BFDAD7 /* NSScanner+HTML.m in Sources */,
 				E2262DFB163833AD00BFDAD7 /* NSString+HTML.m in Sources */,
 				E2262DFD163833AD00BFDAD7 /* NSMutableString+HTML.m in Sources */,
+				0538B0C6185F53B200118E1A /* DTPathUtils.m in Sources */,
 				E2262DFF163833AD00BFDAD7 /* DTTextBlock.m in Sources */,
 				A72D97651684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */,
 				A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */,

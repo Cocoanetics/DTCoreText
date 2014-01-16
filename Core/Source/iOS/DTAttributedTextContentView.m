@@ -421,6 +421,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {
+
 	// needs clearing of background
 	CGRect rect = CGContextGetClipBoundingBox(ctx);
 	
@@ -440,7 +441,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	}
 	
 	DTCoreTextLayoutFrame *theLayoutFrame = self.layoutFrame; // this is synchronized
-	
+
 	// construct drawing options
 	DTCoreTextLayoutFrameDrawingOptions options = DTCoreTextLayoutFrameDrawingDefault;
 	

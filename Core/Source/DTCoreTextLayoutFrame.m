@@ -407,7 +407,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark - Building the Lines
 
-- (double)typographicBoundsForString:(NSString*)str inAttributedString:(NSAttributedString*)attributedString atLocation:(NSUInteger)location {
+- (CGFloat)typographicBoundsForString:(NSString*)str inAttributedString:(NSAttributedString*)attributedString atLocation:(NSUInteger)location {
     // calculate length of an hyphenation mark ("-")
     CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[attributedString attribute:(id)kCTParagraphStyleAttributeName atIndex:location effectiveRange:NULL];
     
@@ -423,7 +423,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         strLength = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
         CFRelease(line);
     }
-    return strLength;
+    return (CGFloat)strLength;
 }
 
 /*
@@ -472,7 +472,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// get the paragraph style at this index
 		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
 		
-        double hyphenMarkLength = 0;
+        CGFloat hyphenMarkLength = 0;
         
         if (hyphenationSupport) {
             hyphenMarkLength = [self typographicBoundsForString:hyphenMarkString inAttributedString:_attributedStringFragment atLocation:lineRange.location];
