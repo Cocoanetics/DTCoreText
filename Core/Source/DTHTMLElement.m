@@ -119,7 +119,7 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:_textAttachment forKey:NSAttachmentAttributeName];
 		
 		// remember original paragraphSpacing
-		[tmpDict setObject:[NSNumber numberWithFloat:self.paragraphStyle.paragraphSpacing] forKey:DTAttachmentParagraphSpacingAttribute];
+		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
 	
 	CTFontRef font = [_fontDescriptor newMatchingFont];
@@ -268,7 +268,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_letterSpacing)
 	{
-		NSNumber *letterSpacingNum = [NSNumber numberWithFloat:_letterSpacing];
+		NSNumber *letterSpacingNum = DTNSNumberFromCGFloat(_letterSpacing);
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
@@ -295,6 +295,21 @@ NSDictionary *_classesForNames = nil;
 	if (_paragraphStyle.textBlocks)
 	{
 		[tmpDict setObject:_paragraphStyle.textBlocks forKey:DTTextBlocksAttribute];
+	}
+	
+	if (_backgroundStrokeColor)
+	{
+		[tmpDict setObject:(id)[_backgroundStrokeColor CGColor] forKey:DTBackgroundStrokeColorAttribute];
+	}
+	
+	if (_backgroundStrokeWidth)
+	{
+		[tmpDict setObject:DTNSNumberFromCGFloat(_backgroundStrokeWidth) forKey:DTBackgroundStrokeWidthAttribute];
+	}
+	
+	if (_backgroundCornerRadius)
+	{
+		[tmpDict setObject:DTNSNumberFromCGFloat(_backgroundCornerRadius) forKey:DTBackgroundCornerRadiusAttribute];
 	}
 		
 	return tmpDict;
@@ -494,7 +509,7 @@ NSDictionary *_classesForNames = nil;
 					else
 					{
 						// string is empty, need a new attributed string so that we have the attributes
-						NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+						attributes = [self attributesForAttributedStringRepresentation];
 						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 						[tmpString appendAttributedString:attributedString];
 					}
@@ -804,19 +819,19 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	id fontFamily = [styles objectForKey:@"font-family"];
+	id fontFamilyStyle = [styles objectForKey:@"font-family"];
 	
-	if (fontFamily)
+	if (fontFamilyStyle)
 	{
 		NSArray *fontFamilies;
 		
-		if ([fontFamily isKindOfClass:[NSString class]])
+		if ([fontFamilyStyle isKindOfClass:[NSString class]])
 		{
-			fontFamilies = [NSArray arrayWithObject:fontFamily];
+			fontFamilies = [NSArray arrayWithObject:fontFamilyStyle];
 		}
-		else if ([fontFamily isKindOfClass:[NSArray class]])
+		else if ([fontFamilyStyle isKindOfClass:[NSArray class]])
 		{
-			fontFamilies = fontFamily;
+			fontFamilies = fontFamilyStyle;
 		}
 				
 		BOOL foundFontFamily = NO;
@@ -1166,7 +1181,29 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	BOOL needsTextBlock = (_backgroundColor!=nil);
+	NSString *borderColor = [styles objectForKey:@"border-color"];
+	if (borderColor)
+	{
+		self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor);
+	}
+	NSString *borderWidth = [[styles objectForKey:@"border-width"] lowercaseString];
+	if (borderWidth)
+	{
+		_backgroundStrokeWidth = [borderWidth floatValue];
+	}
+	else {
+		_backgroundStrokeWidth = 0.0f;
+	}
+	NSString *cornerRadius = [[styles objectForKey:@"border-radius"] lowercaseString];
+	if (cornerRadius)
+	{
+		_backgroundCornerRadius = [cornerRadius floatValue];
+	}
+	else {
+		_backgroundCornerRadius = 0.0f;
+	}
+	
+	BOOL needsTextBlock = (_backgroundColor!=nil || _backgroundStrokeColor!=nil || _backgroundCornerRadius > 0 || _backgroundStrokeWidth > 0);
 	
 	BOOL hasMargins = NO;
 	
@@ -1354,6 +1391,11 @@ NSDictionary *_classesForNames = nil;
 
 	_currentTextSize = element.currentTextSize;
 	_textScale = element.textScale;
+	
+	_backgroundColor = element.backgroundColor;
+	_backgroundStrokeColor = element.backgroundStrokeColor;
+	_backgroundStrokeWidth = element.backgroundStrokeWidth;
+	_backgroundCornerRadius = element.backgroundCornerRadius;
 	
 	// only inherit background-color from inline elements
 	if (element.displayStyle == DTHTMLElementDisplayStyleInline || element.displayStyle == DTHTMLElementDisplayStyleListItem)

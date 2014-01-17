@@ -542,7 +542,7 @@
 		
 		// ----- SPAN enumeration
 		
-		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stop) {
+		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stopEnumerateAttributes) {
 
 			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
 			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
@@ -578,9 +578,9 @@
 				}
 				
 				// find which custom attributes are for the link
-				NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
+				NSDictionary *localHTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
 				
-				[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+				[localHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stopEnumerateKeysAndObjects) {
 					
 					// check if range is longer than current paragraph
 					NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:currentLinkRange.location];
@@ -747,10 +747,10 @@
 			__block BOOL needsSpanTag = NO;
 			
 			// find which custom attributes are only for this span
-			NSDictionary *HTMLAttributes = [attributes objectForKey:DTCustomAttributesAttribute];
+			NSDictionary *localHTMLAttributes = [attributes objectForKey:DTCustomAttributesAttribute];
 			NSMutableDictionary *spanLevelHTMLAttributes = [NSMutableDictionary dictionary];
 			
-			[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+			[localHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
 				
 				// check if there is already an identical paragraph attribute
 				id valueForParagraph = [paragraphLevelHTMLAttributes objectForKey:key];

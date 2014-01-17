@@ -26,6 +26,7 @@ NSString * const DTDefaultStyleSheet = @"DTDefaultStyleSheet";
 NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes";
+NSString * const DTIgnoreInlineStylesOption = @"DTIgnoreInlineStyles";
 
 // attributed string attribute constants
 
@@ -44,6 +45,9 @@ NSString * const DTTextBlocksAttribute = @"DTTextBlocks";
 NSString * const DTFieldAttribute = @"DTField";
 NSString * const DTCustomAttributesAttribute = @"DTCustomAttributes";
 NSString * const DTAscentMultiplierAttribute = @"DTAscentMultiplierAttribute";
+NSString * const DTBackgroundStrokeColorAttribute = @"DTBackgroundStrokeColor";
+NSString * const DTBackgroundStrokeWidthAttribute = @"DTBackgroundStrokeWidth";
+NSString * const DTBackgroundCornerRadiusAttribute = @"DTBackgroundCornerRadius";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";
@@ -51,3 +55,9 @@ NSString * const DTListPrefixField = @"{listprefix}";
 // iOS 6 compatibility
 
 BOOL ___useiOS6Attributes = NO; // this gets set globally by DTHTMLAttributedStringBuilder
+
+
+// exceptions
+
+NSString * const DTCoreTextFontDescriptorException = @"DTCoreTextFontDescriptorException";
+

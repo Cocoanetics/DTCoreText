@@ -8,7 +8,7 @@
 
 #import "DTTextAttachment.h"
 #import "DTCoreText.h"
-#import "DTUtils.h"
+#import "DTCoreGraphicsUtils.h"
 
 #import "DTBase64Coding.h"
 #import "DTDictationPlaceholderTextAttachment.h"
@@ -203,13 +203,13 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 		{
 			// width missing, calculate it
 			CGFloat factor = _originalSize.height / displaySize.height;
-			displaySize.width = roundf(_originalSize.width / factor);
+			displaySize.width = round(_originalSize.width / factor);
 		}
 		else if (displaySize.width>0 && displaySize.height==0)
 		{
 			// height missing, calculate it
 			CGFloat factor = _originalSize.width / displaySize.width;
-			displaySize.height = roundf(_originalSize.height / factor);
+			displaySize.height = round(_originalSize.height / factor);
 		}
 	}
 
@@ -217,7 +217,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	{
 		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)
 		{
-			displaySize = sizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
+			displaySize = DTCGSizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
 		}
 	}
 	

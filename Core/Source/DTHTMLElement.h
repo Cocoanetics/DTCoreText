@@ -33,6 +33,10 @@
 	DTColor *_textColor;
 	DTColor *_backgroundColor;
 	
+	DTColor *_backgroundStrokeColor;
+	CGFloat _backgroundStrokeWidth;
+	CGFloat _backgroundCornerRadius;
+	
 	CTUnderlineStyle _underlineStyle;
 	
 	NSString *_beforeContent;
@@ -151,6 +155,21 @@
  Background color of text in the receiver
  */
 @property (nonatomic, strong) DTColor *backgroundColor;
+
+/**
+ Background stroke color in the receiver
+ */
+@property (nonatomic, strong) DTColor *backgroundStrokeColor;
+
+/**
+ Background stroke width in the receiver
+ */
+@property (nonatomic, assign) CGFloat backgroundStrokeWidth;
+
+/**
+ Background stroke width in the receiver
+ */
+@property (nonatomic, assign) CGFloat backgroundCornerRadius;
 
 /**
  The custom letter spacing of the receiver, default is 0px

@@ -177,9 +177,9 @@
 	
 	STAssertNotNil(attachment, @"No attachment found in output");
 	
-	CGSize expectedSize = CGSizeMake(300, 300);
-	STAssertEquals(attachment.originalSize, expectedSize, @"Expected originalSize to be 300x300");
-	STAssertEquals(attachment.displaySize, expectedSize, @"Expected displaySize to be 300x300");
+	CGSize expectedSize = CGSizeMake(150, 150);
+	STAssertEquals(attachment.originalSize, expectedSize, @"Non-expected originalSize");
+	STAssertEquals(attachment.displaySize, expectedSize, @"Non-expected displaySize");
 }
 
 // parser should ignore "auto" value for height
@@ -194,11 +194,11 @@
 	
 	STAssertNotNil(attachment, @"No attachment found in output");
 	
-	CGSize expectedOriginalSize = CGSizeMake(300, 300);
+	CGSize expectedOriginalSize = CGSizeMake(150, 150);
 	CGSize expectedDisplaySize = CGSizeMake(260, 260);
 	
-	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Expected originalSize to be 300x300");
-	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Expected displaySize to be 260x260");
+	STAssertEquals(attachment.originalSize, expectedOriginalSize, @"Non-expected originalSize");
+	STAssertEquals(attachment.displaySize, expectedDisplaySize, @"Non-expected displaySize");
 }
 
 // parser should recover from no end element being sent for this img
@@ -1031,4 +1031,42 @@
 	NSArray *lines = [[[attributedString string] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsSeparatedByString:@"\n"];
 	STAssertTrue([lines count]==1, @"There should only be one line, display style block should not be inherited");
 }
+
+#pragma mark - Parsing Options
+
+// issue 649
+- (void)testIgnoreInlineStyle
+{
+	NSDictionary *options = @{DTIgnoreInlineStylesOption: @(YES)};
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><head><style>.container { color: red }</style></head><body><span class='container' style=\"color: blue\">Text</span></body></html>" options:options];
+	
+	NSRange effectiveRange;
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:&effectiveRange];
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(expectedRange, effectiveRange, @"Attributes should cover all text");
+	
+	DTColor *color = [attributes foregroundColor];
+	NSString *hexColor = DTHexStringFromDTColor(color);
+	
+	STAssertEqualObjects(hexColor, @"ff0000", @"Color should be red because inline style should be ignored through option");
+}
+
+// issue 649
+- (void)testProcessInlineStyle
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><head><style>.container { color: red }</style></head><body><span class='container' style=\"color: blue\">Text</span></body></html>" options:NULL];
+	
+	NSRange effectiveRange;
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:&effectiveRange];
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	STAssertEquals(expectedRange, effectiveRange, @"Attributes should cover all text");
+	
+	DTColor *color = [attributes foregroundColor];
+	NSString *hexColor = DTHexStringFromDTColor(color);
+	
+	STAssertEqualObjects(hexColor, @"0000ff", @"Color should be blue because inline style should be processed through lack of ignore option");
+}
+
 @end

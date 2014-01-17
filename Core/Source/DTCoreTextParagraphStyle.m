@@ -323,7 +323,7 @@
 	
 	if (_lineHeightMultiple && _lineHeightMultiple!=1.0f)
 	{
-		NSNumber *number = [NSNumber numberWithFloat:_lineHeightMultiple];
+		NSNumber *number = DTNSNumberFromCGFloat(_lineHeightMultiple);
 		[retString appendFormat:@"line-height:%@em;", number];
 	}
 	
@@ -343,21 +343,21 @@
 	// Spacing at the bottom
 	if (_paragraphSpacing!=0.0f)
 	{
-		NSNumber *number = [NSNumber numberWithFloat:_paragraphSpacing];
+		NSNumber *number = DTNSNumberFromCGFloat(_paragraphSpacing);
 		[retString appendFormat:@"margin-bottom:%@px;", number];
 	}
 
 	// Spacing at the top
 	if (_paragraphSpacingBefore!=0.0f)
 	{
-		NSNumber *number = [NSNumber numberWithFloat:_paragraphSpacingBefore];
+		NSNumber *number = DTNSNumberFromCGFloat(_paragraphSpacingBefore);
 		[retString appendFormat:@"margin-top:%@px;", number];
 	}
 	
 	// Spacing at the left
 	if (_headIndent!=0.0f)
 	{
-		NSNumber *number = [NSNumber numberWithFloat:_headIndent];
+		NSNumber *number = DTNSNumberFromCGFloat(_headIndent);
 		[retString appendFormat:@"margin-left:%@px;", number];
 	}
 
@@ -365,7 +365,7 @@
 	if (_tailIndent!=0.0f)
 	{
 		// tail indent is negative if from trailing margin
-		NSNumber *number = [NSNumber numberWithFloat:-_tailIndent];
+		NSNumber *number = DTNSNumberFromCGFloat(-_tailIndent);
 		[retString appendFormat:@"margin-right:%@px;", number];
 	}
 
