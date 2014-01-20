@@ -2,7 +2,7 @@
 //  DTAttributedTextView.m
 //  DTCoreText
 //
-//  Created by Oliver Drobnik on 1/12/11.
+//  Created by Michael Markowski on 1/12/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
@@ -88,9 +88,6 @@
 		self.backgroundColor = [DTColor whiteColor];
 		self.opaque = YES;
 	}
-
-	self.opaque = NO;
-	self.backgroundColor = [NSColor greenColor];
 	
 	self.autoresizesSubviews = NO;
 //	self.clipsToBounds = YES; //TODO mm

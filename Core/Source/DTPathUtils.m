@@ -77,13 +77,20 @@ CGRect clipRectToPath(CGRect rect, CGPathRef path)
 		// Build up the boxes one line at a time. If two boxes have the same width and offset, then merge them.
 		CGRect boundingBox = CGPathGetPathBoundingBox(path);
 		CGRect frameRect = CGRectZero;
+
+#if TARGET_OS_IPHONE
+		CGContextRef context = UIGraphicsGetCurrentContext();
+#else
+		CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+#endif
+		
 		for (CGFloat y = CGRectGetMaxY(boundingBox) - height; y > height; y -= height)
 		{
 			CGRect lineRect = CGRectMake(CGRectGetMinX(boundingBox), y, CGRectGetWidth(boundingBox), height);
-			CGContextAddRect(UIGraphicsGetCurrentContext(), lineRect);
+			CGContextAddRect(context, lineRect);
 			
 			lineRect = CGRectIntegral(clipRectToPath(lineRect, path));		// Do the math with full precision so we don't drift, but do final render on pixel boundaries.
-			CGContextAddRect(UIGraphicsGetCurrentContext(), lineRect);
+			CGContextAddRect(context, lineRect);
             
 			if (! CGRectIsEmpty(lineRect))
 			{

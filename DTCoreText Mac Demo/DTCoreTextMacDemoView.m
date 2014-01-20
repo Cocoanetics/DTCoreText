@@ -29,7 +29,6 @@
         NSAttributedString *attString = [DTCoreTextMacDemoView attributedStringWithText:html style:css];
         NSLog(@"attString: %@\nstyle: %@", attString, css);
         
-		[textView setBackgroundColor:[NSColor yellowColor]];
         [textView setAttributedString:attString];
         
         [self addSubview:textView];
