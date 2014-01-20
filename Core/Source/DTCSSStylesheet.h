@@ -68,6 +68,7 @@
  
  @param element The HTML element.
  @param matchedSelectors The CSS selectors that caused a match
+ @param ignoreInlineStyle If `YES` then the inline styles of the element will be ignored and only the receiver's styles used
  @returns The merged style dictionary containing only styles which selector matches the element
  */
 - (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle;

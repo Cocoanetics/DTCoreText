@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   spec.author       = { 'Oliver Drobnik' => 'oliver@cocoanetics.com' }
   spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
   spec.prepare_command = <<-CMD
-     cd Core/Source
+     cd ./Core/Source
      /usr/bin/xxd -i default.css default.css.c
   CMD
 end

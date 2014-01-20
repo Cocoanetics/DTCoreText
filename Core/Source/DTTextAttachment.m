@@ -176,7 +176,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 #pragma mark Properties
 /** Mutator for originalSize. Sets displaySize to the same value as originalSize. 
- @param The CGSize to store in originalSize. */
+ @param originalSize The CGSize to store in originalSize. */
 - (void)setOriginalSize:(CGSize)originalSize
 {
 	if (!CGSizeEqualToSize(originalSize, _originalSize))

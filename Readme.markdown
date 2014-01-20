@@ -17,29 +17,11 @@ Documentation can be [browsed online](https://docs.cocoanetics.com/DTCoreText) o
 
 A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.
 
+Changelog: [GitHub Releases](https://github.com/Cocoanetics/DTCoreText/releases)
+
+There is also a [Programming Guide](Documentation/Programming Guide-template.markdown) with a set of solutions to common problems.
+
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
-
-#### Changelog
-
-- [Version 1.6.9](http://www.cocoanetics.com/2013/11/dtcoretext-1-6-9/)
-- [Version 1.6.8](http://www.cocoanetics.com/2013/10/dtcoretext-1-6-8/)
-- [Version 1.6.7](http://www.cocoanetics.com/2013/09/dtcoretext-1-6-7/)
-- [Version 1.6.6](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-6/)
-- [Version 1.6.5](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-5/)
-- [Version 1.6.4](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-4/)
-- [Version 1.6.3](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-3-dtrichtexteditor-1-6-2/)
-- [Version 1.6.2](http://www.cocoanetics.com/2013/08/dtcoretext-1-6-2/)
-- [Version 1.6.1](http://www.cocoanetics.com/2013/07/dtcoretext-1-6-1/)
-- [Version 1.6.0](http://www.cocoanetics.com/2013/07/dtcoretext-1-6/)
-- [Version 1.5.3](http://www.cocoanetics.com/2013/06/dtcoretext-1-5-3/)
-- [Version 1.5.2](http://www.cocoanetics.com/2013/05/dtcoretext-1-5-2/)
-- [Version 1.5](http://www.cocoanetics.com/2013/05/rich-text-update-1-5/)
-- [Version 1.4.x](http://www.cocoanetics.com/2013/04/dtcoretext-1-4-2/)
-- [Version 1.4](http://www.cocoanetics.com/2013/04/rich-text-update-1-4/)
-- [Version 1.2](http://www.cocoanetics.com/2013/01/dtcoretext-1-2-0/)
-- [Version 1.1](http://www.cocoanetics.com/2012/12/dtcoretext-1-1/)
-- [Version 1.0.1](http://www.cocoanetics.com/2012/04/dtcoretext-1-0-1-linker-flags-and-rich-text-news/)
-- [Version 1.0](http://www.cocoanetics.com/2012/02/dtrichtexteditor-dtcoretext-news/)
 
 License
 -------

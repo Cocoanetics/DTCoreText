@@ -73,6 +73,9 @@ extern NSString * const DTTextBlocksAttribute;
 extern NSString * const DTFieldAttribute;
 extern NSString * const DTCustomAttributesAttribute;
 extern NSString * const DTAscentMultiplierAttribute;
+extern NSString * const DTBackgroundStrokeColorAttribute;
+extern NSString * const DTBackgroundStrokeWidthAttribute;
+extern NSString * const DTBackgroundCornerRadiusAttribute;
 
 // field constants
 
