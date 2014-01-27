@@ -164,16 +164,7 @@ NSDictionary *_classesForNames = nil;
 	// add strikout if applicable
 	if (_strikeOut)
 	{
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
-		{
-			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-		}
-		else
-#endif
-		{
-			[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
-		}
+		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:DTStrikeOutAttribute];
 	}
 	
 	// set underline style
