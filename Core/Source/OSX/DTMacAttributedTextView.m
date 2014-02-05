@@ -10,7 +10,7 @@
 
 #import "DTMacAttributedTextView.h"
 #import "DTCoreText.h"
-#import "DTTiledLayerWithoutFade.h"
+//#import "DTTiledLayerWithoutFade.h"
 #import "DTBlockFunctions.h"
 
 @interface DTMacAttributedTextView ()
