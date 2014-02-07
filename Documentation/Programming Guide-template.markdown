@@ -156,3 +156,19 @@ Then in the in delegate method for `DTLazyImageView` reset the layout for the af
     [self.attributedTextContentView relayoutText];
 }
 ```
+
+Changing the default font and font size
+---------------------------------------
+When you want to render the HTML in a different font and fontsize, you need to specify this using the `options` parameter.
+
+```
+NSDictionary* options = @{ NSTextSizeMultiplierDocumentOption: [NSNumber numberWithFloat: 1.0],
+			  				DTDefaultFontFamily: @"Helvetica Neue",
+			  			};
+
+NSString *html = @"<p>Some Text</p>";
+NSData* descriptionData = [html dataUsingEncoding:NSUTF8StringEncoding];
+NSAttributedString* attributedDescription = [[NSAttributedString alloc] initWithHTMLData:descriptionData options:options documentAttributes:NULL];
+```
+
+
