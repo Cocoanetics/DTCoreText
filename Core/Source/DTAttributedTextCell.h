@@ -47,6 +47,15 @@
  */
 - (void)setHTMLString:(NSString *)html;
 
+/**
+ This method allows to set HTML text directly as content of the receiver.
+ 
+ This will be converted to an attributed string.
+ @param html The HTML string to set as the receiver's text content
+ @param options The options used for rendering the HTML
+ */
+- (void) setHTMLString:(NSString *)html options:(NSDictionary*) options;
+
 
 /**
  @name Getting Information
