@@ -495,4 +495,16 @@
 	STAssertTrue([paddingRight isEqualToString:@"20px"], @"margin-right should be 20px");
 }
 
+- (void)testUncompressBackgroundShorthand
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+
+	[styles setObject:@"url(\"topbanner.png\") #00D repeat-y fixed" forKey:@"background"];
+	[stylesheet _uncompressShorthands:styles];
+
+	NSString *backgroundColor = [styles objectForKey:@"background-color"];
+	STAssertTrue([backgroundColor isEqualToString:@"#00D"], @"background-color should be #00D");
+}
+
 @end
