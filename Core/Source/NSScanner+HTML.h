@@ -41,6 +41,13 @@
  */
 - (BOOL)scanHTMLColor:(DTColor **)color;
 
+/**
+ Scans for a typical HTML color, typically either #FFFFFF, rgb(255,255,255) or a HTML color name.
+ @param color An optional output parameter that will contain the scanned color if successful
+ @param name An optional output parameter that will contain the HTML color string
+ @returns `YES` if a color could be scanned
+ */
+- (BOOL)scanHTMLColor:(DTColor **)color HTMLName:(NSString **)name;
 
 @end
 

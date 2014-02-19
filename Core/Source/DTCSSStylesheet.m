@@ -410,6 +410,24 @@ extern unsigned int default_css_len;
 		// remove the shorthand
 		[styles removeObjectForKey:@"padding"];
 	}
+
+	shortHand = [styles objectForKey:@"background"];
+
+	if (shortHand)
+	{
+		[styles removeObjectForKey:@"background"];
+		NSString *trimmedString = [shortHand stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
+		NSCharacterSet *tokenEndSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		while (![scanner isAtEnd]) {
+			NSString *colorName;
+			if ([scanner scanHTMLColor:NULL HTMLName:&colorName]) {
+				[styles setObject:colorName forKey:@"background-color"];
+				break;
+			}
+			[scanner scanUpToCharactersFromSet:tokenEndSet intoString:NULL];
+		}
+	}
 }
 
 - (void)_addStyleRule:(NSString *)rule withSelector:(NSString*)selectors

@@ -221,6 +221,11 @@
 
 - (BOOL)scanHTMLColor:(DTColor **)color
 {
+	return [self scanHTMLColor:color HTMLName:NULL];
+}
+
+- (BOOL)scanHTMLColor:(DTColor **)color HTMLName:(NSString **)name
+{
 	NSUInteger indexBefore = [self scanLocation];
 	
 	NSString *colorName = nil;
@@ -262,12 +267,16 @@
 		self.scanLocation = indexBefore;
 		return NO;
 	}
-	
+
 	if (color)
 	{
 		*color = foundColor;
 	}
-	
+
+	if (name) {
+		*name = colorName;
+	}
+
 	return YES;
 }
 
