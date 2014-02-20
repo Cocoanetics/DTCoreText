@@ -72,7 +72,7 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
 /**
  An object to represent an attachment in an HTML/rich text view.  
  */
-@interface DTTextAttachment : NSObject
+@interface DTTextAttachment : NSObject <NSCoding>
 {
 	CGSize _displaySize;  // the display dimensions of the attachment
 	CGSize _originalSize; // the original dimensions of the attachment

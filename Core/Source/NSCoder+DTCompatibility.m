@@ -15,6 +15,16 @@ NSEdgeInsets NSEdgeInsetsFromString(NSString *string);
 
 @implementation NSCoder (DTCompatibility)
 
+#if !TARGET_OS_IPHONE
+- (void)encodeCGSize:(CGSize)size forKey:(NSString *)key {
+    [self encodeObject:NSStringFromCGSize(size) forKey:key];
+}
+
+- (CGSize)decodeCGSizeForKey:(NSString *)key {
+	return NSSizeToCGSize(NSSizeFromString([self decodeObjectForKey:key]));
+}
+#endif
+
 - (void)encodeDTEdgeInsets:(DTEdgeInsets)insets forKey:(NSString *)key {
 #if TARGET_OS_IPHONE
 	[self encodeUIEdgeInsets:insets forKey:key];

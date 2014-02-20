@@ -13,6 +13,19 @@
 	NSAttributedString *_replacedAttributedString;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+	self = [super initWithCoder:aDecoder];
+	if (self) {
+		_replacedAttributedString = [aDecoder decodeObjectForKey:@"replacedAttributedString"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+	[super encodeWithCoder:aCoder];
+	[aCoder encodeObject:_replacedAttributedString forKey:@"replacedAttributedString"];
+}
+
 // if you change any of these then also make sure to adjust the sizes in DTDictationPlaceholderTextAttachment
 #define DOT_WIDTH 10.0f
 #define DOT_DISTANCE 2.5f
