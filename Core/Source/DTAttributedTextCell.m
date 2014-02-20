@@ -194,7 +194,11 @@
 
 - (void)setHTMLString:(NSString *)html
 {
-	// we don't preserve the html but compare it's hash
+	[self setHTMLString:html options:nil];
+}
+
+- (void) setHTMLString:(NSString *)html options:(NSDictionary*) options {
+	
 	NSUInteger newHash = [html hash];
 	
 	if (newHash == _htmlHash)
@@ -205,10 +209,11 @@
 	_htmlHash = newHash;
 	
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data documentAttributes:NULL];
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 	self.attributedString = string;
 	
 	[self setNeedsLayout];
+	
 }
 
 - (void)setAttributedString:(NSAttributedString *)attributedString
