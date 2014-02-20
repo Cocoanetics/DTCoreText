@@ -118,7 +118,7 @@ typedef NS_ENUM(NSUInteger, DTCSSListStylePosition)
 /**
  This class is the equivalent of `NSTextList` on Mac with the added handling of the marker position.
  */
-@interface DTCSSListStyle : NSObject
+@interface DTCSSListStyle : NSObject <NSCoding>
 
 
 /**
