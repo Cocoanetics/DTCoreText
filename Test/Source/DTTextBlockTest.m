@@ -52,4 +52,32 @@
 	STAssertEquals(hash, (NSUInteger)201010757, @"hash should be 201010757");
 }
 
+- (void)testNSCodingEqual {
+	DTTextBlock *block = [[DTTextBlock alloc] init];
+	block.padding = DTEdgeInsetsMake(10, 20, 30, 40);
+	block.backgroundColor = DTColorCreateWithHTMLName(@"red");
+
+	NSData *blockData = [NSKeyedArchiver archivedDataWithRootObject:block];
+	DTTextBlock *blockUnarchived = [NSKeyedUnarchiver unarchiveObjectWithData:blockData];
+
+	STAssertTrue([block isEqual:blockUnarchived], @"Unarchived block should be equal to original");
+}
+
+- (void)testNSCodingNotEqual {
+	DTTextBlock *block1 = [[DTTextBlock alloc] init];
+	block1.padding = DTEdgeInsetsMake(10, 20, 30, 40);
+	block1.backgroundColor = DTColorCreateWithHTMLName(@"red");
+
+	DTTextBlock *block2 = [[DTTextBlock alloc] init];
+	block2.padding = DTEdgeInsetsMake(20, 30, 40, 50);
+	block2.backgroundColor = DTColorCreateWithHTMLName(@"blue");
+
+	STAssertFalse([block1 isEqual:block2], @"Sanity check");
+
+	NSData *block1Data = [NSKeyedArchiver archivedDataWithRootObject:block1];
+	DTTextBlock *block1Unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:block1Data];
+
+	STAssertFalse([block1Unarchived isEqual:block2], @"Different blocks should remain different");
+}
+
 @end

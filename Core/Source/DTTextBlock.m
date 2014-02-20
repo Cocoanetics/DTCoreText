@@ -8,11 +8,26 @@
 
 #import "DTTextBlock.h"
 #import "DTCoreText.h"
+#import "NSCoder+DTCompatibility.h"
 
 @implementation DTTextBlock
 {
 	DTEdgeInsets _padding;
 	DTColor *_backgroundColor;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+	self = [super init];
+	if (self) {
+		_padding = [aDecoder decodeDTEdgeInsetsForKey:@"padding"];
+		_backgroundColor = [aDecoder decodeObjectForKey:@"backgroundColor"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+	[aCoder encodeDTEdgeInsets:_padding forKey:@"padding"];
+	[aCoder encodeObject:_backgroundColor forKey:@"backgroundColor"];
 }
 
 - (NSUInteger)hash

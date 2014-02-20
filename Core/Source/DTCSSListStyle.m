@@ -53,6 +53,25 @@
 	return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+	self = [super init];
+	if (self) {
+		_inherit = [aDecoder decodeBoolForKey:@"inherit"];
+		_type = [aDecoder decodeIntegerForKey:@"type"];
+		_position = [aDecoder decodeIntegerForKey:@"position"];
+		_imageName = [aDecoder decodeObjectForKey:@"imageName"];
+		_startingItemNumber = [aDecoder decodeIntegerForKey:@"startingItemNumber"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+	[aCoder encodeBool:_inherit forKey:@"inherit"];
+	[aCoder encodeInteger:_type forKey:@"type"];
+	[aCoder encodeInteger:_position forKey:@"position"];
+	[aCoder encodeObject:_imageName forKey:@"imageName"];
+	[aCoder encodeInteger:_startingItemNumber forKey:@"startingItemNumber"];
+}
 
 // convert string to listStyleType
 + (DTCSSListStyleType)listStyleTypeFromString:(NSString *)string
