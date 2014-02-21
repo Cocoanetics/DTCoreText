@@ -634,7 +634,7 @@
 			
 			DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
 
-			if ([plainSubString characterAtIndex:0] == NSAttachmentCharacter) {
+			if ([plainSubString characterAtIndex:0] == UNICODE_OBJECT_PLACEHOLDER) {
 				attachment = [attributes objectForKey:@"NSAttachment"];
 				subString = @"";
 			}
