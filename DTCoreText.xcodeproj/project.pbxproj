@@ -25,6 +25,14 @@
 		0538B0C4185F53B200118E1A /* DTPathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0538B0C1185F53B200118E1A /* DTPathUtils.h */; };
 		0538B0C5185F53B200118E1A /* DTPathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0538B0C2185F53B200118E1A /* DTPathUtils.m */; };
 		0538B0C6185F53B200118E1A /* DTPathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0538B0C2185F53B200118E1A /* DTPathUtils.m */; };
+		0599615618B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */; };
+		0599615718B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */; };
+		0599615818B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */; };
+		0599615918B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */; };
+		0599615A18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */; };
+		0599615B18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */; };
+		0599615C18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */; };
+		0599615D18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */; };
 		05DDBBB418463EE100F25A44 /* DTMacAttributedTextContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 05DDBBB218463EE100F25A44 /* DTMacAttributedTextContentView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05DDBBB518463EE100F25A44 /* DTMacAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 05DDBBB318463EE100F25A44 /* DTMacAttributedTextContentView.m */; };
 		05DDBBBC18464ACA00F25A44 /* DTCoreTextGlyphRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -949,6 +957,8 @@
 /* Begin PBXFileReference section */
 		0538B0C1185F53B200118E1A /* DTPathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTPathUtils.h; sourceTree = "<group>"; };
 		0538B0C2185F53B200118E1A /* DTPathUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTPathUtils.m; sourceTree = "<group>"; };
+		0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTCrossPlatformScrollView.h; path = CrossPlatform/DTCrossPlatformScrollView.h; sourceTree = "<group>"; };
+		0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTCrossPlatformScrollView.m; path = CrossPlatform/DTCrossPlatformScrollView.m; sourceTree = "<group>"; };
 		05DDBBB218463EE100F25A44 /* DTMacAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTMacAttributedTextContentView.h; path = OSX/DTMacAttributedTextContentView.h; sourceTree = "<group>"; };
 		05DDBBB318463EE100F25A44 /* DTMacAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTMacAttributedTextContentView.m; path = OSX/DTMacAttributedTextContentView.m; sourceTree = "<group>"; };
 		05DDBBCA184654BC00F25A44 /* DTCoreText Mac Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DTCoreText Mac Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1143,7 +1153,7 @@
 		A79499FF14C6256B00A8CCDE /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLAttributedStringBuilder.h; sourceTree = "<group>"; };
 		A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLAttributedStringBuilder.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTCoreTextConstants.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTCoreTextConstants.m; sourceTree = "<group>"; };
 		A7949A5814CC456000A8CCDE /* MacUnitTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacUnitTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7949A5D14CC456000A8CCDE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		A7949A5E14CC456000A8CCDE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1350,6 +1360,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0599616E18B76ACE00E659F0 /* CrossPlatform */ = {
+			isa = PBXGroup;
+			children = (
+				0599615418B76A0500E659F0 /* DTCrossPlatformScrollView.h */,
+				0599615518B76A0500E659F0 /* DTCrossPlatformScrollView.m */,
+			);
+			name = CrossPlatform;
+			sourceTree = "<group>";
+		};
 		05AEB23F17FF016600683F10 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1750,6 +1769,7 @@
 		A788CAA71486490600E1AFD9 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				0599616E18B76ACE00E659F0 /* CrossPlatform */,
 				05DDBBB118463E9C00F25A44 /* OSX */,
 				05E8024917FF044C000E38EB /* iOS */,
 				A04CF1971738BBF00036E735 /* Accessibility */,
@@ -1969,6 +1989,7 @@
 			files = (
 				A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */,
 				A788C96714863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
+				0599615618B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */,
 				A788C97114863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */,
 				A788C97614863E8700E1AFD9 /* DTCoreTextFontDescriptor.h in Headers */,
 				A788C97B14863E8700E1AFD9 /* DTCoreTextGlyphRun.h in Headers */,
@@ -2050,6 +2071,7 @@
 				A788C99014863E8700E1AFD9 /* DTCoreTextParagraphStyle.h in Headers */,
 				A788C99514863E8700E1AFD9 /* DTCSSListStyle.h in Headers */,
 				A788C99A14863E8700E1AFD9 /* DTCSSStylesheet.h in Headers */,
+				0599615718B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */,
 				A788C99F14863E8700E1AFD9 /* DTHTMLElement.h in Headers */,
 				A788C9B814863E8700E1AFD9 /* DTTextAttachment.h in Headers */,
 				A788C9C714863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */,
@@ -2119,6 +2141,7 @@
 				A7F7EFA81573603100F5A4D0 /* DTCoreTextParagraphStyle.h in Headers */,
 				A7F7EFA91573603100F5A4D0 /* DTCSSListStyle.h in Headers */,
 				A7F7EFAA1573603100F5A4D0 /* DTCSSStylesheet.h in Headers */,
+				0599615818B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */,
 				A7F7EFAB1573603100F5A4D0 /* DTHTMLElement.h in Headers */,
 				A7F7EFAC1573603100F5A4D0 /* DTTextAttachment.h in Headers */,
 				A7F7EFAD1573603100F5A4D0 /* NSAttributedString+HTML.h in Headers */,
@@ -2198,6 +2221,7 @@
 				E2262DFC163833AD00BFDAD7 /* NSMutableString+HTML.h in Headers */,
 				E2262DFE163833AD00BFDAD7 /* DTTextBlock.h in Headers */,
 				E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */,
+				0599615918B76A0500E659F0 /* DTCrossPlatformScrollView.h in Headers */,
 				A72D97611684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */,
 				A7EB84A0168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */,
 				A7EB84AA168B3EC000D686B7 /* DTHTMLParserTextNode.h in Headers */,
@@ -2813,6 +2837,7 @@
 				A788C97914863E8700E1AFD9 /* DTCoreTextFontDescriptor.m in Sources */,
 				A788C97E14863E8700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
 				A788C98314863E8700E1AFD9 /* DTCoreTextLayouter.m in Sources */,
+				0599615A18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */,
 				A788C98814863E8700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
 				A788C98D14863E8700E1AFD9 /* DTCoreTextLayoutLine.m in Sources */,
 				A788C99214863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
@@ -2882,6 +2907,7 @@
 				A788C97F14863E8700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
 				A788C98414863E8700E1AFD9 /* DTCoreTextLayouter.m in Sources */,
 				A788C98914863E8700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
+				0599615B18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */,
 				A788C98E14863E8700E1AFD9 /* DTCoreTextLayoutLine.m in Sources */,
 				A788C99314863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
 				A788C99814863E8700E1AFD9 /* DTCSSListStyle.m in Sources */,
@@ -3035,6 +3061,7 @@
 				A7EB84A3168B3E9D00D686B7 /* DTHTMLParserNode.m in Sources */,
 				A7EB84AD168B3EC000D686B7 /* DTHTMLParserTextNode.m in Sources */,
 				A7EB84BD168B948000D686B7 /* DTBreakHTMLElement.m in Sources */,
+				0599615C18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */,
 				A7EB84C7168B973A00D686B7 /* DTTextHTMLElement.m in Sources */,
 				A7EB84D1168B9A8500D686B7 /* DTTextAttachmentHTMLElement.m in Sources */,
 				A7EB84DB168B9B1300D686B7 /* DTHorizontalRuleHTMLElement.m in Sources */,
@@ -3101,6 +3128,7 @@
 				05DDBBC31846534700F25A44 /* DTCoreTextLayoutFrame.m in Sources */,
 				A70E62FC16C2540C009B47BF /* DTStylesheetHTMLElement.m in Sources */,
 				05DDBC071847659F00F25A44 /* DTMacAttributedTextView.m in Sources */,
+				0599615D18B76A0500E659F0 /* DTCrossPlatformScrollView.m in Sources */,
 				A70028A016FB220B00AFEDA3 /* DTAnchorHTMLElement.m in Sources */,
 				A762704017155420005F0CEC /* DTCoreTextFontCollection.m in Sources */,
 				A7AE58141725374C00A9BF61 /* DTImageTextAttachment.m in Sources */,

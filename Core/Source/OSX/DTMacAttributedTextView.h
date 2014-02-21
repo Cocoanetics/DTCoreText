@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "DTMacAttributedTextContentView.h"
+#import "DTCrossPlatformScrollView.h"
 
 @class DTMacAttributedTextView;
 
@@ -18,7 +19,7 @@
  The content view of type <DTAttributedTextContentView> is created lazily. You should not set values on it directly if you use it in conjunction with this class for scrolling.
  */
 
-@interface DTMacAttributedTextView : NSScrollView
+@interface DTMacAttributedTextView : DTCrossPlatformScrollView
 {
 	// ivars needed by subclasses
 	DTMacAttributedTextContentView *_attributedTextContentView;

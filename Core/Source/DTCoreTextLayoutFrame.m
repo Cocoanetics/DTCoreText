@@ -288,7 +288,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	else
 	{
 		// reasonable "normal"
-		leading = maxFontSize * 1.1f;
+		leading = maxFontSize; // * 1.1f; -> Why? Text layouting will differ from WebKit/FF/Chrome!
 	}
 	
 	// subtract inline box height
@@ -378,7 +378,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	}
 	
 	// origins are rounded
-	baselineOrigin.y = ceil(baselineOrigin.y);
+	//baselineOrigin.y = ceil(baselineOrigin.y); // -> Why? this produces layouts different from WebKit/FF/Chrome!
 	
 	return baselineOrigin;
 }

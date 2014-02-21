@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
   spec.osx.deployment_target = '10.8'
 
   spec.ios.source_files = 'Core/Source/*.{h,m,c}', 'Core/Source/iOS/*.{h,m,c}'
-  spec.osx.source_files = 'Core/Source/*.{h,m,c}', 'Core/Source/OSX/*.{h,m,c}'
+  spec.osx.source_files = 'Core/Source/*.{h,m,c}', 'Core/Source/OSX/*.{h,m,c}', 'Core/Source/CrossPlatform/*.{h,m,c}'
 
   spec.ios.dependency 'DTFoundation/UIKit', '~>1.7.0'
 
