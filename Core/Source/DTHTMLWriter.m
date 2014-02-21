@@ -633,6 +633,11 @@
 			}
 			
 			DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
+
+			if ([plainSubString characterAtIndex:0] == NSAttachmentCharacter) {
+				attachment = [attributes objectForKey:@"NSAttachment"];
+				subString = @"";
+			}
 			
 			if (attachment)
 			{
