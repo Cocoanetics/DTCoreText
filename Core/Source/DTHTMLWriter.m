@@ -300,15 +300,15 @@
 		{
 			if (_textScale!=1.0f)
 			{
-				paragraphStyle.minimumLineHeight = roundf(paragraphStyle.minimumLineHeight / _textScale);
-				paragraphStyle.maximumLineHeight = roundf(paragraphStyle.maximumLineHeight / _textScale);
+				paragraphStyle.minimumLineHeight = roundf((float)paragraphStyle.minimumLineHeight / (float)_textScale);
+				paragraphStyle.maximumLineHeight = roundf((float)paragraphStyle.maximumLineHeight / (float)_textScale);
 				
-				paragraphStyle.paragraphSpacing = roundf(paragraphStyle.paragraphSpacing/ _textScale);
-				paragraphStyle.paragraphSpacingBefore = roundf(paragraphStyle.paragraphSpacingBefore / _textScale);
+				paragraphStyle.paragraphSpacing = roundf((float)paragraphStyle.paragraphSpacing/ (float)_textScale);
+				paragraphStyle.paragraphSpacingBefore = roundf((float)paragraphStyle.paragraphSpacingBefore / (float)_textScale);
 				
-				paragraphStyle.firstLineHeadIndent = roundf(paragraphStyle.firstLineHeadIndent / _textScale);
-				paragraphStyle.headIndent = roundf(paragraphStyle.headIndent / _textScale);
-				paragraphStyle.tailIndent = roundf(paragraphStyle.tailIndent / _textScale);
+				paragraphStyle.firstLineHeadIndent = roundf((float)paragraphStyle.firstLineHeadIndent / (float)_textScale);
+				paragraphStyle.headIndent = roundf((float)paragraphStyle.headIndent / (float)_textScale);
+				paragraphStyle.tailIndent = roundf((float)paragraphStyle.tailIndent / (float)_textScale);
 			}
 			
 			paraStyleString = [paragraphStyle cssStyleRepresentation];
