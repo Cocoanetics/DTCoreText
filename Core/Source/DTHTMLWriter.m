@@ -35,7 +35,7 @@
 		_attributedString = attributedString;
 
 		_useAppleConvertedSpace = YES;
-
+        
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		_CSSPrefix = [[NSString alloc] initWithString:theCSSPrefix];
@@ -243,10 +243,10 @@
 
 - (void)_buildOutput
 {
-	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil textProcessBlock:nil];
+	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil];
 }
 
-- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString* tag))updateStringBlock
+- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap
 {
 	// reusable styles
 	if (existingStyleLookupMap) {
@@ -550,9 +550,11 @@
 		__block NSRange currentLinkRange = {NSNotFound, 0};
 		
 		__block NSMutableDictionary *linkLevelHTMLAttributes = nil;
+
+        __block NSString *plainSubString = nil; // alwas holds the last plain text from enumarated attributes
 		
 		// ----- SPAN enumeration
-		
+        
 		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stopEnumerateAttributes) {
 
 			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
@@ -609,7 +611,7 @@
 				isLastPartOfHyperlink = YES;
 			}
 			
-			NSString *plainSubString =[plainString substringWithRange:spanRange];
+			plainSubString = [plainString substringWithRange:spanRange];
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
@@ -898,6 +900,10 @@
 		}
 		else
 		{
+            if (_insertNonBreakingSpaceInEmptyParagraphs && [plainSubString length] == 0) {
+                [retString appendString:@"&amp;nbsp;"];                
+            }
+                
 			// other blocks are always closed
 			[retString appendFormat:@"</%@>\n", blockElement];
 		}
@@ -1003,11 +1009,11 @@
 	return _HTMLString;
 }
 
-- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap	textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString *tag))updateStringBlock
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap textProcessBlock:updateStringBlock];
+		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap];
 	}
 	
 	return _HTMLString;
@@ -1017,7 +1023,7 @@
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil textProcessBlock:nil];
+		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil];
 	}
 	
 	return _HTMLString;
