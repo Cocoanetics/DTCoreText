@@ -847,13 +847,22 @@ NSDictionary *_classesForNames = nil;
 			
 			// check if this is a known font family
 			CTFontRef font = [_fontDescriptor newMatchingFont];
+                        
 			NSString *foundFamily = CFBridgingRelease(CTFontCopyFamilyName(font));
+			NSString *foundPostScriptName = CFBridgingRelease(CTFontCopyPostScriptName(font));
 			
-			if ([foundFamily isEqualToString:fontFamily])
-			{
-				foundFontFamily = YES;
-				break;
-			}
+            if ([foundPostScriptName isEqualToString:_fontDescriptor.fontFamily])
+            {
+                _fontDescriptor.fontName = foundPostScriptName;
+                foundFontFamily = YES;
+                break;
+            }
+
+            if ([foundFamily isEqualToString:fontFamily])
+            {
+                foundFontFamily = YES;
+                break;
+            }
 			
 			NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 			
