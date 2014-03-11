@@ -46,7 +46,7 @@
  @param textProcessBlock A Block where you can change the generated Text before the tag is closed (e.g. to add characters before closing a paragraph)
  @returns The generated string
  */
-- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap	textProcessBlock:(NSString*(^)(NSString *processedString, NSString *plainSubString, NSString *tag))updateStringBlock;
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap;
 
 /**
  Generates a HTML fragment representation of the attributed string including inlined styles and no html or head elements
@@ -77,5 +77,7 @@
  The style lookup map.
  */
 @property (nonatomic, readonly) NSMutableDictionary *styleLookup;
+
+@property (nonatomic, assign) BOOL insertNonBreakingSpaceInEmptyParagraphs;
 
 @end
