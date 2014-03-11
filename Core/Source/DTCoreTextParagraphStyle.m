@@ -23,7 +23,11 @@
 	CGFloat _lineHeightMultiple;
 	CGFloat _minimumLineHeight;
 	CGFloat _maximumLineHeight;
-	
+
+	CGFloat _minimumLineSpacing;
+	CGFloat _maximumLineSpacing;
+	CGFloat _lineSpacingAdjustment;
+    
 	CTTextAlignment _alignment;
 	CTWritingDirection _baseWritingDirection;
 	
@@ -164,6 +168,13 @@
 		// line height
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(_minimumLineHeight), &_minimumLineHeight);
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight);
+
+        // line spacing
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMinimumLineSpacing, sizeof(_minimumLineSpacing), &_minimumLineSpacing);
+		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierMaximumLineSpacing, sizeof(_maximumLineSpacing), &_maximumLineSpacing);
+
+        // leading
+        CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineSpacingAdjustment, sizeof(_lineSpacingAdjustment), &_lineSpacingAdjustment);
 
 		
 		CTParagraphStyleGetValueForSpecifier(ctParagraphStyle, kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple);
@@ -321,12 +332,18 @@
 			break;
 	}
 	
-	if (_lineHeightMultiple && _lineHeightMultiple!=1.0f)
-	{
-		NSNumber *number = DTNSNumberFromCGFloat(_lineHeightMultiple);
-		[retString appendFormat:@"line-height:%@em;", number];
-	}
-	
+    // prefer fixed line height over multiplier
+    if (_maximumLineHeight != 0 && _minimumLineHeight !=0 && _maximumLineHeight == _minimumLineHeight) {
+		NSNumber *number = DTNSNumberFromCGFloat(_minimumLineHeight);
+		[retString appendFormat:@"line-height:%@px;", number];
+    } else {
+        if (_lineHeightMultiple && _lineHeightMultiple!=1.0f)
+        {
+            NSNumber *number = DTNSNumberFromCGFloat(_lineHeightMultiple);
+            [retString appendFormat:@"line-height:%@em;", number];
+        }
+    }
+    
 	switch (_baseWritingDirection)
 	{
 		case kCTWritingDirectionRightToLeft:
