@@ -528,7 +528,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (CTFontRef)_findOrMakeMatchingFont
 {
-	CTFontDescriptorRef searchingFontDescriptor = NULL;
+    
+    CTFontDescriptorRef searchingFontDescriptor = NULL;
 	CTFontDescriptorRef matchingFontDescriptor = NULL;
 	CTFontRef matchingFont = NULL;
 	
@@ -542,92 +543,107 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		return cachedFont;
 	}
 	
-	// check the override table that has all preinstalled fonts plus the ones the user registered
-	NSString *overrideName = nil;
-	
-	if (_fontFamily)
-	{
-		if (_smallCapsFeature)
-		{
-			overrideName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
-		}
-		else
-		{
-			overrideName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
-		}
-	}
-	
-	// if we use the chinese font cascade fix we cannot use fast method as it does not allow specifying the custom cascade list
-	BOOL useFastFontCreation = !(_needsChineseFontCascadeFix && !self.boldTrait);
-	
-	if (useFastFontCreation && (_fontName || overrideName))
-	{
-		// we can create a font directly from the name
-		NSString *usedName = overrideName?overrideName:_fontName;
-		
-		matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, _pointSize, NULL);
-	}
-	else
-	{
-		// we need to search for a suitable font
-		
-		NSDictionary *fontAttributes;
-		
-		if (overrideName)
-		{
-			fontAttributes = [self fontAttributesWithOverrideFontName:overrideName];
-		}
-		else
-		{
-			fontAttributes = [self fontAttributes];
-		}
-		
-		// the descriptor we are looking for
-		searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)fontAttributes);
-		
-		// the attributes that are mandatory
-		NSMutableSet *mandatoryAttributes = [NSMutableSet setWithObject:(id)kCTFontTraitsAttribute];
-		
-		if (_fontFamily)
-		{
-			[mandatoryAttributes addObject:(id)kCTFontFamilyNameAttribute];
-		}
-		
-		if (_smallCapsFeature)
-		{
-			[mandatoryAttributes addObject:(id)kCTFontFeaturesAttribute];
-		}
-		
-		// do the search
-		matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
-		
-		if (!matchingFontDescriptor)
-		{
-			// try without traits
-			NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
-			[mutableAttributes removeObjectForKey:(id)kCTFontTraitsAttribute];
-			
-			CFRelease(searchingFontDescriptor);
-			searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
-			
-			// do the relaxed search
-			matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
-		}
-		
-		if (!matchingFontDescriptor)
-		{
-			// try with fallback font family
-			NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
-			[mutableAttributes setObject:_fallbackFontFamily forKey:(id)kCTFontFamilyNameAttribute];
-			
-			CFRelease(searchingFontDescriptor);
-			searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
-			
-			// do the relaxed search
-			matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
-		}
-	}
-	
+    // check postscript name first
+    CTFontRef matchingPostScriptNameFont = CTFontCreateWithName((__bridge CFStringRef)_fontFamily, _pointSize, NULL);
+    NSString *foundPostScriptName = CFBridgingRelease(CTFontCopyPostScriptName(matchingPostScriptNameFont));
+    
+    if ([foundPostScriptName isEqualToString:_fontFamily])
+    {
+        // font family IS the postscript name
+        self.fontName = foundPostScriptName;
+        matchingFont = CTFontCreateWithName((__bridge CFStringRef)_fontFamily, _pointSize, NULL);
+        CFRelease(matchingPostScriptNameFont);
+    }
+    else
+    {
+
+        // check the override table that has all preinstalled fonts plus the ones the user registered
+        NSString *overrideName = nil;
+        
+        if (_fontFamily)
+        {
+            if (_smallCapsFeature)
+            {
+                overrideName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
+            }
+            else
+            {
+                overrideName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
+            }
+        }
+           
+        // if we use the chinese font cascade fix we cannot use fast method as it does not allow specifying the custom cascade list
+        BOOL useFastFontCreation = !(_needsChineseFontCascadeFix && !self.boldTrait);
+        
+        if (useFastFontCreation && (_fontName || overrideName))
+        {
+            // we can create a font directly from the name
+            NSString *usedName = overrideName?overrideName:_fontName;
+            
+            matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, _pointSize, NULL);
+        }
+        else
+        {
+            // we need to search for a suitable font
+            
+            NSDictionary *fontAttributes;
+            
+            if (overrideName)
+            {
+                fontAttributes = [self fontAttributesWithOverrideFontName:overrideName];
+            }
+            else
+            {
+                fontAttributes = [self fontAttributes];
+            }
+            
+            // the descriptor we are looking for
+            searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)fontAttributes);
+            
+            // the attributes that are mandatory
+            NSMutableSet *mandatoryAttributes = [NSMutableSet setWithObject:(id)kCTFontTraitsAttribute];
+            
+            if (_fontFamily)
+            {
+                [mandatoryAttributes addObject:(id)kCTFontFamilyNameAttribute];
+            }
+            
+            if (_smallCapsFeature)
+            {
+                [mandatoryAttributes addObject:(id)kCTFontFeaturesAttribute];
+            }
+            
+            // do the search
+            matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
+            
+            if (!matchingFontDescriptor)
+            {
+                // try without traits
+                NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
+                [mutableAttributes removeObjectForKey:(id)kCTFontTraitsAttribute];
+                
+                CFRelease(searchingFontDescriptor);
+                searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
+                
+                // do the relaxed search
+                matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
+            }
+            
+            if (!matchingFontDescriptor)
+            {
+                // try with fallback font family
+                NSMutableDictionary *mutableAttributes = [fontAttributes mutableCopy];
+                [mutableAttributes setObject:_fallbackFontFamily forKey:(id)kCTFontFamilyNameAttribute];
+                
+                CFRelease(searchingFontDescriptor);
+                searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
+                
+                // do the relaxed search
+                matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
+            }
+        }
+    }
+    
 	// any search was successful
 	if (matchingFontDescriptor)
 	{
@@ -843,9 +859,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSMutableString *retString = [NSMutableString string];
 	
+    NSString *fontNameStr = _fontName ? [_fontName stringByAppendingString:@", "] : @"";
+    
 	if (_fontFamily)
 	{
-		[retString appendFormat:@"font-family:'%@';", _fontFamily];
+		[retString appendFormat:@"font-family:%@'%@';", fontNameStr, _fontFamily];
 	}
 	
 	[retString appendFormat:@"font-size:%.0fpx;", _pointSize];
