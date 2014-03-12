@@ -179,6 +179,8 @@
 		
 		if (drawStrikeOut || drawUnderline)
 		{
+			BOOL didDrawSomething = NO;
+			
 			CGContextSaveGState(context);
 			
 			CTFontRef usedFont = (__bridge CTFontRef)([_attributes objectForKey:(id)kCTFontAttributeName]);
@@ -187,7 +189,7 @@
 			
 			if (usedFont)
 			{
-				fontUnderlineThickness = CTFontGetUnderlineThickness(usedFont);
+				fontUnderlineThickness = CTFontGetUnderlineThickness(usedFont) * smallestPixelWidth;
 			}
 			else
 			{
@@ -219,9 +221,12 @@
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				didDrawSomething = YES;
 			}
 			
-			if (drawUnderline)
+			// only draw underlines if Core Text didn't draw them yet
+			if (drawUnderline && !DTCoreTextDrawsUnderlinesWithGlyphs())
 			{
 				CGFloat y;
 				
@@ -237,9 +242,14 @@
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				didDrawSomething = YES;
 			}
 			
-			CGContextStrokePath(context);
+			if (didDrawSomething)
+			{
+				CGContextStrokePath(context);
+			}
 			
 			CGContextRestoreGState(context); // restore antialiasing
 		}
