@@ -402,17 +402,6 @@
 			
 			[listsToOpen enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
 				
-				NSString *name;
-				
-				if ([oneList isOrdered])
-				{
-					name = @"ol";
-				}
-				else
-				{
-					name = @"ul";
-				}
-				
 				// only padding can be reconstructed so far
 				CGFloat listPadding = (paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent) / _textScale;
 				
