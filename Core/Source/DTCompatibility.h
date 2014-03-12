@@ -43,7 +43,7 @@
 	#define DTNSFoundationVersionNumber_iOS_6_0  992.00
 
 	// constant for checking for iOS 7
-	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
+	#define DTNSFoundationVersionNumber_iOS_7_0  1047.00
 
 
 	// runtime-check if NS-style attributes are allowed
@@ -55,6 +55,17 @@
 			return YES;
 		}
 #endif
+		return NO;
+	}
+
+	// runtime-check if CoreText draws underlines
+	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
+	{
+		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_7_0)
+		{
+			return YES;
+		}
+	
 		return NO;
 	}
 
@@ -113,6 +124,12 @@
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
 		return YES;
+	}
+
+	// runtime-check if CoreText draws underlines
+	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
+	{
+		return NO;
 	}
 
 	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
