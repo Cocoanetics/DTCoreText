@@ -465,7 +465,16 @@ NSDictionary *_classesForNames = nil;
 							{
 								NSString *field = [nodeString attribute:DTFieldAttribute atIndex:0 effectiveRange:NULL];
 								
+								// do not trim off field
 								if ([field isEqualToString:DTListPrefixField])
+								{
+									break;
+								}
+								
+								// do not trim off HR character
+								BOOL isHR = [nodeString attribute:DTHorizontalRuleStyleAttribute atIndex:0 effectiveRange:NULL];
+								
+								if (isHR)
 								{
 									break;
 								}

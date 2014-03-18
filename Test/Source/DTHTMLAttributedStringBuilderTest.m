@@ -368,6 +368,40 @@
 	STAssertEquals(expectedSize, imageAttachment.displaySize, @"Expected size should be equal to display size");
 }
 
+#pragma mark - Horizontal Rules
+
+// issue 740: HR inside block following newline are trimmed off
+- (void)testHorizontalRulesInsideBlockquote
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<HR><BLOCKQUOTE><hr>one<hr><br>two<hr></BLOCKQUOTE><hr>" options:nil];
+	
+	// we expect 5 HR, two at the beginning and the end, one in the middle
+	NSRange range;
+	NSRange expectedRange = NSMakeRange(0, 1);
+	BOOL isHR = [[attributedString attributesAtIndex:expectedRange.location effectiveRange:&range][DTHorizontalRuleStyleAttribute] boolValue];
+	STAssertTrue(isHR, @"HR should be in range %@", NSStringFromRange(expectedRange));
+	
+	expectedRange = NSMakeRange(1, 1);
+	isHR = [[attributedString attributesAtIndex:expectedRange.location effectiveRange:&range][DTHorizontalRuleStyleAttribute] boolValue];
+	STAssertTrue(isHR, @"HR should be in range %@", NSStringFromRange(expectedRange));
+
+	expectedRange = NSMakeRange(6, 1);
+	isHR = [[attributedString attributesAtIndex:expectedRange.location effectiveRange:&range][DTHorizontalRuleStyleAttribute] boolValue];
+	STAssertTrue(isHR, @"HR should be in range %@", NSStringFromRange(expectedRange));
+
+	if ([attributedString length]>12)
+	{
+		expectedRange = NSMakeRange(12, 1);
+		isHR = [[attributedString attributesAtIndex:expectedRange.location effectiveRange:&range][DTHorizontalRuleStyleAttribute] boolValue];
+		STAssertTrue(isHR, @"HR should be in range %@", NSStringFromRange(expectedRange));
+		
+		expectedRange = NSMakeRange(13, 1);
+		isHR = [[attributedString attributesAtIndex:expectedRange.location effectiveRange:&range][DTHorizontalRuleStyleAttribute] boolValue];
+		STAssertTrue(isHR, @"HR should be in range %@", NSStringFromRange(expectedRange));
+	}
+}
+
+
 #pragma mark - Non-Wellformed Content
 
 // issue 462: Assertion Failure when attempting to parse beyond final </html> tag
