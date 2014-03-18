@@ -472,7 +472,7 @@ NSDictionary *_classesForNames = nil;
 								}
 								
 								// do not trim off HR character
-								BOOL isHR = [nodeString attribute:DTHorizontalRuleStyleAttribute atIndex:0 effectiveRange:NULL];
+								BOOL isHR = [[nodeString attribute:DTHorizontalRuleStyleAttribute atIndex:0 effectiveRange:NULL] boolValue];
 								
 								if (isHR)
 								{
