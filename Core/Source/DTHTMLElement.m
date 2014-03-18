@@ -207,11 +207,6 @@ NSDictionary *_classesForNames = nil;
 			[tmpDict setObject:(id)[_textColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
 		}
 	}
-	else
-	{
-		// use current graphics context stroke color instead
-		[tmpDict setObject:[NSNumber numberWithBool:YES] forKey:(id)kCTForegroundColorFromContextAttributeName];
-	}
 	
 	if (_backgroundColor)
 	{
