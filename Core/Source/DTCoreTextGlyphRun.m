@@ -127,7 +127,14 @@
 {
 	// get the scaling factor of the current translation matrix
 	CGAffineTransform ctm = CGContextGetCTM(context);
-	CGFloat contentScale = ctm.a; // needed for  rounding operations
+	CGFloat contentScale = MAX(ctm.a, -ctm.d); // needed for  rounding operations
+	
+	if (contentScale<1 || contentScale>2)
+	{
+		DTLogError(@"%s called on a graphics context that has invalid contentScale, assuming 2 instead", __PRETTY_FUNCTION__);
+		contentScale = 2;
+	}
+	
 	CGFloat smallestPixelWidth = 1.0f/contentScale;
 	
 	DTColor *backgroundColor = [_attributes backgroundColor];
