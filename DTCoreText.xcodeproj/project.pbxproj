@@ -29,6 +29,16 @@
 		36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
+		944A9E6518B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
+		94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
+		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
+		94DE4B4618B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
+		94DE4B4718B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
+		94DE4B4818B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */; };
+		94DE4B4918B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */; };
+		94DE4B4A18B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */; };
+		94DE4B4B18B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -919,6 +929,9 @@
 		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSListStyleTest.m; sourceTree = "<group>"; };
+		94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCoder+DTCompatibility.h"; sourceTree = "<group>"; };
+		94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCoder+DTCompatibility.m"; sourceTree = "<group>"; };
 		9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementTest.h; sourceTree = "<group>"; };
 		9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementTest.m; sourceTree = "<group>"; };
 		A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAccessibilityElement.h; sourceTree = "<group>"; };
@@ -1637,6 +1650,8 @@
 				A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */,
 				A788C92614863E8700E1AFD9 /* DTCSSListStyle.h */,
 				A788C92714863E8700E1AFD9 /* DTCSSListStyle.m */,
+				94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */,
+				94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */,
 				A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */,
 				A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */,
 				A76994F914DBB5F70047CC8D /* default.css */,
@@ -1789,6 +1804,7 @@
 				A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */,
 				A738663F17F8B16200E3CDFC /* DTTextBlockTest.h */,
 				A738664017F8B16200E3CDFC /* DTTextBlockTest.m */,
+				944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */,
 				A7C7AD0614DA7C17005A9C69 /* MacUnitTest.h */,
 				A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */,
 				A7C7AD0914DA7C2B005A9C69 /* NSAttributedStringHTMLTest.h */,
@@ -1854,6 +1870,7 @@
 				A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */,
 				36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
 				A78EEA6216774B5F003B5540 /* UIFont+DTCoreText.h in Headers */,
+				94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A72D975E1684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */,
 				A73AE7911686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */,
 				A7EB849D168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */,
@@ -1908,6 +1925,7 @@
 				A788C96314863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96814863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
 				A788C9A414863E8700E1AFD9 /* DTLazyImageView.h in Headers */,
+				94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A788C9A914863E8700E1AFD9 /* DTLinkButton.h in Headers */,
 				A788C9BD14863E8700E1AFD9 /* DTWebVideoView.h in Headers */,
 				A788C9EF14863E8700E1AFD9 /* NSString+Paragraphs.h in Headers */,
@@ -1977,6 +1995,7 @@
 				A7F7EFB11573603100F5A4D0 /* DTAttributedTextContentView.h in Headers */,
 				A7F7EFB21573603100F5A4D0 /* DTAttributedTextView.h in Headers */,
 				A7F7EFB31573603100F5A4D0 /* DTLazyImageView.h in Headers */,
+				94DE4B4618B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A7F7EFB41573603100F5A4D0 /* DTLinkButton.h in Headers */,
 				A7F7EFB51573603100F5A4D0 /* DTWebVideoView.h in Headers */,
 				A7F7EFB71573603100F5A4D0 /* NSString+Paragraphs.h in Headers */,
@@ -2051,6 +2070,7 @@
 				A72D97611684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */,
 				A7EB84A0168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */,
 				A7EB84AA168B3EC000D686B7 /* DTHTMLParserTextNode.h in Headers */,
+				94DE4B4718B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A73AE7941686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */,
 				A7EB84BA168B948000D686B7 /* DTBreakHTMLElement.h in Headers */,
 				A7EB84C4168B973A00D686B7 /* DTTextHTMLElement.h in Headers */,
@@ -2240,7 +2260,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastTestingUpgradeCheck = 0510;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Drobnik.com;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
@@ -2581,7 +2602,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc --print-settings --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\necho \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"";
+			shellScript = "echo \"Documentation Output directory: ${BUILD_DIR}/Documentation/\"\n/usr/local/bin/appledoc --print-settings  --output \"${BUILD_DIR}/Documentation/\" \"${PROJECT_DIR}\"\nexit $?";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -2624,6 +2645,7 @@
 				A788C9C914863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D314863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D814863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
+				94DE4B4818B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */,
 				A788C9E214863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E714863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9EC14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -2691,6 +2713,7 @@
 				A788C9CA14863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D414863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
+				94DE4B4918B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */,
 				A788C9E314863E8700E1AFD9 /* NSMutableAttributedString+HTML.m in Sources */,
 				A788C9E814863E8700E1AFD9 /* NSScanner+HTML.m in Sources */,
 				A788C9ED14863E8700E1AFD9 /* NSString+HTML.m in Sources */,
@@ -2750,6 +2773,7 @@
 				A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
 				A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
 				9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */,
+				944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */,
 				A738664117F8B16200E3CDFC /* DTTextBlockTest.m in Sources */,
 				A709184A17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
@@ -2774,6 +2798,7 @@
 				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
 				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
 				A738664217F8B16200E3CDFC /* DTTextBlockTest.m in Sources */,
+				944A9E6518B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */,
 				A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
 				A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */,
 				A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */,
@@ -2815,6 +2840,7 @@
 				A7F7EF8D1573603100F5A4D0 /* NSCharacterSet+HTML.m in Sources */,
 				A7F7EF8F1573603100F5A4D0 /* NSMutableAttributedString+HTML.m in Sources */,
 				A7F7EF901573603100F5A4D0 /* NSScanner+HTML.m in Sources */,
+				94DE4B4A18B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */,
 				A7F7EF911573603100F5A4D0 /* NSString+HTML.m in Sources */,
 				A7F7EF921573603100F5A4D0 /* NSString+Paragraphs.m in Sources */,
 				A7F7EF941573603100F5A4D0 /* DTColor+Compatibility.m in Sources */,
@@ -2878,6 +2904,7 @@
 				E2262DF9163833AD00BFDAD7 /* NSScanner+HTML.m in Sources */,
 				E2262DFB163833AD00BFDAD7 /* NSString+HTML.m in Sources */,
 				E2262DFD163833AD00BFDAD7 /* NSMutableString+HTML.m in Sources */,
+				94DE4B4B18B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */,
 				E2262DFF163833AD00BFDAD7 /* DTTextBlock.m in Sources */,
 				A72D97651684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */,
 				A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */,
@@ -3064,6 +3091,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -3073,6 +3101,7 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SDKROOT = iphoneos;
@@ -3085,12 +3114,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = YES;
 				DSTROOT = /tmp/DTCoreText.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SDKROOT = iphoneos;
@@ -3368,6 +3399,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -3379,6 +3411,7 @@
 				GCC_PREFIX_HEADER = "Core/DTCoreText-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				PRODUCT_NAME = DTCoreText;
 				PUBLIC_HEADERS_FOLDER_PATH = ../../DTCoreText;
 				SDKROOT = iphoneos;

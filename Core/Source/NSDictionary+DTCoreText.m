@@ -167,8 +167,7 @@
 		// test if this a valid color, workaround for iOS 7 bug
 		size_t componentCount = CGColorGetNumberOfComponents(cgColor);
 		
-		if (componentCount)
-
+		if (componentCount>0 && componentCount<=4)
 		{
 			return [DTColor colorWithCGColor:cgColor];
 		}

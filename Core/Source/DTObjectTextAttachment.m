@@ -10,6 +10,19 @@
 
 @implementation DTObjectTextAttachment
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+	self = [super initWithCoder:aDecoder];
+	if (self) {
+		_childNodes = [aDecoder decodeObjectForKey:@"childNodes"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+	[super encodeWithCoder:aCoder];
+	[aCoder encodeObject:_childNodes forKey:@"childNodes"];
+}
+
 - (id)initWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
 	self = [super initWithElement:element options:options];

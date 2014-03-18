@@ -9,7 +9,7 @@ Smoke Test
 After having integrated DTCoreText and its dependencies into your project you should be able to build your app be able to use DTCoreText functionality. As a quick *Smoke Test* - to see if all is setup correctly - you can test your setup by adding this code to your app delegate:
 
 
-```objective-c
+```
 #import "DTCoreText.h"
 
 NSString *html = @"<p>Some Text</p>";
@@ -32,7 +32,7 @@ For most normal use cases you can use the overrides plist that is part of the DT
 
 If you don't know the set of fonts used by your app you can trigger an asynchronous pre-loading of the internal lookup table. To start the loading process you add the following to your app delegate.
 
-```objective-c
+```
 // preload font matching table
 [DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
 ```
@@ -44,7 +44,7 @@ Setting a Fallback Font Family
 
 When encountering a font family in HTML that is not known to the system the fallback font family is used. This can be set like this:
 
-```objective-c
+```
 [DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica Neue"];
 ```
 	
@@ -55,7 +55,7 @@ Getting a Tapped Word
 
 To retrieve the word a user tapped on you get the closest cursor position to the tapped point. Then you iterate over the plain text's words until you find the one that contains the cursor position's string index.
 
-```objective-c
+```
 - (void)handleTap:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateRecognized)
@@ -85,7 +85,7 @@ Visible String Range
 
 To retrieve the string range in the `NSAttributedString` you set on an DTAttributedTextView you have to get the scroll view bounds. Then you retrieve an array of lines visible in this rectangle from the DTCoreTextLayoutFrame. Finally you retrieve and create a union of the string ranges.
 
-```objective-c
+```
 CGRect visibleRect = _textView.bounds;
 NSArray *visibleLines = [_textView.attributedTextContentView.layoutFrame linesVisibleInRect:visibleRect];
 
@@ -100,7 +100,7 @@ Determing Size Required for an Attributed String
 
 When creating a DTCoreTextLayoutFrame you can specify the maximum width and height that should be filled with text. If you specify `CGFLOAT_WIDTH_UNKNOWN` for the frame size width then the needed with will be calculated. If you specify `CGFLOAT_HEIGHT_UNKNOWN` the height will be calculated. You can get the needed size from the layoutFrame's frame property.
 
-```objective-c
+```
 NSAttributedString *attributedString = ...
 DTCoreTextLayouter *layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:attributedString];
 
@@ -118,9 +118,11 @@ Displaying remote images
 The best way to display remote images is to use `DTLazyImageView`. 
 First you will need to return `DTLazyImageView` instance for your image attachments.
 
-```objective-c
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame{
-    if([attachment isKindOfClass:[DTImageTextAttachment class]]){
+```
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
+{
+    if([attachment isKindOfClass:[DTImageTextAttachment class]])
+	 {
         DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
         imageView.delegate = self;
 
@@ -134,13 +136,15 @@ First you will need to return `DTLazyImageView` instance for your image attachme
 
 Then in the in delegate method for `DTLazyImageView` reset the layout for the affected `DTAttributedContextView`.
 
-```objective-c
-- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size {
+```
+- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size 
+{
     NSURL *url = lazyImageView.url;
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
 
     // update all attachments that matching this URL
-    for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) {
+    for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) 
+	 {
         oneAttachment.originalSize = size;
     }
 
@@ -152,3 +156,19 @@ Then in the in delegate method for `DTLazyImageView` reset the layout for the af
     [self.attributedTextContentView relayoutText];
 }
 ```
+
+Changing the default font and font size
+---------------------------------------
+When you want to render the HTML in a different font and fontsize, you need to specify this using the `options` parameter.
+
+```
+NSDictionary* options = @{ NSTextSizeMultiplierDocumentOption: [NSNumber numberWithFloat: 1.0],
+			  				DTDefaultFontFamily: @"Helvetica Neue",
+			  			};
+
+NSString *html = @"<p>Some Text</p>";
+NSData* descriptionData = [html dataUsingEncoding:NSUTF8StringEncoding];
+NSAttributedString* attributedDescription = [[NSAttributedString alloc] initWithHTMLData:descriptionData options:options documentAttributes:NULL];
+```
+
+

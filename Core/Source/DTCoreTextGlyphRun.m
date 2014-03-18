@@ -127,7 +127,14 @@
 {
 	// get the scaling factor of the current translation matrix
 	CGAffineTransform ctm = CGContextGetCTM(context);
-	CGFloat contentScale = ctm.a; // needed for  rounding operations
+	CGFloat contentScale = MAX(ctm.a, -ctm.d); // needed for  rounding operations
+	
+	if (contentScale<1 || contentScale>2)
+	{
+		DTLogError(@"%s called on a graphics context that has invalid contentScale, assuming 2 instead", __PRETTY_FUNCTION__);
+		contentScale = 2;
+	}
+	
 	CGFloat smallestPixelWidth = 1.0f/contentScale;
 	
 	DTColor *backgroundColor = [_attributes backgroundColor];
@@ -179,6 +186,8 @@
 		
 		if (drawStrikeOut || drawUnderline)
 		{
+			BOOL didDrawSomething = NO;
+			
 			CGContextSaveGState(context);
 			
 			CTFontRef usedFont = (__bridge CTFontRef)([_attributes objectForKey:(id)kCTFontAttributeName]);
@@ -187,7 +196,7 @@
 			
 			if (usedFont)
 			{
-				fontUnderlineThickness = CTFontGetUnderlineThickness(usedFont);
+				fontUnderlineThickness = CTFontGetUnderlineThickness(usedFont) * smallestPixelWidth;
 			}
 			else
 			{
@@ -219,9 +228,12 @@
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				didDrawSomething = YES;
 			}
 			
-			if (drawUnderline)
+			// only draw underlines if Core Text didn't draw them yet
+			if (drawUnderline && !DTCoreTextDrawsUnderlinesWithGlyphs())
 			{
 				CGFloat y;
 				
@@ -237,9 +249,14 @@
 				
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
+				
+				didDrawSomething = YES;
 			}
 			
-			CGContextStrokePath(context);
+			if (didDrawSomething)
+			{
+				CGContextStrokePath(context);
+			}
 			
 			CGContextRestoreGState(context); // restore antialiasing
 		}

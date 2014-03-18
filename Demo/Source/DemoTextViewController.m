@@ -96,6 +96,12 @@
 	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
 	[toolbarItems addObject:debug];
 	
+	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	[toolbarItems addObject:space];
+	
+	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithTitle:@"Screenshot" style:UIBarButtonItemStyleBordered target:self action:@selector(screenshot:)];
+	[toolbarItems addObject:screenshot];
+	
 	if (_segmentedControl.selectedSegmentIndex == 3)
 	{
 		if (!_htmlOutputTypeSegment)
@@ -689,7 +695,23 @@
 	[_textView.attributedTextContentView setNeedsDisplay];
 }
 
-#pragma mark DTLazyImageViewDelegate
+- (void)screenshot:(UIBarButtonItem *)sender
+{
+	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+	
+	CGRect rect = [keyWindow bounds];
+	UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
+	
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	[keyWindow.layer renderInContext:context];
+	
+	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	[[UIPasteboard generalPasteboard] setImage:image];
+}
+
+#pragma mark - DTLazyImageViewDelegate
 
 - (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size {
 	NSURL *url = lazyImageView.url;
