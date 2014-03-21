@@ -113,6 +113,8 @@
 {
 	CTFontRef ctFont = (__bridge CTFontRef)[self objectForKey:(id)kCTFontAttributeName];
 	
+	// on Mac NSFont and CTFont are toll-free bridged, so this works there as well
+	
 	if (ctFont)
 	{
 		return [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
@@ -139,8 +141,6 @@
 			
 			return fontDescriptor;
 		}
-#else
-#warning Creating an NSFont in modern style for Mac not implemented yet
 #endif
 	}
 	
