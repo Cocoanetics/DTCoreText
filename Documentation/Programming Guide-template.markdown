@@ -32,7 +32,7 @@ Variant 1:
 <p><font face="HelveticaNeue-Light">HelveticaNeue-Light</font></p>
 ```
 
-Setting the font face will exactly this font to be used. Tags which modify the bold or italic traits cause the font face to be removed from the inheritance and instead the font family technique be used.
+Setting the font face will use exactly this font face if it exists on the system. If not then the fallback mechanism will be used (see below). Tags which modify the bold or italic traits cause the font face to be removed from the inheritance and instead the font family technique be used.
 
 Variant 2:
 
