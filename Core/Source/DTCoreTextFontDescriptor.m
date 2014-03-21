@@ -545,7 +545,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	// check the override table that has all preinstalled fonts plus the ones the user registered
 	NSString *overrideName = nil;
 	
-	if (_fontFamily)
+	if (_fontFamily && !_fontName) // forced font name takes precedence
 	{
 		if (_smallCapsFeature)
 		{
