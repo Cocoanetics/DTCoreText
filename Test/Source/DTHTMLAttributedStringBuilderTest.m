@@ -590,8 +590,19 @@
 // issue 742
 - (void)testHelveticaNeueLight
 {
-	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p><font face=\"HelveticaNeue-Light\">HelveticaNeue-Light <b>bold</b> <em>italic</em></font></p>" options:nil];
+	NSString *helveticaNeueFontFaceName = @"HelveticaNeue-Light";
 	
+	CTFontRef lightFont =  CTFontCreateWithName((CFStringRef)helveticaNeueFontFaceName, 12, NULL);
+	NSString *checkName = CFBridgingRelease(CTFontCopyPostScriptName(lightFont));
+	CFRelease(lightFont);
+	
+	if (![checkName isEqualToString:helveticaNeueFontFaceName])
+	{
+		NSLog(@"Font face '%@'not supported on current platform, skipping test", helveticaNeueFontFaceName);
+		return;
+	}
+	
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p><font face=\"HelveticaNeue-Light\">HelveticaNeue-Light <b>bold</b> <em>italic</em></font></p>" options:nil];
 	
 	CTFontRef font;
 	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
