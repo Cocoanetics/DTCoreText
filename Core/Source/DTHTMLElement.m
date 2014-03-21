@@ -927,6 +927,9 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
 	if (fontStyle)
 	{
+		// remove font name since this would cause font creation to ignore the trait
+		_fontDescriptor.fontName = nil;
+		
 		if ([fontStyle isEqualToString:@"normal"])
 		{
 			_fontDescriptor.italicTrait = NO;
@@ -944,6 +947,9 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
 	if (fontWeight)
 	{
+		// remove font name since this would cause font creation to ignore the trait
+		_fontDescriptor.fontName = nil;
+		
 		if ([fontWeight isEqualToString:@"normal"])
 		{
 			_fontDescriptor.boldTrait = NO;

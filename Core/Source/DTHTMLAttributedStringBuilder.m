@@ -540,9 +540,6 @@
 			
 			_currentTag.fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
 			
-			// remove font, keep only family to avoid problems on inheriting
-			_currentTag.fontDescriptor.fontName = nil;
-			
 			CFRelease(font);
 		}
 		else

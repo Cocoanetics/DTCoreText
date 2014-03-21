@@ -21,6 +21,28 @@ NSLog(@"%@", attrString);
 
 You should see that this executes and that the NSLog outputs a description of the generated attributed string.
 
+Using Helvetica Neue Light
+--------------------------
+
+If you want to use a specific font to be used there are 2 ways: 1) use the **font** tag specifiying the postscript font face name 2) use the **font-family** CSS attribute and specify an override face name.
+
+Variant 1:
+
+```
+<p><font face="HelveticaNeue-Light">HelveticaNeue-Light</font></p>
+```
+
+Setting the font face will use exactly this font face if it exists on the system. If not then the fallback mechanism will be used (see below). Tags which modify the bold or italic traits cause the font face to be removed from the inheritance and instead the font family technique be used.
+
+Variant 2:
+
+```
+[DTCoreTextFontDescriptor setOverrideFontName:@"HelveticaNeue-Light" forFontFamily:@"Helvetica Neue" bold:NO italic:NO];
+```
+
+This has the effect that whenever a font is needed with a family "Helvetica Neue" that is neither bold nor italic then the "HelveticaNeue-Light" font face will be used. 
+
+
 Font Matching Performance
 -------------------------
 
