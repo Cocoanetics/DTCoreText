@@ -528,6 +528,8 @@ static BOOL _needsChineseFontCascadeFix = NO;
 
 - (CTFontRef)_findOrMakeMatchingFont
 {
+	NSAssert(_fontName || _fontFamily, @"Trying to find a font with neither font name nor font family specified yields unpredictable results");
+	
 	CTFontDescriptorRef searchingFontDescriptor = NULL;
 	CTFontDescriptorRef matchingFontDescriptor = NULL;
 	CTFontRef matchingFont = NULL;
@@ -766,10 +768,6 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	DTCoreTextFontDescriptor *newDesc = [[DTCoreTextFontDescriptor allocWithZone:zone] initWithFontAttributes:[self fontAttributes]];
 	newDesc.pointSize = self.pointSize;
-	if (_stylisticClass)
-	{
-		newDesc.stylisticClass = self.stylisticClass;
-	}
 	
 	return newDesc;
 }
