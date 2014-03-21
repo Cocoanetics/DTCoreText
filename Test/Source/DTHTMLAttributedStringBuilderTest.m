@@ -592,7 +592,7 @@
 {
 	NSString *helveticaNeueFontFaceName = @"HelveticaNeue-Light";
 	
-	CTFontRef lightFont =  CTFontCreateWithName((CFStringRef)helveticaNeueFontFaceName, 12, NULL);
+	CTFontRef lightFont =  CTFontCreateWithName((__bridge CFStringRef)helveticaNeueFontFaceName, 12, NULL);
 	NSString *checkName = CFBridgingRelease(CTFontCopyPostScriptName(lightFont));
 	CFRelease(lightFont);
 	
