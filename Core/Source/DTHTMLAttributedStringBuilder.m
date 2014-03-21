@@ -205,6 +205,13 @@
 	{
 		_defaultFontDescriptor.fontFamily = @"Times New Roman";
 	}
+
+	NSString *defaultFontName = [_options objectForKey:DTDefaultFontName];
+
+	if (defaultFontName) {
+		_defaultFontDescriptor.fontName = defaultFontName;
+	}
+
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
