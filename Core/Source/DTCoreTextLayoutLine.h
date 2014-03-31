@@ -14,13 +14,16 @@
 #endif
 
 @class DTCoreTextLayoutFrame;
+@class DTCoreTextParagraphStyle;
+@class DTTextBlock;
 
 /**
  This class represents one layouted line and contains a number of glyph runs.
  */
 @interface DTCoreTextLayoutLine : NSObject
 {
-	NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
+	// IVAR required by DTRichTextEditor, used in category
+		NSInteger _stringLocationOffset; // offset to modify internal string location to get actual location
 }
 
 /**
@@ -35,6 +38,15 @@
 - (id)initWithLine:(CTLineRef)line;
 
 /**
+ Creates a layout line from a given `CTLine`
+ @param line The Core Text line to wrap
+ @param stringLocationOffset Offset to modify internal string location to get actual location
+ @returns A prepared layout line
+ */
+
+- (id)initWithLine:(CTLineRef)line stringLocationOffset:(NSInteger)stringLocationOffset;
+
+/**
  @name Drawing Layout Lines
  */
 
@@ -43,6 +55,11 @@
  @param context The graphics context to draw into
  */
 - (void)drawInContext:(CGContextRef)context;
+
+/**
+ Creates a `CGPath` containing the shapes of all glyphs in the line
+ */
+- (CGPathRef)newPathWithGlyphs;
 
 /**
  @name Getting Information about Layout Lines
@@ -139,6 +156,31 @@
 @property (nonatomic, readonly) CGFloat trailingWhitespaceWidth;
 
 /**
+ The offset for the underline in positive points measured from the baseline. This is the maximum underline value of the fonts of all glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) CGFloat underlineOffset;
+
+/**
+ The line height of the line. This is determined by getting the maximum font size of all glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) CGFloat lineHeight;
+
+/**
+ The paragraph style of the paragraph this line belongs to. All lines in a paragraph are supposed to have the same paragraph style, so this takes the paragraph style of the first glyph run
+ */
+@property (nonatomic, readonly) DTCoreTextParagraphStyle *paragraphStyle;
+
+/**
+ The text blocks that the receiver belongs to.
+ */
+@property (nonatomic, readonly) NSArray *textBlocks;
+
+/**
+ The text attachments occuring in glyph runs of the receiver.
+ */
+@property (nonatomic, readonly) NSArray *attachments;
+
+/**
  The baseline origin of the receiver
  */
 @property (nonatomic, assign) CGPoint baselineOrigin;
@@ -147,6 +189,12 @@
  `YES` if the writing direction is Right-to-Left, otherwise `NO`
  */
 @property (nonatomic, assign) BOOL writingDirectionIsRightToLeft;
+
+/**
+ The offset to modify internal string location to get actual location
+*/
+
+@property (nonatomic, readonly) NSInteger stringLocationOffset;
 
 /**
  Method to efficiently determine if the receiver is a horizontal rule.

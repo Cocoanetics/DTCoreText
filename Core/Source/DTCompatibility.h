@@ -6,56 +6,129 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-// DTColor is UIColor on iOS, NSColor on Mac
+#pragma mark - iOS
+
 #if TARGET_OS_IPHONE
-@compatibility_alias DTColor UIColor;
+
+	// Compatibility Aliases
+	@compatibility_alias DTColor	UIColor;
+	@compatibility_alias DTImage	UIImage;
+	@compatibility_alias DTFont		UIFont;
+
+	// Edge Insets
+	#define DTEdgeInsets UIEdgeInsets
+	#define DTEdgeInsetsMake(top, left, bottom, right) UIEdgeInsetsMake(top, left, bottom, right)
+
+	// NS-style text attributes are possible with iOS SDK 6.0 or higher
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+		#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
+	#endif
+
+	// NSParagraphStyle supports tabs as of iOS SDK 7.0 or higher
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		#define DTCORETEXT_SUPPORT_NSPARAGRAPHSTYLE_TABS 1
+	#endif
+
+	// iOS before 5.0 has leak in CoreText replacing attributes
+	#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0
+		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
+	#endif
+
+	// iOS 7 bug (rdar://14684188) workaround, can be removed once this bug is fixed
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+		#define DTCORETEXT_FIX_14684188 1
+	#endif
+
+	// constant for checking for iOS 6
+	#define DTNSFoundationVersionNumber_iOS_6_0  992.00
+
+	// constant for checking for iOS 7
+	#define DTNSFoundationVersionNumber_iOS_7_0  1047.20
+
+
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+		{
+			return YES;
+		}
+#endif
+		return NO;
+	}
+
+#if TARGET_CPU_ARM64 || TARGET_CPU_X86_64
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
 #else
-@compatibility_alias DTColor NSColor;
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithFloat:x]
 #endif
 
-// DTImage is UIImage on iOS, NSImage on Mac
-#if TARGET_OS_IPHONE
-@compatibility_alias DTImage UIImage;
-#else
-@compatibility_alias DTImage NSImage;
 #endif
 
-// DTFont is UIFont on iOS, NSFont on Mac
-#if TARGET_OS_IPHONE
-@compatibility_alias DTFont UIFont;
-#else
-@compatibility_alias DTFont NSFont;
+
+#pragma mark - Mac
+
+
+#if !TARGET_OS_IPHONE
+
+	// Compatibility Aliases
+	@compatibility_alias DTColor	NSColor;
+	@compatibility_alias DTImage	NSImage;
+	@compatibility_alias DTFont		NSFont;
+
+	// Edge Insets
+	#define DTEdgeInsets NSEdgeInsets
+	#define DTEdgeInsetsMake(top, left, bottom, right) NSEdgeInsetsMake(top, left, bottom, right)
+
+	// Mac supports NS-Style Text Attributes since 10.0
+	#define DTCORETEXT_SUPPORT_NS_ATTRIBUTES 1
+	#define DTCORETEXT_SUPPORT_NSPARAGRAPHSTYLE_TABS 1
+
+	// theoretically MacOS before 10.8 might have a leak in CoreText replacing attributes
+	#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_7
+		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
+	#endif
+
+	// NSValue has sizeValue on Mac, CGSizeValue on iOS
+	#define CGSizeValue sizeValue
+
+	static inline CGRect DTEdgeInsetsInsetRect(CGRect rect, DTEdgeInsets insets) {
+		rect.origin.x    += insets.left;
+		rect.origin.y    += insets.top;
+		rect.size.width  -= (insets.left + insets.right);
+		rect.size.height -= (insets.top  + insets.bottom);
+		return rect;
+	}
+
+	static inline BOOL DTEdgeInsetsEqualToEdgeInsets(DTEdgeInsets insets1, DTEdgeInsets insets2) {
+		return insets1.left == insets2.left && insets1.top == insets2.top && insets1.right == insets2.right && insets1.bottom == insets2.bottom;
+	}
+
+	// String functions named differently on Mac
+	static inline NSString *NSStringFromCGRect(const CGRect rect)
+	{
+		return NSStringFromRect(NSRectFromCGRect(rect));
+	}
+
+	static inline NSString *NSStringFromCGSize(const CGSize size)
+	{
+		return NSStringFromSize(NSSizeFromCGSize(size));
+	}
+
+	static inline NSString *NSStringFromCGPoint(const CGPoint point)
+	{
+		return NSStringFromPoint(NSPointFromCGPoint(point));
+	}
+
+	// runtime-check if NS-style attributes are allowed
+	static inline BOOL DTCoreTextModernAttributesPossible()
+	{
+		return YES;
+	}
+
+	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]
 #endif
 
-// DTEdgeInsets is UIEdgeInsets on iOS, NSEdgeInsets on Mac
-#if TARGET_OS_IPHONE
-#define DTEdgeInsets UIEdgeInsets
-#define DTEdgeInsetsMake(a, b, c, d) UIEdgeInsetsMake(a, b, c, d)
-#else
-#define DTEdgeInsets NSEdgeInsets
-#define DTEdgeInsetsMake(a, b, c, d) NSEdgeInsetsMake(a, b, c, d)
-
-// These may be out of place here. Feel free to move them!
-// Sourced from https://github.com/andrep/RMModelObject
-static inline NSString* NSStringFromCGRect(const CGRect rect)
-{
-	return NSStringFromRect(NSRectFromCGRect(rect));
-}
-
-static inline NSString* NSStringFromCGSize(const CGSize size)
-{
-	return NSStringFromSize(NSSizeFromCGSize(size));
-}
-
-static inline NSString* NSStringFromCGPoint(const CGPoint point)
-{
-	return NSStringFromPoint(NSPointFromCGPoint(point));
-}
-
-#define NSTextAlignmentLeft			NSLeftTextAlignment
-#define NSTextAlignmentRight		NSRightTextAlignment
-#define NSTextAlignmentCenter		NSCenterTextAlignment
-#define NSTextAlignmentJustified	NSJustifiedTextAlignment
-#define NSTextAlignmentNatural		NSNaturalTextAlignment
-
-#endif
+// this enables generic ceil, floor, abs, round functions that work for 64 and 32 bit
+#include <tgmath.h>

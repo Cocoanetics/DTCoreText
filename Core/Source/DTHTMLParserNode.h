@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "DTWeakSupport.h"
 
 @class DTHTMLParserTextNode;
 
@@ -39,7 +39,7 @@
 /**
  A weak link to the parent node of the receiver
  */
-@property (nonatomic, assign) DTHTMLParserNode *parentNode;
+@property (nonatomic, DT_WEAK_PROPERTY) DTHTMLParserNode *parentNode;
 
 /**
  The child nodes of the receiver

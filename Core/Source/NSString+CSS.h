@@ -20,6 +20,12 @@
 - (NSDictionary *)dictionaryOfCSSStyles;
 
 /**
+ Determines if the receiver contains a CSS length value, that is a number with optional period and unit (em, pt, px).
+ @returns `YES` if this is a CSS length value
+ */
+- (BOOL)isCSSLengthValue;
+
+/**
  Calculates a pixel-based length from the receiver based on the current text size in pixels. Used in DTHTMLElement.
  @param textSize The current size which the CSS size is relative to.
  @param textScale The factor by which absolute sizes are scaled. Set to 1.0f to keep the original value.

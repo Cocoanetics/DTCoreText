@@ -28,6 +28,9 @@
 	return self;
 }
 
+#ifndef COVERAGE
+// exclude methods from coverage testing
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"<%@ content='%@'>", NSStringFromClass([self class]), _characters];
@@ -36,13 +39,15 @@
 - (void)_appendHTMLToString:(NSMutableString *)string indentLevel:(NSUInteger)indentLevel
 {
 	// indent to the level
-	for (int i=0; i<indentLevel; i++)
+	for (NSUInteger i=0; i<indentLevel; i++)
 	{
 		[string appendString:@"   "];
 	}
 	
 	[string appendFormat:@"\"%@\"\n", [_characters stringByNormalizingWhitespace]];
 }
+
+#endif
 
 #pragma mark - Properties
 

@@ -8,30 +8,24 @@
 
 #import "DTTextAttachment.h"
 #import "DTCoreText.h"
-#import "DTUtils.h"
+#import "DTCoreGraphicsUtils.h"
 
 #import "DTBase64Coding.h"
+#import "DTDictationPlaceholderTextAttachment.h"
+#import "DTIframeTextAttachment.h"
+#import "DTImageTextAttachment.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
+#import "DTLog.h"
 
-static NSCache *imageCache = nil;
+static NSMutableDictionary *_classForTagNameLookup = nil;
 
 @interface DTTextAttachment ()
-
-+ (NSCache *)sharedImageCache;
 
 @end
 
 @implementation DTTextAttachment
 {
-	CGSize _originalSize;
-	CGSize _displaySize;
-	DTTextAttachmentVerticalAlignment _verticalAlignment;
-	id _contents;
-    NSDictionary *_attributes;
-    
-    DTTextAttachmentType _contentType;
-	
-	NSURL *_contentURL;
-	
 	NSURL *_hyperLinkURL;
 	NSString *_hyperLinkGUID;
 	
@@ -40,203 +34,68 @@ static NSCache *imageCache = nil;
 	CGFloat _fontDescent;
 }
 
-+ (NSCache *)sharedImageCache {
-  if (imageCache) return imageCache;
-
-  static dispatch_once_t onceToken; // lock
-  dispatch_once(&onceToken, ^{ // this block run only once
-		imageCache = [[NSCache alloc] init];
-  });
-  return imageCache;
++ (void)initialize
+{
+	// this gets called from each subclass
+	// prevent calling from children
+	if (self != [DTTextAttachment class])
+	{
+		return;
+	}
+	
+	_classForTagNameLookup = [[NSMutableDictionary alloc] init];
+	
+	// register standard tags
+	[DTTextAttachment registerClass:[DTImageTextAttachment class] forTagName:@"img"];
+	[DTTextAttachment registerClass:[DTVideoTextAttachment class] forTagName:@"video"];
+	[DTTextAttachment registerClass:[DTIframeTextAttachment class] forTagName:@"iframe"];
+	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"object"];
 }
 
 + (DTTextAttachment *)textAttachmentWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
-	// determine type
-	DTTextAttachmentType attachmentType;
+	Class class = [DTTextAttachment registeredClassForTagName:element.name];
 	
-	if ([element.name isEqualToString:@"img"])
-	{
-		attachmentType = DTTextAttachmentTypeImage;
-	}
-	else if ([element.name isEqualToString:@"video"])
-	{
-		attachmentType = DTTextAttachmentTypeVideoURL;
-	}
-	else if ([element.name isEqualToString:@"iframe"])
-	{
-		attachmentType = DTTextAttachmentTypeIframe;
-	}
-	else if ([element.name isEqualToString:@"object"])
-	{
-		attachmentType = DTTextAttachmentTypeObject;
-	}
-	else
+	if (!class)
 	{
 		return nil;
 	}
-	
-	// determine if there is a display size restriction
-	CGSize maxImageSize = CGSizeZero;
-	
-	NSValue *maxImageSizeValue =[options objectForKey:DTMaxImageSize];
-	if (maxImageSizeValue)
-	{
-#if TARGET_OS_IPHONE
-		maxImageSize = [maxImageSizeValue CGSizeValue];
-#else
-		maxImageSize = [maxImageSizeValue sizeValue];
-#endif
-	}
-	
-	// width, height from tag
-	CGSize displaySize = element.size; // width/height from attributes or CSS style
-	CGSize originalSize = element.size;
-	
-	// get base URL
-	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
-	
-	// decode URL
-	NSString *src = [element.attributes objectForKey:@"src"];
-	
-	NSURL *contentURL = nil;
-	DTImage *decodedImage = nil;
-	
-	
-	// decode content URL
-	if ([src length]) // guard against img with no src
-	{ 
-		if ([src hasPrefix:@"data:"])
-		{
-			NSRange range = [src rangeOfString:@"base64,"];
-			
-			if (range.length)
-			{
-				NSString *encodedData = [src substringFromIndex:range.location + range.length];
-				NSData *decodedData = [DTBase64Coding dataByDecodingString:encodedData];
-				
-				decodedImage = [[DTImage alloc] initWithData:decodedData];
-				
-				if (!displaySize.width || !displaySize.height)
-				{
-					displaySize = decodedImage.size;
-				}
-			}
-		}
-		else // normal URL
-		{
-			contentURL = [NSURL URLWithString:src];
-			
-			if(!contentURL)
-			{
-				src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
-			}
-			
-			if (![contentURL scheme])
-			{
-				// possibly a relative url
-				if (baseURL)
-				{
-					contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
-				}
-				else
-				{
-					// file in app bundle
-					NSBundle *bundle = [NSBundle mainBundle];
-					NSString *path = [bundle pathForResource:src ofType:nil];
-					
-					if (path)
-					{
-						// Prevent a crash if path turns up nil.
-						contentURL = [NSURL fileURLWithPath:path];   
-					}
-					else
-					{
-						// might also be in a different bundle, e.g. when unit testing
-						bundle = [NSBundle bundleForClass:[DTTextAttachment class]];
-						
-						path = [bundle pathForResource:src ofType:nil];
-						if (path)
-						{
-							// Prevent a crash if path turns up nil.
-							contentURL = [NSURL fileURLWithPath:path];
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
-	
-	// for local images we can get their size by inspecting them
-	if (attachmentType == DTTextAttachmentTypeImage)
-	{
-		// if it's a local file we need to inspect it to get it's dimensions
-		if (!displaySize.width || !displaySize.height)
-		{
-			// inspect local file
-			if ([contentURL isFileURL])
-			{
-				DTImage *image = [[DTTextAttachment sharedImageCache] objectForKey:[contentURL path]];
-				if (!image)
-				{
-					image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
-					[[DTTextAttachment sharedImageCache] setObject:image forKey:[contentURL path]];
-				}
 
-				originalSize = image.size;
-				
-				// initial display size matches original
-				displaySize = originalSize;
-			}
-		}
-	}
-
+	DTTextAttachment *attachment = [class alloc];
 	
-	
-	// if you have no display size we assume original size
-	if (CGSizeEqualToSize(displaySize, CGSizeZero))
-	{
-		displaySize = originalSize;
-	}
-	
-	// adjust the display size if there is a restriction and it's too large
-	CGSize adjustedSize = displaySize;
-	
-	if (!CGSizeEqualToSize(maxImageSize, CGSizeZero))
-	{
-		if (maxImageSize.width < displaySize.width || maxImageSize.height < displaySize.height)
-		{
-			adjustedSize = sizeThatFitsKeepingAspectRatio(displaySize, maxImageSize);
-		}
-	}
-		
-	attachment.contentType = attachmentType;
-	attachment.contentURL = contentURL;
-	attachment.contents = decodedImage;
-	attachment.originalSize = originalSize;
-	attachment.displaySize = adjustedSize;
-	attachment.attributes = element.attributes;
-	
-	return attachment;
+	return [attachment initWithElement:element options:options];
 }
 
 
-// makes a data URL of the image
-- (NSString *)dataURLRepresentation
+- (id)initWithElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
-	if ((_contents==nil) || _contentType != DTTextAttachmentTypeImage)
+	self = [super init];
+	
+	if (self)
 	{
-		return nil;
+		// width, height from tag
+		_originalSize = element.size; // initially not known
+		
+		// determine if there is a display size restriction
+		_maxImageSize = CGSizeZero;
+		
+		NSValue *maxImageSizeValue =[options objectForKey:DTMaxImageSize];
+		if (maxImageSizeValue)
+		{
+#if TARGET_OS_IPHONE
+			_maxImageSize = [maxImageSizeValue CGSizeValue];
+#else
+			_maxImageSize = [maxImageSizeValue sizeValue];
+#endif
+		}
+		
+		// set the display size from the original size, restricted to the max size
+		[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
+
+		_attributes = element.attributes;
 	}
 	
-	DTImage *image = (DTImage *)_contents;
-	NSData *data = [image dataForPNGRepresentation];
-	NSString *encoded = [DTBase64Coding stringByEncodingData:data];
-	
-	return [@"data:image/png;base64," stringByAppendingString:encoded];
+	return self;
 }
 
 - (void)adjustVerticalAlignmentForFont:(CTFontRef)font
@@ -296,13 +155,39 @@ static NSCache *imageCache = nil;
 	}
 }
 
+#pragma mark - Subclass Customization
+
++ (void)registerClass:(Class)class forTagName:(NSString *)tagName
+{
+	Class previousClass = [DTTextAttachment registeredClassForTagName:tagName];
+
+	if (previousClass)
+	{
+		DTLogWarning(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
+	}
+	
+	[_classForTagNameLookup setObject:class forKey:tagName];
+}
+
++ (Class)registeredClassForTagName:(NSString *)tagName
+{
+	return [_classForTagNameLookup objectForKey:tagName];
+}
+
 #pragma mark Properties
 /** Mutator for originalSize. Sets displaySize to the same value as originalSize. 
- @param The CGSize to store in originalSize. */
+ @param originalSize The CGSize to store in originalSize. */
 - (void)setOriginalSize:(CGSize)originalSize
 {
-	_originalSize = originalSize;
-	self.displaySize = _originalSize;
+	if (!CGSizeEqualToSize(originalSize, _originalSize))
+	{
+		_originalSize = originalSize;
+		
+		if (!_displaySize.width || !_displaySize.height)
+		{
+			[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
+		}
+	}
 }
 
 - (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize
@@ -318,59 +203,38 @@ static NSCache *imageCache = nil;
 		{
 			// width missing, calculate it
 			CGFloat factor = _originalSize.height / displaySize.height;
-			displaySize.width = roundf(_originalSize.width / factor);
+			displaySize.width = round(_originalSize.width / factor);
 		}
 		else if (displaySize.width>0 && displaySize.height==0)
 		{
 			// height missing, calculate it
 			CGFloat factor = _originalSize.width / displaySize.width;
-			displaySize.height = roundf(_originalSize.height / factor);
+			displaySize.height = round(_originalSize.height / factor);
 		}
 	}
-	
+
 	if (maxDisplaySize.width>0 && maxDisplaySize.height>0)
 	{
 		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)
 		{
-			displaySize = sizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
+			displaySize = DTCGSizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
 		}
 	}
 	
 	_displaySize = displaySize;
 }
 
-/**
- Accessor for the contents instance variable. If the content type is DTTextAttachmentTypeImage this returns a DTImage instance of the contents.
- @returns Contents. If it is an image, a DTImage instance is returned. Otherwise it is returned as is. 
- */
-- (id)contents
+- (void)setDisplaySize:(CGSize)displaySize
 {
-	if (!_contents)
-	{
-		if (_contentType == DTTextAttachmentTypeImage && _contentURL && [_contentURL isFileURL])
-		{
-			DTImage *image = [[DTTextAttachment sharedImageCache] objectForKey:[_contentURL path]];
-			if (!image) {
-				image = [[DTImage alloc] initWithContentsOfFile:[_contentURL path]];
-				[[DTTextAttachment sharedImageCache] setObject:image forKey:[_contentURL path]];
-			}
-
-			return image;
-		}
-	}
-	
-	return _contents;
+	_displaySize = displaySize;
 }
 
 @synthesize originalSize = _originalSize;
 @synthesize displaySize = _displaySize;
-@synthesize contents = _contents;
-@synthesize contentType = _contentType;
 @synthesize contentURL = _contentURL;
 @synthesize hyperLinkURL = _hyperLinkURL;
 @synthesize attributes = _attributes;
 @synthesize verticalAlignment = _verticalAlignment;
 @synthesize hyperLinkGUID = hyperLinkGUID;
-@synthesize childNodes = _childNodes;
 
 @end

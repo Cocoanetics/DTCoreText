@@ -1,7 +1,4 @@
 <html>
-<head>
-<link rel="stylesheet" href="css.css" type="text/css"/>
-</head>
 <body>
 <h1>CSS Styles Support</h1>
 <p>Currently CSS styling is supported inline in tags, and via simple rules.</p>
@@ -30,6 +27,7 @@
 <li>font-family - to specify the postscript name of a family like <span style="font-family:courier;">Courier</span></li>
 <li>font-style - normal, inherit, <span style="font-style:italic;">italic</span>, <span style="font-style:oblique;">oblique</span></li>
 <li>font-weight - normal, <span style="font-weight:bold;">bold</span></li>
+<li>letter-spacing - <span style="letter-spacing:-1px">tighter</span> or <span style="letter-spacing:3px">wider</span></li>
 </ul>
 
 <h2>Font Families</h2>
@@ -40,6 +38,7 @@
 <p style="font-family:cursive">cursive</p>
 <p style="font-family:fantasy">fantasy</p>
 </div>
+
 <h2>Text Shadows</h2>
 <p>The text-shadow property is supported.</p>
 <p style="color:blue;font-size:30px; text-shadow: 0.15em 0.15em #AAA">Text with Shadow</p>
@@ -50,14 +49,5 @@
       0.4em -0.3em 0.1em #006">Multiple Shadows</p>
 <p style="font-size:30px; text-shadow: blue 0.1em 0.1em 0.2em">Text with Shadow</p>
 <p style="font-family:Helvetica;font-size:20px; color:yellow; font-weight:bold; text-shadow:  -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black">OUTLINE</p>
-
-<h2>To Do</h2>
-<ul>
-<li>More robust mapping of font family to available fonts, support for fallback</li>
-<li>text-decoration - blink, overline</li>
-<li>font-variant - to support smallcaps</li></ul>
-
-<h1 class="s2 s18"><span class="c10">This text should be centered</span></h1>
-
 </body>
 </html>

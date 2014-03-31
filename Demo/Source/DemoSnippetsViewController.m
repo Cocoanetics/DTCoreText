@@ -20,8 +20,12 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 
 #pragma mark NSObject
 
-- (id)init {
-	if ((self = [super initWithStyle:UITableViewStylePlain])) {
+- (id)init
+{
+	self = [super initWithStyle:UITableViewStylePlain];
+	
+	if (self)
+	{
 		self.title = @"Snippets";
 		self.tabBarItem.image = [UIImage imageNamed:@"snippets.png"];
 	}
@@ -100,20 +104,33 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 	cell.attributedTextContextView.shouldDrawImages = YES;
 }
 
+- (BOOL)_canReuseCells
+{
+	// reuse does not work for variable height
+	
+	if ([self respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)])
+	{
+		return NO;
+	}
+	
+	// only reuse cells with fixed height
+	return YES;
+}
+
 - (DTAttributedTextCell *)tableView:(UITableView *)tableView preparedCellForIndexPath:(NSIndexPath *)indexPath
 {
-	
 	// workaround for iOS 5 bug
-	NSString *key = [NSString stringWithFormat:@"%d-%d", indexPath.section, indexPath.row];
+	NSString *key = [NSString stringWithFormat:@"%ld-%ld", (long)indexPath.section, (long)indexPath.row];
 	
 	DTAttributedTextCell *cell = [cellCache objectForKey:key];
 
 	if (!cell)
 	{
-		// reuse does not work for variable height
-		cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:AttributedTextCellReuseIdentifier];
+		if ([self _canReuseCells])
+		{
+			cell = (DTAttributedTextCell *)[tableView dequeueReusableCellWithIdentifier:AttributedTextCellReuseIdentifier];
+		}
 	
-		// legacy, as of iOS 6 this always returns a cell
 		if (!cell)
 		{
 			cell = [[DTAttributedTextCell alloc] initWithReuseIdentifier:AttributedTextCellReuseIdentifier];

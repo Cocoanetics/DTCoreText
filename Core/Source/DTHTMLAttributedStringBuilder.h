@@ -18,6 +18,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  */
 @interface DTHTMLAttributedStringBuilder : NSObject <DTHTMLParserDelegate>
 
+
 /**
  @name Creating an Attributed String Builder
  */
@@ -42,10 +43,11 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  - DTDefaultStyleSheet: The default style sheet to use
  - DTUseiOS6Attributes: use iOS 6 attributes for building (UITextView compatible)
  - DTWillFlushBlockCallBack: a block to be executed whenever content is flushed to the output string
+ - DTIgnoreInlineStylesOption: All inline style information is being ignored and only style blocks used
  
  @param data The data in HTML format from which to create the attributed string.
  @param options Specifies how the document should be loaded. Contains values described in NSAttributedString(HTML).
- @param docAttributes Currently not in used.
+ @param docAttributes Currently not in use.
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  */
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes;
@@ -61,6 +63,12 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  */
 - (NSAttributedString *)generatedAttributedString;
 
+/**
+ *  Keeps everythin except the text to allow reusing the string builder with the same CSS.
+ *
+ *  @since 1.7.0
+ */
+- (void)prepareForReuse;
 
 /**
  This block is called before the element is written to the output attributed string
@@ -71,5 +79,8 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  Setting this property to `YES` causes the tree of parse nodes to be preserved until the end of the generation process. This allows to output the HTML structure of the document for debugging.
  */
 @property (nonatomic, assign) BOOL shouldKeepDocumentNodeTree;
+
+@property (nonatomic, strong) NSData *data;
+
 
 @end

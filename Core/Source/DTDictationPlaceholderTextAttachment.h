@@ -16,4 +16,9 @@
 
 @interface DTDictationPlaceholderTextAttachment : DTTextAttachment
 
+/**
+ The string that inserting the dictation placeholder replaced, used for Undoing
+ */
+@property (nonatomic, retain) NSAttributedString *replacedAttributedString;
+
 @end

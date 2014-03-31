@@ -13,35 +13,26 @@
 
 + (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
 {
-	id normalFont = [attributes objectForKey:(id)kCTFontAttributeName];
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 	
-	DTCoreTextFontDescriptor *smallerFontDesc = nil;
-	
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-	if ([normalFont isKindOfClass:[UIFont class]])
+	if (!fontDescriptor)
 	{
-		// UIKit Font
-		UIFont *font = normalFont;
-		
-		CTFontRef ctFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, font.pointSize, NULL);
-		
-		smallerFontDesc	= [DTCoreTextFontDescriptor fontDescriptorForCTFont:ctFont];
-		
-		CFRelease(ctFont);
-	}
-	else
-#endif
-	{
-		// CTFontRef
-		smallerFontDesc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:(__bridge CTFontRef)normalFont];
+		return nil;
 	}
 	
+	DTCoreTextFontDescriptor *smallerFontDesc = [fontDescriptor copy];
 	smallerFontDesc.pointSize *= 0.7;
+	
 	CTFontRef smallerFont = [smallerFontDesc newMatchingFont];
+	
+	if (!smallerFont)
+	{
+		return nil;
+	}
 	
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 	if (___useiOS6Attributes)
 	{
 		UIFont *uiFont = [UIFont fontWithCTFont:smallerFont];
@@ -80,7 +71,7 @@
 		}
 	}
 	
-	return 	tmpString;
+	return tmpString;
 }
 
 @end

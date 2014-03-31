@@ -23,14 +23,42 @@
 	
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
-	while ([scanner scanCSSAttribute:&name value:&value])
+	@autoreleasepool
 	{
-		[tmpDict setObject:value forKey:name];
+		while ([scanner scanCSSAttribute:&name value:&value])
+		{
+			[tmpDict setObject:value forKey:name];
+		}
 	}
 	
 	// converting to non-mutable costs 37.5% of method
 	//	return [NSDictionary dictionaryWithDictionary:tmpDict];
 	return tmpDict;
+}
+
+- (BOOL)isCSSLengthValue
+{
+	NSScanner *scanner = [NSScanner scannerWithString:self];
+	
+	NSString *numberStr;
+	
+	if (![scanner scanCharactersFromSet:[NSCharacterSet cssLengthValueCharacterSet] intoString:&numberStr])
+	{
+		return NO;
+	}
+
+	NSString *numberUnitStr;
+	if (![scanner scanCharactersFromSet:[NSCharacterSet cssLengthUnitCharacterSet] intoString:&numberUnitStr])
+	{
+		return YES;
+	}
+	
+	if ([numberUnitStr isEqualToString:@"em"] | [numberUnitStr isEqualToString:@"px"] | [numberUnitStr isEqualToString:@"pt"])
+	{
+		return YES;
+	}
+
+	return NO;
 }
 
 - (CGFloat)pixelSizeOfCSSMeasureRelativeToCurrentTextSize:(CGFloat)textSize textScale:(CGFloat)textScale
@@ -184,7 +212,14 @@
 
 - (NSArray *)arrayOfCSSShadowsWithCurrentTextSize:(CGFloat)textSize currentColor:(DTColor *)color
 {
-	NSScanner *scanner = [NSScanner scannerWithString:self];
+	NSString *trimmedString = [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	
+	if ([trimmedString isEqualToString:@"none"])
+	{
+		return nil;
+	}
+	
+	NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
 	
 	NSMutableCharacterSet *tokenEndSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
 	[tokenEndSet addCharactersInString:@","];
@@ -225,7 +260,7 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
+														 DTNSNumberFromCGFloat(blur), @"Blur",
 														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
@@ -247,7 +282,7 @@
 						{
 							if (![scanner scanHTMLColor:&shadowColor])
 							{
-								
+								// invalid color, we ignore this color
 							}
 						}
 					}
@@ -271,7 +306,7 @@
 #endif
 					
 					NSDictionary *shadowDict = [NSDictionary dictionaryWithObjectsAndKeys:offsetValue, @"Offset",
-														 [NSNumber numberWithFloat:blur], @"Blur",
+														 DTNSNumberFromCGFloat(blur), @"Blur",
 														 shadowColor, @"Color", nil];
 					
 					[tmpArray addObject:shadowDict];
@@ -286,8 +321,13 @@
 		}
 	}
 	
+	// only return array if not empty
+	if ([tmpArray count])
+	{
+		return tmpArray;
+	}
 	
-	return tmpArray;
+	return nil;
 }
 
 - (NSString *)stringByDecodingCSSContentAttribute

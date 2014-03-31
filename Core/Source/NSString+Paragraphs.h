@@ -42,4 +42,11 @@
  */
 - (NSRange)rangeOfParagraphAtIndex:(NSUInteger)index;
 
+
+/**
+ Counts the number of paragraphs in the receiver
+ @returns The number of paragraph characters (\n) in the receiver
+ */
+- (NSUInteger)numberOfParagraphs;
+
 @end

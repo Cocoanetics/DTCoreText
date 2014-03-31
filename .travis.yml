@@ -1,0 +1,11 @@
+---
+language: objective-c
+
+before_script:
+  - sudo easy_install cpp-coveralls
+
+script:
+  - ./build.sh
+
+after_success:
+  - ./coveralls.rb --extension m --exclude-folder Demo --exclude-folder Test --exclude-folder Externals

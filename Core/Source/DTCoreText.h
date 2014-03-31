@@ -8,39 +8,55 @@
 #import "DTCoreTextConstants.h"
 #import "DTCompatibility.h"
 
-#import "DTColor+HTML.h"
+#import "DTColor+Compatibility.h"
 #import "DTImage+HTML.h"
 
 // common utilities
-#import "DTUtils.h"
 #if TARGET_OS_IPHONE
 #import "DTCoreTextFunctions.h"
 #endif
+
+#import "DTColorFunctions.h"
 
 // common classes
 #import "DTCSSListStyle.h"
 #import "DTTextBlock.h"
 #import "DTCSSStylesheet.h"
 #import "DTCoreTextFontDescriptor.h"
-#import "DTHTMLElement.h"
-#import "DTTextAttachment.h"
-#import "NSCharacterSet+HTML.h"
-#import "NSScanner+HTML.h"
-#import "NSMutableString+HTML.h"
-#import "NSString+CSS.h"
-#import "NSString+HTML.h"
-#import "NSString+Paragraphs.h"
 #import "DTCoreTextParagraphStyle.h"
-#import "NSMutableAttributedString+HTML.h"
+#import "DTHTMLAttributedStringBuilder.h"
+#import "DTHTMLElement.h"
+#import "DTHTMLWriter.h"
+#import "NSCharacterSet+HTML.h"
+#import "NSDictionary+DTCoreText.h"
 #import "NSAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
 #import "NSAttributedString+DTCoreText.h"
-#import "DTHTMLAttributedStringBuilder.h"
+#import "NSMutableAttributedString+HTML.h"
+#import "NSMutableString+HTML.h"
+#import "NSScanner+HTML.h"
+#import "NSString+CSS.h"
+#import "NSString+HTML.h"
+#import "NSString+Paragraphs.h"
 
 // parsing classes
 #import "DTHTMLParserNode.h"
 #import "DTHTMLParserTextNode.h"
 
+// text attachment cluster
+#import "DTTextAttachment.h"
+#import "DTDictationPlaceholderTextAttachment.h"
+#import "DTIframeTextAttachment.h"
+#import "DTImageTextAttachment.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
+
+// laout (both iOS and OSX)
+#import "DTCoreTextGlyphRun.h"
+#import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextLayoutFrame+Cursor.h"
+#import "DTCoreTextLayoutLine.h"
+#import "DTCoreTextLayouter.h"
 
 // These classes only work with UIKit on iOS
 #if TARGET_OS_IPHONE
@@ -55,17 +71,16 @@
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
 #import "DTCoreTextFontCollection.h"
-#import "DTCoreTextGlyphRun.h"
-#import "DTCoreTextLayoutFrame.h"
-#import "DTCoreTextLayoutLine.h"
-#import "DTCoreTextLayouter.h"
 
-#import "DTDictationPlaceholderTextAttachment.h"
 #import "DTDictationPlaceholderView.h"
 
 #import "UIFont+DTCoreText.h"
 
+#else
+
+// OSX Port of UIView Text drawing classes
+#import "DTMacAttributedTextContentView.h"
+#import "DTMacAttributedTextView.h"
+
 #endif
 
-
-#define DT_ADD_FONT_ON_ATTACHMENTS

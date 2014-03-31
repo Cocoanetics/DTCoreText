@@ -9,37 +9,47 @@
 #import "DTCoreText.h"
 #import "NSAttributedString+DTCoreText.h"
 #import "DTHTMLWriter.h"
+#import "NSURL+DTComparing.h"
 
 @implementation NSAttributedString (DTCoreText)
 
 #pragma mark Text Attachments
-- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate
+- (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate class:(Class)class
 {
-	NSMutableArray *tmpArray = [NSMutableArray array];
-	
-	NSUInteger index = 0;
-	
-	while (index<[self length]) 
+	if (![self length])
 	{
-		NSRange range;
-		NSDictionary *attributes = [self attributesAtIndex:index effectiveRange:&range];
-		
-		DTTextAttachment *attachment = [attributes objectForKey:NSAttachmentAttributeName];
-		
-		if (attachment)
-		{
-			if ([predicate evaluateWithObject:attachment])
-			{
-				[tmpArray addObject:attachment];
-			}
-		}
-		
-		index += range.length;
+		return nil;
 	}
 	
-	if ([tmpArray count])
+	NSMutableArray *foundAttachments = [NSMutableArray array];
+	
+	NSRange entireRange = NSMakeRange(0, [self length]);
+	[self enumerateAttribute:NSAttachmentAttributeName inRange:entireRange options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(DTTextAttachment *attachment, NSRange range, BOOL *stop) {
+		
+		if (attachment == nil)
+		{
+			// no attachment value
+			return;
+		}
+		
+		if (predicate && ![predicate evaluateWithObject:attachment])
+		{
+			// doesn't fit predicate, next
+			return;
+		}
+		
+		if (class && ![attachment isKindOfClass:class])
+		{
+			// doesn't fit class, next
+			return;
+		}
+		
+		[foundAttachments addObject:attachment];
+	}];
+	
+	if ([foundAttachments count])
 	{
-		return tmpArray;
+		return foundAttachments;
 	}
 	
 	return nil;
@@ -80,7 +90,7 @@
 		 
 		 DTCSSListStyle *currentEffectiveList = [textLists lastObject];
 		 
-		 NSNumber *key = [NSNumber numberWithInteger:[currentEffectiveList hash]]; // hash defaults to address
+		 NSNumber *key = [NSNumber numberWithInteger:(NSInteger)currentEffectiveList]; // list address is identifier
 		 NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 		 
 		 NSInteger currentCounter=0;
@@ -100,7 +110,7 @@
 		 // calculate the actual range
 		 NSRange actualRange = enclosingRange;  // includes a potential \n
 		 actualRange.location += totalRange.location;
-
+		 
 		 if (NSLocationInRange(location, actualRange))
 		 {
 			 *stop = YES;
@@ -108,92 +118,116 @@
      }
      ];
 	
-	NSNumber *key = [NSNumber numberWithInteger:[list hash]]; // hash defaults to address
+	NSNumber *key = [NSNumber numberWithInteger:(NSInteger)list]; // list address is identifier
 	NSNumber *currentCounterNum = [countersPerList objectForKey:key];
 	
 	return [currentCounterNum integerValue];
 }
 
-
 - (NSRange)_rangeOfObject:(id)object inArrayBehindAttribute:(NSString *)attribute atIndex:(NSUInteger)location
 {
-	NSUInteger searchIndex = location;
-	
-	NSArray *arrayAtIndex;
-	NSUInteger minFoundIndex = NSUIntegerMax;
-	NSUInteger maxFoundIndex = 0;
-	
-	BOOL foundList = NO;
-	
-	do 
+	@synchronized(self)
 	{
-		NSRange effectiveRange;
-		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
+		NSUInteger stringLength = [self length];
+		NSUInteger searchIndex = location;
 		
-		if([arrayAtIndex containsObject:object])
+		NSArray *arrayAtIndex;
+		
+		NSRange totalRange = NSMakeRange(NSNotFound, 0);
+		
+		BOOL foundList = NO;
+		
+		do
 		{
-			foundList = YES;
+			NSRange effectiveRange;
+			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
+			
+			if (!arrayAtIndex || [arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
+			{
+				break;
+			}
 			
 			searchIndex = effectiveRange.location;
+			foundList = YES;
 			
-			minFoundIndex = MIN(minFoundIndex, searchIndex);
-			maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+			// enhance found range
+			if (totalRange.location == NSNotFound)
+			{
+				totalRange = effectiveRange;
+			}
+			else
+			{
+				totalRange = NSUnionRange(totalRange, effectiveRange);
+			}
+			
+			if (searchIndex == 0)
+			{
+				// reached beginning of string
+				break;
+			}
+			
+			searchIndex--;
 		}
+		while (foundList);
 		
-		if (!searchIndex || !foundList)
-		{
-			// reached beginning of string
-			break;
-		}
-		
-		searchIndex--;
-	} 
-	while (foundList && searchIndex>0);
-	
-	// if we didn't find the list at all, return 
-	if (!foundList)
-	{
-		return NSMakeRange(0, NSNotFound);
-	}
-	
-	// now search forward
-	
-	searchIndex = maxFoundIndex;
-	
-	while (searchIndex < [self length])
-	{
-		NSRange effectiveRange;
-		arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
-		
-		foundList = [arrayAtIndex containsObject:object];
-		
+		// if we didn't find the list at all, return
 		if (!foundList)
 		{
-			break;
+			return NSMakeRange(NSNotFound, 0);
 		}
 		
-		searchIndex = NSMaxRange(effectiveRange);
+		// now search forward
 		
-		minFoundIndex = MIN(minFoundIndex, effectiveRange.location);
-		maxFoundIndex = MAX(maxFoundIndex, NSMaxRange(effectiveRange));
+		searchIndex = NSMaxRange(totalRange);
+		
+		while (searchIndex < stringLength)
+		{
+			NSRange effectiveRange;
+			arrayAtIndex = [self attribute:attribute atIndex:searchIndex effectiveRange:&effectiveRange];
+			
+			if (!arrayAtIndex || [arrayAtIndex indexOfObjectIdenticalTo:object] == NSNotFound)
+			{
+				break;
+			}
+			
+			searchIndex = NSMaxRange(effectiveRange);
+			
+			// enhance found range
+			totalRange = NSUnionRange(totalRange, effectiveRange);
+		}
+		
+		return totalRange;
 	}
-	
-	return NSMakeRange(minFoundIndex, maxFoundIndex-minFoundIndex);
 }
 
 - (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
 {
-	return [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+	NSParameterAssert(list);
+	
+	NSRange listRange = [self _rangeOfObject:list inArrayBehindAttribute:DTTextListsAttribute atIndex:location];
+	
+	if (listRange.location == NSNotFound)
+	{
+		// list was not found
+		return listRange;
+	}
+	
+	// extend list range to full paragraphs to be safe
+	listRange = [self.string rangeOfParagraphsContainingRange:listRange parBegIndex:NULL parEndIndex:NULL];
+	
+	return listRange;
 }
 
 - (NSRange)rangeOfTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
 {
+	NSParameterAssert(textBlock);
+	
 	return [self _rangeOfObject:textBlock inArrayBehindAttribute:DTTextBlocksAttribute atIndex:location];
 }
 
 - (NSRange)rangeOfAnchorNamed:(NSString *)anchorName
 {
-	__block NSRange foundRange = NSMakeRange(0, NSNotFound);
+	__block NSRange foundRange = NSMakeRange(NSNotFound, 0);
 	
 	[self enumerateAttribute:DTAnchorAttribute inRange:NSMakeRange(0, [self length]) options:0 usingBlock:^(NSString *value, NSRange range, BOOL *stop) {
 		if ([value isEqualToString:anchorName])
@@ -206,7 +240,78 @@
 	return foundRange;
 }
 
+- (NSRange)rangeOfLinkAtIndex:(NSUInteger)location URL:(NSURL **)URL
+{
+	NSRange rangeSoFar;
+	
+	NSURL *foundURL = [self attribute:DTLinkAttribute atIndex:location effectiveRange:&rangeSoFar];
+	
+	if (!foundURL)
+	{
+		return NSMakeRange(NSNotFound, 0);
+	}
+	
+	// search towards beginning
+	while (rangeSoFar.location>0)
+	{
+		NSRange extendedRange;
+		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:rangeSoFar.location-1 effectiveRange:&extendedRange];
+		
+		// abort search if key not found or value not identical
+		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		{
+			break;
+		}
+		
+		rangeSoFar = NSUnionRange(rangeSoFar, extendedRange);
+	}
+	
+	NSUInteger length = [self length];
+	
+	// search towards end
+	while (NSMaxRange(rangeSoFar)<length)
+	{
+		NSRange extendedRange;
+		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:NSMaxRange(rangeSoFar) effectiveRange:&extendedRange];
+		
+		// abort search if key not found or value not identical
+		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		{
+			break;
+		}
+		
+		rangeSoFar = NSUnionRange(rangeSoFar, extendedRange);
+	}
+	
+	if (URL)
+	{
+		*URL = foundURL;
+	}
+	
+	return rangeSoFar;
+}
+
+- (NSRange)rangeOfFieldAtIndex:(NSUInteger)location
+{
+    if (location<[self length])
+    {
+        // get range of prefix
+        NSRange fieldRange;
+        NSString *fieldAttribute = [self attribute:DTFieldAttribute atIndex:location effectiveRange:&fieldRange];
+        
+        if (fieldAttribute)
+        {
+            return fieldRange;
+        }
+    }
+    
+    return NSMakeRange(NSNotFound, 0);
+}
+
 #pragma mark HTML Encoding
+
+#ifndef COVERAGE
+// exclude method from coverage testing, those are just convenience methods
 
 - (NSString *)htmlString
 {
@@ -233,6 +338,8 @@
 	return [tmpString stringByReplacingOccurrencesOfString:UNICODE_OBJECT_PLACEHOLDER withString:@""];
 }
 
+#endif
+
 #pragma mark Generating Special Attributed Strings
 + (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
 {
@@ -250,17 +357,16 @@
 		paragraphStyle.tabStops = nil;
 		
 		paragraphStyle.headIndent = listIndent;
-		paragraphStyle.paragraphSpacing = 0;
 		
 		if (listStyle.type != DTCSSListStyleTypeNone)
 		{
 			// first tab is to right-align bullet, numbering against
-			CGFloat tabOffset = paragraphStyle.headIndent - 5.0f*1.0; // TODO: change with font size
+			CGFloat tabOffset = paragraphStyle.headIndent - (CGFloat)5.0; // TODO: change with font size
 			[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
 		}
 		
 		// second tab is for the beginning of first line after bullet
-		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:	kCTLeftTextAlignment];	
+		[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];
 	}
 	
 	if (font)
@@ -280,7 +386,7 @@
 		
 		font = [fontDesc newMatchingFont];
 		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
 		if (___useiOS6Attributes)
 		{
 			UIFont *uiFont = [UIFont fontWithCTFont:font];
@@ -301,10 +407,10 @@
 	{
 		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
 	}
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	else if (___useiOS6Attributes)
 	{
-		UIColor *uiColor = [attributes objectForKey:NSForegroundColorAttributeName];
+		DTColor *uiColor = [attributes foregroundColor];
 		
 		if (uiColor)
 		{
@@ -316,7 +422,7 @@
 	// add paragraph style (this has the tabs)
 	if (paragraphStyle)
 	{
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (___useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
@@ -345,7 +451,7 @@
 	}
 	
 	// add a marker so that we know that this is a field/prefix
-	[newAttributes setObject:@"{listprefix}" forKey:DTFieldAttribute];
+	[newAttributes setObject:DTListPrefixField forKey:DTFieldAttribute];
 	
 	NSString *prefix = [listStyle prefixWithCounter:listCounter];
 	
@@ -371,19 +477,18 @@
 		if (image)
 		{
 			// make an attachment for the image
-			DTTextAttachment *attachment = [[DTTextAttachment alloc] init];
-			attachment.contents = image;
-			attachment.contentType = DTTextAttachmentTypeImage;
+			DTImageTextAttachment *attachment = [[DTImageTextAttachment alloc] init];
+			attachment.image = image;
 			attachment.displaySize = image.size;
 			
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 			// need run delegate for sizing
 			CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 			[newAttributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];
 #endif
 			
 			// add attachment
-			[newAttributes setObject:attachment forKey:NSAttachmentAttributeName];				
+			[newAttributes setObject:attachment forKey:NSAttachmentAttributeName];
 			
 			if (listStyle.position == DTCSSListStylePositionInside)
 			{

@@ -15,6 +15,9 @@ static NSCharacterSet *_tagAttributeNameCharacterSet = nil;
 static NSCharacterSet *_quoteCharacterSet = nil;
 static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
+static NSCharacterSet *_cssLengthValueCharacterSet = nil;
+static NSCharacterSet *_cssLengthUnitCharacterSet = nil;
+
 
 
 @implementation NSCharacterSet (HTML)
@@ -46,7 +49,7 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 	static dispatch_once_t predicate;
 	
 	dispatch_once(&predicate, ^{
-		NSMutableCharacterSet *tmpSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		NSMutableCharacterSet *tmpSet = [NSMutableCharacterSet whitespaceAndNewlineCharacterSet];
 		
 		// remove all special unicode space characters
 		[tmpSet removeCharactersInString:UNICODE_NON_BREAKING_SPACE];
@@ -113,5 +116,24 @@ static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 }
 
 
++ (NSCharacterSet *)cssLengthValueCharacterSet
+{
+	static dispatch_once_t predicate;
+	
+	dispatch_once(&predicate, ^{
+		_cssLengthValueCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@".0123456789"];
+	});
+	return _cssLengthValueCharacterSet;
+}
+
++ (NSCharacterSet *)cssLengthUnitCharacterSet
+{
+	static dispatch_once_t predicate;
+	
+	dispatch_once(&predicate, ^{
+		_cssLengthUnitCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"pxtem"];
+	});
+	return _cssLengthUnitCharacterSet;
+}
 
 @end

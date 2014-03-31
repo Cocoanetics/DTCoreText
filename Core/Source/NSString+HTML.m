@@ -17,9 +17,9 @@ static NSDictionary *entityReverseLookup = nil;
 
 - (NSUInteger)integerValueFromHex 
 {
-	int result = 0;
-	sscanf([self UTF8String], "%x", &result);
-	return result;
+	unsigned long result = 0;
+	sscanf([self UTF8String], "%lx", &result);
+	return (NSUInteger)result;
 }
 
 - (BOOL)isNumeric
@@ -402,10 +402,10 @@ static NSDictionary *entityReverseLookup = nil;
 		{
 			if (oneChar<=255)
 			{
+				// output as is
 				[tmpString appendFormat:@"%C", oneChar];
 			}
-			else if (CFStringIsSurrogateHighCharacter(oneChar) &&
-							 i < [self length]-1)
+			else if (CFStringIsSurrogateHighCharacter(oneChar) && i < [self length]-1)
 			{
 				i++;
 				unichar surrogateLowChar = [self characterAtIndex:i];
@@ -414,7 +414,7 @@ static NSDictionary *entityReverseLookup = nil;
 			}
 			else
 			{
-				
+				// output encoded
 				[tmpString appendFormat:@"&#%d;", oneChar];
 			}
 		}
@@ -595,6 +595,7 @@ static NSDictionary *entityReverseLookup = nil;
 							 @"\u2018", @"lsquo",
 							 @"\u2019", @"rsquo",
 							 @"\u201a", @"sbquo",
+							 @"\u201a", @"bsquo",
 							 @"\u201c", @"ldquo",
 							 @"\u201d", @"rdquo",
 							 @"\u201e", @"bdquo",
@@ -768,7 +769,7 @@ static NSDictionary *entityReverseLookup = nil;
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
 				// alternate nbsp; and normal space
-				for (int i=0; i<numSpaces;i++)
+				for (NSUInteger i=0; i<numSpaces;i++)
 				{
 					if (i%2)
 					{

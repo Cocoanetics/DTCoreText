@@ -54,7 +54,7 @@
  @name Bridging to and from NSParagraphStyle
  */
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 /**
  Create a new paragraph style instance from an `NSParagraphStyle`.
  
@@ -191,15 +191,9 @@ The distance in points from the margin of a text container to the end of lines.
  */
 
 /** 
- Text lists containing the paragraph, nested from outermost to innermost, to array.
+ Text lists containing the paragraph, nested from outermost to innermost. Each text list is a DTCSSListStyle object.
 */
 @property (nonatomic, copy) NSArray *textLists;
-
-
-/**
- The amount by which each list level is indented from the previous. NOTE: about to be replaced by textLists property.
- */
-@property (nonatomic, assign) CGFloat listIndent;
 
 
 /**-------------------------------------------------------------------------------------
@@ -208,7 +202,7 @@ The distance in points from the margin of a text container to the end of lines.
  */
 
 /** 
- Text lists containing the paragraph, nested from outermost to innermost, to array.
+ Text blocks containing the paragraph, nested from outermost to innermost, to array. Each text block is a DTTextBlock object.
  */
 @property (nonatomic, copy) NSArray *textBlocks;
 
