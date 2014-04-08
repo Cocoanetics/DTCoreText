@@ -118,7 +118,10 @@
 				{
 					[results addObject:valueString];
 				}
-				else if ([attrName isEqualToString:@"font"] || ([attrName rangeOfString:@"color"].location != NSNotFound) || ([attrName rangeOfString:@"shadow"].location != NSNotFound))
+				else if ([attrName isEqualToString:@"font"] ||
+						 ([attrName rangeOfString:@"color"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"shadow"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"background"].location != NSNotFound))
 				{
 					valueString = [NSString stringWithFormat:@"%@%@", [results lastObject], valueString];
 					[results removeLastObject];
