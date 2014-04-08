@@ -18,6 +18,9 @@
 // scan a single element from a style list
 - (BOOL)scanCSSAttribute:(NSString **)name value:(id *)value
 {
+    if ([*name isEqualToString:@"border-radius"]) {
+        NSLog(@"%@", *name);
+    }
 	NSString *attrName = nil;
 	
 	NSInteger initialScanLocation = [self scanLocation];
@@ -98,7 +101,16 @@
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
 			NSString *valueString = nil;
 			
-			if ([self scanString:@"," intoString:&valueString])
+            if ([self scanString:@"rgb(" intoString:&valueString])
+			{
+				if ([valueString isEqualToString:@"rgb("])
+				{
+                    [self scanUpToString:@";" intoString:&valueString];
+                    NSString * formattedRGBString = [NSString stringWithFormat:@"rgb(%@", valueString];
+                    [results addObject:formattedRGBString];
+				}
+			}
+			else if ([self scanString:@"," intoString:&valueString])
 			{
                 BOOL isStringOnlyCSSProperty = NO;
                 
