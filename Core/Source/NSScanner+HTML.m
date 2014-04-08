@@ -18,9 +18,6 @@
 // scan a single element from a style list
 - (BOOL)scanCSSAttribute:(NSString **)name value:(id *)value
 {
-    if ([*name isEqualToString:@"border-radius"]) {
-        NSLog(@"%@", *name);
-    }
 	NSString *attrName = nil;
 	
 	NSInteger initialScanLocation = [self scanLocation];
