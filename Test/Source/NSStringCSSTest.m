@@ -187,13 +187,24 @@
 	STAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
 }
 
-- (void)textBackgroundColor
+- (void)testBackgroundColor
 {
 	NSString *style = @"font-family:Helvetica;font-weight:bold;background-color:rgb(255, 88, 44);font-size:30px;";
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id color = dictionary[@"background-color"];
 	
-	STAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+	STAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+	STAssertTrue([color isKindOfClass:[NSString class]], @"background-color should be a string");
+}
+
+- (void)testBackgroundRGB
+{
+	NSString *style = @"font-family:Helvetica;font-weight:bold;background:rgb(255, 88, 44);font-size:30px;";
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	id color = dictionary[@"background"];
+
+	STAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+	STAssertTrue([color isKindOfClass:[NSString class]], @"background rgb should be a string");
 }
 
 - (void)testEdgeInsets

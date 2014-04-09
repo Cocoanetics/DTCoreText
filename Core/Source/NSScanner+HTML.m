@@ -98,7 +98,16 @@
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
 			NSString *valueString = nil;
 			
-			if ([self scanString:@"," intoString:&valueString])
+            if ([self scanString:@"rgb(" intoString:&valueString])
+			{
+				if ([valueString isEqualToString:@"rgb("])
+				{
+                    [self scanUpToString:@";" intoString:&valueString];
+                    NSString * formattedRGBString = [NSString stringWithFormat:@"rgb(%@", valueString];
+                    [results addObject:formattedRGBString];
+				}
+			}
+			else if ([self scanString:@"," intoString:&valueString])
 			{
                 BOOL isStringOnlyCSSProperty = NO;
                 
@@ -106,7 +115,10 @@
 				{
 					[results addObject:valueString];
 				}
-				else if ([attrName isEqualToString:@"font"] || ([attrName rangeOfString:@"color"].location != NSNotFound) || ([attrName rangeOfString:@"shadow"].location != NSNotFound))
+				else if ([attrName isEqualToString:@"font"] ||
+						 ([attrName rangeOfString:@"color"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"shadow"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"background"].location != NSNotFound))
 				{
 					valueString = [NSString stringWithFormat:@"%@%@", [results lastObject], valueString];
 					[results removeLastObject];
