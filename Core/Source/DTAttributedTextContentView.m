@@ -659,6 +659,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
 		}
+        [self invalidateIntrinsicContentSize];
 	}
 }
 
