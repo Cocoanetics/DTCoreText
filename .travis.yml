@@ -1,11 +1,16 @@
 ---
 language: objective-c
 
-before_script:
-  - sudo easy_install cpp-coveralls
+before_install: 
+ - brew update
+ 
+install: 
+ - brew upgrade xctool
+ - sudo easy_install cpp-coveralls
 
 script:
-  - ./build.sh
+ - xctool -project DTCoreText.xcodeproj -scheme DemoApp build test -sdk iphonesimulator6.1 -arch i386 ONLY_ACTIVE_ARCH=NO
+ - xctool -project DTCoreText.xcodeproj -scheme "Mac Framework" test -arch x86_64 ONLY_ACTIVE_ARCH=NO
 
 after_success:
   - ./coveralls.rb --extension m --exclude-folder Demo --exclude-folder Test --exclude-folder Externals
