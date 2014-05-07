@@ -418,6 +418,21 @@
 
 #pragma mark - Fonts
 
+// Pull Request 744: DTDefaultFontName to specify font name next to DTDefaultFontFamily
+- (void)testDefaultFontName
+{
+	NSDictionary *options = @{DTDefaultFontName: @"Helvetica-Bold"};
+
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><body><p>Bla<p></body></html>" options:options];
+
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+
+	STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Incorrect font family");
+	STAssertTrue(fontDescriptor.boldTrait, @"Should be bold");
+}
+
 // Issue 443: crash on combining font-family:inherit with small caps
 - (void)testFontFamilySmallCapsCrash
 {
