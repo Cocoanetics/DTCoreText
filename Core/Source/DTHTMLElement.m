@@ -21,7 +21,6 @@
 
 @interface DTHTMLElement ()
 
-@property (nonatomic, strong) NSMutableDictionary *fontCache;
 @property (nonatomic, strong) NSString *linkGUID;
 
 // internal initializer
