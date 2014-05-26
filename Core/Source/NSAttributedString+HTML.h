@@ -27,7 +27,7 @@
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
  */
-- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary **)docAttributes;
+- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
 
 /**
  Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL.
@@ -37,7 +37,7 @@
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
  */
-- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)baseURL documentAttributes:(NSDictionary **)docAttributes;
+- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)baseURL documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
 
 /**
  Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL. 
@@ -48,7 +48,7 @@
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
   @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
  */
-- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes;
+- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
 
 
 /**

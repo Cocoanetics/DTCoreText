@@ -71,7 +71,7 @@
  @param ignoreInlineStyle If `YES` then the inline styles of the element will be ignored and only the receiver's styles used
  @returns The merged style dictionary containing only styles which selector matches the element
  */
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle;
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle;
 
 /**
  Returns a dictionary of the styles of the receiver

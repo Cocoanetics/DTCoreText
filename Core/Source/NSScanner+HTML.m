@@ -16,7 +16,7 @@
 #pragma mark CSS
 
 // scan a single element from a style list
-- (BOOL)scanCSSAttribute:(NSString **)name value:(id *)value
+- (BOOL)scanCSSAttribute:(NSString * __autoreleasing*)name value:(id __autoreleasing*)value
 {
 	NSString *attrName = nil;
 	
@@ -185,7 +185,7 @@
 
 // NOTE: Simplified, we assume that there are no quotes in the URL
 
-- (BOOL)scanCSSURL:(NSString **)urlString
+- (BOOL)scanCSSURL:(NSString * __autoreleasing*)urlString
 {
 	if (![self scanString:@"url(" intoString:NULL])
 	{
@@ -231,12 +231,12 @@
 	return YES;
 }
 
-- (BOOL)scanHTMLColor:(DTColor **)color
+- (BOOL)scanHTMLColor:(DTColor * __autoreleasing*)color
 {
 	return [self scanHTMLColor:color HTMLName:NULL];
 }
 
-- (BOOL)scanHTMLColor:(DTColor **)color HTMLName:(NSString **)name
+- (BOOL)scanHTMLColor:(DTColor * __autoreleasing*)color HTMLName:(NSString * __autoreleasing*)name
 {
 	NSUInteger indexBefore = [self scanLocation];
 	
