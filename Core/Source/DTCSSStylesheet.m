@@ -678,7 +678,7 @@ extern unsigned int default_css_len;
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,

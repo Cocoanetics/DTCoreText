@@ -995,7 +995,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 @synthesize fontName = _fontName;
 @synthesize pointSize = _pointSize;
 
-@synthesize symbolicTraits;
+@dynamic symbolicTraits;
 
 @synthesize stylisticClass = _stylisticClass;
 @synthesize smallCapsFeature = _smallCapsFeature;

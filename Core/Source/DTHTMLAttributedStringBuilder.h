@@ -50,7 +50,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  @param docAttributes Currently not in use.
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  */
-- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes;
+- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
 
 
 /**

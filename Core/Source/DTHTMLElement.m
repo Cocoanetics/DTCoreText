@@ -21,7 +21,6 @@
 
 @interface DTHTMLElement ()
 
-@property (nonatomic, strong) NSMutableDictionary *fontCache;
 @property (nonatomic, strong) NSString *linkGUID;
 
 // internal initializer
@@ -1607,6 +1606,10 @@ NSDictionary *_classesForNames = nil;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
 @synthesize CSSClassNamesToIgnoreForCustomAttributes = _CSSClassNamesToIgnoreForCustomAttributes;
 @synthesize shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
+@synthesize backgroundStrokeColor = _backgroundStrokeColor;
+@synthesize backgroundStrokeWidth = _backgroundStrokeWidth;
+@synthesize backgroundCornerRadius = _backgroundCornerRadius;
+@synthesize letterSpacing = _letterSpacing;
 
 @end
 
