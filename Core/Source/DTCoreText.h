@@ -5,6 +5,7 @@
 #endif
 
 // global constants
+#import "DTCoreTextMacros.h"
 #import "DTCoreTextConstants.h"
 #import "DTCompatibility.h"
 
