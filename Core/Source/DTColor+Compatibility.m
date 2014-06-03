@@ -23,6 +23,7 @@
 #else
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7 || MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
+#import "DTCoreTextMacros.h"
 #import <objc/runtime.h>
 
 static void* DTCoreTextCGColorKey = &DTCoreTextCGColorKey;
