@@ -415,42 +415,23 @@ extern unsigned int default_css_len;
 
 	if (shortHand)
 	{
+		// ignore most tokens except background-color
+		
 		[styles removeObjectForKey:@"background"];
 		
-		NSMutableArray *tmpArray = [NSMutableArray array];
-		
-		if ([shortHand isKindOfClass:[NSString class]])
+		NSCharacterSet *tokenDelimiters = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		NSString *trimmedString = [shortHand stringByTrimmingCharactersInSet:tokenDelimiters];
+		NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
+
+		while (![scanner isAtEnd])
 		{
-			[tmpArray addObject:shortHand];
-		}
-		else if ([shortHand isKindOfClass:[NSArray class]])
-		{
-			NSArray *array = (NSArray *)shortHand;
-			[tmpArray addObjectsFromArray:array];
-		}
-		
-		for (NSString *onePart in tmpArray)
-		{
-			if (![onePart length])
+			NSString *colorName;
+			if ([scanner scanHTMLColor:NULL HTMLName:&colorName])
 			{
-				continue;
+				[styles setObject:colorName forKey:@"background-color"];
+				break;
 			}
-			
-			NSCharacterSet *partSeperators = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-			NSString *trimmedStr = [onePart stringByTrimmingCharactersInSet:partSeperators];
-			NSScanner *scanner = [NSScanner scannerWithString:trimmedStr];
-			NSCharacterSet *tokenEndSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-			
-			while (![scanner isAtEnd])
-			{
-				NSString *colorName;
-				if ([scanner scanHTMLColor:NULL HTMLName:&colorName])
-				{
-					[styles setObject:colorName forKey:@"background-color"];
-					break;
-				}
-				[scanner scanUpToCharactersFromSet:tokenEndSet intoString:NULL];
-			}
+			[scanner scanUpToCharactersFromSet:tokenDelimiters intoString:NULL];
 		}
 	}
 }

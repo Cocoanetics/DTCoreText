@@ -98,13 +98,24 @@
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
 			NSString *valueString = nil;
 			
-            if ([self scanString:@"rgb(" intoString:&valueString])
+			if ([self scanString:@"rgb(" intoString:&valueString])
 			{
 				if ([valueString isEqualToString:@"rgb("])
 				{
-                    [self scanUpToString:@";" intoString:&valueString];
-                    NSString * formattedRGBString = [NSString stringWithFormat:@"rgb(%@", valueString];
-                    [results addObject:formattedRGBString];
+					[self scanUpToString:@";" intoString:&valueString];
+					NSString * formattedRGBString = [NSString stringWithFormat:@"rgb(%@", valueString];
+					
+					if (nextIterationAddsNewEntry)
+					{
+						[results addObject:formattedRGBString];
+						nextIterationAddsNewEntry = NO;
+					}
+					else
+					{
+						valueString = [NSString stringWithFormat:@"%@ %@", [results lastObject], formattedRGBString];
+						[results removeLastObject];
+						[results addObject:valueString];
+					}
 				}
 			}
 			else if ([self scanString:@"," intoString:&valueString])
