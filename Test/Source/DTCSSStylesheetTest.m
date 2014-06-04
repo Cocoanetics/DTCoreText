@@ -507,4 +507,17 @@
 	STAssertTrue([backgroundColor isEqualToString:@"#00D"], @"background-color should be #00D");
 }
 
+// issue #774: Crash when encountering an rgb color in a background shorthand
+- (void)testCompressedBackground
+{
+	DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+	NSMutableDictionary *styles = [NSMutableDictionary dictionary];
+	
+	[styles setObject:@"none 0px 0px repeat scroll rgb(250, 250, 250)" forKey:@"background"];
+	[stylesheet _uncompressShorthands:styles];
+	
+	NSString *backgroundColor = [styles objectForKey:@"background-color"];
+	STAssertTrue([backgroundColor isEqualToString:@"rgb(250, 250, 250)"], @"background-color should be #rgb(250, 250, 250)");
+}
+
 @end
