@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <AvailabilityMacros.h>
+
 #if TARGET_OS_IPHONE
 
 /**
@@ -48,7 +50,7 @@
  Converts an NSColor into a CGColorRef. 
  @returns A CGColorRef of this NSColor 
 */
-- (CGColorRef)CGColor;
+- (CGColorRef)CGColor DT_RETURNS_INNER_POINTER;
 #endif
 
 @end
