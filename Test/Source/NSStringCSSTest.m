@@ -246,4 +246,15 @@
 	STAssertEquals(insets.right, (CGFloat)10, @"top should be 10");
 }
 
+// issue #774: rgb( should not cause function to return an array
+- (void)testStyleWithRGB
+{
+	NSString *style = @"background:foo bar rgb(255, 255, 255)";
+	
+	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
+	
+	id result = dictionary[@"background"];
+	STAssertTrue([result isKindOfClass:[NSString class]], @"Result should be single string");
+}
+
 @end
