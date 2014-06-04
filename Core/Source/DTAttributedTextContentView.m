@@ -500,7 +500,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
+			
+			if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+			{
             [self invalidateIntrinsicContentSize];
+			}
 		}
 	});
 }
@@ -633,7 +637,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_edgeInsets = edgeInsets;
 		
 		[self relayoutText];
-        [self invalidateIntrinsicContentSize];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -661,7 +669,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
 		}
-        [self invalidateIntrinsicContentSize];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -717,7 +729,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldAddFirstLineLeading = shouldAddLeading;
 		
 		[self setNeedsDisplay];
-        [self invalidateIntrinsicContentSize];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -728,7 +744,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldDrawImages = shouldDrawImages;
 		
 		[self setNeedsDisplay];
-        [self invalidateIntrinsicContentSize];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -739,7 +759,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldDrawLinks = shouldDrawLinks;
 		
 		[self setNeedsDisplay];
-        [self invalidateIntrinsicContentSize];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
