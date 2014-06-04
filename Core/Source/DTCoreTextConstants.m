@@ -33,7 +33,7 @@ NSString * const DTIgnoreInlineStylesOption = @"DTIgnoreInlineStyles";
 
 NSString * const DTTextListsAttribute = @"DTTextLists";
 NSString * const DTAttachmentParagraphSpacingAttribute = @"DTAttachmentParagraphSpacing";
-NSString * const DTLinkAttribute = @"NSLinkAttributeName";
+NSString * const DTLinkAttribute = @"NSLink";
 NSString * const DTLinkHighlightColorAttribute = @"DTLinkHighlightColor";
 NSString * const DTAnchorAttribute = @"DTAnchor";
 NSString * const DTGUIDAttribute = @"DTGUID";
