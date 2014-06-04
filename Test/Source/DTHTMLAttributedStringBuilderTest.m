@@ -418,6 +418,21 @@
 
 #pragma mark - Fonts
 
+// Pull Request 744: DTDefaultFontName to specify font name next to DTDefaultFontFamily
+- (void)testDefaultFontName
+{
+	NSDictionary *options = @{DTDefaultFontName: @"Helvetica-Bold"};
+
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><body><p>Bla<p></body></html>" options:options];
+
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+
+	STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Incorrect font family");
+	STAssertTrue(fontDescriptor.boldTrait, @"Should be bold");
+}
+
 // Issue 443: crash on combining font-family:inherit with small caps
 - (void)testFontFamilySmallCapsCrash
 {
@@ -585,6 +600,47 @@
 	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
 	
 	STAssertEqualObjects(descriptor.fontFamily, @"American Typewriter", @"Font Family should be 'American Typewriter'");
+}
+
+// issue 742
+- (void)testHelveticaNeueLight
+{
+	NSString *helveticaNeueFontFaceName = @"HelveticaNeue-Light";
+	
+	CTFontRef lightFont =  CTFontCreateWithName((__bridge CFStringRef)helveticaNeueFontFaceName, 12, NULL);
+	NSString *checkName = CFBridgingRelease(CTFontCopyPostScriptName(lightFont));
+	CFRelease(lightFont);
+	
+	if (![checkName isEqualToString:helveticaNeueFontFaceName])
+	{
+		NSLog(@"Font face '%@'not supported on current platform, skipping test", helveticaNeueFontFaceName);
+		return;
+	}
+	
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p><font face=\"HelveticaNeue-Light\">HelveticaNeue-Light <b>bold</b> <em>italic</em></font></p>" options:nil];
+	
+	CTFontRef font;
+	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
+	
+	// test normal font
+	NSRange expectedRange = NSMakeRange(0, 20);
+	STAssertEquals(fontRange, expectedRange, @"Font should be 20 characters long");
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	STAssertEqualObjects(descriptor.fontName, @"HelveticaNeue-Light", @"Font face should be 'HelveticaNeue-Light'");
+	
+	// test inherited font with bold
+	expectedRange = NSMakeRange(20, 4);  // "bold"
+	fontRange = [self _effectiveRangeOfFontAtIndex:expectedRange.location inAttributedString:attributedString font:&font];
+	STAssertEquals(fontRange, expectedRange, @"Bold Font should be 4 characters long");
+	descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	STAssertEqualObjects(descriptor.fontName, @"HelveticaNeue-Bold", @"Font face should be 'HelveticaNeue-Bold'");
+	
+	// test inherited font with italic
+	expectedRange = NSMakeRange(25, 7);  // "italic" (6) + NL (1) = 7
+	fontRange = [self _effectiveRangeOfFontAtIndex:expectedRange.location inAttributedString:attributedString font:&font];
+	STAssertEquals(fontRange, expectedRange, @"Italic Font should be 5 characters long");
+	descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	STAssertEqualObjects(descriptor.fontName, @"HelveticaNeue-Italic", @"Font face should be 'HelveticaNeue-Italic'");
 }
 
 #pragma mark - Nested Lists

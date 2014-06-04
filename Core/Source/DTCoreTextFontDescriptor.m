@@ -545,7 +545,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	// check the override table that has all preinstalled fonts plus the ones the user registered
 	NSString *overrideName = nil;
 	
-	if (_fontFamily)
+	if (_fontFamily && !_fontName) // forced font name takes precedence
 	{
 		if (_smallCapsFeature)
 		{
@@ -766,10 +766,6 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	DTCoreTextFontDescriptor *newDesc = [[DTCoreTextFontDescriptor allocWithZone:zone] initWithFontAttributes:[self fontAttributes]];
 	newDesc.pointSize = self.pointSize;
-	if (_stylisticClass)
-	{
-		newDesc.stylisticClass = self.stylisticClass;
-	}
 	
 	return newDesc;
 }
@@ -999,7 +995,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 @synthesize fontName = _fontName;
 @synthesize pointSize = _pointSize;
 
-@synthesize symbolicTraits;
+@dynamic symbolicTraits;
 
 @synthesize stylisticClass = _stylisticClass;
 @synthesize smallCapsFeature = _smallCapsFeature;

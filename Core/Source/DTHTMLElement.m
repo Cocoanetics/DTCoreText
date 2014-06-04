@@ -21,7 +21,6 @@
 
 @interface DTHTMLElement ()
 
-@property (nonatomic, strong) NSMutableDictionary *fontCache;
 @property (nonatomic, strong) NSString *linkGUID;
 
 // internal initializer
@@ -927,6 +926,9 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
 	if (fontStyle)
 	{
+		// remove font name since this would cause font creation to ignore the trait
+		_fontDescriptor.fontName = nil;
+		
 		if ([fontStyle isEqualToString:@"normal"])
 		{
 			_fontDescriptor.italicTrait = NO;
@@ -944,6 +946,9 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
 	if (fontWeight)
 	{
+		// remove font name since this would cause font creation to ignore the trait
+		_fontDescriptor.fontName = nil;
+		
 		if ([fontWeight isEqualToString:@"normal"])
 		{
 			_fontDescriptor.boldTrait = NO;
@@ -1601,6 +1606,10 @@ NSDictionary *_classesForNames = nil;
 @synthesize containsAppleConvertedSpace = _containsAppleConvertedSpace;
 @synthesize CSSClassNamesToIgnoreForCustomAttributes = _CSSClassNamesToIgnoreForCustomAttributes;
 @synthesize shouldProcessCustomHTMLAttributes = _shouldProcessCustomHTMLAttributes;
+@synthesize backgroundStrokeColor = _backgroundStrokeColor;
+@synthesize backgroundStrokeWidth = _backgroundStrokeWidth;
+@synthesize backgroundCornerRadius = _backgroundCornerRadius;
+@synthesize letterSpacing = _letterSpacing;
 
 @end
 

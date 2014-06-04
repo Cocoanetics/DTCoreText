@@ -33,8 +33,9 @@
 	<key>--ignore</key>
 	<array>
 		<string>*.m</string>
-		<string>Core/Externals</string>
+		<string>Externals</string>
 		<string>Demo</string>
+		<string>Test</string>
 	</array>
 	<key>--index-desc</key>
 	<string>Readme.markdown</string>

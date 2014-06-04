@@ -16,7 +16,7 @@
 #pragma mark CSS
 
 // scan a single element from a style list
-- (BOOL)scanCSSAttribute:(NSString **)name value:(id *)value
+- (BOOL)scanCSSAttribute:(NSString * __autoreleasing*)name value:(id __autoreleasing*)value
 {
 	NSString *attrName = nil;
 	
@@ -98,7 +98,27 @@
 			// attribute is not quoted, we append elements until we find a ; or the string is at the end
 			NSString *valueString = nil;
 			
-			if ([self scanString:@"," intoString:&valueString])
+			if ([self scanString:@"rgb(" intoString:&valueString])
+			{
+				if ([valueString isEqualToString:@"rgb("])
+				{
+					[self scanUpToString:@";" intoString:&valueString];
+					NSString * formattedRGBString = [NSString stringWithFormat:@"rgb(%@", valueString];
+					
+					if (nextIterationAddsNewEntry)
+					{
+						[results addObject:formattedRGBString];
+						nextIterationAddsNewEntry = NO;
+					}
+					else
+					{
+						valueString = [NSString stringWithFormat:@"%@ %@", [results lastObject], formattedRGBString];
+						[results removeLastObject];
+						[results addObject:valueString];
+					}
+				}
+			}
+			else if ([self scanString:@"," intoString:&valueString])
 			{
                 BOOL isStringOnlyCSSProperty = NO;
                 
@@ -106,7 +126,10 @@
 				{
 					[results addObject:valueString];
 				}
-				else if ([attrName isEqualToString:@"font"] || ([attrName rangeOfString:@"color"].location != NSNotFound) || ([attrName rangeOfString:@"shadow"].location != NSNotFound))
+				else if ([attrName isEqualToString:@"font"] ||
+						 ([attrName rangeOfString:@"color"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"shadow"].location != NSNotFound) ||
+						 ([attrName rangeOfString:@"background"].location != NSNotFound))
 				{
 					valueString = [NSString stringWithFormat:@"%@%@", [results lastObject], valueString];
 					[results removeLastObject];
@@ -173,7 +196,7 @@
 
 // NOTE: Simplified, we assume that there are no quotes in the URL
 
-- (BOOL)scanCSSURL:(NSString **)urlString
+- (BOOL)scanCSSURL:(NSString * __autoreleasing*)urlString
 {
 	if (![self scanString:@"url(" intoString:NULL])
 	{
@@ -219,12 +242,12 @@
 	return YES;
 }
 
-- (BOOL)scanHTMLColor:(DTColor **)color
+- (BOOL)scanHTMLColor:(DTColor * __autoreleasing*)color
 {
 	return [self scanHTMLColor:color HTMLName:NULL];
 }
 
-- (BOOL)scanHTMLColor:(DTColor **)color HTMLName:(NSString **)name
+- (BOOL)scanHTMLColor:(DTColor * __autoreleasing*)color HTMLName:(NSString * __autoreleasing*)name
 {
 	NSUInteger indexBefore = [self scanLocation];
 	

@@ -141,6 +141,23 @@
 	STAssertNotNil([attributes fontDescriptor], @"There should be a font descriptor");
 }
 
+// tests if the fontDescriptor convenience method of NSDictionary always returns something correct
+- (void)testDirectFontDescriptor
+{
+#if TARGET_OS_IPHONE
+	UIFont *font = [UIFont fontWithName:@"Courier" size:12];
+	NSDictionary *attributes = @{NSFontAttributeName: font};
+#else
+	NSFont *font = [NSFont fontWithName:@"Courier" size:12];
+	NSDictionary *attributes = @{NSFontAttributeName: font};
+#endif
+	
+	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
+	STAssertNotNil(fontDescriptor, @"There should be a font descriptor");
+	
+	STAssertEqualObjects(fontDescriptor.fontFamily, @"Courier", @"Font Family should be 'Courier'");
+}
+
 - (void)testFontDescriptorNil
 {
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:NULL];

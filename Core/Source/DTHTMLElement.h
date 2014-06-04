@@ -50,8 +50,6 @@
 	
 	NSArray *_shadows;
 	
-	NSMutableDictionary *_fontCache;
-	
 	DTHTMLElementDisplayStyle _displayStyle;
 	DTHTMLElementFloatStyle _floatStyle;
 	
@@ -260,13 +258,6 @@
  Specifies that whitespace contained in the receiver's text has been converted with Apple's algorithm.
  */
 @property (nonatomic, assign) BOOL containsAppleConvertedSpace;
-
-
-/**
- Ignores children for output that consist only of whitespace
- */
-@property (nonatomic, assign) BOOL supressWhitespaceChildren;
-
 
 /**
  Prevents adding custom HTML attributes to output

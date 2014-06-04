@@ -16,19 +16,9 @@
 #import "DTWeakSupport.h"
 #import "DTLog.h"
 
-@interface DTCoreTextGlyphRun ()
-
-@property (nonatomic, assign) CGRect frame;
-@property (nonatomic, assign) NSInteger numberOfGlyphs;
-@property (nonatomic, DT_WEAK_PROPERTY, readwrite) NSDictionary *attributes;
-
-@end
-
-
 @implementation DTCoreTextGlyphRun
 {
 	CTRunRef _run;
-	
 	CGRect _frame;
 	
 	CGFloat _offset; // x distance from line origin 
@@ -45,8 +35,8 @@
 	const CGPoint *_glyphPositionPoints;
 	
 	DT_WEAK_VARIABLE DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
-	DT_WEAK_VARIABLE NSDictionary *_attributes;
-    NSArray *_stringIndices;
+	DT_WEAK_VARIABLE NSDictionary *_attributes; // weak because it is owned by _run IVAR
+	NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;
 	BOOL _hyperlink;
@@ -137,7 +127,7 @@
 	
 	CGFloat smallestPixelWidth = 1.0f/contentScale;
 	
-	DTColor *backgroundColor = [_attributes backgroundColor];
+	DTColor *backgroundColor = [self.attributes backgroundColor];
 	
 	// -------------- Line-Out, Underline, Background-Color
 	BOOL drawStrikeOut = [[_attributes objectForKey:DTStrikeOutAttribute] boolValue];
@@ -265,8 +255,7 @@
 
 - (CGPathRef)newPathWithGlyphs
 {
-	NSDictionary *attributes = self.attributes;
-	CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
+	CTFontRef font = (__bridge CTFontRef)[self.attributes objectForKey:(id)kCTFontAttributeName];
 
 	if (!font)
 	{

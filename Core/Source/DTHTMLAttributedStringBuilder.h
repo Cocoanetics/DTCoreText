@@ -29,6 +29,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  
  - DTMaxImageSize: the maximum CGSize that a text attachment can fill
  - DTDefaultFontFamily: the default font family to use instead of Times New Roman
+ - DTDefaultFontName: the default font face to use instead of Times New Roman
  - DTDefaultFontSize: the default font size to use instead of 12
  - DTDefaultTextColor: the default text color
  - DTDefaultLinkColor: the default color for hyperlink text
@@ -49,7 +50,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  @param docAttributes Currently not in use.
  @returns Returns an initialized object, or `nil` if the data can’t be decoded.
  */
-- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes;
+- (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
 
 
 /**

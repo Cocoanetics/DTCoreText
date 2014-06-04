@@ -222,6 +222,7 @@
 	
 	[mps setMinimumLineHeight:_minimumLineHeight];
 	[mps setMaximumLineHeight:_maximumLineHeight];
+	[mps setLineHeightMultiple:_lineHeightMultiple];
 	
 	[mps setAlignment:DTNSTextAlignmentFromCTTextAlignment(_alignment)];
 	

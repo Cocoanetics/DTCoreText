@@ -1000,5 +1000,6 @@
 
 @synthesize attributedString = _attributedString;
 @synthesize textScale = _textScale;
+@synthesize useAppleConvertedSpace = _useAppleConvertedSpace;
 
 @end

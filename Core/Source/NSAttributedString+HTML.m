@@ -16,12 +16,12 @@
 
 @implementation NSAttributedString (HTML)
 
-- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary **)docAttributes
+- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
 {
 	return [self initWithHTMLData:data options:nil documentAttributes:docAttributes];
 }
 
-- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary **)docAttributes
+- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
 {
 	NSDictionary *optionsDict = nil;
 	
@@ -33,7 +33,7 @@
 	return [self initWithHTMLData:data options:optionsDict documentAttributes:docAttributes];
 }
 
-- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary **)docAttributes
+- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
 {
 	// only with valid data
 	if (![data length])

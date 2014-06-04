@@ -101,4 +101,16 @@
 }
 #endif
 
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+- (void)testPassLineHeightMultipleToNSParagraphStyle
+{
+	DTCoreTextParagraphStyle *paragraphStyle = [[DTCoreTextParagraphStyle alloc] init];
+	paragraphStyle.lineHeightMultiple = 3.1834;
+	
+	NSParagraphStyle *nsParagraphStyle = [paragraphStyle NSParagraphStyle];
+	
+	STAssertTrue(nsParagraphStyle.lineHeightMultiple==paragraphStyle.lineHeightMultiple, @"Paragraph styles should have the same value for lineHeightMultiple");
+}
+#endif
+
 @end

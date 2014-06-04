@@ -415,17 +415,23 @@ extern unsigned int default_css_len;
 
 	if (shortHand)
 	{
+		// ignore most tokens except background-color
+		
 		[styles removeObjectForKey:@"background"];
-		NSString *trimmedString = [shortHand stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		
+		NSCharacterSet *tokenDelimiters = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+		NSString *trimmedString = [shortHand stringByTrimmingCharactersInSet:tokenDelimiters];
 		NSScanner *scanner = [NSScanner scannerWithString:trimmedString];
-		NSCharacterSet *tokenEndSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		while (![scanner isAtEnd]) {
+
+		while (![scanner isAtEnd])
+		{
 			NSString *colorName;
-			if ([scanner scanHTMLColor:NULL HTMLName:&colorName]) {
+			if ([scanner scanHTMLColor:NULL HTMLName:&colorName])
+			{
 				[styles setObject:colorName forKey:@"background-color"];
 				break;
 			}
-			[scanner scanUpToCharactersFromSet:tokenEndSet intoString:NULL];
+			[scanner scanUpToCharactersFromSet:tokenDelimiters intoString:NULL];
 		}
 	}
 }
@@ -678,7 +684,7 @@ extern unsigned int default_css_len;
 
 #pragma mark Accessing Style Information
 
-- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet **)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
+- (NSDictionary *)mergedStyleDictionaryForElement:(DTHTMLElement *)element matchedSelectors:(NSSet * __autoreleasing*)matchedSelectors ignoreInlineStyle:(BOOL)ignoreInlineStyle
 {
 	// We are going to combine all the relevant styles for this tag.
 	// (Note that when styles are applied, the later styles take precedence,

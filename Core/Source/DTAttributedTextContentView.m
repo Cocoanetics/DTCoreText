@@ -211,8 +211,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	
 	for (DTCoreTextLayoutLine *oneLine in lines)
 	{
-		NSRange lineRange = [oneLine stringRange];
-		
 		NSUInteger skipRunsBeforeLocation = 0;
 		
 		for (DTCoreTextGlyphRun *oneRun in oneLine.glyphRuns)
@@ -225,23 +223,50 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			{
 				// see if it's a link
 				NSRange effectiveRangeOfLink;
-				NSRange effectiveRangeOfAttachment;
 				
 				// make sure that a link is only as long as the area to the next attachment or the current attachment itself
-				DTTextAttachment *attachment = [layoutString attribute:NSAttachmentAttributeName atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfAttachment inRange:lineRange];
+				DTTextAttachment *attachment = oneRun.attributes[NSAttachmentAttributeName];
 				
 				// if there is no attachment then the effectiveRangeOfAttachment contains the range until the next attachment
-				NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfLink inRange:effectiveRangeOfAttachment];
+				NSURL *linkURL = oneRun.attributes[DTLinkAttribute];
+				
+				if (linkURL)
+				{
+					effectiveRangeOfLink = runRange;
+				}
 				
 				// avoid chaining together glyph runs for an attachment
 				if (linkURL && !attachment)
 				{
-					// compute bounding frame over potentially multiple (chinese) glyphs
-					skipRunsBeforeLocation = effectiveRangeOfLink.location+effectiveRangeOfLink.length;
+					NSInteger glyphIndex = [oneLine.glyphRuns indexOfObject:oneRun];
 					
-					// make one link view for all glyphruns in this line
+					// chain together this glyph run with following runs for combined link buttons
+					for (NSInteger i=glyphIndex+1; i<[oneLine.glyphRuns count]; i++)
+					{
+						DTCoreTextGlyphRun *followingRun = oneLine.glyphRuns[i];
+						NSURL *followingURL = followingRun.attributes[DTLinkAttribute];
+						
+						if (![[followingURL absoluteString] isEqualToString:[linkURL absoluteString]])
+						{
+							// following glyph run has different or no link URL
+							break;
+						}
+						
+						if (followingRun.attachment)
+						{
+							// do not join a following attachment to the combined link
+							break;
+						}
+						
+						// extend effective link range
+						effectiveRangeOfLink = NSUnionRange(effectiveRangeOfLink, followingRun.stringRange);
+					}
+					
+					// frame for link view includes for all joined glyphruns with same link in this line
 					frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRangeOfLink];
-					runRange = effectiveRangeOfLink;
+					
+					// this following glyph run link attribute is joined to link range
+					skipRunsBeforeLocation = NSMaxRange(effectiveRangeOfLink);
 				}
 				else
 				{
@@ -295,7 +320,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (existingAttachmentView)
 					{
-						//dispatch_sync(dispatch_get_main_queue(), ^{
 						existingAttachmentView.hidden = NO;
 						existingAttachmentView.frame = frameForSubview;
 						
@@ -303,7 +327,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						
 						[existingAttachmentView setNeedsLayout];
 						[existingAttachmentView setNeedsDisplay];
-						//});
 						
 						linkURL = nil; // prevent adding link button on top of image view
 					}
@@ -500,6 +523,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
+			
+			if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+			{
+            [self invalidateIntrinsicContentSize];
+			}
 		}
 	});
 }
@@ -632,6 +660,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_edgeInsets = edgeInsets;
 		
 		[self relayoutText];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -658,6 +691,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			// this is needed or else no lazy layout will be triggered if there is no layout frame yet (before this is added to a superview)
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
+		}
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
 		}
 	}
 }
@@ -714,6 +752,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldAddFirstLineLeading = shouldAddLeading;
 		
 		[self setNeedsDisplay];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -724,6 +767,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldDrawImages = shouldDrawImages;
 		
 		[self setNeedsDisplay];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 
@@ -734,6 +782,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		_shouldDrawLinks = shouldDrawLinks;
 		
 		[self setNeedsDisplay];
+		
+		if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+		{
+			[self invalidateIntrinsicContentSize];
+		}
 	}
 }
 

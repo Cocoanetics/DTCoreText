@@ -240,7 +240,7 @@
 	return foundRange;
 }
 
-- (NSRange)rangeOfLinkAtIndex:(NSUInteger)location URL:(NSURL **)URL
+- (NSRange)rangeOfLinkAtIndex:(NSUInteger)location URL:(NSURL * __autoreleasing*)URL
 {
 	NSRange rangeSoFar;
 	
