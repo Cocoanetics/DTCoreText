@@ -22,12 +22,18 @@
 
 #else
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7 || MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
+#import "DTCoreTextMacros.h"
 #import <objc/runtime.h>
 
+static void* DTCoreTextCGColorKey = &DTCoreTextCGColorKey;
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7 || MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
+
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
 @interface NSColor (DTCoreText)
 + (NSColor *)DTCoreText_colorWithCGColor:(CGColorRef)cgColor;
-- (CGColorRef)DTCoreText_CGColor;
+- (CGColorRef)DTCoreText_CGColor DT_RETURNS_INNER_POINTER;
 @end
 
 static void DTCoreTextAddMissingSelector(Class aClass, SEL aSelector, SEL implementationSelector)
@@ -61,7 +67,7 @@ static void DTCoreTextNSColorInitialization(void)
 #define colorWithCGColor	DTCoreText_colorWithCGColor
 #define CGColor				DTCoreText_CGColor
 #define HTML				DTCoreText
-#endif
+#endif // MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
 
 @implementation NSColor (HTML)
 
@@ -90,20 +96,25 @@ static void DTCoreTextNSColorInitialization(void)
 // From https://gist.github.com/1593255
 - (CGColorRef)CGColor
 {
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	
-	NSColor *selfCopy = [self colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-	
-	CGFloat colorValues[4];
-	[selfCopy getRed:&colorValues[0] green:&colorValues[1] blue:&colorValues[2] alpha:&colorValues[3]];
-	
-	CGColorRef color = CGColorCreate(colorSpace, colorValues);
-	
-	CGColorSpaceRelease(colorSpace);
+	CGColorRef color = (__bridge CGColorRef)objc_getAssociatedObject(self, DTCoreTextCGColorKey);
+	if (color == NULL)
+	{
+		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+		
+		NSColor *selfCopy = [self colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+		
+		CGFloat colorValues[4];
+		[selfCopy getRed:&colorValues[0] green:&colorValues[1] blue:&colorValues[2] alpha:&colorValues[3]];
+		
+		color = CGColorCreate(colorSpace, colorValues);
+		CGColorSpaceRelease(colorSpace);
+		
+		objc_setAssociatedObject(self, DTCoreTextCGColorKey, CFBridgingRelease(color), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	}
 	
 	return color;
 }
-#endif
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_7 || MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7
 
 @end
 
