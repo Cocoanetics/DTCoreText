@@ -32,8 +32,8 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A7949A5714CC456000A8CCDE"
-               BuildableName = "MacUnitTest.octest"
+               BlueprintIdentifier = "A78D9F771965B7DD00C80986"
+               BuildableName = "MacUnitTest.xctest"
                BlueprintName = "MacUnitTest"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>

@@ -39,26 +39,27 @@
 	[DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica"];
 	
 	NSAttributedString *attributedString = [super attributedStringFromHTMLString:@"<span style=\"font-family:FooBar\">text</span>" options:nil];
-	STAssertNotNil(attributedString, @"There should be an attributed string");
+	XCTAssertNotNil(attributedString, @"There should be an attributed string");
 	
 	NSRange effectiveRange;
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:&effectiveRange];
 	
 	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
-	STAssertEquals(expectedRange, effectiveRange, @"Attributes should be entire range");
+	XCTAssertEqual(expectedRange.length, effectiveRange.length, @"Attributes should be entire range");
+	XCTAssertEqual(expectedRange.location, effectiveRange.location, @"Attributes should be entire range");
 	
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-	STAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font should have fallen back to Helvetica");
+	XCTAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font should have fallen back to Helvetica");
 }
 
 - (void)testNilFallbackFamily
 {
-	STAssertThrows([DTCoreTextFontDescriptor setFallbackFontFamily:nil], @"Should not accept invalid fallback font family");
+	XCTAssertThrows([DTCoreTextFontDescriptor setFallbackFontFamily:nil], @"Should not accept invalid fallback font family");
 }
 
 - (void)testInvalidFallbackFamily
 {
-	STAssertThrows([DTCoreTextFontDescriptor setFallbackFontFamily:@"HelveticaNeue"], @"Should not accept invalid fallback font family");
+	XCTAssertThrows([DTCoreTextFontDescriptor setFallbackFontFamily:@"HelveticaNeue"], @"Should not accept invalid fallback font family");
 }
 
 @end

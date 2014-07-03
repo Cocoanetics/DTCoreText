@@ -6,14 +6,13 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
 #import "DTCoretext.h"
 
 
 /**
  Specialized test case class for testing DTCoreText issues
  */
-@interface DTCoreTextTestCase : SenTestCase
+@interface DTCoreTextTestCase : XCTestCase
 
 /**
  @name Utilities

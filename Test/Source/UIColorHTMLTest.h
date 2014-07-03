@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@interface UIColorHTMLTest : SenTestCase {
+@interface UIColorHTMLTest : XCTestCase {
 
 }
 

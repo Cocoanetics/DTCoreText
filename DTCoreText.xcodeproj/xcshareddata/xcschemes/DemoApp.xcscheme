@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A788CA671486456100E1AFD9"
-               BuildableName = "UnitTest.octest"
+               BuildableName = "UnitTest.xctest"
                BlueprintName = "UnitTest"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
@@ -42,6 +42,26 @@
                   Identifier = "DTCoreTextTestCase">
                </Test>
             </SkippedTests>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A78D9F571965B24100C80986"
+               BuildableName = "DemoApp Tests.xctest"
+               BlueprintName = "DemoApp Tests"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A78D9F671965B2F700C80986"
+               BuildableName = "DemoApp Tests2.xctest"
+               BlueprintName = "DemoApp Tests2"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>

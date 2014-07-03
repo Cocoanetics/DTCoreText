@@ -20,28 +20,28 @@
 	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
-	STAssertTrue([shadows count]==1, @"Could not find one shadow");
+	XCTAssertTrue([shadows count]==1, @"Could not find one shadow");
 	
 	NSDictionary *oneShadow = [shadows lastObject];
 	
-	STAssertTrue([oneShadow count]==3, @"Could not find 3 sub-values for shadow");
+	XCTAssertTrue([oneShadow count]==3, @"Could not find 3 sub-values for shadow");
 	
 	CGFloat blur = [[oneShadow objectForKey:@"Blur"] floatValue];
-	STAssertTrue(blur==3.0f, @"Blur should be 3");
+	XCTAssertTrue(blur==3.0f, @"Blur should be 3");
 	
 	CGSize offset = [[oneShadow objectForKey:@"Offset"] CGSizeValue];
 	CGSize expectedOffset = CGSizeMake(1, 2);
-	STAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
+	XCTAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
 	
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
 	DTColor *redColor = [DTColor redColor];
 
 #if TARGET_OS_IPHONE
-	STAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
+	XCTAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
 #else
-	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
-	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
-	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
+	XCTAssertEqual([shadowColor redComponent], [redColor redComponent], @"Red component differs");
+	XCTAssertEqual([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
+	XCTAssertEqual([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
 #endif
 }
 
@@ -53,28 +53,28 @@
 	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
-	STAssertTrue([shadows count]==1, @"Could not find one shadow");
+	XCTAssertTrue([shadows count]==1, @"Could not find one shadow");
 	
 	NSDictionary *oneShadow = [shadows lastObject];
 	
-	STAssertTrue([oneShadow count]==3, @"Could not find 3 sub-values for shadow");
+	XCTAssertTrue([oneShadow count]==3, @"Could not find 3 sub-values for shadow");
 	
 	CGFloat blur = [[oneShadow objectForKey:@"Blur"] floatValue];
-	STAssertTrue(blur==3.0f, @"Blur should be 3");
+	XCTAssertTrue(blur==3.0f, @"Blur should be 3");
 	
 	CGSize offset = [[oneShadow objectForKey:@"Offset"] CGSizeValue];
 	CGSize expectedOffset = CGSizeMake(1, 2);
-	STAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
+	XCTAssertTrue(CGSizeEqualToSize(offset, expectedOffset), @"Offset should be 1,2");
 	
 	DTColor *shadowColor = [oneShadow objectForKey:@"Color"];
 	DTColor *redColor = [DTColor redColor];
 	
 #if TARGET_OS_IPHONE
-	STAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
+	XCTAssertEqualObjects(shadowColor, redColor, @"Shadow color is not red");
 #else
-	STAssertEquals([shadowColor redComponent], [redColor redComponent], @"Red component differs");
-	STAssertEquals([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
-	STAssertEquals([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
+	XCTAssertEqual([shadowColor redComponent], [redColor redComponent], @"Red component differs");
+	XCTAssertEqual([shadowColor greenComponent], [redColor greenComponent], @"Green component differs");
+	XCTAssertEqual([shadowColor blueComponent], [redColor blueComponent], @"Blue component differs");
 #endif
 }
 
@@ -85,7 +85,7 @@
 	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
-	STAssertNil(shadows, @"Got back an array with %d entries instead of nil", [shadows count]);
+	XCTAssertNil(shadows, @"Got back an array with %ld entries instead of nil", (long)[shadows count]);
 }
 
 - (void)testShadowNone
@@ -95,7 +95,7 @@
 	DTColor *color = (DTColor *)[DTColor blackColor];
 	NSArray *shadows = [string arrayOfCSSShadowsWithCurrentTextSize:10.0 currentColor:color];
 	
-	STAssertNil(shadows, @"Got back an array with %d entries instead of nil", [shadows count]);
+	XCTAssertNil(shadows, @"Got back an array with %ld entries instead of nil", (long)[shadows count]);
 }
 
 - (void)testOneNoteStyle
@@ -105,10 +105,10 @@
 	NSDictionary *styles = [style dictionaryOfCSSStyles];
 	
 	NSString *fontFamily = styles[@"font-family"];
-	STAssertTrue([fontFamily isEqualToString:@"Times New Roman"], @"Font Family should be Times");
+	XCTAssertTrue([fontFamily isEqualToString:@"Times New Roman"], @"Font Family should be Times");
 	
 	NSString *fontAttribute = styles[@"font"];
-	STAssertNil(fontAttribute, @"Uppercase FONT attribute shoudl be ignored");
+	XCTAssertNil(fontAttribute, @"Uppercase FONT attribute shoudl be ignored");
 }
 
 - (void)testInvalidFontSize
@@ -116,11 +116,11 @@
 	NSString *style = @"normal";
 	
 	BOOL isCSSLength = [style isCSSLengthValue];
-	STAssertFalse(isCSSLength, @"Should not be a normal font value");
+	XCTAssertFalse(isCSSLength, @"Should not be a normal font value");
 	
 	style = @"10px";
 	isCSSLength = [style isCSSLengthValue];
-	STAssertTrue(isCSSLength, @"Should be a valid font size value");
+	XCTAssertTrue(isCSSLength, @"Should be a valid font size value");
 }
 
 - (void)testMultiFontFamily
@@ -130,8 +130,8 @@
 	
 	id font =  dictionary[@"font-family"];
 	
-	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
-	STAssertTrue([font count] == 6, @"6 fonts should be returned");
+	XCTAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	XCTAssertTrue([font count] == 6, @"6 fonts should be returned");
 }
 
 - (void)testSimpleQuotedFontFamily
@@ -141,7 +141,7 @@
 	
 	id font =  dictionary[@"font-family"];
 	
-	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
+	XCTAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
 }
 
 - (void)testSimpleUnquotedFontFamily
@@ -151,7 +151,7 @@
 	
 	id font =  dictionary[@"font-family"];
 	
-	STAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
+	XCTAssertEqualObjects(@"Courier New", font, @"Font count should be \"Courier New\"");
 }
 
 - (void)testMultiFontFamilyWithSize
@@ -162,9 +162,9 @@
 	id font =  dictionary[@"font-family"];
 	NSString *size = dictionary[@"font-size"];
 	
-	STAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
-	STAssertTrue([font count] == 6, @"6 fonts should be returned");
-	STAssertTrue([size isEqualToString:@"60px"], @"Font size should be 60px");
+	XCTAssertTrue([font isKindOfClass:[NSArray class]], @"Font count should be an array");
+	XCTAssertTrue([font count] == 6, @"6 fonts should be returned");
+	XCTAssertTrue([size isEqualToString:@"60px"], @"Font size should be 60px");
 }
 
 - (void)testTextShadow
@@ -173,8 +173,8 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id shadow = dictionary[@"text-shadow"];
 	
-	STAssertEqualObjects(@"-1px -1px #555, 1px 1px #EEE", shadow, @"Shadow should be \"-1px -1px #555, 1px 1px #EEE\"");
-	STAssertTrue([shadow isKindOfClass:[NSString class]], @"shadow count should be a string");
+	XCTAssertEqualObjects(@"-1px -1px #555, 1px 1px #EEE", shadow, @"Shadow should be \"-1px -1px #555, 1px 1px #EEE\"");
+	XCTAssertTrue([shadow isKindOfClass:[NSString class]], @"shadow count should be a string");
 }
 
 - (void)testColor
@@ -183,8 +183,8 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id color = dictionary[@"color"];
 	
-	STAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Color should be \"rgb(255, 0, 0)\"");
-	STAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
+	XCTAssertEqualObjects(@"rgb(255, 0, 0)", color, @"Color should be \"rgb(255, 0, 0)\"");
+	XCTAssertTrue([color isKindOfClass:[NSString class]], @"shadow count should be a string");	
 }
 
 - (void)testBackgroundColor
@@ -193,8 +193,8 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id color = dictionary[@"background-color"];
 	
-	STAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
-	STAssertTrue([color isKindOfClass:[NSString class]], @"background-color should be a string");
+	XCTAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+	XCTAssertTrue([color isKindOfClass:[NSString class]], @"background-color should be a string");
 }
 
 - (void)testBackgroundRGB
@@ -203,8 +203,8 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	id color = dictionary[@"background"];
 
-	STAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
-	STAssertTrue([color isKindOfClass:[NSString class]], @"background rgb should be a string");
+	XCTAssertEqualObjects(@"rgb(255, 88, 44)", color, @"Background color should be \"rgb(255, 88, 44)\"");
+	XCTAssertTrue([color isKindOfClass:[NSString class]], @"background rgb should be a string");
 }
 
 - (void)testEdgeInsets
@@ -213,37 +213,37 @@
 	NSString *style = @"10px 20px 30px 40px";
 	DTEdgeInsets insets = [style DTEdgeInsetsRelativeToCurrentTextSize:12.0 textScale:1.0];
 	
-	STAssertEquals(insets.top, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.left, (CGFloat)40, @"top should be 40");
-	STAssertEquals(insets.bottom, (CGFloat)30, @"top should be 30");
-	STAssertEquals(insets.right, (CGFloat)20, @"top should be 20");
+	XCTAssertEqual(insets.top, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.left, (CGFloat)40, @"top should be 40");
+	XCTAssertEqual(insets.bottom, (CGFloat)30, @"top should be 30");
+	XCTAssertEqual(insets.right, (CGFloat)20, @"top should be 20");
 
 	// 3 values
 	style = @"10px 20px 30px";
 	insets = [style DTEdgeInsetsRelativeToCurrentTextSize:12.0 textScale:1.0];
 	
-	STAssertEquals(insets.top, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.left, (CGFloat)20, @"top should be 20");
-	STAssertEquals(insets.bottom, (CGFloat)30, @"top should be 30");
-	STAssertEquals(insets.right, (CGFloat)20, @"top should be 20");
+	XCTAssertEqual(insets.top, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.left, (CGFloat)20, @"top should be 20");
+	XCTAssertEqual(insets.bottom, (CGFloat)30, @"top should be 30");
+	XCTAssertEqual(insets.right, (CGFloat)20, @"top should be 20");
 	
 	// 2 values
 	style = @"10px 20px";
 	insets = [style DTEdgeInsetsRelativeToCurrentTextSize:12.0 textScale:1.0];
 	
-	STAssertEquals(insets.top, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.left, (CGFloat)20, @"top should be 20");
-	STAssertEquals(insets.bottom, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.right, (CGFloat)20, @"top should be 20");
+	XCTAssertEqual(insets.top, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.left, (CGFloat)20, @"top should be 20");
+	XCTAssertEqual(insets.bottom, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.right, (CGFloat)20, @"top should be 20");
 
 	// 1 value
 	style = @"10px";
 	insets = [style DTEdgeInsetsRelativeToCurrentTextSize:12.0 textScale:1.0];
 	
-	STAssertEquals(insets.top, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.left, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.bottom, (CGFloat)10, @"top should be 10");
-	STAssertEquals(insets.right, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.top, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.left, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.bottom, (CGFloat)10, @"top should be 10");
+	XCTAssertEqual(insets.right, (CGFloat)10, @"top should be 10");
 }
 
 // issue #774: rgb( should not cause function to return an array
@@ -254,7 +254,7 @@
 	NSDictionary *dictionary = [style dictionaryOfCSSStyles];
 	
 	id result = dictionary[@"background"];
-	STAssertTrue([result isKindOfClass:[NSString class]], @"Result should be single string");
+	XCTAssertTrue([result isKindOfClass:[NSString class]], @"Result should be single string");
 }
 
 @end

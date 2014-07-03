@@ -31,7 +31,7 @@
 		CTTextAlignment	alignment;
 		CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment);
 
-		STAssertTrue(alignment == [obj charValue], @"Text alignment should be justified");
+		XCTAssertTrue(alignment == [obj charValue], @"Text alignment should be justified");
 	}];
 }
 

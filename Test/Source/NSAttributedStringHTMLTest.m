@@ -70,7 +70,7 @@
 	
 	//[self dumpOneResult:resultOnIOS versusOtherResult:resultOnMac];
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
 }
 
 
@@ -84,7 +84,7 @@
 	
 	NSString *resultOnMac = @"<50726566 69780a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4e 65772050 61726167 72617068 0a537566 666978>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
 }
 
 
@@ -98,7 +98,7 @@
 	
 	NSString *resultOnMac = @"<4265666f 72650a09 e280a209 4f6e650a 09e280a2 0954776f 0a416674 65720a>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
 - (void)testImageParagraphs
@@ -112,7 +112,7 @@
 	
 	NSString *resultOnMac = @"<4265666f 72650aef bfbc0a48 65616465 720a6166 7465720a 536f6d65 20696e6c 696e6520 efbfbc20 74657874 2e0a>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
 - (void)testSpaceNormalization
@@ -125,7 +125,7 @@
 	
 	NSString *resultOnMac = @"<4e6f7720 74686572 65206973 20736f6d 6520626f 6c642074 65787420 616e6420 73706163 65732073 686f756c 64206265 206e6f72 6d616c69 7a65642e 0a>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
 - (void)testSpaceAndNewlines
@@ -138,7 +138,7 @@
 	
 	NSString *resultOnMac = @"<626c6120 666f6c6c 6f777320 4e535374 72696e67 202a7374 72203d20 40225468 65205175 69636b20 42726f77 6e20466f 78204272 6f776e22 3b>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
 }
 
 - (void)testMissingClosingTagAndSpacing
@@ -151,7 +151,7 @@
 	
 	NSString *resultOnMac = @"<696d6167 65206c61 7374>";
 	
-	STAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
+	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
 	
 }
 
