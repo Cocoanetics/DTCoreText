@@ -32,7 +32,7 @@
 	// create a new DT style from it
 	DTCoreTextParagraphStyle *newParagraphStyle = [[DTCoreTextParagraphStyle alloc] initWithCTParagraphStyle:ctParagraphStyle];
 	
-	STAssertNotNil(newParagraphStyle.tabStops, @"There are no tab stops in newly created paragraph style");
+	XCTAssertNotNil(newParagraphStyle.tabStops, @"There are no tab stops in newly created paragraph style");
 }
 
 
@@ -44,8 +44,8 @@
 	CTTextAlignment tabAlignment = CTTextTabGetAlignment(textTab);
 	CGFloat tabLocation = CTTextTabGetLocation(textTab);
 	
-	STAssertTrue(tabAlignment == aligment, @"tab alignment should be %d but is %d", aligment, tabAlignment);
-	STAssertTrue(tabLocation == location, @"tab position should be %d but is %d", location, tabLocation);
+	XCTAssertTrue(tabAlignment == aligment, @"tab alignment should be %d but is %d", aligment, tabAlignment);
+	XCTAssertTrue(tabLocation == location, @"tab position should be %f but is %f", location, tabLocation);
 }
 
 - (void)testTabsOnNSParagraphStyle
@@ -71,7 +71,7 @@
 	
 	NSArray *tabStops = [nsParagraphStyle valueForKey:@"tabStops"];
 	
-	STAssertTrue([tabStops count]==5, @"There should be 2 tab stops");
+	XCTAssertTrue([tabStops count]==5, @"There should be 2 tab stops");
 	
 	// test round drip
 	
@@ -79,7 +79,7 @@
 	
 	NSUInteger tabCount = [newParagraphStyle.tabStops count];
 	
-	STAssertTrue(tabCount==5, @"There should be 2 tab stops");
+	XCTAssertTrue(tabCount==5, @"There should be 2 tab stops");
 	
 	if (tabCount==5)
 	{
@@ -109,7 +109,7 @@
 	
 	NSParagraphStyle *nsParagraphStyle = [paragraphStyle NSParagraphStyle];
 	
-	STAssertTrue(nsParagraphStyle.lineHeightMultiple==paragraphStyle.lineHeightMultiple, @"Paragraph styles should have the same value for lineHeightMultiple");
+	XCTAssertTrue(nsParagraphStyle.lineHeightMultiple==paragraphStyle.lineHeightMultiple, @"Paragraph styles should have the same value for lineHeightMultiple");
 }
 #endif
 

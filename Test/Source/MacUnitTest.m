@@ -169,8 +169,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	
 	*/
 
-	STAssertEquals([macString length], [iosString length], @"String output has different length");
-	
+	XCTAssertEqual([macString length], [iosString length], @"String output has different length");
 	
 	BOOL ignoreCase = [[testParameters objectForKey:@"IgnoreCase"] boolValue];
 	BOOL ignoreNonAlphanumericCharacters = [[testParameters objectForKey:@"IgnoreNonAlphanumericCharacters"] boolValue];
@@ -212,7 +211,7 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 				
 				if (!isSame)
 				{
-					STFail(@"First differing character at index %d: iOS '%@' versus Mac '%@'", i, [ios stringByAddingHTMLEntities] , [mac stringByAddingHTMLEntities]);
+					XCTFail(@"First differing character at index %ld: iOS '%@' versus Mac '%@'", (long)i, [ios stringByAddingHTMLEntities] , [mac stringByAddingHTMLEntities]);
 				}
 				break;
 			}
@@ -253,8 +252,8 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
 	CTFontRef secondFontiOS = (__bridge CTFontRef)[iosString attribute:(id)kCTFontAttributeName atIndex:NSMaxRange(firstFontRangeiOS) effectiveRange:&secondFontRangeiOS];
 	CGFloat secondFontiOSPoints = CTFontGetSize(secondFontiOS);
 
-	STAssertEquals(firstFontMacPoints, firstFontiOSPoints, @"First Font should be same size");
-	STAssertEquals(secondFontMacPoints, secondFontiOSPoints, @"Second Font should be same size");
+	XCTAssertEqual(firstFontMacPoints, firstFontiOSPoints, @"First Font should be same size");
+	XCTAssertEqual(secondFontMacPoints, secondFontiOSPoints, @"Second Font should be same size");
 }
 
 /**

@@ -6,11 +6,9 @@
 //  Copyright (c) 2014 Drobnik.com. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-
 #import "DTCSSListStyle.h"
 
-@interface DTCSSListStyleTest : SenTestCase
+@interface DTCSSListStyleTest : XCTestCase
 
 @end
 
@@ -23,7 +21,7 @@
 	NSData *listStyleData = [NSKeyedArchiver archivedDataWithRootObject:listStyle];
 	DTCSSListStyle *unarchivedListStyle = [NSKeyedUnarchiver unarchiveObjectWithData:listStyleData];
 
-	STAssertTrue([listStyle isEqualToListStyle:unarchivedListStyle], @"Unarchived list styles should be equal to original");
+	XCTAssertTrue([listStyle isEqualToListStyle:unarchivedListStyle], @"Unarchived list styles should be equal to original");
 }
 
 - (void)testNSCodingNotEqual {
@@ -33,12 +31,12 @@
 	NSDictionary *styles2 = @{@"list-style-type":@"circle", @"list-style-position":@"inherit"};
 	DTCSSListStyle *listStyle2 = [[DTCSSListStyle alloc] initWithStyles:styles2];
 
-	STAssertFalse([listStyle1 isEqualToListStyle:listStyle2], @"Sanity check");
+	XCTAssertFalse([listStyle1 isEqualToListStyle:listStyle2], @"Sanity check");
 
 	NSData *listStyle1Data = [NSKeyedArchiver archivedDataWithRootObject:listStyle1];
 	DTCSSListStyle *unarchivedListStyle1 = [NSKeyedUnarchiver unarchiveObjectWithData:listStyle1Data];
 
-	STAssertFalse([unarchivedListStyle1 isEqualToListStyle:listStyle2], @"Different list styles should remain different");
+	XCTAssertFalse([unarchivedListStyle1 isEqualToListStyle:listStyle2], @"Different list styles should remain different");
 
 }
 

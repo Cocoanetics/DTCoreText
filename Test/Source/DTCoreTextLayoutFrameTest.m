@@ -29,7 +29,8 @@
 	CGSize sizeNeeded = [layoutFrame frame].size;
 	CGSize sizeExpected = CGSizeMake(1024, 16);
 	
-	STAssertEquals(sizeNeeded, sizeExpected, @"Size incorrect");
+	XCTAssertEqual(sizeNeeded.height, sizeExpected.height, @"Size incorrect");
+	XCTAssertEqual(sizeNeeded.width, sizeExpected.width, @"Size incorrect");
 }
 
 - (void)testVariableHeightAndWidth
@@ -45,7 +46,8 @@
 	CGSize sizeNeeded = [layoutFrame frame].size;
 	CGSize sizeExpected = CGSizeMake(76, 16);
 	
-	STAssertEquals(sizeNeeded, sizeExpected, @"Size incorrect");
+	XCTAssertEqual(sizeNeeded.height, sizeExpected.height, @"Size incorrect");
+	XCTAssertEqual(sizeNeeded.width, sizeExpected.width, @"Size incorrect");
 }
 
 @end

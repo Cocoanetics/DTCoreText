@@ -20,7 +20,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<b>bold</b>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isBold], @"Attributes should be bold");
+	XCTAssertTrue([attributes isBold], @"Attributes should be bold");
 }
 
 - (void)testItalic
@@ -28,7 +28,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<i>italic</i>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isItalic], @"Attributes should be italic");
+	XCTAssertTrue([attributes isItalic], @"Attributes should be italic");
 }
 
 - (void)testUnderline
@@ -36,7 +36,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<u>underline</u>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isUnderline], @"Attributes should be underlined");
+	XCTAssertTrue([attributes isUnderline], @"Attributes should be underlined");
 }
 
 - (void)testNSUnderline
@@ -51,7 +51,7 @@
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isUnderline], @"Attributes should be underlined");
+	XCTAssertTrue([attributes isUnderline], @"Attributes should be underlined");
 }
 
 - (void)testStrikethrough
@@ -59,7 +59,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<del>strikethrough</del>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isStrikethrough], @"Attributes should be strikethrough");
+	XCTAssertTrue([attributes isStrikethrough], @"Attributes should be strikethrough");
 }
 
 - (void)testNSStrikethrough
@@ -73,7 +73,7 @@
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:buildAttributes];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes isStrikethrough], @"Attributes should be strikethrough");
+	XCTAssertTrue([attributes isStrikethrough], @"Attributes should be strikethrough");
 }
 
 
@@ -82,7 +82,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<h3>header</h3>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes headerLevel]==3, @"Header level should be 3");
+	XCTAssertTrue([attributes headerLevel]==3, @"Header level should be 3");
 }
 
 - (void)testHasAttachment
@@ -90,7 +90,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<img src=\"Oliver.jpg\">" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertTrue([attributes hasAttachment], @"There should be a text attachment");
+	XCTAssertTrue([attributes hasAttachment], @"There should be a text attachment");
 }
 
 - (void)testParagraphStyle
@@ -100,8 +100,8 @@
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
 	
-	STAssertNotNil(paragraphStyle, @"There should be a paragraph style");
-	STAssertTrue([paragraphStyle isKindOfClass:[DTCoreTextParagraphStyle class]], @"Should be a DTCoreTextParagraphStyle");
+	XCTAssertNotNil(paragraphStyle, @"There should be a paragraph style");
+	XCTAssertTrue([paragraphStyle isKindOfClass:[DTCoreTextParagraphStyle class]], @"Should be a DTCoreTextParagraphStyle");
 }
 
 - (void)testParagraphStyleNil
@@ -109,7 +109,7 @@
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertNil([attributes paragraphStyle], @"There should be no paragraph style");
+	XCTAssertNil([attributes paragraphStyle], @"There should be no paragraph style");
 }
 
 - (void)testNSParagraphStyle
@@ -128,8 +128,8 @@
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
 	
-	STAssertNotNil(paragraphStyle, @"There should be a paragraph style");
-	STAssertTrue([paragraphStyle isKindOfClass:[DTCoreTextParagraphStyle class]], @"Should be a DTCoreTextParagraphStyle");
+	XCTAssertNotNil(paragraphStyle, @"There should be a paragraph style");
+	XCTAssertTrue([paragraphStyle isKindOfClass:[DTCoreTextParagraphStyle class]], @"Should be a DTCoreTextParagraphStyle");
 }
 
 
@@ -138,7 +138,7 @@
 	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p>Paragraph</p>" options:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertNotNil([attributes fontDescriptor], @"There should be a font descriptor");
+	XCTAssertNotNil([attributes fontDescriptor], @"There should be a font descriptor");
 }
 
 // tests if the fontDescriptor convenience method of NSDictionary always returns something correct
@@ -153,9 +153,9 @@
 #endif
 	
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-	STAssertNotNil(fontDescriptor, @"There should be a font descriptor");
+	XCTAssertNotNil(fontDescriptor, @"There should be a font descriptor");
 	
-	STAssertEqualObjects(fontDescriptor.fontFamily, @"Courier", @"Font Family should be 'Courier'");
+	XCTAssertEqualObjects(fontDescriptor.fontFamily, @"Courier", @"Font Family should be 'Courier'");
 }
 
 - (void)testFontDescriptorNil
@@ -163,7 +163,7 @@
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"string" attributes:NULL];
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	
-	STAssertNil([attributes fontDescriptor], @"There should be no font descriptor");
+	XCTAssertNil([attributes fontDescriptor], @"There should be no font descriptor");
 }
 
 - (void)testColorDefaults
@@ -174,11 +174,11 @@
 	DTColor *color = [attributes foregroundColor];
 	NSString *hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"000000"], @"Default Color should be black");
+	XCTAssertTrue([hexColor isEqualToString:@"000000"], @"Default Color should be black");
 	
 	color = [attributes backgroundColor];
 	
-	STAssertNil(color, @"Background Color should be nil");
+	XCTAssertNil(color, @"Background Color should be nil");
 }
 
 - (void)testValidColors
@@ -189,12 +189,12 @@
 	DTColor *color = [attributes foregroundColor];
 	NSString *hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
+	XCTAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
 	
 	color = [attributes backgroundColor];
 	hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
+	XCTAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
 
 - (void)testNSValidColors
@@ -211,12 +211,12 @@
 	DTColor *color = [attributes foregroundColor];
 	NSString *hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
+	XCTAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
 	
 	color = [attributes backgroundColor];
 	hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
+	XCTAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
  
 // this crashes or hangs issue #648
@@ -234,12 +234,12 @@
 	DTColor *color = [attributes foregroundColor];
 	NSString *hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
+	XCTAssertTrue([hexColor isEqualToString:@"ff0000"], @"Default Color should be red");
 	
 	color = [attributes backgroundColor];
 	hexColor = DTHexStringFromDTColor(color);
 	
-	STAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
+	XCTAssertTrue([hexColor isEqualToString:@"0000ff"], @"Default Color should be blue");
 }
 
 - (void)testKerning
@@ -249,7 +249,7 @@
 	
 	CGFloat kerning = [attributes kerning];
 	
-	STAssertEquals(kerning, (CGFloat)10.0, @"Kerning incorrect");
+	XCTAssertEqual(kerning, (CGFloat)10.0, @"Kerning incorrect");
 }
 
 @end
