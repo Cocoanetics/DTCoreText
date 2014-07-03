@@ -753,7 +753,7 @@
 		}
 		
 		BOOL characterIsCorrect = [bulletChar isEqualToString:expectedChar];
-		XCTAssertTrue(characterIsCorrect, @"Bullet Character on UL level %lu should be '%@' but is '%@'", lineNumber+1, expectedChar, bulletChar);
+		XCTAssertTrue(characterIsCorrect, @"Bullet Character on UL level %lu should be '%@' but is '%@'", (long)lineNumber+1, expectedChar, bulletChar);
 		
 		lineNumber++;
 	}];
@@ -800,7 +800,7 @@
 		}
 		
 		BOOL prefixIsCorrect = [prefix isEqualToString:expectedPrefix];
-		XCTAssertTrue(prefixIsCorrect, @"Prefix level %lu should be '%@' but is '%@'", lineNumber+1, expectedPrefix, prefix);
+		XCTAssertTrue(prefixIsCorrect, @"Prefix level %lu should be '%@' but is '%@'", (long)lineNumber+1, expectedPrefix, prefix);
 		
 		lineNumber++;
 	}];
@@ -878,7 +878,7 @@
 		
 		NSRange commonRange = NSIntersectionRange(listRange, firstParagraphRange);
 		
-		XCTAssertTrue(NSEqualRanges(commonRange, firstParagraphRange), @"List %lu does not cover entire paragraph", idx+1);
+		XCTAssertTrue(NSEqualRanges(commonRange, firstParagraphRange), @"List %lu does not cover entire paragraph", (long)idx+1);
 	}];
 	
 	// second paragraph should have two lists
@@ -896,7 +896,7 @@
 		
 		NSRange commonRange = NSIntersectionRange(listRange, secondParagraphRange);
 		
-		XCTAssertTrue(NSEqualRanges(commonRange, secondParagraphRange), @"List %lu does not cover entire paragraph", idx+1);
+		XCTAssertTrue(NSEqualRanges(commonRange, secondParagraphRange), @"List %lu does not cover entire paragraph", (long)idx+1);
 	}];
 	
 }
