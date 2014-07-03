@@ -146,6 +146,7 @@
 		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
 		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
 		A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
+		A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */; };
 		A758FC9614DBC7A2007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FC9814DBCF20007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
@@ -517,6 +518,7 @@
 		A7EB8541168FA33500D686B7 /* DTStylesheetHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */; };
 		A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
 		A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
+		A7F0C4241965A0D600D7FAFB /* simpson20.gif in Resources */ = {isa = PBXBuildFile; fileRef = A7F0C4231965A0D600D7FAFB /* simpson20.gif */; };
 		A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
 		A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
 		A7F34D4016CFC7C90054A512 /* RTL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F34D3F16CFC7C90054A512 /* RTL.html */; };
@@ -733,6 +735,13 @@
 			remoteGlobalIDString = A7A476BB180010F100459DFD;
 			remoteInfo = "BundleLoader Dummy";
 		};
+		A758EE691965A29F00773D22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7AC21AE196417830009E1B9;
+			remoteInfo = "DTAnimatedGIF (iOS)";
+		};
 		A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
@@ -921,6 +930,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = E2262DC51638331500BFDAD7;
 			remoteInfo = "Mac Framework";
+		};
+		A7F0C4391965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7AC21AF196417830009E1B9;
+			remoteInfo = "DTAnimatedGIF (iOS)";
+		};
+		A7F0C43B1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F88FF6801920A83300120808;
+			remoteInfo = "DTProgressHUD (iOS)";
+		};
+		A7F0C43D1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F88FF6A51920AAB600120808;
+			remoteInfo = "DTProgressHUD Demo";
+		};
+		A7F0C43F1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A78381C31963F8D700AF09D3;
+			remoteInfo = "DTAnimatedGIF Demo";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1188,6 +1225,7 @@
 		A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTStylesheetHTMLElement.h; sourceTree = "<group>"; };
 		A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTStylesheetHTMLElement.m; sourceTree = "<group>"; };
 		A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WhitespaceFollowingImagePromotedToParagraph.html; sourceTree = "<group>"; };
+		A7F0C4231965A0D600D7FAFB /* simpson20.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = simpson20.gif; path = Externals/DTFoundation/Demo/DTAnimatedGIF/Resources/simpson20.gif; sourceTree = SOURCE_ROOT; };
 		A7F16CF41698491400B0E843 /* NSStringCSSTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringCSSTest.h; sourceTree = "<group>"; };
 		A7F16CF51698491400B0E843 /* NSStringCSSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringCSSTest.m; sourceTree = "<group>"; };
 		A7F34D3F16CFC7C90054A512 /* RTL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = RTL.html; sourceTree = "<group>"; };
@@ -1232,6 +1270,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */,
 				A71F5B7617FAB89500D5E42C /* libDTHTMLParser_iOS.a in Frameworks */,
 				A71F5B7517FAB88F00D5E42C /* libDTFoundation.a in Frameworks */,
 				A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */,
@@ -1476,8 +1515,8 @@
 			children = (
 				A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */,
 				A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */,
-				A781FE9317FAABE500A1F5E8 /* UnitTests.octest */,
 				A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */,
+				A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */,
 				A781FE9717FAABE500A1F5E8 /* libDTAWS.a */,
 				A781FE9917FAABE500A1F5E8 /* libDTASN1.a */,
 				A781FE9B17FAABE500A1F5E8 /* libDTHTMLParser_iOS.a */,
@@ -1490,9 +1529,13 @@
 				A781FEA917FAABE500A1F5E8 /* libDTReachability_Mac.a */,
 				A781FEAB17FAABE500A1F5E8 /* libDTSQLite_iOS.a */,
 				A781FEAD17FAABE500A1F5E8 /* libDTSQLite_Mac.a */,
+				A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */,
 				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
 				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
 				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
+				A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */,
+				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
+				A7F0C4401965A0D600D7FAFB /* DTAnimatedGIF Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1564,6 +1607,7 @@
 				A788CA2514863EF100E1AFD9 /* Image.html */,
 				A788CA2614863EF100E1AFD9 /* ListTest.html */,
 				A788CA2714863EF100E1AFD9 /* LoremIpsum.html */,
+				A7F0C4231965A0D600D7FAFB /* simpson20.gif */,
 				A788CA2814863EF100E1AFD9 /* Oliver.jpg */,
 				A76C23B1183535A300F54F02 /* Oliver@2x.jpg */,
 				A788CA2914863EF100E1AFD9 /* README.html */,
@@ -2151,6 +2195,7 @@
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
+				A758EE6A1965A29F00773D22 /* PBXTargetDependency */,
 				A7C3A93317FAAF6200B3AEE8 /* PBXTargetDependency */,
 				A7C3A93117FAAF5F00B3AEE8 /* PBXTargetDependency */,
 			);
@@ -2177,7 +2222,7 @@
 			name = UnitTest;
 			productName = UnitTests;
 			productReference = A788CA681486456100E1AFD9 /* UnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		A7949A5714CC456000A8CCDE /* MacUnitTest */ = {
 			isa = PBXNativeTarget;
@@ -2196,7 +2241,7 @@
 			name = MacUnitTest;
 			productName = MacUnitTest;
 			productReference = A7949A5814CC456000A8CCDE /* MacUnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		A7A476BB180010F100459DFD /* BundleLoader Dummy */ = {
 			isa = PBXNativeTarget;
@@ -2313,10 +2358,10 @@
 			remoteRef = A781FE9017FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A781FE9317FAABE500A1F5E8 /* UnitTests.octest */ = {
+		A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = UnitTests.octest;
+			path = "Unit Tests.xctest";
 			remoteRef = A781FE9217FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2432,6 +2477,34 @@
 			remoteRef = A781FEB217FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTAnimatedGIF.a;
+			remoteRef = A7F0C4391965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTProgressHUD_iOS.a;
+			remoteRef = A7F0C43B1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "DTProgressHUD Demo.app";
+			remoteRef = A7F0C43D1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C4401965A0D600D7FAFB /* DTAnimatedGIF Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "DTAnimatedGIF Demo.app";
+			remoteRef = A7F0C43F1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -2455,6 +2528,7 @@
 				A788CA4914863EF100E1AFD9 /* Snippets.plist in Resources */,
 				A788CA4A14863EF100E1AFD9 /* styles.html in Resources */,
 				A788CA4B14863EF100E1AFD9 /* Subviews.html in Resources */,
+				A7F0C4241965A0D600D7FAFB /* simpson20.gif in Resources */,
 				A788CA4C14863EF100E1AFD9 /* Video.html in Resources */,
 				A788CA4D14863EF100E1AFD9 /* WarAndPeace.html in Resources */,
 				A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */,
@@ -2942,6 +3016,11 @@
 			isa = PBXTargetDependency;
 			target = A7A476BB180010F100459DFD /* BundleLoader Dummy */;
 			targetProxy = A741440E180012F500E3403B /* PBXContainerItemProxy */;
+		};
+		A758EE6A1965A29F00773D22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTAnimatedGIF (iOS)";
+			targetProxy = A758EE691965A29F00773D22 /* PBXContainerItemProxy */;
 		};
 		A781FEB917FAAD5500A1F5E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
