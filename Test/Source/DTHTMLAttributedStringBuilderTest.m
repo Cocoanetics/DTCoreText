@@ -1116,6 +1116,15 @@
 	XCTAssertTrue([lines count]==1, @"There should only be one line, display style block should not be inherited");
 }
 
+#pragma mark - Attachments
+
+// issue 738: Attachments with display:none should not show
+- (void)testAttachmentWithDisplayNone
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<img style=\"display:none;\" src=\"Oliver.jpg\">" options:nil];
+	XCTAssertEqual([attributedString length], 0, @"Text attachment should be invisible");
+}
+
 #pragma mark - Parsing Options
 
 // issue 649
