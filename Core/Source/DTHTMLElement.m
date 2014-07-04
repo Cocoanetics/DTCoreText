@@ -607,6 +607,12 @@ NSDictionary *_classesForNames = nil;
 {
 	DTEdgeInsets edgeInsets = {0,0,0,0};
 	
+	// preserve previous values in insets
+	if (intoEdgeInsets)
+	{
+		edgeInsets = *intoEdgeInsets;
+	}
+	
 	BOOL didModify = NO;
 	
 	if (![styles count])
