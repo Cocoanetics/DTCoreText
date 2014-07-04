@@ -322,6 +322,12 @@ NSDictionary *_classesForNames = nil;
 		{
 			for (DTHTMLElement *oneChild in self.childNodes)
 			{
+				// ignore children that have display:none
+				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
+				{
+					continue;
+				}
+				
 				if (!oneChild.didOutput)
 				{
 					return YES;
