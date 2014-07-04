@@ -8,12 +8,6 @@
 
 #import "DTHTMLAttributedStringBuilderTest.h"
 
-#import "DTHTMLAttributedStringBuilder.h"
-#import "DTCoreTextConstants.h"
-#import "DTCoreTextParagraphStyle.h"
-#import "DTTextAttachment.h"
-#import "DTCoreText.h"
-
 @implementation DTHTMLAttributedStringBuilderTest
 
 #pragma mark - Utilities

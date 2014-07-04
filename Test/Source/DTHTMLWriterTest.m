@@ -7,8 +7,6 @@
 //
 
 #import "DTHTMLWriterTest.h"
-#import "DTCoreText.h"
-#import "DTColorFunctions.h"
 
 @implementation DTHTMLWriterTest
 
