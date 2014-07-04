@@ -58,4 +58,25 @@
 	XCTAssertEqual(element.margins.bottom, 20, @"Incorrect bottom margin");
 }
 
+// issue 738: Attachments with display:none should not show
+- (void)testAttachmentWithDisplayNone
+{
+	DTHTMLElement *element = [[DTHTMLElement alloc] init];
+	element.textScale = 1;
+	element.paragraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+	CTFontRef font = CTFontCreateWithName(CFSTR("Helvetica"), 20, NULL);
+	element.fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	CFRelease(font);
+	
+	DTObjectTextAttachment *object = [[DTObjectTextAttachment alloc] initWithElement:element options:nil];
+	element.textAttachment = object;
+	
+	NSDictionary *styles = @{@"display" : @"none"};
+	[element applyStyleDictionary:styles];
+	
+	NSAttributedString *attributedString = [element attributedString];
+	
+	XCTAssertNil(attributedString, @"Text attachment should be invisible");
+}
+
 @end

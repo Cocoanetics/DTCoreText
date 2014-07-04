@@ -1116,6 +1116,34 @@
 	XCTAssertTrue([lines count]==1, @"There should only be one line, display style block should not be inherited");
 }
 
+#pragma mark - Attachments
+
+// issue 738: Attachments with display:none should not show
+- (void)testAttachmentWithDisplayNone
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<img style=\"display:none;\" src=\"Oliver.jpg\">" options:nil];
+	XCTAssertEqual([attributedString length], 0, @"Text attachment should be invisible");
+}
+
+// issue 738: Attachment with display:none would cause incorrect needsOutput return
+- (void)testDoubleOutputOfAttachmentWithDisplayNone
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<oliver style=\"width:40; height:40;display:none;\"><p><strong>BOX1</strong></p></oliver><oliver style=\"width:40; height:40;display:block;\"><p><strong>BOX2</strong></p></oliver><p>END</p>" options:nil];
+	
+	NSRange effectiveRange;
+	id attachment = [attributedString attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:&effectiveRange];
+	
+	XCTAssertNotNil(attachment, @"There should be an attachment");
+	XCTAssertTrue(NSEqualRanges(effectiveRange, NSMakeRange(0, 1)), @"Attachment should only be on first character");
+	
+	for (NSInteger i=1; i<[attributedString length]; i++)
+	{
+		id otherAttachment = [attributedString attribute:NSAttachmentAttributeName atIndex:i effectiveRange:&effectiveRange];
+		XCTAssertNil(otherAttachment, @"There is an unexpected attachment at %@", NSStringFromRange(effectiveRange));
+	}
+}
+
+
 #pragma mark - Parsing Options
 
 // issue 649
