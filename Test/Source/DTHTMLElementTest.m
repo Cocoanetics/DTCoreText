@@ -7,6 +7,7 @@
 //
 
 #import "DTHTMLElementTest.h"
+#import "DTHTMLElement.h"
 
 #import "DTHTMLAttributedStringBuilder.h"
 
@@ -33,6 +34,31 @@
 
 		XCTAssertTrue(alignment == [obj charValue], @"Text alignment should be justified");
 	}];
+}
+
+// issue 780: Applying a style dictionary with both -webkit and normal margin
+- (void)testCombiningWebKitAndNormalMargin
+{
+	DTHTMLElement *element = [[DTHTMLElement alloc] init];
+	element.textScale = 1;
+	element.paragraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+	CTFontRef font = CTFontCreateWithName(CFSTR("Helvetica"), 20, NULL);
+	element.fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	CFRelease(font);
+	
+	NSDictionary *styles = @{@"-webkit-margin-after" : @"1em",
+									 @"-webkit-margin-before" : @"1em",
+									 @"-webkit-margin-end" : @"0",
+									 @"-webkit-margin-start" : @"0",
+									 @"display" : @"block",
+									 @"margin-left" : @"40px"};
+	
+	[element applyStyleDictionary:styles];
+	
+	XCTAssertEqual(element.margins.left, 40, @"Incorrect left margin");
+	XCTAssertEqual(element.margins.right, 0, @"Incorrect right margin");
+	XCTAssertEqual(element.margins.top, 20, @"Incorrect top margin");
+	XCTAssertEqual(element.margins.bottom, 20, @"Incorrect bottom margin");
 }
 
 @end
