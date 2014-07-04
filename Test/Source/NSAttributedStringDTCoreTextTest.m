@@ -17,11 +17,11 @@
 	
 	NSRange range = [attributedString rangeOfAnchorNamed:@"anchor"];
 	NSRange expectedRange = NSMakeRange(10, 7);
-	STAssertEquals(range, expectedRange, @"Incorrect Result for findable anchor");
+	XCTAssertTrue(NSEqualRanges(range, expectedRange), @"Incorrect Result for findable anchor");
 	
 	range = [attributedString rangeOfAnchorNamed:@"something"];
 	expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(range, expectedRange, @"Incorrect Result for non-findable anchor");
+	XCTAssertTrue(NSEqualRanges(range, expectedRange), @"Incorrect Result for non-findable anchor");
 }
 
 #pragma mark - Text Blocks
@@ -38,28 +38,28 @@
 
 	NSDictionary *innerAttributes = [attributedString attributesAtIndex:innerRange.location effectiveRange:NULL];
 	NSArray *blocks = [innerAttributes objectForKey:DTTextBlocksAttribute];
-	STAssertTrue([blocks count]==1, @"There should be 1 block");
+	XCTAssertTrue([blocks count]==1, @"There should be 1 block");
 	DTTextBlock *effectiveBlock = [blocks lastObject];
 	
 	// test other block inside range
 	NSRange nonFoundRange = [attributedString rangeOfTextBlock:newBlock atIndex:innerRange.location];
 	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find other block inside");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other block inside");
 
 	// test other block outside range
 	nonFoundRange = [attributedString rangeOfTextBlock:newBlock atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find other block at index 1");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other block at index 1");
 	
 	// test effective block outside range
 	nonFoundRange = [attributedString rangeOfTextBlock:effectiveBlock atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find effective block at index 1");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find effective block at index 1");
 	
 	// test effective block outside range
 	NSRange foundRange = [attributedString rangeOfTextBlock:effectiveBlock atIndex:innerRange.location];
 	expectedRange = innerRange;
-	STAssertEquals(foundRange, expectedRange, @"Should find effective block around 'inside'");
+	XCTAssertTrue(NSEqualRanges(foundRange, expectedRange), @"Should find effective block around 'inside'");
 }
 
 #pragma mark - Lists
@@ -72,33 +72,33 @@
 	
 	NSDictionary *innerAttributes = [attributedString attributesAtIndex:innerRange.location effectiveRange:NULL];
 	NSArray *lists = [innerAttributes objectForKey:DTTextListsAttribute];
-	STAssertTrue([lists count]==1, @"There should be 1 block");
+	XCTAssertTrue([lists count]==1, @"There should be 1 block");
 	DTCSSListStyle *effectiveList = [lists lastObject];
 	
 	// new list with equal values, but different list
 	DTCSSListStyle *newListStyle = [effectiveList copy];
 
-	STAssertFalse(effectiveList == newListStyle, @"Copy should have produced a different instance");
+	XCTAssertFalse(effectiveList == newListStyle, @"Copy should have produced a different instance");
 	
 	// test new list inside range
 	NSRange nonFoundRange = [attributedString rangeOfTextList:newListStyle atIndex:innerRange.location];
 	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find other list inside");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other list inside");
 
 	// test new list outside range
 	nonFoundRange = [attributedString rangeOfTextList:newListStyle atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find other list at index 1");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other list at index 1");
 
 	// test effective list inside range
 	NSRange foundRange = [attributedString rangeOfTextList:effectiveList atIndex:innerRange.location];
 	expectedRange = [[attributedString string] paragraphRangeForRange:innerRange];
-	STAssertEquals(foundRange, expectedRange, @"Should find effective list around 'inner'");
+	XCTAssertTrue(NSEqualRanges(foundRange, expectedRange), @"Should find effective list around 'inner'");
 	
 	// test effective list outside range
 	nonFoundRange = [attributedString rangeOfTextList:effectiveList atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
-	STAssertEquals(nonFoundRange, expectedRange, @"Should not find effective list at index 1");
+	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find effective list at index 1");
 }
 
 - (void)testListPrefix
@@ -113,21 +113,21 @@
 	
 	NSAttributedString *prefix = [NSAttributedString prefixForListItemWithCounter:3 listStyle:listStyle listIndent:30 attributes:attributes];
 	
-	STAssertTrue([[prefix string] isEqualToString:@"\t3.\t"], @"Prefix should be different");
+	XCTAssertTrue([[prefix string] isEqualToString:@"\t3.\t"], @"Prefix should be different");
 	attributes = [prefix attributesAtIndex:0 effectiveRange:NULL];
 	
 	// prefix field should be entire length
 	NSRange fieldRange = [prefix rangeOfFieldAtIndex:0];
 	NSRange expectedRange = NSMakeRange(0, [prefix length]);
 	
-	STAssertEquals(fieldRange, expectedRange, @"Prefix Field should be entire prefix");
+	XCTAssertTrue(NSEqualRanges(fieldRange, expectedRange), @"Prefix Field should be entire prefix");
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [attributes paragraphStyle];
-	STAssertEquals(paragraphStyle.headIndent, (CGFloat)30, @"head ident should be equal to 30");
+	XCTAssertEqual(paragraphStyle.headIndent, (CGFloat)30, @"head ident should be equal to 30");
 	
 	NSArray *lists = [attributes objectForKey:DTTextListsAttribute];
 	
-	STAssertTrue([lists count]==1, @"There should be one list in the prefix");
+	XCTAssertTrue([lists count]==1, @"There should be one list in the prefix");
 	
 	if ([lists count]!=1)
 	{
@@ -139,7 +139,7 @@
 	// modify to make equal
 	effectiveList.startingItemNumber = 3;
 	
-	STAssertTrue([effectiveList isEqualToListStyle:listStyle], @"Effective list style should be equal");
+	XCTAssertTrue([effectiveList isEqualToListStyle:listStyle], @"Effective list style should be equal");
 }
 
 - (void)testItemNumber
@@ -158,7 +158,7 @@
 		
 		NSInteger index = [attributedString itemNumberInTextList:list atIndex:substringRange.location];
 		
-		STAssertEquals(number, index, @"Item number should match the text but doesn't for range %@", NSStringFromRange(substringRange));
+		XCTAssertEqual(number, index, @"Item number should match the text but doesn't for range %@", NSStringFromRange(substringRange));
 	}];
 }
 
@@ -174,33 +174,33 @@
 	NSURL *foundURL = nil;
 	NSRange linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location URL:&foundURL];
 	
-	STAssertNotNil(foundURL, @"No link found inside");
+	XCTAssertNotNil(foundURL, @"No link found inside");
 	
 	if (foundURL)
 	{
-		STAssertTrue([[foundURL absoluteString] isEqualToString:@"http://www.cocoanetics.com"], @"found URL invalid");
+		XCTAssertTrue([[foundURL absoluteString] isEqualToString:@"http://www.cocoanetics.com"], @"found URL invalid");
 	}
 	
-	STAssertEquals(linkRange, innerRange, @"Link should enclose inner text");
+	XCTAssertTrue(NSEqualRanges(linkRange, innerRange), @"Link should enclose inner text");
 	
 	
 	// test outside before
 	foundURL = nil;
 	linkRange = [attributedString rangeOfLinkAtIndex:innerRange.location-1 URL:&foundURL];
 	
-	STAssertNil(foundURL, @"There should be no link before");
+	XCTAssertNil(foundURL, @"There should be no link before");
 	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
 	
-	STAssertEquals(linkRange, expectedRange, @"range should not found range");
+	XCTAssertTrue(NSEqualRanges(linkRange, expectedRange), @"range should not found range");
 
 	// test outside after
 	foundURL = nil;
 	linkRange = [attributedString rangeOfLinkAtIndex:NSMaxRange(innerRange) URL:&foundURL];
 	
-	STAssertNil(foundURL, @"There should be no link after");
+	XCTAssertNil(foundURL, @"There should be no link after");
 	expectedRange = NSMakeRange(NSNotFound, 0);
 	
-	STAssertEquals(linkRange, expectedRange, @"range should not found range");
+	XCTAssertTrue(NSEqualRanges(linkRange, expectedRange), @"range should not found range");
 }
 
 @end

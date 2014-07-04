@@ -17,11 +17,11 @@
 
 	// check encoding
 	NSString *encoded = [string stringByAddingHTMLEntities];
-	STAssertTrue([encoded isEqualToString:@"&#128516;"], @"Smiley is not properly encoded");
+	XCTAssertTrue([encoded isEqualToString:@"&#128516;"], @"Smiley is not properly encoded");
 
 	// check reverse
 	NSString *decoded = [string stringByReplacingHTMLEntities];
-	STAssertTrue([decoded isEqualToString:string], @"Smiley is not properly round trip decoded");
+	XCTAssertTrue([decoded isEqualToString:string], @"Smiley is not properly round trip decoded");
 }
 
 @end

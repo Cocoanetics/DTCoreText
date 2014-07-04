@@ -31,7 +31,9 @@
 	NSMutableDictionary *mutableOptions = [[NSMutableDictionary alloc] initWithDictionary:options];
 	mutableOptions[NSBaseURLDocumentOption] = baseURL;
 	
-	
+	// register a custom class for a tag
+	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"oliver"];
+
 	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:mutableOptions documentAttributes:NULL];
 	return [builder generatedAttributedString];
 }

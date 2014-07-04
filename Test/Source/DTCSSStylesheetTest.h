@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-
-@interface DTCSSStyleSheetTest : SenTestCase
+@interface DTCSSStyleSheetTest : XCTestCase
 
 @end

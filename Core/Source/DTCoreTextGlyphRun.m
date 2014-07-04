@@ -121,7 +121,6 @@
 	
 	if (contentScale<1 || contentScale>2)
 	{
-		DTLogError(@"%s called on a graphics context that has invalid contentScale, assuming 2 instead", __PRETTY_FUNCTION__);
 		contentScale = 2;
 	}
 	

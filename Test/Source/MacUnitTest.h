@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Drobnik KG. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-
-@interface MacUnitTest : SenTestCase
+@interface MacUnitTest : XCTestCase
 
 - (void)internalTestCaseWithURL:(NSURL *)URL withTempPath:(NSString *)tempPath;
 

@@ -7,8 +7,6 @@
 //
 
 #import "DTHTMLWriterTest.h"
-#import "DTCoreText.h"
-#import "DTColorFunctions.h"
 
 @implementation DTHTMLWriterTest
 
@@ -37,7 +35,7 @@
 	
 	BOOL stringsHaveSameLength = [string1 length] == [string2 length];
 	
-	STAssertTrue(stringsHaveSameLength, @"Roundtripped string should be of equal length, but string1 is %d, string2 is %d", [string1 length], [string2 length]);
+	XCTAssertTrue(stringsHaveSameLength, @"Roundtripped string should be of equal length, but string1 is %ld, string2 is %ld", (long)[string1 length], (long)[string2 length]);
 	
 	if (!stringsHaveSameLength)
 	{
@@ -54,20 +52,20 @@
 		
 		BOOL equal = [paraStyle1 isEqual:paraStyle2];
 		
-		STAssertTrue(equal, @"Paragraph Styles in range %@ should be equal", NSStringFromRange(substringRange));
+		XCTAssertTrue(equal, @"Paragraph Styles in range %@ should be equal", NSStringFromRange(substringRange));
 		
 		NSRange prefixRange;
 		NSString *prefix1 = [string1 attribute:DTListPrefixField atIndex:substringRange.location effectiveRange:&prefixRange];
 		NSString *prefix2 = [attributes1 objectForKey:DTListPrefixField];
 		
-		STAssertEqualObjects(prefix1, prefix2, @"List prefix fields should be equal in range %@", NSStringFromRange(substringRange));
+		XCTAssertEqualObjects(prefix1, prefix2, @"List prefix fields should be equal in range %@", NSStringFromRange(substringRange));
 		
 		NSArray *lists1 = [attributes1 objectForKey:DTTextListsAttribute];
 		NSArray *lists2 = [attributes2 objectForKey:DTTextListsAttribute];
 		
 		BOOL sameNumberOfLists = [lists1 count] == [lists2 count];
 		
-		STAssertTrue(sameNumberOfLists, @"Should be same number of lists");
+		XCTAssertTrue(sameNumberOfLists, @"Should be same number of lists");
 		
 		if (sameNumberOfLists)
 		{
@@ -77,7 +75,7 @@
 				DTCSSListStyle *list1 = [lists1 objectAtIndex:index];
 				DTCSSListStyle *list2 = [lists2 objectAtIndex:index];
 				
-				STAssertTrue([list1 isEqualToListStyle:list2], @"List Style at index %d is not equal", index);
+				XCTAssertTrue([list1 isEqualToListStyle:list2], @"List Style at index %ld is not equal", (long)index);
 			}
 		}
 		
@@ -92,7 +90,7 @@
 			equal = [paraStyle1 isEqual:paraStyle2];
 			
 			
-			STAssertTrue(equal, @"Paragraph Styles following prefix in range %@ should be equal", NSStringFromRange(substringRange));
+			XCTAssertTrue(equal, @"Paragraph Styles following prefix in range %@ should be equal", NSStringFromRange(substringRange));
 		}
 	}];
 }
@@ -118,7 +116,7 @@
 	
 	NSRange colorRange = [html rangeOfString:@"background-color:#ffff00"];
 
-	STAssertTrue(colorRange.location != NSNotFound,  @"html should contains background-color:#ffff00");
+	XCTAssertTrue(colorRange.location != NSNotFound,  @"html should contains background-color:#ffff00");
 }
 
 #pragma mark - List Output
@@ -145,7 +143,7 @@
 	writer.textScale = textScale;
 	NSString *writtenHTML = [writer HTMLFragment];
 	
-	STAssertTrue([writtenHTML rangeOfString:@"-webkit-padding-start:32px;padding-left:32px;"].location != NSNotFound, @"Text scale should not affect list indention amount");
+	XCTAssertTrue([writtenHTML rangeOfString:@"-webkit-padding-start:32px;padding-left:32px;"].location != NSNotFound, @"Text scale should not affect list indention amount");
 }
 
 - (void)testNestedListRoundTrip
@@ -189,13 +187,13 @@
 	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
 	NSRange rangeLILI = [html rangeOfString:@"</li></ul></li></ol>"];
-	STAssertTrue(rangeLILI.location != NSNotFound, @"List Items should be closed next to each other");
+	XCTAssertTrue(rangeLILI.location != NSNotFound, @"List Items should be closed next to each other");
 	
 	NSRange rangeLIUL = [html rangeOfString:@"</li><ul"];
-	STAssertTrue(rangeLIUL.location == NSNotFound, @"List Items should not be closed before UL");
+	XCTAssertTrue(rangeLIUL.location == NSNotFound, @"List Items should not be closed before UL");
 	
 	NSRange rangeSpanUL = [html rangeOfString:@"</span></ul"];
-	STAssertTrue(rangeSpanUL.location == NSNotFound, @"Missing LI between span and UL");
+	XCTAssertTrue(rangeSpanUL.location == NSNotFound, @"Missing LI between span and UL");
 }
 
 - (void)testNestedListOutputWithoutTextNode
@@ -207,7 +205,7 @@
 	NSString* html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
 	NSRange twoAOutsideOL = [html rangeOfString:@"2a</span><ol"];
-	STAssertTrue(twoAOutsideOL.location == NSNotFound, @"List item 2a should not be outside the ordered list");
+	XCTAssertTrue(twoAOutsideOL.location == NSNotFound, @"List item 2a should not be outside the ordered list");
 }
 
 #pragma mark - Kerning
@@ -221,7 +219,7 @@
 	NSString *html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
 	NSRange letterSpacingRange = [html rangeOfString:@"letter-spacing:10px;"];
-	STAssertTrue(letterSpacingRange.location != NSNotFound, @"Letter-spacing missing");
+	XCTAssertTrue(letterSpacingRange.location != NSNotFound, @"Letter-spacing missing");
 }
 
 - (void)testKerningWithTextScale
@@ -232,13 +230,13 @@
 	
 	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
 	CGFloat kerning = [attributes kerning];
-	STAssertTrue(kerning == 30, @"Scaled up kerning should be 30");
+	XCTAssertTrue(kerning == 30, @"Scaled up kerning should be 30");
 	
 	// generate html
 	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
 	NSString *html = [[writer HTMLFragment] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 	
 	NSRange letterSpacingRange = [html rangeOfString:@"letter-spacing:10px;"];
-	STAssertTrue(letterSpacingRange.location == NSNotFound, @"Letter-spacing missing");
+	XCTAssertTrue(letterSpacingRange.location == NSNotFound, @"Letter-spacing missing");
 }
 @end

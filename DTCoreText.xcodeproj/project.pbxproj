@@ -30,7 +30,6 @@
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
-		944A9E6518B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
 		94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4618B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
@@ -77,7 +76,6 @@
 		A7081EA515036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
 		A7081EA615036460002987F1 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
 		A709184A17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A709184917F2CF200092F436 /* DTCoreTextTestCase.m */; };
-		A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A709184917F2CF200092F436 /* DTCoreTextTestCase.m */; };
 		A70B4C9F1486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70B4CA01486558200873A4A /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A70E62D616C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A70E62D416C24905009B47BF /* DTDictationPlaceholderTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -97,17 +95,10 @@
 		A70E62FC16C2540C009B47BF /* DTStylesheetHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */; };
 		A70E630116C254F5009B47BF /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A70F11DE148632CD009202BF /* libDTCoreText.a */; };
 		A70E630216C25734009B47BF /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
-		A70E630316C25736009B47BF /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
-		A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
-		A70E630516C25AC6009B47BF /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
 		A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */; };
-		A70ED6CF17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */; };
 		A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		A71B927114E0165000360C30 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
-		A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
 		A71F5B7517FAB88F00D5E42C /* libDTFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */; };
 		A71F5B7617FAB89500D5E42C /* libDTHTMLParser_iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9B17FAABE500A1F5E8 /* libDTHTMLParser_iOS.a */; };
-		A721D58A16909AC800C5A48F /* ListTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2614863EF100E1AFD9 /* ListTest.html */; };
 		A72418171678BACE001362C4 /* iOS6.html in Resources */ = {isa = PBXBuildFile; fileRef = A72418161678BACE001362C4 /* iOS6.html */; };
 		A72C15C71592FAF70064A67F /* CoreTextIssues.html in Resources */ = {isa = PBXBuildFile; fileRef = A72C15C61592FAF70064A67F /* CoreTextIssues.html */; };
 		A72D975E1684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -120,11 +111,8 @@
 		A72D97651684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */; };
 		A730BCD716D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
 		A730BCD816D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
-		A730BCD916D29588003B849F /* Languages.html in Resources */ = {isa = PBXBuildFile; fileRef = A730BCD616D29588003B849F /* Languages.html */; };
 		A7343F3317BDF64A00EF9B83 /* CSSCascading.html in Resources */ = {isa = PBXBuildFile; fileRef = A7343F3217BDF64A00EF9B83 /* CSSCascading.html */; };
-		A7343F3417BDF64A00EF9B83 /* CSSCascading.html in Resources */ = {isa = PBXBuildFile; fileRef = A7343F3217BDF64A00EF9B83 /* CSSCascading.html */; };
 		A738664117F8B16200E3CDFC /* DTTextBlockTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A738664017F8B16200E3CDFC /* DTTextBlockTest.m */; };
-		A738664217F8B16200E3CDFC /* DTTextBlockTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A738664017F8B16200E3CDFC /* DTTextBlockTest.m */; };
 		A73885A51606E9B2001D60C4 /* EmojiTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A73885A41606E9B2001D60C4 /* EmojiTest.html */; };
 		A73AE7911686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A73AE7921686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A73AE78F1686FC6A009CF8C3 /* DTHTMLWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -135,20 +123,14 @@
 		A73AE79A1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */; };
 		A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A73AE7901686FC6A009CF8C3 /* DTHTMLWriter.m */; };
 		A73BC42912DA014300F064C6 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
-		A73FC2ED1834B25000ACF490 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
 		A73FC35B1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A73FC35A1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m */; };
 		A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */; };
 		A740368916E51B3A00ECCDE0 /* DemoAboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */; };
 		A740369116E51C9800ECCDE0 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A740369016E51C9800ECCDE0 /* About.html */; };
-		A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
-		A741440D180012D800E3403B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A741440B1800127300E3403B /* main.m */; };
-		A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
-		A74C973E14DC5294002B5A45 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
 		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
-		A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
+		A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */; };
 		A758FC9614DBC7A2007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A758FC9814DBCF20007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
-		A758FCA114DBD7AF007DF8B2 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
 		A760F54014F56E8E00AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A760F54114F56E9000AD1B0E /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -162,11 +144,8 @@
 		A7675E7D172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
 		A7675E7E172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = A7675E76172EA24700C548CB /* NSAttributedString+DTDebug.m */; };
 		A768BE4717FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
-		A768BE4817FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
-		A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
 		A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
-		A76C23EE1835423200F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
 		A76C23FF1835423200F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
 		A76D45131732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A76D45141732A512006A7CDA /* NSDictionary+DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A76D45111732A512006A7CDA /* NSDictionary+DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -177,16 +156,10 @@
 		A76D45191732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */; };
 		A76D451A1732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
-		A76F503D1705ABAC00DF52D5 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
-		A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
-		A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A777B26C17FAB78C007B8D41 /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */; };
 		A777B26D17FAB790007B8D41 /* libDTHTMLParser_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9D17FAABE500A1F5E8 /* libDTHTMLParser_Mac.a */; };
 		A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
-		A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
-		A783CE7917D11D0700C84C28 /* CSSOOMCrash.plist in Resources */ = {isa = PBXBuildFile; fileRef = A783CE6717D11D0100C84C28 /* CSSOOMCrash.plist */; };
-		A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */; };
@@ -313,12 +286,50 @@
 		A788CA5314863EF100E1AFD9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A788CA3914863EF100E1AFD9 /* main.m */; };
 		A788CA601486416A00E1AFD9 /* libDTCoreText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A70F11DE148632CD009202BF /* libDTCoreText.a */; };
 		A788CA6C1486456100E1AFD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		A788CA7C148645A600E1AFD9 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */; };
 		A788CA80148647AC00E1AFD9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		A788CA82148647BC00E1AFD9 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A704C93913901FDB0045CFC6 /* ImageIO.framework */; };
 		A788CA83148647C900E1AFD9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
 		A788CAA5148648D700E1AFD9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A78C241115073BC50045651E /* TextBoxes.html in Resources */ = {isa = PBXBuildFile; fileRef = A78C241015073BC50045651E /* TextBoxes.html */; };
+		A78D9F821965B81A00C80986 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
+		A78D9F831965B81A00C80986 /* DTCoreTextTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A709184917F2CF200092F436 /* DTCoreTextTestCase.m */; };
+		A78D9F851965B81A00C80986 /* DTCSSStylesheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */; };
+		A78D9F861965B81A00C80986 /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
+		A78D9F871965B81A00C80986 /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
+		A78D9F881965B81A00C80986 /* DTHTMLWriterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */; };
+		A78D9F891965B81A00C80986 /* DTTextBlockTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A738664017F8B16200E3CDFC /* DTTextBlockTest.m */; };
+		A78D9F8A1965B81A00C80986 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
+		A78D9F8B1965B81A00C80986 /* MacUnitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */; };
+		A78D9F8C1965B81A00C80986 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
+		A78D9F8D1965B81A00C80986 /* NSAttributedStringDTCoreTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */; };
+		A78D9F8E1965B81A00C80986 /* NSDictionaryDTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */; };
+		A78D9F8F1965B81A00C80986 /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
+		A78D9F901965B81A00C80986 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
+		A78D9F911965B81A00C80986 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
+		A78D9F921965B81A00C80986 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
+		A78D9F931965B81A00C80986 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
+		A78D9F961965B83B00C80986 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
+		A78D9F971965B9BD00C80986 /* CustomFont.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */; };
+		A78D9F981965B9BD00C80986 /* Empty_and_Unclosed_Paragraphs.html in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */; };
+		A78D9F991965B9BD00C80986 /* ListTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0414DA782D005A9C69 /* ListTest.plist */; };
+		A78D9F9A1965B9BD00C80986 /* Video.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0214DA6EB2005A9C69 /* Video.plist */; };
+		A78D9F9B1965B9BD00C80986 /* WarAndPeace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */; };
+		A78D9F9C1965B9BD00C80986 /* NavTag.html in Resources */ = {isa = PBXBuildFile; fileRef = A76994F614DBB3DD0047CC8D /* NavTag.html */; };
+		A78D9F9D1965B9BD00C80986 /* MalformedURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C953514DC0C69002B5A45 /* MalformedURL.html */; };
+		A78D9F9E1965B9BD00C80986 /* Emoji.html in Resources */ = {isa = PBXBuildFile; fileRef = A74C973D14DC5294002B5A45 /* Emoji.html */; };
+		A78D9F9F1965B9BD00C80986 /* PreWhitespace.html in Resources */ = {isa = PBXBuildFile; fileRef = A71B927014E0165000360C30 /* PreWhitespace.html */; };
+		A78D9FA01965B9BD00C80986 /* PreWhitespace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71B927214E016A300360C30 /* PreWhitespace.plist */; };
+		A78D9FA11965B9BD00C80986 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
+		A78D9FA21965B9BD00C80986 /* SpaceBetweenUnderlines.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */; };
+		A78D9FA31965B9BD00C80986 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
+		A78D9FA41965B9BD00C80986 /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
+		A78D9FA51965B9BD00C80986 /* AppleConverted.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5CB169443B6007A526B /* AppleConverted.html */; };
+		A78D9FA61965B9BD00C80986 /* RTL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F34D3F16CFC7C90054A512 /* RTL.html */; };
+		A78D9FA71965B9BD00C80986 /* EmptyLinesAndFontAttribute.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */; };
+		A78D9FA81965B9BD00C80986 /* CSSCascading.html in Resources */ = {isa = PBXBuildFile; fileRef = A7343F3217BDF64A00EF9B83 /* CSSCascading.html */; };
+		A78D9FA91965B9BD00C80986 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
+		A78D9FAA1965B9BD00C80986 /* CSSOOMCrash.plist in Resources */ = {isa = PBXBuildFile; fileRef = A783CE6717D11D0100C84C28 /* CSSOOMCrash.plist */; };
+		A78D9FAB1965B9E200C80986 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A78E3C51178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A78E3C52178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A78E3C53178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */; };
@@ -333,35 +344,17 @@
 		A7949A0014C6256B00A8CCDE /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		A7949A5014CC44D300A8CCDE /* DTCoreTextConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */; };
 		A7949A5114CC44D300A8CCDE /* DTCoreTextConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */; };
-		A7949A5914CC456000A8CCDE /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */; };
-		A7949A8914CC480100A8CCDE /* Alignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1B14863EF100E1AFD9 /* Alignment.html */; };
-		A7949A8A14CC482F00A8CCDE /* APOD.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1C14863EF100E1AFD9 /* APOD.html */; };
-		A7949A8B14CC483400A8CCDE /* CurrentTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1F14863EF100E1AFD9 /* CurrentTest.html */; };
-		A7949A8C14CC483C00A8CCDE /* ArabicTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1D14863EF100E1AFD9 /* ArabicTest.html */; };
-		A7949A8D14CC484100A8CCDE /* CustomFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2014863EF100E1AFD9 /* CustomFont.html */; };
-		A7949A8E14CC484700A8CCDE /* Image.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2514863EF100E1AFD9 /* Image.html */; };
-		A7949A9014CC484D00A8CCDE /* LoremIpsum.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2714863EF100E1AFD9 /* LoremIpsum.html */; };
-		A7949A9114CC485000A8CCDE /* README.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2914863EF100E1AFD9 /* README.html */; };
-		A7949A9214CC485300A8CCDE /* styles.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2B14863EF100E1AFD9 /* styles.html */; };
-		A7949A9314CC485600A8CCDE /* Subviews.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2C14863EF100E1AFD9 /* Subviews.html */; };
-		A7949A9414CC485A00A8CCDE /* Video.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2D14863EF100E1AFD9 /* Video.html */; };
-		A7949A9514CC485D00A8CCDE /* WarAndPeace.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2E14863EF100E1AFD9 /* WarAndPeace.html */; };
 		A7949A9D14CC566100A8CCDE /* DTCoreTextConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7949A9E14CC566100A8CCDE /* DTCoreTextConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7949AA214CC5BDC00A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
 		A7949AA314CC5BDF00A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
 		A7985E0D178ECD86005D40B2 /* DTHTMLWriterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */; };
 		A7985E1B178ECDE4005D40B2 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */; };
-		A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */; };
 		A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82317FC9648001EBA6E /* UIKit.framework */; };
 		A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */; };
-		A7A476BD180010F100459DFD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		A7A476BE180010F100459DFD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		A7A476BF180010F100459DFD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7A672BB1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
-		A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7AE580D1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE580E1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE580F1725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; };
@@ -400,7 +393,6 @@
 		A7B0B56A14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B0B56B14D9921F0091C2C9 /* NSAttributedString+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B0B56714D9921F0091C2C9 /* NSAttributedString+DTCoreText.m */; };
 		A7B14E21183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
-		A7B14E22183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
 		A7B14E35183638200007CF27 /* DTWeakSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E34183638200007CF27 /* DTWeakSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B14E36183638200007CF27 /* DTWeakSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E34183638200007CF27 /* DTWeakSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B14E38183638350007CF27 /* DTHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E37183638350007CF27 /* DTHTMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -412,19 +404,12 @@
 		A7B14E4718363B5B0007CF27 /* NSString+DTUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E4618363B5B0007CF27 /* NSString+DTUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B14E4818363B5B0007CF27 /* NSString+DTUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B14E4618363B5B0007CF27 /* NSString+DTUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7C1CC0C14D6C4F0008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
-		A7C1CC0D14D6C4F2008D6468 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
-		A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		A7C5D01614D7E3DC00AF1D75 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
 		A7C5D01714D7E3DC00AF1D75 /* DTImage+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C5D01414D7E3BB00AF1D75 /* DTImage+HTML.m */; };
 		A7C7ACD514D924B1005A9C69 /* NSMutableString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C7ACD314D924B1005A9C69 /* NSMutableString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7C7ACD614D924B1005A9C69 /* NSMutableString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C7ACD314D924B1005A9C69 /* NSMutableString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7C7ACD714D924B1005A9C69 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
 		A7C7ACD814D924B1005A9C69 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
-		A7C7ACEF14DA62BA005A9C69 /* CustomFont.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */; };
-		A7C7ACF014DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */; };
-		A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */; };
-		A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0214DA6EB2005A9C69 /* Video.plist */; };
-		A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0714DA7C17005A9C69 /* MacUnitTest.m */; };
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */; };
@@ -432,9 +417,7 @@
 		A7D54EA514E003190063E78B /* Objects.html in Resources */ = {isa = PBXBuildFile; fileRef = A7D54EA414E003190063E78B /* Objects.html */; };
 		A7D63CDA1611B9AC00D4712A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */; };
 		A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
-		A7DBC1AB1689B8C5003F1D38 /* ListItemBulletColorAndFont.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1A91689B846003F1D38 /* ListItemBulletColorAndFont.html */; };
 		A7DBC1B31689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */; };
-		A7DBC1B41689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DBC1B21689B989003F1D38 /* SpaceBetweenUnderlines.html */; };
 		A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
@@ -448,9 +431,7 @@
 		A7DDF87F17DDEB780005D62D /* DTColorFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DDF87B17DDEB780005D62D /* DTColorFunctions.m */; };
 		A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7E3346D16837482002EFCBE /* DTCSSStylesheetTest.m */; };
 		A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5C5169360E5007A526B /* KeepMeTogether.html */; };
-		A7E3A5CC169443B6007A526B /* AppleConverted.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E3A5CB169443B6007A526B /* AppleConverted.html */; };
 		A7E8E1D416D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */; };
-		A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */ = {isa = PBXBuildFile; fileRef = A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */; };
 		A7EB849D168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7EB849E168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7EB849F168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB849B168B3E9D00D686B7 /* DTHTMLParserNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -507,7 +488,6 @@
 		A7EB84ED168C657100D686B7 /* DTListItemHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB84E4168C657000D686B7 /* DTListItemHTMLElement.m */; };
 		A7EB84EE168C657100D686B7 /* DTListItemHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB84E4168C657000D686B7 /* DTListItemHTMLElement.m */; };
 		A7EB84FC168ED63A00D686B7 /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
-		A7EB84FD168ED63A00D686B7 /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
 		A7EB8536168F336200D686B7 /* DTTextAttachmentHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB84CA168B9A8400D686B7 /* DTTextAttachmentHTMLElement.m */; };
 		A7EB8539168FA33500D686B7 /* DTStylesheetHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7EB853A168FA33500D686B7 /* DTStylesheetHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -516,16 +496,13 @@
 		A7EB853E168FA33500D686B7 /* DTStylesheetHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */; };
 		A7EB8541168FA33500D686B7 /* DTStylesheetHTMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */; };
 		A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
-		A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */; };
+		A7F0C4241965A0D600D7FAFB /* simpson20.gif in Resources */ = {isa = PBXBuildFile; fileRef = A7F0C4231965A0D600D7FAFB /* simpson20.gif */; };
 		A7F16CF61698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
-		A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
 		A7F34D4016CFC7C90054A512 /* RTL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F34D3F16CFC7C90054A512 /* RTL.html */; };
-		A7F34D4116CFC7C90054A512 /* RTL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7F34D3F16CFC7C90054A512 /* RTL.html */; };
 		A7F5671414D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671514D841EA00D1F167 /* NSString+CSS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5671214D841E900D1F167 /* NSString+CSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5671614D841EA00D1F167 /* NSString+CSS.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5671314D841E900D1F167 /* NSString+CSS.m */; };
 		A7F5671714D841EA00D1F167 /* NSString+CSS.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5671314D841E900D1F167 /* NSString+CSS.m */; };
-		A7F5671D14D8469000D1F167 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
 		A7F5672714D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5672814D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5672514D8506B00D1F167 /* NSAttributedString+SmallCaps.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F5672914D8506C00D1F167 /* NSAttributedString+SmallCaps.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F5672614D8506C00D1F167 /* NSAttributedString+SmallCaps.m */; };
@@ -602,7 +579,6 @@
 		A7F842F416D38BC300BCD63F /* FontSizes.html in Resources */ = {isa = PBXBuildFile; fileRef = A7EB84FB168ED63A00D686B7 /* FontSizes.html */; };
 		A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2114863EF100E1AFD9 /* DTCoreTextFontOverrides.plist */; };
 		C2CDBAEC17CCD5E5000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
-		C2CDBAED17CCD5EA000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
 		DDCCEB1E17005A4F009FF923 /* css.css in Resources */ = {isa = PBXBuildFile; fileRef = DDCCEB1D17005A4F009FF923 /* css.css */; };
 		E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
 		E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C95314863E8700E1AFD9 /* DTColor+Compatibility.m */; };
@@ -672,17 +648,6 @@
 			);
 			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
 		};
-		A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.css";
-			fileType = pattern.proxy;
-			isEditable = 1;
-			outputFiles = (
-				"${INPUT_FILE_BASE}.css.c",
-			);
-			script = "cd \"$INPUT_FILE_DIR\"  # move into file dir, otherwise xxd takes the full path for the symbol\n/usr/bin/xxd -i \"$INPUT_FILE_NAME\" \"$DERIVED_SOURCES_DIR/$INPUT_FILE_BASE.css.c\" # builds a c file with a hex array";
-		};
 		A76994FD14DBB7380047CC8D /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -726,12 +691,12 @@
 			remoteGlobalIDString = A70F11DD148632CD009202BF;
 			remoteInfo = "Static Library";
 		};
-		A741440E180012F500E3403B /* PBXContainerItemProxy */ = {
+		A758EE691965A29F00773D22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A7A476BB180010F100459DFD;
-			remoteInfo = "BundleLoader Dummy";
+			remoteGlobalIDString = A7AC21AE196417830009E1B9;
+			remoteInfo = "DTAnimatedGIF (iOS)";
 		};
 		A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -887,6 +852,13 @@
 			remoteGlobalIDString = A70F11DD148632CD009202BF;
 			remoteInfo = "Static Library";
 		};
+		A78D9F941965B83200C80986 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2262DC51638331500BFDAD7;
+			remoteInfo = "Mac Framework";
+		};
 		A7C3A93017FAAF5F00B3AEE8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
@@ -915,12 +887,33 @@
 			remoteGlobalIDString = A7E383C1160DFEDB00CF72D6;
 			remoteInfo = "DTHTMLParser (iOS)";
 		};
-		A7CE7CE8171569E10043A448 /* PBXContainerItemProxy */ = {
+		A7F0C4391965A0D600D7FAFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E2262DC51638331500BFDAD7;
-			remoteInfo = "Mac Framework";
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7AC21AF196417830009E1B9;
+			remoteInfo = "DTAnimatedGIF (iOS)";
+		};
+		A7F0C43B1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F88FF6801920A83300120808;
+			remoteInfo = "DTProgressHUD (iOS)";
+		};
+		A7F0C43D1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F88FF6A51920AAB600120808;
+			remoteInfo = "DTProgressHUD Demo";
+		};
+		A7F0C43F1965A0D600D7FAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A78381C31963F8D700AF09D3;
+			remoteInfo = "DTAnimatedGIF Demo";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -986,8 +979,6 @@
 		A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoAboutViewController.m; sourceTree = "<group>"; };
 		A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DemoAboutViewController.xib; sourceTree = "<group>"; };
 		A740369016E51C9800ECCDE0 /* About.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
-		A74144091800127300E3403B /* BundleLoaderDummy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BundleLoaderDummy-Info.plist"; sourceTree = "<group>"; };
-		A741440B1800127300E3403B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
 		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; };
@@ -1093,9 +1084,9 @@
 		A788CA3914863EF100E1AFD9 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A788CA5414863F6400E1AFD9 /* DemoApp-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DemoApp-Info.plist"; sourceTree = "<group>"; };
 		A788CA5514863F6400E1AFD9 /* DemoApp-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DemoApp-Prefix.pch"; sourceTree = "<group>"; };
-		A788CA681486456100E1AFD9 /* UnitTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		A788CA681486456100E1AFD9 /* UnitTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A78C241015073BC50045651E /* TextBoxes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TextBoxes.html; sourceTree = "<group>"; };
+		A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacUnitTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A78E3C4F178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DTCoreTextLayoutFrame+Cursor.h"; sourceTree = "<group>"; };
 		A78E3C50178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DTCoreTextLayoutFrame+Cursor.m"; sourceTree = "<group>"; };
 		A78EEA6016774B5F003B5540 /* UIFont+DTCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+DTCoreText.h"; sourceTree = "<group>"; };
@@ -1104,7 +1095,6 @@
 		A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLAttributedStringBuilder.h; sourceTree = "<group>"; };
 		A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLAttributedStringBuilder.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTCoreTextConstants.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		A7949A5814CC456000A8CCDE /* MacUnitTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacUnitTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7949A5D14CC456000A8CCDE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		A7949A5E14CC456000A8CCDE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A7949A5F14CC456000A8CCDE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1115,7 +1105,6 @@
 		A7985E0C178ECD86005D40B2 /* DTHTMLWriterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriterTest.h; sourceTree = "<group>"; };
 		A79CA82317FC9648001EBA6E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
-		A7A476BC180010F100459DFD /* BundleLoaderDummy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BundleLoaderDummy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A672B91532F2D100920A18 /* DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTCompatibility.h; path = Core/Source/DTCompatibility.h; sourceTree = "<group>"; };
 		A7A95D9414F3F45E002E3F7E /* LineHeight.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineHeight.html; sourceTree = "<group>"; };
 		A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTImageTextAttachment.h; sourceTree = "<group>"; };
@@ -1188,6 +1177,7 @@
 		A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTStylesheetHTMLElement.h; sourceTree = "<group>"; };
 		A7EB8538168FA33300D686B7 /* DTStylesheetHTMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTStylesheetHTMLElement.m; sourceTree = "<group>"; };
 		A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WhitespaceFollowingImagePromotedToParagraph.html; sourceTree = "<group>"; };
+		A7F0C4231965A0D600D7FAFB /* simpson20.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = simpson20.gif; path = Externals/DTFoundation/Demo/DTAnimatedGIF/Resources/simpson20.gif; sourceTree = SOURCE_ROOT; };
 		A7F16CF41698491400B0E843 /* NSStringCSSTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringCSSTest.h; sourceTree = "<group>"; };
 		A7F16CF51698491400B0E843 /* NSStringCSSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringCSSTest.m; sourceTree = "<group>"; };
 		A7F34D3F16CFC7C90054A512 /* RTL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = RTL.html; sourceTree = "<group>"; };
@@ -1232,6 +1222,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A758EE6B1965A2A400773D22 /* libDTAnimatedGIF.a in Frameworks */,
 				A71F5B7617FAB89500D5E42C /* libDTHTMLParser_iOS.a in Frameworks */,
 				A71F5B7517FAB88F00D5E42C /* libDTFoundation.a in Frameworks */,
 				A70F11DF148632CD009202BF /* Foundation.framework in Frameworks */,
@@ -1245,7 +1236,6 @@
 				A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */,
 				A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */,
 				A70E630116C254F5009B47BF /* libDTCoreText.a in Frameworks */,
-				A788CA7C148645A600E1AFD9 /* SenTestingKit.framework in Frameworks */,
 				A788CA6C1486456100E1AFD9 /* Foundation.framework in Frameworks */,
 				A788CA80148647AC00E1AFD9 /* CoreGraphics.framework in Frameworks */,
 				A788CA82148647BC00E1AFD9 /* ImageIO.framework in Frameworks */,
@@ -1255,25 +1245,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A7949A5414CC456000A8CCDE /* Frameworks */ = {
+		A78D9F751965B7DD00C80986 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A76F503D1705ABAC00DF52D5 /* DTCoreText.framework in Frameworks */,
-				A7F5671D14D8469000D1F167 /* Cocoa.framework in Frameworks */,
-				A7C1CC0F14D6CFD5008D6468 /* AppKit.framework in Frameworks */,
-				A7949A5914CC456000A8CCDE /* SenTestingKit.framework in Frameworks */,
-				A7C1CC0D14D6C4F2008D6468 /* libxml2.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A7A476B9180010F100459DFD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A7A476BD180010F100459DFD /* UIKit.framework in Frameworks */,
-				A7A476BE180010F100459DFD /* Foundation.framework in Frameworks */,
-				A7A476BF180010F100459DFD /* CoreGraphics.framework in Frameworks */,
+				A78D9F961965B83B00C80986 /* DTCoreText.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1306,11 +1282,10 @@
 				1D6058910D05DD3D006BFB54 /* RTDemoApp.app */,
 				A70F119B14863198009202BF /* DTCoreText.framework */,
 				A70F11DE148632CD009202BF /* libDTCoreText.a */,
-				A788CA681486456100E1AFD9 /* UnitTest.octest */,
-				A7949A5814CC456000A8CCDE /* MacUnitTest.octest */,
+				A788CA681486456100E1AFD9 /* UnitTest.xctest */,
 				A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */,
 				E2262DC61638331500BFDAD7 /* DTCoreText.framework */,
-				A7A476BC180010F100459DFD /* BundleLoaderDummy.app */,
+				A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */,
 			);
 			name = Products;
 			path = ../..;
@@ -1346,7 +1321,6 @@
 				A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */,
 				A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */,
 				A76E5B4812DD9AF500711782 /* QuartzCore.framework */,
-				A788CA7B148645A600E1AFD9 /* SenTestingKit.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				A79CA82317FC9648001EBA6E /* UIKit.framework */,
 				A7949A5C14CC456000A8CCDE /* Other Frameworks */,
@@ -1453,15 +1427,6 @@
 			path = Demo;
 			sourceTree = SOURCE_ROOT;
 		};
-		A74144061800127300E3403B /* BundleLoaderDummy */ = {
-			isa = PBXGroup;
-			children = (
-				A74144091800127300E3403B /* BundleLoaderDummy-Info.plist */,
-				A741440B1800127300E3403B /* main.m */,
-			);
-			path = BundleLoaderDummy;
-			sourceTree = "<group>";
-		};
 		A7675E6E172EA21E00C548CB /* Debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -1476,8 +1441,8 @@
 			children = (
 				A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */,
 				A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */,
-				A781FE9317FAABE500A1F5E8 /* UnitTests.octest */,
 				A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */,
+				A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */,
 				A781FE9717FAABE500A1F5E8 /* libDTAWS.a */,
 				A781FE9917FAABE500A1F5E8 /* libDTASN1.a */,
 				A781FE9B17FAABE500A1F5E8 /* libDTHTMLParser_iOS.a */,
@@ -1490,9 +1455,13 @@
 				A781FEA917FAABE500A1F5E8 /* libDTReachability_Mac.a */,
 				A781FEAB17FAABE500A1F5E8 /* libDTSQLite_iOS.a */,
 				A781FEAD17FAABE500A1F5E8 /* libDTSQLite_Mac.a */,
+				A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */,
 				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
 				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
 				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
+				A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */,
+				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
+				A7F0C4401965A0D600D7FAFB /* DTAnimatedGIF Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1538,7 +1507,6 @@
 				A7949A6E14CC45B500A8CCDE /* MacUnitTest-Prefix.pch */,
 				A788CA1214863E9D00E1AFD9 /* UnitTest-Info.plist */,
 				A788CA1314863E9D00E1AFD9 /* UnitTest-Prefix.pch */,
-				A74144061800127300E3403B /* BundleLoaderDummy */,
 				A7C7ACF814DA68CE005A9C69 /* Source */,
 				A7C7ACEB14DA62BA005A9C69 /* Resources */,
 			);
@@ -1564,6 +1532,7 @@
 				A788CA2514863EF100E1AFD9 /* Image.html */,
 				A788CA2614863EF100E1AFD9 /* ListTest.html */,
 				A788CA2714863EF100E1AFD9 /* LoremIpsum.html */,
+				A7F0C4231965A0D600D7FAFB /* simpson20.gif */,
 				A788CA2814863EF100E1AFD9 /* Oliver.jpg */,
 				A76C23B1183535A300F54F02 /* Oliver@2x.jpg */,
 				A788CA2914863EF100E1AFD9 /* README.html */,
@@ -2151,6 +2120,7 @@
 				A758FC9714DBCEFD007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
+				A758EE6A1965A29F00773D22 /* PBXTargetDependency */,
 				A7C3A93317FAAF6200B3AEE8 /* PBXTargetDependency */,
 				A7C3A93117FAAF5F00B3AEE8 /* PBXTargetDependency */,
 			);
@@ -2171,49 +2141,30 @@
 				A758FC9D14DBD76E007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A741440F180012F500E3403B /* PBXTargetDependency */,
 				A70E630016C254EB009B47BF /* PBXTargetDependency */,
 			);
 			name = UnitTest;
 			productName = UnitTests;
-			productReference = A788CA681486456100E1AFD9 /* UnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = A788CA681486456100E1AFD9 /* UnitTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A7949A5714CC456000A8CCDE /* MacUnitTest */ = {
+		A78D9F771965B7DD00C80986 /* MacUnitTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A7949A6A14CC456100A8CCDE /* Build configuration list for PBXNativeTarget "MacUnitTest" */;
+			buildConfigurationList = A78D9F7E1965B7DD00C80986 /* Build configuration list for PBXNativeTarget "MacUnitTest" */;
 			buildPhases = (
-				A7949A5314CC456000A8CCDE /* Sources */,
-				A7949A5414CC456000A8CCDE /* Frameworks */,
-				A7949A5514CC456000A8CCDE /* Resources */,
+				A78D9F741965B7DD00C80986 /* Sources */,
+				A78D9F751965B7DD00C80986 /* Frameworks */,
+				A78D9F761965B7DD00C80986 /* Resources */,
 			);
 			buildRules = (
-				A758FC9F14DBD77D007DF8B2 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A7CE7CE9171569E10043A448 /* PBXTargetDependency */,
+				A78D9F951965B83200C80986 /* PBXTargetDependency */,
 			);
 			name = MacUnitTest;
 			productName = MacUnitTest;
-			productReference = A7949A5814CC456000A8CCDE /* MacUnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
-		A7A476BB180010F100459DFD /* BundleLoader Dummy */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A7A476E5180010F100459DFD /* Build configuration list for PBXNativeTarget "BundleLoader Dummy" */;
-			buildPhases = (
-				A7A476B8180010F100459DFD /* Sources */,
-				A7A476B9180010F100459DFD /* Frameworks */,
-				A7A476BA180010F100459DFD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "BundleLoader Dummy";
-			productName = UnitTestBundleLoader;
-			productReference = A7A476BC180010F100459DFD /* BundleLoaderDummy.app */;
-			productType = "com.apple.product-type.application";
+			productReference = A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		A7F7EF761573603100F5A4D0 /* Static Library (no DTFoundation) */ = {
 			isa = PBXNativeTarget;
@@ -2263,6 +2214,11 @@
 				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Drobnik.com;
+				TargetAttributes = {
+					A78D9F771965B7DD00C80986 = {
+						CreatedOnToolsVersion = 6.0;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2289,11 +2245,10 @@
 				A70F119A14863198009202BF /* Static Framework */,
 				A70F11DD148632CD009202BF /* Static Library */,
 				A788CA671486456100E1AFD9 /* UnitTest */,
-				A7949A5714CC456000A8CCDE /* MacUnitTest */,
+				A78D9F771965B7DD00C80986 /* MacUnitTest */,
 				A7174BC414F288F900C57464 /* Documentation */,
 				A7F7EF761573603100F5A4D0 /* Static Library (no DTFoundation) */,
 				E2262DC51638331500BFDAD7 /* Mac Framework */,
-				A7A476BB180010F100459DFD /* BundleLoader Dummy */,
 			);
 		};
 /* End PBXProject section */
@@ -2313,10 +2268,10 @@
 			remoteRef = A781FE9017FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A781FE9317FAABE500A1F5E8 /* UnitTests.octest */ = {
+		A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = UnitTests.octest;
+			path = "Unit Tests.xctest";
 			remoteRef = A781FE9217FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2432,6 +2387,34 @@
 			remoteRef = A781FEB217FAABE500A1F5E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTAnimatedGIF.a;
+			remoteRef = A7F0C4391965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDTProgressHUD_iOS.a;
+			remoteRef = A7F0C43B1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "DTProgressHUD Demo.app";
+			remoteRef = A7F0C43D1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A7F0C4401965A0D600D7FAFB /* DTAnimatedGIF Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "DTAnimatedGIF Demo.app";
+			remoteRef = A7F0C43F1965A0D600D7FAFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -2455,6 +2438,7 @@
 				A788CA4914863EF100E1AFD9 /* Snippets.plist in Resources */,
 				A788CA4A14863EF100E1AFD9 /* styles.html in Resources */,
 				A788CA4B14863EF100E1AFD9 /* Subviews.html in Resources */,
+				A7F0C4241965A0D600D7FAFB /* simpson20.gif in Resources */,
 				A788CA4C14863EF100E1AFD9 /* Video.html in Resources */,
 				A788CA4D14863EF100E1AFD9 /* WarAndPeace.html in Resources */,
 				A788CA4E14863EF100E1AFD9 /* XB Niloofar.ttf in Resources */,
@@ -2503,55 +2487,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A7949A5514CC456000A8CCDE /* Resources */ = {
+		A78D9F761965B7DD00C80986 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7949A8914CC480100A8CCDE /* Alignment.html in Resources */,
-				A7949A8A14CC482F00A8CCDE /* APOD.html in Resources */,
-				A7949A8B14CC483400A8CCDE /* CurrentTest.html in Resources */,
-				A7949A8C14CC483C00A8CCDE /* ArabicTest.html in Resources */,
-				A7949A8D14CC484100A8CCDE /* CustomFont.html in Resources */,
-				A7949A8E14CC484700A8CCDE /* Image.html in Resources */,
-				A7949A9014CC484D00A8CCDE /* LoremIpsum.html in Resources */,
-				A7949A9114CC485000A8CCDE /* README.html in Resources */,
-				A7949A9214CC485300A8CCDE /* styles.html in Resources */,
-				A7949A9314CC485600A8CCDE /* Subviews.html in Resources */,
-				A7949A9414CC485A00A8CCDE /* Video.html in Resources */,
-				A7949A9514CC485D00A8CCDE /* WarAndPeace.html in Resources */,
-				A7C7ACEF14DA62BA005A9C69 /* CustomFont.plist in Resources */,
-				A7C7ACF014DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html in Resources */,
-				A7C7ACF114DA62BA005A9C69 /* WarAndPeace.plist in Resources */,
-				A7C7AD0314DA6EB2005A9C69 /* Video.plist in Resources */,
-				A76994F714DBB3DD0047CC8D /* NavTag.html in Resources */,
-				A74C953614DC0C69002B5A45 /* MalformedURL.html in Resources */,
-				A74C973E14DC5294002B5A45 /* Emoji.html in Resources */,
-				A76C23EE1835423200F54F02 /* Oliver@2x.jpg in Resources */,
-				A71B927114E0165000360C30 /* PreWhitespace.html in Resources */,
-				A71B927314E016A300360C30 /* PreWhitespace.plist in Resources */,
-				A7A95D9714F3F496002E3F7E /* LineHeight.html in Resources */,
-				A7DBC1AB1689B8C5003F1D38 /* ListItemBulletColorAndFont.html in Resources */,
-				A7DBC1B41689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */,
-				A7EB84FD168ED63A00D686B7 /* FontSizes.html in Resources */,
-				A7EB8544169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
-				A721D58A16909AC800C5A48F /* ListTest.html in Resources */,
-				A7E3A5CC169443B6007A526B /* AppleConverted.html in Resources */,
-				A70E630316C25736009B47BF /* Oliver.jpg in Resources */,
-				A70E630516C25AC6009B47BF /* KeepMeTogether.html in Resources */,
-				A7F34D4116CFC7C90054A512 /* RTL.html in Resources */,
-				A7E8E1D516D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html in Resources */,
-				A730BCD916D29588003B849F /* Languages.html in Resources */,
-				A7343F3417BDF64A00EF9B83 /* CSSCascading.html in Resources */,
-				C2CDBAED17CCD5EA000E4AD7 /* CSSOOMCrash.html in Resources */,
-				A783CE7917D11D0700C84C28 /* CSSOOMCrash.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A7A476BA180010F100459DFD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A73FC2ED1834B25000ACF490 /* Default-568h@2x.png in Resources */,
+				A78D9FA51965B9BD00C80986 /* AppleConverted.html in Resources */,
+				A78D9F9A1965B9BD00C80986 /* Video.plist in Resources */,
+				A78D9FA01965B9BD00C80986 /* PreWhitespace.plist in Resources */,
+				A78D9FAB1965B9E200C80986 /* Oliver.jpg in Resources */,
+				A78D9FA71965B9BD00C80986 /* EmptyLinesAndFontAttribute.html in Resources */,
+				A78D9F9E1965B9BD00C80986 /* Emoji.html in Resources */,
+				A78D9FA31965B9BD00C80986 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
+				A78D9F9B1965B9BD00C80986 /* WarAndPeace.plist in Resources */,
+				A78D9FA11965B9BD00C80986 /* ListItemBulletColorAndFont.html in Resources */,
+				A78D9FA81965B9BD00C80986 /* CSSCascading.html in Resources */,
+				A78D9F981965B9BD00C80986 /* Empty_and_Unclosed_Paragraphs.html in Resources */,
+				A78D9F9F1965B9BD00C80986 /* PreWhitespace.html in Resources */,
+				A78D9F9C1965B9BD00C80986 /* NavTag.html in Resources */,
+				A78D9F971965B9BD00C80986 /* CustomFont.plist in Resources */,
+				A78D9FA91965B9BD00C80986 /* CSSOOMCrash.html in Resources */,
+				A78D9FA21965B9BD00C80986 /* SpaceBetweenUnderlines.html in Resources */,
+				A78D9F9D1965B9BD00C80986 /* MalformedURL.html in Resources */,
+				A78D9FAA1965B9BD00C80986 /* CSSOOMCrash.plist in Resources */,
+				A78D9FA61965B9BD00C80986 /* RTL.html in Resources */,
+				A78D9F991965B9BD00C80986 /* ListTest.plist in Resources */,
+				A78D9FA41965B9BD00C80986 /* KeepMeTogether.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2781,35 +2741,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A7949A5314CC456000A8CCDE /* Sources */ = {
+		A78D9F741965B7DD00C80986 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A768BE4817FC547E008834C6 /* NSDictionaryDTCoreText.m in Sources */,
-				A758FCA114DBD7AF007DF8B2 /* default.css in Sources */,
-				A7C7AD0814DA7C17005A9C69 /* MacUnitTest.m in Sources */,
-				A7F16CF71698491400B0E843 /* NSStringCSSTest.m in Sources */,
-				A70ED6CF17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
-				A7B14E22183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */,
-				A70E630416C25A33009B47BF /* DTHTMLAttributedStringBuilderTest.m in Sources */,
-				A74F6FD716DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */,
-				A74036AD16E663FA00ECCDE0 /* NSStringHTMLTest.m in Sources */,
-				A776DBE91716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */,
-				A773790E17185BF100640641 /* DTHTMLElementTest.m in Sources */,
-				A77A3E431779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */,
-				A738664217F8B16200E3CDFC /* DTTextBlockTest.m in Sources */,
-				944A9E6518B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */,
-				A709184B17F2CF200092F436 /* DTCoreTextTestCase.m in Sources */,
-				A7985E1C178ECE08005D40B2 /* DTHTMLWriterTest.m in Sources */,
-				A785FA1217BA113900BB758E /* DTCSSStylesheetTest.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A7A476B8180010F100459DFD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A741440D180012D800E3403B /* main.m in Sources */,
+				A78D9F8F1965B81A00C80986 /* NSMutableAttributedStringHTMLTest.m in Sources */,
+				A78D9F931965B81A00C80986 /* DTCoreTextFontDescriptorTest.m in Sources */,
+				A78D9F8B1965B81A00C80986 /* MacUnitTest.m in Sources */,
+				A78D9F831965B81A00C80986 /* DTCoreTextTestCase.m in Sources */,
+				A78D9F8A1965B81A00C80986 /* DTCSSListStyleTest.m in Sources */,
+				A78D9F821965B81A00C80986 /* DTCoreTextParagraphStyleTest.m in Sources */,
+				A78D9F851965B81A00C80986 /* DTCSSStylesheetTest.m in Sources */,
+				A78D9F921965B81A00C80986 /* NSStringParagraphTest.m in Sources */,
+				A78D9F861965B81A00C80986 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
+				A78D9F8E1965B81A00C80986 /* NSDictionaryDTCoreText.m in Sources */,
+				A78D9F871965B81A00C80986 /* DTHTMLElementTest.m in Sources */,
+				A78D9F911965B81A00C80986 /* NSStringCSSTest.m in Sources */,
+				A78D9F901965B81A00C80986 /* NSStringHTMLTest.m in Sources */,
+				A78D9F8C1965B81A00C80986 /* NSAttributedStringHTMLTest.m in Sources */,
+				A78D9F8D1965B81A00C80986 /* NSAttributedStringDTCoreTextTest.m in Sources */,
+				A78D9F881965B81A00C80986 /* DTHTMLWriterTest.m in Sources */,
+				A78D9F891965B81A00C80986 /* DTTextBlockTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2938,10 +2890,10 @@
 			target = A70F11DD148632CD009202BF /* Static Library */;
 			targetProxy = A70E62FF16C254EB009B47BF /* PBXContainerItemProxy */;
 		};
-		A741440F180012F500E3403B /* PBXTargetDependency */ = {
+		A758EE6A1965A29F00773D22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A7A476BB180010F100459DFD /* BundleLoader Dummy */;
-			targetProxy = A741440E180012F500E3403B /* PBXContainerItemProxy */;
+			name = "DTAnimatedGIF (iOS)";
+			targetProxy = A758EE691965A29F00773D22 /* PBXContainerItemProxy */;
 		};
 		A781FEB917FAAD5500A1F5E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2957,6 +2909,11 @@
 			isa = PBXTargetDependency;
 			target = A70F11DD148632CD009202BF /* Static Library */;
 			targetProxy = A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */;
+		};
+		A78D9F951965B83200C80986 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2262DC51638331500BFDAD7 /* Mac Framework */;
+			targetProxy = A78D9F941965B83200C80986 /* PBXContainerItemProxy */;
 		};
 		A7C3A93117FAAF5F00B3AEE8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2977,11 +2934,6 @@
 			isa = PBXTargetDependency;
 			name = "DTHTMLParser (iOS)";
 			targetProxy = A7C3A93617FAAF8100B3AEE8 /* PBXContainerItemProxy */;
-		};
-		A7CE7CE9171569E10043A448 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E2262DC51638331500BFDAD7 /* Mac Framework */;
-			targetProxy = A7CE7CE8171569E10043A448 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3151,11 +3103,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BundleLoaderDummy.app/BundleLoaderDummy";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3165,12 +3116,14 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -3178,149 +3131,156 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BundleLoaderDummy.app/BundleLoaderDummy";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "Test/UnitTest-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
-		A7949A6B14CC456100A8CCDE /* Debug */ = {
+		A78D9F7F1965B7DD00C80986 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Test/MacUnitTest-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = "-ObjC";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				METAL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
-		A7949A6C14CC456100A8CCDE /* Release */ = {
+		A78D9F801965B7DD00C80986 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Test/MacUnitTest-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = "-ObjC";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				METAL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = macosx;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		A7A476D2180010F100459DFD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "Test/BundleLoaderDummy/BundleLoaderDummy-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_NAME = BundleLoaderDummy;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = NO;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		A7A476D3180010F100459DFD /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "Test/BundleLoaderDummy/BundleLoaderDummy-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_NAME = BundleLoaderDummy;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Coverage;
 		};
-		A7A476D4180010F100459DFD /* Release */ = {
+		A78D9F811965B7DD00C80986 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "Test/BundleLoaderDummy/BundleLoaderDummy-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				PRODUCT_NAME = BundleLoaderDummy;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = NO;
-				WRAPPER_EXTENSION = app;
+				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "Test/MacUnitTest-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				METAL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -3424,11 +3384,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BundleLoaderDummy.app/BundleLoaderDummy";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3440,37 +3399,14 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Test/UnitTest-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Coverage;
-		};
-		A7DC5D0017F833F1006ADDF5 /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREFIX_HEADER = "Test/MacUnitTest-Prefix.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				INFOPLIST_FILE = "Test/MacUnitTest-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Coverage;
 		};
@@ -3507,10 +3443,10 @@
 		A7DC5D0317F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3625,10 +3561,10 @@
 		E2262DD31638331500BFDAD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3655,10 +3591,10 @@
 		E2262DD41638331500BFDAD7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -3733,22 +3669,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A7949A6A14CC456100A8CCDE /* Build configuration list for PBXNativeTarget "MacUnitTest" */ = {
+		A78D9F7E1965B7DD00C80986 /* Build configuration list for PBXNativeTarget "MacUnitTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A7949A6B14CC456100A8CCDE /* Debug */,
-				A7DC5D0017F833F1006ADDF5 /* Coverage */,
-				A7949A6C14CC456100A8CCDE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A7A476E5180010F100459DFD /* Build configuration list for PBXNativeTarget "BundleLoader Dummy" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A7A476D2180010F100459DFD /* Debug */,
-				A7A476D3180010F100459DFD /* Coverage */,
-				A7A476D4180010F100459DFD /* Release */,
+				A78D9F7F1965B7DD00C80986 /* Debug */,
+				A78D9F801965B7DD00C80986 /* Coverage */,
+				A78D9F811965B7DD00C80986 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

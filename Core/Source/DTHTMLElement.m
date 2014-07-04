@@ -322,6 +322,12 @@ NSDictionary *_classesForNames = nil;
 		{
 			for (DTHTMLElement *oneChild in self.childNodes)
 			{
+				// ignore children that have display:none
+				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
+				{
+					continue;
+				}
+				
 				if (!oneChild.didOutput)
 				{
 					return YES;
@@ -432,6 +438,11 @@ NSDictionary *_classesForNames = nil;
 			
 			for (DTHTMLElement *oneChild in self.childNodes)
 			{
+				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
+				{
+					continue;
+				}
+				
 				// if previous node was inline and this child is block then we need a newline
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
 				{
@@ -606,6 +617,12 @@ NSDictionary *_classesForNames = nil;
 - (BOOL)_parseEdgeInsetsFromStyleDictionary:(NSDictionary *)styles forAttributesWithPrefix:(NSString *)prefix writingDirection:(CTWritingDirection)writingDirection intoEdgeInsets:(DTEdgeInsets *)intoEdgeInsets
 {
 	DTEdgeInsets edgeInsets = {0,0,0,0};
+	
+	// preserve previous values in insets
+	if (intoEdgeInsets)
+	{
+		edgeInsets = *intoEdgeInsets;
+	}
 	
 	BOOL didModify = NO;
 	
