@@ -84,7 +84,15 @@
 
 - (BOOL)hasAttachment
 {
-	return [self objectForKey:NSAttachmentAttributeName]!=nil;
+	id attachment = [self objectForKey:NSAttachmentAttributeName];
+	
+	if (!attachment)
+	{
+		// could also be modern NS-style attachment
+		attachment = [self objectForKey:@"NSAttachment"];
+	}
+	
+	return attachment!=nil;
 }
 
 - (DTCoreTextParagraphStyle *)paragraphStyle
