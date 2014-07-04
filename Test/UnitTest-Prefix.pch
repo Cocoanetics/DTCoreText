@@ -6,5 +6,5 @@
 	#import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
 	#import <XCTest/XCTest.h>
-	#import <CoreText/CoreText.h>
+	#import "DTCoreText.h"
 #endif

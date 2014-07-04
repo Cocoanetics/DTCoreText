@@ -7,9 +7,6 @@
 //
 
 #import "DTHTMLElementTest.h"
-#import "DTHTMLElement.h"
-
-#import "DTHTMLAttributedStringBuilder.h"
 
 @implementation DTHTMLElementTest
 
