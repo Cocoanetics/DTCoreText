@@ -432,6 +432,11 @@ NSDictionary *_classesForNames = nil;
 			
 			for (DTHTMLElement *oneChild in self.childNodes)
 			{
+				if (oneChild.displayStyle == DTHTMLElementDisplayStyleNone)
+				{
+					continue;
+				}
+				
 				// if previous node was inline and this child is block then we need a newline
 				if (previousChild && previousChild.displayStyle == DTHTMLElementDisplayStyleInline)
 				{
