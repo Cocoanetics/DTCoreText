@@ -129,31 +129,7 @@ NSDictionary *_classesForNames = nil;
 		if (___useiOS6Attributes)
 		{
 			UIFont *uiFont = [UIFont fontWithCTFont:font];
-			if (uiFont)
-			{
-				[tmpDict setObject:uiFont forKey:NSFontAttributeName];
-			}
-			else
-			{
-				// Fix for missing "HelveticaNeue-Italic" font in iOS 7.0.x
-				CFStringRef fontFamily = CTFontCopyFamilyName(font);
-				
-				CFComparisonResult result = CFStringCompare(fontFamily, (__bridge CFStringRef)@"Helvetica Neue", kCFCompareCaseInsensitive);
-				if (result == kCFCompareEqualTo)
-				{
-					CFTypeRef typeRef = CTFontCopyAttribute(font, kCTFontStyleNameAttribute);
-					
-					if (CTFontGetSymbolicTraits(font) == kCTFontTraitItalic)
-					{
-						UIFont *helveticaFont = [UIFont fontWithName:@"HelveticaNeue-LightItalic" size:CTFontGetSize(font)];
-						[tmpDict setObject:helveticaFont forKey:NSFontAttributeName];
-					}
-					
-					CFRelease(typeRef);
-				}
-				
-				CFRelease(fontFamily);
-			}
+			[tmpDict setObject:uiFont forKey:NSFontAttributeName];
 		}
 		else
 #endif
