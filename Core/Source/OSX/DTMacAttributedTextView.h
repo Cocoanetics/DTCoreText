@@ -138,4 +138,6 @@
  */
 @property (nonatomic) DTEdgeInsets contentInset;
 
+@property (nonatomic, assign) BOOL scrollEnabled;
+
 @end

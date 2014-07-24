@@ -45,6 +45,24 @@
     [[self documentView] setFrameSize:size];
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    BOOL shouldScroll = self.scrollEnabled;
+    NSRect docBounds = [(NSView*)self.documentView bounds];
+    
+    if (docBounds.size.width <= self.bounds.size.width &&
+        docBounds.size.height <= self.bounds.size.height)
+    {
+        shouldScroll = NO;
+    }
+    
+    if (shouldScroll) {
+        [super scrollWheel:theEvent];
+    } else {
+        [[self nextResponder] scrollWheel:theEvent];
+    }
+}
+
 #endif
 
 

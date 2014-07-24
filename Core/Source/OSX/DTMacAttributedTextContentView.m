@@ -13,6 +13,7 @@
 #import "DTMacAttributedTextContentView.h"
 #import "DTDictationPlaceholderTextAttachment.h"
 #import "DTBlockFunctions.h"
+#import "DTTiledLayerWithoutFade.h"
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
@@ -119,11 +120,25 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 		_isTiling = YES;
 	}
 #endif
-	
 }
 
-- (CALayer *)makeBackingLayer {
-	return [CATiledLayer layer];
+//- (CALayer *)makeBackingLayer {
+//	return [CATiledLayer layer];
+//}
+
+/*- (void)viewDidChangeBackingProperties
+{
+    [super viewDidChangeBackingProperties];
+    [[self layer] setContentsScale:[[self window] backingScaleFactor]];
+    [[self layer] setNeedsDisplay];
+}*/
+
+- (void)mouseUp:(NSEvent *)theEvent {
+    [self.nextResponder tryToPerform:_cmd with:theEvent];
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+    [self.nextResponder tryToPerform:_cmd with:theEvent];
 }
 
 - (BOOL)isFlipped {
@@ -449,9 +464,13 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 		[_delegate attributedTextContentView:self willDrawLayoutFrame:theLayoutFrame inContext:ctx];
 	}
 	
+//    CGContextSetShouldAntialias(ctx, NO);
+    CGContextSetShouldSmoothFonts(ctx, false);
 	// need to prevent updating of string and drawing at the same time
 	[theLayoutFrame drawInContext:ctx options:options];
-	
+//    CGContextSetShouldAntialias(ctx, YES);
+    CGContextSetShouldSmoothFonts(ctx, true);
+
 	if (_delegateFlags.delegateSupportsNotificationAfterDrawing)
 	{
 		[_delegate attributedTextContentView:self didDrawLayoutFrame:theLayoutFrame inContext:ctx];

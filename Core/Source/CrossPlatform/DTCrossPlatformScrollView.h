@@ -31,6 +31,7 @@
 }
 
 @property (nonatomic, weak) id<DTCrossPlatformScrollViewDelegate> delegate;
+@property (nonatomic, assign) BOOL scrollEnabled;
 
 - (CGPoint)contentOffset;
 
