@@ -130,13 +130,14 @@
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	
 	// custom option to use iOS 6 attributes if running on iOS 6
-	if ([[_options objectForKey:DTUseiOS6Attributes] boolValue])
+	if ([_options objectForKey:DTUseiOS6Attributes])
 	{
+        BOOL useiOS6Atts = [[_options objectForKey:DTUseiOS6Attributes] boolValue];
 #if TARGET_OS_IPHONE
 		// NS-attributes only supported running on iOS 6.0 or greater
 		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
 		{
-			___useiOS6Attributes = YES;
+			___useiOS6Attributes = useiOS6Atts;
 		}
 		else
 		{
@@ -144,7 +145,7 @@
 		}
 #else
 		// Mac generally supports it
-		___useiOS6Attributes = YES;
+		___useiOS6Attributes = useiOS6Atts;
 #endif
 	}
 	
