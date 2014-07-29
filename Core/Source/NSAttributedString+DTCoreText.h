@@ -8,6 +8,7 @@
 
 @class DTCSSListStyle;
 @class DTTextBlock;
+@class DTHTMLAttributedStringBuilderContext;
 
 /**
  Convenience Methods that mimick similar methods available on Mac
@@ -132,8 +133,9 @@
  @param listStyle The list style
  @param listIndent The amount in px to indent the list
  @param attributes The attribute dictionary for the text to be prefixed
+ @param context The context holding the stringbuilder configuration
  @returns An attributed string with the list prefix
  */
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes;
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes context:(DTHTMLAttributedStringBuilderContext*)context;
 
 @end

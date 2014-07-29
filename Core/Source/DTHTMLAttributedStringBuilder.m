@@ -26,6 +26,40 @@
 
 @end
 
+@implementation DTHTMLAttributedStringBuilderContext : NSObject
+
+- (id)initWithOptions:(NSDictionary*)options {
+    self = [super init];
+    if (self != nil) {
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+        
+        BOOL useiOS6Atts = YES; // default for Mac
+        
+        // custom option to use iOS 6 attributes if running on iOS 6
+        if ([options objectForKey:DTUseiOS6Attributes])
+        {
+            useiOS6Atts = [[options objectForKey:DTUseiOS6Attributes] boolValue];
+#if TARGET_OS_IPHONE
+            // NS-attributes only supported running on iOS 6.0 or greater
+            if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
+            {
+                _useiOS6Attributes = useiOS6Atts;
+            }
+            else
+            {
+                _useiOS6Attributes = NO;
+            }
+#else
+            // Mac generally supports it, but respect the value given in the options
+            _useiOS6Attributes = useiOS6Atts;
+#endif
+        }
+#endif
+    }
+    return self;
+}
+
+@end
 
 @implementation DTHTMLAttributedStringBuilder
 {
@@ -126,31 +160,8 @@
 	// register default handlers
 	[self _registerTagStartHandlers];
 	[self _registerTagEndHandlers];
-		
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	
-	// custom option to use iOS 6 attributes if running on iOS 6
-	if ([_options objectForKey:DTUseiOS6Attributes])
-	{
-        BOOL useiOS6Atts = [[_options objectForKey:DTUseiOS6Attributes] boolValue];
-#if TARGET_OS_IPHONE
-		// NS-attributes only supported running on iOS 6.0 or greater
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
-		{
-			___useiOS6Attributes = useiOS6Atts;
-		}
-		else
-		{
-			___useiOS6Attributes = NO;
-		}
-#else
-		// Mac generally supports it
-		___useiOS6Attributes = useiOS6Atts;
-#endif
-	}
-	
-#endif
     
+    self.currentContext = [[DTHTMLAttributedStringBuilderContext alloc] initWithOptions:_options];
 	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
@@ -837,7 +848,7 @@
 								_willFlushCallback(theTag);
 							}
 							
-							NSAttributedString *nodeString = [theTag attributedString];
+							NSAttributedString *nodeString = [theTag attributedStringWithContext:self.currentContext];
 							
 							if (nodeString)
 							{
@@ -940,7 +951,7 @@
 		if (theTag == _bodyElement)
 		{
 			dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
-				[_tmpString appendAttributedString:[textNode attributedString]];
+				[_tmpString appendAttributedString:[textNode attributedStringWithContext:self.currentContext]];
 				theTag.didOutput = YES;
 			});
 			

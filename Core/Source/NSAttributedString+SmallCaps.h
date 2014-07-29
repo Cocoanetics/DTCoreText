@@ -12,6 +12,8 @@
  This category works equally for Mac and iOS attributed strings.
  */
 
+@class DTHTMLAttributedStringBuilderContext;
+
 @interface NSAttributedString (SmallCaps)
 
 /**
@@ -19,8 +21,9 @@
  
  @param text The string to convert into an attributed string
  @param attributes A dictionary with attributes for the attributed string
+ @param context The context holding the stringbuilder configuration
  @returns An attributed string with synthesized small caps.
 */
-+ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes;
++ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes context:(DTHTMLAttributedStringBuilderContext*)context;
 
 @end

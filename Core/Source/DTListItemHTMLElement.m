@@ -77,12 +77,12 @@
 }
 
 // creates an attributed list prefix
-- (NSAttributedString *)_listPrefix
+- (NSAttributedString *)_listPrefixWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
-	DTCoreTextParagraphStyle *paragraphStyle = [[self attributesForAttributedStringRepresentation] paragraphStyle];
+	DTCoreTextParagraphStyle *paragraphStyle = [[self attributesForAttributedStringRepresentationWithContext:context] paragraphStyle];
 	NSParameterAssert(paragraphStyle);
 	
-	DTCoreTextFontDescriptor *fontDescriptor = [[self attributesForAttributedStringRepresentation] fontDescriptor];
+	DTCoreTextFontDescriptor *fontDescriptor = [[self attributesForAttributedStringRepresentationWithContext:context] fontDescriptor];
 	NSParameterAssert(fontDescriptor);
 	
 	DTCSSListStyle *effectiveList = [self.paragraphStyle.textLists lastObject];
@@ -108,7 +108,7 @@
 		[effectiveList updateFromStyleDictionary:styles];
 	}
 	
-	NSDictionary *attributes = [tmpCopy attributesForAttributedStringRepresentation];
+	NSDictionary *attributes = [tmpCopy attributesForAttributedStringRepresentationWithContext:context];
 	
 	// modify paragraph style
 	paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent - _margins.left - _padding.left;;  // first line has prefix and starts at list indent;
@@ -142,7 +142,7 @@
 	CTFontRef font = [fontDescriptor newMatchingFont];
 	
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-	if (___useiOS6Attributes)
+	if (context.useiOS6Attributes)
 	{
 		UIFont *uiFont = [UIFont fontWithCTFont:font];
 		[newAttributes setObject:uiFont forKey:NSFontAttributeName];
@@ -162,7 +162,7 @@
 		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
 	}
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	else if (___useiOS6Attributes)
+	else if (context.useiOS6Attributes)
 	{
 		DTColor *uiColor = [attributes foregroundColor];
 		
@@ -177,7 +177,7 @@
 	if (paragraphStyle)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
 			[newAttributes setObject:style forKey:NSParagraphStyleAttributeName];
@@ -274,15 +274,15 @@
 	return tmpStr;
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
 	NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] init];
 
 	// append child elements
-	NSAttributedString *childrenString = [super attributedString];
+	NSAttributedString *childrenString = [super attributedStringWithContext:context];
 
 	// apend list prefix
-	NSAttributedString *listPrefix = [self _listPrefix];
+	NSAttributedString *listPrefix = [self _listPrefixWithContext:context];
 	
 	if (listPrefix)
 	{
@@ -293,7 +293,7 @@
 		
 		if ([field isEqualToString:DTListPrefixField])
 		{
-			[tmpString appendEndOfParagraph];
+			[tmpString appendEndOfParagraphWithContext:context];
 		}
 	}
 	

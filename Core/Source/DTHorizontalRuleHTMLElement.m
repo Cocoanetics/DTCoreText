@@ -10,19 +10,19 @@
 
 @implementation DTHorizontalRuleHTMLElement
 
-- (NSDictionary *)attributesForAttributedStringRepresentation
+- (NSDictionary *)attributesForAttributedStringRepresentationWithContext:(DTHTMLAttributedStringBuilderContext *)context
 {
-	NSMutableDictionary *dict = [[super attributesForAttributedStringRepresentation] mutableCopy];
+	NSMutableDictionary *dict = [[super attributesForAttributedStringRepresentationWithContext:context] mutableCopy];
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:DTHorizontalRuleStyleAttribute];
 	
 	return dict;
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext *)context
 {
 	@synchronized(self)
 	{
-		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 		return [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 	}
 }

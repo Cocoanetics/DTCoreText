@@ -8,6 +8,8 @@
 
 #import "DTHTMLElement.h"
 
+@class DTHTMLAttributedStringBuilderContext;
+
 /**
  Specialized subclass of <DTHTMLElement> that deals with text. It represents a text node. The text inside a DTHTMLElement can consist of any number of such text nodes.
  */

@@ -12,6 +12,13 @@
 
 typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 
+@interface DTHTMLAttributedStringBuilderContext : NSObject
+
+@property (nonatomic, assign) BOOL useiOS6Attributes;
+
+- (id)initWithOptions:(NSDictionary*)options;
+
+@end
 
 /**
  Class for building an `NSAttributedString` from an HTML document.
@@ -82,5 +89,6 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 
 @property (nonatomic, strong) NSData *data;
 
+@property (nonatomic, strong) DTHTMLAttributedStringBuilderContext *currentContext;
 
 @end

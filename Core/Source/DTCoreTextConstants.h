@@ -82,7 +82,7 @@ extern NSString * const DTBackgroundCornerRadiusAttribute;
 extern NSString * const DTListPrefixField;
 
 // iOS 6 compatibility
-extern BOOL ___useiOS6Attributes;
+//extern BOOL ___useiOS6Attributes; // TODO -> part of context now. Holding it globally is not suitable when using multiple stringbuilde configurations
 
 // exceptions
 extern NSString * const DTCoreTextFontDescriptorException;

@@ -17,6 +17,7 @@
 #import "DTCompatibility.h"
 
 @class DTBreakHTMLElement;
+@class DTHTMLAttributedStringBuilderContext;
 
 /**
  Class to represent a element (aka "tag") in a HTML document. Structure information - like parent or children - is inherited from its superclass <DTHTMLParserNode>.
@@ -101,15 +102,17 @@
 
 /**
  Creates an `NSAttributedString` that represents the receiver including all its children. This method is typically overwritten in subclasses of <DTHTMLElement> that respresent specific HTML elements.
+ @param context The context holding the stringbuilder configuration
  @returns An attributed string that also contains the children
  */
-- (NSAttributedString *)attributedString;
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext*)context;
 
 /**
  The dictionary of Core Text attributes for creating an `NSAttributedString` representation for the receiver
+ @param context The string builder context
  @returns The dictionary of attributes
  */
-- (NSDictionary *)attributesForAttributedStringRepresentation;
+- (NSDictionary *)attributesForAttributedStringRepresentationWithContext:(DTHTMLAttributedStringBuilderContext*)context;
 
 /**
  Creates a <DTCSSListStyle> to match the CSS styles

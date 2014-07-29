@@ -102,7 +102,7 @@ NSDictionary *_classesForNames = nil;
 
 #pragma mark - Creating Attributed Strings
 
-- (NSDictionary *)attributesForAttributedStringRepresentation
+- (NSDictionary *)attributesForAttributedStringRepresentationWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
 	NSMutableDictionary *tmpDict = [NSMutableDictionary dictionary];
 	
@@ -127,7 +127,7 @@ NSDictionary *_classesForNames = nil;
 	if (font)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			UIFont *uiFont = [UIFont fontWithCTFont:font];
 			[tmpDict setObject:uiFont forKey:NSFontAttributeName];
@@ -165,7 +165,7 @@ NSDictionary *_classesForNames = nil;
 	if (_strikeOut)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
 		}
@@ -180,7 +180,7 @@ NSDictionary *_classesForNames = nil;
 	if (_underlineStyle)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			[tmpDict setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 		}
@@ -197,7 +197,7 @@ NSDictionary *_classesForNames = nil;
 	if (_textColor)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			[tmpDict setObject:_textColor forKey:NSForegroundColorAttributeName];
 		}
@@ -216,7 +216,7 @@ NSDictionary *_classesForNames = nil;
 	if (_backgroundColor)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			[tmpDict setObject:_backgroundColor forKey:NSBackgroundColorAttributeName];
 		}
@@ -236,7 +236,7 @@ NSDictionary *_classesForNames = nil;
 	if (_paragraphStyle)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [self.paragraphStyle NSParagraphStyle];
 			[tmpDict setObject:style forKey:NSParagraphStyleAttributeName];
@@ -253,7 +253,7 @@ NSDictionary *_classesForNames = nil;
 	if (_shadows)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			// only a single shadow supported
 			NSDictionary *firstShadow = [_shadows objectAtIndex:0];
@@ -276,7 +276,7 @@ NSDictionary *_classesForNames = nil;
 		NSNumber *letterSpacingNum = DTNSNumberFromCGFloat(_letterSpacing);
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			[tmpDict setObject:letterSpacingNum forKey:NSKernAttributeName];
 		}
@@ -411,7 +411,7 @@ NSDictionary *_classesForNames = nil;
 	}];
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
 	@synchronized(self)
 	{
@@ -420,7 +420,7 @@ NSDictionary *_classesForNames = nil;
 			return nil;
 		}
 		
-		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 		
 		NSMutableAttributedString *tmpString;
 		
@@ -454,7 +454,7 @@ NSDictionary *_classesForNames = nil;
 					}
 				}
 				
-				NSAttributedString *nodeString = [oneChild attributedString];
+				NSAttributedString *nodeString = [oneChild attributedStringWithContext:context];
 				
 				if (nodeString)
 				{
@@ -509,12 +509,12 @@ NSDictionary *_classesForNames = nil;
 					if ([tmpString length])
 					{
 						// extend font and paragraph style with the \n
-						[tmpString appendEndOfParagraph];
+						[tmpString appendEndOfParagraphWithContext:context];
 					}
 					else
 					{
 						// string is empty, need a new attributed string so that we have the attributes
-						attributes = [self attributesForAttributedStringRepresentation];
+						attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 						NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\n" attributes:attributes];
 						[tmpString appendAttributedString:attributedString];
 					}
@@ -533,7 +533,7 @@ NSDictionary *_classesForNames = nil;
 				NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
 				
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-				if (___useiOS6Attributes)
+				if (context.useiOS6Attributes)
 				{
 					NSParagraphStyle *paraStyle = [tmpString attribute:NSParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 					

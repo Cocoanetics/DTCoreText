@@ -27,10 +27,10 @@
 	}
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext *)context
 {
 	// super returns a mutable attributed string
-	NSMutableAttributedString *mutableAttributedString = (NSMutableAttributedString *)[super attributedString];
+	NSMutableAttributedString *mutableAttributedString = (NSMutableAttributedString *)[super attributedStringWithContext:context];
 	
 	if (_highlightedTextColor)
 	{
