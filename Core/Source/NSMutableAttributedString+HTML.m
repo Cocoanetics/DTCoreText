@@ -77,19 +77,22 @@
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
 			
+			if (newFont)
+			{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-			if (___useiOS6Attributes)
-			{
-				// convert to UIFont
-				UIFont *uiFont = [UIFont fontWithCTFont:newFont];
-				[attributes setObject:uiFont forKey:NSFontAttributeName];
-			
-				CFRelease(newFont);
-			}
-			else
+				if (___useiOS6Attributes)
+				{
+					// convert to UIFont
+					UIFont *uiFont = [UIFont fontWithCTFont:newFont];
+					[attributes setObject:uiFont forKey:NSFontAttributeName];
+					
+					CFRelease(newFont);
+				}
+				else
 #endif
-			{
-				[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+				{
+					[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
+				}
 			}
 		}
 		

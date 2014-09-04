@@ -462,45 +462,45 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		return YES;
 	}
 	
-	CTFontRef tmpFont = [self newMatchingFont];
-	
 	BOOL smallCapsSupported = NO;
 	
-	// check if this font supports small caps
-	CFArrayRef fontFeatures = CTFontCopyFeatures(tmpFont);
-	
-	if (fontFeatures)
-	{
-		for (NSDictionary *oneFeature in (__bridge NSArray *)fontFeatures)
-		{
-			NSInteger featureTypeIdentifier = [[oneFeature objectForKey:(id)kCTFontFeatureTypeIdentifierKey] integerValue];
-			
-			if (featureTypeIdentifier == 3) // Letter Case
-			{
-				NSArray *featureSelectors = [oneFeature objectForKey:(id)kCTFontFeatureTypeSelectorsKey];
-				
-				for (NSDictionary *oneFeatureSelector in featureSelectors)
-				{
-					NSInteger featureSelectorIdentifier = [[oneFeatureSelector objectForKey:(id)kCTFontFeatureSelectorIdentifierKey] integerValue];
-					
-					if (featureSelectorIdentifier == 3) // Small Caps
-					{
-						// hooray, small caps supported!
-						smallCapsSupported = YES;
-						
-						break;
-					}
-				}
-				
-				break;
-			}
-		}
-		
-		CFRelease(fontFeatures);
-	}
+	CTFontRef tmpFont = [self newMatchingFont];
 	
 	if (tmpFont)
 	{
+		// check if this font supports small caps
+		CFArrayRef fontFeatures = CTFontCopyFeatures(tmpFont);
+		
+		if (fontFeatures)
+		{
+			for (NSDictionary *oneFeature in (__bridge NSArray *)fontFeatures)
+			{
+				NSInteger featureTypeIdentifier = [[oneFeature objectForKey:(id)kCTFontFeatureTypeIdentifierKey] integerValue];
+				
+				if (featureTypeIdentifier == 3) // Letter Case
+				{
+					NSArray *featureSelectors = [oneFeature objectForKey:(id)kCTFontFeatureTypeSelectorsKey];
+					
+					for (NSDictionary *oneFeatureSelector in featureSelectors)
+					{
+						NSInteger featureSelectorIdentifier = [[oneFeatureSelector objectForKey:(id)kCTFontFeatureSelectorIdentifierKey] integerValue];
+						
+						if (featureSelectorIdentifier == 3) // Small Caps
+						{
+							// hooray, small caps supported!
+							smallCapsSupported = YES;
+							
+							break;
+						}
+					}
+					
+					break;
+				}
+			}
+			
+			CFRelease(fontFeatures);
+		}
+	
 		CFRelease(tmpFont);
 	}
 	

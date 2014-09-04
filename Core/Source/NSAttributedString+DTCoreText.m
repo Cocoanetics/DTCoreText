@@ -386,18 +386,21 @@
 		
 		font = [fontDesc newMatchingFont];
 		
+		if (font)
+		{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
-		{
-			UIFont *uiFont = [UIFont fontWithCTFont:font];
-			[newAttributes setObject:uiFont forKey:NSFontAttributeName];
-			
-			CFRelease(font);
-		}
-		else
+			if (___useiOS6Attributes)
+			{
+				UIFont *uiFont = [UIFont fontWithCTFont:font];
+				[newAttributes setObject:uiFont forKey:NSFontAttributeName];
+				
+				CFRelease(font);
+			}
+			else
 #endif
-		{
-			[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+			{
+				[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
+			}
 		}
 	}
 	
