@@ -71,7 +71,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 - (NSAttributedString *)generatedAttributedString;
 
 /**
- *  Keeps everythin except the text to allow reusing the string builder with the same CSS.
+ *  Keeps everything except the text to allow reusing the string builder with the same CSS.
  *
  *  @since 1.7.0
  */
