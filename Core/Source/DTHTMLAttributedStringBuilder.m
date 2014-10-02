@@ -962,7 +962,7 @@
 
 		dispatch_group_async(_stringAssemblyGroup, _stringAssemblyQueue, ^{
 			// trim off white space at end
-			while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]])
+			while ([[_tmpString string] hasSuffixCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
 			{
 				[_tmpString deleteCharactersInRange:NSMakeRange([_tmpString length]-1, 1)];
 			}
