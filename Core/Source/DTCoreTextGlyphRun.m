@@ -204,7 +204,7 @@
 				fontUnderlineThickness = smallestPixelWidth;
 			}
 			
-			CGFloat usedUnderlineThickness = DTCeilWithContentScale(fontUnderlineThickness, contentScale);
+			CGFloat usedUnderlineThickness = DTFloorWithContentScale(fontUnderlineThickness, contentScale);
 			
 			CGContextSetLineWidth(context, usedUnderlineThickness);
 			
