@@ -10,6 +10,7 @@
 #import "NSString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "NSAttributedString+SmallCaps.h"
+#import "DTHTMLAttributedStringBuilder.h"
 
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"

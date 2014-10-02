@@ -8,6 +8,7 @@
 
 #import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
+#import "DTHTMLParser.h"
 
 #import "DTTextHTMLElement.h"
 #import "DTBreakHTMLElement.h"
