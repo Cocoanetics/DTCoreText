@@ -960,6 +960,7 @@
 		A70ED6CD17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSAttributedStringDTCoreTextTest.m; sourceTree = "<group>"; };
 		A70F119B14863198009202BF /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A70F11DE148632CD009202BF /* libDTCoreText.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTCoreTextMacros.h; sourceTree = "<group>"; };
 		A71B927014E0165000360C30 /* PreWhitespace.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PreWhitespace.html; sourceTree = "<group>"; };
 		A71B927214E016A300360C30 /* PreWhitespace.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PreWhitespace.plist; sourceTree = "<group>"; };
 		A72418161678BACE001362C4 /* iOS6.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = iOS6.html; sourceTree = "<group>"; };
@@ -1447,21 +1448,21 @@
 				A781FE9917FAABE500A1F5E8 /* libDTASN1.a */,
 				A781FE9B17FAABE500A1F5E8 /* libDTHTMLParser_iOS.a */,
 				A781FE9D17FAABE500A1F5E8 /* libDTHTMLParser_Mac.a */,
-				A781FE9F17FAABE500A1F5E8 /* libDTZipArchive_iOS.a */,
-				A781FEA117FAABE500A1F5E8 /* libDTZipArchive_Mac.a */,
-				A781FEA317FAABE500A1F5E8 /* libDTUTI_iOS.a */,
-				A781FEA517FAABE500A1F5E8 /* libDTUTI_Mac.a */,
+				A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */,
 				A781FEA717FAABE500A1F5E8 /* libDTReachability_iOS.a */,
 				A781FEA917FAABE500A1F5E8 /* libDTReachability_Mac.a */,
 				A781FEAB17FAABE500A1F5E8 /* libDTSQLite_iOS.a */,
 				A781FEAD17FAABE500A1F5E8 /* libDTSQLite_Mac.a */,
-				A7F0C43C1965A0D600D7FAFB /* libDTProgressHUD_iOS.a */,
-				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
-				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
-				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
-				A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */,
-				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
+				A781FEA317FAABE500A1F5E8 /* libDTUTI_iOS.a */,
+				A781FEA517FAABE500A1F5E8 /* libDTUTI_Mac.a */,
+				A781FE9F17FAABE500A1F5E8 /* libDTZipArchive_iOS.a */,
+				A781FEA117FAABE500A1F5E8 /* libDTZipArchive_Mac.a */,
 				A7F0C4401965A0D600D7FAFB /* DTAnimatedGIF Demo.app */,
+				A7F0C43E1965A0D600D7FAFB /* DTProgressHUD Demo.app */,
+				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
+				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
+				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
+				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1615,6 +1616,7 @@
 				A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */,
 				A72D975C1684B38B005F8BA5 /* DTCoreTextFunctions.h */,
 				A72D975D1684B38B005F8BA5 /* DTCoreTextFunctions.m */,
+				A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */,
 				A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */,
 				A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */,
 				A788C92614863E8700E1AFD9 /* DTCSSListStyle.h */,
