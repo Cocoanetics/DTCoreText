@@ -80,22 +80,26 @@
 			{
 				DTCoreTextFontDescriptor *smallDesc = [self.fontDescriptor copy];
 				smallDesc.smallCapsFeature = YES;
-				
-				CTFontRef smallerFont = [smallDesc newMatchingFont];
+
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
-				
+
+				CTFontRef smallerFont = [smallDesc newMatchingFont];
+
+				if (smallerFont)
+				{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-				if (___useiOS6Attributes)
-				{
-					UIFont *font = [UIFont fontWithCTFont:smallerFont];
-					
-					[smallAttributes setObject:font forKey:NSFontAttributeName];
-					CFRelease(smallerFont);
-				}
-				else
+					if (___useiOS6Attributes)
+					{
+						UIFont *font = [UIFont fontWithCTFont:smallerFont];
+						
+						[smallAttributes setObject:font forKey:NSFontAttributeName];
+						CFRelease(smallerFont);
+					}
+					else
 #endif
-				{
-					[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+					{
+						[smallAttributes setObject:CFBridgingRelease(smallerFont) forKey:(id)kCTFontAttributeName];
+					}
 				}
 				
 				return [[NSAttributedString alloc] initWithString:_text attributes:smallAttributes];
