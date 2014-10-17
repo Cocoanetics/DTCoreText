@@ -637,6 +637,22 @@
 	XCTAssertEqualObjects(descriptor.fontName, @"HelveticaNeue-Italic", @"Font face should be 'HelveticaNeue-Italic'");
 }
 
+// issue 804: allow custom font name specification
+- (void)testOverrideFontName
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p style=\"-coretext-fontname:Arial-BoldMT\">Bold</p>" options:nil];
+
+	CTFontRef font;
+	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	XCTAssertTrue(NSEqualRanges(fontRange, expectedRange), @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	XCTAssertEqualObjects(descriptor.fontName, @"Arial-BoldMT", @"Font should be 'Arial-BoldMT'");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
@@ -1143,6 +1159,29 @@
 	}
 }
 
+// issue 816: Retina data URL would cause incorrect original size
+- (void)testRetinaDataURL
+{
+	NSAttributedString *attributedString = [self attributedStringFromTestFileName:@"RetinaDataURL"];
+	
+	XCTAssert([attributedString length] == 2, @"RetinaDataURL should be parsed as 2 characters");
+	
+	NSRange effectiveRange;
+	DTImageTextAttachment *attachment = [attributedString attribute:NSAttachmentAttributeName atIndex:0 effectiveRange:&effectiveRange];
+	
+	XCTAssertNotNil(attachment, @"There should be an attachment");
+	XCTAssertTrue(NSEqualRanges(effectiveRange, NSMakeRange(0, 1)), @"Attachment should only be on first character");
+	
+	CGSize targetSize = CGSizeMake(176, 68);
+	
+	XCTAssert([attachment isKindOfClass:[DTImageTextAttachment class]], @"Attachment should be image");
+	XCTAssert(CGSizeEqualToSize(attachment.image.size, targetSize), @"Attachment has incorrect image size");
+	XCTAssert(CGSizeEqualToSize(attachment.originalSize, targetSize), @"Attachment has incorrect original size");
+	
+#if TARGET_OS_IPHONE
+	XCTAssert(attachment.image.scale == 2, @"Attachment image should have scale 2");
+#endif
+}
 
 #pragma mark - Parsing Options
 

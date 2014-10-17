@@ -3,11 +3,10 @@ language: objective-c
 
 before_install: 
  - brew update
+ - brew upgrade xctool
  
 install: 
- - brew upgrade xctool
  - sudo easy_install cpp-coveralls
- - curl -sL https://gist.github.com/henrikhodne/7ac6d02ff9a24a94720c/raw/install_appledoc.sh | sh
 
 script:
  - xctool -project DTCoreText.xcodeproj -scheme DemoApp build test -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO
