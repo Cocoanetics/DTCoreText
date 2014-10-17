@@ -46,11 +46,7 @@ static NSCache *imageCache = nil;
 	
 	if (self)
 	{
-		// get base URL
-		NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
-		NSString *src = [element.attributes objectForKey:@"src"];
-		
-		[self _decodeImageSrc:src relativeToBaseURL:baseURL];
+		[self _decodeImageFromElement:element options:options];
 	}
 	
 	return self;
@@ -69,8 +65,12 @@ static NSCache *imageCache = nil;
 }
 
 
-- (void)_decodeImageSrc:(NSString *)src relativeToBaseURL:(NSURL *)baseURL
+- (void)_decodeImageFromElement:(DTHTMLElement *)element options:(NSDictionary *)options
 {
+	// get base URL
+	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
+	NSString *src = [element.attributes objectForKey:@"src"];
+	
 	NSURL *contentURL = nil;
 	
 	// decode content URL
@@ -101,7 +101,46 @@ static NSCache *imageCache = nil;
 			// if we have image data, get the default display size
 			if (decodedData)
 			{
-				self.image = [[DTImage alloc] initWithData:decodedData];
+				UIImage *decodedImage = [[DTImage alloc] initWithData:decodedData];
+				
+				// we don't know the content scale from such images, need to infer it from size in style
+				NSString *styles = [element.attributes objectForKey:@"style"];
+				
+				// that only works if there is a style dictionary
+				if (styles)
+				{
+					NSDictionary *attributes = [styles dictionaryOfCSSStyles];
+					
+					NSString *widthStr = attributes[@"width"];
+					NSString *heightStr = attributes[@"height"];
+					
+					if ([widthStr hasSuffix:@"px"] && [heightStr hasSuffix:@"px"])
+					{
+						CGSize sizeAccordingToStyle;
+						
+						// those style size values are the original image size
+						sizeAccordingToStyle.width = [widthStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:0 textScale:1];
+						sizeAccordingToStyle.height = [heightStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:0 textScale:1];
+						
+						// if _orgiginal width and height are a fraction of decode image size, it must be a scaled image
+						if (sizeAccordingToStyle.width && sizeAccordingToStyle.width < decodedImage.size.width &&
+							 sizeAccordingToStyle.height && sizeAccordingToStyle.height < decodedImage.size.height)
+						{
+							// determine image scale
+							CGFloat scale = roundf(decodedImage.size.width/sizeAccordingToStyle.width);
+							
+							if (scale>=2.0 && scale<=3.0)
+							{
+								// make a new image with correct scale, same pixels
+								decodedImage = [UIImage imageWithCGImage:decodedImage.CGImage scale:scale orientation:decodedImage.imageOrientation];
+							}
+						}
+					}
+				}
+				
+				self.image = decodedImage;
+				
+				// prevent remote loading of image
 				_contentURL = nil;
 			}
 		}
