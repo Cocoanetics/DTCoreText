@@ -44,6 +44,8 @@
 	// private
 	NSURL *lastActionLink;
 	NSMutableSet *mediaPlayers;
+	
+	BOOL _needsAdjustInsetsOnLayout;
 }
 
 
@@ -70,7 +72,10 @@
 		self.navigationItem.titleView = _segmentedControl;	
 		
 		[self _updateToolbarForMode];
-
+		
+		_needsAdjustInsetsOnLayout = YES;
+		
+		self.automaticallyAdjustsScrollViewInsets = YES;
 	}
 	return self;
 }
@@ -257,12 +262,23 @@
 	[super viewWillDisappear:animated];
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+	// prevent hiding of status bar in landscape because this messes up the layout guide calc
+	return NO;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	_needsAdjustInsetsOnLayout = YES;
+}
+
 // this is only called on >= iOS 5
 - (void)viewDidLayoutSubviews
 {
 	[super viewDidLayoutSubviews];
 	
-	if (![self respondsToSelector:@selector(topLayoutGuide)])
+	if (![self respondsToSelector:@selector(topLayoutGuide)] || !_needsAdjustInsetsOnLayout)
 	{
 		return;
 	}
@@ -270,6 +286,8 @@
 	// this also compiles with iOS 6 SDK, but will work with later SDKs too
 	CGFloat topInset = [[self valueForKeyPath:@"topLayoutGuide.length"] floatValue];
 	CGFloat bottomInset = [[self valueForKeyPath:@"bottomLayoutGuide.length"] floatValue];
+	
+	NSLog(@"%f top", topInset);
 	
 	UIEdgeInsets outerInsets = UIEdgeInsetsMake(topInset, 0, bottomInset, 0);
 	UIEdgeInsets innerInsets = outerInsets;
@@ -300,6 +318,8 @@
 	_htmlView.contentInset = outerInsets;
 	_htmlView.contentOffset = outerScrollOffset;
 	_htmlView.scrollIndicatorInsets = outerInsets;
+	
+	_needsAdjustInsetsOnLayout = NO;
 }
 
 #pragma mark Private Methods
