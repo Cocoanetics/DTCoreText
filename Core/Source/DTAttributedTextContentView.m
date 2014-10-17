@@ -1005,8 +1005,14 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
 {
-	DTAccessibilityElement *element = [[self accessibilityElements] objectAtIndex:index];
-	return element;
+	NSUInteger count = [self accessibilityElementCount];
+	
+	if (count > 0 && index < count)
+	{
+		return [[self accessibilityElements] objectAtIndex:index];
+	}
+	
+	return nil;
 }
 
 - (NSInteger)indexOfAccessibilityElement:(id)element
