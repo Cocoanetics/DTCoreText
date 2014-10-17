@@ -637,6 +637,22 @@
 	XCTAssertEqualObjects(descriptor.fontName, @"HelveticaNeue-Italic", @"Font face should be 'HelveticaNeue-Italic'");
 }
 
+// issue 804: allow custom font name specification
+- (void)testOverrideFontName
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p style=\"-coretext-fontname:Arial-BoldMT\">Bold</p>" options:nil];
+
+	CTFontRef font;
+	NSRange fontRange = [self _effectiveRangeOfFontAtIndex:0 inAttributedString:attributedString font:&font];
+	
+	NSRange expectedRange = NSMakeRange(0, [attributedString length]);
+	XCTAssertTrue(NSEqualRanges(fontRange, expectedRange), @"Font should be entire length");
+	
+	DTCoreTextFontDescriptor *descriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+	
+	XCTAssertEqualObjects(descriptor.fontName, @"Arial-BoldMT", @"Font should be 'Arial-BoldMT'");
+}
+
 #pragma mark - Nested Lists
 
 - (void)testNestedListWithStyleNone
