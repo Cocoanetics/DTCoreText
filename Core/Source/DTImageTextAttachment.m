@@ -129,7 +129,8 @@ static NSCache *imageCache = nil;
 							// determine image scale
 							CGFloat scale = roundf(decodedImage.size.width/sizeAccordingToStyle.width);
 							
-							if (scale>=2.0 && scale<=3.0)
+							// sanity check, accept from @2x - @5x
+							if (scale>=2.0 && scale<=5.0)
 							{
 								// make a new image with correct scale, same pixels
 								decodedImage = [UIImage imageWithCGImage:decodedImage.CGImage scale:scale orientation:decodedImage.imageOrientation];
