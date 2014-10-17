@@ -101,7 +101,7 @@ static NSCache *imageCache = nil;
 			// if we have image data, get the default display size
 			if (decodedData)
 			{
-				UIImage *decodedImage = [[DTImage alloc] initWithData:decodedData];
+				DTImage *decodedImage = [[DTImage alloc] initWithData:decodedData];
 				
 				// we don't know the content scale from such images, need to infer it from size in style
 				NSString *styles = [element.attributes objectForKey:@"style"];
@@ -127,13 +127,18 @@ static NSCache *imageCache = nil;
 							 sizeAccordingToStyle.height && sizeAccordingToStyle.height < decodedImage.size.height)
 						{
 							// determine image scale
-							CGFloat scale = roundf(decodedImage.size.width/sizeAccordingToStyle.width);
+							CGFloat scale = round(decodedImage.size.width/sizeAccordingToStyle.width);
 							
 							// sanity check, accept from @2x - @5x
 							if (scale>=2.0 && scale<=5.0)
 							{
-								// make a new image with correct scale, same pixels
-								decodedImage = [UIImage imageWithCGImage:decodedImage.CGImage scale:scale orientation:decodedImage.imageOrientation];
+#if TARGET_OS_IPHONE
+								// on iOS change the scale by making a new image with same pixels
+								decodedImage = [DTImage imageWithCGImage:decodedImage.CGImage scale:scale orientation:decodedImage.imageOrientation];
+#else
+								// on OS X we can set the size
+								[decodedImage setSize:sizeAccordingToStyle];
+#endif
 							}
 						}
 					}
