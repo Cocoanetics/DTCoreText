@@ -424,6 +424,10 @@
 		A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7DBC1B61689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m */; };
 		A7DBE49B12E6E53C00F25897 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE49A12E6E53C00F25897 /* MediaPlayer.framework */; };
 		A7DBE4F812E6E5B000F25897 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */; };
+		A7DDDCA519F1615500EAE9BA /* RetinaDataURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DDDCA419F1615500EAE9BA /* RetinaDataURL.html */; };
+		A7DDDCA619F1615500EAE9BA /* RetinaDataURL.html in Resources */ = {isa = PBXBuildFile; fileRef = A7DDDCA419F1615500EAE9BA /* RetinaDataURL.html */; };
+		A7DDDCBB19F166B700EAE9BA /* NavTag.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7DDDCBA19F166B700EAE9BA /* NavTag.plist */; };
+		A7DDDCBD19F166F600EAE9BA /* CSSCascading.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7DDDCBC19F166F600EAE9BA /* CSSCascading.plist */; };
 		A7DDF87717DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7DDF87817DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7DDF87917DDEB630005D62D /* DTColorFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DDF87617DDEB630005D62D /* DTColorFunctions.h */; };
@@ -1163,6 +1167,9 @@
 		A7DBE4F712E6E5B000F25897 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		A7DC5CED17F81DEE006ADDF5 /* DTCoreTextTestLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextTestLog.h; sourceTree = "<group>"; };
 		A7DC5CEE17F81DEE006ADDF5 /* DTCoreTextTestLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextTestLog.m; sourceTree = "<group>"; };
+		A7DDDCA419F1615500EAE9BA /* RetinaDataURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = RetinaDataURL.html; sourceTree = "<group>"; };
+		A7DDDCBA19F166B700EAE9BA /* NavTag.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = NavTag.plist; sourceTree = "<group>"; };
+		A7DDDCBC19F166F600EAE9BA /* CSSCascading.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CSSCascading.plist; sourceTree = "<group>"; };
 		A7DDF87617DDEB630005D62D /* DTColorFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTColorFunctions.h; sourceTree = "<group>"; };
 		A7DDF87B17DDEB780005D62D /* DTColorFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTColorFunctions.m; sourceTree = "<group>"; };
 		A7E3346C16837482002EFCBE /* DTCSSStylesheetTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCSSStylesheetTest.h; sourceTree = "<group>"; };
@@ -1744,12 +1751,14 @@
 		A7C7ACEB14DA62BA005A9C69 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A7DDDCA419F1615500EAE9BA /* RetinaDataURL.html */,
 				A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */,
 				A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */,
 				A7C7AD0414DA782D005A9C69 /* ListTest.plist */,
 				A7C7AD0214DA6EB2005A9C69 /* Video.plist */,
 				A7C7ACEE14DA62BA005A9C69 /* WarAndPeace.plist */,
 				A76994F614DBB3DD0047CC8D /* NavTag.html */,
+				A7DDDCBA19F166B700EAE9BA /* NavTag.plist */,
 				A74C953514DC0C69002B5A45 /* MalformedURL.html */,
 				A74C973D14DC5294002B5A45 /* Emoji.html */,
 				A71B927014E0165000360C30 /* PreWhitespace.html */,
@@ -1762,6 +1771,7 @@
 				A7F34D3F16CFC7C90054A512 /* RTL.html */,
 				A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */,
 				A7343F3217BDF64A00EF9B83 /* CSSCascading.html */,
+				A7DDDCBC19F166F600EAE9BA /* CSSCascading.plist */,
 				C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */,
 				A783CE6717D11D0100C84C28 /* CSSOOMCrash.plist */,
 			);
@@ -2491,6 +2501,7 @@
 				A7DBC1AA1689B846003F1D38 /* ListItemBulletColorAndFont.html in Resources */,
 				A7DBC1B31689B989003F1D38 /* SpaceBetweenUnderlines.html in Resources */,
 				A7EB8543169065F300D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html in Resources */,
+				A7DDDCA519F1615500EAE9BA /* RetinaDataURL.html in Resources */,
 				A7E3A5C6169360E5007A526B /* KeepMeTogether.html in Resources */,
 				A70E630216C25734009B47BF /* Oliver.jpg in Resources */,
 				A7F34D4016CFC7C90054A512 /* RTL.html in Resources */,
@@ -2509,6 +2520,7 @@
 			files = (
 				A78D9FA51965B9BD00C80986 /* AppleConverted.html in Resources */,
 				A78D9F9A1965B9BD00C80986 /* Video.plist in Resources */,
+				A7DDDCBD19F166F600EAE9BA /* CSSCascading.plist in Resources */,
 				A78D9FA01965B9BD00C80986 /* PreWhitespace.plist in Resources */,
 				A78D9FAB1965B9E200C80986 /* Oliver.jpg in Resources */,
 				A78D9FA71965B9BD00C80986 /* EmptyLinesAndFontAttribute.html in Resources */,
@@ -2524,9 +2536,11 @@
 				A78D9FA91965B9BD00C80986 /* CSSOOMCrash.html in Resources */,
 				A78D9FA21965B9BD00C80986 /* SpaceBetweenUnderlines.html in Resources */,
 				A78D9F9D1965B9BD00C80986 /* MalformedURL.html in Resources */,
+				A7DDDCA619F1615500EAE9BA /* RetinaDataURL.html in Resources */,
 				A78D9FAA1965B9BD00C80986 /* CSSOOMCrash.plist in Resources */,
 				A78D9FA61965B9BD00C80986 /* RTL.html in Resources */,
 				A78D9F991965B9BD00C80986 /* ListTest.plist in Resources */,
+				A7DDDCBB19F166B700EAE9BA /* NavTag.plist in Resources */,
 				A78D9FA41965B9BD00C80986 /* KeepMeTogether.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
