@@ -17,9 +17,13 @@
         [contentView setPostsBoundsChangedNotifications:YES];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(boundsDidChange:)
                                                      name:NSViewBoundsDidChangeNotification object:contentView];
+        _isObservingBoundsChanges = YES;
     } else {
-        [contentView setPostsBoundsChangedNotifications:NO];
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        if (_isObservingBoundsChanges) {
+            [contentView setPostsBoundsChangedNotifications:NO];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            _isObservingBoundsChanges = NO;
+        }
     }
 }
 
@@ -63,6 +67,13 @@
     }
 }
 
+- (void)dealloc
+{
+    if (_isObservingBoundsChanges) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];        
+        _isObservingBoundsChanges = NO;
+    }
+}
 #endif
 
 
