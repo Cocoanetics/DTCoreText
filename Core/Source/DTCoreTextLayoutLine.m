@@ -55,7 +55,10 @@
 
 - (id)initWithLine:(CTLineRef)line stringLocationOffset:(NSInteger)stringLocationOffset
 {
-	if (line == NULL) return nil;
+	if (!line)
+	{
+		return nil;
+	}
 	
 	if ((self = [super init]))
 	{

@@ -661,7 +661,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 		}
 		
-		if (line == NULL) continue;
+		if (!line)
+		{
+			continue;
+		}
 		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
