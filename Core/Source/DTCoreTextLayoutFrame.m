@@ -661,6 +661,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			}
 		}
 		
+		if (!line)
+		{
+			continue;
+		}
+		
 		// wrap it
 		DTCoreTextLayoutLine *newLine = [[DTCoreTextLayoutLine alloc] initWithLine:line
 															  stringLocationOffset:isHyphenatedString ? lineRange.location : 0];
