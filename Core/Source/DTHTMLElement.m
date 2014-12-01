@@ -1312,6 +1312,12 @@ NSDictionary *_classesForNames = nil;
 	{
 		self.paragraphStyle.paragraphSpacing = _margins.bottom;
 	}
+    
+    NSString *coretextFontString = [styles objectForKey:@"-coretext-fontname"];
+    if (coretextFontString)
+    {
+        _fontDescriptor.fontName = [styles objectForKey:@"-coretext-fontname"];
+    }
 }
 
 - (DTCSSListStyle *)listStyle
