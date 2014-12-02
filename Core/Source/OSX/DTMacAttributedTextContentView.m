@@ -767,14 +767,27 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 	
 	if ([newColor alphaComponent]<1.0)
 	{
-		self.opaque = NO;
+		self.opaqueValue = NO;
 	}
 	else
 	{
-		self.opaque = YES;
+		self.opaqueValue = YES;
 	}
 }
 
+- (BOOL)isOpaque
+{
+	if ([[self superclass] instancesRespondToSelector:@selector(isOpaque)]) {
+		return [super isOpaque];
+	}
+
+	return self.opaqueValue;
+}
+
+- (void)setOpaqueValue:(BOOL)opaqueValue
+{
+	_opaqueValue = opaqueValue;
+}
 
 - (DTCoreTextLayouter *)layouter
 {

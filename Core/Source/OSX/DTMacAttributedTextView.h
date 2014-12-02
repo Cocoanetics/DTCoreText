@@ -129,9 +129,11 @@
 - (CGRect)cursorRectAtIndex:(NSInteger)index;
 
 /**
+ Yosemite defines opaque as readOnly property in NSView (opaque since 10.10). So we have to use opaqueValue as property.
+ 
  Mimicking UIView's opaque property
  */
-@property (nonatomic) BOOL opaque;
+@property (nonatomic, assign) BOOL opaqueValue;
 
 /**
  Mimicking UIScrollView's contentInset property
