@@ -341,7 +341,7 @@
 #endif
 
 #pragma mark Generating Special Attributed Strings
-+ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes
++ (NSAttributedString *)prefixForListItemWithCounter:(NSUInteger)listCounter listStyle:(DTCSSListStyle *)listStyle listIndent:(CGFloat)listIndent attributes:(NSDictionary *)attributes context:(DTHTMLAttributedStringBuilderContext*)context
 {
 	// get existing values from attributes
 	CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
@@ -387,7 +387,7 @@
 		font = [fontDesc newMatchingFont];
 		
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			UIFont *uiFont = [UIFont fontWithCTFont:font];
 			[newAttributes setObject:uiFont forKey:NSFontAttributeName];
@@ -408,7 +408,7 @@
 		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
 	}
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	else if (___useiOS6Attributes)
+	else if (context.useiOS6Attributes)
 	{
 		DTColor *uiColor = [attributes foregroundColor];
 		
@@ -423,7 +423,7 @@
 	if (paragraphStyle)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
+		if (context.useiOS6Attributes)
 		{
 			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
 			[newAttributes setObject:style forKey:NSParagraphStyleAttributeName];

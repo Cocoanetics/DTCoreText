@@ -45,7 +45,9 @@
 	[self appendAttributedString:appendString];
 }
 
-- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle
+      fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
+             context:(DTHTMLAttributedStringBuilderContext*)context
 {
 	NSUInteger selfLengthBefore = [self length];
 	
@@ -60,7 +62,7 @@
 		if (paragraphStyle)
 		{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-			if (___useiOS6Attributes)
+			if (context.useiOS6Attributes)
 			{
 				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
 				[attributes setObject:style forKey:NSParagraphStyleAttributeName];
@@ -78,7 +80,7 @@
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
 			
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-			if (___useiOS6Attributes)
+			if (context.useiOS6Attributes)
 			{
 				// convert to UIFont
 				UIFont *uiFont = [UIFont fontWithCTFont:newFont];
@@ -103,7 +105,7 @@
 	}
 }
 
-- (void)appendEndOfParagraph
+- (void)appendEndOfParagraphWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
 	NSUInteger length = [self length];
 	
@@ -117,7 +119,7 @@
 
 	
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	if (___useiOS6Attributes)
+	if (context.useiOS6Attributes)
 	{
 		id font = [attributes objectForKey:NSFontAttributeName];
 		

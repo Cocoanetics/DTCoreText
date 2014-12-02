@@ -8,6 +8,7 @@
 
 #import "DTCoreTextConstants.h"
 
+@class DTHTMLAttributedStringBuilderContext;
 @class DTCoreTextParagraphStyle, DTCoreTextFontDescriptor;
 
 /**
@@ -26,13 +27,17 @@
  Appends a string with a given paragraph style and font to this string. 
  @param string The string to be appended to this string.
  @param paragraphStyle Paragraph style to be attributed to the appended string. 
- @param fontDescriptor Font descriptor to be attributed to the appended string. */
-- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor;
-
+ @param fontDescriptor Font descriptor to be attributed to the appended string. 
+ @param context The context holding the stringBuilder configuration
+ */
+- (void)appendString:(NSString *)string withParagraphStyle:(DTCoreTextParagraphStyle *)paragraphStyle
+      fontDescriptor:(DTCoreTextFontDescriptor *)fontDescriptor
+             context:(DTHTMLAttributedStringBuilderContext*)context;
 /**
  Adds the paragraph terminator `\n` and makes sure that the previous font and paragraph styles extend to include it
+ @param context The context holding the stringBuilder configuration
  */
-- (void)appendEndOfParagraph;
+- (void)appendEndOfParagraphWithContext:(DTHTMLAttributedStringBuilderContext*)context;
 
 /**
  @name Working with Custom HTML Attributes

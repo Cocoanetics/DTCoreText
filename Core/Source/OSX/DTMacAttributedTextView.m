@@ -76,17 +76,17 @@
 		
 		if (alpha < 1.0)
 		{
-			self.opaque = NO;
+			self.opaqueValue = NO;
 		}
 		else
 		{
-			self.opaque = YES;
+			self.opaqueValue = YES;
 		}
 	}
 	else
 	{
 		self.backgroundColor = [DTColor whiteColor];
-		self.opaque = YES;
+		self.opaqueValue = YES;
 	}
 	
 	self.autoresizesSubviews = NO;
@@ -234,11 +234,11 @@
 		
 		if (alpha < 1.0)
 		{
-			_attributedTextContentView.opaque = NO;
+			_attributedTextContentView.opaqueValue = NO;
 		}
 		else
 		{
-			_attributedTextContentView.opaque = YES;
+			_attributedTextContentView.opaqueValue = YES;
 		}
 		
 		// set text delegate if it was set before instantiation of content view
@@ -270,7 +270,7 @@
 	{
 		super.backgroundColor = newColor;
 		_attributedTextContentView.backgroundColor = [DTColor clearColor];
-		self.opaque = NO;
+		self.opaqueValue = NO;
 	}
 	else
 	{
@@ -282,7 +282,6 @@
 		}
 	}
 }
-
 
 - (void)setContentInset:(DTEdgeInsets)contentInset
 {

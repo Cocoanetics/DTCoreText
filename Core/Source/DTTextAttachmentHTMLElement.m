@@ -54,11 +54,11 @@
 	return self;
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext *)context
 {
 	@synchronized(self)
 	{
-		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 		
 		// ignore text, use unicode object placeholder
 		NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc] initWithString:UNICODE_OBJECT_PLACEHOLDER attributes:attributes];

@@ -11,7 +11,7 @@
 
 @implementation NSAttributedString (SmallCaps)
 
-+ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes
++ (NSAttributedString *)synthesizedSmallCapsAttributedStringWithText:(NSString *)text attributes:(NSDictionary *)attributes context:(DTHTMLAttributedStringBuilderContext*)context
 {
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
 	
@@ -33,7 +33,7 @@
 	NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-	if (___useiOS6Attributes)
+	if (context.useiOS6Attributes)
 	{
 		UIFont *uiFont = [UIFont fontWithCTFont:smallerFont];
 		

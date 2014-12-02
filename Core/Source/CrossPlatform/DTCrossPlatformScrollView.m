@@ -17,9 +17,13 @@
         [contentView setPostsBoundsChangedNotifications:YES];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(boundsDidChange:)
                                                      name:NSViewBoundsDidChangeNotification object:contentView];
+        _isObservingBoundsChanges = YES;
     } else {
-        [contentView setPostsBoundsChangedNotifications:NO];
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        if (_isObservingBoundsChanges) {
+            [contentView setPostsBoundsChangedNotifications:NO];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            _isObservingBoundsChanges = NO;
+        }
     }
 }
 
@@ -45,6 +49,31 @@
     [[self documentView] setFrameSize:size];
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    BOOL shouldScroll = self.scrollEnabled;
+    NSRect docBounds = [(NSView*)self.documentView bounds];
+    
+    if (docBounds.size.width <= self.bounds.size.width &&
+        docBounds.size.height <= self.bounds.size.height)
+    {
+        shouldScroll = NO;
+    }
+    
+    if (shouldScroll) {
+        [super scrollWheel:theEvent];
+    } else {
+        [[self nextResponder] scrollWheel:theEvent];
+    }
+}
+
+- (void)dealloc
+{
+    if (_isObservingBoundsChanges) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];        
+        _isObservingBoundsChanges = NO;
+    }
+}
 #endif
 
 

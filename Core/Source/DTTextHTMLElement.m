@@ -10,6 +10,7 @@
 #import "NSString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "NSAttributedString+SmallCaps.h"
+#import "DTHTMLAttributedStringBuilder.h"
 
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"
@@ -31,7 +32,7 @@
 	[string appendFormat:@"\"%@\"\n", [_text stringByNormalizingWhitespace]];
 }
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext*)context
 {
 	@synchronized(self)
 	{
@@ -67,7 +68,7 @@
 			text = [_text stringByNormalizingWhitespace];
 		}
 		
-		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 		
 		if (self.fontVariant == DTHTMLElementFontVariantNormal)
 		{
@@ -85,7 +86,7 @@
 				NSMutableDictionary *smallAttributes = [attributes mutableCopy];
 				
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-				if (___useiOS6Attributes)
+				if (context.useiOS6Attributes)
 				{
 					UIFont *font = [UIFont fontWithCTFont:smallerFont];
 					
@@ -102,7 +103,7 @@
 			}
 			else
 			{
-				return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:_text attributes:attributes];
+				return [NSAttributedString synthesizedSmallCapsAttributedStringWithText:_text attributes:attributes context:context];
 			}
 		}
 	}

@@ -10,11 +10,11 @@
 
 @implementation DTBreakHTMLElement
 
-- (NSAttributedString *)attributedString
+- (NSAttributedString *)attributedStringWithContext:(DTHTMLAttributedStringBuilderContext *)context
 {
 	@synchronized(self)
 	{
-		NSDictionary *attributes = [self attributesForAttributedStringRepresentation];
+		NSDictionary *attributes = [self attributesForAttributedStringRepresentationWithContext:context];
 		return [[NSAttributedString alloc] initWithString:UNICODE_LINE_FEED attributes:attributes];
 	}
 }
