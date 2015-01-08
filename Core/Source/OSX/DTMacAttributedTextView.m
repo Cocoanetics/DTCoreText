@@ -276,7 +276,7 @@
 	{
 		super.backgroundColor = newColor;
 		
-		if (_attributedTextContentView.opaque)
+		if (_attributedTextContentView.opaqueValue)
 		{
 			_attributedTextContentView.backgroundColor = newColor;
 		}
