@@ -53,12 +53,12 @@
 
 - (void)layoutSubviews
 {
-	[super layoutSubviews];
-	
 	[self attributedTextContentView];
 	
 	// layout custom subviews for visible area
 	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
+  
+  [super layoutSubviews];
 }
 
 - (void)awakeFromNib
