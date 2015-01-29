@@ -426,8 +426,6 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviews
 {
-	[super layoutSubviews];
-	
 	if (!_isTiling && (self.bounds.size.width>1024.0 || self.bounds.size.height>1024.0))
 	{
 		if (![self.layer isKindOfClass:[CATiledLayer class]])
@@ -440,6 +438,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		[self layoutSubviewsInRect:CGRectInfinite];
 	}
+  
+    [super layoutSubviews];
 }
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
