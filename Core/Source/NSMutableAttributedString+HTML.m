@@ -175,9 +175,18 @@
 	
 	if (foregroundColor)
 	{
-		[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
+#if TARGET_OS_IPHONE
+		if ([foregroundColor isKindOfClass:[UIColor class]])
+		{
+			[appendAttributes setObject:(id)[foregroundColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+		}
+		else
+#endif
+		{
+			[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
+		}
 	}
-	
+
 	NSAttributedString *newlineString = [[NSAttributedString alloc] initWithString:@"\n" attributes:appendAttributes];
 	[self appendAttributedString:newlineString];
 }
