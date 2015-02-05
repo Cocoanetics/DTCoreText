@@ -43,7 +43,9 @@
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 + (DTCoreTextParagraphStyle *)paragraphStyleWithNSParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
-	NSParameterAssert(paragraphStyle);
+	if ( ! paragraphStyle) {
+		paragraphStyle = [NSParagraphStyle defaultParagraphStyle];
+	}
 	
 	DTCoreTextParagraphStyle *retStyle = [[DTCoreTextParagraphStyle alloc] init];
 	
