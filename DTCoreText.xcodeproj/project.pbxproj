@@ -691,6 +691,27 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		9BF28F851A97F5F2001FA359 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FAC284E619B84B5F0010C385;
+			remoteInfo = "DTActionSheet Demo";
+		};
+		9BF28F871A97F5F2001FA359 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7EA07B81A2B2F6A00B61CCE;
+			remoteInfo = "DTFoundation (iOS)";
+		};
+		9BF28F891A97F5F2001FA359 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7EA07391A2B215200B61CCE;
+			remoteInfo = "DTFoundation (OSX)";
+		};
 		A70E62FF16C254EB009B47BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -711,13 +732,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = A7AC21AE196417830009E1B9;
 			remoteInfo = "DTAnimatedGIF (iOS)";
-		};
-		A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7BAD10E1483F934000E2B6A;
-			remoteInfo = "Static Framework";
 		};
 		A781FE9017FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1460,7 +1474,6 @@
 		A781FE7817FAABE500A1F5E8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */,
 				A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */,
 				A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */,
 				A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */,
@@ -1482,7 +1495,10 @@
 				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
 				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
 				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
+				9BF28F861A97F5F2001FA359 /* DTActionSheet Demo.app */,
 				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
+				9BF28F881A97F5F2001FA359 /* DTFoundation.framework */,
+				9BF28F8A1A97F5F2001FA359 /* DTFoundation.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2238,7 +2254,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = Drobnik.com;
 				TargetAttributes = {
 					A78D9F771965B7DD00C80986 = {
@@ -2280,11 +2296,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */ = {
+		9BF28F861A97F5F2001FA359 /* DTActionSheet Demo.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
+			fileType = wrapper.application;
+			path = "DTActionSheet Demo.app";
+			remoteRef = 9BF28F851A97F5F2001FA359 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9BF28F881A97F5F2001FA359 /* DTFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
 			path = DTFoundation.framework;
-			remoteRef = A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */;
+			remoteRef = 9BF28F871A97F5F2001FA359 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9BF28F8A1A97F5F2001FA359 /* DTFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DTFoundation.framework;
+			remoteRef = 9BF28F891A97F5F2001FA359 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */ = {
@@ -3011,10 +3041,6 @@
 		A70F11A414863198009202BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CONTENTS_FOLDER_PATH = "$(WRAPPER_NAME)/Versions/$(FRAMEWORK_VERSION)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
@@ -3047,10 +3073,6 @@
 		A70F11A514863198009202BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CONTENTS_FOLDER_PATH = "$(WRAPPER_NAME)/Versions/$(FRAMEWORK_VERSION)";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
@@ -3081,10 +3103,6 @@
 		A70F11E7148632CD009202BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3107,10 +3125,6 @@
 		A70F11E8148632CD009202BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = YES;
@@ -3367,10 +3381,6 @@
 		A7DC5CFD17F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CONTENTS_FOLDER_PATH = "$(WRAPPER_NAME)/Versions/$(FRAMEWORK_VERSION)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
@@ -3403,10 +3413,6 @@
 		A7DC5CFE17F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3468,10 +3474,6 @@
 		A7DC5D0217F833F1006ADDF5 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -3527,10 +3529,6 @@
 		A7F7EFCB1573603100F5A4D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
@@ -3554,10 +3552,6 @@
 		A7F7EFCC1573603100F5A4D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/DTCoreText.dst;
