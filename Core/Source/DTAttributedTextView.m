@@ -53,7 +53,7 @@
 
 - (void)layoutSubviews
 {
-	[self attributedTextContentView];
+	(void)[self attributedTextContentView];
 	
 	// layout custom subviews for visible area
 	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
