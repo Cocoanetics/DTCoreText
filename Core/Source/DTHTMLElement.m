@@ -881,25 +881,25 @@ NSDictionary *_classesForNames = nil;
 				
 				NSString *lowercaseFontFamily = [fontFamily lowercaseString];
 				
-				if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
+				if ([lowercaseFontFamily isEqualToString:@"geneva"])
 				{
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"cursive"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"cursive"])
 				{
 					_fontDescriptor.stylisticClass = kCTFontScriptsClass;
 					_fontDescriptor.fontFamily = nil;
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"sans-serif"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"sans-serif"])
 				{
 					// too many matches (24)
 					// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"serif"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"serif"])
 				{
 					// kCTFontTransitionalSerifsClass = Baskerville
 					// kCTFontClarendonSerifsClass = American Typewriter
@@ -909,18 +909,18 @@ NSDictionary *_classesForNames = nil;
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"fantasy"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"fantasy"])
 				{
 					_fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"monospace"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"monospace"])
 				{
 					_fontDescriptor.monospaceTrait = YES;
 					_fontDescriptor.fontFamily = @"Courier";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily rangeOfString:@"times"].length)
+				else if ([lowercaseFontFamily isEqualToString:@"times"])
 				{
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
