@@ -880,26 +880,27 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				NSString *lowercaseFontFamily = [fontFamily lowercaseString];
+				NSArray *lowercaseFontFamilyArray = [lowercaseFontFamily componentsSeparatedByString: @","];
 				
-				if ([lowercaseFontFamily isEqualToString:@"geneva"])
+				if ([lowercaseFontFamilyArray indexOfObject:@"geneva"] != NSNotFound)
 				{
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"cursive"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"cursive"] != NSNotFound)
 				{
 					_fontDescriptor.stylisticClass = kCTFontScriptsClass;
 					_fontDescriptor.fontFamily = nil;
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"sans-serif"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"sans-serif"] != NSNotFound)
 				{
 					// too many matches (24)
 					// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"serif"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"serif"] != NSNotFound)
 				{
 					// kCTFontTransitionalSerifsClass = Baskerville
 					// kCTFontClarendonSerifsClass = American Typewriter
@@ -909,18 +910,18 @@ NSDictionary *_classesForNames = nil;
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"fantasy"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"fantasy"] != NSNotFound)
 				{
 					_fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"monospace"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"monospace"] != NSNotFound)
 				{
 					_fontDescriptor.monospaceTrait = YES;
 					_fontDescriptor.fontFamily = @"Courier";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamily isEqualToString:@"times"])
+				else if ([lowercaseFontFamilyArray indexOfObject:@"times"] != NSNotFound)
 				{
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
