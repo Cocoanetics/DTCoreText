@@ -880,31 +880,26 @@ NSDictionary *_classesForNames = nil;
 				}
 				
 				NSString *lowercaseFontFamily = [fontFamily lowercaseString];
-				NSString *lowercaseFontFamilyWithoutWhiteSpaces = [lowercaseFontFamily stringByReplacingOccurrencesOfString:@"\\s"
-																					   withString:@""
-																					   options:NSRegularExpressionSearch
-																			           range:NSMakeRange(0, [lowercaseFontFamily length])];
-				NSArray *lowercaseFontFamilyWithoutWhiteSpacesArray = [lowercaseFontFamilyWithoutWhiteSpaces componentsSeparatedByString: @","];
 				
-				if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"geneva"] != NSNotFound)
+				if ([lowercaseFontFamily rangeOfString:@"geneva"].length)
 				{
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"cursive"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"cursive"].length)
 				{
 					_fontDescriptor.stylisticClass = kCTFontScriptsClass;
 					_fontDescriptor.fontFamily = nil;
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"sans-serif"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"sans-serif"].length)
 				{
 					// too many matches (24)
 					// fontDescriptor.stylisticClass = kCTFontSansSerifClass;
 					_fontDescriptor.fontFamily = @"Helvetica";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"serif"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"serif"].length)
 				{
 					// kCTFontTransitionalSerifsClass = Baskerville
 					// kCTFontClarendonSerifsClass = American Typewriter
@@ -914,18 +909,18 @@ NSDictionary *_classesForNames = nil;
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"fantasy"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"fantasy"].length)
 				{
 					_fontDescriptor.fontFamily = @"Papyrus"; // only available on iPad
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"monospace"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"monospace"].length)
 				{
 					_fontDescriptor.monospaceTrait = YES;
 					_fontDescriptor.fontFamily = @"Courier";
 					foundFontFamily = YES;
 				}
-				else if ([lowercaseFontFamilyWithoutWhiteSpacesArray indexOfObject:@"times"] != NSNotFound)
+				else if ([lowercaseFontFamily rangeOfString:@"times"].length)
 				{
 					_fontDescriptor.fontFamily = @"Times New Roman";
 					foundFontFamily = YES;
