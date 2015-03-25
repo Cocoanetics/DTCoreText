@@ -188,18 +188,24 @@
 	NSRange entireString = NSMakeRange(0, [attributedString length]);
 	
 	// add a foreground color using the Core Text attribute name
-	[testingString addAttribute:(id)kCTForegroundColorAttributeName value:(id)([UIColor redColor].CGColor) range:entireString];
+	CGFloat components[4] = {1.0, 0.0, 0.0, 1.0};
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGColorRef redColorRef = CGColorCreate(colorSpace, components);
+	[testingString addAttribute:(id)kCTForegroundColorAttributeName value:(id)CFBridgingRelease(redColorRef) range:entireString];
+	CGColorSpaceRelease(colorSpace);
 	
 	// append the end of a paragraph tag
 	[testingString appendEndOfParagraph];
 	
 	// check the foreground color
-	id stringColor = [testingString attribute:(id)kCTForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
-	if (![stringColor isKindOfClass:[UIColor class]]) {
-		stringColor = [UIColor colorWithCGColor:(CGColorRef)stringColor];
+	id stringColorRef = [testingString attribute:(id)kCTForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
+#if TARGET_OS_IPHONE
+	if ([stringColorRef isKindOfClass:[UIColor class]]) {
+		stringColorRef = (id)[(UIColor *)stringColorRef CGColor];
 	}
+#endif
 	
-	XCTAssertTrue(CGColorEqualToColor([[UIColor redColor] CGColor], [stringColor CGColor]), @"Foreground color should be red");
+	XCTAssertTrue(CGColorEqualToColor(redColorRef, (CGColorRef)stringColorRef), @"Foreground color should be red");
 	
 #if TARGET_OS_IPHONE && DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	[testingString setAttributedString:attributedString];
