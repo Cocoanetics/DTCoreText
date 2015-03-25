@@ -180,4 +180,49 @@
 	XCTAssertTrue(NSEqualRanges(queriedRange, expectedRange), @"Range is incorrect");
 }
 
+- (void)testForegroundColorAttributeNameAtEndOfParagraph
+{
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"1234567890"];
+	NSMutableAttributedString *testingString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
+	
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	
+	// add a foreground color using the Core Text attribute name
+	[testingString addAttribute:(id)kCTForegroundColorAttributeName value:(id)([UIColor redColor].CGColor) range:entireString];
+	
+	// append the end of a paragraph tag
+	[testingString appendEndOfParagraph];
+	
+	// check the foreground color
+	id stringColor = [testingString attribute:(id)kCTForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
+	if (![stringColor isKindOfClass:[UIColor class]]) {
+		stringColor = [UIColor colorWithCGColor:(CGColorRef)stringColor];
+	}
+	
+	XCTAssertTrue(CGColorEqualToColor([[UIColor redColor] CGColor], [stringColor CGColor]), @"Foreground color should be red");
+	
+#if TARGET_OS_IPHONE && DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	[testingString setAttributedString:attributedString];
+	
+	___useiOS6Attributes = YES;
+	
+	// add a foreground color using the NSAttributedString attribute name
+	[testingString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:entireString];
+	
+	// append the end of a paragraph tag
+	[testingString appendEndOfParagraph];
+	
+	// check the foreground color
+	id nsAttributesStringColor = [testingString attribute:NSForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
+
+	if (![nsAttributesStringColor isKindOfClass:[UIColor class]]) {
+		XCTFail(@"Color for NSForegroundColorAttributeName should be set as a valid UIColor"	);
+	} else {
+		XCTAssertTrue(CGColorEqualToColor([[UIColor redColor] CGColor], [nsAttributesStringColor CGColor]), @"Foreground color should be red");
+	}
+	
+	___useiOS6Attributes = NO;
+#endif
+}
+
 @end
