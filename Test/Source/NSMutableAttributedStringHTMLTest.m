@@ -187,12 +187,14 @@
 	
 	NSRange entireString = NSMakeRange(0, [attributedString length]);
 	
+	BOOL defaultValueForUseiOS6Attributes = ___useiOS6Attributes;
+	___useiOS6Attributes = NO;
+	
 	// add a foreground color using the Core Text attribute name
 	CGFloat components[4] = {1.0, 0.0, 0.0, 1.0};
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	CGColorRef redColorRef = CGColorCreate(colorSpace, components);
 	[testingString addAttribute:(id)kCTForegroundColorAttributeName value:(id)CFBridgingRelease(redColorRef) range:entireString];
-	CGColorSpaceRelease(colorSpace);
 	
 	// append the end of a paragraph tag
 	[testingString appendEndOfParagraph];
@@ -206,6 +208,8 @@
 #endif
 	
 	XCTAssertTrue(CGColorEqualToColor(redColorRef, (CGColorRef)stringColorRef), @"Foreground color should be red");
+	
+	CGColorSpaceRelease(colorSpace);
 	
 #if TARGET_OS_IPHONE && DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	[testingString setAttributedString:attributedString];
@@ -226,9 +230,9 @@
 	} else {
 		XCTAssertTrue(CGColorEqualToColor([[UIColor redColor] CGColor], [nsAttributesStringColor CGColor]), @"Foreground color should be red");
 	}
-	
-	___useiOS6Attributes = NO;
 #endif
+	
+	___useiOS6Attributes = defaultValueForUseiOS6Attributes;
 }
 
 @end
