@@ -8,12 +8,11 @@
 
 #import "DTHTMLParserNode.h"
 #import "DTHTMLParserTextNode.h"
-#import "DTWeakSupport.h"
 
 @implementation DTHTMLParserNode
 {
 	NSString *_name;
-	DT_WEAK_VARIABLE DTHTMLParserNode *_parentNode;
+	__weak DTHTMLParserNode *_parentNode;
 	NSMutableArray *_childNodes;
 }
 

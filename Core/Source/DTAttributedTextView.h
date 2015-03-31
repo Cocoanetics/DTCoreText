@@ -35,7 +35,7 @@
 /**
  A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
  */
-@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
+@property (nonatomic, weak) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
 
 /**

@@ -37,7 +37,7 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	
 	BOOL shouldShowProgressiveDownload;
 	
-	DT_WEAK_VARIABLE id<DTLazyImageViewDelegate> _delegate;
+	__weak id<DTLazyImageViewDelegate> _delegate;
 }
 
 - (void)dealloc
