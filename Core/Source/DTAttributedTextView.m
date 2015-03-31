@@ -27,7 +27,7 @@
 	UIView *_backgroundView;
 
 	// these are pass-through, i.e. store until the content view is created
-	DT_WEAK_VARIABLE id textDelegate;
+	__weak id textDelegate;
 	NSAttributedString *_attributedString;
 	
 	BOOL _shouldDrawLinks;

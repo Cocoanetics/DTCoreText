@@ -7,7 +7,6 @@
 //
 
 #import "DTAttributedTextContentView.h"
-#import "DTWeakSupport.h"
 
 /**
  This class represents a tableview cell that contains an attributed text as its content.
@@ -37,7 +36,7 @@
 /**
  A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
  */
-@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
+@property (nonatomic, weak) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
 
 /**
  This method allows to set HTML text directly as content of the receiver. 

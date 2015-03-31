@@ -14,12 +14,13 @@ GitHub offers tar balls for the individual tagged versions but you shouldn't try
 Requirements
 ------------
 
-DTCoreText needs a minimum iOS deployment target of iOS 4.2 because of:
+DTCoreText needs a minimum iOS deployment target of iOS 5.0 because of:
 
 - NSCache
 - GCD-based threading and locking
 - Blocks
 - ARC
+- Weak variables and properties
 
 Support for OS X is currently being developed.
 

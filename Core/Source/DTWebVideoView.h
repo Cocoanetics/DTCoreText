@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTWeakSupport.h"
+#import <Foundation/Foundation.h>
 
 @class DTWebVideoView;
 @class DTTextAttachment;
@@ -42,7 +42,7 @@
 /**
  The delegate of the video view
  */
-@property (nonatomic, DT_WEAK_PROPERTY) id <DTWebVideoViewDelegate> delegate;
+@property (nonatomic, weak) id <DTWebVideoViewDelegate> delegate;
 
 /**
  The text attachment representing an embedded video.

@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTWeakSupport.h"
+#import <Foundation/Foundation.h>
 
 @class DTLazyImageView;
 
@@ -60,7 +60,7 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
 /**
  The delegate, conforming to <DTLazyImageViewDelegate>, to inform when the image dimensions were determined
  */
-@property (nonatomic, DT_WEAK_PROPERTY) id<DTLazyImageViewDelegate> delegate;
+@property (nonatomic, weak) id<DTLazyImageViewDelegate> delegate;
 
 
 /**

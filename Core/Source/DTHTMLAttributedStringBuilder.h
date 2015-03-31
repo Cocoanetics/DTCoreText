@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLParser.h"
+#import <Foundation/Foundation.h>
 
 @class DTHTMLElement;
 
@@ -16,7 +16,7 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 /**
  Class for building an `NSAttributedString` from an HTML document.
  */
-@interface DTHTMLAttributedStringBuilder : NSObject <DTHTMLParserDelegate>
+@interface DTHTMLAttributedStringBuilder : NSObject
 
 /**
  @name Creating an Attributed String Builder
