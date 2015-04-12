@@ -133,13 +133,13 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
     [[self layer] setNeedsDisplay];
 }*/
 
-- (void)mouseUp:(NSEvent *)theEvent {
-    [self.nextResponder tryToPerform:_cmd with:theEvent];
-}
+//- (void)mouseUp:(NSEvent *)theEvent {
+//    [self.nextResponder tryToPerform:_cmd with:theEvent];
+//}
 
-- (void)mouseDown:(NSEvent *)theEvent {
-    [self.nextResponder tryToPerform:_cmd with:theEvent];
-}
+//- (void)mouseDown:(NSEvent *)theEvent {
+//    [self.nextResponder tryToPerform:_cmd with:theEvent];
+//}
 
 - (BOOL)isFlipped {
 	return YES;
