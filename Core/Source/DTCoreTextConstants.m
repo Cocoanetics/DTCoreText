@@ -28,6 +28,7 @@ NSString * const DTUseiOS6Attributes = @"DTUseiOS6Attributes";
 NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 NSString * const DTProcessCustomHTMLAttributes = @"DTProcessCustomHTMLAttributes";
 NSString * const DTIgnoreInlineStylesOption = @"DTIgnoreInlineStyles";
+NSString * const DTDocumentPreserveTrailingSpaces = @"DTDocumentPreserveTrailingSpaces";
 
 // attributed string attribute constants
 
