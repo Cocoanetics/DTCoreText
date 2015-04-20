@@ -132,13 +132,18 @@ static NSDictionary *entityReverseLookup = nil;
 	static dispatch_once_t predicate;
 	
 	dispatch_once(&predicate, ^{
-		entityReverseLookup = [[NSDictionary alloc] initWithObjectsAndKeys:@"&quot;", [NSNumber numberWithInteger:0x22],
+		entityReverseLookup = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                      @"&quot;", [NSNumber numberWithInteger:0x22],
 									  @"&amp;", [NSNumber numberWithInteger:0x26],
 									  @"&apos;", [NSNumber numberWithInteger:0x27],
 									  @"&lt;", [NSNumber numberWithInteger:0x3c],
 									  @"&gt;", [NSNumber numberWithInteger:0x3e],
-									  @"&nbsp;", [NSNumber numberWithInteger:0x00a0],
-									  @"&iexcl;", [NSNumber numberWithInteger:0x00a1],
+                                      //@"&#xA0;", [NSNumber numberWithInteger:0x00a0],
+                                      @"&#xA0;", [NSNumber numberWithInteger:0x00a0],
+                                      //@"&#160;", [NSNumber numberWithInteger:0x0160],
+									  //@"&nbsp;", [NSNumber numberWithInteger:0x00a0],
+									  /*
+                                      @"&iexcl;", [NSNumber numberWithInteger:0x00a1],
 									  @"&cent;", [NSNumber numberWithInteger:0x00a2],
 									  @"&pound;", [NSNumber numberWithInteger:0x00a3],
 									  @"&curren;", [NSNumber numberWithInteger:0x00a4],
@@ -380,7 +385,8 @@ static NSDictionary *entityReverseLookup = nil;
 									  @"&clubs;", [NSNumber numberWithInteger:0x2663],
 									  @"&hearts;", [NSNumber numberWithInteger:0x2665],
 									  @"&diams;", [NSNumber numberWithInteger:0x2666],
-									  @"<br />", [NSNumber numberWithInteger:0x2028], 
+									  */
+                                      @"<br />", [NSNumber numberWithInteger:0x2028],
 									  nil];
 		
 	});
@@ -400,7 +406,8 @@ static NSDictionary *entityReverseLookup = nil;
 		}
 		else
 		{
-			if (oneChar<=255)
+			//if (oneChar<=255)
+            if (/*oneChar == 9 ||*/ (oneChar > 31 && oneChar <= 125))
 			{
 				// output as is
 				[tmpString appendFormat:@"%C", oneChar];
