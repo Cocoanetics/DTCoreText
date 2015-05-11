@@ -578,6 +578,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 #pragma mark - Sizing
 
+- (void)setBounds:(CGRect)bounds {
+
+    if (!CGSizeEqualToSize(self.bounds.size, bounds.size)) {
+        _layoutFrame = nil;
+        [self invalidateIntrinsicContentSize];
+    }
+    [super setBounds:bounds];
+}
+
 - (CGSize)intrinsicContentSize
 {
 	if (!self.layoutFrame) // creates new layout frame if possible
