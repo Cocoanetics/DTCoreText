@@ -180,4 +180,59 @@
 	XCTAssertTrue(NSEqualRanges(queriedRange, expectedRange), @"Range is incorrect");
 }
 
+- (void)testForegroundColorAttributeNameAtEndOfParagraph
+{
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"1234567890"];
+	NSMutableAttributedString *testingString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
+	
+	NSRange entireString = NSMakeRange(0, [attributedString length]);
+	
+	BOOL defaultValueForUseiOS6Attributes = ___useiOS6Attributes;
+	___useiOS6Attributes = NO;
+	
+	// add a foreground color using the Core Text attribute name
+	CGFloat components[4] = {1.0, 0.0, 0.0, 1.0};
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGColorRef redColorRef = CGColorCreate(colorSpace, components);
+	[testingString addAttribute:(id)kCTForegroundColorAttributeName value:(id)CFBridgingRelease(redColorRef) range:entireString];
+	
+	// append the end of a paragraph tag
+	[testingString appendEndOfParagraph];
+	
+	// check the foreground color
+	id stringColorRef = [testingString attribute:(id)kCTForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
+#if TARGET_OS_IPHONE
+	if ([stringColorRef isKindOfClass:[UIColor class]]) {
+		stringColorRef = (id)[(UIColor *)stringColorRef CGColor];
+	}
+#endif
+	
+	XCTAssertTrue(CGColorEqualToColor(redColorRef, (CGColorRef)stringColorRef), @"Foreground color should be red");
+	
+	CGColorSpaceRelease(colorSpace);
+	
+#if TARGET_OS_IPHONE && DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	[testingString setAttributedString:attributedString];
+	
+	___useiOS6Attributes = YES;
+	
+	// add a foreground color using the NSAttributedString attribute name
+	[testingString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:entireString];
+	
+	// append the end of a paragraph tag
+	[testingString appendEndOfParagraph];
+	
+	// check the foreground color
+	id nsAttributesStringColor = [testingString attribute:NSForegroundColorAttributeName atIndex:([testingString length] - 1) effectiveRange:nil];
+
+	if (![nsAttributesStringColor isKindOfClass:[UIColor class]]) {
+		XCTFail(@"Color for NSForegroundColorAttributeName should be set as a valid UIColor"	);
+	} else {
+		XCTAssertTrue(CGColorEqualToColor([[UIColor redColor] CGColor], [nsAttributesStringColor CGColor]), @"Foreground color should be red");
+	}
+#endif
+	
+	___useiOS6Attributes = defaultValueForUseiOS6Attributes;
+}
+
 @end
