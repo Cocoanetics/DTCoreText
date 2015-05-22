@@ -29,6 +29,9 @@
 		36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
+		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
+		6326844A1B0109B1006FCBE4 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632684491B0109B1006FCBE4 /* Launch Screen.xib */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
 		94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
@@ -691,6 +694,27 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		632684601B0109B1006FCBE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FAC284E619B84B5F0010C385;
+			remoteInfo = "DTActionSheet Demo";
+		};
+		632684621B0109B1006FCBE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7EA07B81A2B2F6A00B61CCE;
+			remoteInfo = "DTFoundation (iOS)";
+		};
+		632684641B0109B1006FCBE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7EA07391A2B215200B61CCE;
+			remoteInfo = "DTFoundation (OSX)";
+		};
 		A70E62FF16C254EB009B47BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -711,13 +735,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = A7AC21AE196417830009E1B9;
 			remoteInfo = "DTAnimatedGIF (iOS)";
-		};
-		A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7BAD10E1483F934000E2B6A;
-			remoteInfo = "Static Framework";
 		};
 		A781FE9017FAABE500A1F5E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -936,6 +953,10 @@
 		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AutoLayoutDemoViewController.xib; sourceTree = "<group>"; };
+		5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLayoutDemoViewController.m; sourceTree = "<group>"; };
+		5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLayoutDemoViewController.h; sourceTree = "<group>"; };
+		632684491B0109B1006FCBE4 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "Launch Screen.xib"; path = "Demo/Source/Launch Screen.xib"; sourceTree = "<group>"; };
 		944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSListStyleTest.m; sourceTree = "<group>"; };
 		94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCoder+DTCompatibility.h"; sourceTree = "<group>"; };
 		94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCoder+DTCompatibility.m"; sourceTree = "<group>"; };
@@ -1315,6 +1336,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				632684491B0109B1006FCBE4 /* Launch Screen.xib */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A788CA1114863E9D00E1AFD9 /* Test */,
@@ -1460,7 +1482,6 @@
 		A781FE7817FAABE500A1F5E8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */,
 				A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */,
 				A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */,
 				A7F0C43A1965A0D600D7FAFB /* libDTAnimatedGIF.a */,
@@ -1482,7 +1503,10 @@
 				A781FEB117FAABE500A1F5E8 /* DTReachability Demo.app */,
 				A781FEAF17FAABE500A1F5E8 /* DTSidePanels Demo.app */,
 				A781FEB317FAABE500A1F5E8 /* DTZipArchive.app */,
+				632684611B0109B1006FCBE4 /* DTActionSheet Demo.app */,
 				A781FE9317FAABE500A1F5E8 /* Unit Tests.xctest */,
+				632684631B0109B1006FCBE4 /* DTFoundation.framework */,
+				632684651B0109B1006FCBE4 /* DTFoundation.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1588,6 +1612,9 @@
 				A740368516E51B3A00ECCDE0 /* DemoAboutViewController.h */,
 				A740368616E51B3A00ECCDE0 /* DemoAboutViewController.m */,
 				A740368716E51B3A00ECCDE0 /* DemoAboutViewController.xib */,
+				5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */,
+				5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */,
+				5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2280,11 +2307,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A781FE8F17FAABE500A1F5E8 /* DTFoundation.framework */ = {
+		632684611B0109B1006FCBE4 /* DTActionSheet Demo.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
+			fileType = wrapper.application;
+			path = "DTActionSheet Demo.app";
+			remoteRef = 632684601B0109B1006FCBE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		632684631B0109B1006FCBE4 /* DTFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
 			path = DTFoundation.framework;
-			remoteRef = A781FE8E17FAABE500A1F5E8 /* PBXContainerItemProxy */;
+			remoteRef = 632684621B0109B1006FCBE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		632684651B0109B1006FCBE4 /* DTFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DTFoundation.framework;
+			remoteRef = 632684641B0109B1006FCBE4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A781FE9117FAABE500A1F5E8 /* libDTFoundation.a */ = {
@@ -2457,6 +2498,7 @@
 				A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */,
 				A788CA4214863EF100E1AFD9 /* Icon@2x.png in Resources */,
 				A788CA4314863EF100E1AFD9 /* icon_smile.gif in Resources */,
+				6326844A1B0109B1006FCBE4 /* Launch Screen.xib in Resources */,
 				A788CA4414863EF100E1AFD9 /* Image.html in Resources */,
 				A788CA4514863EF100E1AFD9 /* ListTest.html in Resources */,
 				A788CA4614863EF100E1AFD9 /* LoremIpsum.html in Resources */,
@@ -2484,6 +2526,7 @@
 				DDCCEB1E17005A4F009FF923 /* css.css in Resources */,
 				A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */,
 				A7FB12C9175F49A400D4B7F0 /* DTCoreTextFontOverrides.plist in Resources */,
+				5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2607,6 +2650,7 @@
 				A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */,
 				A788CA5314863EF100E1AFD9 /* main.m in Sources */,
 				A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */,
+				5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
