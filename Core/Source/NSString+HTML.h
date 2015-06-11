@@ -67,6 +67,13 @@
 - (NSString *)stringByAddingHTMLEntities;
 
 
+/**
+ Convert a string into a proper XML string by converting special characters into XML entities.
+ @returns A string containing XML that now uses proper XML entities.
+ */
+- (NSString *)stringByAddingXMLEntities;
+
+
 /** 
  Convert a string from HTML entities into correct character representations using UTF8 encoding. For example: an ellipsis entity representy by `&hellip;` is converted into `…`. 
  @returns A string without HTML entities, instead having the actual characters formerly represented by HTML entities. 

@@ -18,15 +18,27 @@
 	CGFloat _textScale;
 	BOOL _useAppleConvertedSpace;
 	NSString *_CSSPrefix;
+    DTHTMLEscape _options;
 }
 
 @synthesize styleLookup = _styleLookup;
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString {
-	return [self initWithAttributedString:attributedString CSSPrefix:@""];
+- (id)initWithAttributedString:(NSAttributedString *)attributedString
+{
+    return [self initWithAttributedString:attributedString CSSPrefix:@"" options:DTHTMLEscapeHTML];
+}
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString options:(DTHTMLEscape)options
+{
+	return [self initWithAttributedString:attributedString CSSPrefix:@"" options:options];
 }
 
 - (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix
+{
+    return [self initWithAttributedString:attributedString CSSPrefix:theCSSPrefix options:DTHTMLEscapeHTML];
+}
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(DTHTMLEscape)options
 {
 	self = [super init];
 	
@@ -39,6 +51,8 @@
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		_CSSPrefix = [[NSString alloc] initWithString:theCSSPrefix];
+
+        _options = options;
 	}
 	
 	return self;
@@ -633,7 +647,16 @@
 				needsToRemovePrefix = NO;
 			}
 			
-			NSString *subString = [plainSubString stringByAddingHTMLEntities];
+            NSString *subString;
+            if(_options & DTHTMLEscapeXML)
+            {
+                subString = [plainSubString stringByAddingXMLEntities];
+            }
+            else
+            {
+                subString = [plainSubString stringByAddingHTMLEntities];
+            }
+            
 			
 			if (!subString)
 			{
