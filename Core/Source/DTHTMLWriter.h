@@ -6,12 +6,19 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+typedef NS_OPTIONS(NSUInteger, DTHTMLEscape) {
+    DTHTMLEscapeHTML     = 0,
+    DTHTMLEscapeXML      = 1 << 0
+};
+
 /**
  Class to generate HTML from `NSAttributedString` instances.
  */
 @interface DTHTMLWriter : NSObject {
 	NSMutableDictionary *_styleLookup;
 }
+
+
 
 /**
  @name Creating an HTML Writer
@@ -26,9 +33,24 @@
 /**
  Creates a writer with a given `NSAttributedString` as input
  @param attributedString An attributed string
+ @param options Escape handling options
+ */
+- (id)initWithAttributedString:(NSAttributedString *)attributedString options:(DTHTMLEscape)options;
+
+/**
+ Creates a writer with a given `NSAttributedString` as input
+ @param attributedString An attributed string
  @param CSSPrefix All generated CSS styles will be prefixed by this string
  */
 - (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix;
+
+/**
+ Creates a writer with a given `NSAttributedString` as input
+ @param attributedString An attributed string
+ @param CSSPrefix All generated CSS styles will be prefixed by this string
+ @param options Escape handling options
+ */
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(DTHTMLEscape)options;
 
 /**
  @name Generating HTML
