@@ -210,12 +210,12 @@ static NSCache *imageCache = nil;
 	{
 		// get the other dimension if one is missing
 		
-		if (_originalSize.width==0 && _originalSize.height>0)
+		if (_originalSize.width==0 && _originalSize.height!=0)
 		{
 			CGFloat factor = _originalSize.height/image.size.height;
 			_originalSize.width = image.size.height * factor;
 		}
-		else if (_originalSize.width>0 && _originalSize.height==0)
+		else if (_originalSize.width!=0 && _originalSize.height==0)
 		{
 			CGFloat factor = _originalSize.width/image.size.width;
 			_originalSize.height = image.size.width * factor;
@@ -231,7 +231,7 @@ static NSCache *imageCache = nil;
 	{
 		// get the other dimension if one is missing
 		
-		if (_displaySize.width==0 && _displaySize.height>0)
+		if (_displaySize.width==0 && _displaySize.height!=0)
 		{
 			CGSize newDisplaySize = _displaySize;
 
@@ -240,7 +240,7 @@ static NSCache *imageCache = nil;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
-		else if (_displaySize.width>0 && _displaySize.height==0)
+		else if (_displaySize.width!=0 && _displaySize.height==0)
 		{
 			CGSize newDisplaySize = _displaySize;
 			
