@@ -247,7 +247,7 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 {
 	[_receivedData appendData:data];
 	
-	if (!CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
+	if (!&CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
 	{
 		// don't show progressive
 		return;
