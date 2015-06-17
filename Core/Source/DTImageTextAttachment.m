@@ -123,8 +123,8 @@ static NSCache *imageCache = nil;
 						sizeAccordingToStyle.height = [heightStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:0 textScale:1];
 						
 						// if _orgiginal width and height are a fraction of decode image size, it must be a scaled image
-						if (sizeAccordingToStyle.width && sizeAccordingToStyle.width < decodedImage.size.width &&
-							 sizeAccordingToStyle.height && sizeAccordingToStyle.height < decodedImage.size.height)
+						if (sizeAccordingToStyle.width != 0 && sizeAccordingToStyle.width < decodedImage.size.width &&
+							 sizeAccordingToStyle.height != 0 && sizeAccordingToStyle.height < decodedImage.size.height)
 						{
 							// determine image scale
 							CGFloat scale = round(decodedImage.size.width/sizeAccordingToStyle.width);
