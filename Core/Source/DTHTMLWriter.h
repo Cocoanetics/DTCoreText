@@ -6,10 +6,8 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-typedef NS_OPTIONS(NSUInteger, DTHTMLEscape) {
-    DTHTMLEscapeHTML     = 0,
-    DTHTMLEscapeXML      = 1 << 0
-};
+extern NSString *kOptionRenderLastParagraphWithoutNewlineAsSpan;
+extern NSString *kOptionDTHTMLEscapeXML;
 
 /**
  Class to generate HTML from `NSAttributedString` instances.
@@ -33,13 +31,6 @@ typedef NS_OPTIONS(NSUInteger, DTHTMLEscape) {
 /**
  Creates a writer with a given `NSAttributedString` as input
  @param attributedString An attributed string
- @param options Escape handling options
- */
-- (id)initWithAttributedString:(NSAttributedString *)attributedString options:(DTHTMLEscape)options;
-
-/**
- Creates a writer with a given `NSAttributedString` as input
- @param attributedString An attributed string
  @param CSSPrefix All generated CSS styles will be prefixed by this string
  */
 - (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix;
@@ -49,8 +40,9 @@ typedef NS_OPTIONS(NSUInteger, DTHTMLEscape) {
  @param attributedString An attributed string
  @param CSSPrefix All generated CSS styles will be prefixed by this string
  @param options Escape handling options
+ @param options for generating html string. Currently supported: kOptionRenderLastParagraphWithoutNewlineAsSpan, kOptionDTHTMLEscapeXML
  */
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(DTHTMLEscape)options;
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(NSDictionary*)theOptions;
 
 /**
  @name Generating HTML
@@ -101,5 +93,7 @@ typedef NS_OPTIONS(NSUInteger, DTHTMLEscape) {
 @property (nonatomic, readonly) NSMutableDictionary *styleLookup;
 
 @property (nonatomic, assign) BOOL insertNonBreakingSpaceInEmptyParagraphs;
+
+@property (nonatomic, strong) NSMutableDictionary *options;
 
 @end

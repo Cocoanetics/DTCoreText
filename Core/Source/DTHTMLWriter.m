@@ -11,6 +11,9 @@
 #import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
 
+NSString *kOptionRenderLastParagraphWithoutNewlineAsSpan = @"renderLastParagraphWithoutNewlineAsSpan";
+NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
+
 @implementation DTHTMLWriter
 {
 	NSAttributedString *_attributedString;
@@ -18,27 +21,22 @@
 	CGFloat _textScale;
 	BOOL _useAppleConvertedSpace;
 	NSString *_CSSPrefix;
-    DTHTMLEscape _options;
+    BOOL _optionRenderLastParagraphWithoutNewlineAsSpan;
+    BOOL _optionEscapeAsXML;
 }
 
 @synthesize styleLookup = _styleLookup;
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString
-{
-    return [self initWithAttributedString:attributedString CSSPrefix:@"" options:DTHTMLEscapeHTML];
+- (id)initWithAttributedString:(NSAttributedString *)attributedString {
+    return [self initWithAttributedString:attributedString CSSPrefix:@"" options:nil];
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString options:(DTHTMLEscape)options
-{
-	return [self initWithAttributedString:attributedString CSSPrefix:@"" options:options];
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix {
+    return [self initWithAttributedString:attributedString CSSPrefix:theCSSPrefix options:nil];
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix
-{
-    return [self initWithAttributedString:attributedString CSSPrefix:theCSSPrefix options:DTHTMLEscapeHTML];
-}
-
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(DTHTMLEscape)options
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(NSDictionary*)theOptions
 {
 	self = [super init];
 	
@@ -51,9 +49,18 @@
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		_CSSPrefix = [[NSString alloc] initWithString:theCSSPrefix];
+        _options = [NSMutableDictionary dictionaryWithDictionary:theOptions];
+        
+        _optionRenderLastParagraphWithoutNewlineAsSpan = YES;
+        if ([_options valueForKey:kOptionRenderLastParagraphWithoutNewlineAsSpan] != nil) {
+            _optionRenderLastParagraphWithoutNewlineAsSpan = [[_options valueForKey:kOptionRenderLastParagraphWithoutNewlineAsSpan] boolValue];
+        }
+        _optionEscapeAsXML = NO;
+        if ([_options valueForKey:kOptionDTHTMLEscapeXML] != nil) {
+            _optionEscapeAsXML = [[_options valueForKey:kOptionDTHTMLEscapeXML] boolValue];
+        }
 
-        _options = options;
-	}
+    }
 	
 	return self;
 }
@@ -469,8 +476,8 @@
 		if ([paragraphs lastObject] == oneParagraph)
 		{
 			// last paragraph in string
-			
-			if (![plainString hasSuffix:@"\n"])
+            
+			if (![plainString hasSuffix:@"\n"] && _optionRenderLastParagraphWithoutNewlineAsSpan)
 			{
 				// not a whole paragraph, so we don't put it in P
 				blockElement = @"span";
@@ -648,7 +655,7 @@
 			}
 			
             NSString *subString;
-            if(_options & DTHTMLEscapeXML)
+            if(_optionEscapeAsXML)
             {
                 subString = [plainSubString stringByAddingXMLEntities];
             }
