@@ -680,7 +680,7 @@
 			
 			CGFloat kerning = [attributes kerning] / _textScale;
 			
-			if (kerning)
+			if (kerning>0)
 			{
 				fontStyle = [fontStyle stringByAppendingFormat:@"letter-spacing:%.0fpx;", kerning];
 			}

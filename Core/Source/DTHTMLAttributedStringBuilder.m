@@ -157,7 +157,7 @@
 	
 	// custom option to scale text
 	_textScale = [[_options objectForKey:NSTextSizeMultiplierDocumentOption] floatValue];
-	if (!_textScale)
+	if (_textScale==0)
 	{
 		_textScale = 1.0f;
 	}

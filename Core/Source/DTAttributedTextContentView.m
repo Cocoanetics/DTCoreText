@@ -447,7 +447,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// needs clearing of background
 	CGRect rect = CGContextGetClipBoundingBox(ctx);
 	
-	if (_backgroundOffset.height || _backgroundOffset.width)
+	if (_backgroundOffset.height>0 || _backgroundOffset.width>0)
 	{
 		CGContextSetPatternPhase(ctx, _backgroundOffset);
 	}

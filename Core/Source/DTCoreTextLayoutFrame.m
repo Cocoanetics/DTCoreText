@@ -266,12 +266,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
 	
-	if (paragraphStyle.minimumLineHeight && paragraphStyle.minimumLineHeight > maxFontSize)
+	if (paragraphStyle.minimumLineHeight>0 && paragraphStyle.minimumLineHeight > maxFontSize)
 	{
 		maxFontSize = paragraphStyle.minimumLineHeight;
 	}
 	
-	if (paragraphStyle.maximumLineHeight && paragraphStyle.maximumLineHeight < maxFontSize)
+	if (paragraphStyle.maximumLineHeight>0 && paragraphStyle.maximumLineHeight < maxFontSize)
 	{
 		maxFontSize = paragraphStyle.maximumLineHeight;
 	}

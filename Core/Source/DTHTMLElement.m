@@ -265,7 +265,7 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	if (_letterSpacing)
+	if (_letterSpacing>0)
 	{
 		NSNumber *letterSpacingNum = DTNSNumberFromCGFloat(_letterSpacing);
 		
@@ -301,12 +301,12 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:(id)[_backgroundStrokeColor CGColor] forKey:DTBackgroundStrokeColorAttribute];
 	}
 	
-	if (_backgroundStrokeWidth)
+	if (_backgroundStrokeWidth>0)
 	{
 		[tmpDict setObject:DTNSNumberFromCGFloat(_backgroundStrokeWidth) forKey:DTBackgroundStrokeWidthAttribute];
 	}
 	
-	if (_backgroundCornerRadius)
+	if (_backgroundCornerRadius>0)
 	{
 		[tmpDict setObject:DTNSNumberFromCGFloat(_backgroundCornerRadius) forKey:DTBackgroundCornerRadiusAttribute];
 	}
