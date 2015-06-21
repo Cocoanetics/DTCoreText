@@ -13,7 +13,6 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
-#import "DTWeakSupport.h"
 #import "DTLog.h"
 
 @implementation DTCoreTextGlyphRun
@@ -34,8 +33,8 @@
 	
 	const CGPoint *_glyphPositionPoints;
 	
-	DT_WEAK_VARIABLE DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
-	DT_WEAK_VARIABLE NSDictionary *_attributes; // weak because it is owned by _run IVAR
+	__weak DTCoreTextLayoutLine *_line;	// retain cycle, since these objects are retained by the _line
+	__weak NSDictionary *_attributes; // weak because it is owned by _run IVAR
 	NSArray *_stringIndices;
 	
 	DTTextAttachment *_attachment;

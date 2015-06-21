@@ -15,12 +15,12 @@
 {
 	DTAttributedTextContentView *_attributedTextContextView;
 	
-	DT_WEAK_VARIABLE id <DTAttributedTextContentViewDelegate> _textDelegate;
+	__weak id <DTAttributedTextContentViewDelegate> _textDelegate;
 	
 	NSUInteger _htmlHash; // preserved hash to avoid relayouting for same HTML
 	
 	BOOL _hasFixedRowHeight;
-	DT_WEAK_VARIABLE UITableView *_containingTableView;
+	__weak UITableView *_containingTableView;
 }
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier

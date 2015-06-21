@@ -7,6 +7,7 @@
 //
 
 #import "DTCoreText.h"
+#import "DTHTMLParser.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
 #import "DTTextHTMLElement.h"
@@ -19,7 +20,7 @@
 #import "NSString+DTFormatNumbers.h"
 #endif
 
-@interface DTHTMLAttributedStringBuilder ()
+@interface DTHTMLAttributedStringBuilder () <DTHTMLParserDelegate>
 
 - (void)_registerTagStartHandlers;
 - (void)_registerTagEndHandlers;

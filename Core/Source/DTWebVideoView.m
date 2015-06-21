@@ -19,7 +19,7 @@
 {
 	DTTextAttachment *_attachment;
 	
-	DT_WEAK_VARIABLE id <DTWebVideoViewDelegate> _delegate;
+	__weak id <DTWebVideoViewDelegate> _delegate;
 	
 	UIWebView *_webView;
 }
