@@ -512,11 +512,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding;
 		}
-		
-        if (hyphenationSupport) {
-            availableSpace -= ceilf(hyphenMarkLength); // reserve some space for hyphenation marks, so they won't get cut
-		}
-        
+		        
 		CGFloat offset = totalLeftPadding;
 		
 		// if first character is a tab, then it is positioned without the indentation
@@ -543,22 +539,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (!shouldTruncateLine)
 		{
-			static const unichar softHypen = 0x00AD;
-			NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
-			unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
-			if (softHypen == lastChar)
-			{
-				NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
-				NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
-				[hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
-				line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
-				isHyphenatedString = YES;
-			}
-			else
-			{
-				// create a line to fit
-				line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
-			}
+            isHyphenatedString = [self createLineByReplacingLastCharWithHyphenIfNecessary:&line range:lineRange typesetter:typesetter];
+            CGFloat lineWidth = (CGFloat)CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+            if (lineWidth > _frame.size.width) {
+                lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, availableSpace - hyphenMarkLength);
+                if (NSMaxRange(lineRange) > maxIndex) {
+                    lineRange.length = maxIndex - lineRange.location;
+                }
+                isHyphenatedString = [self createLineByReplacingLastCharWithHyphenIfNecessary:&line range:lineRange typesetter:typesetter];
+            }
 		}
 		else
 		{
@@ -763,6 +752,26 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// need to add bottom padding if in text block
 		_additionalPaddingAtBottom = totalPadding;
 	}
+}
+
+- (BOOL)createLineByReplacingLastCharWithHyphenIfNecessary:(CTLineRef*)line range:(NSRange)lineRange typesetter:(CTTypesetterRef)typesetter {
+    static const unichar softHypen = 0x00AD;
+    NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
+    unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
+    if (softHypen == lastChar)
+    {
+        NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
+        NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
+        [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
+        *line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+        return YES;
+    }
+    else
+    {
+        // create a line to fit
+        *line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+    }
+    return NO;
 }
 
 /**
