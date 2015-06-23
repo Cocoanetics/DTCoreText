@@ -14,6 +14,7 @@ extern NSString *kOptionDTHTMLEscapeXML;
  */
 @interface DTHTMLWriter : NSObject {
 	NSMutableDictionary *_styleLookup;
+    NSDictionary *_fontLookupMap;
 }
 
 
@@ -61,6 +62,7 @@ extern NSString *kOptionDTHTMLEscapeXML;
  @returns The generated string
  */
 - (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap;
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap andFontLookupMap:(NSDictionary*)fontLookupMap;
 
 /**
  Generates a HTML fragment representation of the attributed string including inlined styles and no html or head elements
