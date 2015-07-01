@@ -31,6 +31,15 @@
  */
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont;
 
+
+/**
+ Convenience method for creates a font descriptor from a Core Text font and a font lookup map
+ @param ctFont The Core Text font
+ @param fontLookupMap The font lookup map
+ @returns An initialized font descriptor
+ */
++ (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont withFontLookupMap:(NSDictionary*)fontLookupMap;
+
 /**
  Creates a font descriptor from a font attributes dictionary
  @param attributes The dictionary of font attributes

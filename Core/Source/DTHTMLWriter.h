@@ -14,6 +14,7 @@ extern NSString *kOptionDTHTMLEscapeXML;
  */
 @interface DTHTMLWriter : NSObject {
 	NSMutableDictionary *_styleLookup;
+    NSDictionary *_fontLookupMap;
 }
 
 
@@ -57,10 +58,17 @@ extern NSString *kOptionDTHTMLEscapeXML;
 /**
  Generates a HTML representation of the attributed string by taking an existing style lookup map into account
  @param styleLookupMap An existing style lookup to give the developer the change to render multiple strings in one pass using the same CSS
- @param textProcessBlock A Block where you can change the generated Text before the tag is closed (e.g. to add characters before closing a paragraph)
  @returns The generated string
  */
 - (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap;
+
+/**
+ Generates a HTML representation of the attributed string by taking an existing style lookup map into account
+ @param styleLookupMap An existing style lookup to give the developer the change to render multiple strings in one pass using the same CSS
+ @param fontLookupMap A dictionary containing replacement fonts to use when generating the result
+ @returns The generated string
+ */
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap andFontLookupMap:(NSDictionary*)fontLookupMap;
 
 /**
  Generates a HTML fragment representation of the attributed string including inlined styles and no html or head elements

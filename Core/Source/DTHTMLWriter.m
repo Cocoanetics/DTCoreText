@@ -264,10 +264,10 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 
 - (void)_buildOutput
 {
-	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil];
+	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil fontLookupMap:nil];
 }
 
-- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap
+- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap fontLookupMap:(NSDictionary *)fontLookupMap
 {
 	// reusable styles
 	if (existingStyleLookupMap) {
@@ -275,6 +275,8 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 	} else {
 		_styleLookup = [[NSMutableDictionary alloc] init];
 	}
+    
+    _fontLookupMap = fontLookupMap;
 	
 	NSString *plainString = [_attributedString string];
 	
@@ -355,7 +357,7 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 		{
 			if (paragraphFont)
 			{
-				DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:paragraphFont];
+				DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:paragraphFont withFontLookupMap:_fontLookupMap];
 				
 				if (_textScale!=1.0f)
 				{
@@ -703,7 +705,11 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 			if (!fontIsBlockLevel)
 			{
 				DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-				
+                /*NSString *fontName = [NSString stringWithString:fontDescriptor.fontName];
+                if([_fontLookupMap objectForKey:fontName]) {
+                    fontDescriptor.fontName = [_fontLookupMap objectForKey:fontName];
+                    fontDescriptor.fontFamily = [_fontLookupMap objectForKey:fontName];
+                }*/
 				if (fontDescriptor)
 				{
 					if (_textScale!=1.0f)
@@ -1043,17 +1049,27 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap];
+		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap fontLookupMap:nil];
 	}
 	
 	return _HTMLString;
+}
+
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap andFontLookupMap:(NSDictionary*)fontLookupMap
+{
+    if (!_HTMLString)
+    {
+        [self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap fontLookupMap:fontLookupMap];
+    }
+    
+    return _HTMLString;
 }
 
 - (NSString *)HTMLFragment
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil];
+		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil fontLookupMap:nil];
 	}
 	
 	return _HTMLString;
