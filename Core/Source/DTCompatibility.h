@@ -85,6 +85,8 @@
 
 #if !TARGET_OS_IPHONE
 
+#import <AppKit/AppKit.h>
+
 	// Compatibility Aliases
 	@compatibility_alias DTColor	NSColor;
 	@compatibility_alias DTImage	NSImage;

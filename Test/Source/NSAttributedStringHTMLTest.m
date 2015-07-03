@@ -6,12 +6,12 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCoreTextConstants.h"
 #import "NSAttributedStringHTMLTest.h"
 #import "NSAttributedString+HTML.h"
-
 #import "NSAttributedString+DTCoreText.h"
-
 #import "DTHTMLAttributedStringBuilder.h"
+
 
 @implementation NSAttributedStringHTMLTest
 
