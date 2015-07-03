@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E2262DC51638331500BFDAD7"
                BuildableName = "DTCoreText.framework"
-               BlueprintName = "Mac Framework"
+               BlueprintName = "DTCoreText (Mac)"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -54,7 +54,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2262DC51638331500BFDAD7"
             BuildableName = "DTCoreText.framework"
-            BlueprintName = "Mac Framework"
+            BlueprintName = "DTCoreText (Mac)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

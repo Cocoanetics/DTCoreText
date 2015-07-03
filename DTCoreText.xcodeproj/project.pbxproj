@@ -162,8 +162,6 @@
 		A76D451A1732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = A76D45121732A512006A7CDA /* NSDictionary+DTCoreText.m */; };
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
-		A777B26C17FAB78C007B8D41 /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */; };
-		A777B26D17FAB790007B8D41 /* libDTHTMLParser_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9D17FAABE500A1F5E8 /* libDTHTMLParser_Mac.a */; };
 		A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
 		A788C95D14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C95E14863E8700E1AFD9 /* DTAttributedTextCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -461,6 +459,7 @@
 		A79BA6C51B46A3AA0086C2F6 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6C41B46A3AA0086C2F6 /* libxml2.dylib */; };
 		A79BA6CD1B46A4250086C2F6 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		A79BA8261B46E1360086C2F6 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A79BA8251B46E1360086C2F6 /* Launch Screen.xib */; };
+		A79BA8431B46E55D0086C2F6 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6571B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82317FC9648001EBA6E /* UIKit.framework */; };
 		A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */; };
 		A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -734,7 +733,6 @@
 		E2262DFD163833AD00BFDAD7 /* NSMutableString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7ACD414D924B1005A9C69 /* NSMutableString+HTML.m */; };
 		E2262DFE163833AD00BFDAD7 /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2262DFF163833AD00BFDAD7 /* DTTextBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = A7081EA215036460002987F1 /* DTTextBlock.m */; };
-		E2262E021638345E00BFDAD7 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79499FF14C6256B00A8CCDE /* libxml2.dylib */; };
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -964,20 +962,6 @@
 			remoteGlobalIDString = FAF37A2017AFDD93009AC27C;
 			remoteInfo = DTZipArchiveDemo;
 		};
-		A781FEB817FAAD5500A1F5E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3D7CE53D166613B60028D339;
-			remoteInfo = "DTHTMLParser (Mac)";
-		};
-		A781FECE17FAAD5A00A1F5E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A710A4FF1607556000437D36;
-			remoteInfo = "Static Library (Mac)";
-		};
 		A788CA611486428F00E1AFD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -1019,6 +1003,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A7EA07B71A2B2F6A00B61CCE;
 			remoteInfo = "DTFoundation (iOS)";
+		};
+		A79BA8461B46E5710086C2F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7EA07381A2B215200B61CCE;
+			remoteInfo = "DTFoundation (OSX)";
 		};
 		A7C3A93017FAAF5F00B3AEE8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1463,11 +1454,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A777B26D17FAB790007B8D41 /* libDTHTMLParser_Mac.a in Frameworks */,
-				A777B26C17FAB78C007B8D41 /* libDTFoundation_Mac.a in Frameworks */,
+				A79BA8431B46E55D0086C2F6 /* DTFoundation.framework in Frameworks */,
 				E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */,
 				E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */,
-				E2262E021638345E00BFDAD7 /* libxml2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2438,9 +2427,9 @@
 			productReference = A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A79BA61F1B46A1FB0086C2F6 /* iOS Framework */ = {
+		A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A79BA6581B46A1FB0086C2F6 /* Build configuration list for PBXNativeTarget "iOS Framework" */;
+			buildConfigurationList = A79BA6581B46A1FB0086C2F6 /* Build configuration list for PBXNativeTarget "DTCoreText (iOS)" */;
 			buildPhases = (
 				A79BA61B1B46A1FB0086C2F6 /* Sources */,
 				A79BA61C1B46A1FB0086C2F6 /* Frameworks */,
@@ -2453,7 +2442,7 @@
 			dependencies = (
 				A79BA6C11B46A3570086C2F6 /* PBXTargetDependency */,
 			);
-			name = "iOS Framework";
+			name = "DTCoreText (iOS)";
 			productName = DTCoreText;
 			productReference = A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2476,9 +2465,9 @@
 			productReference = A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		E2262DC51638331500BFDAD7 /* Mac Framework */ = {
+		E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E2262DD21638331500BFDAD7 /* Build configuration list for PBXNativeTarget "Mac Framework" */;
+			buildConfigurationList = E2262DD21638331500BFDAD7 /* Build configuration list for PBXNativeTarget "DTCoreText (Mac)" */;
 			buildPhases = (
 				E2262DC11638331500BFDAD7 /* Sources */,
 				E2262DC21638331500BFDAD7 /* Frameworks */,
@@ -2489,10 +2478,9 @@
 				E2262E001638341B00BFDAD7 /* PBXBuildRule */,
 			);
 			dependencies = (
-				A781FECF17FAAD5A00A1F5E8 /* PBXTargetDependency */,
-				A781FEB917FAAD5500A1F5E8 /* PBXTargetDependency */,
+				A79BA8471B46E5710086C2F6 /* PBXTargetDependency */,
 			);
-			name = "Mac Framework";
+			name = "DTCoreText (Mac)";
 			productName = DTCoreText;
 			productReference = E2262DC61638331500BFDAD7 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2543,8 +2531,8 @@
 				A78D9F771965B7DD00C80986 /* MacUnitTest */,
 				A7174BC414F288F900C57464 /* Documentation */,
 				A7F7EF761573603100F5A4D0 /* Static Library (no DTFoundation) */,
-				E2262DC51638331500BFDAD7 /* Mac Framework */,
-				A79BA61F1B46A1FB0086C2F6 /* iOS Framework */,
+				E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */,
+				A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -3280,16 +3268,6 @@
 			name = "DTAnimatedGIF (iOS)";
 			targetProxy = A76B314B19E680C30021243F /* PBXContainerItemProxy */;
 		};
-		A781FEB917FAAD5500A1F5E8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "DTHTMLParser (Mac)";
-			targetProxy = A781FEB817FAAD5500A1F5E8 /* PBXContainerItemProxy */;
-		};
-		A781FECF17FAAD5A00A1F5E8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Static Library (Mac)";
-			targetProxy = A781FECE17FAAD5A00A1F5E8 /* PBXContainerItemProxy */;
-		};
 		A788CA621486428F00E1AFD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A70F11DD148632CD009202BF /* Static Library */;
@@ -3297,18 +3275,23 @@
 		};
 		A78D9F951965B83200C80986 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E2262DC51638331500BFDAD7 /* Mac Framework */;
+			target = E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */;
 			targetProxy = A78D9F941965B83200C80986 /* PBXContainerItemProxy */;
 		};
 		A79BA6361B46A1FB0086C2F6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A79BA61F1B46A1FB0086C2F6 /* iOS Framework */;
+			target = A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */;
 			targetProxy = A79BA6351B46A1FB0086C2F6 /* PBXContainerItemProxy */;
 		};
 		A79BA6C11B46A3570086C2F6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "DTFoundation (iOS)";
 			targetProxy = A79BA6C01B46A3570086C2F6 /* PBXContainerItemProxy */;
+		};
+		A79BA8471B46E5710086C2F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTFoundation (OSX)";
+			targetProxy = A79BA8461B46E5710086C2F6 /* PBXContainerItemProxy */;
 		};
 		A7C3A93117FAAF5F00B3AEE8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4268,7 +4251,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A79BA6581B46A1FB0086C2F6 /* Build configuration list for PBXNativeTarget "iOS Framework" */ = {
+		A79BA6581B46A1FB0086C2F6 /* Build configuration list for PBXNativeTarget "DTCoreText (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A79BA6391B46A1FB0086C2F6 /* Debug */,
@@ -4298,7 +4281,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E2262DD21638331500BFDAD7 /* Build configuration list for PBXNativeTarget "Mac Framework" */ = {
+		E2262DD21638331500BFDAD7 /* Build configuration list for PBXNativeTarget "DTCoreText (Mac)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E2262DD31638331500BFDAD7 /* Debug */,
