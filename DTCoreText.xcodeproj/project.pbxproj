@@ -31,7 +31,6 @@
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
 		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
-		6326844A1B0109B1006FCBE4 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632684491B0109B1006FCBE4 /* Launch Screen.xib */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
 		94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
@@ -461,6 +460,7 @@
 		A79BA6C21B46A3630086C2F6 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6551B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A79BA6C51B46A3AA0086C2F6 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6C41B46A3AA0086C2F6 /* libxml2.dylib */; };
 		A79BA6CD1B46A4250086C2F6 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
+		A79BA8261B46E1360086C2F6 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A79BA8251B46E1360086C2F6 /* Launch Screen.xib */; };
 		A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82317FC9648001EBA6E /* UIKit.framework */; };
 		A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */; };
 		A7A672BA1532F2D100920A18 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1100,7 +1100,6 @@
 		5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AutoLayoutDemoViewController.xib; sourceTree = "<group>"; };
 		5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLayoutDemoViewController.m; sourceTree = "<group>"; };
 		5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLayoutDemoViewController.h; sourceTree = "<group>"; };
-		632684491B0109B1006FCBE4 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "Launch Screen.xib"; path = "Demo/Source/Launch Screen.xib"; sourceTree = "<group>"; };
 		944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSListStyleTest.m; sourceTree = "<group>"; };
 		94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCoder+DTCompatibility.h"; sourceTree = "<group>"; };
 		94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCoder+DTCompatibility.m"; sourceTree = "<group>"; };
@@ -1285,6 +1284,7 @@
 		A7985E0C178ECD86005D40B2 /* DTHTMLWriterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriterTest.h; sourceTree = "<group>"; };
 		A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A79BA6C41B46A3AA0086C2F6 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libxml2.dylib; sourceTree = DEVELOPER_DIR; };
+		A79BA8251B46E1360086C2F6 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		A79CA82317FC9648001EBA6E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		A7A672B91532F2D100920A18 /* DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTCompatibility.h; path = Core/Source/DTCompatibility.h; sourceTree = "<group>"; };
@@ -1493,7 +1493,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				632684491B0109B1006FCBE4 /* Launch Screen.xib */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A788CA1114863E9D00E1AFD9 /* Test */,
@@ -1719,6 +1718,7 @@
 		A788CA1A14863EF100E1AFD9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A79BA8251B46E1360086C2F6 /* Launch Screen.xib */,
 				A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */,
 				A788CA2A14863EF100E1AFD9 /* Snippets.plist */,
 				A788CA1B14863EF100E1AFD9 /* Alignment.html */,
@@ -2741,7 +2741,7 @@
 				A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */,
 				A788CA4214863EF100E1AFD9 /* Icon@2x.png in Resources */,
 				A788CA4314863EF100E1AFD9 /* icon_smile.gif in Resources */,
-				6326844A1B0109B1006FCBE4 /* Launch Screen.xib in Resources */,
+				A79BA8261B46E1360086C2F6 /* Launch Screen.xib in Resources */,
 				A788CA4414863EF100E1AFD9 /* Image.html in Resources */,
 				A788CA4514863EF100E1AFD9 /* ListTest.html in Resources */,
 				A788CA4614863EF100E1AFD9 /* LoremIpsum.html in Resources */,
