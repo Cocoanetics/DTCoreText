@@ -20,6 +20,20 @@
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A79BA6291B46A1FB0086C2F6"
+               BuildableName = "DTCoreTextTests.xctest"
+               BlueprintName = "DTCoreTextTests"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -42,6 +56,16 @@
                   Identifier = "DTCoreTextTestCase">
                </Test>
             </SkippedTests>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A79BA6291B46A1FB0086C2F6"
+               BuildableName = "DTCoreTextTests.xctest"
+               BlueprintName = "DTCoreTextTests"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
