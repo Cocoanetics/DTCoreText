@@ -1369,6 +1369,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 					break;
 			}
 			
+			if (DTCoreTextModernAttributesPossible())
+			{
+				NSNumber *baselineOffset = oneRun.attributes[NSBaselineOffsetAttributeName];
+				if (baselineOffset)
+				{
+					textPosition.y += [baselineOffset floatValue];
+				}
+			}
+			
 			CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 			
 			if (!oneRun.attachment)
