@@ -353,7 +353,6 @@
 		A7949AA314CC5BDF00A8CCDE /* DTHTMLAttributedStringBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */; };
 		A7985E0D178ECD86005D40B2 /* DTHTMLWriterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */; };
 		A7985E1B178ECDE4005D40B2 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */; };
-		A79BA6371B46A1FB0086C2F6 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */; };
 		A79BA6381B46A1FB0086C2F6 /* DTCoreText.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A79BA65B1B46A2290086C2F6 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; };
 		A79BA65C1B46A2300086C2F6 /* DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A672B91532F2D100920A18 /* DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -976,13 +975,6 @@
 			remoteGlobalIDString = E2262DC51638331500BFDAD7;
 			remoteInfo = "Mac Framework";
 		};
-		A79BA6351B46A1FB0086C2F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A79BA61F1B46A1FB0086C2F6;
-			remoteInfo = DTCoreText;
-		};
 		A79BA6541B46A1FB0086C2F6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
@@ -1375,7 +1367,6 @@
 			files = (
 				A7949A0014C6256B00A8CCDE /* libxml2.dylib in Frameworks */,
 				A788CA601486416A00E1AFD9 /* libDTCoreText.a in Frameworks */,
-				A79BA6371B46A1FB0086C2F6 /* DTCoreText.framework in Frameworks */,
 				A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */,
 				A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -2338,7 +2329,6 @@
 			);
 			dependencies = (
 				A788CA621486428F00E1AFD9 /* PBXTargetDependency */,
-				A79BA6361B46A1FB0086C2F6 /* PBXTargetDependency */,
 			);
 			name = DemoApp;
 			productName = DTCoreText;
@@ -3277,11 +3267,6 @@
 			isa = PBXTargetDependency;
 			target = E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */;
 			targetProxy = A78D9F941965B83200C80986 /* PBXContainerItemProxy */;
-		};
-		A79BA6361B46A1FB0086C2F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */;
-			targetProxy = A79BA6351B46A1FB0086C2F6 /* PBXContainerItemProxy */;
 		};
 		A79BA6C11B46A3570086C2F6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
