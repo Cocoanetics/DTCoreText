@@ -8,7 +8,8 @@
 
 #import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
-#import "DTLog.h"
+
+#import <DTFoundation/DTLog.h>
 
 static NSCache *_imageCache = nil;
 

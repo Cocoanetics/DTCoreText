@@ -65,7 +65,7 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 	[self.tableView registerClass:[DTAttributedTextCell class] forCellReuseIdentifier:AttributedTextCellReuseIdentifier];
 #endif
 	
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStyleBordered target:self action:@selector(showAbout:)];
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStylePlain target:self action:@selector(showAbout:)];
 }
 
 

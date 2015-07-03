@@ -6,10 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
 #import "NSScanner+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "DTColorFunctions.h"
+#import "NSString+HTML.h" 
 
 @implementation NSScanner (HTML)
 

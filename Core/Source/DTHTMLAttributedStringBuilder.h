@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTHTMLParser.h"
+#import <DTFoundation/DTHTMLParser.h>
 
 @class DTHTMLElement;
 

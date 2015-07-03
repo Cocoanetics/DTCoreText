@@ -1,17 +1,24 @@
 //
-//  DTTextAttachmentImage.m
+//  DTImageTextAttachment.m
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 22.04.13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
-#import "DTBase64Coding.h"
+#import "DTCompatibility.h"
+#import "DTImageTextAttachment.h"
+#import "DTCoreTextConstants.h"
+#import "DTHTMLElement.h"
+#import "NSString+CSS.h"
+#import "NSString+HTML.h"
+#import "DTImage+HTML.h"
 
 #if TARGET_OS_IPHONE
-	#import "DTAnimatedGIF.h"
+	#import <DTFoundation/DTAnimatedGIF.h>
 #endif
+
+#import <DTFoundation/DTBase64Coding.h>
 
 static NSCache *imageCache = nil;
 

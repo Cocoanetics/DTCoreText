@@ -6,14 +6,27 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
 #import "DTHTMLAttributedStringBuilder.h"
 
 #import "DTTextHTMLElement.h"
 #import "DTBreakHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
+#import "DTCSSStyleSheet.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "DTHTMLParserTextNode.h"
+
 #import "DTTextAttachmentHTMLElement.h"
-#import "DTLog.h"
+#import "DTColorFunctions.h"
+#import "DTCoreTextParagraphStyle.h"
+#import "DTObjectTextAttachment.h"
+#import "DTVideoTextAttachment.h"
+
+#import "NSString+HTML.h"
+#import "NSCharacterSet+HTML.h"
+#import "NSMutableAttributedString+HTML.h"
+
+#import <DTFoundation/DTLog.h>
+#import <DTFoundation/DTHTMLParser.h>
 
 #if DEBUG_LOG_METRICS
 #import "NSString+DTFormatNumbers.h"

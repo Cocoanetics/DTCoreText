@@ -6,11 +6,18 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
 #import "DTCoreTextConstants.h"
+#import "DTCoreTextLayouter.h"
+#import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextParagraphStyle.h"
 #import "NSDictionary+DTCoreText.h"
-#import "DTLog.h"
+#import "DTTextBlock.h"
+#import "DTCoreTextFunctions.h"
+#import "DTTextAttachment.h"
+#import "NSString+Paragraphs.h"
+
+#import <DTFoundation/DTLog.h>
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;

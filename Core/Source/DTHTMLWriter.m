@@ -7,9 +7,19 @@
 //
 
 #import "DTHTMLWriter.h"
-#import "DTCoreText.h"
 #import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
+#import "DTCSSListStyle.h"
+#import "DTCoreTextConstants.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "DTCoreTextParagraphStyle.h"
+#import "NSAttributedString+DTCoreText.h"
+#import "NSAttributedString+HTML.h"
+#import "DTTextAttachment.h"
+#import "NSString+HTML.h"
+#import "DTColorFunctions.h"
+
+
 
 @implementation DTHTMLWriter
 {

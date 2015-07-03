@@ -7,8 +7,8 @@
 //
 
 #import "NSString+HTML.h"
-#import "DTCoreText.h"
-
+#import "NSCharacterSet+HTML.h"
+#import "DTCoreTextConstants.h"
 
 static NSDictionary *entityLookup = nil;
 static NSDictionary *entityReverseLookup = nil;
