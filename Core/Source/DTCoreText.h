@@ -8,6 +8,7 @@
 #import "DTCoreTextMacros.h"
 #import "DTCoreTextConstants.h"
 #import "DTCompatibility.h"
+#import "DTWeakSupport.h"
 
 #import "DTColor+Compatibility.h"
 #import "DTImage+HTML.h"

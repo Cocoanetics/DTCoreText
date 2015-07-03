@@ -171,19 +171,33 @@
 	}
 
 	// transfer foreground color
-	id foregroundColor = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
-	
-	if (foregroundColor)
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+	if (___useiOS6Attributes)
 	{
-#if TARGET_OS_IPHONE
-		if ([foregroundColor isKindOfClass:[UIColor class]])
+		id foregroundColor = [attributes objectForKey:NSForegroundColorAttributeName];
+		
+		if (foregroundColor)
 		{
-			[appendAttributes setObject:(id)[foregroundColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+			[appendAttributes setObject:foregroundColor forKey:NSForegroundColorAttributeName];
 		}
-		else
+	}
+	else
 #endif
+	{
+		id foregroundColor = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
+		
+		if (foregroundColor)
 		{
-			[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
+#if TARGET_OS_IPHONE
+			if ([foregroundColor isKindOfClass:[UIColor class]])
+			{
+				[appendAttributes setObject:(id)[foregroundColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+			}
+			else
+#endif
+			{
+				[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
+			}
 		}
 	}
 

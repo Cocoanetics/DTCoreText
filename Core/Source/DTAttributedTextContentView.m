@@ -159,6 +159,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
 	[self setup];
 }
 
@@ -447,7 +448,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	// needs clearing of background
 	CGRect rect = CGContextGetClipBoundingBox(ctx);
 	
-	if (_backgroundOffset.height || _backgroundOffset.width)
+	if (_backgroundOffset.height != 0 || _backgroundOffset.width != 0)
 	{
 		CGContextSetPatternPhase(ctx, _backgroundOffset);
 	}
@@ -577,6 +578,15 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 }
 
 #pragma mark - Sizing
+
+- (void)setBounds:(CGRect)bounds {
+
+    if (!CGSizeEqualToSize(self.bounds.size, bounds.size)) {
+        _layoutFrame = nil;
+        [self invalidateIntrinsicContentSize];
+    }
+    [super setBounds:bounds];
+}
 
 - (CGSize)intrinsicContentSize
 {

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment version="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AutoLayoutDemoViewController">
+            <connections>
+                <outlet property="textView" destination="OKc-8r-9LA" id="Jnw-7B-P5d"/>
+                <outlet property="view" destination="iN0-l3-epB" id="ADL-mg-nY7"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OKc-8r-9LA" customClass="DTAttributedTextContentView">
+                    <rect key="frame" x="0.0" y="126" width="600" height="273"/>
+                    <color key="backgroundColor" white="0.96108610379068471" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="273" placeholder="YES" id="B4R-1a-eTt"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Text" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LgW-cV-LY2">
+                    <rect key="frame" x="260" y="87" width="81" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="UYZ-R6-6xZ"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some more text" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2tp-Kw-u69">
+                    <rect key="frame" x="239" y="425" width="123" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="LJy-ez-zUP"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="OKc-8r-9LA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="9MH-aq-kPK"/>
+                <constraint firstAttribute="centerX" secondItem="LgW-cV-LY2" secondAttribute="centerX" constant="-0.5" id="FKy-i5-gpU"/>
+                <constraint firstAttribute="trailing" secondItem="OKc-8r-9LA" secondAttribute="trailing" id="HJn-YW-ZMw"/>
+                <constraint firstItem="2tp-Kw-u69" firstAttribute="top" secondItem="OKc-8r-9LA" secondAttribute="bottom" constant="26" id="kjS-pU-r4O"/>
+                <constraint firstAttribute="centerX" secondItem="2tp-Kw-u69" secondAttribute="centerX" constant="-0.5" id="qPd-Tl-2Cy"/>
+                <constraint firstItem="LgW-cV-LY2" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="87" id="rIG-TB-yeb"/>
+                <constraint firstItem="OKc-8r-9LA" firstAttribute="top" secondItem="LgW-cV-LY2" secondAttribute="bottom" constant="18" id="vZJ-t5-dRp"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+        </view>
+    </objects>
+</document>
