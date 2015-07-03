@@ -159,6 +159,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
 	[self setup];
 }
 
