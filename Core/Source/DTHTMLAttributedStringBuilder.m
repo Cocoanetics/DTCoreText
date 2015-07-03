@@ -6,6 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#import <DTFoundation/DTLog.h>
+#import <DTFoundation/DTHTMLParser.h>
+
 #import "DTHTMLAttributedStringBuilder.h"
 
 #import "DTTextHTMLElement.h"
@@ -24,9 +27,6 @@
 #import "NSString+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSMutableAttributedString+HTML.h"
-
-#import <DTFoundation/DTLog.h>
-#import <DTFoundation/DTHTMLParser.h>
 
 #if DEBUG_LOG_METRICS
 #import "NSString+DTFormatNumbers.h"
