@@ -8,7 +8,8 @@
 
 #import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
-#import "DTLog.h"
+
+#import <DTFoundation/DTLog.h>
 
 static NSCache *_imageCache = nil;
 
@@ -247,7 +248,7 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 {
 	[_receivedData appendData:data];
 	
-	if (!CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
+	if (!&CGImageSourceCreateIncremental || !shouldShowProgressiveDownload)
 	{
 		// don't show progressive
 		return;

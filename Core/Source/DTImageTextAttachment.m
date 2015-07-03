@@ -1,17 +1,24 @@
 //
-//  DTTextAttachmentImage.m
+//  DTImageTextAttachment.m
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 22.04.13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
-#import "DTBase64Coding.h"
+#import "DTCompatibility.h"
+#import "DTImageTextAttachment.h"
+#import "DTCoreTextConstants.h"
+#import "DTHTMLElement.h"
+#import "NSString+CSS.h"
+#import "NSString+HTML.h"
+#import "DTImage+HTML.h"
 
 #if TARGET_OS_IPHONE
-	#import "DTAnimatedGIF.h"
+	#import <DTFoundation/DTAnimatedGIF.h>
 #endif
+
+#import <DTFoundation/DTBase64Coding.h>
 
 static NSCache *imageCache = nil;
 
@@ -123,8 +130,8 @@ static NSCache *imageCache = nil;
 						sizeAccordingToStyle.height = [heightStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:0 textScale:1];
 						
 						// if _orgiginal width and height are a fraction of decode image size, it must be a scaled image
-						if (sizeAccordingToStyle.width && sizeAccordingToStyle.width < decodedImage.size.width &&
-							 sizeAccordingToStyle.height && sizeAccordingToStyle.height < decodedImage.size.height)
+						if (sizeAccordingToStyle.width != 0 && sizeAccordingToStyle.width < decodedImage.size.width &&
+							 sizeAccordingToStyle.height != 0 && sizeAccordingToStyle.height < decodedImage.size.height)
 						{
 							// determine image scale
 							CGFloat scale = round(decodedImage.size.width/sizeAccordingToStyle.width);
@@ -196,7 +203,7 @@ static NSCache *imageCache = nil;
 	}
 	
 	// if it's a local file we need to inspect it to get it's dimensions
-	if (!_displaySize.width || !_displaySize.height)
+	if (_displaySize.width==0 || _displaySize.height==0)
 	{
 		DTImage *image = _image;
 		
@@ -255,12 +262,12 @@ static NSCache *imageCache = nil;
 	{
 		// get the other dimension if one is missing
 		
-		if (!_originalSize.width && _originalSize.height)
+		if (_originalSize.width==0 && _originalSize.height!=0)
 		{
 			CGFloat factor = _originalSize.height/image.size.height;
 			_originalSize.width = image.size.height * factor;
 		}
-		else if (_originalSize.width && !_originalSize.height)
+		else if (_originalSize.width!=0 && _originalSize.height==0)
 		{
 			CGFloat factor = _originalSize.width/image.size.width;
 			_originalSize.height = image.size.width * factor;
@@ -276,7 +283,7 @@ static NSCache *imageCache = nil;
 	{
 		// get the other dimension if one is missing
 		
-		if (!_displaySize.width && _displaySize.height)
+		if (_displaySize.width==0 && _displaySize.height!=0)
 		{
 			CGSize newDisplaySize = _displaySize;
 
@@ -285,7 +292,7 @@ static NSCache *imageCache = nil;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
-		else if (_displaySize.width && !_displaySize.height)
+		else if (_displaySize.width!=0 && _displaySize.height==0)
 		{
 			CGSize newDisplaySize = _displaySize;
 			

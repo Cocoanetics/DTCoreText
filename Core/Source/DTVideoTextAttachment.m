@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
+#import "DTVideoTextAttachment.h"
+#import "DTCoreTextConstants.h"
+#import "DTHTMLElement.h"
+#import "NSString+HTML.h"
 
 @implementation DTVideoTextAttachment
 

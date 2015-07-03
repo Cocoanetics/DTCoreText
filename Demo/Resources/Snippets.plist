@@ -172,5 +172,15 @@
 		<key>Title</key>
 		<string>Never mind this file ...</string>
 	</dict>
+    <dict>
+        <key>Description</key>
+        <string>AutoLayout test</string>
+        <key>Title</key>
+        <string>AutoLayout test</string>
+        <key>File</key>
+        <string>FontSizes.html</string>
+        <key>AutoLayoutTest</key>
+        <true/>
+    </dict>
 </array>
 </plist>

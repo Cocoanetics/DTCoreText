@@ -66,7 +66,6 @@
 #endif
 		
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
-		_segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
 		self.navigationItem.titleView = _segmentedControl;	
@@ -98,13 +97,13 @@
 {
 	NSMutableArray *toolbarItems = [NSMutableArray array];
 	
-	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStyleBordered target:self action:@selector(debugButton:)];
+	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStylePlain target:self action:@selector(debugButton:)];
 	[toolbarItems addObject:debug];
 	
 	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	[toolbarItems addObject:space];
 	
-	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithTitle:@"Screenshot" style:UIBarButtonItemStyleBordered target:self action:@selector(screenshot:)];
+	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithTitle:@"Screenshot" style:UIBarButtonItemStylePlain target:self action:@selector(screenshot:)];
 	[toolbarItems addObject:screenshot];
 	
 	if (_segmentedControl.selectedSegmentIndex == 3)
@@ -112,7 +111,6 @@
 		if (!_htmlOutputTypeSegment)
 		{
 			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[@"Document", @"Fragment"]];
-			_htmlOutputTypeSegment.segmentedControlStyle = UISegmentedControlStyleBar;
 			_htmlOutputTypeSegment.selectedSegmentIndex = 0;
 			
 			[_htmlOutputTypeSegment addTarget:self action:@selector(_htmlModeChanged:) forControlEvents:UIControlEventValueChanged];

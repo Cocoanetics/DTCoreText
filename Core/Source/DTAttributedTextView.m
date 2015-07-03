@@ -10,8 +10,9 @@
 
 #import "DTAttributedTextView.h"
 #import "DTCoreText.h"
-#import "DTTiledLayerWithoutFade.h"
 #import "DTBlockFunctions.h"
+
+#import <DTFoundation/DTTiledLayerWithoutFade.h>
 
 
 @interface DTAttributedTextView ()
@@ -53,7 +54,7 @@
 
 - (void)layoutSubviews
 {
-	[self attributedTextContentView];
+	(void)[self attributedTextContentView];
 	
 	// layout custom subviews for visible area
 	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
@@ -63,6 +64,7 @@
 
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
 	[self _setup];
 }
 

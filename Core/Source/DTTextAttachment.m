@@ -7,17 +7,17 @@
 //
 
 #import "DTTextAttachment.h"
-#import "DTCoreText.h"
 #import "DTCoreGraphicsUtils.h"
-
-#import "DTBase64Coding.h"
+#import "DTHTMLElement.h"
 #import "DTDictationPlaceholderTextAttachment.h"
 #import "DTIframeTextAttachment.h"
 #import "DTImageTextAttachment.h"
 #import "DTObjectTextAttachment.h"
 #import "DTVideoTextAttachment.h"
-#import "DTLog.h"
 #import "NSCoder+DTCompatibility.h"
+
+#import <DTFoundation/DTLog.h>
+
 
 static NSMutableDictionary *_classForTagNameLookup = nil;
 
@@ -205,7 +205,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	{
 		_originalSize = originalSize;
 		
-		if (!_displaySize.width || !_displaySize.height)
+		if (_displaySize.width==0 || _displaySize.height==0)
 		{
 			[self setDisplaySize:_originalSize withMaxDisplaySize:_maxImageSize];
 		}
@@ -214,20 +214,20 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 - (void)setDisplaySize:(CGSize)displaySize withMaxDisplaySize:(CGSize)maxDisplaySize
 {
-	if (_originalSize.width && _originalSize.height)
+	if (_originalSize.width!=0 && _originalSize.height!=0)
 	{
 		// width and/or height missing
 		if (displaySize.width==0 && displaySize.height==0)
 		{
 			displaySize = _originalSize;
 		}
-		else if (!displaySize.width && displaySize.height)
+		else if (displaySize.width==0 && displaySize.height!=0)
 		{
 			// width missing, calculate it
 			CGFloat factor = _originalSize.height / displaySize.height;
 			displaySize.width = round(_originalSize.width / factor);
 		}
-		else if (displaySize.width>0 && displaySize.height==0)
+		else if (displaySize.width!=0 && displaySize.height==0)
 		{
 			// height missing, calculate it
 			CGFloat factor = _originalSize.width / displaySize.width;

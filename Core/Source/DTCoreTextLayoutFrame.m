@@ -6,11 +6,18 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
 #import "DTCoreTextConstants.h"
+#import "DTCoreTextLayouter.h"
+#import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextParagraphStyle.h"
 #import "NSDictionary+DTCoreText.h"
-#import "DTLog.h"
+#import "DTTextBlock.h"
+#import "DTCoreTextFunctions.h"
+#import "DTTextAttachment.h"
+#import "NSString+Paragraphs.h"
+
+#import <DTFoundation/DTLog.h>
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
@@ -266,12 +273,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
 	
-	if (paragraphStyle.minimumLineHeight && paragraphStyle.minimumLineHeight > maxFontSize)
+	if (paragraphStyle.minimumLineHeight != 0 && paragraphStyle.minimumLineHeight > maxFontSize)
 	{
 		maxFontSize = paragraphStyle.minimumLineHeight;
 	}
 	
-	if (paragraphStyle.maximumLineHeight && paragraphStyle.maximumLineHeight < maxFontSize)
+	if (paragraphStyle.maximumLineHeight != 0 && paragraphStyle.maximumLineHeight < maxFontSize)
 	{
 		maxFontSize = paragraphStyle.maximumLineHeight;
 	}
@@ -1367,6 +1374,15 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				}
 				default:
 					break;
+			}
+			
+			if (DTCoreTextModernAttributesPossible())
+			{
+				NSNumber *baselineOffset = oneRun.attributes[NSBaselineOffsetAttributeName];
+				if (baselineOffset)
+				{
+					textPosition.y += [baselineOffset floatValue];
+				}
 			}
 			
 			CGContextSetTextPosition(context, textPosition.x, textPosition.y);

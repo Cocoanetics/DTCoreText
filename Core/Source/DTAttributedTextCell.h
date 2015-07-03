@@ -7,7 +7,7 @@
 //
 
 #import "DTAttributedTextContentView.h"
-#import "DTWeakSupport.h"
+#import <DTFoundation/DTWeakSupport.h>
 
 /**
  This class represents a tableview cell that contains an attributed text as its content.

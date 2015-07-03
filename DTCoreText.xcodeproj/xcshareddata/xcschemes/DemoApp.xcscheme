@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0600"
+   LastUpgradeVersion = "0640"
    version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,6 +17,20 @@
                BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
                BuildableName = "RTDemoApp.app"
                BlueprintName = "DemoApp"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A79BA6291B46A1FB0086C2F6"
+               BuildableName = "DTCoreTextTests.xctest"
+               BlueprintName = "DTCoreTextTests"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,6 +57,16 @@
                </Test>
             </SkippedTests>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A79BA6291B46A1FB0086C2F6"
+               BuildableName = "DTCoreTextTests.xctest"
+               BlueprintName = "DTCoreTextTests"
+               ReferencedContainer = "container:DTCoreText.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
@@ -64,7 +88,8 @@
       debugDocumentVersioning = "YES"
       debugXPCServices = "NO"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
@@ -82,7 +107,8 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"

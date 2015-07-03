@@ -1,12 +1,15 @@
 //
-//  DTTextAttachmentObject.m
+//  DTObjectTextAttachment.m
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 22.04.13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
+#import "DTObjectTextAttachment.h"
+#import "DTCoreTextConstants.h"
+#import "DTHTMLElement.h"
+#import "NSString+HTML.h"
 
 @implementation DTObjectTextAttachment
 

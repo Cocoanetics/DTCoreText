@@ -6,8 +6,11 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
+#import "DTCompatibility.h"
 #import "NSString+CSS.h"
+#import "NSScanner+HTML.h"
+#import "NSCharacterSet+HTML.h"
+#import "DTCoreTextConstants.h"
 
 @implementation NSString (CSS)
 

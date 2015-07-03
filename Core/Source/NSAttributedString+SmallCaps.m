@@ -7,7 +7,14 @@
 //
 
 #import "NSAttributedString+SmallCaps.h"
-#import "DTCoreText.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "NSDictionary+DTCoreText.h"
+#import "DTCoreTextConstants.h"
+
+
+#if TARGET_OS_IPHONE
+#import "UIFont+DTCoreText.h"
+#endif
 
 @implementation NSAttributedString (SmallCaps)
 

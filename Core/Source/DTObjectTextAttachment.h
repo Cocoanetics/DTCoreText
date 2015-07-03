@@ -1,5 +1,5 @@
 //
-//  DTTextAttachmentObject.h
+//  DTObjectTextAttachment.h
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 22.04.13.
