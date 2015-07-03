@@ -6,7 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
 #import "DTHTMLElement.h"
 #import "DTAnchorHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
@@ -15,9 +14,25 @@
 #import "DTListItemHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextHTMLElement.h"
-#import "NSString+DTUtilities.h"
+#import "DTTextBlock.h"
+#import "DTCSSListStyle.h"
+#import "NSString+HTML.h"
+#import "NSString+CSS.h"
+#import "NSString+Paragraphs.h"
 #import "DTColorFunctions.h"
-#import "DTLog.h"
+#import "DTCoreTextParagraphStyle.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "NSAttributedStringRunDelegates.h"
+
+#import "NSMutableAttributedString+HTML.h"
+#import "NSCharacterSet+HTML.h"
+
+#import <DTFoundation/DTLog.h>
+#import <DTFoundation/NSString+DTUtilities.h>
+
+#if TARGET_OS_IPHONE
+#import "UIFont+DTCoreText.h"
+#endif
 
 @interface DTHTMLElement ()
 

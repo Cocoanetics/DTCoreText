@@ -7,7 +7,6 @@
 //
 
 #import "DTTextBlock.h"
-#import "DTCoreText.h"
 #import "NSCoder+DTCompatibility.h"
 
 @implementation DTTextBlock

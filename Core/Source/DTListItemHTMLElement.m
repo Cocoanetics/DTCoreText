@@ -7,6 +7,18 @@
 //
 
 #import "DTListItemHTMLElement.h"
+#import "DTCoreTextParagraphStyle.h"
+#import "DTCoreTextFontDescriptor.h"
+#import "NSDictionary+DTCoreText.h"
+#import "DTCSSListStyle.h"
+#import "NSString+CSS.h"
+#import "DTImageTextAttachment.h"
+#import "NSMutableAttributedString+HTML.h"
+#import "NSAttributedStringRunDelegates.h"
+
+#if TARGET_OS_IPHONE
+#import "UIFont+DTCoreText.h"
+#endif
 
 @implementation DTListItemHTMLElement
 

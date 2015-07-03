@@ -9,7 +9,8 @@
 #import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
-#import "DTLog.h"
+
+#import <DTFoundation/DTLog.h>
 
 @implementation DTAttributedTextCell
 {
