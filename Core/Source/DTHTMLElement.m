@@ -30,6 +30,8 @@
 #import <DTFoundation/DTLog.h>
 #import <DTFoundation/NSString+DTUtilities.h>
 
+#import <CoreText/CoreText.h>
+
 #if TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"
 #endif

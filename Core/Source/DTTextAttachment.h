@@ -11,6 +11,8 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
+#import <CoreText/CoreText.h>
+
 @class DTHTMLElement;
 
 /**
