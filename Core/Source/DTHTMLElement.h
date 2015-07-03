@@ -11,10 +11,10 @@
 @class DTTextAttachment;
 @class DTCSSListStyle;
 
+#import "DTCompatibility.h"
 #import "DTCoreTextConstants.h"
 #import "DTHTMLParserNode.h"
 #import "DTTextAttachment.h"
-#import "DTCompatibility.h"
 
 @class DTBreakHTMLElement;
 

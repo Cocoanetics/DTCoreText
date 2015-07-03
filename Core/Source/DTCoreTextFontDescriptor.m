@@ -6,9 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextFontCollection.h"
-#import "DTCompatibility.h"
 #import "DTCoreTextConstants.h"
 
 static NSCache *_fontCache = nil;

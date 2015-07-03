@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
 #import "DTCoreTextParagraphStyleTest.h"
 #import "DTCoreTextParagraphStyle.h"
 
-#import "DTCompatibility.h"
 
 @interface DTCoreTextParagraphStyle ()
 
