@@ -10,12 +10,10 @@
 
 #if TARGET_OS_IPHONE
 
-#import <UIKit/UIKit.h>
-
 	// Compatibility Aliases
-	@compatibility_alias DTColor	UIColor;
-	@compatibility_alias DTImage	UIImage;
-	@compatibility_alias DTFont		UIFont;
+	#define DTColor UIColor
+	#define DTImage UIImage
+	#define DTFont UIFont
 
 	// Edge Insets
 	#define DTEdgeInsets UIEdgeInsets
@@ -85,12 +83,10 @@
 
 #if !TARGET_OS_IPHONE
 
-#import <AppKit/AppKit.h>
-
 	// Compatibility Aliases
-	@compatibility_alias DTColor	NSColor;
-	@compatibility_alias DTImage	NSImage;
-	@compatibility_alias DTFont		NSFont;
+	#define DTColor NSColor
+	#define DTImage NSImage
+	#define DTFont NSFont
 
 	// Edge Insets
 	#define DTEdgeInsets NSEdgeInsets
