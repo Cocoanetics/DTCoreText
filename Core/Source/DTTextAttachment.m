@@ -185,7 +185,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 	if (previousClass)
 	{
-		DTLogWarning(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
+		DTLogDebug(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
 	}
 	
 	[_classForTagNameLookup setObject:class forKey:tagName];
