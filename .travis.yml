@@ -1,16 +1,13 @@
 ---
 language: objective-c
 
-before_install: 
- - brew update
- - brew upgrade xctool
- 
 install: 
  - sudo easy_install cpp-coveralls
 
 script:
- - xctool -project DTCoreText.xcodeproj -scheme DemoApp build test -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO
- - xctool -project DTCoreText.xcodeproj -scheme "Mac Framework" test -arch x86_64 ONLY_ACTIVE_ARCH=NO
+ - xctool -project DTCoreText.xcodeproj -scheme DemoApp build -sdk iphonesimulator -arch i386 ONLY_ACTIVE_ARCH=NO
+ - xctool -project DTCoreText.xcodeproj -scheme "DTCoreText (iOS)" test -sdk iphonesimulator
+ - xctool -project DTCoreText.xcodeproj -scheme "DTCoreText (Mac)" build test
  - appledoc -o /tmp .
 
 after_success:

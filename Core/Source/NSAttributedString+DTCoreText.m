@@ -19,7 +19,7 @@
 #import "NSDictionary+DTCoreText.h"
 #import "NSAttributedStringRunDelegates.h"
 
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
+#if TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"
 #endif
 

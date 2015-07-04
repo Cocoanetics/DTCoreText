@@ -6,9 +6,17 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
+
 #import "NSMutableAttributedString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
+#import "NSDictionary+DTCoreText.h"
+
+#if TARGET_OS_IPHONE
+#import "UIFont+DTCoreText.h"
+#endif
+
 
 @implementation NSMutableAttributedString (HTML)
 
@@ -135,6 +143,7 @@
 		{
 			[appendAttributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
 		}
+		
 	}
 	else
 #endif

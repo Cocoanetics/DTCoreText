@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
+#import <DTCoreText/DTCoreText.h>
 
 @interface NSCoder (DTCompatibility)
 

@@ -9,6 +9,7 @@
 #import "MacUnitTest.h"
 #import "DTHTMLAttributedStringBuilder.h"
 #import "NSObject+DTRuntime.h"
+#import "NSString+HTML.h"
 
 #define TESTCASE_FILE_EXTENSION @"html"
 //#define ONLY_TEST_CURRENT 1
