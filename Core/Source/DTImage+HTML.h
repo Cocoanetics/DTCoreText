@@ -8,6 +8,8 @@
 
 #if TARGET_OS_IPHONE
 
+#import <UIKit/UIImage.h>
+
 /**
  Category used to have the same method available for unit testing on Mac on iOS.
  */

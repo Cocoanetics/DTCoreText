@@ -9,6 +9,9 @@
 #import "DTCompatibility.h"
 
 #if TARGET_OS_IPHONE
+
+#import <UIKit/UIKit.h>
+
 /**
  Creates a CTFont from a UIFont
  @param font The `UIFont`

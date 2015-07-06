@@ -10,6 +10,8 @@
 
 #if TARGET_OS_IPHONE
 
+#import <UIKit/UIColor.h>
+
 /**
  Implementations of methods on NSColor/UIColor which are missing on the other platform.
  */
