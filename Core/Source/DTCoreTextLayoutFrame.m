@@ -411,6 +411,50 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark - Building the Lines
 
+bool areLinesEqual(CTLineRef line1, CTLineRef line2)
+{
+    CFArrayRef glyphRuns1 = CTLineGetGlyphRuns(line1);
+    CFArrayRef glyphRuns2 = CTLineGetGlyphRuns(line2);
+    int runCount1 = CFArrayGetCount(glyphRuns1), runCount2 = CFArrayGetCount(glyphRuns2);
+    
+    if (runCount1 != runCount2)
+        return false;
+    
+    for (int i = 0; i < runCount1; i++)
+    {
+        CTRunRef run1 = CFArrayGetValueAtIndex(glyphRuns1, i);
+        CTRunRef run2 = CFArrayGetValueAtIndex(glyphRuns2, i);
+        
+        int countInRun1 = CTRunGetGlyphCount(run1), countInRun2 = CTRunGetGlyphCount(run2);
+        if (countInRun1 != countInRun2)
+            return false;
+        
+        CGGlyph* glyphs1 = CTRunGetGlyphsPtr(run1);
+        CGGlyph* glyphs2 = CTRunGetGlyphsPtr(run2);
+        
+        for (int j = 0; j < countInRun1; j++) {
+            if (glyphs1[j] != glyphs2[j])
+                return false;
+        }
+    }
+    
+    return true;
+}
+
+CFIndex getTruncationIndex(CTLineRef line, CTLineRef trunc)
+{
+    CFIndex truncCount = CFArrayGetCount(CTLineGetGlyphRuns(trunc));
+    
+    CFArrayRef lineRuns = CTLineGetGlyphRuns(line);
+    CFIndex lineRunsCount = CFArrayGetCount(lineRuns);
+    
+    CTRunRef lineLastRun = CFArrayGetValueAtIndex(lineRuns, lineRunsCount - truncCount - 1);
+    
+    CFRange lastRunRange = CTRunGetStringRange(lineLastRun);
+    
+    return lastRunRange.location = lastRunRange.length;
+}
+
 /*
  Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place. This version supports text boxes.
  */
@@ -540,7 +584,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// if we extend to the entire to the entire text range
 			// it is possible to pull lines up from paragraphs below us
 			NSRange oldLineRange = lineRange;
-			lineRange.length = NSMaxRange(currentParagraphRange)-lineRange.location;
+			lineRange.length = maxIndex-lineRange.location;
 			CTLineRef baseLine = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 			
 			// convert lineBreakMode to CoreText type
@@ -568,6 +612,36 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			// create the truncated line
 			line = CTLineCreateTruncatedLine(baseLine, availableSpace, truncationType, elipsisLineRef);
+            
+            // check if truncation was occured
+            BOOL truncationOccured = !areLinesEqual(baseLine, line);
+            // if yes check was it before end of the current paragraph or after
+            NSUInteger endOfParagraphIndex = NSMaxRange(currentParagraphRange);
+            if (truncationOccured)
+            {
+                CFIndex truncationIndex = getTruncationIndex(line, elipsisLineRef);
+                if (truncationIndex > endOfParagraphIndex)
+                {
+                    NSAttributedString *subStr = [_attributedStringFragment attributedSubstringFromRange:NSMakeRange(lineRange.location, endOfParagraphIndex - lineRange.location)];
+                    NSMutableAttributedString *attrMutStr = [subStr mutableCopy];
+                    [attrMutStr appendAttributedString:attribStr];
+                    CFRelease(line);
+                    line = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attrMutStr));
+                }
+            }
+            else
+            {
+                if (maxIndex != endOfParagraphIndex)
+                {
+                    NSAttributedString *subStr = [_attributedStringFragment attributedSubstringFromRange:NSMakeRange(lineRange.location, endOfParagraphIndex - lineRange.location)];
+                    NSMutableAttributedString *attrMutStr = [subStr mutableCopy];
+                    [attrMutStr appendAttributedString:attribStr];
+                    CFRelease(line);
+                    line = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attrMutStr));
+                }
+            }
+            // if before all is done
+            // if not mode truncation string just before the end of paragraph
 			
 			// clean up
 			CFRelease(baseLine);
