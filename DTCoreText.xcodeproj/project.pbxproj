@@ -30,6 +30,11 @@
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		4266937E1B56F60D00F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
+		426693AA1B56F91200F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
+		426693AB1B56F92C00F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
+		426693AC1B56F94300F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
+		426693AD1B56F97200F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
+		426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
 		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
@@ -2910,6 +2915,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A758FC9614DBC7A2007DF8B2 /* default.css in Sources */,
+				426693AB1B56F92C00F9DBFC /* CTLineUtils.m in Sources */,
 				A788C96014863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96514863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96A14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
@@ -2978,6 +2984,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A758FC9814DBCF20007DF8B2 /* default.css in Sources */,
+				426693AA1B56F91200F9DBFC /* CTLineUtils.m in Sources */,
 				A788C96114863E8700E1AFD9 /* DTAttributedTextCell.m in Sources */,
 				A788C96614863E8700E1AFD9 /* DTAttributedTextContentView.m in Sources */,
 				A788C96B14863E8700E1AFD9 /* DTAttributedTextView.m in Sources */,
@@ -3095,6 +3102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A79BA6CD1B46A4250086C2F6 /* default.css in Sources */,
+				426693AD1B56F97200F9DBFC /* CTLineUtils.m in Sources */,
 				A79BA6B21B46A2700086C2F6 /* NSAttributedStringRunDelegates.m in Sources */,
 				A7B130501B4B25BF0014E109 /* DTLazyImageView.m in Sources */,
 				A7B130541B4B25BF0014E109 /* DTLinkButton.m in Sources */,
@@ -3162,6 +3170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7F7EF781573603100F5A4D0 /* default.css in Sources */,
+				426693AC1B56F94300F9DBFC /* CTLineUtils.m in Sources */,
 				A7F7EF7A1573603100F5A4D0 /* DTAttributedTextCell.m in Sources */,
 				A7F7EF7B1573603100F5A4D0 /* DTAttributedTextContentView.m in Sources */,
 				A7F7EF7C1573603100F5A4D0 /* DTAttributedTextView.m in Sources */,
@@ -3229,6 +3238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2262E0B1638351C00BFDAD7 /* default.css in Sources */,
+				426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */,
 				E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */,
 				E2262DD61638336700BFDAD7 /* DTImage+HTML.m in Sources */,
 				E2262DD81638337D00BFDAD7 /* DTCoreTextConstants.m in Sources */,

@@ -26,8 +26,8 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
         if (countInRun1 != countInRun2)
             return NO;
         
-        CGGlyph* glyphs1 = CTRunGetGlyphsPtr(run1);
-        CGGlyph* glyphs2 = CTRunGetGlyphsPtr(run2);
+        const CGGlyph* glyphs1 = CTRunGetGlyphsPtr(run1);
+        const CGGlyph* glyphs2 = CTRunGetGlyphsPtr(run2);
         
         for (int j = 0; j < countInRun1; j++) {
             if (glyphs1[j] != glyphs2[j])
