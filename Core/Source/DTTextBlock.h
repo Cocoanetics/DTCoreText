@@ -11,7 +11,7 @@
 /**
  Class that represents a block of text with attributes like padding or a background color.
  */
-@interface DTTextBlock : NSObject
+@interface DTTextBlock : NSObject <NSCoding>
 
 /**
  The space to be applied between the layouted text and the edges of the receiver
