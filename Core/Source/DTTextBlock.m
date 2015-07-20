@@ -29,10 +29,10 @@
 
 - (void)encodeWithCoder: (NSCoder *) coder {
     [coder encodeObject:DTHexStringFromDTColor(self.backgroundColor) forKey: @"backgroundColor"];
-    [coder encodeObject:[NSNumber numberWithFloat:self.padding.top] forKey: @"paddingTop"];
-    [coder encodeObject:[NSNumber numberWithFloat:self.padding.right] forKey: @"paddingRight"];
-    [coder encodeObject:[NSNumber numberWithFloat:self.padding.bottom] forKey: @"paddingBottom"];
-    [coder encodeObject:[NSNumber numberWithFloat:self.padding.left] forKey: @"paddingLeft"];
+    [coder encodeObject:@(self.padding.top) forKey: @"paddingTop"];
+    [coder encodeObject:@(self.padding.right) forKey: @"paddingRight"];
+    [coder encodeObject:@(self.padding.bottom) forKey: @"paddingBottom"];
+    [coder encodeObject:@(self.padding.left) forKey: @"paddingLeft"];
 }
 
 - (NSUInteger)hash
