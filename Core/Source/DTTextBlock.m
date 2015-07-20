@@ -15,6 +15,26 @@
 	DTColor *_backgroundColor;
 }
 
+- (id)initWithCoder: (NSCoder *) coder {
+    self = [super init];
+    if (self) {
+        _backgroundColor = DTColorCreateWithHexString([coder decodeObjectForKey:@"backgroundColor"]);
+        _padding = DTEdgeInsetsMake([[coder decodeObjectForKey:@"paddingTop"] floatValue],
+                                    [[coder decodeObjectForKey:@"paddingLeft"] floatValue],
+                                    [[coder decodeObjectForKey:@"paddingBottom"] floatValue],
+                                    [[coder decodeObjectForKey:@"paddingRight"] floatValue]);
+    }
+    return self;
+}
+
+- (void)encodeWithCoder: (NSCoder *) coder {
+    [coder encodeObject:DTHexStringFromDTColor(self.backgroundColor) forKey: @"backgroundColor"];
+    [coder encodeObject:@(self.padding.top) forKey: @"paddingTop"];
+    [coder encodeObject:@(self.padding.right) forKey: @"paddingRight"];
+    [coder encodeObject:@(self.padding.bottom) forKey: @"paddingBottom"];
+    [coder encodeObject:@(self.padding.left) forKey: @"paddingLeft"];
+}
+
 - (NSUInteger)hash
 {
 	NSUInteger calcHash = 7;
