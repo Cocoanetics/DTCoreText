@@ -31,10 +31,9 @@
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
 		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
-		6D8ECDF61B5F9B5B003BDBDD /* DTCoreTextMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
 		94DE4B4418B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
-		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4618B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4718B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */; };
 		94DE4B4818B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */; };
@@ -2092,6 +2091,7 @@
 				A788C96314863E8700E1AFD9 /* DTAttributedTextContentView.h in Headers */,
 				A788C96814863E8700E1AFD9 /* DTAttributedTextView.h in Headers */,
 				A788C9A414863E8700E1AFD9 /* DTLazyImageView.h in Headers */,
+				94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A788C9A914863E8700E1AFD9 /* DTLinkButton.h in Headers */,
 				A788C9BD14863E8700E1AFD9 /* DTWebVideoView.h in Headers */,
 				A788C9EF14863E8700E1AFD9 /* NSString+Paragraphs.h in Headers */,
@@ -2136,9 +2136,7 @@
 				A04CF1B11738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.h in Headers */,
 				A78E3C52178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.h in Headers */,
 				A7DDF87817DDEB630005D62D /* DTColorFunctions.h in Headers */,
-				94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A700289A16FB220B00AFEDA3 /* DTAnchorHTMLElement.h in Headers */,
-				6D8ECDF61B5F9B5B003BDBDD /* DTCoreTextMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
