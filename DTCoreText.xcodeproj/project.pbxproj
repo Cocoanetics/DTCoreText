@@ -230,7 +230,7 @@
 		A78D9F911965B81A00C80986 /* NSStringCSSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F16CF51698491400B0E843 /* NSStringCSSTest.m */; };
 		A78D9F921965B81A00C80986 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A78D9F931965B81A00C80986 /* DTCoreTextFontDescriptorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */; };
-		A78D9F961965B83B00C80986 /* DTCoreText_Mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText_Mac.framework */; };
+		A78D9F961965B83B00C80986 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
 		A78D9F971965B9BD00C80986 /* CustomFont.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACEC14DA62BA005A9C69 /* CustomFont.plist */; };
 		A78D9F981965B9BD00C80986 /* Empty_and_Unclosed_Paragraphs.html in Resources */ = {isa = PBXBuildFile; fileRef = A7C7ACED14DA62BA005A9C69 /* Empty_and_Unclosed_Paragraphs.html */; };
 		A78D9F991965B9BD00C80986 /* ListTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7C7AD0414DA782D005A9C69 /* ListTest.plist */; };
@@ -1109,7 +1109,7 @@
 		A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DTCoreTextConstants.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A7985E0B178ECD86005D40B2 /* DTHTMLWriterTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLWriterTest.m; sourceTree = "<group>"; };
 		A7985E0C178ECD86005D40B2 /* DTHTMLWriterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLWriterTest.h; sourceTree = "<group>"; };
-		A79BA6201B46A1FB0086C2F6 /* DTCoreText_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A79BA6C41B46A3AA0086C2F6 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libxml2.dylib; sourceTree = DEVELOPER_DIR; };
 		A79BA8251B46E1360086C2F6 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		A79CA82317FC9648001EBA6E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -1201,7 +1201,7 @@
 		A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDTCoreText_no_DTFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
-		E2262DC61638331500BFDAD7 /* DTCoreText_Mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText_Mac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1254,7 +1254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A78D9F961965B83B00C80986 /* DTCoreText_Mac.framework in Frameworks */,
+				A78D9F961965B83B00C80986 /* DTCoreText.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1295,9 +1295,9 @@
 				A70F11DE148632CD009202BF /* libDTCoreText.a */,
 				A788CA681486456100E1AFD9 /* UnitTest.xctest */,
 				A7F7EFCD1573603100F5A4D0 /* libDTCoreText_no_DTFoundation.a */,
-				E2262DC61638331500BFDAD7 /* DTCoreText_Mac.framework */,
+				E2262DC61638331500BFDAD7 /* DTCoreText.framework */,
 				A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */,
-				A79BA6201B46A1FB0086C2F6 /* DTCoreText_iOS.framework */,
+				A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */,
 			);
 			name = Products;
 			path = ../..;
@@ -2180,7 +2180,7 @@
 			);
 			name = "DTCoreText (iOS)";
 			productName = DTCoreText;
-			productReference = A79BA6201B46A1FB0086C2F6 /* DTCoreText_iOS.framework */;
+			productReference = A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A7F7EF761573603100F5A4D0 /* Static Library (no DTFoundation) */ = {
@@ -2218,7 +2218,7 @@
 			);
 			name = "DTCoreText (Mac)";
 			productName = DTCoreText;
-			productReference = E2262DC61638331500BFDAD7 /* DTCoreText_Mac.framework */;
+			productReference = E2262DC61638331500BFDAD7 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -3269,7 +3269,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = DTCoreText_iOS;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3316,7 +3316,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = DTCoreText_iOS;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3364,7 +3364,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = DTCoreText_iOS;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3537,7 +3537,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = DTCoreText_Mac;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -3678,7 +3678,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = DTCoreText_Mac;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -3707,7 +3707,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = DTCoreText_Mac;
+				PRODUCT_NAME = DTCoreText;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
