@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A79BA61F1B46A1FB0086C2F6"
-               BuildableName = "DTCoreText_iOS.framework"
+               BuildableName = "DTCoreText.framework"
                BlueprintName = "DTCoreText (iOS)"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A79BA61F1B46A1FB0086C2F6"
-            BuildableName = "DTCoreText_iOS.framework"
+            BuildableName = "DTCoreText.framework"
             BlueprintName = "DTCoreText (iOS)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A79BA61F1B46A1FB0086C2F6"
-            BuildableName = "DTCoreText_iOS.framework"
+            BuildableName = "DTCoreText.framework"
             BlueprintName = "DTCoreText (iOS)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A79BA61F1B46A1FB0086C2F6"
-            BuildableName = "DTCoreText_iOS.framework"
+            BuildableName = "DTCoreText.framework"
             BlueprintName = "DTCoreText (iOS)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>
