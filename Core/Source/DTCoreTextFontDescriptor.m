@@ -866,7 +866,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 
     if (_fontName) {
-        [retString appendFormat:@"-coretext-fontname:%@;", _fontName];
+        [retString appendFormat:@"-coretext-fontname:'%@';", _fontName];
     }
 	
 	[retString appendFormat:@"font-size:%.0fpx;", _pointSize];
