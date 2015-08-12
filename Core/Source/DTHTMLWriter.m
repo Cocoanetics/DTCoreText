@@ -937,7 +937,7 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 		else
 		{
             if (_insertNonBreakingSpaceInEmptyParagraphs && [plainSubString length] == 0) {
-                [retString appendString:@"&amp;nbsp;"];                
+                [retString appendString:@"&#160;"];
             }
                 
 			// other blocks are always closed
