@@ -10,6 +10,9 @@
 
 @class DTHTMLElement;
 
+/**
+ The block that gets executed whenever an element is flushed to the output string
+ */
 typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 
 

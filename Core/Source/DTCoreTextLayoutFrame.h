@@ -18,7 +18,9 @@
 @class DTCoreTextLayoutLine;
 @class DTTextBlock;
 
-
+/**
+ A handler block that is called whenever a text block attributed is encountered during text drawing
+ */
 typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground);
 
 /**

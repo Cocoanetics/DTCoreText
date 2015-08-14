@@ -11,6 +11,9 @@
 
 @class DTCoreTextLayoutFrame, DTTextAttachment;
 
+/**
+ A block that provides accessibility information for the passed text attachments
+ */
 typedef id(^DTAttachmentViewProvider)(DTTextAttachment *textAttachment);
 
 /**
