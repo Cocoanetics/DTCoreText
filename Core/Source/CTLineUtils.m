@@ -26,22 +26,22 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
         if (countInRun1 != countInRun2)
             return NO;
         
-        const CGGlyph* glyphs1 = CTRunGetGlyphsPtr(run1);
-        BOOL shouldFreeMem1 = NO;
-        if (glyphs1 == NULL)
+        const CGGlyph* constGlyphs1 = CTRunGetGlyphsPtr(run1);
+		CGGlyph* glyphs1 = NULL;
+        if (constGlyphs1 == NULL)
         {
             glyphs1 = (CGGlyph*)malloc(countInRun1*sizeof(CGGlyph));
             CTRunGetGlyphs(run1, CFRangeMake(0, countInRun1), glyphs1);
-            shouldFreeMem1 = YES;
+			constGlyphs1 = glyphs1;
         }
         
-        const CGGlyph* glyphs2 = CTRunGetGlyphsPtr(run2);
-        BOOL shouldFreeMem2 = NO;
-        if (glyphs2 == NULL)
+        const CGGlyph* constGlyphs2 = CTRunGetGlyphsPtr(run2);
+		CGGlyph* glyphs2 = NULL;
+        if (constGlyphs2 == NULL)
         {
             glyphs2 = (CGGlyph*)malloc(countInRun2*sizeof(CGGlyph));
             CTRunGetGlyphs(run2, CFRangeMake(0, countInRun2), glyphs2);
-            shouldFreeMem2 = YES;
+			constGlyphs2 = glyphs2;
         }
         
         BOOL result = YES;
@@ -54,10 +54,10 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
             }
         }
         
-        if (shouldFreeMem1)
+        if (glyphs1 != NULL)
             free(glyphs1);
         
-        if (shouldFreeMem2)
+        if (glyphs2 != NULL)
             free(glyphs2);
         
         if (!result)
