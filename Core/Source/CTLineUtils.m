@@ -12,17 +12,17 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
 {
     CFArrayRef glyphRuns1 = CTLineGetGlyphRuns(line1);
     CFArrayRef glyphRuns2 = CTLineGetGlyphRuns(line2);
-    int runCount1 = CFArrayGetCount(glyphRuns1), runCount2 = CFArrayGetCount(glyphRuns2);
+    CFIndex runCount1 = CFArrayGetCount(glyphRuns1), runCount2 = CFArrayGetCount(glyphRuns2);
     
     if (runCount1 != runCount2)
         return NO;
     
-    for (int i = 0; i < runCount1; i++)
+    for (CFIndex i = 0; i < runCount1; i++)
     {
         CTRunRef run1 = CFArrayGetValueAtIndex(glyphRuns1, i);
         CTRunRef run2 = CFArrayGetValueAtIndex(glyphRuns2, i);
         
-        int countInRun1 = CTRunGetGlyphCount(run1), countInRun2 = CTRunGetGlyphCount(run2);
+        CFIndex countInRun1 = CTRunGetGlyphCount(run1), countInRun2 = CTRunGetGlyphCount(run2);
         if (countInRun1 != countInRun2)
             return NO;
         
@@ -45,7 +45,7 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
         }
         
         BOOL result = YES;
-        for (int j = 0; j < countInRun1; j++)
+        for (CFIndex j = 0; j < countInRun1; j++)
         {
             if (glyphs1[j] != glyphs2[j])
             {
