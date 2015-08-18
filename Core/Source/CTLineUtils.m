@@ -47,7 +47,7 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
         BOOL result = YES;
         for (CFIndex j = 0; j < countInRun1; j++)
         {
-            if (glyphs1[j] != glyphs2[j])
+            if (constGlyphs1[j] != constGlyphs2[j])
             {
                 result = NO;
                 break;
