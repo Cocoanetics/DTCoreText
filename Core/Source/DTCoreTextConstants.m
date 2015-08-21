@@ -6,7 +6,6 @@
 NSString * const NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";
 NSString * const NSTextEncodingNameDocumentOption = @"NSTextEncodingNameDocumentOption";
 NSString * const NSTextSizeMultiplierDocumentOption = @"NSTextSizeMultiplierDocumentOption";
-NSString * const NSAttachmentAttributeName = @"NSAttachmentAttributeName";
 #endif
 
 // custom options
