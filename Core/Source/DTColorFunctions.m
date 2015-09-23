@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 #import "DTCompatibility.h"
 #import "DTColorFunctions.h"
-
 
 static NSDictionary *colorLookup = nil;
 
@@ -265,7 +267,11 @@ DTColor *DTColorCreateWithHTMLName(NSString *name)
 
 NSString *DTHexStringFromDTColor(DTColor *color)
 {
-	CGColorRef cgColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]].CGColor;
+#if TARGET_OS_IPHONE
+    CGColorRef cgColor = color.CGColor;
+#else
+    CGColorRef cgColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]].CGColor;
+#endif
 	size_t count = CGColorGetNumberOfComponents(cgColor);
 	const CGFloat *components = CGColorGetComponents(cgColor);
 
