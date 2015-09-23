@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.7.7'
+  spec.version      = '1.7.10'
 
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/artifacts/DTCoreText.git', :tag => spec.version.to_s }
@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'DTFoundation/DTHTMLParser', '~>1.7.3'
 
   spec.ios.frameworks   = 'MediaPlayer', 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
-  spec.osx.frameworks   = 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO'
+  spec.osx.frameworks   = 'QuartzCore', 'CoreText', 'CoreGraphics', 'ImageIO', 'AppKit'
 
   spec.requires_arc = true
   spec.homepage     = 'https://github.com/Cocoanetics/DTCoreText'
