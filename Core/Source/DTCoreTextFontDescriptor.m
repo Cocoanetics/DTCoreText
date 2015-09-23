@@ -10,6 +10,7 @@
 #import "DTCoreTextFontCollection.h"
 #import "DTCompatibility.h"
 #import "DTCoreTextConstants.h"
+#import "DTHTMLFontMapping.h"
 
 static NSCache *_fontCache = nil;
 static NSMutableDictionary *_fontOverrides = nil;
@@ -237,6 +238,18 @@ static BOOL _needsChineseFontCascadeFix = NO;
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont
 {
 	return [[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont];
+}
+
++ (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont withFontLookupMap:(NSDictionary*)fontLookupMap
+{
+    DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont];
+    NSString *fontName = [NSString stringWithString:desc.fontName];
+    if([fontLookupMap objectForKey:fontName]) {
+		DTHTMLFontMapping *fontMapping = [fontLookupMap objectForKey:fontName];
+		desc.fontName = fontMapping.targetFontName;
+		desc.fontFamily = fontMapping.targetFontFamily;
+    }
+    return desc;
 }
 
 - (id)initWithFontAttributes:(NSDictionary *)attributes
@@ -845,7 +858,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSMutableString *retString = [NSMutableString string];
 	
-    NSString *fontNameStr = _fontName ? [_fontName stringByAppendingString:@", "] : @"";
+    NSString *fontNameStr = _fontName ? [NSString stringWithFormat:@"'%@', ", _fontName] : @"";
     
 	if (_fontFamily)
 	{
@@ -853,7 +866,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	}
 
     if (_fontName) {
-        [retString appendFormat:@"-coretext-fontname:%@;", _fontName];
+        [retString appendFormat:@"-coretext-fontname:'%@';", _fontName];
     }
 	
 	[retString appendFormat:@"font-size:%.0fpx;", _pointSize];

@@ -76,6 +76,7 @@
 		36F8CECC1593AA3C00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		4DD386E21B39B54D004A6D85 /* DTHTMLFontMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD386E11B39B54D004A6D85 /* DTHTMLFontMapping.m */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A04CF1A51738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -984,6 +985,8 @@
 		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4DD386E01B39B54D004A6D85 /* DTHTMLFontMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLFontMapping.h; sourceTree = "<group>"; };
+		4DD386E11B39B54D004A6D85 /* DTHTMLFontMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLFontMapping.m; sourceTree = "<group>"; };
 		9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementTest.h; sourceTree = "<group>"; };
 		9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLElementTest.m; sourceTree = "<group>"; };
 		A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTAccessibilityElement.h; path = iOS/DTAccessibilityElement.h; sourceTree = "<group>"; };
@@ -1819,6 +1822,8 @@
 				A7EB849C168B3E9D00D686B7 /* DTHTMLParserNode.m */,
 				A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */,
 				A7EB84A6168B3EC000D686B7 /* DTHTMLParserTextNode.m */,
+				4DD386E01B39B54D004A6D85 /* DTHTMLFontMapping.h */,
+				4DD386E11B39B54D004A6D85 /* DTHTMLFontMapping.m */,
 			);
 			name = "HTML Parsing";
 			sourceTree = "<group>";
@@ -2359,7 +2364,7 @@
 			name = UnitTest;
 			productName = UnitTests;
 			productReference = A788CA681486456100E1AFD9 /* UnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		A7949A5714CC456000A8CCDE /* MacUnitTest */ = {
 			isa = PBXNativeTarget;
@@ -2378,7 +2383,7 @@
 			name = MacUnitTest;
 			productName = MacUnitTest;
 			productReference = A7949A5814CC456000A8CCDE /* MacUnitTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		A7A476BB180010F100459DFD /* BundleLoader Dummy */ = {
 			isa = PBXNativeTarget;
@@ -2819,6 +2824,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A788CA5014863EF100E1AFD9 /* CoreTextDemoAppDelegate.m in Sources */,
+				4DD386E21B39B54D004A6D85 /* DTHTMLFontMapping.m in Sources */,
 				A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */,
 				A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */,
 				A788CA5314863EF100E1AFD9 /* main.m in Sources */,

@@ -11,6 +11,9 @@
 #import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
 
+NSString *kOptionRenderLastParagraphWithoutNewlineAsSpan = @"renderLastParagraphWithoutNewlineAsSpan";
+NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
+
 @implementation DTHTMLWriter
 {
 	NSAttributedString *_attributedString;
@@ -18,27 +21,22 @@
 	CGFloat _textScale;
 	BOOL _useAppleConvertedSpace;
 	NSString *_CSSPrefix;
-    DTHTMLEscape _options;
+    BOOL _optionRenderLastParagraphWithoutNewlineAsSpan;
+    BOOL _optionEscapeAsXML;
 }
 
 @synthesize styleLookup = _styleLookup;
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString
-{
-    return [self initWithAttributedString:attributedString CSSPrefix:@"" options:DTHTMLEscapeHTML];
+- (id)initWithAttributedString:(NSAttributedString *)attributedString {
+    return [self initWithAttributedString:attributedString CSSPrefix:@"" options:nil];
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString options:(DTHTMLEscape)options
-{
-	return [self initWithAttributedString:attributedString CSSPrefix:@"" options:options];
+
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix {
+    return [self initWithAttributedString:attributedString CSSPrefix:theCSSPrefix options:nil];
 }
 
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix
-{
-    return [self initWithAttributedString:attributedString CSSPrefix:theCSSPrefix options:DTHTMLEscapeHTML];
-}
-
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(DTHTMLEscape)options
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(NSDictionary*)theOptions
 {
 	self = [super init];
 	
@@ -51,9 +49,18 @@
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
 		_CSSPrefix = [[NSString alloc] initWithString:theCSSPrefix];
+        _options = [NSMutableDictionary dictionaryWithDictionary:theOptions];
+        
+        _optionRenderLastParagraphWithoutNewlineAsSpan = YES;
+        if ([_options valueForKey:kOptionRenderLastParagraphWithoutNewlineAsSpan] != nil) {
+            _optionRenderLastParagraphWithoutNewlineAsSpan = [[_options valueForKey:kOptionRenderLastParagraphWithoutNewlineAsSpan] boolValue];
+        }
+        _optionEscapeAsXML = NO;
+        if ([_options valueForKey:kOptionDTHTMLEscapeXML] != nil) {
+            _optionEscapeAsXML = [[_options valueForKey:kOptionDTHTMLEscapeXML] boolValue];
+        }
 
-        _options = options;
-	}
+    }
 	
 	return self;
 }
@@ -257,10 +264,10 @@
 
 - (void)_buildOutput
 {
-	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil];
+	[self _buildOutputAsHTMLFragment:NO styleLookupMap:nil fontLookupMap:nil];
 }
 
-- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap
+- (void)_buildOutputAsHTMLFragment:(BOOL)fragment styleLookupMap:(NSMutableDictionary*)existingStyleLookupMap fontLookupMap:(NSDictionary *)fontLookupMap
 {
 	// reusable styles
 	if (existingStyleLookupMap) {
@@ -268,6 +275,8 @@
 	} else {
 		_styleLookup = [[NSMutableDictionary alloc] init];
 	}
+    
+    _fontLookupMap = fontLookupMap;
 	
 	NSString *plainString = [_attributedString string];
 	
@@ -348,7 +357,7 @@
 		{
 			if (paragraphFont)
 			{
-				DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:paragraphFont];
+				DTCoreTextFontDescriptor *desc = [DTCoreTextFontDescriptor fontDescriptorForCTFont:paragraphFont withFontLookupMap:_fontLookupMap];
 				
 				if (_textScale!=1.0f)
 				{
@@ -469,8 +478,8 @@
 		if ([paragraphs lastObject] == oneParagraph)
 		{
 			// last paragraph in string
-			
-			if (![plainString hasSuffix:@"\n"])
+            
+			if (![plainString hasSuffix:@"\n"] && _optionRenderLastParagraphWithoutNewlineAsSpan)
 			{
 				// not a whole paragraph, so we don't put it in P
 				blockElement = @"span";
@@ -648,7 +657,7 @@
 			}
 			
             NSString *subString;
-            if(_options & DTHTMLEscapeXML)
+            if(_optionEscapeAsXML)
             {
                 subString = [plainSubString stringByAddingXMLEntities];
             }
@@ -696,7 +705,11 @@
 			if (!fontIsBlockLevel)
 			{
 				DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-				
+                /*NSString *fontName = [NSString stringWithString:fontDescriptor.fontName];
+                if([_fontLookupMap objectForKey:fontName]) {
+                    fontDescriptor.fontName = [_fontLookupMap objectForKey:fontName];
+                    fontDescriptor.fontFamily = [_fontLookupMap objectForKey:fontName];
+                }*/
 				if (fontDescriptor)
 				{
 					if (_textScale!=1.0f)
@@ -924,7 +937,7 @@
 		else
 		{
             if (_insertNonBreakingSpaceInEmptyParagraphs && [plainSubString length] == 0) {
-                [retString appendString:@"&amp;nbsp;"];                
+                [retString appendString:@"&#160;"];
             }
                 
 			// other blocks are always closed
@@ -1036,17 +1049,27 @@
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap];
+		[self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap fontLookupMap:nil];
 	}
 	
 	return _HTMLString;
+}
+
+- (NSString *)HTMLStringWithStyleLookupMap:(NSMutableDictionary*)styleLookupMap andFontLookupMap:(NSDictionary*)fontLookupMap
+{
+    if (!_HTMLString)
+    {
+        [self _buildOutputAsHTMLFragment:NO styleLookupMap:styleLookupMap fontLookupMap:fontLookupMap];
+    }
+    
+    return _HTMLString;
 }
 
 - (NSString *)HTMLFragment
 {
 	if (!_HTMLString)
 	{
-		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil];
+		[self _buildOutputAsHTMLFragment:true styleLookupMap:nil fontLookupMap:nil];
 	}
 	
 	return _HTMLString;
