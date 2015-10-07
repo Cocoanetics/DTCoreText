@@ -94,10 +94,12 @@
 		shouldOpenExternalURL = [_delegate videoView:self shouldOpenExternalURL:[request URL]];
 	}
 	
+#if !defined(DT_APP_EXTENSIONS)
 	if (shouldOpenExternalURL)
 	{
 		[[UIApplication sharedApplication] openURL:[request URL]];
 	}
+#endif
 	
 	return NO;
 }
