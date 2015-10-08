@@ -57,4 +57,10 @@
  */
 @property (nonatomic, readonly) NSAttributedString *attributedString;
 
+
+/**
+ The HTML element tag name to use for paragraphs. Defaults to @"p".
+ */
+@property (nonatomic, strong) NSString *paragraphTagName;
+
 @end

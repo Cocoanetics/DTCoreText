@@ -42,6 +42,8 @@
 
 		// default is to leave px sizes as is
 		_textScale = 1.0f;
+		
+		_paragraphTagName = @"p";
 	}
 	
 	return self;
@@ -430,7 +432,7 @@
 		}
 		else
 		{
-			blockElement = @"p";
+			blockElement = _paragraphTagName;
 		}
 		
 		NSNumber *headerLevel = [paraAttributes objectForKey:DTHeaderLevelAttribute];
