@@ -33,7 +33,7 @@
 #import "DTBreakHTMLElement.h"
 #import "DTListItemHTMLElement.h"
 #import "DTHorizontalRuleHTMLElement.h"
-#import "DTStyleSheetHTMLElement.h"
+#import "DTStylesheetHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
 #import "DTTextHTMLElement.h"
 #import "DTHTMLWriter.h"
