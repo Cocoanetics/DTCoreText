@@ -32,7 +32,11 @@
 extern NSString * const NSBaseURLDocumentOption;
 extern NSString * const NSTextEncodingNameDocumentOption;
 extern NSString * const NSTextSizeMultiplierDocumentOption;
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_7_0
 extern NSString * const NSAttachmentAttributeName; 
+#endif
+
 #endif
 
 // custom options
