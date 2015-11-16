@@ -92,6 +92,11 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  */
 - (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
+/**
+ @returns The view that should represent the given anchor
+ */
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAnchor:(NSString *)anchor frame:(CGRect)frame;
+
 
 /**
  Provide generic views for all attachments.

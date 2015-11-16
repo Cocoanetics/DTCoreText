@@ -534,7 +534,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// determine whether this is a normal line or if it should be truncated
 		shouldTruncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) || (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		
-		CTLineRef line;
+		CTLineRef line = NULL;
 		BOOL isHyphenatedString = NO;
 		
 		if (!shouldTruncateLine)
@@ -582,6 +582,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CTLineRef elipsisLineRef = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attribStr));
 			
 			// create the truncated line
+            if (line) {
+                CFRelease(line);
+            }
 			line = CTLineCreateTruncatedLine(baseLine, availableSpace, truncationType, elipsisLineRef);
 			
 			// clean up
@@ -763,12 +766,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
         NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
         [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
+        
+        if (*line) {
+            CFRelease(*line);
+        }
         *line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
         return YES;
     }
     else
     {
         // create a line to fit
+        if (*line) {
+            CFRelease(*line);
+        }
         *line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
     }
     return NO;
