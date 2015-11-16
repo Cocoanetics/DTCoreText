@@ -243,11 +243,14 @@ static BOOL _needsChineseFontCascadeFix = NO;
 + (DTCoreTextFontDescriptor *)fontDescriptorForCTFont:(CTFontRef)ctFont withFontLookupMap:(NSDictionary*)fontLookupMap
 {
     DTCoreTextFontDescriptor *desc = [[DTCoreTextFontDescriptor alloc] initWithCTFont:ctFont];
-    NSString *fontName = [NSString stringWithString:desc.fontName];
-    if([fontLookupMap objectForKey:fontName]) {
-		DTHTMLFontMapping *fontMapping = [fontLookupMap objectForKey:fontName];
-		desc.fontName = fontMapping.targetFontName;
-		desc.fontFamily = fontMapping.targetFontFamily;
+    if(desc.fontName)
+    {
+        NSString *fontName = [NSString stringWithString:desc.fontName];
+        if([fontLookupMap objectForKey:fontName]) {
+            DTHTMLFontMapping *fontMapping = [fontLookupMap objectForKey:fontName];
+            desc.fontName = fontMapping.targetFontName;
+            desc.fontFamily = fontMapping.targetFontFamily;
+        }
     }
     return desc;
 }
