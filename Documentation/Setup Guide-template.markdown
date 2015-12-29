@@ -100,7 +100,7 @@ You can move all the additional framework and library links that Xcode adds into
 
 #### Setting up Header Search Paths
 
-For Xcode to find the headers of DTCoreText add `Externals/DTCoreText/Core` to the *User Header Search Paths*. To find the headers of DTFoundation referenced by DTCoreText you also need to add `Externals/DTCoreText/Externals/DTFoundation/Core`. Make sure you select the *Recursive* check box on both.
+For Xcode to find the headers of DTCoreText add `${TARGET_BUILD_DIR}` to the *Header Search Paths*.
 
 ![DTCoreText_Reference](DTCoreText_Search_Paths.png)
 
@@ -123,7 +123,7 @@ The `default.css` stylesheet that is used for defining the default HTML CSS styl
 At this point your project should build and be able to use DTCoreText functionality. As a quick *Smoke Test* - to see if all is setup correctly - you can test your setup by adding this code to your app delegate:
 
 
-    #import "DTCoreText.h"
+    #import <DTCoreText/DTCoreText.h>
 
     NSString *html = @"<p>Some Text</p>";
     NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];

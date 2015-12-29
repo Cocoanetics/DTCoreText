@@ -16,6 +16,7 @@
 #import "DTCoreTextFunctions.h"
 #import "DTTextAttachment.h"
 #import "NSString+Paragraphs.h"
+#import "CTLineUtils.h"
 
 #import <DTFoundation/DTLog.h>
 
@@ -540,7 +541,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			// if we extend to the entire to the entire text range
 			// it is possible to pull lines up from paragraphs below us
 			NSRange oldLineRange = lineRange;
-			lineRange.length = NSMaxRange(currentParagraphRange)-lineRange.location;
+			lineRange.length = maxIndex-lineRange.location;
 			CTLineRef baseLine = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
 			
 			// convert lineBreakMode to CoreText type
@@ -568,6 +569,43 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			
 			// create the truncated line
 			line = CTLineCreateTruncatedLine(baseLine, availableSpace, truncationType, elipsisLineRef);
+            
+            // check if truncation occured
+            BOOL truncationOccured = !areLinesEqual(baseLine, line);
+            // if yes check was it before the end of the current paragraph or after
+            NSUInteger endOfParagraphIndex = NSMaxRange(currentParagraphRange);
+            // this works only for truncation at the end
+            if (truncationType == kCTLineTruncationEnd)
+            {
+                if (truncationOccured)
+                {
+                    CFIndex truncationIndex = getTruncationIndex(line, elipsisLineRef);
+                    // if truncation occured after the end of the paragraph
+                    // move truncation token to the end of the paragraph
+                    if (truncationIndex > endOfParagraphIndex)
+                    {
+                        NSAttributedString *subStr = [_attributedStringFragment attributedSubstringFromRange:NSMakeRange(lineRange.location, endOfParagraphIndex - lineRange.location - 1)];
+                        NSMutableAttributedString *attrMutStr = [subStr mutableCopy];
+                        [attrMutStr appendAttributedString:attribStr];
+                        CFRelease(line);
+                        line = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attrMutStr));
+                    }
+                    // otherwise, everything is OK
+                }
+                else
+                {
+                    // if no truncation happened, force addition of
+                    // the truncation token to the end of the paragraph
+                    if (maxIndex != endOfParagraphIndex)
+                    {
+                        NSAttributedString *subStr = [_attributedStringFragment attributedSubstringFromRange:NSMakeRange(lineRange.location, endOfParagraphIndex - lineRange.location - 1)];
+                        NSMutableAttributedString *attrMutStr = [subStr mutableCopy];
+                        [attrMutStr appendAttributedString:attribStr];
+                        CFRelease(line);
+                        line = CTLineCreateWithAttributedString((__bridge  CFAttributedStringRef)(attrMutStr));
+                    }
+                }
+            }
 			
 			// clean up
 			CFRelease(baseLine);

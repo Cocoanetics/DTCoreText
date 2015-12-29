@@ -1171,6 +1171,56 @@ NSDictionary *_classesForNames = nil;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
 	}
+    
+    // Specializations on line-height:
+    
+    NSString *minimumLineHeight = [[styles objectForKey:@"minimum-line-height"] lowercaseString];
+    if (minimumLineHeight)
+    {
+        if ([minimumLineHeight isEqualToString:@"normal"])
+        {
+            // no op, that was already done above
+        }
+        else if ([minimumLineHeight isEqualToString:@"inherit"])
+        {
+            // no op, we already inherited it
+        }
+        else if ([minimumLineHeight isNumeric])
+        {
+            self.paragraphStyle.minimumLineHeight = [minimumLineHeight floatValue];
+        }
+        else // interpret as length
+        {
+            CGFloat minimumLineHeightValue = [minimumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+            self.paragraphStyle.minimumLineHeight = minimumLineHeightValue;
+        }
+    }
+
+    NSString *maximumLineHeight = [[styles objectForKey:@"maximum-line-height"] lowercaseString];
+    if (maximumLineHeight)
+    {
+        if ([maximumLineHeight isEqualToString:@"normal"])
+        {
+            // no op, that was already done above
+        }
+        else if ([maximumLineHeight isEqualToString:@"inherit"])
+        {
+            // no op, we already inherited it
+        }
+        else if ([maximumLineHeight isNumeric])
+        {
+            self.paragraphStyle.minimumLineHeight = [maximumLineHeight floatValue];
+        }
+        else // interpret as length
+        {
+            CGFloat maximumLineHeightValue = [maximumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+            self.paragraphStyle.maximumLineHeight = maximumLineHeightValue;
+        }
+    }
+
+    
+    // End Specializations on line-height
+
 	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
 	if (fontVariantStr)
