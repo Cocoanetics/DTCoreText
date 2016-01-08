@@ -1,6 +1,9 @@
----
 language: objective-c
+osx_image: xcode7
 
+before_install:
+  - curl -sL https://gist.github.com/henrikhodne/7ac6d02ff9a24a94720c/raw/install_appledoc.sh | sh
+  
 install: 
  - sudo easy_install cpp-coveralls
 
