@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0DA7797F1C56965600796D4F /* DTCoreTextMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
@@ -1872,6 +1873,7 @@
 			files = (
 				A788C97214863E8700E1AFD9 /* DTCoreTextFontCollection.h in Headers */,
 				A788C97714863E8700E1AFD9 /* DTCoreTextFontDescriptor.h in Headers */,
+				0DA7797F1C56965600796D4F /* DTCoreTextMacros.h in Headers */,
 				A788C97C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h in Headers */,
 				A788C98114863E8700E1AFD9 /* DTCoreTextLayouter.h in Headers */,
 				A788C98614863E8700E1AFD9 /* DTCoreTextLayoutFrame.h in Headers */,
