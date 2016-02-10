@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
+#import "DTCoreText.h"
 #import "DTCoreTextTestCase.h"
 
 @interface DTCoreTextFontDescriptorTest : DTCoreTextTestCase
