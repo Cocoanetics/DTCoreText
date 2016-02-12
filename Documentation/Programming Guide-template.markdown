@@ -193,4 +193,12 @@ NSData* descriptionData = [html dataUsingEncoding:NSUTF8StringEncoding];
 NSAttributedString* attributedDescription = [[NSAttributedString alloc] initWithHTMLData:descriptionData options:options documentAttributes:NULL];
 ```
 
+Adding Custom Font with FontFaceName
+--------------------------------
+When you want to add a custom font to the HTML being rendered using FontFaceName, you can add ```-coretext-fontname: SourceSansPro-Light;``` to the stylesheet.
+An example would be:
+```
+    let customStyleSheet = DTCSSStylesheet(styleBlock: "body { -coretext-fontname: SourceSansPro-Light; }")
+    DTCSSStylesheet.defaultStyleSheet().mergeStylesheet(customStyleSheet)
+```
 
