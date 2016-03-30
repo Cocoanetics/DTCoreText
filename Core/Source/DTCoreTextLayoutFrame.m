@@ -539,15 +539,28 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (!shouldTruncateLine)
 		{
-            isHyphenatedString = [self createLineByReplacingLastCharWithHyphenIfNecessary:&line range:lineRange typesetter:typesetter];
-            CGFloat lineWidth = (CGFloat)CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-            if (lineWidth > _frame.size.width) {
-                lineRange.length = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, availableSpace - hyphenMarkLength);
-                if (NSMaxRange(lineRange) > maxIndex) {
-                    lineRange.length = maxIndex - lineRange.location;
-                }
-                isHyphenatedString = [self createLineByReplacingLastCharWithHyphenIfNecessary:&line range:lineRange typesetter:typesetter];
-            }
+			static const unichar softHypen = 0x00AD;
+			NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
+			unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
+			if (softHypen == lastChar)
+			{
+				NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
+				NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
+				[hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
+				if (line) {
+					CFRelease(line);
+				}
+				line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
+				isHyphenatedString = YES;
+			}
+			else
+			{
+				// create a line to fit
+				if (line) {
+					CFRelease(line);
+				}
+				line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
+			}
 		}
 		else
 		{
@@ -755,33 +768,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// need to add bottom padding if in text block
 		_additionalPaddingAtBottom = totalPadding;
 	}
-}
-
-- (BOOL)createLineByReplacingLastCharWithHyphenIfNecessary:(CTLineRef*)line range:(NSRange)lineRange typesetter:(CTTypesetterRef)typesetter {
-    static const unichar softHypen = 0x00AD;
-    NSString *lineString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] string];
-    unichar lastChar = [lineString characterAtIndex:[lineString length] - 1];
-    if (softHypen == lastChar)
-    {
-        NSMutableAttributedString *hyphenatedString = [[_attributedStringFragment attributedSubstringFromRange:lineRange] mutableCopy];
-        NSRange replaceRange = NSMakeRange(hyphenatedString.length - 1, 1);
-        [hyphenatedString replaceCharactersInRange:replaceRange withString:@"-"];
-        
-        if (*line) {
-            CFRelease(*line);
-        }
-        *line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)hyphenatedString);
-        return YES;
-    }
-    else
-    {
-        // create a line to fit
-        if (*line) {
-            CFRelease(*line);
-        }
-        *line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
-    }
-    return NO;
 }
 
 /**
