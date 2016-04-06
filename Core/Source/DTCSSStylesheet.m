@@ -545,9 +545,9 @@ extern unsigned int default_css_len;
 				{
 					// skip comment until closing /
 					
-					for (; i < length; i++)
+					for (; i < length && i > 0; i++)
 					{
-						if ([css characterAtIndex:i] == '/')
+						if ([css characterAtIndex:i] == '/' && [css characterAtIndex:i-1] == '*')
 						{
 							break;
 						}
@@ -603,6 +603,11 @@ extern unsigned int default_css_len;
 		// A closing brace!
 		else if (c == '}')
 		{
+            if (braceLevel == 0) {
+                NSLog(@"ERROR: no matching opening brace in css at character %ul",i);
+                braceMarker = i + 1;
+                continue;
+            }
 			// If we finished a rule...
 			if (braceLevel == 1)
 			{
@@ -612,8 +617,7 @@ extern unsigned int default_css_len;
 				
 				braceMarker = i + 1;
 			}
-			
-			braceLevel = MAX(braceLevel-1, 0ul);
+            braceLevel = braceLevel-1;
 		}
 	}
 }
