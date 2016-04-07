@@ -29,7 +29,7 @@
 	NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, self.size.width, self.size.height)];
 	[self unlockFocus];
 	
-	return [bitmapRep representationUsingType:NSPNGFileType properties:Nil];
+	return [bitmapRep representationUsingType:NSPNGFileType properties:[NSDictionary new]];
 }
 
 @end
