@@ -223,18 +223,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			if (runRange.location>=skipRunsBeforeLocation)
 			{
 				// see if it's a link
-				NSRange effectiveRangeOfLink;
+				NSRange effectiveRangeOfLink = runRange;
 				
 				// make sure that a link is only as long as the area to the next attachment or the current attachment itself
 				DTTextAttachment *attachment = oneRun.attributes[NSAttachmentAttributeName];
 				
 				// if there is no attachment then the effectiveRangeOfAttachment contains the range until the next attachment
 				NSURL *linkURL = oneRun.attributes[DTLinkAttribute];
-				
-				if (linkURL)
-				{
-					effectiveRangeOfLink = runRange;
-				}
 				
 				// avoid chaining together glyph runs for an attachment
 				if (linkURL && !attachment)
