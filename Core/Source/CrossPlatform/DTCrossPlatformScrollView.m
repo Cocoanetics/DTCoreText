@@ -49,6 +49,10 @@
     [[self documentView] setFrameSize:size];
 }
 
++ (BOOL)isCompatibleWithResponsiveScrolling {
+    return YES;
+}
+
 - (void)scrollWheel:(NSEvent *)theEvent
 {
     BOOL shouldScroll = self.scrollEnabled;
