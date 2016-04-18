@@ -11,6 +11,23 @@
 
 #if !TARGET_OS_IPHONE
 
+- (void)setDocumentView:(id)documentView {
+    [super setDocumentView:documentView];
+    
+    if (self.contentView) {
+        [self.contentView setPostsBoundsChangedNotifications:YES];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(boundsDidChange:)
+                                                     name:NSViewBoundsDidChangeNotification object:self.contentView];
+        _isObservingBoundsChanges = YES;
+    } else {
+        if (_isObservingBoundsChanges) {
+            [self.contentView setPostsBoundsChangedNotifications:NO];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            _isObservingBoundsChanges = NO;
+        }
+    }
+}
+
 - (void)setContentView:(NSClipView *)contentView {
     [super setContentView:contentView];
     if (contentView) {
