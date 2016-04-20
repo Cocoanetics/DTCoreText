@@ -574,13 +574,20 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 		
 		__block NSMutableDictionary *linkLevelHTMLAttributes = nil;
 
-        __block NSString *plainSubString = nil; // alwas holds the last plain text from enumarated attributes
+		__block NSString *plainSubString = nil; // alwas holds the last plain text from enumarated attributes
 		
 		// ----- SPAN enumeration
-        
+		
 		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stopEnumerateAttributes) {
-
-			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
+			
+			NSURL *spanURL = nil;
+			
+			if([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSURL class]]) {
+				spanURL = [attributes objectForKey:DTLinkAttribute];
+			} else if ([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSString class]]) {
+				spanURL = [NSURL URLWithString:[attributes objectForKey:DTLinkAttribute]];
+			}
+			
 			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
 			
 			BOOL isFirstPartOfHyperlink = NO;
