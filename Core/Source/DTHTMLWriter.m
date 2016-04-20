@@ -585,7 +585,7 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 			if([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSURL class]]) {
 				spanURL = [attributes objectForKey:DTLinkAttribute];
 			} else if ([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSString class]]) {
-				spanURL = [[NSURL alloc] initWithString:[attributes objectForKey:DTLinkAttribute]];
+				spanURL = [NSURL URLWithString:[attributes objectForKey:DTLinkAttribute]];
 			}
 			
 			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
