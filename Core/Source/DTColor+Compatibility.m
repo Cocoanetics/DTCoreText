@@ -89,7 +89,7 @@ static void DTCoreTextNSColorInitialization(void)
 		return [NSColor colorWithDeviceRed:components[0] green:components[1] blue:components[2] alpha:components[3]];
 	}
 	
-	// neigher grayscale nor rgba
+	// neither grayscale nor rgba
 	return nil;
 }
 

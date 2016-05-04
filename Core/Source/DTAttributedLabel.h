@@ -31,7 +31,7 @@
 @property(nonatomic, assign) NSLineBreakMode lineBreakMode;
 
 /**
- The string to append to the visible string in case a trunction occurs
+ The string to append to the visible string in case a truncation occurs
  */
 @property(nonatomic, strong) NSAttributedString *truncationString;
 

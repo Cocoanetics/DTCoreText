@@ -739,7 +739,7 @@
 	
 	BOOL didUpdate = NO;
 	
-	// update all attachments that matchin this URL (possibly multiple images with same size)
+	// update all attachments that match this URL (possibly multiple images with same size)
 	for (DTTextAttachment *oneAttachment in [_textView.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred])
 	{
 		// update attachments that have no original size, that also sets the display size

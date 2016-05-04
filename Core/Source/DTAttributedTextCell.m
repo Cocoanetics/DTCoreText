@@ -88,7 +88,7 @@
 	
 	_containingTableView = [self _findContainingTableView];
 	
-	// on < iOS 7 we need to make the background translucent to avoid artefacts at rounded edges
+	// on < iOS 7 we need to make the background translucent to avoid artifacts at rounded edges
 	if (_containingTableView.style == UITableViewStyleGrouped)
 	{
 		if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0)
@@ -233,7 +233,7 @@
 {
 	if (!_attributedTextContextView)
 	{
-		// don't know size jetzt because there's no string in it
+		// don't know size because there's no string in it
 		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:self.contentView.bounds];
 		
 		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);

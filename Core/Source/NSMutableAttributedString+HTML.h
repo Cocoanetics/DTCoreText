@@ -39,7 +39,7 @@
  */
 
 /**
- Adds the custom HTML attributes with the given value on the given range, optionally replacing occurences of an attribute with the same name.
+ Adds the custom HTML attributes with the given value on the given range, optionally replacing occurrences of an attribute with the same name.
  @param name The name of the custom HTML attribute
  @param value The value to set for the custom attribute
  @param range The range to add the custom attribute for

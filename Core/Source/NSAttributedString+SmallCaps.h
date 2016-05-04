@@ -15,7 +15,7 @@
 @interface NSAttributedString (SmallCaps)
 
 /**
- Creates an `NSAttributedString` from the given text and attributes and synthesizes small caps. On iPad there is only one font that has native small caps, for all other fonts the small caps are synthesized by reduzing the font size for all lowercase characters.
+ Creates an `NSAttributedString` from the given text and attributes and synthesizes small caps. On iPad there is only one font that has native small caps, for all other fonts the small caps are synthesized by reducing the font size for all lowercase characters.
  
  @param text The string to convert into an attributed string
  @param attributes A dictionary with attributes for the attributed string

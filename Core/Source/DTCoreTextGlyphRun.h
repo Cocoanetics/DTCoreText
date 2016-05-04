@@ -103,7 +103,7 @@
 @property (nonatomic, readonly) NSInteger numberOfGlyphs;
 
 /**
- The Core Text attributes that are shared by all gylphs of the receiver
+ The Core Text attributes that are shared by all glyphs of the receiver
  */
 @property (nonatomic, readonly) NSDictionary *attributes;
 

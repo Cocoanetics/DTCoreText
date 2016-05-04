@@ -68,14 +68,14 @@
 
 
 /** 
- Convert a string from HTML entities into correct character representations using UTF8 encoding. For example: an ellipsis entity representy by `&hellip;` is converted into `…`. 
- @returns A string without HTML entities, instead having the actual characters formerly represented by HTML entities. 
+ Convert a string from HTML entities into correct character representations using UTF8 encoding. For example: an ellipsis entity represented by `&hellip;` is converted into `…`.
+ @returns A string without HTML entities, instead having the actual characters formerly represented by HTML entities.
  */
 - (NSString *)stringByReplacingHTMLEntities;
 
 
 /**
- Replaces occurences of more two or more spaces with a range of alternating non-breaking space and regular space. It also encloses these parts with a span of class 'Apple-converted-space'
+ Replaces occurrences of more two or more spaces with a range of alternating non-breaking space and regular space. It also encloses these parts with a span of class 'Apple-converted-space'
  */
 - (NSString *)stringByAddingAppleConvertedSpace;
 
