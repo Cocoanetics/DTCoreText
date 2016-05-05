@@ -112,7 +112,7 @@
 - (NSArray *)stringIndices;
 
 /**
- Determins the graphical offset for a given string index
+ Determines the graphical offset for a given string index
  @param index The string index
  @returns The offset
  */
@@ -138,7 +138,7 @@
 /**
  The ascent (height above the baseline) of the receiver
  */
-@property (nonatomic, assign) CGFloat ascent; // needs to be modifyable
+@property (nonatomic, assign) CGFloat ascent; // needs to be modifiable
 
 /**
  The descent (height below the baseline) of the receiver
@@ -151,7 +151,7 @@
 @property (nonatomic, readonly) CGFloat leading;
 
 /**
- The width of the traling whitespace of the receiver
+ The width of the trailing whitespace of the receiver
  */
 @property (nonatomic, readonly) CGFloat trailingWhitespaceWidth;
 
@@ -176,7 +176,7 @@
 @property (nonatomic, readonly) NSArray *textBlocks;
 
 /**
- The text attachments occuring in glyph runs of the receiver.
+ The text attachments occurring in glyph runs of the receiver.
  */
 @property (nonatomic, readonly) NSArray *attachments;
 

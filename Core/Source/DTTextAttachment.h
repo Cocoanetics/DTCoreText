@@ -139,7 +139,7 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
 @property (nonatomic, assign) CGSize originalSize;
 
 /**
- The size to use for displaying/layouting the receiver
+ The size to use for displaying/laying out the receiver
  */
 @property (nonatomic, assign) CGSize displaySize;
 

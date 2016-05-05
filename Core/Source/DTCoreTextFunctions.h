@@ -26,21 +26,21 @@ CTFontRef DTCTFontCreateWithUIFont(UIFont *font);
 CTLineTruncationType DTCTLineTruncationTypeFromNSLineBreakMode(NSLineBreakMode lineBreakMode);
 
 /**
- Rounds the passed value according to the specifed content scale. 
+ Rounds the passed value according to the specified content scale.
  
  With contentScale 1 the results are identical to roundf, with Retina content scale 2 the results are multiples of 0.5.
  */
 CGFloat DTRoundWithContentScale(CGFloat value, CGFloat contentScale);
 
 /**
- Rounds up the passed value according to the specifed content scale.
+ Rounds up the passed value according to the specified content scale.
  
  With contentScale 1 the results are identical to roundf, with Retina content scale 2 the results are multiples of 0.5.
  */
 CGFloat DTCeilWithContentScale(CGFloat value, CGFloat contentScale);
 
 /**
- Rounds down the passed value according to the specifed content scale.
+ Rounds down the passed value according to the sspecifiedcontent scale.
  
  With contentScale 1 the results are identical to roundf, with Retina content scale 2 the results are multiples of 0.5.
  */

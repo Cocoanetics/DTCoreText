@@ -46,7 +46,7 @@
 
 /**
  Whether the receiver's attributes contain a DTTextAttachment
- @returns `YES` if ther is an attachment
+ @returns `YES` if there is an attachment
  */
 - (BOOL)hasAttachment;
 

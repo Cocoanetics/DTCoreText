@@ -159,7 +159,7 @@ typedef NS_ENUM(NSUInteger, DTHTMLElementFloatStyle)
 typedef NS_ENUM(NSUInteger, DTHTMLElementFontVariant)
 {
 	/**
-	 The element inherts the font variant
+	 The element inherits the font variant
 	 */
 	DTHTMLElementFontVariantInherit = 0,
 	

@@ -182,7 +182,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviewsInRect:(CGRect)rect
 {
-	// if we are called for partial (non-infinate) we remove unneeded custom subviews first
+	// if we are called for partial (non-infinite) we remove unneeded custom subviews first
 	if (!CGRectIsInfinite(rect))
 	{
 		[self removeSubviewsOutsideRect:rect];
@@ -258,7 +258,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						effectiveRangeOfLink = NSUnionRange(effectiveRangeOfLink, followingRun.stringRange);
 					}
 					
-					// frame for link view includes for all joined glyphruns with same link in this line
+					// frame for link view includes for all joined glyph runs with same link in this line
 					frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRangeOfLink];
 					
 					// this following glyph run link attribute is joined to link range

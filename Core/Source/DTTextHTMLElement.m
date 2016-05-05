@@ -54,7 +54,7 @@
 			}
 			
 			// replace paragraph breaks with line breaks
-			// useing \r as to not confuse this with line feeds, but still get a single paragraph
+			// using \r as to not confuse this with line feeds, but still get a single paragraph
 			text = [text stringByReplacingOccurrencesOfString:@"\n" withString:@"\r"];
 		}
 		else if (_containsAppleConvertedSpace)
