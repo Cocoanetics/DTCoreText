@@ -119,13 +119,7 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 	CATiledLayer *layer = (id)self.layer;
 	if ([layer isKindOfClass:[CATiledLayer class]])
 	{
-		// get larger dimension and multiply by scale
-		UIScreen *mainScreen = [UIScreen mainScreen];
-		CGFloat largerDimension = MAX(mainScreen.applicationFrame.size.width, mainScreen.applicationFrame.size.height);
-		CGFloat scale = mainScreen.scale;
-		
-		// this way tiles cover entire screen regardless of orientation or scale
-		CGSize tileSize = CGSizeMake(largerDimension * scale, largerDimension * scale);
+        CGSize tileSize = CGSizeMake(1024, 1024);
 		layer.tileSize = tileSize;
 		
 		_isTiling = YES;
@@ -133,9 +127,9 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 #endif
 }
 
-//- (CALayer *)makeBackingLayer {
-//	return [CATiledLayer layer];
-//}
+- (CALayer *)makeBackingLayer {
+	return [CATiledLayer layer];
+}
 
 /*- (void)viewDidChangeBackingProperties
 {
