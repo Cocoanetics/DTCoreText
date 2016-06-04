@@ -52,7 +52,7 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
 /**
  The DTAttributedTextContentView used to display remote images with DTAttributedTextCell
  */
-@property (nonatomic, weak) DTAttributedTextContentView *contentView;
+@property (nonatomic, DT_WEAK_PROPERTY) DTAttributedTextContentView *contentView;
 
 /**
  @name Getting Information
