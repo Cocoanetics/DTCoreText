@@ -127,10 +127,6 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 #endif
 }
 
-- (CALayer *)makeBackingLayer {
-	return [CATiledLayer layer];
-}
-
 /*- (void)viewDidChangeBackingProperties
 {
     [super viewDidChangeBackingProperties];
