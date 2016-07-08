@@ -27,6 +27,12 @@ extern NSString *DTLinkButtonDidHighlightNotification;
 
 
 /**
+ The target to open URL.
+ */
+@property (nonatomic, copy) NSString *urlTarget;
+
+
+/**
  The unique identifier (GUID) that all parts of the same hyperlink have in common.
  */
 @property (nonatomic, copy) NSString *GUID;
