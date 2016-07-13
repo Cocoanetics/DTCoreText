@@ -153,8 +153,14 @@ NSDictionary *_classesForNames = nil;
 		
 		// add a GUID to group multiple glyph runs belonging to same link
 		[tmpDict setObject:_linkGUID forKey:DTGUIDAttribute];
+        
+        // add hyperlink target
+        if (_linkTarget)
+        {
+            [tmpDict setObject:_linkTarget forKey:DTLinkTargetAttribute];
+        }
 	}
-	
+    
 	// add anchor
 	if (_anchorName)
 	{
@@ -1401,6 +1407,7 @@ NSDictionary *_classesForNames = nil;
 	_shadows = [element.shadows copy];
 	
 	_link = [element.link copy];
+    _linkTarget = [element.linkTarget copy];
 	_anchorName = [element.anchorName copy];
 	_linkGUID = element.linkGUID;
 	
@@ -1591,6 +1598,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize backgroundColor = _backgroundColor;
 @synthesize beforeContent = _beforeContent;
 @synthesize link = _link;
+@synthesize linkTarget = _linkTarget;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
 @synthesize textAttachment = _textAttachment;

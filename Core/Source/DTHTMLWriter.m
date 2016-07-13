@@ -588,7 +588,8 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 				spanURL = [NSURL URLWithString:[attributes objectForKey:DTLinkAttribute]];
 			}
 			
-			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
+            NSString *spanLinkTarget = [attributes objectForKey:DTLinkTargetAttribute];
+            NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
 			
 			BOOL isFirstPartOfHyperlink = NO;
 			BOOL isLastPartOfHyperlink = NO;
@@ -613,6 +614,10 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 				{
 					[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
 				}
+                
+                if (spanLinkTarget) {
+                    [linkLevelHTMLAttributes setObject:spanLinkTarget forKey:@"target"];
+                }
 				
 				// add anchor name if present
 				if (spanAnchorName)

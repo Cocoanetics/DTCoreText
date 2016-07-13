@@ -234,7 +234,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				
 				// if there is no attachment then the effectiveRangeOfAttachment contains the range until the next attachment
 				NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfLink inRange:effectiveRangeOfAttachment];
-				
+                
                 //
                 NSString *anchor = [layoutString attribute:DTAnchorAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfAnchor inRange:effectiveRangeOfAttachment];
                 
@@ -387,10 +387,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
                             {
                                 NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
                                 
+                                NSString *linkTarget = [attributes objectForKey:DTLinkTargetAttribute];
                                 NSString *guid = [attributes objectForKey:DTGUIDAttribute];
-                                
-                                
-                                newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
+
+                                newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL urlTarget:linkTarget identifier:guid frame:frameForSubview];
                             }
                             else if (_delegateFlags.delegateSupportsGenericCustomViews)
                             {
@@ -933,7 +933,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	_delegate = delegate;
 	
 	_delegateFlags.delegateSupportsCustomViewsForAttachments = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttachment:frame:)];
-    _delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:identifier:frame:)];
+    _delegateFlags.delegateSupportsCustomViewsForLinks = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForLink:urlTarget:identifier:frame:)];
     _delegateFlags.delegateSupportsCustomViewsForAnchors = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAnchor:frame:)];
 	_delegateFlags.delegateSupportsGenericCustomViews = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAttributedString:frame:)];
 	_delegateFlags.delegateSupportsNotificationBeforeDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:willDrawLayoutFrame:inContext:)];
