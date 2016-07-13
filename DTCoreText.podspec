@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.8.0'
+  spec.version      = '2.0.0'
 
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/artifacts/DTCoreText.git', :tag => spec.version.to_s }
