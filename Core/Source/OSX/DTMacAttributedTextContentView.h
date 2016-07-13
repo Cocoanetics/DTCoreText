@@ -8,11 +8,11 @@
 
 // not yet ported iOS code
 #define DT_MACPORT_FEATURE_ATTACHMENT_IMPLEMENTED 0
-#define DT_MACPORT_FEATURE_TILEDLAYER_IMPLEMENTED 0
+#define DT_MACPORT_FEATURE_TILEDLAYER_IMPLEMENTED 1
 #define DT_MACPORT_FEATURE_LAYERCLASS_IMPLEMENTED 0
-#define DT_MACPORT_FEATURE_SUPPORT_FOR_CUSTOM_LINKVIEWS_IMPLEMENTED 0
+#define DT_MACPORT_FEATURE_SUPPORT_FOR_CUSTOM_LINKVIEWS_IMPLEMENTED 1
 #define DT_MACPORT_FEATURE_SUPPORT_FOR_CUSTOM_SUBVIEWS_IMPLEMENTED 0
-#define DT_MACPORT_FEATURE_SUPPORT_FOR_LAYOUT_SUBVIEWS_IMPLEMENTED 0 // maybe not needed at all -> todo: check if needed
+#define DT_MACPORT_FEATURE_SUPPORT_FOR_LAYOUT_SUBVIEWS_IMPLEMENTED 1 // maybe not needed at all -> todo: check if needed
 
 #import <Cocoa/Cocoa.h>
 
@@ -103,6 +103,11 @@ extern NSString * const DTMacAttributedTextContentViewDidFinishLayoutNotificatio
  */
 - (NSView *)attributedTextContentView:(DTMacAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
+/**
+ @returns The view that should represent the given anchor
+ */
+
+- (NSView *)attributedTextContentView:(DTMacAttributedTextContentView *)attributedTextContentView viewForAnchor:(NSString *)anchor frame:(CGRect)frame;
 
 /**
  Provide generic views for all attachments.

@@ -457,6 +457,10 @@
 		}
 		
 		_currentTag.link = link;
+        
+        NSString *cleanTargetString = [[_currentTag attributeForKey:@"target"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        cleanTargetString = [cleanTargetString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        _currentTag.linkTarget = cleanTargetString;
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];

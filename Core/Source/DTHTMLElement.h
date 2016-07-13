@@ -29,6 +29,7 @@
 	DTTextAttachment *_textAttachment;
 	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
 	NSURL *_link;
+    NSString *_linkTarget;
 	NSString *_anchorName;
 	
 	DTColor *_textColor;
@@ -69,7 +70,7 @@
 	NSMutableArray *_children;
 	
 	NSDictionary *_styles;
-	
+    
 	BOOL _didOutput;
 	
 	// margins/padding
@@ -143,6 +144,11 @@
  Hyperlink URL of the receiver, or `nil` if there is no hyperlink
  */
 @property (nonatomic, copy) NSURL *link;
+
+/**
+ Target, used by hyperlinks
+ */
+@property (nonatomic, copy) NSString *linkTarget;
 
 /**
  Anchor name, used by hyperlinks, of the receiver that can be used to scroll to.

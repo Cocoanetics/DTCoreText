@@ -86,11 +86,12 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  
  @param attributedTextContentView The content view asking for a custom view
  @param url The `NSURL` of the hyperlink
+ @param urlTarget The target where to open the hyperlink (http://www.w3schools.com/tags/tag_a.asp: _blank, _parent, _self, _top, ...)
  @param identifier An identifier that uniquely identifies the hyperlink within the document
  @param frame The frame that the view should use to fit on top of the space reserved for the attachment
  @returns The view that should represent the given hyperlink
  */
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
+- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url urlTarget:(NSString*)urlTarget identifier:(NSString *)identifier frame:(CGRect)frame;
 
 /**
  @returns The view that should represent the given anchor

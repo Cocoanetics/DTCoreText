@@ -19,6 +19,15 @@
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
 #endif
 
+@interface MarkView : NSView
+@property (readwrite) NSInteger tag;
+@end
+
+@implementation MarkView
+@synthesize tag = _tag;
+@end
+
+
 NSString * const DTMacAttributedTextContentViewDidFinishLayoutNotification = @"DTMacAttributedTextContentViewDidFinishLayoutNotification";
 
 @interface DTMacAttributedTextContentView ()
@@ -45,6 +54,7 @@ NSString * const DTMacAttributedTextContentViewDidFinishLayoutNotification = @"D
 	{
 		unsigned int delegateSupportsCustomViewsForAttachments:1;
 		unsigned int delegateSupportsCustomViewsForLinks:1;
+        unsigned int delegateSupportsCustomViewsForAnchors:1;
 		unsigned int delegateSupportsGenericCustomViews:1;
 		unsigned int delegateSupportsNotificationBeforeDrawing:1;
 		unsigned int delegateSupportsNotificationAfterDrawing:1;
@@ -108,23 +118,13 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 	CATiledLayer *layer = (id)self.layer;
 	if ([layer isKindOfClass:[CATiledLayer class]])
 	{
-		// get larger dimension and multiply by scale
-		UIScreen *mainScreen = [UIScreen mainScreen];
-		CGFloat largerDimension = MAX(mainScreen.applicationFrame.size.width, mainScreen.applicationFrame.size.height);
-		CGFloat scale = mainScreen.scale;
-		
-		// this way tiles cover entire screen regardless of orientation or scale
-		CGSize tileSize = CGSizeMake(largerDimension * scale, largerDimension * scale);
+        CGSize tileSize = CGSizeMake(1024, 1024);
 		layer.tileSize = tileSize;
 		
 		_isTiling = YES;
 	}
 #endif
 }
-
-//- (CALayer *)makeBackingLayer {
-//	return [CATiledLayer layer];
-//}
 
 /*- (void)viewDidChangeBackingProperties
 {
@@ -220,7 +220,8 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 			
 			if (runRange.location>=skipRunsBeforeLocation)
 			{
-				// see if it's a link
+                // see if it's a link or anchor
+                NSRange effectiveRangeOfAnchor;
 				NSRange effectiveRangeOfLink;
 				NSRange effectiveRangeOfAttachment;
 				
@@ -230,8 +231,18 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 				// if there is no attachment then the effectiveRangeOfAttachment contains the range until the next attachment
 				NSURL *linkURL = [layoutString attribute:DTLinkAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfLink inRange:effectiveRangeOfAttachment];
 				
-				// avoid chaining together glyph runs for an attachment
-				if (linkURL && !attachment)
+                NSString *anchor = [layoutString attribute:DTAnchorAttribute atIndex:runRange.location longestEffectiveRange:&effectiveRangeOfAnchor inRange:effectiveRangeOfAttachment];
+                
+                if (anchor) {
+                    // compute bounding frame over potentially multiple (chinese) glyphs
+                    skipRunsBeforeLocation = effectiveRangeOfAnchor.location+effectiveRangeOfAnchor.length;
+                    
+                    // make one anchor view for all glyphruns in this line
+                    frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRangeOfAnchor];
+                    runRange = effectiveRangeOfAnchor;
+                }
+                // avoid chaining together glyph runs for an attachment
+                else if (linkURL && !attachment)
 				{
 					// compute bounding frame over potentially multiple (chinese) glyphs
 					skipRunsBeforeLocation = effectiveRangeOfLink.location+effectiveRangeOfLink.length;
@@ -262,9 +273,10 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 				if ((frameForSubview.size.width<=0 || frameForSubview.size.height<=0) && !attachment)
 				{
 					continue;
-				}
-								
-				// offset layout if necessary
+                }
+                
+                
+                // offset layout if necessary
 				if (!CGPointEqualToPoint(_layoutOffset, CGPointZero))
 				{
 					frameForSubview.origin.x += _layoutOffset.x;
@@ -343,57 +355,71 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 #endif
 				
 #if DT_MACPORT_FEATURE_SUPPORT_FOR_CUSTOM_LINKVIEWS_IMPLEMENTED
-				if (linkURL && (_delegateFlags.delegateSupportsCustomViewsForLinks || _delegateFlags.delegateSupportsGenericCustomViews))
-				{
-					UIView *existingLinkView = [self.customViewsForLinksIndex objectForKey:indexKey];
-					
-					// make sure that the frame height is no less than the line height for hyperlinks
-					if (frameForSubview.size.height < oneLine.frame.size.height)
-					{
-						frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
-						frameForSubview.size.height = ceil(oneLine.frame.size.height);
-					}
-					
-					if (existingLinkView)
-					{
-						existingLinkView.frame = frameForSubview;
-						existingLinkView.hidden = NO;
-					}
-					else
-					{
-						UIView *newCustomLinkView = nil;
-						
-						// make sure that the frame height is no less than the line height for hyperlinks
-						if (frameForSubview.size.height < oneLine.frame.size.height)
-						{
-							frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
-							frameForSubview.size.height = ceil(oneLine.frame.size.height);
-						}
-						
-						if (_delegateFlags.delegateSupportsCustomViewsForLinks)
-						{
-							NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
-							
-							NSString *guid = [attributes objectForKey:DTGUIDAttribute];
-							newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
-						}
-						else if (_delegateFlags.delegateSupportsGenericCustomViews)
-						{
-							NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange];
-							newCustomLinkView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
-						}
-						
-						// delegate responsible to set frame
-						if (newCustomLinkView)
-						{
-							newCustomLinkView.tag = runRange.location;
-							[self addSubview:newCustomLinkView];
-							
-							[self.customViews addObject:newCustomLinkView];
-							[self.customViewsForLinksIndex setObject:newCustomLinkView forKey:indexKey];
-						}
-					}
-				}
+                NSNumber *indexKey = [NSNumber numberWithInteger:runRange.location];
+                
+                if ((linkURL || anchor) && (_delegateFlags.delegateSupportsCustomViewsForAnchors || _delegateFlags.delegateSupportsCustomViewsForLinks || _delegateFlags.delegateSupportsGenericCustomViews))
+                {
+                    NSView *existingLinkView = [self.customViewsForLinksIndex objectForKey:indexKey];
+                    
+                    // make sure that the frame height is no less than the line height for hyperlinks
+                    if (frameForSubview.size.height < oneLine.frame.size.height)
+                    {
+                        frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
+                        frameForSubview.size.height = ceil(oneLine.frame.size.height);
+                    }
+                    
+                    if (existingLinkView)
+                    {
+                        existingLinkView.frame = frameForSubview;
+                        existingLinkView.hidden = NO;
+                    }
+                    else
+                    {
+                        NSView *newCustomLinkView = nil;
+                        
+                        // make sure that the frame height is no less than the line height for hyperlinks
+                        if (frameForSubview.size.height < oneLine.frame.size.height)
+                        {
+                            frameForSubview.origin.y = trunc(oneLine.frame.origin.y);
+                            frameForSubview.size.height = ceil(oneLine.frame.size.height);
+                        }
+                        
+                        if (linkURL) {
+                            // handle url
+                            if (_delegateFlags.delegateSupportsCustomViewsForLinks)
+                            {
+                                NSDictionary *attributes = [layoutString attributesAtIndex:runRange.location effectiveRange:NULL];
+                                
+                                NSString *guid = [attributes objectForKey:DTGUIDAttribute];
+                                
+                                
+                                newCustomLinkView = [_delegate attributedTextContentView:self viewForLink:linkURL identifier:guid frame:frameForSubview];
+                            }
+                            else if (_delegateFlags.delegateSupportsGenericCustomViews)
+                            {
+                                NSAttributedString *string = [layoutString attributedSubstringFromRange:runRange];
+                                newCustomLinkView = [_delegate attributedTextContentView:self viewForAttributedString:string frame:frameForSubview];
+                            }
+                        } else {
+                            // handle anchor
+                            if (_delegateFlags.delegateSupportsCustomViewsForAnchors)
+                            {
+                                newCustomLinkView = [_delegate attributedTextContentView:self viewForAnchor:anchor frame:frameForSubview];
+                            }
+                        }
+                        
+                        // delegate responsible to set frame
+                        if (newCustomLinkView)
+                        {
+                            // newCustomLinkView.tag = runRange.location; <-- "tag" is readonly on MacOS X
+                            ((MarkView *)newCustomLinkView).tag = runRange.location;
+                            [self addSubview:newCustomLinkView];
+                            
+                            [self.customViews addObject:newCustomLinkView];
+                            [self.customViewsForLinksIndex setObject:newCustomLinkView forKey:indexKey];
+                        }
+                    }
+                }
 #endif
 			}
 		}
@@ -403,9 +429,9 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 }
 
 #if DT_MACPORT_FEATURE_SUPPORT_FOR_LAYOUT_SUBVIEWS_IMPLEMENTED
-- (void)layoutSubviews
+- (void)layout
 {
-	[super layoutSubviews];
+	[super layout];
 	
 	if (!_isTiling && (self.bounds.size.width>1024.0 || self.bounds.size.height>1024.0))
 	{
@@ -527,7 +553,7 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 #if DT_MACPORT_FEATURE_SUPPORT_FOR_CUSTOM_LINKVIEWS_IMPLEMENTED
 	NSArray *linkViews = [customViewsForLinksIndex allValues];
 	
-	for (UIView *customView in linkViews)
+	for (NSView *customView in linkViews)
 	{
 		[customView removeFromSuperview];
 		[customViews removeObject:customView];
@@ -952,7 +978,8 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 	_delegateFlags.delegateSupportsNotificationBeforeDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:willDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationAfterDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:didDrawLayoutFrame:inContext:)];
 	_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing = [_delegate respondsToSelector:@selector(attributedTextContentView:shouldDrawBackgroundForTextBlock:frame:context:forLayoutFrame:)];
-	
+    _delegateFlags.delegateSupportsCustomViewsForAnchors = [_delegate respondsToSelector:@selector(attributedTextContentView:viewForAnchor:frame:)];
+        
 	if (!_delegateFlags.delegateSupportsCustomViewsForLinks && !_delegateFlags.delegateSupportsGenericCustomViews)
 	{
 		[self removeAllCustomViewsForLinks];

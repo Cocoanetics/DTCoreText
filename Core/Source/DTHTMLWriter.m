@@ -574,14 +574,22 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 		
 		__block NSMutableDictionary *linkLevelHTMLAttributes = nil;
 
-        __block NSString *plainSubString = nil; // alwas holds the last plain text from enumarated attributes
+		__block NSString *plainSubString = nil; // alwas holds the last plain text from enumarated attributes
 		
 		// ----- SPAN enumeration
-        
+		
 		[_attributedString enumerateAttributesInRange:paragraphRange options:0 usingBlock:^(NSDictionary *attributes, NSRange spanRange, BOOL *stopEnumerateAttributes) {
-
-			NSURL *spanURL = [attributes objectForKey:DTLinkAttribute];
-			NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
+			
+			NSURL *spanURL = nil;
+			
+			if([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSURL class]]) {
+				spanURL = [attributes objectForKey:DTLinkAttribute];
+			} else if ([[attributes objectForKey:DTLinkAttribute] isKindOfClass:[NSString class]]) {
+				spanURL = [NSURL URLWithString:[attributes objectForKey:DTLinkAttribute]];
+			}
+			
+            NSString *spanLinkTarget = [attributes objectForKey:DTLinkTargetAttribute];
+            NSString *spanAnchorName = [attributes objectForKey:DTAnchorAttribute];
 			
 			BOOL isFirstPartOfHyperlink = NO;
 			BOOL isLastPartOfHyperlink = NO;
@@ -606,6 +614,10 @@ NSString *kOptionDTHTMLEscapeXML = @"DTHTMLEscapeXML";
 				{
 					[linkLevelHTMLAttributes setObject:[spanURL relativeString] forKey:@"href"];
 				}
+                
+                if (spanLinkTarget) {
+                    [linkLevelHTMLAttributes setObject:spanLinkTarget forKey:@"target"];
+                }
 				
 				// add anchor name if present
 				if (spanAnchorName)
