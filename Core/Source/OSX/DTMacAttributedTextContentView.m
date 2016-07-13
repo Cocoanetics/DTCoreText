@@ -14,7 +14,6 @@
 #import "DTDictationPlaceholderTextAttachment.h"
 #import "DTBlockFunctions.h"
 #import "DTTiledLayerWithoutFade.h"
-#import "STTextFrameAnimationDirector.h"
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
