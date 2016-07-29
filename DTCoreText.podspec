@@ -5,6 +5,7 @@ Pod::Spec.new do |spec|
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
   spec.source_files = 'Core/Source/*.{h,m,c}'
+  spec.ios.source_files = 'Core/Source/*.{h,m,c}'
   spec.dependency 'DTFoundation/Core', '~>1.7.5'
   spec.dependency 'DTFoundation/UIKit', '~>1.7.5'
   spec.dependency 'DTFoundation/DTHTMLParser', '~>1.7.5'

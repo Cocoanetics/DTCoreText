@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "94D24B081D4AFE7800C7F33C"
-               BuildableName = "DTCoreText (tvOS).framework"
+               BuildableName = "DTCoreText.framework"
                BlueprintName = "DTCoreText (tvOS)"
                ReferencedContainer = "container:DTCoreText.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "94D24B081D4AFE7800C7F33C"
-            BuildableName = "DTCoreText (tvOS).framework"
+            BuildableName = "DTCoreText.framework"
             BlueprintName = "DTCoreText (tvOS)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "94D24B081D4AFE7800C7F33C"
-            BuildableName = "DTCoreText (tvOS).framework"
+            BuildableName = "DTCoreText.framework"
             BlueprintName = "DTCoreText (tvOS)"
             ReferencedContainer = "container:DTCoreText.xcodeproj">
          </BuildableReference>

@@ -36,6 +36,12 @@
 		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
 		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
+		948723C91D4B130D00274167 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 948723B11D4B130000274167 /* DTWebVideoView.h */; };
+		948723CA1D4B130E00274167 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 948723B11D4B130000274167 /* DTWebVideoView.h */; };
+		948723CB1D4B130F00274167 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 948723B11D4B130000274167 /* DTWebVideoView.h */; };
+		948723CC1D4B131A00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
+		948723CD1D4B131B00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
+		948723CE1D4B131C00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
 		94D24B0C1D4AFE7800C7F33C /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		94D24B0D1D4AFE7800C7F33C /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		94D24B0E1D4AFE7800C7F33C /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
@@ -302,8 +308,6 @@
 		A788C9AC14863E8700E1AFD9 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92F14863E8700E1AFD9 /* DTLinkButton.m */; };
 		A788C9B814863E8700E1AFD9 /* DTTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93414863E8700E1AFD9 /* DTTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9BB14863E8700E1AFD9 /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93514863E8700E1AFD9 /* DTTextAttachment.m */; };
-		A788C9BD14863E8700E1AFD9 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93614863E8700E1AFD9 /* DTWebVideoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A788C9C014863E8700E1AFD9 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93714863E8700E1AFD9 /* DTWebVideoView.m */; };
 		A788C9C714863E8700E1AFD9 /* NSAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A788C9CA14863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */; };
 		A788C9D114863E8700E1AFD9 /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -547,8 +551,6 @@
 		A7B1304E1B4B25BF0014E109 /* DTAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */; };
 		A7B1304F1B4B25BF0014E109 /* DTLazyImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B130501B4B25BF0014E109 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */; };
-		A7B130511B4B25BF0014E109 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93614863E8700E1AFD9 /* DTWebVideoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7B130521B4B25BF0014E109 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93714863E8700E1AFD9 /* DTWebVideoView.m */; };
 		A7B130531B4B25BF0014E109 /* DTLinkButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92E14863E8700E1AFD9 /* DTLinkButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7B130541B4B25BF0014E109 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92F14863E8700E1AFD9 /* DTLinkButton.m */; };
 		A7B130551B4B25E30014E109 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -669,7 +671,6 @@
 		A7F7EF871573603100F5A4D0 /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */; };
 		A7F7EF881573603100F5A4D0 /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92F14863E8700E1AFD9 /* DTLinkButton.m */; };
 		A7F7EF891573603100F5A4D0 /* DTTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93514863E8700E1AFD9 /* DTTextAttachment.m */; };
-		A7F7EF8A1573603100F5A4D0 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93714863E8700E1AFD9 /* DTWebVideoView.m */; };
 		A7F7EF8B1573603100F5A4D0 /* NSAttributedString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */; };
 		A7F7EF8C1573603100F5A4D0 /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
 		A7F7EF8D1573603100F5A4D0 /* NSCharacterSet+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C94114863E8700E1AFD9 /* NSCharacterSet+HTML.m */; };
@@ -705,7 +706,6 @@
 		A7F7EFB21573603100F5A4D0 /* DTAttributedTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB31573603100F5A4D0 /* DTLazyImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB41573603100F5A4D0 /* DTLinkButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92E14863E8700E1AFD9 /* DTLinkButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7F7EFB51573603100F5A4D0 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93614863E8700E1AFD9 /* DTWebVideoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFB71573603100F5A4D0 /* NSString+Paragraphs.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C94A14863E8700E1AFD9 /* NSString+Paragraphs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFBA1573603100F5A4D0 /* DTCoreText-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = A788CA1514863EC600E1AFD9 /* DTCoreText-Prefix.pch */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7F7EFBB1573603100F5A4D0 /* DTCoreTextConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A9C14CC565F00A8CCDE /* DTCoreTextConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1126,6 +1126,8 @@
 		5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLayoutDemoViewController.m; sourceTree = "<group>"; };
 		5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLayoutDemoViewController.h; sourceTree = "<group>"; };
 		944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSListStyleTest.m; sourceTree = "<group>"; };
+		948723B11D4B130000274167 /* DTWebVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DTWebVideoView.h; path = iOS/DTWebVideoView.h; sourceTree = "<group>"; };
+		948723B21D4B130000274167 /* DTWebVideoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DTWebVideoView.m; path = iOS/DTWebVideoView.m; sourceTree = "<group>"; };
 		94D24B961D4AFE7800C7F33C /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCoder+DTCompatibility.h"; sourceTree = "<group>"; };
 		94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCoder+DTCompatibility.m"; sourceTree = "<group>"; };
@@ -1241,8 +1243,6 @@
 		A788C92F14863E8700E1AFD9 /* DTLinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLinkButton.m; sourceTree = "<group>"; };
 		A788C93414863E8700E1AFD9 /* DTTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTextAttachment.h; sourceTree = "<group>"; };
 		A788C93514863E8700E1AFD9 /* DTTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTTextAttachment.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		A788C93614863E8700E1AFD9 /* DTWebVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTWebVideoView.h; sourceTree = "<group>"; };
-		A788C93714863E8700E1AFD9 /* DTWebVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTWebVideoView.m; sourceTree = "<group>"; };
 		A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+HTML.h"; sourceTree = "<group>"; };
 		A788C93B14863E8700E1AFD9 /* NSAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+HTML.m"; sourceTree = "<group>"; };
 		A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringRunDelegates.h; sourceTree = "<group>"; };
@@ -1836,8 +1836,8 @@
 				A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */,
 				A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */,
 				A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */,
-				A788C93614863E8700E1AFD9 /* DTWebVideoView.h */,
-				A788C93714863E8700E1AFD9 /* DTWebVideoView.m */,
+				948723B11D4B130000274167 /* DTWebVideoView.h */,
+				948723B21D4B130000274167 /* DTWebVideoView.m */,
 				A788C92E14863E8700E1AFD9 /* DTLinkButton.h */,
 				A788C92F14863E8700E1AFD9 /* DTLinkButton.m */,
 			);
@@ -2147,9 +2147,9 @@
 				A788C9A414863E8700E1AFD9 /* DTLazyImageView.h in Headers */,
 				94DE4B4518B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A788C9A914863E8700E1AFD9 /* DTLinkButton.h in Headers */,
-				A788C9BD14863E8700E1AFD9 /* DTWebVideoView.h in Headers */,
 				A788C9EF14863E8700E1AFD9 /* NSString+Paragraphs.h in Headers */,
 				A788CA1814863EC600E1AFD9 /* DTCoreText-Prefix.pch in Headers */,
+				948723CB1D4B130F00274167 /* DTWebVideoView.h in Headers */,
 				A7949A9E14CC566100A8CCDE /* DTCoreTextConstants.h in Headers */,
 				A7F5671514D841EA00D1F167 /* NSString+CSS.h in Headers */,
 				A7F5672814D8506C00D1F167 /* NSAttributedString+SmallCaps.h in Headers */,
@@ -2237,7 +2237,6 @@
 				A79BA6A51B46A2660086C2F6 /* DTCoreTextLayoutLine.h in Headers */,
 				A79BA6931B46A25A0086C2F6 /* DTImageTextAttachment.h in Headers */,
 				A79BA6AF1B46A2700086C2F6 /* NSAttributedString+SmallCaps.h in Headers */,
-				A7B130511B4B25BF0014E109 /* DTWebVideoView.h in Headers */,
 				A79BA6AB1B46A2700086C2F6 /* NSAttributedString+HTML.h in Headers */,
 				A79BA6871B46A2530086C2F6 /* DTColor+Compatibility.h in Headers */,
 				A79BA66B1B46A24A0086C2F6 /* NSDictionary+DTCoreText.h in Headers */,
@@ -2248,6 +2247,7 @@
 				A79BA6791B46A24F0086C2F6 /* DTAnchorHTMLElement.h in Headers */,
 				A79BA69B1B46A2660086C2F6 /* DTCoreTextFontCollection.h in Headers */,
 				A79BA6BB1B46A2700086C2F6 /* NSMutableString+HTML.h in Headers */,
+				948723C91D4B130D00274167 /* DTWebVideoView.h in Headers */,
 				A7B130551B4B25E30014E109 /* DTAccessibilityElement.h in Headers */,
 				A7B1304F1B4B25BF0014E109 /* DTLazyImageView.h in Headers */,
 				A79BA65E1B46A24A0086C2F6 /* DTCoreTextConstants.h in Headers */,
@@ -2286,7 +2286,6 @@
 				A7F7EFB31573603100F5A4D0 /* DTLazyImageView.h in Headers */,
 				94DE4B4618B5968D00F0BA6D /* NSCoder+DTCompatibility.h in Headers */,
 				A7F7EFB41573603100F5A4D0 /* DTLinkButton.h in Headers */,
-				A7F7EFB51573603100F5A4D0 /* DTWebVideoView.h in Headers */,
 				A7F7EFB71573603100F5A4D0 /* NSString+Paragraphs.h in Headers */,
 				A7F7EFBA1573603100F5A4D0 /* DTCoreText-Prefix.pch in Headers */,
 				A7F7EFBB1573603100F5A4D0 /* DTCoreTextConstants.h in Headers */,
@@ -2313,6 +2312,7 @@
 				A7EB84CD168B9A8500D686B7 /* DTTextAttachmentHTMLElement.h in Headers */,
 				A7EB84D7168B9B1300D686B7 /* DTHorizontalRuleHTMLElement.h in Headers */,
 				A7EB84E7168C657100D686B7 /* DTListItemHTMLElement.h in Headers */,
+				948723CA1D4B130E00274167 /* DTWebVideoView.h in Headers */,
 				A7EB853B168FA33500D686B7 /* DTStylesheetHTMLElement.h in Headers */,
 				A060479416A8B5770000CAA1 /* DTAttributedLabel.h in Headers */,
 				A70E62D816C24905009B47BF /* DTDictationPlaceholderTextAttachment.h in Headers */,
@@ -3020,6 +3020,7 @@
 				A788C97A14863E8700E1AFD9 /* DTCoreTextFontDescriptor.m in Sources */,
 				A788C97F14863E8700E1AFD9 /* DTCoreTextGlyphRun.m in Sources */,
 				A788C98414863E8700E1AFD9 /* DTCoreTextLayouter.m in Sources */,
+				948723CE1D4B131C00274167 /* DTWebVideoView.m in Sources */,
 				A788C98914863E8700E1AFD9 /* DTCoreTextLayoutFrame.m in Sources */,
 				A788C98E14863E8700E1AFD9 /* DTCoreTextLayoutLine.m in Sources */,
 				A788C99314863E8700E1AFD9 /* DTCoreTextParagraphStyle.m in Sources */,
@@ -3029,7 +3030,6 @@
 				A788C9A714863E8700E1AFD9 /* DTLazyImageView.m in Sources */,
 				A788C9AC14863E8700E1AFD9 /* DTLinkButton.m in Sources */,
 				A788C9BB14863E8700E1AFD9 /* DTTextAttachment.m in Sources */,
-				A788C9C014863E8700E1AFD9 /* DTWebVideoView.m in Sources */,
 				A788C9CA14863E8700E1AFD9 /* NSAttributedString+HTML.m in Sources */,
 				A788C9D414863E8700E1AFD9 /* NSAttributedStringRunDelegates.m in Sources */,
 				A788C9D914863E8700E1AFD9 /* NSCharacterSet+HTML.m in Sources */,
@@ -3134,7 +3134,6 @@
 				A79BA6B21B46A2700086C2F6 /* NSAttributedStringRunDelegates.m in Sources */,
 				A7B130501B4B25BF0014E109 /* DTLazyImageView.m in Sources */,
 				A7B130541B4B25BF0014E109 /* DTLinkButton.m in Sources */,
-				A7B130521B4B25BF0014E109 /* DTWebVideoView.m in Sources */,
 				A79BA67C1B46A24F0086C2F6 /* DTBreakHTMLElement.m in Sources */,
 				A79BA6A41B46A2660086C2F6 /* DTCoreTextLayoutFrame+Cursor.m in Sources */,
 				A7B130481B4B25BF0014E109 /* DTAttributedLabel.m in Sources */,
@@ -3178,6 +3177,7 @@
 				A79BA6981B46A25A0086C2F6 /* DTObjectTextAttachment.m in Sources */,
 				A79BA67A1B46A24F0086C2F6 /* DTAnchorHTMLElement.m in Sources */,
 				A79BA6B01B46A2700086C2F6 /* NSAttributedString+SmallCaps.m in Sources */,
+				948723CC1D4B131A00274167 /* DTWebVideoView.m in Sources */,
 				A79BA6901B46A25A0086C2F6 /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A79BA68C1B46A2530086C2F6 /* DTColorFunctions.m in Sources */,
 				A79BA69A1B46A2600086C2F6 /* DTHTMLWriter.m in Sources */,
@@ -3215,7 +3215,6 @@
 				A7F7EF871573603100F5A4D0 /* DTLazyImageView.m in Sources */,
 				A7F7EF881573603100F5A4D0 /* DTLinkButton.m in Sources */,
 				A7F7EF891573603100F5A4D0 /* DTTextAttachment.m in Sources */,
-				A7F7EF8A1573603100F5A4D0 /* DTWebVideoView.m in Sources */,
 				A7F7EF8B1573603100F5A4D0 /* NSAttributedString+HTML.m in Sources */,
 				A7F7EF8C1573603100F5A4D0 /* NSAttributedStringRunDelegates.m in Sources */,
 				A7F7EF8D1573603100F5A4D0 /* NSCharacterSet+HTML.m in Sources */,
@@ -3246,6 +3245,7 @@
 				A060479816A8B5770000CAA1 /* DTAttributedLabel.m in Sources */,
 				A70E62DC16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62E516C24DDF009B47BF /* DTDictationPlaceholderView.m in Sources */,
+				948723CD1D4B131B00274167 /* DTWebVideoView.m in Sources */,
 				A700289F16FB220B00AFEDA3 /* DTAnchorHTMLElement.m in Sources */,
 				A7AE58131725374C00A9BF61 /* DTImageTextAttachment.m in Sources */,
 				A7AE581D1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */,
