@@ -542,53 +542,45 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	
 }
 
-- (NSString*)overrideFontName {
-    // forced font name takes precedence
-    if (_fontFamily && !_fontName) {
-        if (_smallCapsFeature) {
-            return [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
-        }
-        else {
-            return [DTCoreTextFontDescriptor overrideFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
-        }
-    }
-    return nil;
-}
-
-- (NSDictionary*)fontAttributesForOverrideFontName:(NSString*)overrideName {
-    if (overrideName) {
-        return [self fontAttributesWithOverrideFontName:overrideName];
-    } else {
-        return [self fontAttributes];
-    }
-    return nil;
-}
-
 - (CTFontRef)_findOrMakeMatchingFont
 {
+    
     CTFontDescriptorRef searchingFontDescriptor = NULL;
 	CTFontDescriptorRef matchingFontDescriptor = NULL;
+	CTFontRef matchingFont = NULL;
 	
 	// check the cache first
 	NSNumber *cacheKey = [NSNumber numberWithUnsignedInteger:[self hash]];
 	
 	CTFontRef cachedFont = (__bridge_retained CTFontRef)[_fontCache objectForKey:cacheKey];
-	if (cachedFont) {
+	
+	if (cachedFont)
+	{
 		return cachedFont;
 	}
 
-    CTFontRef matchingFont = NULL;
-
     // check the override table that has all preinstalled fonts plus the ones the user registered
-    NSString *overrideFontName = [self overrideFontName];
+    NSString *overrideName = nil;
     
+    if (_fontFamily && !_fontName) // forced font name takes precedence
+    {
+        if (_smallCapsFeature)
+        {
+            overrideName = [DTCoreTextFontDescriptor smallCapsFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
+        }
+        else
+        {
+            overrideName = [DTCoreTextFontDescriptor overrideFontNameforFontFamily:_fontFamily bold:self.boldTrait italic:self.italicTrait];
+        }
+    }
+       
     // if we use the chinese font cascade fix we cannot use fast method as it does not allow specifying the custom cascade list
     BOOL useFastFontCreation = !(_needsChineseFontCascadeFix && !self.boldTrait);
     
-    if (useFastFontCreation && (_fontName || overrideFontName))
+    if (useFastFontCreation && (_fontName || overrideName))
     {
         // we can create a font directly from the name
-        NSString *usedName = overrideFontName ?: _fontName;
+        NSString *usedName = overrideName?overrideName:_fontName;
         
         matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, _pointSize, NULL);
     }
@@ -596,7 +588,16 @@ static BOOL _needsChineseFontCascadeFix = NO;
     {
         // we need to search for a suitable font
         
-        NSDictionary *fontAttributes = [self fontAttributesForOverrideFontName:overrideFontName];
+        NSDictionary *fontAttributes;
+        
+        if (overrideName)
+        {
+            fontAttributes = [self fontAttributesWithOverrideFontName:overrideName];
+        }
+        else
+        {
+            fontAttributes = [self fontAttributes];
+        }
         
         // the descriptor we are looking for
         searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)fontAttributes);
@@ -644,16 +645,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
         }
     }
     
+    
 	// any search was successful
 	if (matchingFontDescriptor)
 	{
-        CTFontRef newFont = CTFontCreateWithFontDescriptor(matchingFontDescriptor, _pointSize, NULL);
-        
-        if (matchingFont != NULL) {
-            CFRelease(matchingFont);
-        }
-        
-        matchingFont = newFont;
+		matchingFont = CTFontCreateWithFontDescriptor(matchingFontDescriptor, _pointSize, NULL);
 		
 		CFRelease(matchingFontDescriptor);
 	}
@@ -670,10 +666,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		CGAffineTransform slantMatrix = { 1, 0, 0.25, 1, 0, 0 };
 		
 		CTFontRef slantedFont = CTFontCreateCopyWithAttributes(matchingFont, _pointSize, &slantMatrix, NULL);
-        
-        if (matchingFont != NULL) {
-            CFRelease(matchingFont);
-        }
+		CFRelease(matchingFont);
 		
 		matchingFont = slantedFont;
 	}
@@ -684,7 +677,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		[_fontCache setObject:(__bridge id)(matchingFont) forKey:cacheKey];
 	}
 	
-	return matchingFont; // returns a +1 reference
+	return matchingFont;	// returns a +1 reference
 }
 
 - (CTFontRef)newMatchingFont
