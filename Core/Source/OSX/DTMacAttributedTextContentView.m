@@ -126,20 +126,14 @@ static Class _layerClassToUseForDTMacAttributedTextContentView = nil;
 #endif
 }
 
-/*- (void)viewDidChangeBackingProperties
+#if DT_MACPORT_FEATURE_TILEDLAYER_IMPLEMENTED
+
+- (CALayer*)makeBackingLayer
 {
-    [super viewDidChangeBackingProperties];
-    [[self layer] setContentsScale:[[self window] backingScaleFactor]];
-    [[self layer] setNeedsDisplay];
-}*/
+    return [DTTiledLayerWithoutFade layer];
+}
 
-//- (void)mouseUp:(NSEvent *)theEvent {
-//    [self.nextResponder tryToPerform:_cmd with:theEvent];
-//}
-
-//- (void)mouseDown:(NSEvent *)theEvent {
-//    [self.nextResponder tryToPerform:_cmd with:theEvent];
-//}
+#endif
 
 - (BOOL)isFlipped {
 	return YES;
