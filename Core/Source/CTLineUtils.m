@@ -74,9 +74,23 @@ CFIndex getTruncationIndex(CTLineRef line, CTLineRef trunc)
     CFArrayRef lineRuns = CTLineGetGlyphRuns(line);
     CFIndex lineRunsCount = CFArrayGetCount(lineRuns);
     
-    CTRunRef lineLastRun = CFArrayGetValueAtIndex(lineRuns, lineRunsCount - truncCount - 1);
-    
-    CFRange lastRunRange = CTRunGetStringRange(lineLastRun);
-    
-    return lastRunRange.location = lastRunRange.length;
+		CFIndex index = lineRunsCount - truncCount - 1;
+
+		// If the index is negative, CFArrayGetValueAtIndex will crash on iOS 10 beta.
+		// We will just return 0 because on iOS 9, CFArrayGetValueAtIndex would have
+		// returned nil anyways and the return truncation index would be 0.
+		// Apple might have enabled an assert that only appears in the iOS 10 beta
+		// release, but we will just avoid passing invalid arguments just to be safe.
+		if (index < 0)
+		{
+			return 0;
+		}
+		else
+		{
+			CTRunRef lineLastRun = CFArrayGetValueAtIndex(lineRuns, index);
+
+			CFRange lastRunRange = CTRunGetStringRange(lineLastRun);
+
+			return lastRunRange.location = lastRunRange.length;
+		}
 }
