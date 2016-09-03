@@ -21,5 +21,10 @@ Pod::Spec.new do |spec|
      cd ./Core/Source
      /usr/bin/xxd -i default.css default.css.c
   CMD
+  
+  spec.subspec 'Extension' do |ap|
+    ap.source_files = 'Core/Source/*.{h,m,c}'
+    ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
+  end
 end
 
