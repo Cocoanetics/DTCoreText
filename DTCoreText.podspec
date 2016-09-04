@@ -16,18 +16,18 @@ Pod::Spec.new do |spec|
   spec.documentation_url = 'http://docs.cocoanetics.com/DTCoreText'
   spec.social_media_url = 'https://twitter.com/cocoanetics'
   spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
-  spec.default_subspec = 'Base'
+  spec.default_subspec = 'Core'
   spec.prepare_command = <<-CMD
      cd ./Core/Source
      /usr/bin/xxd -i default.css default.css.c
   CMD
 
-  spec.subspec 'Base' do |ap|
+  spec.subspec 'Core' do |ap|
     ap.source_files = 'Core/Source/*.{h,m,c}'
   end
   
   spec.subspec 'Extension' do |ap|
-    ap.dependency = 'DTCoreText/Base'
+    ap.dependency = 'DTCoreText/Core'
     ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
   end
 end
