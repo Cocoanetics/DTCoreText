@@ -4,7 +4,6 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, '4.3'
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
-  spec.source_files = 'Core/Source/*.{h,m,c}'
   spec.dependency 'DTFoundation/Core', '~>1.7.5'
   spec.dependency 'DTFoundation/UIKit', '~>1.7.5'
   spec.dependency 'DTFoundation/DTHTMLParser', '~>1.7.5'
@@ -17,15 +16,19 @@ Pod::Spec.new do |spec|
   spec.documentation_url = 'http://docs.cocoanetics.com/DTCoreText'
   spec.social_media_url = 'https://twitter.com/cocoanetics'
   spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
-  spec.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)' }
+  spec.default_subspec = 'Base'
   spec.prepare_command = <<-CMD
      cd ./Core/Source
      /usr/bin/xxd -i default.css default.css.c
   CMD
+
+  spec.subspec 'Base' do |ap|
+    ap.source_files = 'Core/Source/*.{h,m,c}'
+  end
   
   spec.subspec 'Extension' do |ap|
-    ap.source_files = 'Core/Source/*.{h,m,c}'
-#    ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
+    ap.dependency = 'DTCoreText/Base'
+    ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
   end
 end
 
