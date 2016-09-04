@@ -167,6 +167,13 @@
 			break;
 		}
 			
+		case DTCSSListStyleTypeUpperRoman:
+		{
+			typeString = @"upper-roman";
+			isOrdered = YES;
+			break;
+		}
+			
 		case DTCSSListStyleTypeLowerAlpha:
 		{
 			typeString = @"lower-alpha";
@@ -177,6 +184,13 @@
 		case DTCSSListStyleTypeLowerLatin:
 		{
 			typeString = @"lower-latin";
+			isOrdered = YES;
+			break;
+		}
+			
+		case DTCSSListStyleTypeLowerRoman:
+		{
+			typeString = @"lower-roman";
 			isOrdered = YES;
 			break;
 		}

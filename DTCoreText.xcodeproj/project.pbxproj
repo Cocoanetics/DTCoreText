@@ -28,6 +28,16 @@
 		36F8CE961593590500E9599C /* DTTextBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7081EA11503645F002987F1 /* DTTextBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECE1593AA3D00E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
+		3A4EA5291D475B29009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA52A1D475B29009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
+		3A4EA52B1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA52C1D475B2A009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
+		3A4EA52D1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA52E1D475B2A009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
+		3A4EA52F1D475B2B009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA5301D475B2B009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
+		3A4EA5321D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */; };
+		3A4EA5331D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */; };
 		4266937E1B56F60D00F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		426693AA1B56F91200F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		426693AC1B56F94300F9DBFC /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
@@ -974,6 +984,9 @@
 		1D6058910D05DD3D006BFB54 /* RTDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+RomanNumerals.h"; sourceTree = "<group>"; };
+		3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+RomanNumerals.m"; sourceTree = "<group>"; };
+		3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSNumberRomanNumeralsTest.m; sourceTree = "<group>"; };
 		4266937C1B56F60D00F9DBFC /* CTLineUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTLineUtils.h; sourceTree = "<group>"; };
 		4266937D1B56F60D00F9DBFC /* CTLineUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTLineUtils.m; sourceTree = "<group>"; };
 		5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AutoLayoutDemoViewController.xib; sourceTree = "<group>"; };
@@ -1727,6 +1740,8 @@
 				A7EB849C168B3E9D00D686B7 /* DTHTMLParserNode.m */,
 				A7EB84A5168B3EC000D686B7 /* DTHTMLParserTextNode.h */,
 				A7EB84A6168B3EC000D686B7 /* DTHTMLParserTextNode.m */,
+				3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */,
+				3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */,
 			);
 			name = "HTML Parsing";
 			sourceTree = "<group>";
@@ -1886,6 +1901,7 @@
 				A7C7AD0D14DA7C2C005A9C69 /* UIColorHTMLTest.h */,
 				A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */,
 				A7B14E20183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m */,
+				3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1926,6 +1942,7 @@
 				A7C7ACD614D924B1005A9C69 /* NSMutableString+HTML.h in Headers */,
 				A788C9D614863E8700E1AFD9 /* NSCharacterSet+HTML.h in Headers */,
 				A788C9E014863E8700E1AFD9 /* NSMutableAttributedString+HTML.h in Headers */,
+				3A4EA5291D475B29009222BF /* NSNumber+RomanNumerals.h in Headers */,
 				A788C9E514863E8700E1AFD9 /* NSScanner+HTML.h in Headers */,
 				A7B0B56914D9921F0091C2C9 /* NSAttributedString+DTCoreText.h in Headers */,
 				A788C9EA14863E8700E1AFD9 /* NSString+HTML.h in Headers */,
@@ -2009,6 +2026,7 @@
 				A79BA6AF1B46A2700086C2F6 /* NSAttributedString+SmallCaps.h in Headers */,
 				A7B130511B4B25BF0014E109 /* DTWebVideoView.h in Headers */,
 				A79BA6AB1B46A2700086C2F6 /* NSAttributedString+HTML.h in Headers */,
+				3A4EA52F1D475B2B009222BF /* NSNumber+RomanNumerals.h in Headers */,
 				A79BA6871B46A2530086C2F6 /* DTColor+Compatibility.h in Headers */,
 				A79BA66B1B46A24A0086C2F6 /* NSDictionary+DTCoreText.h in Headers */,
 				A79BA6811B46A24F0086C2F6 /* DTStylesheetHTMLElement.h in Headers */,
@@ -2076,6 +2094,7 @@
 				36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */,
 				A72D97601684B38B005F8BA5 /* DTCoreTextFunctions.h in Headers */,
 				A73AE7931686FC6A009CF8C3 /* DTHTMLWriter.h in Headers */,
+				3A4EA52B1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */,
 				A7EB849F168B3E9D00D686B7 /* DTHTMLParserNode.h in Headers */,
 				A7EB84A9168B3EC000D686B7 /* DTHTMLParserTextNode.h in Headers */,
 				A7EB84B9168B948000D686B7 /* DTBreakHTMLElement.h in Headers */,
@@ -2114,6 +2133,7 @@
 				E2262DE11638337D00BFDAD7 /* DTCSSStylesheet.h in Headers */,
 				E2262DE41638337D00BFDAD7 /* DTTextAttachment.h in Headers */,
 				E2262DE61638337D00BFDAD7 /* NSString+CSS.h in Headers */,
+				3A4EA52D1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */,
 				E2262DE81638337D00BFDAD7 /* DTCoreTextFontDescriptor.h in Headers */,
 				E2262DEA1638337D00BFDAD7 /* DTCoreTextParagraphStyle.h in Headers */,
 				E2262DEE1638338B00BFDAD7 /* NSString+Paragraphs.h in Headers */,
@@ -2737,6 +2757,7 @@
 				A70E62DB16C24905009B47BF /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A70E62E416C24DDF009B47BF /* DTDictationPlaceholderView.m in Sources */,
 				A700289E16FB220B00AFEDA3 /* DTAnchorHTMLElement.m in Sources */,
+				3A4EA52A1D475B29009222BF /* NSNumber+RomanNumerals.m in Sources */,
 				A7AE58121725374C00A9BF61 /* DTImageTextAttachment.m in Sources */,
 				A7AE581C1725381E00A9BF61 /* DTVideoTextAttachment.m in Sources */,
 				A7AE5826172538CC00A9BF61 /* DTIframeTextAttachment.m in Sources */,
@@ -2761,6 +2782,7 @@
 				A7B14E21183628EE0007CF27 /* DTCoreTextFontDescriptorTest.m in Sources */,
 				A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */,
 				A70ED6CE17F99BD9008A801A /* NSAttributedStringDTCoreTextTest.m in Sources */,
+				3A4EA5321D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */,
 				A73FC35B1834F5D200ACF490 /* DTCoreTextLayoutFrameTest.m in Sources */,
 				A7E3346E16837482002EFCBE /* DTCSSStylesheetTest.m in Sources */,
 				A7DBC1B71689BA20003F1D38 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
@@ -2790,6 +2812,7 @@
 				A78D9F921965B81A00C80986 /* NSStringParagraphTest.m in Sources */,
 				A78D9F861965B81A00C80986 /* DTHTMLAttributedStringBuilderTest.m in Sources */,
 				A78D9F8E1965B81A00C80986 /* NSDictionaryDTCoreText.m in Sources */,
+				3A4EA5331D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */,
 				A78D9F871965B81A00C80986 /* DTHTMLElementTest.m in Sources */,
 				A78D9F911965B81A00C80986 /* NSStringCSSTest.m in Sources */,
 				A78D9F901965B81A00C80986 /* NSStringHTMLTest.m in Sources */,
@@ -2860,6 +2883,7 @@
 				A79BA6741B46A24A0086C2F6 /* DTHTMLParserNode.m in Sources */,
 				A79BA69C1B46A2660086C2F6 /* DTCoreTextFontCollection.m in Sources */,
 				A79BA66E1B46A24A0086C2F6 /* NSString+CSS.m in Sources */,
+				3A4EA5301D475B2B009222BF /* NSNumber+RomanNumerals.m in Sources */,
 				A79BA6B81B46A2700086C2F6 /* NSScanner+HTML.m in Sources */,
 				A7B1305C1B4B25F00014E109 /* DTDictationPlaceholderView.m in Sources */,
 				A79BA6821B46A24F0086C2F6 /* DTStylesheetHTMLElement.m in Sources */,
@@ -2928,6 +2952,7 @@
 				A7AE58311725391900A9BF61 /* DTObjectTextAttachment.m in Sources */,
 				A7675E7D172EA24700C548CB /* NSAttributedString+DTDebug.m in Sources */,
 				A76D45191732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
+				3A4EA52C1D475B2A009222BF /* NSNumber+RomanNumerals.m in Sources */,
 				A04CF1A91738BC080036E735 /* DTAccessibilityElement.m in Sources */,
 				A04CF1AF1738BC080036E735 /* DTAccessibilityViewProxy.m in Sources */,
 				A04CF1B51738BC080036E735 /* DTCoreTextLayoutFrameAccessibilityElementGenerator.m in Sources */,
@@ -2964,6 +2989,7 @@
 				94DE4B4B18B5968D00F0BA6D /* NSCoder+DTCompatibility.m in Sources */,
 				E2262DFF163833AD00BFDAD7 /* DTTextBlock.m in Sources */,
 				A72D97651684B38B005F8BA5 /* DTCoreTextFunctions.m in Sources */,
+				3A4EA52E1D475B2A009222BF /* NSNumber+RomanNumerals.m in Sources */,
 				A73AE79B1686FC6A009CF8C3 /* DTHTMLWriter.m in Sources */,
 				A7EB84A4168B3E9D00D686B7 /* DTHTMLParserNode.m in Sources */,
 				A7EB84AE168B3EC000D686B7 /* DTHTMLParserTextNode.m in Sources */,

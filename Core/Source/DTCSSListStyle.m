@@ -11,9 +11,7 @@
 #import "DTCoreTextConstants.h"
 
 #import "NSScanner+HTML.h"
-//#import "NSString+HTML.h"
-
-
+#import "NSNumber+RomanNumerals.h"
 
 
 @interface DTCSSListStyle ()
@@ -119,7 +117,15 @@
 	else if ([string isEqualToString:@"lower-alpha"]||[string isEqualToString:@"lower-latin"])
 	{
 		return DTCSSListStyleTypeLowerAlpha;
-	}		
+	}
+	else if ([string isEqualToString:@"lower-roman"])
+	{
+		return DTCSSListStyleTypeLowerRoman;
+	}
+	else if ([string isEqualToString:@"upper-roman"])
+	{
+		return DTCSSListStyleTypeUpperRoman;
+	}
 	else if ([string isEqualToString:@"plus"])
 	{
 		return DTCSSListStyleTypePlus;
@@ -418,8 +424,19 @@
 		case DTCSSListStyleTypeUnderscore:
 		{
 			token = @"_";
+			break;
 		}
-	}	
+		case DTCSSListStyleTypeUpperRoman:
+		{
+			token = [NSString stringWithFormat:@"%@.",[@(counter) romanNumeral]];
+			break;
+		}
+		case DTCSSListStyleTypeLowerRoman:
+		{
+			token = [NSString stringWithFormat:@"%@.",[[@(counter) romanNumeral] lowercaseString]];
+			break;
+		}
+	}
 	
 	if (_position == DTCSSListStylePositionInside)
 	{

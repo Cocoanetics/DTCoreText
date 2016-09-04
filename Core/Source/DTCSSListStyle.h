@@ -57,6 +57,11 @@ typedef NS_ENUM(NSUInteger, DTCSSListStyleType)
     DTCSSListStyleTypeUpperLatin,
 	
 	/**
+	 Numbered list style with uppercase roman numbers
+	 */
+	DTCSSListStyleTypeUpperRoman,
+	
+	/**
 	 Numbered list style with lowercase letters
 	 */
     DTCSSListStyleTypeLowerAlpha,
@@ -67,6 +72,11 @@ typedef NS_ENUM(NSUInteger, DTCSSListStyleType)
     DTCSSListStyleTypeLowerLatin,
 	
 	/**
+	 Numbered list style with lowercase roman numbers
+	 */
+	DTCSSListStyleTypeLowerRoman,
+	
+	/**
 	 Plus bullet list style
 	 */
     DTCSSListStyleTypePlus,
@@ -75,7 +85,6 @@ typedef NS_ENUM(NSUInteger, DTCSSListStyleType)
 	 Underscore bullet list style
 	 */
     DTCSSListStyleTypeUnderscore,
-	
 	
 	/**
 	 Image bullet list style
