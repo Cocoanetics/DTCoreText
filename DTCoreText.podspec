@@ -21,7 +21,7 @@ Pod::Spec.new do |spec|
      /usr/bin/xxd -i default.css default.css.c
   CMD
 
-  spec.default_subspec = 'Core'
+  #spec.default_subspec = 'Core'
 
   spec.subspec 'Core' do |ap|
     ap.source_files = 'Core/Source/*.{h,m,c}'
