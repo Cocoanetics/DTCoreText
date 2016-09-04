@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   
   spec.subspec 'Extension' do |ap|
     ap.source_files = 'Core/Source/*.{h,m,c}'
-    ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
+#    ap.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DT_APP_EXTENSIONS=1' }
   end
 end
 
