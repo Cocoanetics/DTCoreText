@@ -23,9 +23,9 @@ Pod::Spec.new do |spec|
 
   #spec.default_subspec = 'Core'
 
-  spec.subspec 'Core' do |ap|
-    ap.source_files = 'Core/Source/*.{h,m,c}'
-  end
+  # spec.subspec 'Core' do |ap|
+  #   ap.source_files = 'Core/Source/*.{h,m,c}'
+  # end
   
   spec.subspec 'Extension' do |ap|
     ap.dependency = 'DTCoreText/Core'
