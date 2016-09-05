@@ -250,14 +250,14 @@
 	[self setTypeWithString:[styles objectForKey:@"list-style-type"]];
 	[self setPositionWithString:[styles objectForKey:@"list-style-position"]];
 	
-	NSString *tmpStr =  [styles objectForKey:@"list-style-image"];
-	
-	if (tmpStr)
+	NSObject *tmpValue = [styles objectForKey:@"list-style-image"];
+
+	if ([tmpValue isKindOfClass:NSString.class])
 	{
 		// extract just the name
 		
 		NSString *urlString;
-		NSScanner *scanner = [NSScanner scannerWithString:tmpStr];
+		NSScanner *scanner = [NSScanner scannerWithString:(NSString *)tmpValue];
 		
 		if ([scanner scanCSSURL:&urlString])
 		{
