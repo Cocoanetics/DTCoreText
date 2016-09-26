@@ -10,7 +10,7 @@
 @class DTTextBlock;
 
 /**
- Convenience Methods that mimick similar methods available on Mac
+ Convenience Methods that mimics similar methods available on Mac
  */
 @interface NSAttributedString (DTCoreText)
 
@@ -95,7 +95,7 @@
  */
 
 /**
- Encodes the receiver into a generic HTML prepresentation.
+ Encodes the receiver into a generic HTML representation.
  
  @returns An HTML string.
  */

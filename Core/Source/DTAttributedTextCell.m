@@ -88,7 +88,7 @@
 	
 	_containingTableView = [self _findContainingTableView];
 	
-	// on < iOS 7 we need to make the background translucent to avoid artefacts at rounded edges
+	// on < iOS 7 we need to make the background translucent to avoid artifacts at rounded edges
 	if (_containingTableView.style == UITableViewStyleGrouped)
 	{
 		if (NSFoundationVersionNumber < DTNSFoundationVersionNumber_iOS_7_0)
@@ -151,7 +151,7 @@
 			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
 		}
-			
+#if TARGET_OS_IOS
 		case UITableViewCellAccessoryDetailDisclosureButton:
 		{
 			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
@@ -165,7 +165,7 @@
 			break;
 		}
 #endif
-			
+#endif	
 		case UITableViewCellAccessoryNone:
 		{
 			break;
@@ -233,7 +233,7 @@
 {
 	if (!_attributedTextContextView)
 	{
-		// don't know size jetzt because there's no string in it
+		// don't know size because there's no string in it
 		_attributedTextContextView = [[DTAttributedTextContentView alloc] initWithFrame:self.contentView.bounds];
 		
 		_attributedTextContextView.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);

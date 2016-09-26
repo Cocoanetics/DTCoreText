@@ -177,7 +177,7 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:_anchorName forKey:DTAnchorAttribute];
 	}
 	
-	// add strikout if applicable
+	// add strikeout if applicable
 	if (_strikeOut)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -1137,7 +1137,7 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	// if there is a text attachment we transfer the aligment we got
+	// if there is a text attachment we transfer the alignment we got
 	_textAttachment.verticalAlignment = _textAttachmentAlignment;
 	
 	id shadow = [styles objectForKey:@"text-shadow"];
@@ -1364,7 +1364,7 @@ NSDictionary *_classesForNames = nil;
 		if (hasMargins)
 		{
 			self.paragraphStyle.paragraphSpacing = _margins.bottom;
-			
+			self.paragraphStyle.paragraphSpacingBefore = _margins.top;
 			// we increase the inherited values for the time being
 			self.paragraphStyle.headIndent += _margins.left;
 			self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;

@@ -341,8 +341,8 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 
 
 /**
- Switches on the debug drawing mode where individual glph runs, baselines, et ceter get individually marked.
- 
+ Switches on the debug drawing mode where individual glyph runs, baselines, et cetera get individually marked.
+
  @param debugFrames if the debug drawing should occur
  */
 + (void)setShouldDrawDebugFrames:(BOOL)debugFrames;
@@ -371,7 +371,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 
 
 /**
- Optional attributed string tu use as truncation indicator.  If nil, will use "…" w/ attributes taken from text being truncated
+ Optional attributed string to use as truncation indicator.  If nil, will use "…" w/ attributes taken from text being truncated
  */
 @property(nonatomic, strong)NSAttributedString *truncationString;
 

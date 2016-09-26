@@ -43,7 +43,7 @@
  */
 
 /**
- If specified then all absolute font sizes (px) will be divided by this value. This is useful if you specified a text size multiplicator when converting HTML to the attributed string you are processing.
+ If specified then all absolute font sizes (px) will be divided by this value. This is useful if you specified a text size multiplier when converting HTML to the attributed string you are processing.
  */
 @property (nonatomic, assign) CGFloat textScale;
 
