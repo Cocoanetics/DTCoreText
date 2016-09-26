@@ -151,7 +151,7 @@
 			contentWidth -= ios6Style ? 20.0f : 10.0f + 14.0f + 15.0f;
 			break;
 		}
-			
+#if TARGET_OS_IOS
 		case UITableViewCellAccessoryDetailDisclosureButton:
 		{
 			contentWidth -= ios6Style ? 33.0f : 10.0f + 42.0f + 15.0f;
@@ -165,7 +165,7 @@
 			break;
 		}
 #endif
-			
+#endif	
 		case UITableViewCellAccessoryNone:
 		{
 			break;

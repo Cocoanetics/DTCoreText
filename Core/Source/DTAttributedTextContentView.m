@@ -137,7 +137,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		// get larger dimension and multiply by scale
 		UIScreen *mainScreen = [UIScreen mainScreen];
-		CGFloat largerDimension = MAX(mainScreen.applicationFrame.size.width, mainScreen.applicationFrame.size.height);
+		CGFloat largerDimension = MAX(mainScreen.bounds.size.width, mainScreen.bounds.size.height);
 		CGFloat scale = mainScreen.scale;
 		
 		// this way tiles cover entire screen regardless of orientation or scale
