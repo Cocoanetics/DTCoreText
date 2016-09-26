@@ -3512,7 +3512,6 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"${TARGET_BUILD_DIR}/**",
-					"$(SYMROOT)/../../**",
 					/usr/include/libxml2,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
@@ -3723,7 +3722,6 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"${TARGET_BUILD_DIR}/**",
-					"$(SYMROOT)/../../**",
 					/usr/include/libxml2,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
@@ -3749,7 +3747,6 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"${TARGET_BUILD_DIR}/**",
-					"$(SYMROOT)/../../**",
 					/usr/include/libxml2,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
