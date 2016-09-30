@@ -163,7 +163,7 @@ static NSCache *imageCache = nil;
 			
 			if(!contentURL)
 			{
-				src = [src stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				src = [src stringByAddingHTMLEntities];
 				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
 			}
 			
@@ -435,7 +435,7 @@ static NSCache *imageCache = nil;
 	
 	for (__strong NSString *oneKey in [tmpAttributes allKeys])
 	{
-		oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		oneKey = [oneKey stringByAddingHTMLEntities];
 		NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
 		[retString appendFormat:@" %@=\"%@\"", oneKey, value];
 	}

@@ -1063,19 +1063,35 @@ NSDictionary *_classesForNames = nil;
 	{
 		if ([alignment isEqualToString:@"left"])
 		{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			self.paragraphStyle.alignment = kCTTextAlignmentLeft;
+#else
 			self.paragraphStyle.alignment = kCTLeftTextAlignment;
+#endif
 		}
 		else if ([alignment isEqualToString:@"right"])
 		{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			self.paragraphStyle.alignment = kCTTextAlignmentRight;
+#else
 			self.paragraphStyle.alignment = kCTRightTextAlignment;
+#endif
 		}
 		else if ([alignment isEqualToString:@"center"])
 		{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			self.paragraphStyle.alignment = kCTTextAlignmentCenter;
+#else
 			self.paragraphStyle.alignment = kCTCenterTextAlignment;
+#endif
 		}
 		else if ([alignment isEqualToString:@"justify"])
 		{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			self.paragraphStyle.alignment = kCTTextAlignmentJustified;
+#else
 			self.paragraphStyle.alignment = kCTJustifiedTextAlignment;
+#endif
 		}
 		else if ([alignment isEqualToString:@"inherit"])
 		{

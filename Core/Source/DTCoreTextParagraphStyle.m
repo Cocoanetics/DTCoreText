@@ -123,7 +123,11 @@
 		_firstLineHeadIndent = 0.0;
 		_defaultTabInterval = 36.0;
 		_baseWritingDirection = kCTWritingDirectionNatural;
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		_alignment = kCTTextAlignmentNatural;
+#else
 		_alignment = kCTNaturalTextAlignment;
+#endif
 		_lineHeightMultiple = 0.0;
 		_minimumLineHeight = 0.0;
 		_maximumLineHeight = 0.0;
@@ -307,19 +311,44 @@
 	
 	switch (_alignment) 
 	{
+			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		case kCTTextAlignmentLeft:
+#else
 		case kCTLeftTextAlignment:
+#endif
 			[retString appendString:@"text-align:left;"];
 			break;
+			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		case kCTTextAlignmentRight:
+#else
 		case kCTRightTextAlignment:
+#endif
 			[retString appendString:@"text-align:right;"];
 			break;
+			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		case kCTTextAlignmentCenter:
+#else
 		case kCTCenterTextAlignment:
+#endif
 			[retString appendString:@"text-align:center;"];
 			break;
+			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		case kCTTextAlignmentJustified:
+#else
 		case kCTJustifiedTextAlignment:
+#endif
 			[retString appendString:@"text-align:justify;"];
 			break;
+			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+		case kCTTextAlignmentNatural:
+#else
 		case kCTNaturalTextAlignment:
+#endif
 			// no output, this is default
 			break;
 	}

@@ -97,7 +97,7 @@
 	
 	for (__strong NSString *oneKey in [tmpAttributes allKeys])
 	{
-		oneKey = [oneKey stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		oneKey = [oneKey stringByAddingHTMLEntities];
 		NSString *value = [[tmpAttributes objectForKey:oneKey] stringByAddingHTMLEntities];
 		[retString appendFormat:@" %@=\"%@\"", oneKey, value];
 	}

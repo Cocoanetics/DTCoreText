@@ -620,7 +620,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		if (!CTParagraphStyleGetValueForSpecifier(paragraphStyle, kCTParagraphStyleSpecifierAlignment, sizeof(textAlignment), &textAlignment))
 		{
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			textAlignment = kCTTextAlignmentNatural;
+#else
 			textAlignment = kCTNaturalTextAlignment;
+#endif
 		}
 		
 		// determine writing direction
@@ -638,14 +642,23 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		switch (textAlignment)
 		{
+				
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			case kCTTextAlignmentLeft:
+#else
 			case kCTLeftTextAlignment:
+#endif
 			{
 				lineOriginX = _frame.origin.x + offset;
 				// nothing to do
 				break;
 			}
 				
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			case kCTTextAlignmentNatural:
+#else
 			case kCTNaturalTextAlignment:
+#endif
 			{
 				lineOriginX = _frame.origin.x + offset;
 				
@@ -657,21 +670,33 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				// right alignment falls through
 			}
 				
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			case kCTTextAlignmentRight:
+#else
 			case kCTRightTextAlignment:
+#endif
 			{
 				lineOriginX = _frame.origin.x + offset + (CGFloat)CTLineGetPenOffsetForFlush(line, 1.0, availableSpace);
 				
 				break;
 			}
 				
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			case kCTTextAlignmentCenter:
+#else
 			case kCTCenterTextAlignment:
+#endif
 			{
 				lineOriginX = _frame.origin.x + offset + (CGFloat)CTLineGetPenOffsetForFlush(line, 0.5, availableSpace);
 				
 				break;
 			}
 				
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+			case kCTTextAlignmentJustified:
+#else
 			case kCTJustifiedTextAlignment:
+#endif
 			{
 				BOOL isAtEndOfParagraph  = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length ||
 											[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);

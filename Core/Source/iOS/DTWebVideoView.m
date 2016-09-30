@@ -6,7 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreText.h"
+#import "DTWebVideoView.h"
+#import "DTIframeTextAttachment.h"
 
 @interface DTWebVideoView ()
 

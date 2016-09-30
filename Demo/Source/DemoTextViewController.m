@@ -11,6 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 #import "DTTiledLayerWithoutFade.h"
+#import "DTWebVideoView.h"
 
 
 @interface DemoTextViewController ()
@@ -284,8 +285,6 @@
 	// this also compiles with iOS 6 SDK, but will work with later SDKs too
 	CGFloat topInset = [[self valueForKeyPath:@"topLayoutGuide.length"] floatValue];
 	CGFloat bottomInset = [[self valueForKeyPath:@"bottomLayoutGuide.length"] floatValue];
-	
-	NSLog(@"%f top", topInset);
 	
 	UIEdgeInsets outerInsets = UIEdgeInsetsMake(topInset, 0, bottomInset, 0);
 	UIEdgeInsets innerInsets = outerInsets;

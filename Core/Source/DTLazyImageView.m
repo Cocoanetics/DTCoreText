@@ -8,6 +8,7 @@
 
 #import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
+#import "DTCompatibility.h"
 
 #import <DTFoundation/DTLog.h>
 
@@ -17,6 +18,11 @@ NSString * const DTLazyImageViewWillStartDownloadNotification = @"DTLazyImageVie
 NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageViewDidFinishDownloadNotification";
 
 @interface DTLazyImageView ()
+#if DTCORETEXT_USES_NSURLSESSION
+<NSURLSessionDataDelegate>
+#else
+<NSURLConnectionDelegate>
+#endif
 
 - (void)_notifyDelegate;
 
@@ -27,9 +33,16 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	NSURL *_url;
 	NSMutableURLRequest *_urlRequest;
 	
-	NSURLConnection *_connection;
-	NSMutableData *_receivedData;
 	
+#if DTCORETEXT_USES_NSURLSESSION
+	NSURLSessionDataTask *_dataTask;
+	NSURLSession *_session;
+#else
+	NSURLConnection *_connection;
+#endif
+
+	NSMutableData *_receivedData;
+
 	/* For progressive download */
 	CGImageSourceRef _imageSource;
 	CGFloat _fullHeight;
@@ -44,7 +57,12 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 - (void)dealloc
 {
 	_delegate = nil; // to avoid late notification
+	
+#if DTCORETEXT_USES_NSURLSESSION
+	[_dataTask cancel];
+#else
 	[_connection cancel];
+#endif
 	
 	if (_imageSource) CFRelease(_imageSource);
 }
@@ -77,12 +95,22 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 			[_urlRequest setTimeoutInterval:10.0];
 		}
 		
-		_connection = [[NSURLConnection alloc] initWithRequest:_urlRequest delegate:self startImmediately:NO];
-		[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-
 		[[NSNotificationCenter defaultCenter] postNotificationName:DTLazyImageViewWillStartDownloadNotification object:self];
 		
+#if DTCORETEXT_USES_NSURLSESSION
+		
+		if (!_session)
+		{
+			_session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:nil];
+		}
+		
+		_dataTask = [_session dataTaskWithRequest:_urlRequest];
+		[_dataTask resume];
+#else
+		_connection = [[NSURLConnection alloc] initWithRequest:_urlRequest delegate:self startImmediately:NO];
+		[_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 		[_connection start];
+#endif
 	}
 }
 
@@ -90,7 +118,13 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 {
 	[super didMoveToSuperview];
 	
-	if (!self.image && (_url || _urlRequest) && !_connection && self.superview)
+	if (!self.image && (_url || _urlRequest) &&
+#if DTCORETEXT_USES_NSURLSESSION
+		 !_dataTask
+#else
+		 !_connection
+#endif
+		 && self.superview)
 	{
 		UIImage *image = [_imageCache objectForKey:_url];
 		
@@ -112,8 +146,13 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 
 - (void)cancelLoading
 {
+#if DTCORETEXT_USES_NSURLSESSION
+	[_dataTask cancel];
+	_dataTask = nil;
+#else
 	[_connection cancel];
 	_connection = nil;
+#endif
 	
 	_receivedData = nil;
 }
@@ -220,7 +259,13 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	}
 }
 
+#if DTCORETEXT_USES_NSURLSESSION
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+didReceiveResponse:(NSURLResponse *)response
+ completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+#else
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+#endif
 {
 	// every time we get an response it might be a forward, so we discard what data we have
 	_receivedData = nil;
@@ -232,9 +277,17 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 		
 		if (![[httpResponse MIMEType] hasPrefix:@"image"])
 		{
+#if DTCORETEXT_USES_NSURLSESSION
+			completionHandler(NSURLSessionResponseCancel);
+#else
 			[self cancelLoading];
+#endif
 			return;
 		}
+		
+#if DTCORETEXT_USES_NSURLSESSION
+		completionHandler(NSURLSessionResponseAllow);
+#endif
 	}
 	
 	/* For progressive download */
@@ -244,7 +297,12 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	_receivedData = [[NSMutableData alloc] init];
 }
 
+#if DTCORETEXT_USES_NSURLSESSION
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+	 didReceiveData:(NSData *)data
+#else
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+#endif
 {
 	[_receivedData appendData:data];
 	
@@ -268,8 +326,21 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	[super removeFromSuperview];
 }
 
+#if DTCORETEXT_USES_NSURLSESSION
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+didCompleteWithError:(nullable NSError *)error
+#else
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
+#endif
 {
+#if DTCORETEXT_USES_NSURLSESSION
+	if (error)
+	{
+		[self connection:nil didFailWithError:error];
+		return;
+	}
+#endif
+	
 	if (_receivedData)
 	{
 		[self performSelectorOnMainThread:@selector(completeDownloadWithData:) withObject:_receivedData waitUntilDone:YES];
@@ -277,7 +348,11 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 		_receivedData = nil;
 	}
 	
+#if DTCORETEXT_USES_NSURLSESSION
+	_dataTask = nil;
+#else
 	_connection = nil;
+#endif
 	
 	/* For progressive download */
 	if (_imageSource)
@@ -291,7 +366,12 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+#if DTCORETEXT_USES_NSURLSESSION
+	_dataTask = nil;
+#else
 	_connection = nil;
+#endif
+	
 	_receivedData = nil;
 	
 	/* For progressive download */

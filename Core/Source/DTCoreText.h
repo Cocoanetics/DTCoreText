@@ -62,11 +62,6 @@
 #import "DTObjectTextAttachment.h"
 #import "DTVideoTextAttachment.h"
 
-// These classes only work with UIKit on iOS
-#if TARGET_OS_IOS
-#import "DTWebVideoView.h"
-#endif
-
 // TARGET_OS_IPHONE is both tvOS and iOS
 #if TARGET_OS_IPHONE
 

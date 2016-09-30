@@ -39,6 +39,11 @@
 		#define DTCORETEXT_FIX_14684188 1
 	#endif
 
+	// use NSURLSession if NSURLConnection is deprecated
+	#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
+		#define DTCORETEXT_USES_NSURLSESSION 1
+	#endif
+
 	// constant for checking for iOS 6
 	#define DTNSFoundationVersionNumber_iOS_6_0  992.00
 
@@ -99,6 +104,11 @@
 	// theoretically MacOS before 10.8 might have a leak in CoreText replacing attributes
 	#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_7
 		#define DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX 1
+	#endif
+
+	// use NSURLSession if NSURLConnection is deprecated
+	#if __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_11
+	#define DTCORETEXT_USES_NSURLSESSION 1
 	#endif
 
 	// NSValue has sizeValue on Mac, CGSizeValue on iOS
