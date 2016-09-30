@@ -78,8 +78,13 @@ CFIndex getTruncationIndex(CTLineRef line, CTLineRef trunc)
     CFArrayRef lineRuns = CTLineGetGlyphRuns(line);
     CFIndex lineRunsCount = CFArrayGetCount(lineRuns);
     
-    CTRunRef lineLastRun = CFArrayGetValueAtIndex(lineRuns, lineRunsCount - truncCount - 1);
-    
+	long index = lineRunsCount - truncCount - 1;
+	if (index < 0) {
+		index = 0;
+	}
+	
+	CTRunRef lineLastRun = CFArrayGetValueAtIndex(lineRuns, index);
+	
     CFRange lastRunRange = CTRunGetStringRange(lineLastRun);
     
     return lastRunRange.location = lastRunRange.length;
