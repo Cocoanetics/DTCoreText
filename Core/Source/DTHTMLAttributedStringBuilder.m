@@ -431,7 +431,7 @@
 				if (!link)
 				{
 					// NSURL did not like the link, so let's encode it
-					cleanString = [cleanString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+					cleanString = [cleanString stringByAddingHTMLEntities];
 					
 					link = [NSURL URLWithString:cleanString relativeToURL:_baseURL];
 				}
