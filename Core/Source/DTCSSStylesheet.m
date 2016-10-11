@@ -826,7 +826,7 @@ extern unsigned int default_css_len;
 	for (NSString *selector in _orderedSelectors)
 	{
 		// We only process the selector if our selector has more than 1 part to it (e.g. ".foo" would be skipped and ".foo .bar" would not)
-	        if (![selector containsString:@" "]) {
+	        if (![selector rangeOfString:@" "].length) {
         	    continue;
 	        }
 	        
