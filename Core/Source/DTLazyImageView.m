@@ -324,6 +324,13 @@ didReceiveResponse:(NSURLResponse *)response
 - (void)removeFromSuperview
 {
 	[super removeFromSuperview];
+	
+#if DTCORETEXT_USES_NSURLSESSION
+	[_dataTask cancel];
+	[_session invalidateAndCancel];
+#else
+	[_connection cancel];
+#endif
 }
 
 #if DTCORETEXT_USES_NSURLSESSION
@@ -349,6 +356,7 @@ didCompleteWithError:(nullable NSError *)error
 	}
 	
 #if DTCORETEXT_USES_NSURLSESSION
+	[_session finishTasksAndInvalidate];
 	_dataTask = nil;
 #else
 	_connection = nil;
@@ -367,6 +375,7 @@ didCompleteWithError:(nullable NSError *)error
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 #if DTCORETEXT_USES_NSURLSESSION
+	[_session invalidateAndCancel];
 	_dataTask = nil;
 #else
 	_connection = nil;

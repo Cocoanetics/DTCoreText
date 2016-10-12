@@ -42,7 +42,6 @@ article,aside,footer,header,hgroup,nav,section
 p
 {
 	display:block;
-	-webkit-margin-before:1em;
 	-webkit-margin-after:1em;
 	-webkit-margin-start:0;
 	-webkit-margin-end:0;

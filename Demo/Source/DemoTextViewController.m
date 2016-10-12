@@ -753,7 +753,10 @@
 	if (didUpdate)
 	{
 		// layout might have changed due to image sizes
-		[_textView relayoutText];
+		// do it on next run loop because a layout pass might be going on
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[_textView relayoutText];
+		});
 	}
 }
 
