@@ -839,12 +839,12 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSMutableString *retString = [NSMutableString string];
 	
-	if (_fontFamily)
-	{
-		[retString appendFormat:@"font-family:'%@';", _fontFamily];
-	}
+//	if (_fontFamily)
+//	{
+//		[retString appendFormat:@"font-family:'%@';", _fontFamily];
+//	}
 	
-	[retString appendFormat:@"font-size:%.0fpx;", _pointSize];
+	//[retString appendFormat:@"font-size:%.0fpx;", _pointSize];
 	
 	if (self.italicTrait)
 	{

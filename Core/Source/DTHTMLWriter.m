@@ -483,29 +483,29 @@
 		}];
 		
 		// Add dir="auto" if the writing direction is unknown
-		if (paragraphStyle)
-		{
-			switch (paragraphStyle.baseWritingDirection)
-			{
-				case kCTWritingDirectionNatural:
-				{
-					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
-					break;
-				}
-					
-				case kCTWritingDirectionRightToLeft:
-				{
-					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
-					break;
-				}
-					
-				case kCTWritingDirectionLeftToRight:
-				{
-					// this is default, so we omit it
-					break;
-				}
-			}
-		}
+//		if (paragraphStyle)
+//		{
+//			switch (paragraphStyle.baseWritingDirection)
+//			{
+//				case kCTWritingDirectionNatural:
+//				{
+//					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
+//					break;
+//				}
+//					
+//				case kCTWritingDirectionRightToLeft:
+//				{
+//					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
+//					break;
+//				}
+//					
+//				case kCTWritingDirectionLeftToRight:
+//				{
+//					// this is default, so we omit it
+//					break;
+//				}
+//			}
+//		}
 		
 
 		// start paragraph start tag
