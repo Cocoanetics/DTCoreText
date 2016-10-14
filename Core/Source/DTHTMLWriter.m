@@ -537,7 +537,7 @@
 					className = [individualClasses componentsJoinedByString:@" "];
 				}
 				
-				//[paragraphLevelHTMLAttributes setObject:className forKey:@"class"];
+				[paragraphLevelHTMLAttributes setObject:className forKey:@"class"];
 			}
 		}
 		
@@ -839,7 +839,7 @@
 						className = [individualClasses componentsJoinedByString:@" "];
 					}
 					
-					//[spanLevelHTMLAttributes setObject:className forKey:@"class"];
+					[spanLevelHTMLAttributes setObject:className forKey:@"class"];
 				}
 			}
 			
@@ -971,7 +971,7 @@
 			[styleBlock appendString:@"span.Apple-tab-span {white-space:pre;}"];
 		}
 		
-//		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
+		[output appendFormat:@"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html40/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n<meta name=\"Generator\" content=\"DTCoreText HTML Writer\" />\n<style type=\"text/css\">\n%@</style>\n</head>\n<body>\n", styleBlock];
 	}
 
 	if (hasTab)
@@ -1001,7 +1001,7 @@
 
 	if (!fragment)
 	{
-		//[output appendString:@"</body>\n</html>\n"];
+		[output appendString:@"</body>\n</html>\n"];
 	}
 	
 	_HTMLString = output;
