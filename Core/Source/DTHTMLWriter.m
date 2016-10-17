@@ -1004,6 +1004,17 @@
 		[output appendString:@"</body>\n</html>\n"];
 	}
 	
+    if(fragment){
+        NSDataDetector *detect = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:nil];
+        NSArray *matches = [detect matchesInString:output options:0 range:NSMakeRange(0, [output length])];
+        NSEnumerator* enumerator=[matches reverseObjectEnumerator];
+        
+        for(NSTextCheckingResult* result in enumerator){
+            NSString* url = [output substringWithRange:result.range];
+            output=[output stringByReplacingCharactersInRange:result.range withString:[NSString stringWithFormat:@"<a href='%@'>%@</a>",url,url]];
+        }
+    }
+    
 	_HTMLString = output;
 }
 
