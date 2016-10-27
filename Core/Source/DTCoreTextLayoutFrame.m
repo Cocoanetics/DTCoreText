@@ -244,7 +244,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	lineOrigin.x = line.baselineOrigin.x;
 	
 	// prevent overlap of a line with small font size with line before it
-	if (!usesForcedLineHeight)
+	if (usesForcedLineHeight == 0)
 	{
 		// only if there IS a line before it AND the line height is not fixed
 		CGFloat previousLineBottom = CGRectGetMaxY(previousLine.frame);
@@ -269,12 +269,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	DTCoreTextParagraphStyle *paragraphStyle = [line paragraphStyle];
 	
-	if (paragraphStyle.minimumLineHeight && paragraphStyle.minimumLineHeight > maxFontSize)
+	if (paragraphStyle.minimumLineHeight != 0 && paragraphStyle.minimumLineHeight > maxFontSize)
 	{
 		maxFontSize = paragraphStyle.minimumLineHeight;
 	}
 	
-	if (paragraphStyle.maximumLineHeight && paragraphStyle.maximumLineHeight < maxFontSize)
+	if (paragraphStyle.maximumLineHeight != 0 && paragraphStyle.maximumLineHeight < maxFontSize)
 	{
 		maxFontSize = paragraphStyle.maximumLineHeight;
 	}
