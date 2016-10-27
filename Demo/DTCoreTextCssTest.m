@@ -8,6 +8,8 @@
 
 #import <XCTest/XCTest.h>
 
+#import "DTCSSStylesheet.h"
+
 @interface DTCoreTextCssTest : XCTestCase
 
 @end
@@ -31,9 +33,13 @@
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
+	NSString* mergedCSS = [NSString stringWithContentsOfURL:[[NSBundle bundleForClass:[self class]] URLForResource:@"text" withExtension:@"css"] encoding:NSUTF8StringEncoding error:nil];
+	__block DTCSSStylesheet* stylesheet;
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
+		stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock: mergedCSS];
     }];
+	NSLog(@"%@",stylesheet);
 }
 
 @end

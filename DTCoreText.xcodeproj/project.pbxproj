@@ -78,6 +78,7 @@
 		36F8CECF1593AA4200E9599C /* DTHTMLAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */; };
 		370946591DC255E400A59C52 /* DTCoreTextDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 370946581DC255E400A59C52 /* DTCoreTextDemoTests.m */; };
 		370946631DC2561F00A59C52 /* DTCoreTextCssTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 370946621DC2561F00A59C52 /* DTCoreTextCssTest.m */; };
+		370946651DC26E2700A59C52 /* text.css in Resources */ = {isa = PBXBuildFile; fileRef = 370946641DC26E2700A59C52 /* text.css */; };
 		4DD386E21B39B54D004A6D85 /* DTHTMLFontMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD386E11B39B54D004A6D85 /* DTHTMLFontMapping.m */; };
 		9AFC1BB7171724EB002BF23A /* DTHTMLElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFC1BB6171724EB002BF23A /* DTHTMLElementTest.m */; };
 		A04CF1A41738BC080036E735 /* DTAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A04CF19E1738BC080036E735 /* DTAccessibilityElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -998,6 +999,7 @@
 		370946581DC255E400A59C52 /* DTCoreTextDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextDemoTests.m; sourceTree = "<group>"; };
 		3709465A1DC255E400A59C52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		370946621DC2561F00A59C52 /* DTCoreTextCssTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextCssTest.m; sourceTree = "<group>"; };
+		370946641DC26E2700A59C52 /* text.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = text.css; sourceTree = "<group>"; };
 		4DD386E01B39B54D004A6D85 /* DTHTMLFontMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLFontMapping.h; sourceTree = "<group>"; };
 		4DD386E11B39B54D004A6D85 /* DTHTMLFontMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTHTMLFontMapping.m; sourceTree = "<group>"; };
 		9AFC1BB5171724EB002BF23A /* DTHTMLElementTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLElementTest.h; sourceTree = "<group>"; };
@@ -1563,6 +1565,7 @@
 		370946611DC2560100A59C52 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				370946641DC26E2700A59C52 /* text.css */,
 				370946621DC2561F00A59C52 /* DTCoreTextCssTest.m */,
 			);
 			name = Tests;
@@ -2748,6 +2751,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				370946651DC26E2700A59C52 /* text.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
