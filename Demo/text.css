@@ -1,0 +1,68 @@
+p { display: block; -webkit-margin-before: 0; -webkit-margin-after: 0; -webkit-margin-start: 0; -webkit-margin-end: 0 }
+p.purple_p1 { text-align: center; line-height: 20px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 20px; font-weight: bold }
+p.purple_p2 { line-height: 15px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 12px }
+p.purple_p3 { line-height: 24px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 18px }
+p.purple_p4 { line-height: 21px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 14px }
+p.purple_p4a { line-height: 10px; font-family: "RobotoCondensed-Light", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Light"; font-size: 10px }
+p.purple_p4b { text-align: center; line-height: 26px; font-family: "RobotoCondensed-Light", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Light"; font-size: 22px }
+p.purple_p4c { text-align: center; line-height: 30px; font-family: "Salome-Regular", "Salome"; -coretext-fontname: "Salome"; font-size: 26px }
+p.purple_p4d { line-height: 21px; font-family: "Roboto-Bold", "Roboto"; -coretext-fontname: "Roboto-Bold"; font-size: 14px; font-weight: bold }
+p.purple_p5 { line-height: 27px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 21px }
+p.purple_p5x { line-height: 20px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 18px }
+p.purple_p6 { line-height: 38px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 36px }
+p.purple_p7 { line-height: 28px; font-family: "Roboto-Bold", "Roboto"; -coretext-fontname: "Roboto-Bold"; font-size: 24px }
+p.purple_p8 { line-height: 28px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 26px; font-weight: bold }
+p.purple_p8a { line-height: 28px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 26px }
+p.purple_p8c { line-height: 18px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 16px; font-weight: bold }
+p.purple_p8d { line-height: 18px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 16px }
+p.purple_p8e { text-align: center; line-height: 18px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 16px; font-weight: bold }
+p.purple_p8b { line-height: 28px; font-family: "Roboto-BlackItalic", "Roboto"; -coretext-fontname: "Roboto-BlackItalic"; font-size: 24px; font-style: italic; font-weight: bold }
+p.purple_p8x { line-height: 22px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 20px; font-weight: bold }
+p.purple_p100 { line-height: 12px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 12px }
+p.purple_p100a { line-height: 12px; font-family: "RobotoCondensed-Regular", "Roboto"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 12px }
+p.purple_p100b { text-align: center; line-height: 12px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 12px }
+p.purple_p9 { line-height: 37px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 31px }
+p.purple_p9a { line-height: 40px; font-family: "TitlingGothicFBCompLight", "TitlingGothicFBComp-Light", "TitlingGothicFBComp Light"; -coretext-fontname: "TitlingGothicFBComp-Light"; font-size: 31px }
+p.purple_p30 { line-height: 18px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 18px; font-weight: bold }
+p.purple_p10 { line-height: 18px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 14px }
+p.purple_p11 { line-height: 26px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 30px }
+p.purple_p111 { line-height: 26px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 30px; font-weight: bold }
+p.purple_p12 { line-height: 24px; font-family: "Roboto-Black", "Roboto"; -coretext-fontname: "Roboto-Black"; font-size: 18px; font-weight: bold }
+p.purple_p13 { line-height: 16px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 14px }
+p.purple_p14 { line-height: 22px; font-family: "Roboto-Bold", "Roboto"; -coretext-fontname: "Roboto-Bold"; font-size: 18px; font-weight: bold }
+p.purple_p15 { text-align: left; line-height: 21px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 14px }
+p.purple_p16 { line-height: 38px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 38px }
+p.purple_p17 { line-height: 34px; font-family: "Roboto-Black", "Roboto"; -coretext-fontname: "Roboto-Black"; font-size: 24px; font-weight: bold }
+p.purple_p18 { text-align: right; line-height: 14px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 14px }
+p.purple_p19 { line-height: 14px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 10px }
+p.purple_p20 { line-height: 20px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 15px; font-weight: bold }
+p.purple_p21 { line-height: 24px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 18px }
+p.purple_p22 { text-align: right; line-height: 16px; font-family: "Roboto-Bold", "Roboto"; -coretext-fontname: "Roboto-Bold"; font-size: 16px; font-weight: bold }
+p.purple_p23 { line-height: 20px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 14px }
+p.purple_p24 { text-align: left; line-height: 21px }
+p.purple_p25 { line-height: 60px; font-family: "BLANCH_CAPS_INLINE", "Blanch-CapsInline"; -coretext-fontname: "Blanch-CapsInline"; font-size: 100px }
+p.purple_p26 { text-align: left; line-height: 20px }
+p.purple_p27 { text-align: left; line-height: 24px; font-family: "RobotoCondensed-Light", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Light"; font-size: 22px }
+p.purple_p28 { text-align: center; line-height: 12px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 12px }
+p.purple_p29 { text-align: center; line-height: 34px; font-family: "Salome-Regular", "Salome"; -coretext-fontname: "Salome"; font-size: 34px }
+p.purple_p31 { line-height: 18px; font-family: "RobotoCondensed-Regular", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Regular"; font-size: 18px }
+p.purple_p32 { line-height: 40px; font-family: "Salome-Regular", "Salome"; -coretext-fontname: "Salome"; font-size: 40px }
+p.purple_p33 { text-align: center; line-height: 30px; font-family: "TitlingGothicFBCompMedium", "TitlingGothicFBComp-Medium", "TitlingGothicFBComp medium"; -coretext-fontname: "TitlingGothicFBComp-Medium"; font-size: 24px }
+p.purple_p34 { text-align: center; line-height: 62px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 62px }
+p.purple_p35 { line-height: 30px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 30px; font-weight: bold }
+p.purple_p36 { text-align: right; line-height: 50px; font-family: "BLANCH_CAPS_INLINE", "Blanch-CapsInline"; -coretext-fontname: "Blanch-CapsInline"; font-size: 64px }
+p.purple_p37 { line-height: 30px; font-family: "RobotoCondensed-Bold", "Roboto Condensed"; -coretext-fontname: "RobotoCondensed-Bold"; font-size: 30px; font-weight: bold }
+p.purple_p38 { line-height: 16px; font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 14px }
+span.purple_s1 { color: rgb(255, 255, 255) }
+span.purple_s2 { color: rgb(236, 28, 36) }
+span.purple_s3 { color: rgb(0, 0, 0) }
+span.purple_s4 { color: rgb(94, 94, 94) }
+span.purple_s7 { color: rgb(51, 51, 51) }
+span.purple_s8 { font-family: "Roboto-BoldItalic", "Roboto"; -coretext-fontname: "Roboto-BoldItalic"; font-size: 14px; font-style: italic; font-weight: bold; color: rgb(0, 0, 0) }
+span.purple_s9 { font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 14px; color: rgb(0, 0, 0) }
+span.purple_s10 { color: rgb(127, 0, 21) }
+span.purple_s11 { font-family: "Roboto-BoldItalic", "Roboto"; -coretext-fontname: "Roboto-BoldItalic"; font-size: 14px; font-style: italic; font-weight: bold; color: rgb(0, 0, 0) }
+span.purple_s12 { font-family: "Roboto-Regular", "Roboto"; -coretext-fontname: "Roboto-Regular"; font-size: 14px; color: rgb(0, 0, 0) }
+span.bold { font-weight: bold; font-family: "Roboto-Bold", "Roboto"; -coretext-fontname: "Roboto-Bold" }
+span.italic { font-style: italic; font-family: "Roboto-Italic", "Roboto"; -coretext-fontname: "Roboto-Italic" }
+span.italic > span.bold, span.bold > span.italic { font-weight: bold; font-style: italic; font-family: "Roboto-BoldItalic", "Roboto"; -coretext-fontname: "Roboto-BoldItalic" }
