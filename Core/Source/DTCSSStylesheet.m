@@ -604,7 +604,7 @@ extern unsigned int default_css_len;
 		else if (c == '}')
 		{
             if (braceLevel == 0) {
-                NSLog(@"ERROR: no matching opening brace in css at character %ul",i);
+                NSLog(@"ERROR: no matching opening brace in css at character %lul",(unsigned long)i);
                 braceMarker = i + 1;
                 continue;
             }

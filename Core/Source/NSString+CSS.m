@@ -25,9 +25,24 @@
 	
 	@autoreleasepool
 	{
-		while ([scanner scanCSSAttribute:&name value:&value])
+        BOOL finished = NO;
+		while (!finished)
 		{
-			[tmpDict setObject:value forKey:name];
+            if([scanner scanCSSAttribute:&name value:&value])
+            {
+                [tmpDict setObject:value forKey:name];
+            }
+            else
+            {
+                if(scanner.scanLocation+1 < self.length)
+                {
+                    scanner.scanLocation++;
+                }
+                else
+                {
+                    finished = YES;
+                }
+            }
 		}
 	}
 	

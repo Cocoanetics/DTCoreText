@@ -337,7 +337,7 @@
 		NSNumber *number = DTNSNumberFromCGFloat(_minimumLineHeight);
 		[retString appendFormat:@"line-height:%@px;", number];
     } else {
-        if (_lineHeightMultiple && _lineHeightMultiple!=1.0f)
+        if (_lineHeightMultiple != 0 && _lineHeightMultiple != 1.0f)
         {
             NSNumber *number = DTNSNumberFromCGFloat(_lineHeightMultiple);
             [retString appendFormat:@"line-height:%@em;", number];

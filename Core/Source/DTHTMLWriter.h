@@ -32,18 +32,17 @@ extern NSString *kOptionDTHTMLEscapeXML;
 /**
  Creates a writer with a given `NSAttributedString` as input
  @param attributedString An attributed string
- @param CSSPrefix All generated CSS styles will be prefixed by this string
+ @param aCSSPrefix All generated CSS styles will be prefixed by this string
  */
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix;
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)aCSSPrefix;
 
 /**
  Creates a writer with a given `NSAttributedString` as input
  @param attributedString An attributed string
- @param CSSPrefix All generated CSS styles will be prefixed by this string
- @param options Escape handling options
- @param options for generating html string. Currently supported: kOptionRenderLastParagraphWithoutNewlineAsSpan, kOptionDTHTMLEscapeXML
+ @param aCSSPrefix All generated CSS styles will be prefixed by this string
+ @param options Escape handling options for generating html string. Currently supported: kOptionRenderLastParagraphWithoutNewlineAsSpan, kOptionDTHTMLEscapeXML
  */
-- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)theCSSPrefix options:(NSDictionary*)theOptions;
+- (id)initWithAttributedString:(NSAttributedString *)attributedString CSSPrefix:(NSString*)aCSSPrefix options:(NSDictionary*)options;
 
 /**
  @name Generating HTML
