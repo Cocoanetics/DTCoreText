@@ -7,7 +7,7 @@
 //
 
 #import "DTHTMLElementTest.h"
-#import <DTCoreText/DTCoreText.h>
+#import "DTCoreText.h"
 
 @implementation DTHTMLElementTest
 
