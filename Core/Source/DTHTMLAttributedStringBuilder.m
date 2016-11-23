@@ -420,6 +420,9 @@
 		}
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
+        if (link == nil) {
+            link = [NSURL URLWithString:[cleanString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        }
 		
 		// deal with relative URL
 		if (![link scheme])
