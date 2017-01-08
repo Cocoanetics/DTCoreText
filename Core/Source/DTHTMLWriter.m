@@ -368,7 +368,7 @@
 		NSString *blockElement;
 		
 		// close until we are at current or nil
-		if ([previousListStyles count]>[currentListStyles count])
+		if ([previousListStyles count]>=[currentListStyles count])
 		{
 			NSMutableArray *closingStyles = [previousListStyles mutableCopy];
 			
