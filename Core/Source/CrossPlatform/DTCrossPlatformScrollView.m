@@ -55,7 +55,7 @@
 }
 
 - (CGSize)contentSize {
-    return self.documentView.frame.size;
+    return [[self documentView] frame].size;
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset {
