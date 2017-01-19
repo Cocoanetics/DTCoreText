@@ -524,14 +524,14 @@ static NSDictionary *entityReverseLookupHTML = nil;
 			// first space always output as is
 			[output appendString:@" "];
 			
-			NSUInteger numSpaces = [spaces length];
+			NSUInteger numSpaces = [spaces length]-1;
 			
-			if (numSpaces > 1)
+			if (numSpaces > 0)
 			{
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
 				// alternate nbsp; and normal space
-				for (NSUInteger i=1; i<numSpaces;i++)
+				for (NSUInteger i=0; i<numSpaces;i++)
 				{
 					if (i%2)
 					{
