@@ -45,7 +45,7 @@
 - (void)testUnclosedDecoding
 {
 	NSString *encoded = @"&#128516test";
-	NSString *expected = @"😄test";
+	NSString *expected = encoded;
 	
 	NSString *decoded = [encoded stringByReplacingHTMLEntities];
 	XCTAssertEqualObjects(decoded, expected, @"String is not properly decoded");
@@ -54,23 +54,20 @@
 - (void)testUnclosedHexDecoding
 {
 	NSString *encoded = @"&#x1F604test";
-	NSString *expected = @"😄test";
+	NSString *expected = encoded;
 	
 	NSString *decoded = [encoded stringByReplacingHTMLEntities];
 	XCTAssertEqualObjects(decoded, expected, @"String is not properly decoded");
 }
-
-/* Not implemented.
 
 - (void)testUnclosedKnownEntityDecoding
 {
 	NSString *encoded = @"&lttest";
-	NSString *expected = @"<test";
+	NSString *expected = encoded;
 	
 	NSString *decoded = [encoded stringByReplacingHTMLEntities];
 	XCTAssertEqualObjects(decoded, expected, @"String is not properly decoded");
 }
-*/
 
 - (void)testInvalidDecoding
 {

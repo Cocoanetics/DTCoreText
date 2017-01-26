@@ -705,12 +705,11 @@ static NSDictionary *entityReverseLookup = nil;
 			{
 				unsigned long long scannedLongLong;
 				
-				if ([scanner scanHexLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX)
+				if ([scanner scanHexLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX && [scanner scanString:@";" intoString:NULL])
 				{
 					UTF32Char inputChar = (UTF32Char)CFSwapInt32HostToLittle((UTF32Char)scannedLongLong);
 					NSString *string = [[NSString alloc] initWithBytes:&inputChar length:4 encoding:NSUTF32LittleEndianStringEncoding];
 					[output appendString:string];
-					[scanner scanString:@";" intoString:NULL];
 					matched = YES;
 				}
 			}
@@ -718,12 +717,11 @@ static NSDictionary *entityReverseLookup = nil;
 			{
 				unsigned long long scannedLongLong;
 				
-				if ([scanner scanUnsignedLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX)
+				if ([scanner scanUnsignedLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX && [scanner scanString:@";" intoString:NULL])
 				{
 					UTF32Char inputChar = (UTF32Char)CFSwapInt32HostToLittle((UTF32Char)scannedLongLong);
 					NSString *string = [[NSString alloc] initWithBytes:&inputChar length:4 encoding:NSUTF32LittleEndianStringEncoding];
 					[output appendString:string];
-					[scanner scanString:@";" intoString:NULL];
 					matched = YES;
 				}
 			}
