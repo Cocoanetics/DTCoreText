@@ -547,7 +547,9 @@ extern unsigned int default_css_len;
 
 - (void)parseStyleBlock:(NSString*)css
 {
-	NSUInteger braceLevel = 0, braceMarker = 0;
+	NSUInteger braceMarker = 0;
+	
+	NSInteger braceLevel = 0;
 	
 	NSString* selector;
 	
@@ -636,8 +638,12 @@ extern unsigned int default_css_len;
 				
 				braceMarker = i + 1;
 			}
+			// Skip unpaired closing brace
+			else if (braceLevel < 1) {
+				braceMarker += 1;	
+			}
 			
-			braceLevel = MAX(braceLevel-1, 0ul);
+			braceLevel = MAX(braceLevel-1, 0);
 		}
 	}
 }
