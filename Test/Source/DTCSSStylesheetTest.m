@@ -517,4 +517,16 @@
 	XCTAssertTrue([backgroundColor isEqualToString:@"rgb(250, 250, 250)"], @"background-color should be #rgb(250, 250, 250)");
 }
 
+// issue #1045: CSS Parser: skip unpaired bracket } & fix NSUInteger underflow
+- (void)testParseStyleBlock
+{
+	for (NSString *cssStr in @[@"s1{p1:1em}s2{p2:2em}", @"s1{p1:1em}}s2{p2:2em}", @"s1{p1:1em}}}}}s2{p2:2em}}}"])
+	{
+		DTCSSStylesheet *stylesheet = [DTCSSStylesheet defaultStyleSheet];
+		[stylesheet parseStyleBlock:cssStr];
+		XCTAssertTrue([stylesheet.styles[@"s1"][@"p1"] isEqualToString:@"1em"], @"missing css style s1 when  parsing str: %@", cssStr);
+		XCTAssertTrue([stylesheet.styles[@"s2"][@"p2"] isEqualToString:@"2em"], @"missing css style s2 when parsing str %@", cssStr);
+	}
+}
+
 @end
