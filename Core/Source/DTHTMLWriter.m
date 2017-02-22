@@ -368,7 +368,7 @@
 		NSString *blockElement;
 		
 		// close until we are at current or nil
-		if ([previousListStyles count]>[currentListStyles count])
+		if ([previousListStyles count]>=[currentListStyles count])
 		{
 			NSMutableArray *closingStyles = [previousListStyles mutableCopy];
 			
@@ -483,29 +483,29 @@
 		}];
 		
 		// Add dir="auto" if the writing direction is unknown
-		if (paragraphStyle)
-		{
-			switch (paragraphStyle.baseWritingDirection)
-			{
-				case kCTWritingDirectionNatural:
-				{
-					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
-					break;
-				}
-					
-				case kCTWritingDirectionRightToLeft:
-				{
-					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
-					break;
-				}
-					
-				case kCTWritingDirectionLeftToRight:
-				{
-					// this is default, so we omit it
-					break;
-				}
-			}
-		}
+//		if (paragraphStyle)
+//		{
+//			switch (paragraphStyle.baseWritingDirection)
+//			{
+//				case kCTWritingDirectionNatural:
+//				{
+//					[paragraphLevelHTMLAttributes setObject:@"auto" forKey:@"dir"];
+//					break;
+//				}
+//					
+//				case kCTWritingDirectionRightToLeft:
+//				{
+//					[paragraphLevelHTMLAttributes setObject:@"rtl" forKey:@"dir"];
+//					break;
+//				}
+//					
+//				case kCTWritingDirectionLeftToRight:
+//				{
+//					// this is default, so we omit it
+//					break;
+//				}
+//			}
+//		}
 		
 
 		// start paragraph start tag
@@ -1004,6 +1004,17 @@
 		[output appendString:@"</body>\n</html>\n"];
 	}
 	
+    if(fragment){
+        NSDataDetector *detect = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:nil];
+        NSArray *matches = [detect matchesInString:output options:0 range:NSMakeRange(0, [output length])];
+        NSEnumerator* enumerator=[matches reverseObjectEnumerator];
+        
+        for(NSTextCheckingResult* result in enumerator){
+            NSString* url = [output substringWithRange:result.range];
+            output=[output stringByReplacingCharactersInRange:result.range withString:[NSString stringWithFormat:@"<a href='%@'>%@</a>",url,url]];
+        }
+    }
+    
 	_HTMLString = output;
 }
 
