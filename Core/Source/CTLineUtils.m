@@ -73,7 +73,9 @@ BOOL areLinesEqual(CTLineRef line1, CTLineRef line2)
 
 CFIndex getTruncationIndex(CTLineRef line, CTLineRef trunc)
 {
-    CFIndex truncCount = CFArrayGetCount(CTLineGetGlyphRuns(trunc));
+	if (line == nil || trunc == nil) return 0;
+	
+	CFIndex truncCount = CFArrayGetCount(CTLineGetGlyphRuns(trunc));
     
     CFArrayRef lineRuns = CTLineGetGlyphRuns(line);
     CFIndex lineRunsCount = CFArrayGetCount(lineRuns);
