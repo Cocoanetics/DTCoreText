@@ -1327,6 +1327,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (![visibleLines count])
 	{
+		if (_textFrame)
+		{
+			CFRelease(_textFrame);
+		}
 		return;
 	}
 	
