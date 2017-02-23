@@ -773,7 +773,7 @@ static NSDictionary *entityReverseLookup = nil;
 			
 			NSUInteger numSpaces = [spaces length]-1;
 			
-			if (numSpaces > 1)
+			if (numSpaces > 0)
 			{
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
