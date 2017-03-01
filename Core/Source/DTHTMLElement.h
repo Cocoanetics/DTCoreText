@@ -76,6 +76,9 @@
 	// indent of lists
 	CGFloat _listIndent;
 	
+	// indent of tag <p>
+	CGFloat _pTextIndent;
+	
 	BOOL _shouldProcessCustomHTMLAttributes;
 }
 
@@ -168,6 +171,11 @@
  Background stroke width in the receiver
  */
 @property (nonatomic, assign) CGFloat backgroundCornerRadius;
+
+/**
+ Tag <p> text indent
+ */
+@property (nonatomic, assign) CGFloat pTextIndent;
 
 /**
  The custom letter spacing of the receiver, default is 0px
