@@ -6,7 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
 
 /**
  This class describes the attributes of a font. It is used to represent fonts throughout the parsing and when needed is able to generated matching `CTFont` instances.

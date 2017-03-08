@@ -751,6 +751,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		// abort layout if we left the configured frame
 		CGFloat lineBottom = CGRectGetMaxY(newLine.frame);
 		
+		// screen bottom last line min padding
+		if (newLine.textBlocks.count > 0) {
+			DTTextBlock *lineTextBlock = newLine.textBlocks[0];
+			lineBottom = lineBottom + lineTextBlock.padding.bottom;
+		}
+		
 		if (lineBottom>maxY)
 		{
 			if ([typesetLines count] && self.lineBreakMode)
@@ -955,16 +961,35 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 {
 	CGRect blockFrame;
 	
+	DTCoreTextLayoutLine *screenLastLine = [self.lines lastObject];
+	DTCoreTextLayoutLine *screenFirstLine = [self.lines firstObject];
+	// judge the effectiveRange is out of screen
+	if (NSMaxRange(screenLastLine.stringRange) <= effectiveRange.location || screenFirstLine.stringRange.location >= NSMaxRange(effectiveRange))
+	{
+		return CGRectZero;
+	}
+	
     // we know extent of block, get frame
     DTCoreTextLayoutLine *firstBlockLine = [self lineContainingIndex:effectiveRange.location];
     DTCoreTextLayoutLine *lastBlockLine = [self lineContainingIndex:NSMaxRange(effectiveRange)-1];
     
     // start with frame spanned from these lines
-    blockFrame.origin = firstBlockLine.frame.origin;
-    blockFrame.origin.x = _frame.origin.x;
-    blockFrame.size.width = _frame.size.width;
-    blockFrame.size.height = CGRectGetMaxY(lastBlockLine.frame) - blockFrame.origin.y;
-    
+	blockFrame.origin = firstBlockLine.frame.origin;
+	blockFrame.origin.x = _frame.origin.x;
+	blockFrame.size.width = _frame.size.width;
+	
+	if (!firstBlockLine)
+	{
+		blockFrame.origin.y = _frame.origin.y;
+	}
+	
+	blockFrame.size.height = CGRectGetMaxY(lastBlockLine.frame) - blockFrame.origin.y;
+	
+	if (!lastBlockLine)
+	{
+		blockFrame.size.height = CGRectGetMaxY(_frame) - blockFrame.origin.y;
+	}
+	
     // top paddings we get from first line
     for (NSInteger i = [firstBlockLine.textBlocks count]-1; i>=level;i--)
     {
@@ -1302,6 +1327,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	if (![visibleLines count])
 	{
+		if (_textFrame)
+		{
+			CFRelease(_textFrame);
+		}
 		return;
 	}
 	

@@ -697,40 +697,49 @@ static NSDictionary *entityReverseLookup = nil;
 		
 		if ([scanner scanString:@"&" intoString:NULL])
 		{
+			NSUInteger originalLocation = scanner.scanLocation;
+			BOOL matched = NO;
 			NSString *afterAmpersand = nil;
-			if ([scanner scanUpToString:@";" intoString:&afterAmpersand]) 
+			
+			if ([scanner scanString:@"#x" intoString:NULL])
 			{
-				if ([scanner scanString:@";" intoString:NULL])
+				unsigned long long scannedLongLong;
+				
+				if ([scanner scanHexLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX && [scanner scanString:@";" intoString:NULL])
 				{
-					if ([afterAmpersand hasPrefix:@"#"] && [afterAmpersand length]<=6)
-					{
-						unichar ch = (unichar)[[afterAmpersand substringFromIndex:1] integerValue];
-						[output appendFormat:@"%C", ch];
-					}
-					else 
-					{
-						NSString *converted = [entityLookup objectForKey:afterAmpersand];
-						
-						if (converted)
-						{
-							[output appendString:converted];
-						}
-						else 
-						{
-							// not a valid sequence
-							[output appendString:@"&"];
-							[output appendString:afterAmpersand];
-							[output appendString:@";"];
-						}
-					}
-					
+					UTF32Char inputChar = (UTF32Char)CFSwapInt32HostToLittle((UTF32Char)scannedLongLong);
+					NSString *string = [[NSString alloc] initWithBytes:&inputChar length:4 encoding:NSUTF32LittleEndianStringEncoding];
+					[output appendString:string];
+					matched = YES;
 				}
-				else 
+			}
+			else if ([scanner scanString:@"#" intoString:NULL])
+			{
+				unsigned long long scannedLongLong;
+				
+				if ([scanner scanUnsignedLongLong:&scannedLongLong] && scannedLongLong <= UINT32_MAX && [scanner scanString:@";" intoString:NULL])
 				{
-					// no semicolon 
-					[output appendString:@"&"];
-					[output appendString:afterAmpersand];
+					UTF32Char inputChar = (UTF32Char)CFSwapInt32HostToLittle((UTF32Char)scannedLongLong);
+					NSString *string = [[NSString alloc] initWithBytes:&inputChar length:4 encoding:NSUTF32LittleEndianStringEncoding];
+					[output appendString:string];
+					matched = YES;
 				}
+			}
+			else if ([scanner scanUpToString:@";" intoString:&afterAmpersand] && [scanner scanString:@";" intoString:NULL])
+			{
+				NSString *converted = [entityLookup objectForKey:afterAmpersand];
+				
+				if (converted)
+				{
+					[output appendString:converted];
+					matched = YES;
+				}
+			}
+			
+			if (!matched)
+			{
+				[output appendString:@"&"];
+				scanner.scanLocation = originalLocation;
 			}
 		}
 	}
@@ -764,7 +773,7 @@ static NSDictionary *entityReverseLookup = nil;
 			
 			NSUInteger numSpaces = [spaces length]-1;
 			
-			if (numSpaces > 1)
+			if (numSpaces > 0)
 			{
 				[output appendString:@"<span class=\"Apple-converted-space\">"];
 				
