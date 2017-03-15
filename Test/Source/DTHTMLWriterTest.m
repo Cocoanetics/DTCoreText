@@ -239,4 +239,135 @@
 	NSRange letterSpacingRange = [html rangeOfString:@"letter-spacing:10px;"];
 	XCTAssertTrue(letterSpacingRange.location == NSNotFound, @"Letter-spacing missing");
 }
+
+#pragma mark - Link generation
+
+- (void)testSingleLineAnchor {
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"first second third"];
+	[attributedString addAttribute:DTAnchorAttribute value:@"nameValue" range:NSMakeRange(6, 6)]; // word "second"
+	
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	
+	NSString *generatedHTMLFragment = [writer HTMLFragment];
+	NSString *expectedHTMLFragment = [NSString stringWithFormat:
+									  @"<span>"
+									  "<span style=\"color:#000000;\">first </span>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;\">second</span>"
+									  "</a>"
+									  "<span style=\"color:#000000;\"> third</span>"
+									  "</span>\n"];
+	
+	XCTAssertTrue([generatedHTMLFragment isEqualToString:expectedHTMLFragment], @"Strings are not equal %@ %@", expectedHTMLFragment, generatedHTMLFragment);
+}
+
+- (void)testSingleLineAnchorWithBackgroundColorAround {
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"single line blue link blue link"];
+	[attributedString addAttribute:DTAnchorAttribute value:@"nameValue" range:NSMakeRange(17, 4)]; // "link"
+	DTColor *color = DTColorCreateWithHexString(@"0000FF");
+	[attributedString addAttribute:DTBackgroundColorAttribute value:(id)color.CGColor range:NSMakeRange(12, 14)]; // "blue link blue"
+	
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	
+	NSString *generatedHTMLFragment = [writer HTMLFragment];
+	NSString *expectedHTMLFragment = [NSString stringWithFormat:
+									  @"<span>"
+									  "<span style=\"color:#000000;\">single line </span>"
+									  "<span style=\"color:#000000;background-color:#0000ff;\">blue </span>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;background-color:#0000ff;\">link</span>"
+									  "</a>"
+									  "<span style=\"color:#000000;background-color:#0000ff;\"> blue</span>"
+									  "<span style=\"color:#000000;\"> link</span>"
+									  "</span>\n"];
+	
+	XCTAssertTrue([generatedHTMLFragment isEqualToString:expectedHTMLFragment], @"Strings are not equal %@ %@", expectedHTMLFragment, generatedHTMLFragment);
+}
+
+
+- (void)testMultiLineAnchor {
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"first line\nsecond line\nthird line"];
+	[attributedString addAttribute:DTAnchorAttribute value:@"nameValue" range:NSMakeRange(0, 22)]; // first and second line
+	
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	
+	NSString *generatedHTMLFragment = [writer HTMLFragment];
+	NSString *expectedHTMLFragment = [NSString stringWithFormat:
+									  @"<p>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;\">first line</span>"
+									  "</a>"
+									  "</p>\n"
+									  "<p>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;\">second line</span>"
+									  "</a>"
+									  "</p>\n"
+									  "<span>"
+									  "<span style=\"color:#000000;\">third line</span>"
+									  "</span>\n"];
+	
+	XCTAssertTrue([generatedHTMLFragment isEqualToString:expectedHTMLFragment], @"Strings are not equal %@ %@", expectedHTMLFragment, generatedHTMLFragment);
+}
+
+- (void)testMultiLineAnchorWithBackgroundColorAround {
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"single line blue newline\nlink blue link"];
+	[attributedString addAttribute:DTAnchorAttribute value:@"nameValue" range:NSMakeRange(17, 12)]; // "link"
+	DTColor *color = DTColorCreateWithHexString(@"0000FF");
+	[attributedString addAttribute:DTBackgroundColorAttribute value:(id)color.CGColor range:NSMakeRange(12, 22)]; // "blue link blue"
+	
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	
+	NSString *generatedHTMLFragment = [writer HTMLFragment];
+	NSString *expectedHTMLFragment = [NSString stringWithFormat:
+									  @"<p>"
+									  "<span style=\"color:#000000;\">single line </span>"
+									  "<span style=\"color:#000000;background-color:#0000ff;\">blue </span>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;background-color:#0000ff;\">newline</span>"
+									  "</a>"
+									  "</p>\n"
+									  "<span>"
+									  "<a name=\"nameValue\">"
+									  "<span style=\"color:#000000;background-color:#0000ff;\">link</span>"
+									  "</a>"
+									  "<span style=\"color:#000000;background-color:#0000ff;\"> blue</span>"
+									  "<span style=\"color:#000000;\"> link</span>"
+									  "</span>\n"];
+	
+	XCTAssertTrue([generatedHTMLFragment isEqualToString:expectedHTMLFragment], @"Strings are not equal %@ %@", expectedHTMLFragment, generatedHTMLFragment);
+}
+
+- (void)testMultiLineAnchorWithExtendedBackgroundColorAround {
+	DTColor *backgroundColor = DTColorCreateWithHexString(@"9b57b5");
+	 
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"111\n222\n333\n444"];
+	[attributedString addAttribute:DTBackgroundColorAttribute value:(id)backgroundColor.CGColor range:NSMakeRange(2, 11)];
+	[attributedString addAttribute:DTAnchorAttribute value:@"nameAttribute" range:NSMakeRange(4, 7)];
+	
+	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:attributedString];
+	
+	NSString *generatedHTMLFragment = [writer HTMLFragment];
+	NSString *expectedHTMLFragment = [NSString stringWithFormat:
+									  @"<p>"
+									  "<span style=\"color:#000000;\">11</span>"
+									  "<span style=\"color:#000000;background-color:#9b57b5;\">1</span>"
+									  "</p>\n"
+									  "<p>"
+									  "<a name=\"nameAttribute\">"
+									  "<span style=\"color:#000000;background-color:#9b57b5;\">222</span>"
+									  "</a>"
+									  "</p>\n"
+									  "<p>"
+									  "<a name=\"nameAttribute\">"
+									  "<span style=\"color:#000000;background-color:#9b57b5;\">333</span>"
+									  "</a>"
+									  "</p>\n"
+									  "<span>"
+									  "<span style=\"color:#000000;background-color:#9b57b5;\">4</span>"
+									  "<span style=\"color:#000000;\">44</span>"
+									  "</span>\n"];
+	
+	XCTAssertTrue([generatedHTMLFragment isEqualToString:expectedHTMLFragment], @"Strings are not equal %@ %@", expectedHTMLFragment, generatedHTMLFragment);
+}
 @end

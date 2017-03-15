@@ -569,11 +569,11 @@
 			{
 				if (spanURL)
 				{
-					currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+					currentLinkRange = [[_attributedString attributedSubstringFromRange:paragraphRange] rangeOfLinkAtIndex:spanRange.location URL:NULL];
 				}
 				else if (spanAnchorName)
 				{
-					currentLinkRange = [_attributedString rangeOfAnchorNamed:spanAnchorName];
+					currentLinkRange = [[_attributedString attributedSubstringFromRange:paragraphRange] rangeOfAnchorNamed:spanAnchorName];
 				}
 				
 				isFirstPartOfHyperlink = YES;
@@ -607,8 +607,8 @@
 				}];
 			}
 			
-			// check if previous link is over yet
-			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			// check if the current link tag needs to be closed
+			if (currentLinkRange.location != NSNotFound && currentLinkRange.length <= spanRange.length)
 			{
 				isLastPartOfHyperlink = YES;
 			}
