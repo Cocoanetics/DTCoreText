@@ -14,7 +14,7 @@
 #import "DTTextHTMLElement.h"
 #import "DTBreakHTMLElement.h"
 #import "DTStylesheetHTMLElement.h"
-#import "DTCSSStyleSheet.h"
+#import "DTCSSStylesheet.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTHTMLParserTextNode.h"
 
