@@ -607,8 +607,8 @@
 				}];
 			}
 			
-			// check if previous link is over yet
-			if (NSMaxRange(spanRange) >= NSMaxRange(currentLinkRange))
+			// check if the current link tag needs to be closed
+			if (currentLinkRange.location != NSNotFound && (NSMaxRange(spanRange) >= MIN(NSMaxRange(currentLinkRange), NSMaxRange(paragraphRange))))
 			{
 				isLastPartOfHyperlink = YES;
 			}
