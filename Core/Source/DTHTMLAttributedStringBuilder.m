@@ -588,7 +588,15 @@
 	
 	void (^pBlock)(void) = ^
 	{
-		_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
+		// if have the custom headIndent
+		if (_defaultParagraphStyle.firstLineHeadIndent > 0)
+		{
+			_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _defaultParagraphStyle.firstLineHeadIndent;
+		}
+		else
+		{
+			_currentTag.paragraphStyle.firstLineHeadIndent = _currentTag.paragraphStyle.headIndent + _currentTag.pTextIndent;
+		}
 	};
 	
 	[_tagStartHandlers setObject:[pBlock copy] forKey:@"p"];
