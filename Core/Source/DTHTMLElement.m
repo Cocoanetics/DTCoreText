@@ -386,7 +386,10 @@ NSDictionary *_classesForNames = nil;
 	
 	[_attributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
 		
+		// Ignore attributes on global ignore list
 		if ([attributesToIgnore containsObject:key]) return;
+		// Ignore Apple-converted-space helper CSS class
+		if ([@"class" isEqualToString:key] && [@"Apple-converted-space" isEqualToString:value]) return;
 
 		if (_CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
 		{

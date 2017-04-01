@@ -7,6 +7,7 @@
 //
 
 #import "DTHTMLAttributedStringBuilderTest.h"
+#import "DTCoreTextConstants.h"
 
 @implementation DTHTMLAttributedStringBuilderTest
 
@@ -132,6 +133,26 @@
 	NSString *charBeforeTwo = [plainText substringWithRange:NSMakeRange(twoRange.location-1, 1)];
 	
 	XCTAssertFalse([charBeforeTwo isEqualToString:@"\n"], @"Superfluous NL following BR");
+}
+
+/**
+ * Test converting HTML with 'Apple-converted-space' span into attributes strings.
+ * Even with 'DTProcessCustomHTMLAttributes' on there should be no reference in the resulting 
+ * attributed string as the conversion is handled internally by DTCoreText.
+ */
+- (void)testCustomAttributeProcessingWithAppleConvertedSpaces
+{
+	NSDictionary *options = @{DTProcessCustomHTMLAttributes: @(YES)};
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<p class='text' dir='auto'><span>2 <span class='Apple-converted-space'> </span>2</span></p>" options:options];
+	
+	__block BOOL appleConvertedSpaceFound = NO;
+	[attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:NSAttributedStringEnumerationReverse usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
+		if([attrs[DTCustomAttributesAttribute][@"class"] isEqualToString:@"Apple-converted-space"]) {
+			appleConvertedSpaceFound |= YES;
+		}
+	}];
+	
+	XCTAssertFalse(appleConvertedSpaceFound, @"There should be no custom class 'Apple-converted-space' as apple converted spaces are handled internally");
 }
 
 #pragma mark - General Tests
