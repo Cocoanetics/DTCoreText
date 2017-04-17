@@ -80,4 +80,30 @@
 	XCTAssertNil(attributedString, @"Text attachment should be invisible");
 }
 
+- (void)testAttachmentWithPercentWidth
+{
+	NSDictionary *styles1 = @{@"width" : @"100%"};
+	NSDictionary *styles2 = @{@"width" : @"80%"};
+	NSDictionary *styles3 = @{@"width" : @"110%"};
+	
+	CGSize maxImageSize = CGSizeMake(500,500);
+	
+	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+									[NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
+									[NSNumber numberWithFloat:16.0],DTDefaultFontSize,
+									nil];
+	
+	DTHTMLElement *attachment = [DTHTMLElement elementWithName:@"img" attributes:nil options:options];
+	
+	[attachment applyStyleDictionary:styles1];
+	XCTAssertEqual(attachment.textAttachment.displaySize.width, 500, @"Text attachment width incorrect");
+	
+	[attachment applyStyleDictionary:styles2];
+	XCTAssertEqual(attachment.textAttachment.displaySize.width, 400, @"Text attachment width incorrect");
+	
+	[attachment applyStyleDictionary:styles3];
+	XCTAssertEqual(attachment.textAttachment.displaySize.width, 500, @"Text attachment width incorrect");
+	
+}
+
 @end
