@@ -28,6 +28,7 @@
 		DTTextAttachment *attachment = [DTTextAttachment textAttachmentWithElement:self options:options];
 		
 		// add it to tag
+		_paragraphStyle = _paragraphStyle ? _paragraphStyle : [[DTCoreTextParagraphStyle alloc] init];
 		_textAttachment = attachment;
 		
 		// to avoid much too much space before the image
