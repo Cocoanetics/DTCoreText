@@ -104,7 +104,7 @@
 	
 	if (widthString.length > 1 && [widthString hasSuffix:@"%"])
 	{
-		CGFloat width = [[widthString substringToIndex:widthString.length - 1] floatValue];
+		float width = [[widthString substringToIndex:widthString.length - 1] floatValue];
 		
 		_size.width = _maxDisplaySize.width * width/100.0;
 	}
