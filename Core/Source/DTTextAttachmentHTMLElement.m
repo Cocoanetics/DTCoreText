@@ -100,6 +100,15 @@
 		_textAttachment.originalSize = _size;
 	}
 	
+	NSString *widthString = [styles objectForKey:@"width"];
+	
+	if (widthString.length > 1 && [widthString hasSuffix:@"%"])
+	{
+		CGFloat width = [[widthString substringToIndex:widthString.length - 1] floatValue];
+		
+		_size.width = _maxDisplaySize.width * width/100.0;
+	}
+	
 	// update the display size
 	[_textAttachment setDisplaySize:_size withMaxDisplaySize:_maxDisplaySize];
 }
