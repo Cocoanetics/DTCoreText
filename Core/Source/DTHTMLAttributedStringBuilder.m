@@ -65,7 +65,7 @@
 	dispatch_group_t _stringAssemblyGroup;
 	dispatch_queue_t _dataParsingQueue;
 	dispatch_group_t _dataParsingGroup;
-	dispatch_queue_t _treeBuildingQueue;;
+	dispatch_queue_t _treeBuildingQueue;
 	dispatch_group_t _treeBuildingGroup;
 	
 	// lookup table for blocks that deal with begin and end tags
