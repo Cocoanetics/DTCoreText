@@ -14,6 +14,11 @@
 #import "DTHTMLElement.h"
 #import "DTCoreTextConstants.h"
 #import "DTHTMLAttributedStringBuilder.h"
+#import "DTTextAttachment.h"
+
+#if TARGET_OS_IPHONE
+#import "NSAttributedStringRunDelegates.h"
+#endif
 
 @implementation NSAttributedString (HTML)
 
@@ -56,6 +61,70 @@
 	id string = [stringBuilder generatedAttributedString];
 	
 	return string;
+}
+
+#pragma mark - NSAttributedString Archiving
+
+- (NSData *)convertToData
+{
+	NSMutableAttributedString *appendString = [self mutableCopy];
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
+	NSUInteger length = [self length];
+	if (length)
+	{
+		[self enumerateAttributesInRange:NSMakeRange(0, length-1) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
+			
+			if (attrs[NSAttachmentAttributeName])
+			{
+				[appendString removeAttribute:(id)kCTRunDelegateAttributeName range:range];
+			}
+		}];
+	}
+#endif
+
+	NSData *data = nil;
+	@try
+	{
+		data = [NSKeyedArchiver archivedDataWithRootObject:appendString];
+	}
+	@catch (NSException *exception)
+	{
+		data = nil;
+	}
+	
+	return data;
+}
+
++ (NSAttributedString *)attributedStringWithData:(NSData *)data
+{
+	NSMutableAttributedString *appendString = nil;
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
+	@try
+	{
+		appendString = (NSMutableAttributedString *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
+	}
+	@catch (NSException *exception)
+	{
+		appendString = nil;
+	}
+	
+	NSUInteger length = [appendString length];
+	if (length)
+	{
+		[appendString enumerateAttributesInRange:NSMakeRange(0, length-1) options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
+			
+			if (attrs[NSAttachmentAttributeName])
+			{
+				DTTextAttachment *attatchment = attrs[NSAttachmentAttributeName];
+				CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attatchment);
+				
+				[appendString addAttribute:(id)kCTRunDelegateAttributeName value:CFBridgingRelease(embeddedObjectRunDelegate) range:range];
+			}
+			
+		}];
+	}
+#endif
+	return [appendString copy];
 }
 
 #pragma mark - Working with Custom HTML Attributes
