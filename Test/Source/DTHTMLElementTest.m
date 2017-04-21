@@ -80,12 +80,13 @@
 	XCTAssertNil(attributedString, @"Text attachment should be invisible");
 }
 
-- (void)testAttachmentWithPercentWidth
+- (void)testAttachmentWithPercentWidthAndHeight
 {
-	NSDictionary *styles1 = @{@"width" : @"100%"};
-	NSDictionary *styles2 = @{@"width" : @"80%"};
-	NSDictionary *styles3 = @{@"width" : @"110%"};
-	
+	NSDictionary *styles1 = @{@"width" : @"100%",@"height" : @"100%"};
+	NSDictionary *styles2 = @{@"width" : @"80%",@"height" : @"100%"};
+	NSDictionary *styles3 = @{@"width" : @"110%",@"height" : @"80%"};
+	NSDictionary *styles4 = @{@"width" : @"100%",@"height" : @"110%"};
+
 	CGSize maxImageSize = CGSizeMake(500,500);
 	
 	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -94,16 +95,24 @@
 									nil];
 	
 	DTHTMLElement *attachment = [DTHTMLElement elementWithName:@"img" attributes:nil options:options];
+	attachment.textAttachment.originalSize = CGSizeMake(1000, 800);
 	
 	[attachment applyStyleDictionary:styles1];
 	XCTAssertEqual(attachment.textAttachment.displaySize.width, 500, @"Text attachment width incorrect");
-	
+	XCTAssertEqual(attachment.textAttachment.displaySize.height, 500, @"Text attachment height incorrect");
+
 	[attachment applyStyleDictionary:styles2];
 	XCTAssertEqual(attachment.textAttachment.displaySize.width, 400, @"Text attachment width incorrect");
-	
+	XCTAssertEqual(attachment.textAttachment.displaySize.height, 500, @"Text attachment height incorrect");
+
 	[attachment applyStyleDictionary:styles3];
 	XCTAssertEqual(attachment.textAttachment.displaySize.width, 500, @"Text attachment width incorrect");
-	
+	XCTAssertEqual(attachment.textAttachment.displaySize.height, 364, @"Text attachment height incorrect");
+
+	[attachment applyStyleDictionary:styles4];
+	XCTAssertEqual(attachment.textAttachment.displaySize.width, 455, @"Text attachment width incorrect");
+	XCTAssertEqual(attachment.textAttachment.displaySize.height, 500, @"Text attachment height incorrect");
 }
+
 
 @end
