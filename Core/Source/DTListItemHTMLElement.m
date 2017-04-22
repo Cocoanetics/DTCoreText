@@ -22,7 +22,7 @@
 
 @implementation DTListItemHTMLElement
 
-- (NSUInteger)_indexOfListItemInListRoot:(DTHTMLElement *)listRoot
+- (NSInteger)_indexOfListItemInListRoot:(DTHTMLElement *)listRoot
 {
 	@synchronized(self)
 	{

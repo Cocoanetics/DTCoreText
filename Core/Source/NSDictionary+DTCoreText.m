@@ -75,7 +75,7 @@
 	return NO;
 }
 
-- (NSUInteger)headerLevel
+- (NSInteger)headerLevel
 {
 	NSNumber *headerLevelNum = [self objectForKey:DTHeaderLevelAttribute];
 	

@@ -14,11 +14,11 @@ static NSDictionary *colorLookup = nil;
 
 #pragma mark - Private Functions
 
-NSUInteger _integerValueFromHexString(NSString *hexString);
+NSInteger _integerValueFromHexString(NSString *hexString);
 
 #pragma mark - Implementations
 
-NSUInteger _integerValueFromHexString(NSString *hexString)
+NSInteger _integerValueFromHexString(NSString *hexString)
 {
 	int result = 0;
 	sscanf([hexString UTF8String], "%x", &result);
