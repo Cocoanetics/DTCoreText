@@ -64,6 +64,24 @@
 }
 
 #pragma mark - NSAttributedString Archiving
++ (NSMutableDictionary *)getArchivingDictionaryWith:(NSDictionary *)attrs
+{
+
+	NSDictionary *archiveDict = attrs[DTArchivingAttribute];
+	NSMutableDictionary *dict = nil;
+	
+	if (![archiveDict isKindOfClass:[NSDictionary class]])
+	{
+		dict = [NSMutableDictionary dictionary];
+	}
+	else
+	{
+		dict = [archiveDict mutableCopy];
+	}
+
+	
+	return dict;
+}
 
 - (NSData *)convertToData
 {
@@ -77,6 +95,18 @@
 			if (attrs[NSAttachmentAttributeName])
 			{
 				[appendString removeAttribute:(id)kCTRunDelegateAttributeName range:range];
+			}
+			// if there will others attribute to archiving , implement like this.
+			if (attrs[DTBackgroundStrokeColorAttribute])
+			{
+				NSMutableDictionary *dict = [[self class] getArchivingDictionaryWith:attrs];
+				CGColorRef strokeColor = (__bridge CGColorRef)(attrs[DTBackgroundStrokeColorAttribute]);
+				
+				UIColor *stoke = [[UIColor alloc] initWithCGColor:strokeColor];
+				[dict setObject:stoke forKey:DTBackgroundStrokeColorAttribute];
+				
+				[appendString setAttributes:dict range:range];
+				[appendString removeAttribute:(id)DTBackgroundStrokeColorAttribute range:range];
 			}
 		}];
 	}
@@ -98,7 +128,6 @@
 + (NSAttributedString *)attributedStringWithData:(NSData *)data
 {
 	NSMutableAttributedString *appendString = nil;
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
 	@try
 	{
 		appendString = (NSMutableAttributedString *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -113,6 +142,8 @@
 	{
 		[appendString enumerateAttributesInRange:NSMakeRange(0, length-1) options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
 			
+#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
+
 			if (attrs[NSAttachmentAttributeName])
 			{
 				DTTextAttachment *attatchment = attrs[NSAttachmentAttributeName];
@@ -120,10 +151,22 @@
 				
 				[appendString addAttribute:(id)kCTRunDelegateAttributeName value:CFBridgingRelease(embeddedObjectRunDelegate) range:range];
 			}
+#endif
+			// if there will others attribute to archiving , implement like this.
+			if (attrs[DTBackgroundStrokeColorAttribute])
+			{
+				NSMutableDictionary *dict = [self getArchivingDictionaryWith:attrs];
+				UIColor *stroke = dict[DTBackgroundStrokeColorAttribute];
+				CGColorRef strokeColor = stroke.CGColor;
+				
+				[appendString addAttribute:DTBackgroundStrokeColorAttribute value:(__bridge id)strokeColor range:range];
+				
+				[dict removeObjectForKey:DTBackgroundStrokeColorAttribute];
+				[appendString setAttributes:dict range:range];
+			}
 			
 		}];
 	}
-#endif
 	return [appendString copy];
 }
 
