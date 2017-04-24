@@ -51,7 +51,6 @@ extern NSString * const DTDefaultLinkDecoration;
 extern NSString * const DTDefaultLinkHighlightColor;
 extern NSString * const DTDefaultTextAlignment;
 extern NSString * const DTDefaultLineHeightMultiplier;
-extern NSString * const DTDefaultLineHeightMultiplier;
 extern NSString * const DTDefaultFirstLineHeadIndent;
 extern NSString * const DTDefaultHeadIndent;
 extern NSString * const DTDefaultStyleSheet;
