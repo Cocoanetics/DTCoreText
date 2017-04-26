@@ -15,6 +15,11 @@
  */
 typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
 
+/**
+ The block that gets executed whenever html tag parsing error
+ */
+typedef void(^DTHTMLAttributedStringBuilderParseErrorCallback)(NSAttributedString *attr, NSError *);
+
 
 /**
  Class for building an `NSAttributedString` from an HTML document.
@@ -71,10 +76,19 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  This block is called before the element is written to the output attributed string
  */
 @property (nonatomic, copy) DTHTMLAttributedStringBuilderWillFlushCallback willFlushCallback;
+/**
+ The block that gets executed whenever html tag parsing error
+ */
+@property (nonatomic, copy) DTHTMLAttributedStringBuilderParseErrorCallback parseErrorCallback;
 
 /**
  Setting this property to `YES` causes the tree of parse nodes to be preserved until the end of the generation process. This allows to output the HTML structure of the document for debugging.
  */
 @property (nonatomic, assign) BOOL shouldKeepDocumentNodeTree;
+
+/**
+ This func can abort AttributedString building.
+ */
+- (void)abortParsing;
 
 @end

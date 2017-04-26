@@ -73,6 +73,8 @@
 	NSMutableDictionary *_tagEndHandlers;
 	
 	DTHTMLAttributedStringBuilderWillFlushCallback _willFlushCallback;
+	DTHTMLAttributedStringBuilderParseErrorCallback _parseErrorCallback;
+
 	BOOL _shouldProcessCustomHTMLAttributes;
 	
 	// new parsing
@@ -82,6 +84,8 @@
 	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
 	BOOL _ignoreInlineStyles; // ignores style blocks attached on elements
 	BOOL _preserverDocumentTrailingSpaces; // don't remove spaces at end of document
+	
+	DTHTMLParser  *_parser;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
@@ -93,6 +97,17 @@
 		_options = options;
 		
 		// documentAttributes ignored for now
+		// Specify the appropriate text encoding for the passed data, default is UTF8
+		NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
+		NSStringEncoding encoding = NSUTF8StringEncoding; // default
+		
+		if (textEncodingName)
+		{
+			CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
+			encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+		}
+		_parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
+		_parser.delegate = (id)self;
 		
 		// GCD setup
 		_stringAssemblyQueue = dispatch_queue_create("DTHTMLAttributedStringBuilder", 0);
@@ -134,16 +149,6 @@
 	// register default handlers
 	[self _registerTagStartHandlers];
 	[self _registerTagEndHandlers];
-	
- 	// Specify the appropriate text encoding for the passed data, default is UTF8
-	NSString *textEncodingName = [_options objectForKey:NSTextEncodingNameDocumentOption];
-	NSStringEncoding encoding = NSUTF8StringEncoding; // default
-	
-	if (textEncodingName)
-	{
-		CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((__bridge CFStringRef)textEncodingName);
-		encoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
-	}
 	
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	
@@ -339,12 +344,8 @@
 	// don't remove spaces at end of document
 	_preserverDocumentTrailingSpaces = [[_options objectForKey:DTDocumentPreserveTrailingSpaces] boolValue];
 	
-	// create a parser
-	DTHTMLParser *parser = [[DTHTMLParser alloc] initWithData:_data encoding:encoding];
-	parser.delegate = (id)self;
-	
 	__block BOOL result;
-	dispatch_group_async(_dataParsingGroup, _dataParsingQueue, ^{ result = [parser parse]; });
+	dispatch_group_async(_dataParsingGroup, _dataParsingQueue, ^{ result = [_parser parse]; });
 	
 	// wait until all string assembly is complete
 	dispatch_group_wait(_dataParsingGroup, DISPATCH_TIME_FOREVER);
@@ -999,9 +1000,27 @@
 	});
 }
 
+- (void)parser:(DTHTMLParser *)parser parseErrorOccurred:(NSError *)parseError;
+{
+	if(_parseErrorCallback)
+	{
+		_parseErrorCallback(_tmpString,parseError);
+	}
+}
+			  
+- (void)abortParsing
+{
+	NSString *errorMsg = @"user abort";
+	
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errorMsg forKey:NSLocalizedDescriptionKey];
+	NSError *parserError = [NSError errorWithDomain:@"DTHTMLParser" code:-1 userInfo:userInfo];
+	
+	[_parser abortParsingWithError:parserError];
+}
 #pragma mark Properties
 
 @synthesize willFlushCallback = _willFlushCallback;
 @synthesize shouldKeepDocumentNodeTree = _shouldKeepDocumentNodeTree;
+@synthesize parseErrorCallback = _parseErrorCallback;
 
 @end
