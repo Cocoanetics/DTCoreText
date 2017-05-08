@@ -72,4 +72,23 @@
  */
 - (NSRange)rangeOfHTMLAttribute:(NSString *)name atIndex:(NSUInteger)index;
 
+/**
+ Retrieves the NSAttributedString with NSData
+ 
+ Currently only supports iOS by `___useiOS6Attributes`, if error occur return nil.
+
+ @param data The data must generate by `convertToData` function
+ @return NSAttributedString from unarchiveObjectWithData, the data must generate by `convertToData` function
+ */
++ (NSAttributedString *)attributedStringWithData:(NSData *)data;
+
+/**
+ Retrieves NSData with self
+ 
+ Currently only supports iOS by `___useiOS6Attributes`, if error occur return nil.
+ 
+ @return NSData from NSAttributedString execute archivedDataWithRootObject:
+ */
+- (NSData *)convertToData;
+
 @end
