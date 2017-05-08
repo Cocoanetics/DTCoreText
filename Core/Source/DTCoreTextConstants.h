@@ -82,6 +82,7 @@ extern NSString * const DTAscentMultiplierAttribute;
 extern NSString * const DTBackgroundStrokeColorAttribute;
 extern NSString * const DTBackgroundStrokeWidthAttribute;
 extern NSString * const DTBackgroundCornerRadiusAttribute;
+extern NSString * const DTArchivingAttribute;
 
 // field constants
 
