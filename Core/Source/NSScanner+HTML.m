@@ -22,6 +22,23 @@
 	
 	NSInteger initialScanLocation = [self scanLocation];
 	
+	if ([self isAtEnd]) {
+		return NO;
+	}
+	
+	if ([self.string characterAtIndex:initialScanLocation] == ';') {
+		[self setScanLocation:initialScanLocation+1];
+		return YES;
+	}
+	
+	// alphanumeric plus -
+	NSCharacterSet *cssStyleAttributeNameCharacterSet = [NSCharacterSet cssStyleAttributeNameCharacterSet];
+	
+	if (![self scanCharactersFromSet:cssStyleAttributeNameCharacterSet intoString:&attrName])
+	{
+		return NO;
+	}
+	
 	NSCharacterSet *whiteCharacterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 	
 	NSMutableCharacterSet *nonWhiteCharacterSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
@@ -32,14 +49,6 @@
 	[nonWhiteCommaCharacterSet formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@";,"]];
 	[nonWhiteCommaCharacterSet invert];
 
-	
-	// alphanumeric plus -
-	NSCharacterSet *cssStyleAttributeNameCharacterSet = [NSCharacterSet cssStyleAttributeNameCharacterSet];
-	
-	if (![self scanCharactersFromSet:cssStyleAttributeNameCharacterSet intoString:&attrName])
-	{
-		return NO;
-	}
 	
 	// skip whitespace
 	[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
