@@ -586,6 +586,26 @@
 	
 	[_tagStartHandlers setObject:[fontBlock copy] forKey:@"font"];
 	
+	void (^bBlock)(void) = ^
+	{
+		currentTag.fontDescriptor.boldTrait = YES;
+	};
+	
+	[_tagStartHandlers setObject:[bBlock copy] forKey:@"b"];
+	
+	void (^iBlock)(void) = ^
+	{
+		currentTag.fontDescriptor.italicTrait = YES;
+	};
+	
+	[_tagStartHandlers setObject:[iBlock copy] forKey:@"i"];
+
+	void (^uBlock)(void) = ^
+	{
+		currentTag.underlineStyle = kCTUnderlineStyleSingle;
+	};
+	
+	[_tagStartHandlers setObject:[uBlock copy] forKey:@"u"];
 	
 	void (^pBlock)(void) = ^
 	{
