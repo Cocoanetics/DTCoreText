@@ -777,6 +777,35 @@
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D0491F48758300A82774 /* DTCoreTextMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D04C1F4875FA00A82774 /* DTColor+Compatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C95214863E8700E1AFD9 /* DTColor+Compatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D04D1F48764C00A82774 /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D0521F4878FD00A82774 /* DTStylesheetHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D0681F48794000A82774 /* NSAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE4191B1F4849E800100BAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4191A1F4849E800100BAE /* AppDelegate.m */; };
+		FDE4191E1F4849E800100BAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4191D1F4849E800100BAE /* main.m */; };
+		FDE419211F4849E800100BAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE419201F4849E800100BAE /* ViewController.m */; };
+		FDE419231F4849E800100BAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FDE419221F4849E800100BAE /* Assets.xcassets */; };
+		FDE419261F4849E800100BAE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FDE419241F4849E800100BAE /* Main.storyboard */; };
+		FDE419521F484A6F00100BAE /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91D14863E8700E1AFD9 /* DTCoreTextGlyphRun.m */; };
+		FDE419531F484A6F00100BAE /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
+		FDE419541F484A8300100BAE /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
+		FDE419551F484A8300100BAE /* DTCoreTextLayoutFrame+Cursor.m in Sources */ = {isa = PBXBuildFile; fileRef = A78E3C50178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.m */; };
+		FDE419561F484A8E00100BAE /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92314863E8700E1AFD9 /* DTCoreTextLayoutLine.m */; };
+		FDE419571F484A9F00100BAE /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
+		FDE419581F484B2200100BAE /* DTCoreTextGlyphRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE419591F484B2200100BAE /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE4195A1F484B7000100BAE /* DTCoreTextLayoutFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92014863E8700E1AFD9 /* DTCoreTextLayoutFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE4195B1F484B9B00100BAE /* DTCoreTextLayoutLine.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92214863E8700E1AFD9 /* DTCoreTextLayoutLine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE4195C1F484BA400100BAE /* DTCoreTextLayouter.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91E14863E8700E1AFD9 /* DTCoreTextLayouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDE419601F484C3F00100BAE /* AttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4195F1F484C3F00100BAE /* AttributedTextContentView.m */; };
+		FDE419711F4854BA00100BAE /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
+		FDE419741F4854E800100BAE /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */; };
+		FDE419751F48561B00100BAE /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE4196E1F4852C600100BAE /* AppKit.framework */; };
+		FDE419761F48562400100BAE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE4196C1F4852C000100BAE /* Cocoa.framework */; };
+		FDE419771F48562E00100BAE /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73BC42812DA014300F064C6 /* CoreText.framework */; };
+		FDE419781F48564500100BAE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
+		FDE4197B1F48589F00100BAE /* LinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4197A1F48589F00100BAE /* LinkButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1108,6 +1137,20 @@
 			remoteGlobalIDString = A78381C31963F8D700AF09D3;
 			remoteInfo = "DTAnimatedGIF Demo";
 		};
+		FDE419421F484A2800100BAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2262DC51638331500BFDAD7;
+			remoteInfo = "DTCoreText (Mac)";
+		};
+		FDE419721F4854DD00100BAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A710A4FF1607556000437D36;
+			remoteInfo = "Static Library (Mac)";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1418,6 +1461,21 @@
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE419171F4849E800100BAE /* Demo4MacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo4MacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE419191F4849E800100BAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		FDE4191A1F4849E800100BAE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		FDE4191D1F4849E800100BAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FDE4191F1F4849E800100BAE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		FDE419201F4849E800100BAE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		FDE419221F4849E800100BAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FDE419251F4849E800100BAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FDE419271F4849E800100BAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FDE4195E1F484C3F00100BAE /* AttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedTextContentView.h; sourceTree = "<group>"; };
+		FDE4195F1F484C3F00100BAE /* AttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributedTextContentView.m; sourceTree = "<group>"; };
+		FDE4196C1F4852C000100BAE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		FDE4196E1F4852C600100BAE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		FDE419791F48589F00100BAE /* LinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkButton.h; sourceTree = "<group>"; };
+		FDE4197A1F48589F00100BAE /* LinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1521,6 +1579,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FDE419141F4849E800100BAE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDE419781F48564500100BAE /* QuartzCore.framework in Frameworks */,
+				FDE419771F48562E00100BAE /* CoreText.framework in Frameworks */,
+				FDE419761F48562400100BAE /* Cocoa.framework in Frameworks */,
+				FDE419751F48561B00100BAE /* AppKit.framework in Frameworks */,
+				FDE419741F4854E800100BAE /* libDTFoundation_Mac.a in Frameworks */,
+				FDE419711F4854BA00100BAE /* DTCoreText.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1535,6 +1606,7 @@
 				A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */,
 				A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */,
 				94D24B961D4AFE7800C7F33C /* DTCoreText.framework */,
+				FDE419171F4849E800100BAE /* Demo4MacOS.app */,
 			);
 			name = Products;
 			path = ../..;
@@ -1545,6 +1617,7 @@
 			children = (
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
+				FDE419181F4849E800100BAE /* Demo4MacOS */,
 				A788CA1114863E9D00E1AFD9 /* Test */,
 				A70D37CE16DCE92C003F21C9 /* Documentation */,
 				A7856F3917FAA69C0080AB0A /* Externals */,
@@ -1558,6 +1631,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FDE4196E1F4852C600100BAE /* AppKit.framework */,
+				FDE4196C1F4852C000100BAE /* Cocoa.framework */,
 				A74A7AAC1B617250004163BE /* QuartzCore.framework */,
 				A74A7AAA1B617227004163BE /* CoreGraphics.framework */,
 				A74A7AA81B617222004163BE /* UIKit.framework */,
@@ -2068,6 +2143,41 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		FDE419181F4849E800100BAE /* Demo4MacOS */ = {
+			isa = PBXGroup;
+			children = (
+				FDE4195D1F484C3F00100BAE /* UI */,
+				FDE419191F4849E800100BAE /* AppDelegate.h */,
+				FDE4191A1F4849E800100BAE /* AppDelegate.m */,
+				FDE4191F1F4849E800100BAE /* ViewController.h */,
+				FDE419201F4849E800100BAE /* ViewController.m */,
+				FDE419221F4849E800100BAE /* Assets.xcassets */,
+				FDE419241F4849E800100BAE /* Main.storyboard */,
+				FDE419271F4849E800100BAE /* Info.plist */,
+				FDE4191C1F4849E800100BAE /* Supporting Files */,
+			);
+			path = Demo4MacOS;
+			sourceTree = "<group>";
+		};
+		FDE4191C1F4849E800100BAE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FDE4191D1F4849E800100BAE /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FDE4195D1F484C3F00100BAE /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				FDE419791F48589F00100BAE /* LinkButton.h */,
+				FDE4197A1F48589F00100BAE /* LinkButton.m */,
+				FDE4195E1F484C3F00100BAE /* AttributedTextContentView.h */,
+				FDE4195F1F484C3F00100BAE /* AttributedTextContentView.m */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2402,6 +2512,16 @@
 				A7B14E42183638D40007CF27 /* DTLog.h in Headers */,
 				A7B14E40183638D40007CF27 /* DTBase64Coding.h in Headers */,
 				A7B14E4818363B5B0007CF27 /* NSString+DTUtilities.h in Headers */,
+				FDE419581F484B2200100BAE /* DTCoreTextGlyphRun.h in Headers */,
+				FDE4195A1F484B7000100BAE /* DTCoreTextLayoutFrame.h in Headers */,
+				FDE4195C1F484BA400100BAE /* DTCoreTextLayouter.h in Headers */,
+				FDE4195B1F484B9B00100BAE /* DTCoreTextLayoutLine.h in Headers */,
+				FD29D0491F48758300A82774 /* DTCoreTextMacros.h in Headers */,
+				FD29D04C1F4875FA00A82774 /* DTColor+Compatibility.h in Headers */,
+				FD29D0521F4878FD00A82774 /* DTStylesheetHTMLElement.h in Headers */,
+				FD29D0681F48794000A82774 /* NSAttributedString+HTML.h in Headers */,
+				FD29D04D1F48764C00A82774 /* DTImage+HTML.h in Headers */,
+				FDE419591F484B2200100BAE /* NSAttributedStringRunDelegates.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2564,6 +2684,25 @@
 			productReference = E2262DC61638331500BFDAD7 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		FDE419161F4849E800100BAE /* Demo4MacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FDE419411F4849E800100BAE /* Build configuration list for PBXNativeTarget "Demo4MacOS" */;
+			buildPhases = (
+				FDE419131F4849E800100BAE /* Sources */,
+				FDE419141F4849E800100BAE /* Frameworks */,
+				FDE419151F4849E800100BAE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FDE419731F4854DD00100BAE /* PBXTargetDependency */,
+				FDE419431F484A2800100BAE /* PBXTargetDependency */,
+			);
+			name = Demo4MacOS;
+			productName = Demo4MacOS;
+			productReference = FDE419171F4849E800100BAE /* Demo4MacOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2580,6 +2719,11 @@
 					A79BA61F1B46A1FB0086C2F6 = {
 						CreatedOnToolsVersion = 6.4;
 					};
+					FDE419161F4849E800100BAE = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = Y28WQ9G7N2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
@@ -2592,6 +2736,7 @@
 				French,
 				German,
 				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -2612,6 +2757,7 @@
 				E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */,
 				A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */,
 				94D24B081D4AFE7800C7F33C /* DTCoreText (tvOS) */,
+				FDE419161F4849E800100BAE /* Demo4MacOS */,
 			);
 		};
 /* End PBXProject section */
@@ -2923,6 +3069,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FDE419151F4849E800100BAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDE419231F4849E800100BAE /* Assets.xcassets in Resources */,
+				FDE419261F4849E800100BAE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3290,6 +3445,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE419571F484A9F00100BAE /* DTCoreTextLayouter.m in Sources */,
+				FDE419561F484A8E00100BAE /* DTCoreTextLayoutLine.m in Sources */,
+				FDE419541F484A8300100BAE /* DTCoreTextLayoutFrame.m in Sources */,
+				FDE419551F484A8300100BAE /* DTCoreTextLayoutFrame+Cursor.m in Sources */,
+				FDE419521F484A6F00100BAE /* DTCoreTextGlyphRun.m in Sources */,
+				FDE419531F484A6F00100BAE /* NSAttributedStringRunDelegates.m in Sources */,
 				E2262E0B1638351C00BFDAD7 /* default.css in Sources */,
 				426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */,
 				E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */,
@@ -3335,6 +3496,18 @@
 				A76D451A1732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
 				A7985E1B178ECDE4005D40B2 /* NSAttributedString+HTML.m in Sources */,
 				A7DDF87F17DDEB780005D62D /* DTColorFunctions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FDE419131F4849E800100BAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDE4197B1F48589F00100BAE /* LinkButton.m in Sources */,
+				FDE419211F4849E800100BAE /* ViewController.m in Sources */,
+				FDE4191E1F4849E800100BAE /* main.m in Sources */,
+				FDE4191B1F4849E800100BAE /* AppDelegate.m in Sources */,
+				FDE419601F484C3F00100BAE /* AttributedTextContentView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3391,7 +3564,28 @@
 			target = A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */;
 			targetProxy = A7D29D681CB68D470068F043 /* PBXContainerItemProxy */;
 		};
+		FDE419431F484A2800100BAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */;
+			targetProxy = FDE419421F484A2800100BAE /* PBXContainerItemProxy */;
+		};
+		FDE419731F4854DD00100BAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library (Mac)";
+			targetProxy = FDE419721F4854DD00100BAE /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FDE419241F4849E800100BAE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FDE419251F4849E800100BAE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
@@ -4349,6 +4543,103 @@
 			};
 			name = Release;
 		};
+		FDE419281F4849E800100BAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = Demo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.Demo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FDE419291F4849E800100BAE /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = Demo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.Demo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		FDE4192A1F4849E800100BAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = Demo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.Demo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4448,6 +4739,16 @@
 				E2262DD31638331500BFDAD7 /* Debug */,
 				A7DC5D0317F833F1006ADDF5 /* Coverage */,
 				E2262DD41638331500BFDAD7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FDE419411F4849E800100BAE /* Build configuration list for PBXNativeTarget "Demo4MacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FDE419281F4849E800100BAE /* Debug */,
+				FDE419291F4849E800100BAE /* Coverage */,
+				FDE4192A1F4849E800100BAE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -11,6 +11,7 @@
 #import <CoreText/CoreText.h>
 #elif TARGET_OS_MAC
 #import <ApplicationServices/ApplicationServices.h>
+#import <AppKit/NSGraphicsContext.h>
 #endif
 
 #import "DTCoreTextConstants.h"
