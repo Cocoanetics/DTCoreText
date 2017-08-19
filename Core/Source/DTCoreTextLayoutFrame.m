@@ -1255,8 +1255,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)_setForgroundColorInContext:(CGContextRef)context forGlyphRun:(DTCoreTextGlyphRun *)glyphRun options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
 	DTColor *color = nil;
-	
-	BOOL needsToSetFillColor = [[glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName] boolValue];
+	// if unset kCTForegroundColorFromContextAttributeName, default YES
+	NSNumber *foregroundColorFromContext = [glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName];
+	BOOL needsToSetFillColor = foregroundColorFromContext ? [foregroundColorFromContext boolValue] : YES;
 	
 	if (glyphRun.isHyperlink)
 	{
