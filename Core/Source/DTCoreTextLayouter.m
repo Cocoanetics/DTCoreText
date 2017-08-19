@@ -7,6 +7,7 @@
 //
 
 #import "DTCoreTextLayouter.h"
+#import "DTCompatibility.h"
 
 @interface DTCoreTextLayouter ()
 

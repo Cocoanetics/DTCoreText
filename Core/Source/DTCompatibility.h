@@ -130,6 +130,18 @@
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
 
+	static inline CGRect UIEdgeInsetsInsetRect(CGRect rect, NSEdgeInsets insets) {
+		rect.origin.x    += insets.left;
+		rect.origin.y    += insets.top;
+		rect.size.width  -= (insets.left + insets.right);
+		rect.size.height -= (insets.top  + insets.bottom);
+		return rect;
+	}
+
+	static inline BOOL UIEdgeInsetsEqualToEdgeInsets(NSEdgeInsets insets1, NSEdgeInsets insets2) {
+		return insets1.left == insets2.left && insets1.top == insets2.top && insets1.right == insets2.right && insets1.bottom == insets2.bottom;
+	}
+
 	// runtime-check if NS-style attributes are allowed
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
