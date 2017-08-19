@@ -777,6 +777,9 @@
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D0491F48758300A82774 /* DTCoreTextMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D04C1F4875FA00A82774 /* DTColor+Compatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C95214863E8700E1AFD9 /* DTColor+Compatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD29D04D1F48764C00A82774 /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FDE4191B1F4849E800100BAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4191A1F4849E800100BAE /* AppDelegate.m */; };
 		FDE4191E1F4849E800100BAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE4191D1F4849E800100BAE /* main.m */; };
 		FDE419211F4849E800100BAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE419201F4849E800100BAE /* ViewController.m */; };
@@ -2511,6 +2514,9 @@
 				FDE4195A1F484B7000100BAE /* DTCoreTextLayoutFrame.h in Headers */,
 				FDE4195C1F484BA400100BAE /* DTCoreTextLayouter.h in Headers */,
 				FDE4195B1F484B9B00100BAE /* DTCoreTextLayoutLine.h in Headers */,
+				FD29D0491F48758300A82774 /* DTCoreTextMacros.h in Headers */,
+				FD29D04C1F4875FA00A82774 /* DTColor+Compatibility.h in Headers */,
+				FD29D04D1F48764C00A82774 /* DTImage+HTML.h in Headers */,
 				FDE419591F484B2200100BAE /* NSAttributedStringRunDelegates.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4741,6 +4747,7 @@
 				FDE4192A1F4849E800100BAE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
