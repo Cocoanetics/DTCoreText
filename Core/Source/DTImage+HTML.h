@@ -26,6 +26,8 @@
 
 #else
 
+#import <AppKit/NSImage.h>
+
 /**
  Category used to have the same method available for unit testing on Mac on iOS.
  */

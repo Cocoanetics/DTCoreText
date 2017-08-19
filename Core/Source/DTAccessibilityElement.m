@@ -11,12 +11,12 @@
 static const CGPoint DTAccessibilityElementNullActivationPoint = {CGFLOAT_MAX, CGFLOAT_MAX};
 
 @interface DTAccessibilityElement()
-@property (nonatomic, unsafe_unretained) UIView *parentView;
+@property (nonatomic, unsafe_unretained) DTView *parentView;
 @end
 
 @implementation DTAccessibilityElement
 
-- (id)initWithParentView:(UIView *)parentView
+- (id)initWithParentView:(DTView *)parentView
 {
 	self = [super initWithAccessibilityContainer:parentView];
 	if (self)

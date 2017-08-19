@@ -16,7 +16,7 @@
 
 @implementation DTCoreTextLayoutFrameAccessibilityElementGenerator
 
-- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block
+- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(DTView *)view attachmentViewProvider:(DTAttachmentViewProvider)block
 {
 	NSMutableArray *elements = [NSMutableArray array];
 

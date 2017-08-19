@@ -17,7 +17,7 @@
 	return self;
 }
 
-- (UIView *)proxiedView
+- (DTView *)proxiedView
 {
 	return [self.delegate viewForTextAttachment:self.textAttachment proxy:self];
 }
@@ -34,14 +34,14 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
 {
-	NSMethodSignature *signature = [UIView instanceMethodSignatureForSelector:sel];
+	NSMethodSignature *signature = [DTView instanceMethodSignatureForSelector:sel];
 	
 	return signature;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-	UIView *view = [self proxiedView];
+	DTView *view = [self proxiedView];
 	[invocation invokeWithTarget:view];
 }
 
