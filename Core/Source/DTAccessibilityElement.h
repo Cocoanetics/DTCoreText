@@ -6,7 +6,18 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
+
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
+
+#else
+
+#import <AppKit/AppKit.h>
+
+#endif
+
 
 /**
  A UIAccessibilityElement subclass that automatically converts its local accessibilityFrame to screen coordinates.
@@ -27,6 +38,6 @@
  @param parentView The logical superview for the onscreen element the receiver represents.
  @returns Returns an initialized DTAccessibilityElement */
 
-- (id)initWithParentView:(UIView *)parentView;
+- (id)initWithParentView:(DTView *)parentView;
 
 @end

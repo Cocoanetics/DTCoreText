@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "DTTextAttachment.h"
+#import "DTCompatibility.h"
 
 @protocol DTAccessibilityViewProxyDelegate;
 
@@ -50,5 +51,5 @@
  @returns The sender requesting the view.
  */
 
-- (UIView *)viewForTextAttachment:(DTTextAttachment *)attachment proxy:(DTAccessibilityViewProxy *)proxy;
+- (DTView *)viewForTextAttachment:(DTTextAttachment *)attachment proxy:(DTAccessibilityViewProxy *)proxy;
 @end

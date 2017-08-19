@@ -29,6 +29,6 @@ typedef id(^DTAttachmentViewProvider)(DTTextAttachment *textAttachment);
  @returns Returns an array of objects conforming to the UIAccessibility informal protocol, suitable for presentation for the VoiceOver system.
  */
 
-- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(UIView *)view attachmentViewProvider:(DTAttachmentViewProvider)block;
+- (NSArray *)accessibilityElementsForLayoutFrame:(DTCoreTextLayoutFrame *)frame view:(DTView *)view attachmentViewProvider:(DTAttachmentViewProvider)block;
 
 @end

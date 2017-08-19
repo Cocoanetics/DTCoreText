@@ -14,6 +14,7 @@
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
 #import "DTWeakSupport.h"
+#import "DTCompatibility.h"
 #import "DTLog.h"
 
 @implementation DTCoreTextGlyphRun

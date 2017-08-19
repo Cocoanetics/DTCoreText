@@ -14,6 +14,7 @@
 	#define DTColor UIColor
 	#define DTImage UIImage
 	#define DTFont UIFont
+	#define DTView	UIView
 
 	// Edge Insets
 	#define DTEdgeInsets UIEdgeInsets
@@ -92,6 +93,7 @@
 	#define DTColor NSColor
 	#define DTImage NSImage
 	#define DTFont NSFont
+	#define DTView	NSView
 
 	// Edge Insets
 	#define DTEdgeInsets NSEdgeInsets
@@ -140,6 +142,18 @@
 	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
 	{
 		return NO;
+	}
+
+	static inline CGRect UIEdgeInsetsInsetRect(CGRect rect, NSEdgeInsets insets) {
+		rect.origin.x    += insets.left;
+		rect.origin.y    += insets.top;
+		rect.size.width  -= (insets.left + insets.right);
+		rect.size.height -= (insets.top  + insets.bottom);
+		return rect;
+	}
+
+	static inline BOOL UIEdgeInsetsEqualToEdgeInsets(NSEdgeInsets insets1, NSEdgeInsets insets2) {
+		return insets1.left == insets2.left && insets1.top == insets2.top && insets1.right == insets2.right && insets1.bottom == insets2.bottom;
 	}
 
 	#define DTNSNumberFromCGFloat(x) [NSNumber numberWithDouble:x]

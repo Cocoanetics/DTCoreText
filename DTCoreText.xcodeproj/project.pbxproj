@@ -777,6 +777,30 @@
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD93AEFE1F47C1B60032FB3A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AEFD1F47C1B60032FB3A /* AppDelegate.m */; };
+		FD93AF011F47C1B60032FB3A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF001F47C1B60032FB3A /* main.m */; };
+		FD93AF041F47C1B60032FB3A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF031F47C1B60032FB3A /* ViewController.m */; };
+		FD93AF061F47C1B60032FB3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD93AF051F47C1B60032FB3A /* Assets.xcassets */; };
+		FD93AF091F47C1B60032FB3A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FD93AF071F47C1B60032FB3A /* Main.storyboard */; };
+		FD93AF2B1F47C2DF0032FB3A /* libDTFoundation_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9517FAABE500A1F5E8 /* libDTFoundation_Mac.a */; };
+		FD93AF2C1F47C2DF0032FB3A /* libDTHTMLParser_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FE9D17FAABE500A1F5E8 /* libDTHTMLParser_Mac.a */; };
+		FD93AF2D1F47C2DF0032FB3A /* libDTReachability_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEA917FAABE500A1F5E8 /* libDTReachability_Mac.a */; };
+		FD93AF2E1F47C2DF0032FB3A /* libDTSQLite_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEAD17FAABE500A1F5E8 /* libDTSQLite_Mac.a */; };
+		FD93AF2F1F47C2DF0032FB3A /* libDTUTI_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEA517FAABE500A1F5E8 /* libDTUTI_Mac.a */; };
+		FD93AF301F47C2DF0032FB3A /* libDTZipArchive_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEA117FAABE500A1F5E8 /* libDTZipArchive_Mac.a */; };
+		FD93AF311F47C3160032FB3A /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
+		FD93AF431F47C5740032FB3A /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */; };
+		FD93AF471F47D40F0032FB3A /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
+		FD93AF481F47D44D0032FB3A /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
+		FD93AF491F47D4640032FB3A /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92314863E8700E1AFD9 /* DTCoreTextLayoutLine.m */; };
+		FD93AF4A1F47D4810032FB3A /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91D14863E8700E1AFD9 /* DTCoreTextGlyphRun.m */; };
+		FD93AF4B1F47D5EA0032FB3A /* DTCoreTextGlyphRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD93AF4C1F47D6040032FB3A /* DTCoreTextLayoutLine.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92214863E8700E1AFD9 /* DTCoreTextLayoutLine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD93AF4D1F47D62C0032FB3A /* DTCoreTextLayoutFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92014863E8700E1AFD9 /* DTCoreTextLayoutFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD93AF4E1F47D6370032FB3A /* DTCoreTextLayouter.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91E14863E8700E1AFD9 /* DTCoreTextLayouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD93AF511F47DB2A0032FB3A /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */; };
+		FD93AF521F47DDD20032FB3A /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
+		FD93AF531F47DDDF0032FB3A /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1108,6 +1132,55 @@
 			remoteGlobalIDString = A78381C31963F8D700AF09D3;
 			remoteInfo = "DTAnimatedGIF Demo";
 		};
+		FD93AF281F47C2710032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A710A4FF1607556000437D36;
+			remoteInfo = "Static Library (Mac)";
+		};
+		FD93AF321F47C3270032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2262DC51638331500BFDAD7;
+			remoteInfo = "DTCoreText (Mac)";
+		};
+		FD93AF341F47C33F0032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3D7CE53D166613B60028D339;
+			remoteInfo = "DTHTMLParser (Mac)";
+		};
+		FD93AF361F47C33F0032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A72121E9173BFFED003C6F0A;
+			remoteInfo = "DTReachability (Mac)";
+		};
+		FD93AF381F47C33F0032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7C92B8B174FB9720019D70A;
+			remoteInfo = "DTSQLite (Mac)";
+		};
+		FD93AF3A1F47C33F0032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7E889A316A9B190009EF0DF;
+			remoteInfo = "DTUTI (Mac)";
+		};
+		FD93AF3C1F47C33F0032FB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7D8C7AF1723174600025675;
+			remoteInfo = "DTZipArchive (Mac)";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1418,6 +1491,19 @@
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD93AEFA1F47C1B60032FB3A /* DTCoreTextDemo4MacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DTCoreTextDemo4MacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD93AEFC1F47C1B60032FB3A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		FD93AEFD1F47C1B60032FB3A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		FD93AF001F47C1B60032FB3A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FD93AF021F47C1B60032FB3A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		FD93AF031F47C1B60032FB3A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		FD93AF051F47C1B60032FB3A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FD93AF081F47C1B60032FB3A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FD93AF0A1F47C1B60032FB3A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FD93AF411F47C5740032FB3A /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
+		FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextContentView.m; sourceTree = "<group>"; };
+		FD93AF4F1F47DB2A0032FB3A /* DTLinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLinkButton.h; sourceTree = "<group>"; };
+		FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLinkButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1521,6 +1607,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FD93AEF71F47C1B60032FB3A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD93AF311F47C3160032FB3A /* DTCoreText.framework in Frameworks */,
+				FD93AF2B1F47C2DF0032FB3A /* libDTFoundation_Mac.a in Frameworks */,
+				FD93AF2C1F47C2DF0032FB3A /* libDTHTMLParser_Mac.a in Frameworks */,
+				FD93AF2D1F47C2DF0032FB3A /* libDTReachability_Mac.a in Frameworks */,
+				FD93AF2E1F47C2DF0032FB3A /* libDTSQLite_Mac.a in Frameworks */,
+				FD93AF2F1F47C2DF0032FB3A /* libDTUTI_Mac.a in Frameworks */,
+				FD93AF301F47C2DF0032FB3A /* libDTZipArchive_Mac.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1535,6 +1635,7 @@
 				A78D9F781965B7DD00C80986 /* MacUnitTest.xctest */,
 				A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */,
 				94D24B961D4AFE7800C7F33C /* DTCoreText.framework */,
+				FD93AEFA1F47C1B60032FB3A /* DTCoreTextDemo4MacOS.app */,
 			);
 			name = Products;
 			path = ../..;
@@ -1548,6 +1649,7 @@
 				A788CA1114863E9D00E1AFD9 /* Test */,
 				A70D37CE16DCE92C003F21C9 /* Documentation */,
 				A7856F3917FAA69C0080AB0A /* Externals */,
+				FD93AEFB1F47C1B60032FB3A /* DTCoreTextDemo4MacOS */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -2068,6 +2170,41 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		FD93AEFB1F47C1B60032FB3A /* DTCoreTextDemo4MacOS */ = {
+			isa = PBXGroup;
+			children = (
+				FD93AF401F47C5740032FB3A /* UI */,
+				FD93AEFC1F47C1B60032FB3A /* AppDelegate.h */,
+				FD93AEFD1F47C1B60032FB3A /* AppDelegate.m */,
+				FD93AF021F47C1B60032FB3A /* ViewController.h */,
+				FD93AF031F47C1B60032FB3A /* ViewController.m */,
+				FD93AF051F47C1B60032FB3A /* Assets.xcassets */,
+				FD93AF071F47C1B60032FB3A /* Main.storyboard */,
+				FD93AF0A1F47C1B60032FB3A /* Info.plist */,
+				FD93AEFF1F47C1B60032FB3A /* Supporting Files */,
+			);
+			path = DTCoreTextDemo4MacOS;
+			sourceTree = "<group>";
+		};
+		FD93AEFF1F47C1B60032FB3A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FD93AF001F47C1B60032FB3A /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FD93AF401F47C5740032FB3A /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				FD93AF4F1F47DB2A0032FB3A /* DTLinkButton.h */,
+				FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */,
+				FD93AF411F47C5740032FB3A /* DTAttributedTextContentView.h */,
+				FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2399,9 +2536,14 @@
 				A7AE582E1725391900A9BF61 /* DTObjectTextAttachment.h in Headers */,
 				A7B14E39183638350007CF27 /* DTHTMLParser.h in Headers */,
 				A7B14E36183638200007CF27 /* DTWeakSupport.h in Headers */,
-				A7B14E42183638D40007CF27 /* DTLog.h in Headers */,
 				A7B14E40183638D40007CF27 /* DTBase64Coding.h in Headers */,
+				A7B14E42183638D40007CF27 /* DTLog.h in Headers */,
 				A7B14E4818363B5B0007CF27 /* NSString+DTUtilities.h in Headers */,
+				FD93AF4C1F47D6040032FB3A /* DTCoreTextLayoutLine.h in Headers */,
+				FD93AF4E1F47D6370032FB3A /* DTCoreTextLayouter.h in Headers */,
+				FD93AF4B1F47D5EA0032FB3A /* DTCoreTextGlyphRun.h in Headers */,
+				FD93AF4D1F47D62C0032FB3A /* DTCoreTextLayoutFrame.h in Headers */,
+				FD93AF531F47DDDF0032FB3A /* NSAttributedStringRunDelegates.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2564,6 +2706,30 @@
 			productReference = E2262DC61638331500BFDAD7 /* DTCoreText.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		FD93AEF91F47C1B60032FB3A /* DTCoreTextDemo4MacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD93AF241F47C1B60032FB3A /* Build configuration list for PBXNativeTarget "DTCoreTextDemo4MacOS" */;
+			buildPhases = (
+				FD93AEF61F47C1B60032FB3A /* Sources */,
+				FD93AEF71F47C1B60032FB3A /* Frameworks */,
+				FD93AEF81F47C1B60032FB3A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FD93AF351F47C33F0032FB3A /* PBXTargetDependency */,
+				FD93AF371F47C33F0032FB3A /* PBXTargetDependency */,
+				FD93AF391F47C33F0032FB3A /* PBXTargetDependency */,
+				FD93AF3B1F47C33F0032FB3A /* PBXTargetDependency */,
+				FD93AF3D1F47C33F0032FB3A /* PBXTargetDependency */,
+				FD93AF291F47C2710032FB3A /* PBXTargetDependency */,
+				FD93AF331F47C3270032FB3A /* PBXTargetDependency */,
+			);
+			name = DTCoreTextDemo4MacOS;
+			productName = DTCoreTextDemo4MacOS;
+			productReference = FD93AEFA1F47C1B60032FB3A /* DTCoreTextDemo4MacOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2580,6 +2746,11 @@
 					A79BA61F1B46A1FB0086C2F6 = {
 						CreatedOnToolsVersion = 6.4;
 					};
+					FD93AEF91F47C1B60032FB3A = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = Y28WQ9G7N2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DTCoreText" */;
@@ -2592,6 +2763,7 @@
 				French,
 				German,
 				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -2612,6 +2784,7 @@
 				E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */,
 				A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */,
 				94D24B081D4AFE7800C7F33C /* DTCoreText (tvOS) */,
+				FD93AEF91F47C1B60032FB3A /* DTCoreTextDemo4MacOS */,
 			);
 		};
 /* End PBXProject section */
@@ -2923,6 +3096,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD93AEF81F47C1B60032FB3A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD93AF061F47C1B60032FB3A /* Assets.xcassets in Resources */,
+				FD93AF091F47C1B60032FB3A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3290,6 +3472,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD93AF521F47DDD20032FB3A /* NSAttributedStringRunDelegates.m in Sources */,
+				FD93AF4A1F47D4810032FB3A /* DTCoreTextGlyphRun.m in Sources */,
+				FD93AF491F47D4640032FB3A /* DTCoreTextLayoutLine.m in Sources */,
+				FD93AF481F47D44D0032FB3A /* DTCoreTextLayoutFrame.m in Sources */,
+				FD93AF471F47D40F0032FB3A /* DTCoreTextLayouter.m in Sources */,
 				E2262E0B1638351C00BFDAD7 /* default.css in Sources */,
 				426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */,
 				E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */,
@@ -3335,6 +3522,18 @@
 				A76D451A1732A512006A7CDA /* NSDictionary+DTCoreText.m in Sources */,
 				A7985E1B178ECDE4005D40B2 /* NSAttributedString+HTML.m in Sources */,
 				A7DDF87F17DDEB780005D62D /* DTColorFunctions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD93AEF61F47C1B60032FB3A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD93AF041F47C1B60032FB3A /* ViewController.m in Sources */,
+				FD93AF011F47C1B60032FB3A /* main.m in Sources */,
+				FD93AEFE1F47C1B60032FB3A /* AppDelegate.m in Sources */,
+				FD93AF431F47C5740032FB3A /* DTAttributedTextContentView.m in Sources */,
+				FD93AF511F47DB2A0032FB3A /* DTLinkButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3391,7 +3590,53 @@
 			target = A79BA61F1B46A1FB0086C2F6 /* DTCoreText (iOS) */;
 			targetProxy = A7D29D681CB68D470068F043 /* PBXContainerItemProxy */;
 		};
+		FD93AF291F47C2710032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library (Mac)";
+			targetProxy = FD93AF281F47C2710032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF331F47C3270032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2262DC51638331500BFDAD7 /* DTCoreText (Mac) */;
+			targetProxy = FD93AF321F47C3270032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF351F47C33F0032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTHTMLParser (Mac)";
+			targetProxy = FD93AF341F47C33F0032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF371F47C33F0032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTReachability (Mac)";
+			targetProxy = FD93AF361F47C33F0032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF391F47C33F0032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTSQLite (Mac)";
+			targetProxy = FD93AF381F47C33F0032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF3B1F47C33F0032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTUTI (Mac)";
+			targetProxy = FD93AF3A1F47C33F0032FB3A /* PBXContainerItemProxy */;
+		};
+		FD93AF3D1F47C33F0032FB3A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DTZipArchive (Mac)";
+			targetProxy = FD93AF3C1F47C33F0032FB3A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FD93AF071F47C1B60032FB3A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD93AF081F47C1B60032FB3A /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
@@ -4349,6 +4594,103 @@
 			};
 			name = Release;
 		};
+		FD93AF0B1F47C1B60032FB3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = DTCoreTextDemo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.DTCoreTextDemo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FD93AF0C1F47C1B60032FB3A /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = DTCoreTextDemo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.DTCoreTextDemo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		FD93AF0D1F47C1B60032FB3A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y28WQ9G7N2;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = DTCoreTextDemo4MacOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cntrump.DTCoreTextDemo4MacOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4451,6 +4793,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		FD93AF241F47C1B60032FB3A /* Build configuration list for PBXNativeTarget "DTCoreTextDemo4MacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD93AF0B1F47C1B60032FB3A /* Debug */,
+				FD93AF0C1F47C1B60032FB3A /* Coverage */,
+				FD93AF0D1F47C1B60032FB3A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
