@@ -1,5 +1,5 @@
 //
-//  DTAttributedTextContentView.h
+//  AttributedTextContentView.h
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 1/9/11.
@@ -13,7 +13,7 @@
 #import <DTFoundation/DTWeakSupport.h>
 #import <DTCoreText/DTCoreText.h>
 
-@class DTAttributedTextContentView;
+@class AttributedTextContentView;
 @class DTCoreTextLayoutFrame;
 @class DTTextBlock;
 @class DTCoreTextLayouter;
@@ -42,7 +42,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param layoutFrame The layout frame that will be drawn for
  @param context The graphics context that will drawn into
  */
-- (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView willDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+- (void)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView willDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
 
 
 /**
@@ -52,7 +52,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param layoutFrame The layout frame that was drawn for
  @param context The graphics context that was drawn into
  */
-- (void)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
+- (void)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView didDrawLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame inContext:(CGContextRef)context;
 
 
 /**
@@ -67,7 +67,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param layoutFrame The layout frame that will be drawn for
  @returns `YES` is the standard fill of the text block should be drawn, `NO` if it should not
  */
-- (BOOL)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame;
+- (BOOL)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView shouldDrawBackgroundForTextBlock:(DTTextBlock *)textBlock frame:(CGRect)frame context:(CGContextRef)context forLayoutFrame:(DTCoreTextLayoutFrame *)layoutFrame;
 
 /**
  @name Providing Custom Views for Content
@@ -82,7 +82,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param frame The frame that the view should use to fit on top of the space reserved for the attachment
  @returns The view that should represent the given attachment
  */
-- (DTView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame;
+- (DTView *)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame;
 
 
 /**
@@ -94,7 +94,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @param frame The frame that the view should use to fit on top of the space reserved for the attachment
  @returns The view that should represent the given hyperlink
  */
-- (DTView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
+- (DTView *)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame;
 
 
 /**
@@ -108,7 +108,7 @@ extern NSString * const DTAttributedTextContentViewDidFinishLayoutNotification;
  @returns The view that should represent the given hyperlink or text attachment
  @see attributedTextContentView:viewForAttachment:frame: and attributedTextContentView:viewForAttachment:frame:
  */
-- (DTView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
+- (DTView *)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView viewForAttributedString:(NSAttributedString *)string frame:(CGRect)frame;
 
 @end
 
@@ -134,7 +134,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  DTAttributedTextContentView is designed to be used as the content view inside a DTAttributedTextView and thus sizes its intrinsicContentSize always to be the same as the width of the set frame. Use DTAttributedLabel if you don't require scrolling behavior.
  */
 
-@interface DTAttributedTextContentView : DTView
+@interface AttributedTextContentView : DTView
 {
 	NSAttributedString *_attributedString;
 	DTCoreTextLayoutFrame *_layoutFrame;
@@ -313,7 +313,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 /**
  You can globally customize the layer class to be used for new instances of <DTAttributedTextContentView>. By itself it makes most sense to go with the default `CALayer`. For larger bodies of text, i.e. if there is scrolling then you should use a `CATiledLayer` subclass instead.
  */
-@interface DTAttributedTextContentView (Tiling)
+@interface AttributedTextContentView (Tiling)
 
 /**
  Sets the layer class globally to use in new instances of content views. Defaults to `CALayer`.
@@ -335,7 +335,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 /**
  Methods for drawing the content view
  */
-@interface DTAttributedTextContentView (Drawing)
+@interface AttributedTextContentView (Drawing)
 
 /**
  Creates an image from a part of the receiver's content view
@@ -352,7 +352,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 /**
  Methods for getting cursor position and frame. Those are convenience methods that call through to the layoutFrame property which has the same coordinate system as the receiver.
  */
-@interface DTAttributedTextContentView (Cursor)
+@interface AttributedTextContentView (Cursor)
 
 /**
  Determines the closest string index to a point in the receiver's frame.

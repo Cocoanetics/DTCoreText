@@ -789,7 +789,7 @@
 		FD93AF2F1F47C2DF0032FB3A /* libDTUTI_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEA517FAABE500A1F5E8 /* libDTUTI_Mac.a */; };
 		FD93AF301F47C2DF0032FB3A /* libDTZipArchive_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A781FEA117FAABE500A1F5E8 /* libDTZipArchive_Mac.a */; };
 		FD93AF311F47C3160032FB3A /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2262DC61638331500BFDAD7 /* DTCoreText.framework */; };
-		FD93AF431F47C5740032FB3A /* DTAttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */; };
+		FD93AF431F47C5740032FB3A /* AttributedTextContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF421F47C5740032FB3A /* AttributedTextContentView.m */; };
 		FD93AF471F47D40F0032FB3A /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
 		FD93AF481F47D44D0032FB3A /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
 		FD93AF491F47D4640032FB3A /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92314863E8700E1AFD9 /* DTCoreTextLayoutLine.m */; };
@@ -798,7 +798,7 @@
 		FD93AF4C1F47D6040032FB3A /* DTCoreTextLayoutLine.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92214863E8700E1AFD9 /* DTCoreTextLayoutLine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD93AF4D1F47D62C0032FB3A /* DTCoreTextLayoutFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92014863E8700E1AFD9 /* DTCoreTextLayoutFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD93AF4E1F47D6370032FB3A /* DTCoreTextLayouter.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91E14863E8700E1AFD9 /* DTCoreTextLayouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FD93AF511F47DB2A0032FB3A /* DTLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */; };
+		FD93AF511F47DB2A0032FB3A /* LinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD93AF501F47DB2A0032FB3A /* LinkButton.m */; };
 		FD93AF521F47DDD20032FB3A /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
 		FD93AF531F47DDDF0032FB3A /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -1500,10 +1500,10 @@
 		FD93AF051F47C1B60032FB3A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD93AF081F47C1B60032FB3A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FD93AF0A1F47C1B60032FB3A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FD93AF411F47C5740032FB3A /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
-		FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTAttributedTextContentView.m; sourceTree = "<group>"; };
-		FD93AF4F1F47DB2A0032FB3A /* DTLinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLinkButton.h; sourceTree = "<group>"; };
-		FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTLinkButton.m; sourceTree = "<group>"; };
+		FD93AF411F47C5740032FB3A /* AttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedTextContentView.h; sourceTree = "<group>"; };
+		FD93AF421F47C5740032FB3A /* AttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributedTextContentView.m; sourceTree = "<group>"; };
+		FD93AF4F1F47DB2A0032FB3A /* LinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkButton.h; sourceTree = "<group>"; };
+		FD93AF501F47DB2A0032FB3A /* LinkButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2197,10 +2197,10 @@
 		FD93AF401F47C5740032FB3A /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				FD93AF4F1F47DB2A0032FB3A /* DTLinkButton.h */,
-				FD93AF501F47DB2A0032FB3A /* DTLinkButton.m */,
-				FD93AF411F47C5740032FB3A /* DTAttributedTextContentView.h */,
-				FD93AF421F47C5740032FB3A /* DTAttributedTextContentView.m */,
+				FD93AF4F1F47DB2A0032FB3A /* LinkButton.h */,
+				FD93AF501F47DB2A0032FB3A /* LinkButton.m */,
+				FD93AF411F47C5740032FB3A /* AttributedTextContentView.h */,
+				FD93AF421F47C5740032FB3A /* AttributedTextContentView.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3532,8 +3532,8 @@
 				FD93AF041F47C1B60032FB3A /* ViewController.m in Sources */,
 				FD93AF011F47C1B60032FB3A /* main.m in Sources */,
 				FD93AEFE1F47C1B60032FB3A /* AppDelegate.m in Sources */,
-				FD93AF431F47C5740032FB3A /* DTAttributedTextContentView.m in Sources */,
-				FD93AF511F47DB2A0032FB3A /* DTLinkButton.m in Sources */,
+				FD93AF431F47C5740032FB3A /* AttributedTextContentView.m in Sources */,
+				FD93AF511F47DB2A0032FB3A /* LinkButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4802,6 +4802,7 @@
 				FD93AF0D1F47C1B60032FB3A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

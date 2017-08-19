@@ -1,17 +1,15 @@
 //
 //  DTLinkButton.m
-//  quan4macos
 //
 //  Created by cntrump on 2017/8/7.
-//  Copyright © 2017年 unnoo. All rights reserved.
 //
 
-#import "DTLinkButton.h"
+#import "LinkButton.h"
 
 // constant for notification
 NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotification";
 
-@interface DTLinkButton () {
+@interface LinkButton () {
     NSURL *_URL;
     NSString *_GUID;
 
@@ -22,7 +20,7 @@ NSString *DTLinkButtonDidHighlightNotification = @"DTLinkButtonDidHighlightNotif
 
 @end
 
-@implementation DTLinkButton
+@implementation LinkButton
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DTLinkButtonDidHighlightNotification object:nil];

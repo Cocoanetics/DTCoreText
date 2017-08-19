@@ -7,8 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "./UI/DTLinkButton.h"
-#import "./UI/DTAttributedTextContentView.h"
+#import "./UI/LinkButton.h"
+#import "./UI/AttributedTextContentView.h"
 #import "NSAttributedStringRunDelegates.h"
 
 
@@ -63,7 +63,7 @@
 @end
 
 @interface ViewController ()<DTAttributedTextContentViewDelegate> {
-	DTAttributedTextContentView *_textContentView;
+	AttributedTextContentView *_textContentView;
 }
 
 @end
@@ -87,7 +87,7 @@
 	NSAttributedString *emotionString = [NSAttributedString dt_stringWithImageAttachment:[NSImage imageNamed:@"moren_hashiqi_org"] displaySize:CGSizeMake(22.0, 22.0) alignment:DTTextAttachmentVerticalAlignmentBaseline url:nil attributes:@{NSFontAttributeName:[NSFont systemFontOfSize:15.0]}];
 	[string appendAttributedString:emotionString];
 
-	_textContentView = [[DTAttributedTextContentView alloc] initWithFrame:self.view.bounds];
+	_textContentView = [[AttributedTextContentView alloc] initWithFrame:self.view.bounds];
 	_textContentView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 	_textContentView.delegate = self;
 	_textContentView.shouldDrawLinks = NO;
@@ -103,8 +103,8 @@
     // Update the view, if already loaded.
 }
 
-- (DTView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame {
-	DTLinkButton *linkButton = [[DTLinkButton alloc] initWithFrame:frame];
+- (DTView *)attributedTextContentView:(AttributedTextContentView *)attributedTextContentView viewForLink:(NSURL *)url identifier:(NSString *)identifier frame:(CGRect)frame {
+	LinkButton *linkButton = [[LinkButton alloc] initWithFrame:frame];
 
 	linkButton.image = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDefault];
 

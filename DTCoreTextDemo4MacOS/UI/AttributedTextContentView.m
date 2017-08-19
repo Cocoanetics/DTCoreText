@@ -1,5 +1,5 @@
 //
-//  DTAttributedTextContentView.h
+//  AttributedTextContentView.h
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 1/9/11.
@@ -10,7 +10,7 @@
 
 #import "DTCoreText.h"
 #import "DTCoreTextLayoutFrame+Cursor.h"
-#import "DTAttributedTextContentView.h"
+#import "AttributedTextContentView.h"
 
 #if TARGET_OS_IPHONE
 #import "DTDictationPlaceholderTextAttachment.h"
@@ -32,7 +32,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 #if TARGET_OS_IPHONE
 @interface DTAttributedTextContentView () <DTAccessibilityViewProxyDelegate>
 #else
-@interface DTAttributedTextContentView ()
+@interface AttributedTextContentView ()
 #endif
 {
 	BOOL _shouldAddFirstLineLeading;
@@ -80,7 +80,7 @@ NSString * const DTAttributedTextContentViewDidFinishLayoutNotification = @"DTAt
 
 static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
-@implementation DTAttributedTextContentView (Tiling)
+@implementation AttributedTextContentView (Tiling)
 
 + (void)setLayerClass:(Class)layerClass
 {
@@ -100,7 +100,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @end
 
 
-@implementation DTAttributedTextContentView (Cursor)
+@implementation AttributedTextContentView (Cursor)
 
 - (NSInteger)closestCursorIndexToPoint:(CGPoint)point
 {
@@ -115,7 +115,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @end
 
 
-@implementation DTAttributedTextContentView
+@implementation AttributedTextContentView
 
 - (void)setup
 {
@@ -982,11 +982,11 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				
 				if (_delegateFlags.delegateSupportsNotificationBeforeTextBoxDrawing)
 				{
-					DT_WEAK_VARIABLE DTAttributedTextContentView *weakself = self;
+					DT_WEAK_VARIABLE AttributedTextContentView *weakself = self;
 					
 					[_layoutFrame setTextBlockHandler:^(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground) {
 						
-						DTAttributedTextContentView *strongself = weakself;
+						AttributedTextContentView *strongself = weakself;
 						
 						BOOL result = [strongself->_delegate attributedTextContentView:strongself shouldDrawBackgroundForTextBlock:textBlock frame:frame context:context forLayoutFrame:strongself->_layoutFrame];
 						
@@ -1181,7 +1181,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 @end
 
-@implementation DTAttributedTextContentView (Drawing)
+@implementation AttributedTextContentView (Drawing)
 
 - (DTImage *)contentImageWithBounds:(CGRect)bounds options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
