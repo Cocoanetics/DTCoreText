@@ -1255,8 +1255,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 - (void)_setForgroundColorInContext:(CGContextRef)context forGlyphRun:(DTCoreTextGlyphRun *)glyphRun options:(DTCoreTextLayoutFrameDrawingOptions)options
 {
 	DTColor *color = nil;
-	
-	BOOL needsToSetFillColor = [[glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName] boolValue];
+	NSNumber *foregroundColorFromContext = [glyphRun.attributes objectForKey:(id)kCTForegroundColorFromContextAttributeName];
+	BOOL needsToSetFillColor = foregroundColorFromContext ? [foregroundColorFromContext boolValue] : YES;
 	
 	if (glyphRun.isHyperlink)
 	{
@@ -1909,6 +1909,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		_numberOfLines = numberOfLines;
         // clear lines cache
         _lines = nil;
+		_frame.size.height = CGFLOAT_HEIGHT_UNKNOWN;
     }
 }
 
@@ -1919,6 +1920,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
         _lineBreakMode = lineBreakMode;
         // clear lines cache
         _lines = nil;
+		_frame.size.height = CGFLOAT_HEIGHT_UNKNOWN;
     }
 }
 
@@ -1932,6 +1934,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
             // clear lines cache
             _lines = nil;
+			_frame.size.height = CGFLOAT_HEIGHT_UNKNOWN;
         }
     }
 }
