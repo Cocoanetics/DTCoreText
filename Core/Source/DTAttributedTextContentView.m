@@ -165,6 +165,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)dealloc
 {
+	if (_isTiling)
+	{
+		self.layer.contents = nil;
+		self.layer.delegate = nil;
+	}
+
 	[self removeAllCustomViews];
 }
 
