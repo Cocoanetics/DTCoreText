@@ -54,6 +54,7 @@ NSString * const DTAscentMultiplierAttribute = @"DTAscentMultiplierAttribute";
 NSString * const DTBackgroundStrokeColorAttribute = @"DTBackgroundStrokeColor";
 NSString * const DTBackgroundStrokeWidthAttribute = @"DTBackgroundStrokeWidth";
 NSString * const DTBackgroundCornerRadiusAttribute = @"DTBackgroundCornerRadius";
+NSString * const DTArchivingAttribute = @"DTArchivingAttribute";
 
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";
