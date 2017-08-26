@@ -777,6 +777,22 @@
 		E2262E031638346200BFDAD7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7C1CC0E14D6CFD5008D6468 /* AppKit.framework */; };
 		E2262E0B1638351C00BFDAD7 /* default.css in Sources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		E2262EA41638485F00BFDAD7 /* DTCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B4C9E1486558200873A4A /* DTCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD3C5FEB1F510E9D000352CE /* DTCoreTextLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91F14863E8700E1AFD9 /* DTCoreTextLayouter.m */; };
+		FD3C5FEC1F510E9D000352CE /* DTCoreTextLayoutFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92114863E8700E1AFD9 /* DTCoreTextLayoutFrame.m */; };
+		FD3C5FED1F510E9D000352CE /* DTCoreTextLayoutFrame+Cursor.m in Sources */ = {isa = PBXBuildFile; fileRef = A78E3C50178D674300D17DCD /* DTCoreTextLayoutFrame+Cursor.m */; };
+		FD3C5FEE1F510E9D000352CE /* DTCoreTextLayoutLine.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92314863E8700E1AFD9 /* DTCoreTextLayoutLine.m */; };
+		FD3C5FEF1F510EB7000352CE /* DTCoreTextLayouter.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91E14863E8700E1AFD9 /* DTCoreTextLayouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD3C5FF01F510EB7000352CE /* DTCoreTextLayoutFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92014863E8700E1AFD9 /* DTCoreTextLayoutFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD3C5FF11F510EB7000352CE /* DTCoreTextLayoutLine.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C92214863E8700E1AFD9 /* DTCoreTextLayoutLine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD3C5FF21F510F49000352CE /* DTCoreTextGlyphRun.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91D14863E8700E1AFD9 /* DTCoreTextGlyphRun.m */; };
+		FD3C5FF31F510F49000352CE /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
+		FD3C5FF41F510F55000352CE /* DTCoreTextGlyphRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C91C14863E8700E1AFD9 /* DTCoreTextGlyphRun.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD3C5FF51F510F55000352CE /* NSAttributedStringRunDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93E14863E8700E1AFD9 /* NSAttributedStringRunDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDAE5F6D1F511D18003A5F0B /* DTCoreTextMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A717BDE319E5A06C0024EF95 /* DTCoreTextMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDAE5F841F511D62003A5F0B /* DTColor+Compatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C95214863E8700E1AFD9 /* DTColor+Compatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDAE5F851F511DA6003A5F0B /* DTImage+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C5D01314D7E3BB00AF1D75 /* DTImage+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDAE5F861F511DEB003A5F0B /* DTStylesheetHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7EB8537168FA33000D686B7 /* DTStylesheetHTMLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FDAE5F871F511E26003A5F0B /* NSAttributedString+HTML.h in Headers */ = {isa = PBXBuildFile; fileRef = A788C93A14863E8700E1AFD9 /* NSAttributedString+HTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2356,6 +2372,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDAE5F871F511E26003A5F0B /* NSAttributedString+HTML.h in Headers */,
+				FDAE5F861F511DEB003A5F0B /* DTStylesheetHTMLElement.h in Headers */,
+				FDAE5F851F511DA6003A5F0B /* DTImage+HTML.h in Headers */,
+				FDAE5F841F511D62003A5F0B /* DTColor+Compatibility.h in Headers */,
+				FDAE5F6D1F511D18003A5F0B /* DTCoreTextMacros.h in Headers */,
+				FD3C5FF41F510F55000352CE /* DTCoreTextGlyphRun.h in Headers */,
+				FD3C5FF51F510F55000352CE /* NSAttributedStringRunDelegates.h in Headers */,
+				FD3C5FEF1F510EB7000352CE /* DTCoreTextLayouter.h in Headers */,
+				FD3C5FF01F510EB7000352CE /* DTCoreTextLayoutFrame.h in Headers */,
+				FD3C5FF11F510EB7000352CE /* DTCoreTextLayoutLine.h in Headers */,
 				E2262DD71638337D00BFDAD7 /* DTCoreTextConstants.h in Headers */,
 				E2262DDB1638337D00BFDAD7 /* DTHTMLAttributedStringBuilder.h in Headers */,
 				E2262DDD1638337D00BFDAD7 /* DTHTMLElement.h in Headers */,
@@ -3290,6 +3316,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD3C5FF21F510F49000352CE /* DTCoreTextGlyphRun.m in Sources */,
+				FD3C5FF31F510F49000352CE /* NSAttributedStringRunDelegates.m in Sources */,
+				FD3C5FEB1F510E9D000352CE /* DTCoreTextLayouter.m in Sources */,
+				FD3C5FEC1F510E9D000352CE /* DTCoreTextLayoutFrame.m in Sources */,
+				FD3C5FED1F510E9D000352CE /* DTCoreTextLayoutFrame+Cursor.m in Sources */,
+				FD3C5FEE1F510E9D000352CE /* DTCoreTextLayoutLine.m in Sources */,
 				E2262E0B1638351C00BFDAD7 /* default.css in Sources */,
 				426693AE1B56F98500F9DBFC /* CTLineUtils.m in Sources */,
 				E2262DD51638336700BFDAD7 /* DTColor+Compatibility.m in Sources */,
@@ -4150,6 +4182,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
+				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
@@ -4312,6 +4345,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
+				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
@@ -4341,6 +4375,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
+				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
