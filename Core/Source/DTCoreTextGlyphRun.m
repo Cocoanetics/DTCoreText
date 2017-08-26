@@ -6,6 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
 #import "DTCoreTextGlyphRun.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTTextAttachment.h"

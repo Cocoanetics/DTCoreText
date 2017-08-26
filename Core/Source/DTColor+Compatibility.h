@@ -28,6 +28,8 @@
 
 #else
 
+#import <AppKit/NSColor.h>
+
 /**
  Methods used to work with HTML representations of colors.
  */

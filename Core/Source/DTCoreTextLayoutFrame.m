@@ -1339,6 +1339,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 #if TARGET_OS_IPHONE
 	// need to push the CG context so that the UI* based colors can be set
 	UIGraphicsPushContext(context);
+#elif TARGET_OS_MAC
+	NSGraphicsContext *c = [NSGraphicsContext graphicsContextWithCGContext:context flipped:YES];
+	[NSGraphicsContext saveGraphicsState];
+	[NSGraphicsContext setCurrentContext:c];
 #endif
 	
 	// need to draw all text boxes because the the there might be the padding region of a box outside the clip rect visible
@@ -1553,6 +1557,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 #if TARGET_OS_IPHONE
 	UIGraphicsPopContext();
+#elif TARGET_OS_MAC
+	[NSGraphicsContext restoreGraphicsState];
 #endif
 	
 	CGContextRestoreGState(context);
