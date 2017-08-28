@@ -62,24 +62,25 @@
 #import "DTObjectTextAttachment.h"
 #import "DTVideoTextAttachment.h"
 
+#import "NSAttributedStringRunDelegates.h"
+
+#import "DTCoreTextGlyphRun.h"
+#import "DTCoreTextLayoutFrame.h"
+#import "DTCoreTextLayoutFrame+Cursor.h"
+#import "DTCoreTextLayoutLine.h"
+#import "DTCoreTextLayouter.h"
+
 // TARGET_OS_IPHONE is both tvOS and iOS
 #if TARGET_OS_IPHONE
 
 #import "DTLazyImageView.h"
 #import "DTLinkButton.h"
 
-#import "NSAttributedStringRunDelegates.h"
-
 #import "DTAttributedLabel.h"
 #import "DTAttributedTextCell.h"
 #import "DTAttributedTextContentView.h"
 #import "DTAttributedTextView.h"
 #import "DTCoreTextFontCollection.h"
-#import "DTCoreTextGlyphRun.h"
-#import "DTCoreTextLayoutFrame.h"
-#import "DTCoreTextLayoutFrame+Cursor.h"
-#import "DTCoreTextLayoutLine.h"
-#import "DTCoreTextLayouter.h"
 
 #import "DTDictationPlaceholderView.h"
 

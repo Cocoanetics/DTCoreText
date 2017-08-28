@@ -336,9 +336,7 @@ static NSCache *imageCache = nil;
 
 - (void)drawInRect:(CGRect)rect context:(CGContextRef)context
 {
-#if TARGET_OS_IPHONE
 	[self.image drawInRect:rect];
-#endif
 }
 
 #pragma mark - DTTextAttachmentHTMLEncoding
