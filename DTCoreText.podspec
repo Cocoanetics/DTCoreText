@@ -19,10 +19,7 @@ Pod::Spec.new do |spec|
   spec.social_media_url = 'https://twitter.com/cocoanetics'
   spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
   spec.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)' }
-  spec.prepare_command = <<-CMD
-     cd ./Core/Source
-     /usr/bin/xxd -i default.css default.css.c
-  CMD
+  spec.resource_bundles = { 'Resources': 'Core/Source/default.css' }
   
   spec.default_subspec = 'Core'
 

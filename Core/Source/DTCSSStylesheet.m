@@ -15,9 +15,6 @@
 #import "NSString+HTML.h"
 
 
-// external symbols generated via custom build rule and xxd
-extern unsigned char default_css[];
-extern unsigned int default_css_len;
 
 
 @implementation DTCSSStylesheet
@@ -41,9 +38,16 @@ extern unsigned int default_css_len;
 	{
 		if (!defaultDTCSSStylesheet)
 		{
-			// get the data from the external symbol
-			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
-			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+			NSBundle *bundle = [NSBundle bundleForClass:self];
+			NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
+			// Cocoapods uses a separate Resources bundle to include default.css
+			if (!path)
+			{
+				NSString *resourcesBundlePath = [bundle pathForResource:@"Resources" ofType:@"bundle"];
+				NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
+				path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
+			}
+			NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 			
 			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
 		}

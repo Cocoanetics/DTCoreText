@@ -7,8 +7,6 @@ You have multiple options available for integrating DTCoreText into your own app
 - [As Sub-Project and/or Git Submodule](#Subproject)
 - [As Framework](#Framework)
 
-DTCoreText is designed to be included as static library from a subproject, it embeds several classes from the **DTFoundation** project. If you want to use DTFoundation as well in your project you need to use the "Static Library (no DTFoundation)" target to avoid duplicate symbols.
-
 GitHub offers tar balls for the individual tagged versions but you shouldn't try to set these up with your project because those are missing the external references. Doing a recursive clone insures that you get all the files from all involved GitHub repositories.
 
 Requirements
@@ -42,7 +40,7 @@ One mild disadvantage of using Cocoapods is that you cannot easily make changes 
 Integrating via Sub-Project
 ---------------------------
 
-This is the recommended approach as it lets Xcode see all the project symbols and dependencies and also allows for execution of the special build rule that processes the `default.css` file into a link-able form.
+This is the recommended approach as it lets Xcode see all the project symbols and dependencies.
 
 If you use `git` as SCM of your apps you would add DTCoreText as a submodule, if not then you would simply clone the project into an Externals sub-folder of your project. The repo URL can either be the one of the master repository or - if you plan to [contribute to it](http://www.cocoanetics.com/2012/01/github-fork-fix-pull-request/) - could be a fork of the project.
 
@@ -116,7 +114,7 @@ In Xcode versions before 4.6 you also needed the `-all_load` flag but that appea
 
 DTCoreText uses the `DTCoreTextFontOverrides.plist` to speed up font matching. The version in the Demo App resources has the commonly used font families set up so that it can quickly get the name of a specific font face given font family and the italic and bold settings. It works without this as well, but will be slower. Add your own custom fonts to the plist and include it in your app to make use of this optimization.
 
-The `default.css` stylesheet that is used for defining the default HTML CSS styles is compiled into `default.css.h` via a build rule. It is linked into the static library, so you don't need to do anything there. If you want to customize something then please do so via the parse options documented in the [NSAttributedString HTML Category](../../Categories/NSAttributedString+HTML.html).
+The `default.css` stylesheet that is used for defining the default HTML CSS styles. If you want to customize something then please do so via the parse options documented in the [NSAttributedString HTML Category](../../Categories/NSAttributedString+HTML.html).
 
 #### Smoke Test
 
