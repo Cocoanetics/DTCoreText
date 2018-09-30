@@ -161,10 +161,16 @@ static NSCache *imageCache = nil;
 		{
 			contentURL = [NSURL URLWithString:src];
 			
-			if(!contentURL)
+			if (!contentURL)
 			{
 				src = [src stringByAddingHTMLEntities];
 				contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
+			}
+			
+			if (!contentURL)
+			{
+				src = [src stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+				contentURL = [NSURL URLWithString:src];
 			}
 			
 			if (![contentURL scheme])
