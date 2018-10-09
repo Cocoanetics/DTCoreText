@@ -426,10 +426,11 @@
 				}
 			}
 			
+			__weak typeof(self) weakSelf = self;
 			[listsToOpen enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
 				
 				// only padding can be reconstructed so far
-				CGFloat listPadding = (paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent) / _textScale;
+				CGFloat listPadding = (paragraphStyle.headIndent - paragraphStyle.firstLineHeadIndent) / weakSelf.textScale;
 				
 				// beginning of a list block
 				[retString appendString:[self _tagRepresentationForListStyle:oneList closingTag:NO listPadding:listPadding inlineStyles:fragment]];
@@ -471,10 +472,11 @@
 		NSDictionary *HTMLAttributes = [_attributedString HTMLAttributesAtIndex:paragraphRange.location];
 		NSMutableDictionary *paragraphLevelHTMLAttributes = [NSMutableDictionary dictionary];
 		
+		__weak typeof(self) weakSelf = self;
 		[HTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
 			
 			// check if range is longer than current paragraph
-			NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:paragraphRange.location];
+			NSRange attributeEffectiveRange = [weakSelf.attributedString rangeOfHTMLAttribute:key atIndex:paragraphRange.location];
 			
 			if (NSIntersectionRange(attributeEffectiveRange, paragraphRange).length == paragraphRange.length)
 			{
@@ -569,11 +571,11 @@
 			{
 				if (spanURL)
 				{
-					currentLinkRange = [_attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
+					currentLinkRange = [weakSelf.attributedString rangeOfLinkAtIndex:spanRange.location URL:NULL];
 				}
 				else if (spanAnchorName)
 				{
-					currentLinkRange = [_attributedString rangeOfAnchorNamed:spanAnchorName];
+					currentLinkRange = [weakSelf.attributedString rangeOfAnchorNamed:spanAnchorName];
 				}
 				
 				isFirstPartOfHyperlink = YES;
@@ -593,12 +595,12 @@
 				}
 				
 				// find which custom attributes are for the link
-				NSDictionary *localHTMLAttributes = [_attributedString HTMLAttributesAtIndex:currentLinkRange.location];
+				NSDictionary *localHTMLAttributes = [weakSelf.attributedString HTMLAttributesAtIndex:currentLinkRange.location];
 				
 				[localHTMLAttributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stopEnumerateKeysAndObjects) {
 					
 					// check if range is longer than current paragraph
-					NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:currentLinkRange.location];
+					NSRange attributeEffectiveRange = [weakSelf.attributedString rangeOfHTMLAttribute:key atIndex:currentLinkRange.location];
 					
 					if (NSEqualRanges(attributeEffectiveRange, currentLinkRange))
 					{
@@ -617,7 +619,7 @@
 			
 			if (effectiveListStyle && needsToRemovePrefix)
 			{
-				NSRange prefixRange = [_attributedString rangeOfFieldAtIndex:spanRange.location];
+				NSRange prefixRange = [weakSelf.attributedString rangeOfFieldAtIndex:spanRange.location];
 				
 				if (prefixRange.location != NSNotFound)
 				{
@@ -690,9 +692,9 @@
 				
 				if (fontDescriptor)
 				{
-					if (_textScale!=1.0f)
+					if (weakSelf.textScale!=1.0f)
 					{
-						fontDescriptor.pointSize /= _textScale;
+						fontDescriptor.pointSize /= weakSelf.textScale;
 					}
 					
 					fontStyle = [fontDescriptor cssStyleRepresentation];
@@ -704,7 +706,7 @@
 				fontStyle = @"";
 			}
 			
-			CGFloat kerning = [attributes kerning] / _textScale;
+			CGFloat kerning = [attributes kerning] / weakSelf.textScale;
 			
 			if (kerning != 0)
 			{
@@ -803,7 +805,7 @@
 					}
 				}
 				
-				NSRange attributeEffectiveRange = [_attributedString rangeOfHTMLAttribute:key atIndex:spanRange.location];
+				NSRange attributeEffectiveRange = [weakSelf.attributedString rangeOfHTMLAttribute:key atIndex:spanRange.location];
 				
 				if (currentLinkRange.location==NSNotFound || !NSEqualRanges(attributeEffectiveRange, currentLinkRange))
 				{

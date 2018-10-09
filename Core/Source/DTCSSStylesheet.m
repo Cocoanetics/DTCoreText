@@ -714,17 +714,21 @@
 	NSString *classString = [element.attributes objectForKey:@"class"];
 	NSArray *classes = [classString componentsSeparatedByString:@" "];
 	
+	__weak typeof(self) weakSelf = self;
+	
 	// Cascaded selectors with more than one part are sorted by specificity
 	NSMutableArray *matchingCascadingSelectors = [self matchingComplexCascadingSelectorsForElement:element];
 	[matchingCascadingSelectors sortUsingComparator:^NSComparisonResult(NSString *selector1, NSString *selector2)
 	 {
-		 NSInteger weightForSelector1 = [[_orderedSelectorWeights objectForKey:selector1] integerValue];
-		 NSInteger weightForSelector2 = [[_orderedSelectorWeights objectForKey:selector2] integerValue];
+		 DTCSSStylesheet *strongSelf = weakSelf;
+		 
+		 NSInteger weightForSelector1 = [[strongSelf->_orderedSelectorWeights objectForKey:selector1] integerValue];
+		 NSInteger weightForSelector2 = [[strongSelf->_orderedSelectorWeights objectForKey:selector2] integerValue];
 		 
 		 if (weightForSelector1 == weightForSelector2)
 		 {
-			 weightForSelector1 += [_orderedSelectors indexOfObject:selector1];
-			 weightForSelector2 += [_orderedSelectors indexOfObject:selector2];
+			 weightForSelector1 += [strongSelf->_orderedSelectors indexOfObject:selector1];
+			 weightForSelector2 += [strongSelf->_orderedSelectors indexOfObject:selector2];
 		 }
 		 
 		 if (weightForSelector1 > weightForSelector2)
