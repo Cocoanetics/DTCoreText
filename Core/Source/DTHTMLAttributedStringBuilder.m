@@ -390,14 +390,11 @@
 	
 	_tagStartHandlers = [[NSMutableDictionary alloc] init];
 	
-	__weak typeof(self) weakSelf = self;
-
 	void (^blockquoteBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.paragraphStyle.headIndent += (CGFloat)25.0 * strongSelf->_textScale;
-		strongSelf->_currentTag.paragraphStyle.firstLineHeadIndent = strongSelf->_currentTag.paragraphStyle.headIndent;
-		strongSelf->_currentTag.paragraphStyle.paragraphSpacing = strongSelf->_defaultFontDescriptor.pointSize;
+		self->_currentTag.paragraphStyle.headIndent += (CGFloat)25.0 * self->_textScale;
+		self->_currentTag.paragraphStyle.firstLineHeadIndent = self->_currentTag.paragraphStyle.headIndent;
+		self->_currentTag.paragraphStyle.paragraphSpacing = self->_defaultFontDescriptor.pointSize;
 	};
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
@@ -405,18 +402,17 @@
 	
 	void (^aBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		if (strongSelf->_currentTag.isColorInherited || !strongSelf->_currentTag.textColor)
+		if (self->_currentTag.isColorInherited || !self->_currentTag.textColor)
 		{
-			strongSelf->_currentTag.textColor = strongSelf->_defaultLinkColor;
-			strongSelf->_currentTag.isColorInherited = NO;
+			self->_currentTag.textColor = self->_defaultLinkColor;
+			self->_currentTag.isColorInherited = NO;
 		}
 		
 		// the name attribute of A becomes an anchor
-		strongSelf->_currentTag.anchorName = [strongSelf->_currentTag attributeForKey:@"name"];
+		self->_currentTag.anchorName = [self->_currentTag attributeForKey:@"name"];
 
 		// remove line breaks and whitespace in links
-		NSString *cleanString = [[strongSelf->_currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+		NSString *cleanString = [[self->_currentTag attributeForKey:@"href"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 		cleanString = [cleanString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 		
 		if (![cleanString length])
@@ -435,37 +431,36 @@
 		{
 			if ([cleanString length])
 			{
-				link = [NSURL URLWithString:cleanString relativeToURL:strongSelf->_baseURL];
+				link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
 				
 				if (!link)
 				{
 					// NSURL did not like the link, so let's encode it
 					cleanString = [cleanString stringByAddingHTMLEntities];
 					
-					link = [NSURL URLWithString:cleanString relativeToURL:strongSelf->_baseURL];
+					link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
 				}
 			}
 			else
 			{
-				link = strongSelf->_baseURL;
+				link = self->_baseURL;
 			}
 		}
 		
-		strongSelf->_currentTag.link = link;
+		self->_currentTag.link = link;
 	};
 	
 	[_tagStartHandlers setObject:[aBlock copy] forKey:@"a"];
 	
 	void (^listBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.paragraphStyle.firstLineHeadIndent = strongSelf->_currentTag.paragraphStyle.headIndent;
+		self->_currentTag.paragraphStyle.firstLineHeadIndent = self->_currentTag.paragraphStyle.headIndent;
 		
 		// create the appropriate list style from CSS
-		DTCSSListStyle *newListStyle = [strongSelf->_currentTag listStyle];
+		DTCSSListStyle *newListStyle = [self->_currentTag listStyle];
 		
 		// append this list style to the current paragraph style text lists
-		NSMutableArray *textLists = [strongSelf->_currentTag.paragraphStyle.textLists mutableCopy];
+		NSMutableArray *textLists = [self->_currentTag.paragraphStyle.textLists mutableCopy];
 		
 		if (!textLists)
 		{
@@ -474,7 +469,7 @@
 		
 		[textLists addObject:newListStyle];
 		
-		strongSelf->_currentTag.paragraphStyle.textLists = textLists;
+		self->_currentTag.paragraphStyle.textLists = textLists;
 	};
 	
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
@@ -482,58 +477,50 @@
 	
 	void (^h1Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 1;
+		self->_currentTag.headerLevel = 1;
 	};
 	[_tagStartHandlers setObject:[h1Block copy] forKey:@"h1"];
 	
 	void (^h2Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 2;
+		self->_currentTag.headerLevel = 2;
 	};
 	[_tagStartHandlers setObject:[h2Block copy] forKey:@"h2"];
 	
 	
 	void (^h3Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 3;
+		self->_currentTag.headerLevel = 3;
 	};
 	[_tagStartHandlers setObject:[h3Block copy] forKey:@"h3"];
 	
 	
 	void (^h4Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 4;
+		self->_currentTag.headerLevel = 4;
 	};
 	[_tagStartHandlers setObject:[h4Block copy] forKey:@"h4"];
 	
 	
 	void (^h5Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 5;
+		self->_currentTag.headerLevel = 5;
 	};
 	[_tagStartHandlers setObject:[h5Block copy] forKey:@"h5"];
 	
 	
 	void (^h6Block)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		strongSelf->_currentTag.headerLevel = 6;
+		self->_currentTag.headerLevel = 6;
 	};
 	[_tagStartHandlers setObject:[h6Block copy] forKey:@"h6"];
 	
 	
 	void (^fontBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-
 		CGFloat pointSize;
 		
-		NSString *sizeAttribute = [strongSelf->_currentTag attributeForKey:@"size"];
+		NSString *sizeAttribute = [self->_currentTag attributeForKey:@"size"];
 		
 		if (sizeAttribute)
 		{
@@ -542,59 +529,59 @@
 			switch (sizeValue)
 			{
 				case 1:
-					pointSize = strongSelf->_textScale * 10.0f;
+					pointSize = self->_textScale * 10.0f;
 					break;
 				case 2:
-					pointSize = strongSelf->_textScale * 13.0f;
+					pointSize = self->_textScale * 13.0f;
 					break;
 				case 3:
-					pointSize = strongSelf->_textScale * 16.0f;
+					pointSize = self->_textScale * 16.0f;
 					break;
 				case 4:
-					pointSize = strongSelf->_textScale * 18.0f;
+					pointSize = self->_textScale * 18.0f;
 					break;
 				case 5:
-					pointSize = strongSelf->_textScale * 24.0f;
+					pointSize = self->_textScale * 24.0f;
 					break;
 				case 6:
-					pointSize = strongSelf->_textScale * 32.0f;
+					pointSize = self->_textScale * 32.0f;
 					break;
 				case 7:
-					pointSize = strongSelf->_textScale * 48.0f;
+					pointSize = self->_textScale * 48.0f;
 					break;
 				default:
-					pointSize = strongSelf->_defaultFontDescriptor.pointSize;
+					pointSize = self->_defaultFontDescriptor.pointSize;
 					break;
 			}
 		}
 		else
 		{
 			// size is inherited
-			pointSize = strongSelf->_currentTag.fontDescriptor.pointSize;
+			pointSize = self->_currentTag.fontDescriptor.pointSize;
 		}
 		
-		NSString *face = [strongSelf->_currentTag attributeForKey:@"face"];
+		NSString *face = [self->_currentTag attributeForKey:@"face"];
 		
 		if (face)
 		{
 			// create a temp font with this face
 			CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)face, pointSize, NULL);
 			
-			strongSelf->_currentTag.fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
+			self->_currentTag.fontDescriptor = [DTCoreTextFontDescriptor fontDescriptorForCTFont:font];
 			
 			CFRelease(font);
 		}
 		else
 		{
 			// modify inherited descriptor
-			strongSelf->_currentTag.fontDescriptor.pointSize = pointSize;
+			self->_currentTag.fontDescriptor.pointSize = pointSize;
 		}
 		
-		NSString *color = [strongSelf->_currentTag attributeForKey:@"color"];
+		NSString *color = [self->_currentTag attributeForKey:@"color"];
 		
 		if (color)
 		{
-			strongSelf->_currentTag.textColor = DTColorCreateWithHTMLName(color);
+			self->_currentTag.textColor = DTColorCreateWithHTMLName(color);
 		}
 	};
 	
@@ -603,16 +590,15 @@
 	
 	void (^pBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
 		// if have the custom headIndent
-		if (strongSelf->_defaultParagraphStyle.firstLineHeadIndent > 0)
+		if (self->_defaultParagraphStyle.firstLineHeadIndent > 0)
 		{
-			strongSelf->_currentTag.paragraphStyle.firstLineHeadIndent = strongSelf->_currentTag.paragraphStyle.headIndent +
-																		 strongSelf->_defaultParagraphStyle.firstLineHeadIndent;
+			self->_currentTag.paragraphStyle.firstLineHeadIndent = self->_currentTag.paragraphStyle.headIndent +
+																		 self->_defaultParagraphStyle.firstLineHeadIndent;
 		}
 		else
 		{
-			strongSelf->_currentTag.paragraphStyle.firstLineHeadIndent = strongSelf->_currentTag.paragraphStyle.headIndent + strongSelf->_currentTag.pTextIndent;
+			self->_currentTag.paragraphStyle.firstLineHeadIndent = self->_currentTag.paragraphStyle.headIndent + self->_currentTag.pTextIndent;
 		}
 	};
 	
@@ -627,20 +613,17 @@
 	}
 	
 	_tagEndHandlers = [[NSMutableDictionary alloc] init];
-	
-	__weak typeof(self) weakSelf = self;
-	
+		
 	void (^objectBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		if ([strongSelf->_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
+		if ([self->_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
 		{
-			if ([strongSelf->_currentTag.textAttachment isKindOfClass:[DTObjectTextAttachment class]])
+			if ([self->_currentTag.textAttachment isKindOfClass:[DTObjectTextAttachment class]])
 			{
-				DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)strongSelf->_currentTag.textAttachment;
+				DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)self->_currentTag.textAttachment;
 				
 				// transfer the child nodes to the attachment
-				objectAttachment.childNodes = [strongSelf->_currentTag.childNodes copy];
+				objectAttachment.childNodes = [self->_currentTag.childNodes copy];
 			}
 		}
 	};
@@ -649,10 +632,9 @@
 
 	void (^videoBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		if ([strongSelf->_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
+		if ([self->_currentTag isKindOfClass:[DTTextAttachmentHTMLElement class]])
 		{
-			DTTextAttachmentHTMLElement *attachmentElement = (DTTextAttachmentHTMLElement *)strongSelf->_currentTag;
+			DTTextAttachmentHTMLElement *attachmentElement = (DTTextAttachmentHTMLElement *)self->_currentTag;
 			
 			if ([attachmentElement.textAttachment isKindOfClass:[DTVideoTextAttachment class]])
 			{
@@ -668,7 +650,7 @@
 							NSString *src = [child attributeForKey:@"src"];
 							
 							// content URL
-							videoAttachment.contentURL = [NSURL URLWithString:src relativeToURL:strongSelf->_baseURL];
+							videoAttachment.contentURL = [NSURL URLWithString:src relativeToURL:self->_baseURL];
 							
 							break;
 						}
@@ -682,9 +664,8 @@
 	
 	void (^styleBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		DTCSSStylesheet *localSheet = [(DTStylesheetHTMLElement *)strongSelf->_currentTag stylesheet];
-		[strongSelf->_globalStyleSheet mergeStylesheet:localSheet];
+		DTCSSStylesheet *localSheet = [(DTStylesheetHTMLElement *)self->_currentTag stylesheet];
+		[self->_globalStyleSheet mergeStylesheet:localSheet];
 	};
 	
 	[_tagEndHandlers setObject:[styleBlock copy] forKey:@"style"];
@@ -692,20 +673,19 @@
 	
 	void (^linkBlock)(void) = ^
 	{
-		DTHTMLAttributedStringBuilder *strongSelf = weakSelf;
-		NSString *href = [strongSelf->_currentTag attributeForKey:@"href"];
-		NSString *type = [[strongSelf->_currentTag attributeForKey:@"type"] lowercaseString];
+		NSString *href = [self->_currentTag attributeForKey:@"href"];
+		NSString *type = [[self->_currentTag attributeForKey:@"type"] lowercaseString];
 		
 		if ([type isEqualToString:@"text/css"])
 		{
-			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:strongSelf->_baseURL];
+			NSURL *stylesheetURL = [NSURL URLWithString:href relativeToURL:self->_baseURL];
 			if ([stylesheetURL isFileURL])
 			{
 				NSString *stylesheetContent = [NSString stringWithContentsOfURL:stylesheetURL encoding:NSUTF8StringEncoding error:nil];
 				if (stylesheetContent)
 				{
 					DTCSSStylesheet *localSheet = [[DTCSSStylesheet alloc] initWithStyleBlock:stylesheetContent];
-					[strongSelf->_globalStyleSheet mergeStylesheet:localSheet];
+					[self->_globalStyleSheet mergeStylesheet:localSheet];
 				}
 			}
 			else

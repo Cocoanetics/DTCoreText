@@ -384,16 +384,14 @@ NSDictionary *_classesForNames = nil;
 	NSSet *attributesToIgnore = [[self class] attributesToIgnoreForCustomAttributesAttribute];
 	NSRange entireString = NSMakeRange(0, [attributedString length]);
 	
-	__weak typeof(self) weakSelf = self;
 	[_attributes enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
-		DTHTMLElement *strongSelf = weakSelf;
 		
 		// Ignore attributes on global ignore list
 		if ([attributesToIgnore containsObject:key]) return;
 		// Ignore Apple-converted-space helper CSS class
 		if ([@"class" isEqualToString:key] && [@"Apple-converted-space" isEqualToString:value]) return;
 
-		if (strongSelf->_CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
+		if (self.CSSClassNamesToIgnoreForCustomAttributes && [key isEqualToString:@"class"])
 		{
 			NSMutableArray *classNamesToKeep = [NSMutableArray array];
 			
@@ -412,7 +410,7 @@ NSDictionary *_classesForNames = nil;
 			
 			for (NSString *oneClassName in components)
 			{
-				if (![strongSelf->_CSSClassNamesToIgnoreForCustomAttributes containsObject:oneClassName])
+				if (![self.CSSClassNamesToIgnoreForCustomAttributes containsObject:oneClassName])
 				{
 					[classNamesToKeep addObject:oneClassName];
 				}
