@@ -503,18 +503,19 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
+	__weak typeof(self) weakSelf = self;
 	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
-
+		DTAttributedTextContentView *strongSelf = weakSelf;
 		// Make sure we actually have a superview and a previous layout before attempting to relayout the text.
-		if (_layoutFrame && self.superview)
+		if (strongSelf->_layoutFrame && strongSelf.superview)
 		{
 			// need new layout frame, layouter can remain because the attributed string is probably the same
-			self.layoutFrame = nil;
+			strongSelf.layoutFrame = nil;
 			
 			// remove all links because they might have merged or split
-			[self removeAllCustomViewsForLinks];
+			[strongSelf removeAllCustomViewsForLinks];
 			
-			if (_attributedString)
+			if (strongSelf->_attributedString)
 			{
 				// triggers new layout
 				CGSize neededSize = [self intrinsicContentSize];
@@ -525,12 +526,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[[NSNotificationCenter defaultCenter] postNotificationName:DTAttributedTextContentViewDidFinishLayoutNotification object:self userInfo:userInfo];
 			}
 			
-			[self setNeedsLayout];
-			[self setNeedsDisplayInRect:self.bounds];
+			[strongSelf setNeedsLayout];
+			[strongSelf setNeedsDisplayInRect:self.bounds];
 			
-			if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+			if ([strongSelf respondsToSelector:@selector(invalidateIntrinsicContentSize)])
 			{
-            [self invalidateIntrinsicContentSize];
+            	[strongSelf invalidateIntrinsicContentSize];
 			}
 		}
 	});

@@ -130,16 +130,18 @@
 
 - (void)relayoutText
 {
+	__weak typeof(self) weakSelf = self;
 	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+		DTAttributedTextView *strongSelf = weakSelf;
 		
 		// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
-		_attributedTextContentView.layouter=nil;
+		strongSelf->_attributedTextContentView.layouter=nil;
 		
 		// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
-		[_attributedTextContentView relayoutText];
+		[strongSelf->_attributedTextContentView relayoutText];
 		
 		// layout custom subviews for visible area
-		[self setNeedsLayout];
+		[strongSelf setNeedsLayout];
 	});
 }
 
@@ -166,7 +168,9 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
+	__weak typeof(self) weakSelf = self;
 	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+		DTAttributedTextView *strongSelf = weakSelf;
 		
 		NSDictionary *userInfo = [notification userInfo];
 		CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
@@ -176,8 +180,8 @@
 		// ignore possibly delayed layout notification for a different width
 		if (optimalFrame.size.width == frame.size.width)
 		{
-			_attributedTextContentView.frame = optimalFrame;
-			self.contentSize = [_attributedTextContentView intrinsicContentSize];
+			strongSelf->_attributedTextContentView.frame = optimalFrame;
+			strongSelf.contentSize = [strongSelf->_attributedTextContentView intrinsicContentSize];
 		}
 	});
 }
