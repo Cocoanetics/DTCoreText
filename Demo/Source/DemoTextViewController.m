@@ -258,6 +258,8 @@
 		[player stop];
 	}
 	
+	_textView.textDelegate = nil;
+	
 	[super viewWillDisappear:animated];
 }
 
