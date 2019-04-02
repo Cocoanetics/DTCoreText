@@ -1241,4 +1241,17 @@
 	XCTAssertEqualObjects(hexColor, @"0000ff", @"Color should be blue because inline style should be processed through lack of ignore option");
 }
 
+- (void)testBase64imageInLiElement
+{
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<ul style=\"list-style: none;\">\n<li style=\"color: #333; list-style-image: url(\'data:image/png;base64,ABCDEF\');\">Li item</li></ul>" options:NULL];
+	
+	NSDictionary *attributes = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+
+	DTColor *color = [attributes foregroundColor];
+	NSString *hexColor = DTHexStringFromDTColor(color);
+	
+	XCTAssertEqualObjects(hexColor, @"333333", @"Color attribute lost");
+	XCTAssertEqualObjects([attributedString string], @"Li item\n");
+}
+
 @end
