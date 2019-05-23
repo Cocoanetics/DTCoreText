@@ -7,7 +7,6 @@
 //
 
 #import "DTHTMLWriter.h"
-#import "DTVersion.h"
 #import "NSDictionary+DTCoreText.h"
 #import "DTCSSListStyle.h"
 #import "DTCoreTextConstants.h"
@@ -19,6 +18,7 @@
 #import "NSString+HTML.h"
 #import "DTColorFunctions.h"
 
+#import <DTFoundation/DTVersion.h>
 
 
 @implementation DTHTMLWriter

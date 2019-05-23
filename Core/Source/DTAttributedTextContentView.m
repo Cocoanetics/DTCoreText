@@ -14,7 +14,8 @@
 #import "DTAccessibilityViewProxy.h"
 #import "DTAccessibilityElement.h"
 #import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
-#import "DTBlockFunctions.h"
+
+#import <DTFoundation/DTBlockFunctions.h>
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
