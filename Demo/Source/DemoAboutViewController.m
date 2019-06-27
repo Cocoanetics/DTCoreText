@@ -38,9 +38,4 @@
 	self.attributedTextView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
-- (void)viewDidUnload
-{
-    [self setAttributedTextView:nil];
-    [super viewDidUnload];
-}
 @end

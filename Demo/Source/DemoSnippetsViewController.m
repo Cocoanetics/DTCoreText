@@ -68,11 +68,6 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStylePlain target:self action:@selector(showAbout:)];
 }
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
-
 #pragma mark - Actions
 
 - (void)showAbout:(id)sender
