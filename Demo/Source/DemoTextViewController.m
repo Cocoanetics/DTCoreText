@@ -86,12 +86,6 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
-
-
 #pragma mark UIViewController
 
 - (void)_updateToolbarForMode
@@ -258,6 +252,8 @@
 		[player stop];
 	}
 	
+	_textView.textDelegate = nil;
+	
 	[super viewWillDisappear:animated];
 }
 
@@ -265,11 +261,6 @@
 {
 	// prevent hiding of status bar in landscape because this messes up the layout guide calc
 	return NO;
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	_needsAdjustInsetsOnLayout = YES;
 }
 
 // this is only called on >= iOS 5
@@ -755,7 +746,7 @@
 		// layout might have changed due to image sizes
 		// do it on next run loop because a layout pass might be going on
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[_textView relayoutText];
+			[self->_textView relayoutText];
 		});
 	}
 }

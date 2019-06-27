@@ -253,6 +253,11 @@
 		}
 	}
 	
+	if (!prefix)
+	{
+		return nil;
+	}
+	
 	NSMutableAttributedString *tmpStr = [[NSMutableAttributedString alloc] initWithString:prefix attributes:newAttributes];
 	
 	if (image)

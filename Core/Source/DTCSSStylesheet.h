@@ -25,7 +25,7 @@
 /**
  Creates the default stylesheet.
  
- This stylesheet is based on the standard styles that Webkit provides for these tags. This stylesheet is loaded from an embedded copy of default.css.
+ This stylesheet is based on the standard styles that Webkit provides for these tags. This stylesheet is loaded from default.css.
  */
 + (DTCSSStylesheet *)defaultStyleSheet;
 

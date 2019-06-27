@@ -55,7 +55,8 @@
 {
     [super willMoveToSuperview:newSuperview];
   
-    [_phaseTimer invalidate], _phaseTimer = nil;
+	[_phaseTimer invalidate];
+	_phaseTimer = nil;
     
     if (newSuperview)
     {

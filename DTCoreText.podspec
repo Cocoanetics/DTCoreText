@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'DTCoreText'
-  spec.version      = '1.6.21'
+  spec.version      = '1.6.22'
   spec.platforms    = {:ios => '4.3', :tvos => '9.0' }
   spec.license      = 'BSD'
   spec.source       = { :git => 'https://github.com/Cocoanetics/DTCoreText.git', :tag => spec.version.to_s }
@@ -19,10 +19,7 @@ Pod::Spec.new do |spec|
   spec.social_media_url = 'https://twitter.com/cocoanetics'
   spec.prefix_header_contents = '#import <CoreText/CoreText.h>'
   spec.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)' }
-  spec.prepare_command = <<-CMD
-     cd ./Core/Source
-     /usr/bin/xxd -i default.css default.css.c
-  CMD
+  spec.resource_bundles = { 'Resources': 'Core/Source/default.css' }
   
   spec.default_subspec = 'Core'
 
