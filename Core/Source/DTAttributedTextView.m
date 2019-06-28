@@ -130,7 +130,7 @@
 
 - (void)relayoutText
 {
-	__weak typeof(self) weakSelf = self;
+	DT_WEAK_VARIABLE typeof(self) weakSelf = self;
 	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
 		DTAttributedTextView *strongSelf = weakSelf;
 		
@@ -168,7 +168,7 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	__weak typeof(self) weakSelf = self;
+	DT_WEAK_VARIABLE typeof(self) weakSelf = self;
 	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
 		DTAttributedTextView *strongSelf = weakSelf;
 		

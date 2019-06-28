@@ -10,7 +10,7 @@
 
 @interface AutoLayoutDemoViewController ()
 
-@property (nonatomic, weak) IBOutlet DTAttributedTextContentView *textView;
+@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet DTAttributedTextContentView *textView;
 @end
 
 @implementation AutoLayoutDemoViewController
