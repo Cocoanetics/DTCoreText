@@ -25,6 +25,7 @@
 		11848C07215E204600A18658 /* default.css in Resources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		11848C08215E204F00A18658 /* default.css in Resources */ = {isa = PBXBuildFile; fileRef = A76994F914DBB5F70047CC8D /* default.css */; };
 		11848C17215E259000A18658 /* DTCoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6201B46A1FB0086C2F6 /* DTCoreText.framework */; };
+		1926D78E231E467900F11523 /* DemoWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DemoWebVideoView.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
@@ -40,8 +41,6 @@
 		5AF0E509CE9C6EC97E3007F5 /* AutoLayoutDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */; };
 		5AF0ECFF9BD94137DE0992BA /* AutoLayoutDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */; };
 		944A9E6418B5A7F000E41481 /* DTCSSListStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */; };
-		948723C91D4B130D00274167 /* DTWebVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 948723B11D4B130000274167 /* DTWebVideoView.h */; };
-		948723CC1D4B131A00274167 /* DTWebVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 948723B21D4B130000274167 /* DTWebVideoView.m */; };
 		94D24B0D1D4AFE7800C7F33C /* CTLineUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4266937D1B56F60D00F9DBFC /* CTLineUtils.m */; };
 		94D24B0E1D4AFE7800C7F33C /* NSAttributedStringRunDelegates.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C93F14863E8700E1AFD9 /* NSAttributedStringRunDelegates.m */; };
 		94D24B0F1D4AFE7800C7F33C /* DTLazyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */; };
@@ -799,8 +798,8 @@
 		5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLayoutDemoViewController.m; sourceTree = "<group>"; };
 		5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLayoutDemoViewController.h; sourceTree = "<group>"; };
 		944A9E6318B5A7F000E41481 /* DTCSSListStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSListStyleTest.m; sourceTree = "<group>"; };
-		948723B11D4B130000274167 /* DTWebVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DTWebVideoView.h; path = iOS/DTWebVideoView.h; sourceTree = "<group>"; };
-		948723B21D4B130000274167 /* DTWebVideoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DTWebVideoView.m; path = iOS/DTWebVideoView.m; sourceTree = "<group>"; };
+		948723B11D4B130000274167 /* DemoWebVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoWebVideoView.h; sourceTree = "<group>"; };
+		948723B21D4B130000274167 /* DemoWebVideoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoWebVideoView.m; sourceTree = "<group>"; };
 		94D24B961D4AFE7800C7F33C /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94DE4B4218B5968D00F0BA6D /* NSCoder+DTCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCoder+DTCompatibility.h"; sourceTree = "<group>"; };
 		94DE4B4318B5968D00F0BA6D /* NSCoder+DTCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCoder+DTCompatibility.m"; sourceTree = "<group>"; };
@@ -1467,6 +1466,8 @@
 				5AF0E4DB1FBCBA1C165C0959 /* AutoLayoutDemoViewController.m */,
 				5AF0E909A170F1B0FF3CCC47 /* AutoLayoutDemoViewController.h */,
 				5AF0E4D86A6BE8FC798F9702 /* AutoLayoutDemoViewController.xib */,
+				948723B11D4B130000274167 /* DemoWebVideoView.h */,
+				948723B21D4B130000274167 /* DemoWebVideoView.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1486,8 +1487,6 @@
 				A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */,
 				A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */,
 				A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */,
-				948723B11D4B130000274167 /* DTWebVideoView.h */,
-				948723B21D4B130000274167 /* DTWebVideoView.m */,
 				A788C92E14863E8700E1AFD9 /* DTLinkButton.h */,
 				A788C92F14863E8700E1AFD9 /* DTLinkButton.m */,
 			);
@@ -1830,7 +1829,6 @@
 				A79BA6791B46A24F0086C2F6 /* DTAnchorHTMLElement.h in Headers */,
 				A79BA69B1B46A2660086C2F6 /* DTCoreTextFontCollection.h in Headers */,
 				A79BA6BB1B46A2700086C2F6 /* NSMutableString+HTML.h in Headers */,
-				948723C91D4B130D00274167 /* DTWebVideoView.h in Headers */,
 				A7B130551B4B25E30014E109 /* DTAccessibilityElement.h in Headers */,
 				A7B1304F1B4B25BF0014E109 /* DTLazyImageView.h in Headers */,
 				A79BA65E1B46A24A0086C2F6 /* DTCoreTextConstants.h in Headers */,
@@ -2413,6 +2411,7 @@
 				A788CA5014863EF100E1AFD9 /* CoreTextDemoAppDelegate.m in Sources */,
 				A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */,
 				4266937E1B56F60D00F9DBFC /* CTLineUtils.m in Sources */,
+				1926D78E231E467900F11523 /* DemoWebVideoView.m in Sources */,
 				A788CA5214863EF100E1AFD9 /* DemoTextViewController.m in Sources */,
 				A788CA5314863EF100E1AFD9 /* main.m in Sources */,
 				A740368816E51B3A00ECCDE0 /* DemoAboutViewController.m in Sources */,
@@ -2588,7 +2587,6 @@
 				A79BA6981B46A25A0086C2F6 /* DTObjectTextAttachment.m in Sources */,
 				A79BA67A1B46A24F0086C2F6 /* DTAnchorHTMLElement.m in Sources */,
 				A79BA6B01B46A2700086C2F6 /* NSAttributedString+SmallCaps.m in Sources */,
-				948723CC1D4B131A00274167 /* DTWebVideoView.m in Sources */,
 				A79BA6901B46A25A0086C2F6 /* DTDictationPlaceholderTextAttachment.m in Sources */,
 				A79BA68C1B46A2530086C2F6 /* DTColorFunctions.m in Sources */,
 				A79BA69A1B46A2600086C2F6 /* DTHTMLWriter.m in Sources */,

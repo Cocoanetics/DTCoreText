@@ -1,26 +1,26 @@
 //
-//  DTWebVideoView.m
+//  DemoWebVideoView.m
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 8/5/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTWebVideoView.h"
+#import "DemoWebVideoView.h"
 #import "DTIframeTextAttachment.h"
 
-@interface DTWebVideoView ()
+@interface DemoWebVideoView ()
 
 - (void)disableScrolling;
 
 @end
 
 
-@implementation DTWebVideoView
+@implementation DemoWebVideoView
 {
 	DTTextAttachment *_attachment;
 	
-	DT_WEAK_VARIABLE id <DTWebVideoViewDelegate> _delegate;
+	DT_WEAK_VARIABLE id <DemoWebVideoViewDelegate> _delegate;
 	
 	UIWebView *_webView;
 }

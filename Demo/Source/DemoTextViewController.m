@@ -11,7 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 #import "DTTiledLayerWithoutFade.h"
-#import "DTWebVideoView.h"
+#import "DemoWebVideoView.h"
 
 
 @interface DemoTextViewController ()
@@ -576,7 +576,7 @@
 	}
 	else if ([attachment isKindOfClass:[DTIframeTextAttachment class]])
 	{
-		DTWebVideoView *videoView = [[DTWebVideoView alloc] initWithFrame:frame];
+		DemoWebVideoView *videoView = [[DemoWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
 		
 		return videoView;
