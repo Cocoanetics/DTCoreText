@@ -271,12 +271,12 @@ static NSCache *imageCache = nil;
 		if (_originalSize.width==0 && _originalSize.height!=0)
 		{
 			CGFloat factor = _originalSize.height/image.size.height;
-			_originalSize.width = image.size.height * factor;
+			_originalSize.width = image.size.width * factor;
 		}
 		else if (_originalSize.width!=0 && _originalSize.height==0)
 		{
 			CGFloat factor = _originalSize.width/image.size.width;
-			_originalSize.height = image.size.width * factor;
+			_originalSize.height = image.size.height * factor;
 		}
 	}
 	
@@ -294,7 +294,7 @@ static NSCache *imageCache = nil;
 			CGSize newDisplaySize = _displaySize;
 
 			CGFloat factor = _displaySize.height/_originalSize.height;
-			newDisplaySize.width = _originalSize.height * factor;
+			newDisplaySize.width = _originalSize.width * factor;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
@@ -303,7 +303,7 @@ static NSCache *imageCache = nil;
 			CGSize newDisplaySize = _displaySize;
 			
 			CGFloat factor = _displaySize.width/_originalSize.width;
-			newDisplaySize.height = _originalSize.width * factor;
+			newDisplaySize.height = _originalSize.height * factor;
 			
 			[self setDisplaySize:newDisplaySize withMaxDisplaySize:_maxImageSize];
 		}
