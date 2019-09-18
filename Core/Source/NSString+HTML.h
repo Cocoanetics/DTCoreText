@@ -79,4 +79,9 @@
  */
 - (NSString *)stringByAddingAppleConvertedSpace;
 
+/**
+Percent-encodes all characters outside the normal ASCII range
+*/
+- (NSString *)stringByEncodingNonASCIICharacters;
+
 @end

@@ -76,4 +76,11 @@
  */
 + (NSCharacterSet *)cssLengthUnitCharacterSet;
 
+/**
+Characterset of ASCII Characters
+@returns An NSCharacterSet
+*/
+
++ (NSCharacterSet *)ASCIICharacterSet;
+
 @end

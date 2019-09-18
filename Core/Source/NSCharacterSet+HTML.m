@@ -17,7 +17,7 @@ static NSCharacterSet *_nonQuotedAttributeEndCharacterSet = nil;
 static NSCharacterSet *_cssStyleAttributeNameCharacterSet = nil;
 static NSCharacterSet *_cssLengthValueCharacterSet = nil;
 static NSCharacterSet *_cssLengthUnitCharacterSet = nil;
-
+static NSCharacterSet *_asciiCharacterSet = nil;
 
 
 @implementation NSCharacterSet (HTML)
@@ -134,6 +134,19 @@ static NSCharacterSet *_cssLengthUnitCharacterSet = nil;
 		_cssLengthUnitCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"pxtem"];
 	});
 	return _cssLengthUnitCharacterSet;
+}
+
++ (NSCharacterSet *)ASCIICharacterSet
+{
+	static dispatch_once_t predicate;
+	
+	dispatch_once(&predicate, ^{
+		NSMutableCharacterSet *tmpSet = [NSMutableCharacterSet new];
+		[tmpSet addCharactersInRange:NSMakeRange(32, 96)];
+		_asciiCharacterSet = [tmpSet copy];
+	});
+	
+	return _asciiCharacterSet;
 }
 
 @end
