@@ -429,22 +429,26 @@
 		// deal with relative URL
 		if (![link scheme])
 		{
-			if ([cleanString length])
-			{
-				link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
-				
-				if (!link)
-				{
-					// NSURL did not like the link, so let's encode it
-					cleanString = [cleanString stringByAddingHTMLEntities];
-					
-					link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
-				}
-			}
-			else
-			{
-				link = self->_baseURL;
-			}
+             NSString *decodedUrl = [link.absoluteString stringByRemovingPercentEncoding]; // check source url whether has prefix when url is encoded and has no scheme
+            if (![decodedUrl hasPrefix:@"https://"] && ![decodedUrl hasPrefix:@"http://"])
+            {
+                if ([cleanString length])
+                {
+                    link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
+                    
+                    if (!link)
+                    {
+                        // NSURL did not like the link, so let's encode it
+                        cleanString = [cleanString stringByAddingHTMLEntities];
+                        
+                        link = [NSURL URLWithString:cleanString relativeToURL:self->_baseURL];
+                    }
+                }
+                else
+                {
+                    link = self->_baseURL;
+                }
+            }
 		}
 		
 		self->_currentTag.link = link;

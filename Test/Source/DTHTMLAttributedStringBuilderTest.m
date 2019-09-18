@@ -317,6 +317,29 @@
 }
 
 
+- (void)testEncodedUrl
+{
+    NSString *cleanString = @"https%3A//www.example.com/%E4%BD%A0%E5%A5%BD"; // https://www.example.com/你好
+    NSURL *link = [NSURL URLWithString:cleanString];
+    NSString *decodedUrl = [link.absoluteString stringByRemovingPercentEncoding];
+	XCTAssertFalse(![decodedUrl hasPrefix:@"https://"] && ![decodedUrl hasPrefix:@"http://"]);
+
+    cleanString = @"https%3A//www.example.com/notice%3Ftitle%3Dhello%26name%3Dworld";
+    link = [NSURL URLWithString:cleanString];
+    decodedUrl = [link.absoluteString stringByRemovingPercentEncoding];
+	XCTAssertFalse(![decodedUrl hasPrefix:@"https://"] && ![decodedUrl hasPrefix:@"http://"]);
+	
+	cleanString = @"https://www.example.com/%E4%BD%A0%E5%A5%BD";
+	link = [NSURL URLWithString:cleanString];
+	decodedUrl = [link.absoluteString stringByRemovingPercentEncoding];
+	XCTAssertFalse(![decodedUrl hasPrefix:@"https://"] && ![decodedUrl hasPrefix:@"http://"]);
+	
+	cleanString = @"https://www.example.com/helloworld";
+	link = [NSURL URLWithString:cleanString];
+	decodedUrl = [link.absoluteString stringByRemovingPercentEncoding];
+	XCTAssertFalse(![decodedUrl hasPrefix:@"https://"] && ![decodedUrl hasPrefix:@"http://"]);
+}
+
 // setting ordered list starting number
 - (void)testOrderedListStartingNumber
 {
