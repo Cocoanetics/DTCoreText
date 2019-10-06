@@ -630,7 +630,14 @@
 	
 	if ([[UIApplication sharedApplication] canOpenURL:[URL absoluteURL]])
 	{
-		[[UIApplication sharedApplication] openURL:[URL absoluteURL]];
+		if (@available(iOS 10.0, *)) {
+			[[UIApplication sharedApplication] openURL:[URL absoluteURL] options:@{} completionHandler:nil];
+		} else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+			[[UIApplication sharedApplication] openURL:[URL absoluteURL]];
+#pragma clang diagnostic pop
+		}
 	}
 	else 
 	{
@@ -652,7 +659,14 @@
 {
 	if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
-		[[UIApplication sharedApplication] openURL:[self.lastActionLink absoluteURL]];
+		if (@available(iOS 10.0, *)) {
+			[[UIApplication sharedApplication] openURL:[self.lastActionLink absoluteURL] options:@{} completionHandler:nil];
+		} else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+			[[UIApplication sharedApplication] openURL:[self.lastActionLink absoluteURL]];
+#pragma clang diagnostic pop
+		}
 	}
 }
 

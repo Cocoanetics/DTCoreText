@@ -98,7 +98,14 @@
 #if !defined(DT_APP_EXTENSIONS)
 	if (shouldOpenExternalURL)
 	{
-		[[UIApplication sharedApplication] openURL:[request URL]];
+		if (@available(iOS 10.0, *)) {
+			[[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
+		} else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+			[[UIApplication sharedApplication] openURL:[request URL]];
+#pragma clang diagnostic pop
+		}
 	}
 #endif
 	
