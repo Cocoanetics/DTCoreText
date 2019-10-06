@@ -655,7 +655,11 @@
 	}
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+#pragma clang diagnostic pop
 {
 	if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
@@ -680,8 +684,28 @@
 		
 		if ([[UIApplication sharedApplication] canOpenURL:[button.URL absoluteURL]])
 		{
-			UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.URL absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
-			[action showFromRect:button.frame inView:button.superview animated:YES];
+			if (@available(iOS 8.0, *)) {
+				UIAlertController *ac = [UIAlertController alertControllerWithTitle:[[button.URL absoluteURL] description]
+																			message:nil
+																	 preferredStyle:UIAlertControllerStyleActionSheet];
+				[ac addAction:[UIAlertAction actionWithTitle:@"Open in Safari"
+													   style:UIAlertActionStyleDefault
+													 handler:^(UIAlertAction * _Nonnull action) {
+					[[UIApplication sharedApplication] openURL:[self.lastActionLink absoluteURL] options:@{} completionHandler:nil];
+				}]];
+				
+				[ac addAction:[UIAlertAction actionWithTitle:@"Cancel"
+													   style:UIAlertActionStyleCancel
+													 handler:nil]];
+				
+				[self presentViewController:ac animated:YES completion:nil];
+			} else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+				UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:[[button.URL absoluteURL] description] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Open in Safari", nil];
+				[action showFromRect:button.frame inView:button.superview animated:YES];
+#pragma clang diagnostic pop
+			}
 		}
 	}
 }
