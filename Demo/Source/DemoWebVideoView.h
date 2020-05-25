@@ -7,6 +7,7 @@
 //
 
 #import <DTFoundation/DTWeakSupport.h>
+#import <WebKit/WebKit.h>
 
 @class DemoWebVideoView;
 @class DTTextAttachment;
@@ -37,7 +38,7 @@
  
  To add additional video services please add them in the mentioned location and submit a pull request for the addition.
  */
-@interface DemoWebVideoView : UIView <UIWebViewDelegate>
+@interface DemoWebVideoView : UIView <WKNavigationDelegate>
 
 /**
  The delegate of the video view

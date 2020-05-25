@@ -22,7 +22,7 @@
 	
 	DT_WEAK_VARIABLE id <DemoWebVideoViewDelegate> _delegate;
 	
-	UIWebView *_webView;
+	WKWebView *_webView;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -32,25 +32,20 @@
 	{
 		self.userInteractionEnabled = YES;
 		
-		_webView = [[UIWebView alloc] initWithFrame:self.bounds];
+		_webView = [[WKWebView alloc] initWithFrame:self.bounds];
 		_webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[self addSubview:_webView];
 		
 		[self disableScrolling];
 		
-		_webView.delegate = self;
-		
-		if ([_webView respondsToSelector:@selector(setAllowsInlineMediaPlayback:)])
-		{
-			_webView.allowsInlineMediaPlayback = YES;
-		}
+		_webView.navigationDelegate = self;
     }
     return self;
 }
 
 - (void)dealloc
 {
-	_webView.delegate = nil;
+	_webView.navigationDelegate = nil;
 	
 }
 
@@ -74,18 +69,22 @@
 
 #pragma mark UIWebViewDelegate
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
+	NSURLRequest *request = navigationAction.request;
+
 	// allow the embed request for YouTube
 	if (NSNotFound != [[[request URL] absoluteString] rangeOfString:@"www.youtube.com/embed/"].location)
 	{
-		return YES;
+		decisionHandler(WKNavigationActionPolicyAllow);
+		return;
 	}
 
 	// allow the embed request for DailyMotion Cloud
 	if (NSNotFound != [[[request URL] absoluteString] rangeOfString:@"api.dmcloud.net/player/embed/"].location)
 	{
-		return YES;
+		decisionHandler(WKNavigationActionPolicyAllow);
+		return;
 	}
 
 	BOOL shouldOpenExternalURL = YES;
@@ -109,7 +108,7 @@
 	}
 #endif
 	
-	return NO;
+	decisionHandler(WKNavigationActionPolicyCancel);
 }
 
 
