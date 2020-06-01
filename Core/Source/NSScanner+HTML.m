@@ -57,7 +57,7 @@
 	NSMutableArray *results = [NSMutableArray array];
 	BOOL nextIterationAddsNewEntry = YES;
 	
-	while (![self isAtEnd] && ![self scanString:@";" intoString:NULL])
+    while (![self isAtEnd] && ![self scanString:@";" intoString:NULL] && ![self scanString:@"'';" intoString:NULL] && ![self scanString:@"\"\";" intoString:NULL])
 	{
 		// skip whitespace
 		[self scanCharactersFromSet:whiteCharacterSet intoString:NULL];
