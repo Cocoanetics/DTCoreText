@@ -8,7 +8,7 @@ The project covers two broad areas:
 1. **Layouting** - Interfacing with CoreText, generating attributed strings from HTML code
 2. **User Interface** - UI-related classes render these objects, specifically `DTAttributedTextView`, `DTAttributedLabel` and `DTAttributedTextCell`.
 
-This is useful for drawing simple rich text like any HTML document without having to use a `UIWebView`. For text selection and highlighting (as you might need for an Editor or Reader) there is the commercial **DTRichTextEditor** component which can be purchased in the [Cocoanetics Parts Store](http://www.cocoanetics.com/parts/dtrichtexteditor/).
+This is useful for drawing simple rich text like any HTML document without having to use a web view. For text selection and highlighting (as you might need for an Editor or Reader) there is the commercial **DTRichTextEditor** component which can be purchased in the [Cocoanetics Parts Store](http://www.cocoanetics.com/parts/dtrichtexteditor/).
 
 Documentation
 -------------
