@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCSSStyleSheetTest.h"
+#import "DTCSSStylesheetTest.h"
 
 #import "DTCSSStylesheet.h"
 #import "DTHTMLElement.h"
