@@ -77,7 +77,7 @@
 	element.accessibilityLabel = text;
 	element.localCoordinateAccessibilityFrame = [self frameForRuns:runs];
 	
-	// We're trying to keep the accessibility frame behavior consistent with UIWebView, which seems to do a union of the rects for all the runs composing a single accessibility group,
+	// We're trying to keep the accessibility frame behavior consistent with web view, which seems to do a union of the rects for all the runs composing a single accessibility group,
 	// even if that spans across multiple lines.  Set the local coordinate activation point to support multi-line links. A link that is at the end of one line and
 	// wraps to the beginning of the next would have a rect that's the size of both lines combined.  The center of that rect would be outside the hit areas for either of the
 	// runs individually, so we set the accessibility activation point to be the origin of the first run.
