@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCSSStyleSheetTest.h"
+#import "DTCSSStylesheetTest.h"
 
 #import "DTCSSStylesheet.h"
 #import "DTHTMLElement.h"
@@ -30,6 +30,35 @@
 	
 	NSString *fontFamily = [styles objectForKey:@"font-family"];
 	XCTAssertEqualObjects(fontFamily, @"Trebuchet MS", @"font-family should match");
+
+	NSString *fontSize = [styles objectForKey:@"font-size"];
+	XCTAssertEqualObjects(fontSize, @"16px", @"font-size should match");
+
+	NSString *lineHeight = [styles objectForKey:@"line-height"];
+	XCTAssertEqualObjects(lineHeight, @"20 px", @"line-height should match");
+
+	NSString *fontStyle = [styles objectForKey:@"font-style"];
+	XCTAssertEqualObjects(fontStyle, @"italic", @"font-style should match");
+	
+	NSString *empty = [styles objectForKey:@"empty"];
+	XCTAssertEqualObjects(empty, @"", @"empty should match");
+
+	NSString *empty2 = [styles objectForKey:@"empty2"];
+	XCTAssertEqualObjects(empty2, @"", @"empty2 should match");
+}
+
+// Issue 1183
+
+- (void)testEmptyFontFamily
+{
+	NSString *string = @"span { font-family: ''; empty: ; empty2:; font-size: 16px; line-height: 20 px; font-style: italic }";
+	
+	DTCSSStylesheet *stylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:string];
+	
+	NSDictionary *styles = [stylesheet.styles objectForKey:@"span"];
+	
+	NSString *fontFamily = [styles objectForKey:@""];
+	XCTAssertNil(fontFamily, @"font-family should be nil");
 
 	NSString *fontSize = [styles objectForKey:@"font-size"];
 	XCTAssertEqualObjects(fontSize, @"16px", @"font-size should match");

@@ -422,8 +422,11 @@
 		}
 		
 		NSURL *link = [NSURL URLWithString:cleanString];
-        if (link == nil) {
-            link = [NSURL URLWithString:[cleanString stringByURLEncoding]];
+		
+        if (link == nil)
+		{
+			cleanString = [cleanString stringByEncodingNonASCIICharacters];
+            link = [NSURL URLWithString:cleanString];
         }
 		
 		// deal with relative URL

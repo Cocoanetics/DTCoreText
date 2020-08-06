@@ -64,13 +64,13 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<50726566 69780a4f 6e652074 776f20e2 80a87468 7265650a 4e657720 50617261 67726170 680a5375 66666978>";
+	NSString *resultOnMac = @"5072656669780a4f6e652074776f20e280a874687265650a4e6577205061726167726170680a537566666978";
 	
 	//[self dumpOneResult:resultOnIOS versusOtherResult:resultOnMac];
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on Paragraph Test differs");
 }
 
 
@@ -80,11 +80,11 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<50726566 69780a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4f 6e650a4e 65772050 61726167 72617068 0a537566 666978>";
+	NSString *resultOnMac = @"5072656669780a4f6e650a4f6e650a4f6e650a4f6e650a4f6e650a4e6577205061726167726170680a537566666978";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Paragraph Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on Paragraph Test differs");
 }
 
 
@@ -94,11 +94,11 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 	
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<4265666f 72650a09 e280a209 4f6e650a 09e280a2 0954776f 0a416674 65720a>";
+	NSString *resultOnMac = @"4265666f72650a09e280a2094f6e650a09e280a20954776f0a41667465720a";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on List Test differs");
 }
 
 - (void)testImageParagraphs
@@ -108,11 +108,11 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<4265666f 72650aef bfbc0a48 65616465 720a6166 7465720a 536f6d65 20696e6c 696e6520 efbfbc20 74657874 2e0a>";
+	NSString *resultOnMac = @"4265666f72650aefbfbc0a4865616465720a61667465720a536f6d6520696e6c696e6520efbfbc20746578742e0a";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on List Test differs");
 }
 
 - (void)testSpaceNormalization
@@ -121,11 +121,11 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<4e6f7720 74686572 65206973 20736f6d 6520626f 6c642074 65787420 616e6420 73706163 65732073 686f756c 64206265 206e6f72 6d616c69 7a65642e 0a>";
+	NSString *resultOnMac = @"4e6f7720746865726520697320736f6d6520626f6c64207465787420616e64207370616365732073686f756c64206265206e6f726d616c697a65642e0a";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on List Test differs");
 }
 
 - (void)testSpaceAndNewlines
@@ -134,11 +134,11 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<626c6120 666f6c6c 6f777320 4e535374 72696e67 202a7374 72203d20 40225468 65205175 69636b20 42726f77 6e20466f 78204272 6f776e22 3b>";
+	NSString *resultOnMac = @"626c6120666f6c6c6f7773204e53537472696e67202a737472203d20402254686520517569636b2042726f776e20466f782042726f776e223b";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on List Test differs");
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on List Test differs");
 }
 
 - (void)testMissingClosingTagAndSpacing
@@ -147,28 +147,12 @@
 	NSAttributedString *string = [self attributedStringFromHTML:html];
 
 	NSData *dump = [[string string] dataUsingEncoding:NSUTF8StringEncoding];
-	NSString *resultOnIOS = [dump description];
+	NSString *resultOnIOS = [self hexStringForData:dump];
 	
-	NSString *resultOnMac = @"<696d6167 65206c61 7374>";
+	NSString *resultOnMac = @"696d616765206c617374";
 	
-	XCTAssertEqualObjects(resultOnIOS, resultOnMac, @"Output on Invalid Tag Test differs");
-	
+	XCTAssertTrue([resultOnIOS isEqualToString:resultOnMac], @"Output on Invalid Tag Test differs");
 }
-
-/*
-- (void)testAttributedStringColorToHTML
-{
-	NSMutableAttributedString *string = [[NSMutableAttributedString alloc]initWithString: @"test"];
-	
-	UIColor *color = [ UIColor colorWithRed: 1.0 green: 0.0 blue: 0.0 alpha: 1.0 ];
-
-	[ string setAttributes: [ NSDictionary dictionaryWithObject: (id)color.CGColor forKey: (id)kCTForegroundColorAttributeName ] range: NSMakeRange(0, 2) ];	
-	
-	NSString *expected = @"<span><span style=\"color:#ff0000;\">te</span>st</span>\n";
-
-	STAssertEqualObjects([ string htmlString ], expected, @"Output on HTML string color test differs");
-}
- */
 
 - (void)testCrashAtEmptyNodeBeforeDivWithiOS6Attributes
 {
@@ -180,6 +164,19 @@
 																	  options:options
 														   documentAttributes:NULL];
 	XCTAssert(string != nil);
+}
+
+
+- (NSString *)hexStringForData:(NSData *)data
+{
+    const unsigned char *bytes = (const unsigned char *)data.bytes;
+    NSMutableString *hex = [NSMutableString new];
+	
+    for (NSInteger i = 0; i < data.length; i++) {
+        [hex appendFormat:@"%02x", bytes[i]];
+    }
+	
+    return [hex copy];
 }
 
 @end

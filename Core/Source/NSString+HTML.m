@@ -9,6 +9,7 @@
 #import "NSString+HTML.h"
 #import "NSCharacterSet+HTML.h"
 #import "DTCoreTextConstants.h"
+#import <DTFoundation/NSString+DTURLEncoding.h>
 
 static NSDictionary *entityLookup = nil;
 static NSDictionary *entityReverseLookup = nil;
@@ -796,6 +797,15 @@ static NSDictionary *entityReverseLookup = nil;
 	}
 	
 	return output;
+}
+
+- (NSString *)stringByEncodingNonASCIICharacters
+{	
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_7_0
+	return [self stringByURLEncoding];
+#else
+    return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet ASCIICharacterSet]];
+#endif
 }
 
 @end
