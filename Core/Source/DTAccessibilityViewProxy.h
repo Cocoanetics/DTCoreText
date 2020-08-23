@@ -5,6 +5,7 @@
 //  Created by Austen Green on 5/6/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 #import "DTTextAttachment.h"
@@ -52,3 +53,5 @@
 
 - (UIView *)viewForTextAttachment:(DTTextAttachment *)attachment proxy:(DTAccessibilityViewProxy *)proxy;
 @end
+
+#endif

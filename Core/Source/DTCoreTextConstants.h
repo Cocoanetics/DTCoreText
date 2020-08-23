@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 // unicode characters
 
 #define UNICODE_OBJECT_PLACEHOLDER @"\ufffc"

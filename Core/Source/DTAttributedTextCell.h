@@ -5,6 +5,9 @@
 //  Created by Oliver Drobnik on 8/4/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
+
+#import <UIKit/UIKit.h>
 
 #import "DTAttributedTextContentView.h"
 #import <DTFoundation/DTWeakSupport.h>
@@ -83,3 +86,5 @@
 @property (nonatomic, readonly) DTAttributedTextContentView *attributedTextContextView;
 
 @end
+
+#endif

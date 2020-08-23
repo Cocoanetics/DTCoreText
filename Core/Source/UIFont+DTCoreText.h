@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <CoreText/CoreText.h>
 
 /**
@@ -22,3 +24,5 @@
 + (UIFont *)fontWithCTFont:(CTFontRef)ctFont;
 
 @end
+
+#endif
