@@ -6,9 +6,13 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 #pragma mark - iOS
 
 #if TARGET_OS_IPHONE
+
+#import <UIKit/UIKit.h>
 
 	// Compatibility Aliases
 	#define DTColor UIColor
@@ -87,6 +91,9 @@
 
 
 #if !TARGET_OS_IPHONE
+
+
+#import <AppKit/AppKit.h>
 
 	// Compatibility Aliases
 	#define DTColor NSColor

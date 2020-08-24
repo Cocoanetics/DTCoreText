@@ -5,6 +5,7 @@
 //  Created by Oliver Drobnik on 1/12/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -387,7 +388,7 @@
 - (void)setTextDelegate:(id<DTAttributedTextContentViewDelegate>)aTextDelegate
 {
 	// store unsafe pointer to delegate because we might not have a contentView yet
-	textDelegate = aTextDelegate;
+	self->_textDelegate = aTextDelegate;
 	
 	// set it if possible, otherwise it will be set in contentView lazy property
 	_attributedTextContentView.delegate = aTextDelegate;
@@ -395,7 +396,7 @@
 
 - (id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-	return _attributedTextContentView.delegate;
+	return _attributedTextContentView.delegate ?: self->_textDelegate;;
 }
 
 - (void)setShouldDrawLinks:(BOOL)shouldDrawLinks
@@ -417,3 +418,5 @@
 @synthesize shouldDrawLinks = _shouldDrawLinks;
 
 @end
+
+#endif

@@ -10,6 +10,9 @@
  Constant for highlighting notification
  */
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+
 extern NSString *DTLinkButtonDidHighlightNotification;
 
 /**
@@ -45,3 +48,5 @@ extern NSString *DTLinkButtonDidHighlightNotification;
 
 
 @end
+
+#endif

@@ -5,6 +5,7 @@
 //  Created by Oliver Drobnik on 05.02.13.
 //  Copyright (c) 2013 Cocoanetics. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import <UIKit/UIKit.h>
 
@@ -25,3 +26,5 @@
 @property (nonatomic, strong) id context;
 
 @end
+
+#endif
