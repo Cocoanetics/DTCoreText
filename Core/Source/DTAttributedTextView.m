@@ -387,7 +387,7 @@
 - (void)setTextDelegate:(id<DTAttributedTextContentViewDelegate>)aTextDelegate
 {
 	// store unsafe pointer to delegate because we might not have a contentView yet
-	textDelegate = aTextDelegate;
+	self->_textDelegate = aTextDelegate;
 	
 	// set it if possible, otherwise it will be set in contentView lazy property
 	_attributedTextContentView.delegate = aTextDelegate;
@@ -395,7 +395,7 @@
 
 - (id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-	return _attributedTextContentView.delegate;
+	return _attributedTextContentView.delegate ?: self->_textDelegate;;
 }
 
 - (void)setShouldDrawLinks:(BOOL)shouldDrawLinks

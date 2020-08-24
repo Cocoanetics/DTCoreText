@@ -38,6 +38,19 @@
 	return self;
 }
 
+- (id) initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+
+    if (self != nil)
+    {
+        [self setupAttributedLabel];
+    }
+
+    return self;
+}
+
+
+
 - (void) awakeFromNib
 {
 	[super awakeFromNib];
