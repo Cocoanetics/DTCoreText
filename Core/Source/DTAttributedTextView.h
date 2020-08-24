@@ -5,6 +5,9 @@
 //  Created by Oliver Drobnik on 1/12/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
+
+#import <UIKit/UIKit.h>
 
 #import "DTAttributedTextContentView.h"
 
@@ -126,3 +129,5 @@
 - (CGRect)cursorRectAtIndex:(NSInteger)index;
 
 @end
+
+#endif

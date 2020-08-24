@@ -5,6 +5,7 @@
 //  Created by Oliver Drobnik on 8/4/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import "DTCoreText.h"
 #import "DTAttributedTextCell.h"
@@ -267,3 +268,5 @@
 @synthesize textDelegate = _textDelegate;
 
 @end
+
+#endif

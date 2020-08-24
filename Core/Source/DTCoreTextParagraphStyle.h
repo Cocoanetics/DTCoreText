@@ -5,6 +5,8 @@
 //  Created by Oliver Drobnik on 4/14/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#import <Foundation/Foundation.h>
+#import <CoreText/CoreText.h>
 
 /**
  `DTCoreTextParagraphStyle` encapsulates the paragraph or ruler attributes used by the NSAttributedString classes on iOS. It is a replacement for `NSParagraphStyle` which is not implemented on iOS. 

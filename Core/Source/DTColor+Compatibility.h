@@ -26,8 +26,9 @@
 
 @end
 
-#else
+#endif
 
+#if TARGET_OS_OSX
 #import <AppKit/NSColor.h>
 
 /**

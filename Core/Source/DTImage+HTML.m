@@ -19,7 +19,9 @@
 
 @end
 
-#else
+#endif
+
+#if TARGET_OS_OSX
 
 @implementation NSImage (HTML)
 

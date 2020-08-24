@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  Methods for making HTML strings easier and quicker to handle. 
  */

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-@class DTColor;
+#import "DTCompatibility.h"
 
 /**
  Takes a CSS color string ('333', 'F9FFF9'), determines the RGB values used, and returns a UIColor object of that color.

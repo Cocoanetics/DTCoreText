@@ -5,6 +5,7 @@
 //  Created by Brian Kenny on 1/17/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import "DTAttributedLabel.h"
 #import "DTCoreTextLayoutFrame.h"
@@ -37,6 +38,19 @@
 	
 	return self;
 }
+
+- (id) initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+
+    if (self != nil)
+    {
+        [self setupAttributedLabel];
+    }
+
+    return self;
+}
+
+
 
 - (void) awakeFromNib
 {
@@ -105,3 +119,5 @@
 
 
 @end
+
+#endif

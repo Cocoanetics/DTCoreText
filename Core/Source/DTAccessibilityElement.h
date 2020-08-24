@@ -5,6 +5,7 @@
 //  Created by Austen Green on 3/13/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import <UIKit/UIKit.h>
 
@@ -30,3 +31,5 @@
 - (id)initWithParentView:(UIView *)parentView;
 
 @end
+
+#endif
