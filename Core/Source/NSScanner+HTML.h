@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DTColor;
+#import "DTCompatibility.h"
 
 /**
  Extensions for NSScanner to deal with HTML-specific parsing, primarily CSS-related things
