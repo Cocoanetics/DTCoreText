@@ -5,6 +5,7 @@
 //  Created by Oliver Drobnik on 5/20/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import <DTFoundation/DTWeakSupport.h>
 #import "DTAttributedTextContentView.h"
@@ -79,3 +80,5 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
 - (void)cancelLoading;
 
 @end
+
+#endif

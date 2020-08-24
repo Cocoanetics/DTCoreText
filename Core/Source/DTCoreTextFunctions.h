@@ -5,6 +5,11 @@
 //  Created by Oliver Drobnik on 21.12.12.
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
+#import <CoreText/CoreText.h>
+
+#if TARGET_OS_OSX
+#import <AppKit/AppKit.h>
+#endif
 
 #import "DTCompatibility.h"
 

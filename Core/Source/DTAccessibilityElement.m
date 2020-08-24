@@ -5,6 +5,7 @@
 //  Created by Austen Green on 3/13/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import "DTAccessibilityElement.h"
 
@@ -48,3 +49,5 @@ static const CGPoint DTAccessibilityElementNullActivationPoint = {CGFLOAT_MAX, C
 }
 
 @end
+
+#endif

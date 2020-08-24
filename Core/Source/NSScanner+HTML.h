@@ -6,7 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@class DTColor;
+#import <Foundation/Foundation.h>
+
+#import "DTCompatibility.h"
 
 /**
  Extensions for NSScanner to deal with HTML-specific parsing, primarily CSS-related things

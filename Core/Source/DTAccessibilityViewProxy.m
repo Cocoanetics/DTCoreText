@@ -5,6 +5,7 @@
 //  Created by Austen Green on 5/6/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import "DTAccessibilityViewProxy.h"
 
@@ -56,3 +57,5 @@
 }
 
 @end
+
+#endif

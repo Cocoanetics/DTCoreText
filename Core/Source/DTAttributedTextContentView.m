@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <QuartzCore/QuartzCore.h>
 
 #import "DTCoreText.h"
@@ -1109,3 +1111,5 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 }
 
 @end
+
+#endif

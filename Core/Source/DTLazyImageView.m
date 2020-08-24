@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <ImageIO/ImageIO.h>
 #import "DTLazyImageView.h"
 #import "DTCompatibility.h"
@@ -414,3 +416,5 @@ didCompleteWithError:(nullable NSError *)error
 @synthesize urlRequest = _urlRequest;
 
 @end
+
+#endif

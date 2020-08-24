@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import "UIFont+DTCoreText.h"
 
 @implementation UIFont (DTCoreText)
@@ -27,3 +29,5 @@
 }
 
 @end
+
+#endif

@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 
 /**
  Categories needed for modifying mutable strings, as needed for DTCoreText.

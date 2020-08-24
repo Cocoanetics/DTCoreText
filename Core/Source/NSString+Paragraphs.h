@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 Cocoanetics. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 
 /**
  Methods simplifying dealing with text that is in paragraphs.

@@ -5,6 +5,7 @@
 //  Created by Brian Kenny on 1/17/13.
 //  Copyright (c) 2013 Cocoanetics.com. All rights reserved.
 //
+#if TARGET_OS_IPHONE
 
 #import "DTAttributedTextContentView.h"
 
@@ -36,3 +37,5 @@
 @property(nonatomic, strong) NSAttributedString *truncationString;
 
 @end
+
+#endif
