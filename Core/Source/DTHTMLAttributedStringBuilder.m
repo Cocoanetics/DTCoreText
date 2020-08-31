@@ -231,7 +231,10 @@
 	if (defaultFontName) {
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
-
+	else
+    {
+        _defaultFontDescriptor.fontName = @"TimesNewRomanPSMT";
+    }
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
