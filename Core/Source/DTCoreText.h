@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
 
 #if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>

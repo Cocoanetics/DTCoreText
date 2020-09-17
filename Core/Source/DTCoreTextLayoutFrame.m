@@ -559,7 +559,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				}
 				else if (truncationType == kCTLineTruncationMiddle)
 				{
-					index += (oldLineRange.length > 1 ? (oldLineRange.length/2.0 - 1) : 0);
+					index += (oldLineRange.length > 1 ? (oldLineRange.length/2 - 1) : 0);
 				}
 				NSDictionary * attributes = [_attributedStringFragment attributesAtIndex:index effectiveRange:&range];
 				attribStr = [[NSAttributedString alloc] initWithString:@"…" attributes:attributes];
