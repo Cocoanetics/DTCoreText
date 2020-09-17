@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "DTCoreText",
     platforms: [
-        .iOS(.v8),         //.v8 - .v13
+        .iOS(.v9),         //.v8 - .v13
         .macOS(.v10_10),    //.v10_10 - .v10_15
         .tvOS(.v9),        //.v9 - .v13
     ],
@@ -16,7 +16,7 @@ let package = Package(
             targets: ["DTCoreText"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nostradani/DTFoundation.git", from: "1.7.15"),
+        .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
     ],
     targets: [
         .target(
