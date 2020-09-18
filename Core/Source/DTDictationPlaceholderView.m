@@ -5,9 +5,10 @@
 //  Created by Oliver Drobnik on 05.02.13.
 //  Copyright (c) 2013 Cocoanetics. All rights reserved.
 //
-#if TARGET_OS_IPHONE
 
 #import "DTDictationPlaceholderView.h"
+
+#if TARGET_OS_IPHONE
 
 // if you change any of these then also make sure to adjust the sizes in DTDictationPlaceholderTextAttachment
 #define DOT_WIDTH 10.0f

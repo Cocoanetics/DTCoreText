@@ -6,13 +6,14 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-/**
- Constant for highlighting notification
- */
+#import "DTCompatibility.h"
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 
+/**
+ Constant for highlighting notification
+ */
 extern NSString *DTLinkButtonDidHighlightNotification;
 
 /**

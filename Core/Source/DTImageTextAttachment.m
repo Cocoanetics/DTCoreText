@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
 #import "DTImageTextAttachment.h"
+
 #import "DTCoreTextConstants.h"
 #import "DTHTMLElement.h"
 #import "NSString+CSS.h"

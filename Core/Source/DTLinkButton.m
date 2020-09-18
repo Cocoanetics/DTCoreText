@@ -6,9 +6,10 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTLinkButton.h"
+
 #if TARGET_OS_IPHONE
 
-#import "DTLinkButton.h"
 #import "DTCoreText.h"
 
 // constant for notification

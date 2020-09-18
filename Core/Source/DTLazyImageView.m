@@ -6,11 +6,11 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTLazyImageView.h"
+
 #if TARGET_OS_IPHONE
 
 #import <ImageIO/ImageIO.h>
-#import "DTLazyImageView.h"
-#import "DTCompatibility.h"
 
 #import <DTFoundation/DTLog.h>
 

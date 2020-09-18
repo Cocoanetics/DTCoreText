@@ -5,10 +5,14 @@
 //  Created by Oliver Drobnik on 8/4/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+
+#import "DTCompatibility.h"
+
+#import "DTAttributedTextCell.h"
+
 #if TARGET_OS_IPHONE
 
 #import "DTCoreText.h"
-#import "DTAttributedTextCell.h"
 #import "DTCSSStylesheet.h"
 
 #import <DTFoundation/DTLog.h>

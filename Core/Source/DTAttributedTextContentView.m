@@ -6,12 +6,13 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTAttributedTextContentView.h"
+
 #if TARGET_OS_IPHONE
 
 #import <QuartzCore/QuartzCore.h>
 
 #import "DTCoreText.h"
-#import "DTAttributedTextContentView.h"
 #import "DTDictationPlaceholderTextAttachment.h"
 #import "DTAccessibilityViewProxy.h"
 #import "DTAccessibilityElement.h"

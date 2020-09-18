@@ -5,6 +5,9 @@
 //  Created by Oliver Drobnik on 5/20/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+
+#import "DTCompatibility.h"
+
 #if TARGET_OS_IPHONE
 
 #import <DTFoundation/DTWeakSupport.h>

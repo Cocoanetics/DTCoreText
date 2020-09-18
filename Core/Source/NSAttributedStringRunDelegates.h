@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import "DTCompatibility.h"
+
 #import <CoreGraphics/CoreGraphics.h>
 
 #if TARGET_OS_IPHONE

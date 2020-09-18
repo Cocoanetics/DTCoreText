@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "DTCompatibility.h"
 
 #if TARGET_OS_IPHONE
 #elif TARGET_OS_MAC

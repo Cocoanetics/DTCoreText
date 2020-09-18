@@ -6,6 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
+#import <Availability.h>
+#import <TargetConditionals.h>
+
 #import "DTTextHTMLElement.h"
 #import "NSString+HTML.h"
 #import "DTCoreTextFontDescriptor.h"

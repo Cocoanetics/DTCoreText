@@ -5,9 +5,11 @@
 //  Created by Austen Green on 3/13/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
-#if TARGET_OS_IPHONE
 
 #import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
+
+#if TARGET_OS_IPHONE
+
 #import "DTCoreTextLayoutFrame.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextGlyphRun.h"

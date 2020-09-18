@@ -7,9 +7,10 @@
 //
 
 #import "DTColor+Compatibility.h"
-#import "DTColorFunctions.h"
 
 #if TARGET_OS_IPHONE
+
+#import "DTColorFunctions.h"
 
 @implementation UIColor (HTML)
 

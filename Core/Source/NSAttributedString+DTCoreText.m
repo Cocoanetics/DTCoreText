@@ -6,7 +6,6 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
 #import "NSAttributedString+DTCoreText.h"
 #import "DTHTMLWriter.h"
 #import "DTCoreTextConstants.h"

@@ -4,6 +4,9 @@
 
 #ifdef __OBJC__
 
+#import <Availability.h>
+#import <TargetConditionals.h>
+
 #import <Foundation/Foundation.h>
 
 #if TARGET_OS_IPHONE

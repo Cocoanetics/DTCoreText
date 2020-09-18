@@ -6,9 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
-
 #import "NSMutableAttributedString+HTML.h"
+
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "NSDictionary+DTCoreText.h"

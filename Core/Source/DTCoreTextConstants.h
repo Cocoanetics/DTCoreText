@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+#import "DTCompatibility.h"
 
 // unicode characters
 

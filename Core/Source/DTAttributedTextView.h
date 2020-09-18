@@ -5,6 +5,9 @@
 //  Created by Oliver Drobnik on 1/12/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+
+#import "DTCompatibility.h"
+
 #if TARGET_OS_IPHONE
 
 #import <UIKit/UIKit.h>

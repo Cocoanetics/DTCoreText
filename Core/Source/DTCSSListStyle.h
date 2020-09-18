@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <Availability.h>
+#import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
 
 /**

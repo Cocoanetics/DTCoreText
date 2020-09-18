@@ -5,9 +5,11 @@
 //  Created by Brian Kenny on 1/17/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
-#if TARGET_OS_IPHONE
 
 #import "DTAttributedLabel.h"
+
+#if TARGET_OS_IPHONE
+
 #import "DTCoreTextLayoutFrame.h"
 #import <QuartzCore/QuartzCore.h>
 

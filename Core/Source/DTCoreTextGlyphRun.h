@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-
+#import "DTCompatibility.h"
 
 #if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>

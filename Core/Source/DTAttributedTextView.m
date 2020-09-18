@@ -5,11 +5,13 @@
 //  Created by Oliver Drobnik on 1/12/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
+
+#import "DTAttributedTextView.h"
+
 #if TARGET_OS_IPHONE
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "DTAttributedTextView.h"
 #import "DTCoreText.h"
 
 #import <DTFoundation/DTTiledLayerWithoutFade.h>

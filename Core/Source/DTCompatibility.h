@@ -5,6 +5,8 @@
 //  Created by Oliver Letterer on 09.04.12.
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
+#import <Availability.h>
+#import <TargetConditionals.h>
 
 #import <Foundation/Foundation.h>
 

@@ -5,6 +5,9 @@
 //  Created by Brian Kenny on 1/17/13.
 //  Copyright (c) 2013 Cocoanetics.com. All rights reserved.
 //
+
+#import "DTCompatibility.h"
+
 #if TARGET_OS_IPHONE
 
 #import "DTAttributedTextContentView.h"

@@ -5,9 +5,12 @@
 //  Created by Austen Green on 5/6/13.
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
+
+#import "DTCompatibility.h"
+#import "DTAccessibilityElement.h"
+
 #if TARGET_OS_IPHONE
 
-#import <Foundation/Foundation.h>
 #import "DTTextAttachment.h"
 
 @protocol DTAccessibilityViewProxyDelegate;

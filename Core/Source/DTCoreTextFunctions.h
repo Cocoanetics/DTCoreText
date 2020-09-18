@@ -7,6 +7,8 @@
 //
 #import <CoreText/CoreText.h>
 
+#import "DTCompatibility.h"
+
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #endif

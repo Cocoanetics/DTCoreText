@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "DTCompatibility.h"
 
 /**
  Methods that generated an attributed string with Small Caps, even if the used fonts don't support them natively.
