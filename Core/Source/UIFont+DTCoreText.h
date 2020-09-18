@@ -7,8 +7,6 @@
 //
 
 #import "DTCompatibility.h"
-#import <Availability.h>
-#import <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE
 

@@ -6,7 +6,6 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import 
 #import "UIFont+DTCoreText.h"
 
 #if TARGET_OS_IPHONE
