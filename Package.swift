@@ -27,6 +27,7 @@ let package = Package(
             path: "Core"),
         .testTarget(
             name: "DTCoreTextTests",
-            dependencies: ["DTCoreText"]),
+            dependencies: ["DTCoreText"],
+			path: "Test")
     ]
 )
