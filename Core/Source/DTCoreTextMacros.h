@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Axinoe. All rights reserved.
 //
 
-#import <Availability.h>
+#import "DTCompatibility.h"
 
 #ifndef DT_RETURNS_INNER_POINTER
 #if __has_attribute(objc_returns_inner_pointer)

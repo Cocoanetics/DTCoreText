@@ -6,10 +6,9 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import <Availability.h>
-#import <TargetConditionals.h>
-
 #import "DTListItemHTMLElement.h"
+
+#import "DTCompatibility.h"
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "NSDictionary+DTCoreText.h"
