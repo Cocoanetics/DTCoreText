@@ -12,7 +12,7 @@ let package = Package(
     products: [
         .library(
             name: "DTCoreText",
-			type: .dynamic,
+			// type: .dynamic,
             targets: ["DTCoreText"])
     ],
     dependencies: [
