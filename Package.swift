@@ -23,10 +23,10 @@ let package = Package(
             dependencies: [
                 .product(name: "DTFoundation", package: "DTFoundation"),
             ],
-            path: "Core/Source",
+            path: "Core",
+			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],
              resources: [
-            	.copy("default.css")],
-				publicHeadersPath: "Core/include"
+            	.copy("Source/default.css")]
         ),
         .testTarget(
             name: "DTCoreTextTests",
