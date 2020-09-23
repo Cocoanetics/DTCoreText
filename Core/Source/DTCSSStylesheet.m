@@ -52,7 +52,7 @@
             }
 #endif
 			
-			NSAssert(path != nil, "Missing default.css")
+			NSAssert(path != nil, @"Missing default.css");
 			NSLog(@"Loading default.css from %@", path);
 			
             NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
