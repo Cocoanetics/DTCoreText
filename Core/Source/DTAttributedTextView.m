@@ -138,7 +138,7 @@
 		DTAttributedTextView *strongSelf = weakSelf;
 		
 		// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
-		strongSelf->_attributedTextContentView.layouter=nil;
+		strongSelf->_attributedTextContentView.layouter = nil;
 		
 		// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
 		[strongSelf->_attributedTextContentView relayoutText];
@@ -244,7 +244,7 @@
 		}
 
 		// set text delegate if it was set before instantiation of content view
-		_attributedTextContentView.delegate = textDelegate;
+		_attributedTextContentView.delegate = self->_textDelegate;
 		
 		// pass on setting
 		_attributedTextContentView.shouldDrawLinks = _shouldDrawLinks;
@@ -268,7 +268,7 @@
 
 - (void)setBackgroundColor:(DTColor *)newColor
 {
-	if ([newColor alphaComponent]<1.0)
+	if ([newColor alphaComponent] < 1.0)
 	{
 		super.backgroundColor = newColor;
 		_attributedTextContentView.backgroundColor = [DTColor clearColor];
@@ -398,7 +398,7 @@
 
 - (id<DTAttributedTextContentViewDelegate>)textDelegate
 {
-	return _attributedTextContentView.delegate ?: self->_textDelegate;;
+	return _attributedTextContentView.delegate ?: self->_textDelegate;
 }
 
 - (void)setShouldDrawLinks:(BOOL)shouldDrawLinks
