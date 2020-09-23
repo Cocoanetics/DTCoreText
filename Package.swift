@@ -12,7 +12,8 @@ let package = Package(
     products: [
         .library(
             name: "DTCoreText",
-            targets: ["DTCoreText"]),
+			type: .dynamic,
+            targets: ["DTCoreText"])
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
@@ -24,7 +25,7 @@ let package = Package(
                 .product(name: "DTFoundation", package: "DTFoundation"),
             ],
             path: "Core",
-			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],
+			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],  
              resources: [
             	.copy("Source/default.css")]
         ),
