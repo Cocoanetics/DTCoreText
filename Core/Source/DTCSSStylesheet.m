@@ -38,9 +38,11 @@
 	{
 		if (!defaultDTCSSStylesheet)
 		{
+
             NSBundle *bundle = [NSBundle bundleForClass:self];
             NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
 			
+#if !SWIFT_PACKAGE
             // Cocoapods uses a separate Resources bundle to include default.css
             if (!path)
             {
@@ -48,7 +50,9 @@
                 NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
                 path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
             }
+#endif
 			
+			NSAssert(path != nil, "Missing default.css")
 			NSLog(@"Loading default.css from %@", path);
 			
             NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
