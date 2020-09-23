@@ -25,7 +25,8 @@ let package = Package(
             ],
             path: "Core/Source",
              resources: [
-            	.copy("default.css")]
+            	.copy("default.css")],
+				publicHeadersPath: "Core/include"
         ),
         .testTarget(
             name: "DTCoreTextTests",
