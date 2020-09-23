@@ -611,11 +611,9 @@ static BOOL _needsChineseFontCascadeFix = NO;
 				matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
 			} else {
 				CFIndex i = 0;
-				CFDictionaryRef traits = NULL;
-				CTFontDescriptorRef currentFontDescriptor = NULL;
 				for (i=0; i<count; i++) {
-					currentFontDescriptor = CFArrayGetValueAtIndex(matchingFontDescriptors, i);
-					traits = CTFontDescriptorCopyAttribute(currentFontDescriptor, kCTFontTraitsAttribute);
+					CTFontDescriptorRef currentFontDescriptor = CFArrayGetValueAtIndex(matchingFontDescriptors, i);
+					CFDictionaryRef traits = CTFontDescriptorCopyAttribute(currentFontDescriptor, kCTFontTraitsAttribute);
 					NSDictionary *traitsDictionary = CFBridgingRelease(traits);
 					
 					BOOL hasSlantValue = [traitsDictionary[@"NSCTFontSlantTrait"] boolValue];
@@ -626,9 +624,9 @@ static BOOL _needsChineseFontCascadeFix = NO;
 					
 					if (hasMatchingBoldTrait && hasMatchingItalicTrait) {
 						matchingFontDescriptor = currentFontDescriptor;
+						CFRetain(matchingFontDescriptor);
 					}
 				}
-				CFRelease(currentFontDescriptor);
 			}
 		}
 		
@@ -670,6 +668,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	if (searchingFontDescriptor)
 	{
 		CFRelease(searchingFontDescriptor);
+	}
+	
+	if (matchingFontDescriptors)
+	{
+		CFRelease(matchingFontDescriptors);
 	}
 	
 	// check if we indeed got an oblique font if we wanted one
