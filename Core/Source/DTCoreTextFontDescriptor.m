@@ -625,6 +625,9 @@ static BOOL _needsChineseFontCascadeFix = NO;
 					if (hasMatchingBoldTrait && hasMatchingItalicTrait) {
 						matchingFontDescriptor = currentFontDescriptor;
 						CFRetain(matchingFontDescriptor);
+						
+						// take first one that fits
+						break;
 					}
 				}
 			}
