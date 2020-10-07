@@ -7,7 +7,6 @@
 //
 
 #import "NSAttributedStringDTCoreTextTest.h"
-#import "NSAttributedString+DTCoreText.h"
 
 @implementation NSAttributedStringDTCoreTextTest
 

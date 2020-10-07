@@ -7,8 +7,6 @@
 //
 
 #import "NSMutableAttributedStringHTMLTest.h"
-#import "NSMutableAttributedString+HTML.h"
-#import "NSAttributedString+HTML.h"
 
 
 @implementation NSMutableAttributedStringHTMLTest

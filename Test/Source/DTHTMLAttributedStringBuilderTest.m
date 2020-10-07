@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
 #import "DTHTMLAttributedStringBuilderTest.h"
-#import "DTCoreTextConstants.h"
 
 @implementation DTHTMLAttributedStringBuilderTest
 

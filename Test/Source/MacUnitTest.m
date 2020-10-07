@@ -7,9 +7,11 @@
 //
 
 #import "MacUnitTest.h"
-#import "DTHTMLAttributedStringBuilder.h"
-#import "NSObject+DTRuntime.h"
-#import "NSString+HTML.h"
+
+#if !TARGET_OS_IOS
+
+@import DTCoreText;
+@import AppKit;
 
 #define TESTCASE_FILE_EXTENSION @"html"
 //#define ONLY_TEST_CURRENT 1
@@ -281,3 +283,5 @@ NSString *testCaseNameFromURL(NSURL *URL, BOOL withSpaces)
  */
 
 @end
+
+#endif

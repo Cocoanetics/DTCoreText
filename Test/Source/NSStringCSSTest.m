@@ -6,10 +6,7 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCompatibility.h"
 #import "NSStringCSSTest.h"
-#import "NSString+CSS.h"
-#import "DTColor+Compatibility.h"
 
 @implementation NSStringCSSTest
 

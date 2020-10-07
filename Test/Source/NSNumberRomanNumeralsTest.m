@@ -6,9 +6,8 @@
 //  Copyright © 2016 Drobnik.com. All rights reserved.
 //
 
+#import <DTCoreText/NSNumber+RomanNumerals.h>
 #import <XCTest/XCTest.h>
-
-#import "NSNumber+RomanNumerals.h"
 
 @interface NSNumberRomanNumeralsTest : XCTestCase
 

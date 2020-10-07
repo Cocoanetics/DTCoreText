@@ -8,8 +8,6 @@
 
 #import "DTTextBlockTest.h"
 
-#import "DTTextBlock.h"
-
 @implementation DTTextBlockTest
 
 - (void)testEquals

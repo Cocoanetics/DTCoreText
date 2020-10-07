@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoretext.h"
-
+#import <DTCoreText/DTCoreText.h>
+#import <XCTest/XCTest.h>
 
 /**
  Specialized test case class for testing DTCoreText issues

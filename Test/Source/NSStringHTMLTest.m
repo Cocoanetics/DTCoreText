@@ -6,9 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTCoreTextConstants.h"
 #import "NSStringHTMLTest.h"
-#import "NSString+HTML.h"
 
 @implementation NSStringHTMLTest
 
