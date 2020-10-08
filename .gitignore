@@ -1,8 +1,11 @@
 .DS_Store
 build
+.build
 *.mode1v3
 *.pbxuser
 project.xcworkspace
 xcuserdata
 .svn
-.build/
+.swiftpm
+.dependencies
+.derivedData
