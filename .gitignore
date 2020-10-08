@@ -5,5 +5,4 @@ build
 project.xcworkspace
 xcuserdata
 .svn
-.swiftpm/
 .build/

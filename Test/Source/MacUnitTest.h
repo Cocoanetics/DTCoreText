@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Drobnik KG. All rights reserved.
 //
 
+@import XCTest;
+
 @interface MacUnitTest : XCTestCase
 
 - (void)internalTestCaseWithURL:(NSURL *)URL withTempPath:(NSString *)tempPath;

@@ -29,9 +29,9 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		3A4EA52D1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA52D1D475B2A009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A4EA52E1D475B2A009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
-		3A4EA52F1D475B2B009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; };
+		3A4EA52F1D475B2B009222BF /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A4EA5301D475B2B009222BF /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
 		3A4EA5321D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */; };
 		3A4EA5331D475D76009222BF /* NSNumberRomanNumeralsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5311D475D76009222BF /* NSNumberRomanNumeralsTest.m */; };
@@ -433,6 +433,8 @@
 		A7C7AD0F14DA7C2D005A9C69 /* NSAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0A14DA7C2B005A9C69 /* NSAttributedStringHTMLTest.m */; };
 		A7C7AD1014DA7C2D005A9C69 /* NSStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */; };
 		A7C7AD1114DA7C2D005A9C69 /* UIColorHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */; };
+		A7CC852E252E4F690056BC22 /* NSNumber+RomanNumerals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A4EA50F1D475B17009222BF /* NSNumber+RomanNumerals.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7CC853B252E4F710056BC22 /* NSNumber+RomanNumerals.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A4EA5101D475B17009222BF /* NSNumber+RomanNumerals.m */; };
 		A7CF230A16DE1DF7005A4A6E /* AppledocSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */; };
 		A7D29D611CB68D2A0068F043 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6551B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A7D29D621CB68D2A0068F043 /* DTFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6551B46A1FB0086C2F6 /* DTFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -909,7 +911,7 @@
 		A788C92814863E8700E1AFD9 /* DTCSSStylesheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCSSStylesheet.h; sourceTree = "<group>"; };
 		A788C92914863E8700E1AFD9 /* DTCSSStylesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCSSStylesheet.m; sourceTree = "<group>"; };
 		A788C92A14863E8700E1AFD9 /* DTHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DTHTMLElement.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLElement.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A788C92B14863E8700E1AFD9 /* DTHTMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLElement.m; sourceTree = "<group>"; };
 		A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DTLazyImageView.h; sourceTree = "<group>"; };
 		A788C92D14863E8700E1AFD9 /* DTLazyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTLazyImageView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788C92E14863E8700E1AFD9 /* DTLinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTLinkButton.h; sourceTree = "<group>"; };
@@ -975,7 +977,7 @@
 		A78EEA6116774B5F003B5540 /* UIFont+DTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+DTCoreText.m"; sourceTree = "<group>"; };
 		A79499FF14C6256B00A8CCDE /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		A7949A4514CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTHTMLAttributedStringBuilder.h; sourceTree = "<group>"; };
-		A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLAttributedStringBuilder.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A7949A4614CAF58C00A8CCDE /* DTHTMLAttributedStringBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTHTMLAttributedStringBuilder.m; sourceTree = "<group>"; };
 		A7949A4F14CC44D200A8CCDE /* DTCoreTextConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTCoreTextConstants.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A7949A5D14CC456000A8CCDE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		A7949A5E14CC456000A8CCDE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1026,6 +1028,7 @@
 		A7C7AD0C14DA7C2C005A9C69 /* NSStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringHTMLTest.m; sourceTree = "<group>"; };
 		A7C7AD0D14DA7C2C005A9C69 /* UIColorHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorHTMLTest.h; sourceTree = "<group>"; };
 		A7C7AD0E14DA7C2C005A9C69 /* UIColorHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorHTMLTest.m; sourceTree = "<group>"; };
+		A7CC84C7252E1ABD0056BC22 /*  */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ""; sourceTree = SOURCE_ROOT; };
 		A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppledocSettings.plist; path = ../AppledocSettings.plist; sourceTree = "<group>"; };
 		A7D54EA414E003190063E78B /* Objects.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Objects.html; sourceTree = "<group>"; };
 		A7D63CD91611B9AC00D4712A /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -1182,6 +1185,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				A7CC84C7252E1ABD0056BC22 /*  */,
 				A788C90C14863E5000E1AFD9 /* Core */,
 				A7342FF512DC343B00044B3C /* Demo */,
 				A788CA1114863E9D00E1AFD9 /* Test */,
@@ -1748,6 +1752,7 @@
 				94D24B701D4AFE7800C7F33C /* DTCoreTextLayoutFrame.h in Headers */,
 				94D24B711D4AFE7800C7F33C /* DTImage+HTML.h in Headers */,
 				94D24B721D4AFE7800C7F33C /* DTCSSListStyle.h in Headers */,
+				A7CC852E252E4F690056BC22 /* NSNumber+RomanNumerals.h in Headers */,
 				94D24B731D4AFE7800C7F33C /* DTDictationPlaceholderView.h in Headers */,
 				94D24B741D4AFE7800C7F33C /* DTCoreTextFontDescriptor.h in Headers */,
 				94D24B751D4AFE7800C7F33C /* DTAttributedTextCell.h in Headers */,
@@ -2451,6 +2456,7 @@
 				94D24B231D4AFE7800C7F33C /* DTAttributedTextCell.m in Sources */,
 				94D24B241D4AFE7800C7F33C /* DTCoreTextLayouter.m in Sources */,
 				94D24B251D4AFE7800C7F33C /* DTCoreTextFontDescriptor.m in Sources */,
+				A7CC853B252E4F710056BC22 /* NSNumber+RomanNumerals.m in Sources */,
 				94D24B261D4AFE7800C7F33C /* DTCoreTextConstants.m in Sources */,
 				94D24B271D4AFE7800C7F33C /* DTCSSListStyle.m in Sources */,
 				94D24B281D4AFE7800C7F33C /* UIFont+DTCoreText.m in Sources */,

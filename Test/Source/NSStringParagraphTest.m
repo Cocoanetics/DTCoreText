@@ -7,7 +7,6 @@
 //
 
 #import "NSStringParagraphTest.h"
-#import "NSString+Paragraphs.h"
 
 @implementation NSStringParagraphTest
 

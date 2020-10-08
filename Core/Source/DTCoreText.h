@@ -50,6 +50,7 @@
 #import "NSString+CSS.h"
 #import "NSString+HTML.h"
 #import "NSString+Paragraphs.h"
+#import "NSNumber+RomanNumerals.h"
 
 // parsing classes
 #import "DTHTMLParserNode.h"

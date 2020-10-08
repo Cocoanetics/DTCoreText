@@ -38,13 +38,13 @@
 	{
 		if (!defaultDTCSSStylesheet)
 		{
-
-#if SWIFT_PACKAGE // Temporaray fix, since resources in SPM are only supported starting with Swift 5.3
-            NSString* cssString = @"html{display:block}head{display:none}title{display:none}style{display:none}body{display:block}article,aside,footer,header,hgroup,nav,section{display:block}p{display:block;-webkit-margin-before:1em;-webkit-margin-after:1em;-webkit-margin-start:0;-webkit-margin-end:0}ul,menu,dir{display:block;list-style-type:disc;-webkit-margin-before:1em;-webkit-margin-after:1em;-webkit-margin-start:0;-webkit-margin-end:0;-webkit-padding-start:27px}li{display:list-item}ol{display:block;list-style-type:decimal;-webkit-margin-before:1em;-webkit-margin-after:1em;-webkit-margin-start:0;-webkit-margin-end:0;-webkit-padding-start:27px}ul ul,ol ul{list-style-type:circle}ol ol ul,ol ul ul,ul ol ul,ul ul ul{list-style-type:square}code{font-family:Courier}pre,xmp,plaintext,listing{display:block;font-family:monospace;white-space:pre;margin:1em 0px}a{color:#0000EE;text-decoration:underline}a:active{color:#FF0000}center{text-align:center;display:block}strong,b{font-weight:bolder}i,em{font-style:italic}u{text-decoration:underline}big{font-size:bigger}small{font-size:smaller}sub{font-size:smaller;vertical-align:sub}sup{font-size:smaller;vertical-align:super}s,strike,del{text-decoration:line-through}tt,code,kbd,samp{font-family:monospace}pre,xmp,plaintext,listing{display:block;font-family:monospace;white-space:pre;margin-top:1em;margin-right:0;margin-bottom:1em;margin-left:0}h1{display:block;font-size:2em;-webkit-margin-before:.67em;-webkit-margin-after:.67em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}h2{display:block;font-size:1.5em;-webkit-margin-before:.83em;-webkit-margin-after:.83em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}h3{display:block;font-size:1.17em;-webkit-margin-before:1em;-webkit-margin-after:1em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}h4{display:block;-webkit-margin-before:1.33em;-webkit-margin-after:1.33em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}h5{display:block;font-size:.83em;-webkit-margin-before:1.67em;-webkit-margin-after:1.67em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}h6{display:block;font-size:.67em;-webkit-margin-before:2.33em;-webkit-margin-after:2.33em;-webkit-margin-start:0;-webkit-margin-end:0;font-weight:bold}div{display:block}link{display:none}meta{display:none}script{display:none}hr{display:block;-webkit-margin-before:0.5em;-webkit-margin-after:0.5em;-webkit-margin-start:auto;-webkit-margin-end:auto;border-style:inset;border-width:1px}table{display:table;border-collapse:separate;border-spacing:2px;border-color:gray}";
-
+#if SWIFT_PACKAGE
+			// get resource bundle via macro
+			NSString *path = [SWIFTPM_MODULE_BUNDLE pathForResource:@"default" ofType:@"css"];
 #else
-            NSBundle *bundle = [NSBundle bundleForClass:self];
-            NSString *path = [bundle pathForResource:@"default" ofType:@"css"];
+			NSBundle *bundle = [NSBundle bundleForClass:self];
+			NSString *path = [[NSBundle bundleForClass:self] pathForResource:@"default" ofType:@"css"];
+			
             // Cocoapods uses a separate Resources bundle to include default.css
             if (!path)
             {
@@ -52,8 +52,11 @@
                 NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
                 path = [resourcesBundle pathForResource:@"default" ofType:@"css"];
             }
-            NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 #endif
+			
+			NSAssert(path != nil, @"Missing default.css");
+			
+            NSString *cssString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 
 			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
 		}

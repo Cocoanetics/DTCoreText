@@ -534,6 +534,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	CTFontDescriptorRef searchingFontDescriptor = NULL;
 	CTFontDescriptorRef matchingFontDescriptor = NULL;
+	CFArrayRef matchingFontDescriptors = NULL;
 	CTFontRef matchingFont = NULL;
 	
 	// check the cache first
@@ -602,8 +603,35 @@ static BOOL _needsChineseFontCascadeFix = NO;
 			[mandatoryAttributes addObject:(id)kCTFontFeaturesAttribute];
 		}
 		
-		// do the search
-		matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
+		matchingFontDescriptors = CTFontDescriptorCreateMatchingFontDescriptors(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
+		
+		if (matchingFontDescriptors) {
+			CFIndex count = CFArrayGetCount(matchingFontDescriptors);
+			if (count == 1) {
+				matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
+			} else {
+				CFIndex i = 0;
+				for (i=0; i<count; i++) {
+					CTFontDescriptorRef currentFontDescriptor = CFArrayGetValueAtIndex(matchingFontDescriptors, i);
+					CFDictionaryRef traits = CTFontDescriptorCopyAttribute(currentFontDescriptor, kCTFontTraitsAttribute);
+					NSDictionary *traitsDictionary = CFBridgingRelease(traits);
+					
+					BOOL hasSlantValue = [traitsDictionary[@"NSCTFontSlantTrait"] boolValue];
+					BOOL hasBoldValue = [traitsDictionary[@"NSCTFontWeightTrait"] boolValue];
+					
+					BOOL hasMatchingBoldTrait = hasBoldValue == self.boldTrait;
+					BOOL hasMatchingItalicTrait = hasSlantValue == self.italicTrait;
+					
+					if (hasMatchingBoldTrait && hasMatchingItalicTrait) {
+						matchingFontDescriptor = currentFontDescriptor;
+						CFRetain(matchingFontDescriptor);
+						
+						// take first one that fits
+						break;
+					}
+				}
+			}
+		}
 		
 		if (!matchingFontDescriptor)
 		{
@@ -643,6 +671,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 	if (searchingFontDescriptor)
 	{
 		CFRelease(searchingFontDescriptor);
+	}
+	
+	if (matchingFontDescriptors)
+	{
+		CFRelease(matchingFontDescriptors);
 	}
 	
 	// check if we indeed got an oblique font if we wanted one

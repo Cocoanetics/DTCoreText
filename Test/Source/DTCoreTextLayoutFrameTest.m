@@ -7,8 +7,9 @@
 //
 
 #import "DTCoreTextTestCase.h"
-#import "DTCoreTextLayouter.h"
-#import "DTCoreTextLayoutFrame.h"
+
+#import <DTCoreText/DTCoreText.h>
+#import <XCTest/XCTest.h>
 
 @interface DTCoreTextLayoutFrameTest : DTCoreTextTestCase
 

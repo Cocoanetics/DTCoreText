@@ -1,5 +1,4 @@
-// swift-tools-version:5.2
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version:5.3
 
 import PackageDescription
 
@@ -13,7 +12,8 @@ let package = Package(
     products: [
         .library(
             name: "DTCoreText",
-            targets: ["DTCoreText"]),
+			// type: .dynamic,
+            targets: ["DTCoreText"])
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
@@ -24,10 +24,17 @@ let package = Package(
             dependencies: [
                 .product(name: "DTFoundation", package: "DTFoundation"),
             ],
-            path: "Core"),
+            path: "Core",
+			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],  
+             resources: [
+            	.copy("Source/default.css")]
+        ),
         .testTarget(
             name: "DTCoreTextTests",
             dependencies: ["DTCoreText"],
-			path: "Test")
+			path: "Test/Source",
+            resources: [
+           		.copy("Resources")]
+			)
     ]
 )
