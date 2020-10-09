@@ -9,8 +9,10 @@
 #import "DTCompatibility.h"
 #import "DTCoreTextConstants.h"
 
-#if TARGET_OS_IPHONE
+
 #import <CoreText/CoreText.h>
+
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 #import <UIKit/UIKit.h>
 #endif
 

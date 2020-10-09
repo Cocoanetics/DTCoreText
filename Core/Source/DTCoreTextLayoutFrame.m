@@ -1174,7 +1174,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	CGFloat scaleFactor = 1.0;
 	
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
 	{
 		scaleFactor = [[UIScreen mainScreen] scale];
