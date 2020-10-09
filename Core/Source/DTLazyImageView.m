@@ -8,7 +8,7 @@
 
 #import "DTLazyImageView.h"
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
 #import <ImageIO/ImageIO.h>
 

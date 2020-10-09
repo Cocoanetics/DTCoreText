@@ -10,7 +10,7 @@
 
 #import "DTAttributedTextCell.h"
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
 #import "DTCoreText.h"
 #import "DTCSSStylesheet.h"
