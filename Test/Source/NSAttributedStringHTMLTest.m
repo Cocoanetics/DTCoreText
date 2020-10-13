@@ -168,7 +168,7 @@
 - (void)testDefaultFont
 {
 	// This string is the simplest case that caused the crash.
-	NSString *html = @"<b>Hello World!</b>";
+	NSString *html = @"<p>Hello World!</p>";
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
 	NSDictionary *options = @{};
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data
