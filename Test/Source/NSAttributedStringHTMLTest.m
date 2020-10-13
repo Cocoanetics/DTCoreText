@@ -164,6 +164,29 @@
 	XCTAssert(string != nil);
 }
 
+// issue #1199
+- (void)testDefaultFont
+{
+	// This string is the simplest case that caused the crash.
+	NSString *html = @"<b>Hello World!</b>";
+	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+	NSDictionary *options = @{};
+	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data
+																	  options:options
+														   documentAttributes:NULL];
+	
+	UIFont *font = [string attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+	
+	UIFontDescriptor *descriptor = [font fontDescriptor];
+	BOOL isBold = (descriptor.symbolicTraits & UIFontDescriptorTraitBold) != 0;
+	XCTAssertFalse(isBold);
+	
+	BOOL isItalic = (descriptor.symbolicTraits & UIFontDescriptorTraitItalic) != 0;
+	XCTAssertFalse(isItalic);
+	
+	XCTAssertTrue([font.familyName isEqualToString:@"Times New Roman"]);
+}
+
 
 - (NSString *)hexStringForData:(NSData *)data
 {
