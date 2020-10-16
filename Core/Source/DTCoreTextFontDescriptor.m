@@ -655,8 +655,39 @@ static BOOL _needsChineseFontCascadeFix = NO;
 			CFRelease(searchingFontDescriptor);
 			searchingFontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)mutableAttributes);
 			
-			// do the relaxed search
-			matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, NULL);
+            if (matchingFontDescriptors)
+            {
+                CFRelease(matchingFontDescriptors);
+            }
+
+            matchingFontDescriptors = CTFontDescriptorCreateMatchingFontDescriptors(searchingFontDescriptor, NULL);
+            if (matchingFontDescriptors) {
+                CFIndex count = CFArrayGetCount(matchingFontDescriptors);
+                if (count == 1) {
+                    matchingFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(searchingFontDescriptor, (__bridge CFSetRef)mandatoryAttributes);
+                } else {
+                    CFIndex i = 0;
+                    for (i=0; i<count; i++) {
+                        CTFontDescriptorRef currentFontDescriptor = CFArrayGetValueAtIndex(matchingFontDescriptors, i);
+                        CFDictionaryRef traits = CTFontDescriptorCopyAttribute(currentFontDescriptor, kCTFontTraitsAttribute);
+                        NSDictionary *traitsDictionary = CFBridgingRelease(traits);
+
+                        BOOL hasSlantValue = [traitsDictionary[@"NSCTFontSlantTrait"] boolValue];
+                        BOOL hasBoldValue = [traitsDictionary[@"NSCTFontWeightTrait"] boolValue];
+
+                        BOOL hasMatchingBoldTrait = hasBoldValue == self.boldTrait;
+                        BOOL hasMatchingItalicTrait = hasSlantValue == self.italicTrait;
+
+                        if (hasMatchingBoldTrait && hasMatchingItalicTrait) {
+                            matchingFontDescriptor = currentFontDescriptor;
+                            CFRetain(matchingFontDescriptor);
+
+                            // take first one that fits
+                            break;
+                        }
+                    }
+                }
+            }
 		}
 	}
 	
