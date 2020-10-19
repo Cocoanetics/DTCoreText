@@ -57,18 +57,23 @@
 
 - (void)layoutSubviews
 {
-	(void)[self attributedTextContentView];
+	[super layoutSubviews];
+	
+	self.attributedTextContentView.edgeInsets = self.contentInset;
 	
 	// layout custom subviews for visible area
 	[_attributedTextContentView layoutSubviewsInRect:self.bounds];
-  
-  [super layoutSubviews];
 }
 
 - (void)awakeFromNib
 {
 	[super awakeFromNib];
 	[self _setup];
+}
+
+- (void)safeAreaInsetsDidChange
+{
+	[super safeAreaInsetsDidChange];
 }
 
 // default
@@ -287,14 +292,14 @@
 
 - (void)setContentInset:(UIEdgeInsets)contentInset
 {
-	if (!UIEdgeInsetsEqualToEdgeInsets(self.contentInset, contentInset))
+	[super setContentInset:contentInset];
+	
+	// height does not matter, that will be determined anyhow
+	CGRect contentFrame = CGRectMake(0, 0, self.frame.size.width - self.contentInset.left - self.contentInset.right, _attributedTextContentView.frame.size.height);
+	
+	if (CGRectEqualToRect(contentFrame, self.attributedTextContentView.frame))
 	{
-		[super setContentInset:contentInset];
-		
-		// height does not matter, that will be determined anyhow
-		CGRect contentFrame = CGRectMake(0, 0, self.frame.size.width - self.contentInset.left - self.contentInset.right, _attributedTextContentView.frame.size.height);
-		
-		_attributedTextContentView.frame = contentFrame;
+		self.attributedTextContentView.frame = contentFrame;
 	}
 }
 
