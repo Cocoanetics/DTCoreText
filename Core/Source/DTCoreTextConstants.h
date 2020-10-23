@@ -62,6 +62,7 @@ extern NSString * const DTWillFlushBlockCallBack;
 extern NSString * const DTProcessCustomHTMLAttributes;
 extern NSString * const DTIgnoreInlineStylesOption;
 extern NSString * const DTDocumentPreserveTrailingSpaces;
+extern NSString * const DTDefaultUIFontDescriptor;
 
 
 // attributed string attribute constants

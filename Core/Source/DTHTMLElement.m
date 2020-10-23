@@ -138,24 +138,27 @@ NSDictionary *_classesForNames = nil;
 		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
 	
-	CTFontRef font = [_fontDescriptor newMatchingFont];
+    CTFontRef font;
+    if (_UIFontDescriptor != nil) {
+        font = CTFontCreateWithFontDescriptor((CTFontDescriptorRef)_UIFontDescriptor, self.pointSize, nil);
+    } else {
+        font = [_fontDescriptor newMatchingFont];
+    }
 	
 	if (font)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
-		{
-			UIFont *uiFont = [UIFont fontWithCTFont:font];
-			[tmpDict setObject:uiFont forKey:NSFontAttributeName];
-		}
-		else
+        if (___useiOS6Attributes)
+        {
+            [tmpDict setObject:[UIFont fontWithCTFont:font] forKey:NSFontAttributeName];
+        }
+        else
 #endif
-		{
-			// __bridge since its already retained elsewhere
-			[tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
-		}
-		
-		
+        {
+            // __bridge since its already retained elsewhere
+            [tmpDict setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
+        }
+
 		// use this font to adjust the values needed for the run delegate during layout time
 		[_textAttachment adjustVerticalAlignmentForFont:font];
 		
@@ -708,29 +711,29 @@ NSDictionary *_classesForNames = nil;
 		{
 			if ([oneKey hasSuffix:leftKey])
 			{
-				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.left = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:bottomKey])
 			{
-				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.bottom = [attributeValue	pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:rightKey])
 			{
-				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.right = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 			else if ([oneKey hasSuffix:topKey])
 			{
-				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+				edgeInsets.top = [attributeValue pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 				didModify = YES;
 			}
 		}
 		else
 		{
 			// shortcut with multiple values
-			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			edgeInsets = [attributeValue DTEdgeInsetsRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 			didModify = YES;
 		}
 	}
@@ -826,7 +829,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([fontSize isEqualToString:@"inherit"])
 		{
-			_fontDescriptor.pointSize = self.parentElement.fontDescriptor.pointSize;
+			_fontDescriptor.pointSize = self.parentElement.pointSize;
 		}
 		else if ([fontSize isCSSLengthValue])
 		{
@@ -886,7 +889,12 @@ NSDictionary *_classesForNames = nil;
 			_fontDescriptor.fontFamily = fontFamily;
 			
 			// check if this is a known font family
-			CTFontRef font = [_fontDescriptor newMatchingFont];
+            CTFontRef font;
+            if (_UIFontDescriptor != nil) {
+                font = CTFontCreateWithFontDescriptor((CTFontDescriptorRef)_UIFontDescriptor, self.pointSize, nil);
+            } else {
+                font = [_fontDescriptor newMatchingFont];
+            }
 			
 			if (font)
 			{
@@ -1152,7 +1160,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else // interpret as length
 		{
-			_letterSpacing = [letterSpacing pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			_letterSpacing = [letterSpacing pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 		}
 	}
 	
@@ -1163,7 +1171,7 @@ NSDictionary *_classesForNames = nil;
 	if (shadow)
 	{
 		
-		self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:_fontDescriptor.pointSize currentColor:_textColor];
+        self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:self.pointSize currentColor:_textColor];
 	}
 	
 	NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
@@ -1185,7 +1193,7 @@ NSDictionary *_classesForNames = nil;
 		}
 		else // interpret as length
 		{
-			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+			CGFloat lineHeightValue = [lineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 			self.paragraphStyle.minimumLineHeight = lineHeightValue;
 			self.paragraphStyle.maximumLineHeight = lineHeightValue;
 		}
@@ -1210,7 +1218,7 @@ NSDictionary *_classesForNames = nil;
         }
         else // interpret as length
         {
-            CGFloat minimumLineHeightValue = [minimumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+            CGFloat minimumLineHeightValue = [minimumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
             self.paragraphStyle.minimumLineHeight = minimumLineHeightValue;
         }
     }
@@ -1232,7 +1240,7 @@ NSDictionary *_classesForNames = nil;
         }
         else // interpret as length
         {
-            CGFloat maximumLineHeightValue = [maximumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+            CGFloat maximumLineHeightValue = [maximumLineHeight pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
             self.paragraphStyle.maximumLineHeight = maximumLineHeightValue;
         }
     }
@@ -1261,13 +1269,13 @@ NSDictionary *_classesForNames = nil;
 	NSString *widthString = [styles objectForKey:@"width"];
 	if (widthString && ![widthString isEqualToString:@"auto"])
 	{
-		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
 	if (heightString && ![heightString isEqualToString:@"auto"])
 	{
-		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
+		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.pointSize textScale:_textScale];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
@@ -1508,6 +1516,7 @@ NSDictionary *_classesForNames = nil;
 - (void)inheritAttributesFromElement:(DTHTMLElement *)element
 {
 	_fontDescriptor = [element.fontDescriptor copy];
+    _UIFontDescriptor = [element.UIFontDescriptor copy];
 	_paragraphStyle = [element.paragraphStyle copy];
 
 	_headerLevel = element.headerLevel;
@@ -1705,7 +1714,13 @@ NSDictionary *_classesForNames = nil;
 	return (DTHTMLElement *)self.parentNode;
 }
 
+- (CGFloat)pointSize
+{
+    return self.UIFontDescriptor?self.UIFontDescriptor.pointSize:self.fontDescriptor.pointSize;
+}
+
 @synthesize fontDescriptor = _fontDescriptor;
+@synthesize UIFontDescriptor = _UIFontDescriptor;
 @synthesize paragraphStyle = _paragraphStyle;
 @synthesize textColor = _textColor;
 @synthesize backgroundColor = _backgroundColor;

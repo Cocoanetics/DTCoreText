@@ -54,6 +54,8 @@
 	NSURL *_baseURL;
 	DTCoreTextFontDescriptor *_defaultFontDescriptor;
 	DTCoreTextParagraphStyle *_defaultParagraphStyle;
+
+    UIFontDescriptor *_defaultUIFontDescriptor;
 	
 	// root node inherits these defaults
 	DTHTMLElement *_defaultTag;
@@ -232,6 +234,7 @@
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
 
+    _defaultUIFontDescriptor = [_options objectForKey:DTDefaultUIFontDescriptor];
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
@@ -313,9 +316,10 @@
 	
 	_defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;
+    _defaultTag.UIFontDescriptor = _defaultUIFontDescriptor;
 	_defaultTag.paragraphStyle = _defaultParagraphStyle;
 	_defaultTag.textScale = _textScale;
-	_defaultTag.currentTextSize = _defaultFontDescriptor.pointSize;
+    _defaultTag.currentTextSize = self.pointSize;
 	
 #if DTCORETEXT_FIX_14684188
 	// workaround, only necessary while rdar://14684188 is not fixed
@@ -394,7 +398,7 @@
 	{
 		self->_currentTag.paragraphStyle.headIndent += (CGFloat)25.0 * self->_textScale;
 		self->_currentTag.paragraphStyle.firstLineHeadIndent = self->_currentTag.paragraphStyle.headIndent;
-		self->_currentTag.paragraphStyle.paragraphSpacing = self->_defaultFontDescriptor.pointSize;
+        self->_currentTag.paragraphStyle.paragraphSpacing = self.pointSize;
 	};
 	
 	[_tagStartHandlers setObject:[blockquoteBlock copy] forKey:@"blockquote"];
@@ -553,14 +557,14 @@
 					pointSize = self->_textScale * 48.0f;
 					break;
 				default:
-					pointSize = self->_defaultFontDescriptor.pointSize;
+					pointSize = self.pointSize;
 					break;
 			}
 		}
 		else
 		{
 			// size is inherited
-			pointSize = self->_currentTag.fontDescriptor.pointSize;
+			pointSize = self->_currentTag.pointSize;
 		}
 		
 		NSString *face = [self->_currentTag attributeForKey:@"face"];
@@ -1027,6 +1031,10 @@
 	[_parser abortParsing];
 }
 #pragma mark Properties
+
+- (CGFloat)pointSize {
+    return _defaultUIFontDescriptor?_defaultUIFontDescriptor.pointSize:_defaultFontDescriptor.pointSize;
+}
 
 @synthesize willFlushCallback = _willFlushCallback;
 @synthesize shouldKeepDocumentNodeTree = _shouldKeepDocumentNodeTree;

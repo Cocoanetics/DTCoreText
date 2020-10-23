@@ -24,6 +24,7 @@
 @interface DTHTMLElement : DTHTMLParserNode
 {
 	DTCoreTextFontDescriptor *_fontDescriptor;
+    UIFontDescriptor * _UIFontDescriptor;
 	DTCoreTextParagraphStyle *_paragraphStyle;
 	DTTextAttachment *_textAttachment;
 	DTTextAttachmentVerticalAlignment _textAttachmentAlignment;
@@ -126,6 +127,8 @@
  Font Descriptor describing the font state of the receiver
  */
 @property (nonatomic, copy) DTCoreTextFontDescriptor *fontDescriptor;
+
+@property (nonatomic, copy) UIFontDescriptor * UIFontDescriptor;
 
 /**
  Paragraph Style describing the paragraph state of the receiver
@@ -340,5 +343,7 @@
  @returns `YES` if it still requires output
  */
 - (BOOL)needsOutput;
+
+- (CGFloat)pointSize;
 
 @end
