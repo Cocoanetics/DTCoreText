@@ -10,10 +10,12 @@
 
 #if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
+#import "DTWeakSupport.h"
+
 static const CGPoint DTAccessibilityElementNullActivationPoint = {CGFLOAT_MAX, CGFLOAT_MAX};
 
 @interface DTAccessibilityElement()
-@property (nonatomic, unsafe_unretained) UIView *parentView;
+@property (nonatomic, DT_WEAK_PROPERTY) UIView *parentView;
 @end
 
 @implementation DTAccessibilityElement
