@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Drobnik.com. All rights reserved.
 //
 
-#import "DTWeakSupport.h"
+#import <DTFoundation/DTWeakSupport.h>
 
 @interface DemoAboutViewController : UIViewController
 

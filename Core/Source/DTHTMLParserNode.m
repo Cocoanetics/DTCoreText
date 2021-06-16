@@ -8,7 +8,7 @@
 
 #import "DTHTMLParserNode.h"
 #import "DTHTMLParserTextNode.h"
-#import "DTWeakSupport.h"
+#import <DTFoundation/DTWeakSupport.h>
 
 @implementation DTHTMLParserNode
 {
