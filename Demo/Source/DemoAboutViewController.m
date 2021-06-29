@@ -32,8 +32,17 @@
 	
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"About" ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
-	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithHTMLData:data documentAttributes:NULL];
 	
+	NSDictionary *options;
+	
+	if (@available(iOS 13.0, *)) {
+		options = @{DTDefaultTextColor: [UIColor labelColor], DTUseiOS6Attributes: @(YES)};
+	} else {
+		options = @{DTDefaultTextColor: [UIColor blackColor], DTUseiOS6Attributes: @(YES)};
+	}
+	
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
+
 	self.attributedTextView.attributedString = attributedString;
 	self.attributedTextView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
 }

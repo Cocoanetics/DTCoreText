@@ -36,7 +36,7 @@
 
 - (void)testFallbackFamily
 {
-	[DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica"];
+	[DTCoreTextFontDescriptor setFallbackFontFamily:@"Arial"];
 	
 	NSAttributedString *attributedString = [super attributedStringFromHTMLString:@"<span style=\"font-family:FooBar\">text</span>" options:nil];
 	XCTAssertNotNil(attributedString, @"There should be an attributed string");
@@ -49,7 +49,64 @@
 	XCTAssertEqual(expectedRange.location, effectiveRange.location, @"Attributes should be entire range");
 	
 	DTCoreTextFontDescriptor *fontDescriptor = [attributes fontDescriptor];
-	XCTAssertEqualObjects(fontDescriptor.fontFamily, @"Helvetica", @"Font should have fallen back to Helvetica");
+	XCTAssertEqualObjects(fontDescriptor.fontFamily, @"Arial", @"Font should have fallen back to Arial");
+}
+
+- (void)testFallbackFontFamilyWithoutFontTraits
+{
+    [DTCoreTextFontDescriptor setFallbackFontFamily:@"Arial"];
+
+    NSAttributedString *attributedString = [super attributedStringFromHTMLString:@"<span style=\"font-family:FooBar\"><p>text</p></span>" options:nil];
+    XCTAssertNotNil(attributedString, @"There should be an attributed string");
+
+	UIFont *font = [attributedString attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+
+	UIFontDescriptor *descriptor = [font fontDescriptor];
+	BOOL isBold = (descriptor.symbolicTraits & UIFontDescriptorTraitBold) != 0;
+	XCTAssertFalse(isBold);
+
+	BOOL isItalic = (descriptor.symbolicTraits & UIFontDescriptorTraitItalic) != 0;
+	XCTAssertFalse(isItalic);
+
+	XCTAssertTrue([font.familyName isEqualToString:@"Arial"]);
+}
+
+- (void)testFallbackFontFamilyWithBoldFontTrait
+{
+	[DTCoreTextFontDescriptor setFallbackFontFamily:@"Arial"];
+
+	NSAttributedString *attributedString = [super attributedStringFromHTMLString:@"<span style=\"font-family:FooBar\"><b>text</b></span>" options:nil];
+	XCTAssertNotNil(attributedString, @"There should be an attributed string");
+
+	UIFont *font = [attributedString attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+
+	UIFontDescriptor *descriptor = [font fontDescriptor];
+	BOOL isBold = (descriptor.symbolicTraits & UIFontDescriptorTraitBold) != 0;
+	XCTAssertTrue(isBold);
+
+	BOOL isItalic = (descriptor.symbolicTraits & UIFontDescriptorTraitItalic) != 0;
+	XCTAssertFalse(isItalic);
+
+	XCTAssertTrue([font.familyName isEqualToString:@"Arial"]);
+}
+
+- (void)testFallbackFontFamilyWithItalicFontTrait
+{
+	[DTCoreTextFontDescriptor setFallbackFontFamily:@"Arial"];
+
+	NSAttributedString *attributedString = [super attributedStringFromHTMLString:@"<span style=\"font-family:FooBar\"><em>text</em></span>" options:nil];
+	XCTAssertNotNil(attributedString, @"There should be an attributed string");
+
+	UIFont *font = [attributedString attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+
+	UIFontDescriptor *descriptor = [font fontDescriptor];
+	BOOL isBold = (descriptor.symbolicTraits & UIFontDescriptorTraitBold) != 0;
+	XCTAssertFalse(isBold);
+
+	BOOL isItalic = (descriptor.symbolicTraits & UIFontDescriptorTraitItalic) != 0;
+	XCTAssertTrue(isItalic);
+
+	XCTAssertTrue([font.familyName isEqualToString:@"Arial"]);
 }
 
 - (void)testNilFallbackFamily

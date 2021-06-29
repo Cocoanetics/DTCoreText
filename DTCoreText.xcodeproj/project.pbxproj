@@ -202,7 +202,6 @@
 		A74A7AAB1B617227004163BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74A7AAA1B617227004163BE /* CoreGraphics.framework */; };
 		A74A7AAD1B617250004163BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74A7AAC1B617250004163BE /* QuartzCore.framework */; };
 		A74F6FD616DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */; };
-		A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75C6C71141798CE00AEE350 /* MobileCoreServices.framework */; };
 		A762704017155420005F0CEC /* DTCoreTextFontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */; };
 		A766D65A1B610E4B00394D48 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6551B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A7675E7A172EA24700C548CB /* NSAttributedString+DTDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A7675E75172EA24700C548CB /* NSAttributedString+DTDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -216,6 +215,8 @@
 		A76E5B4912DD9AF500711782 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A76E5B4812DD9AF500711782 /* QuartzCore.framework */; };
 		A776DBE81716A8EE00E71F36 /* NSStringParagraphTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */; };
 		A77A3E421779BF04000B290B /* NSMutableAttributedStringHTMLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */; };
+		A77B76392535FDF20046FC0F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A77B76382535FDF20046FC0F /* CoreServices.framework */; };
+		A77B763B2535FDFB0046FC0F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A77B763A2535FDFB0046FC0F /* CoreServices.framework */; };
 		A786FBAB247BFC1D00890B3D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A786FB91247BFC1D00890B3D /* WebKit.framework */; };
 		A788CA3A14863EF100E1AFD9 /* Alignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1B14863EF100E1AFD9 /* Alignment.html */; };
 		A788CA3B14863EF100E1AFD9 /* APOD.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1C14863EF100E1AFD9 /* APOD.html */; };
@@ -393,7 +394,6 @@
 		A79BA8261B46E1360086C2F6 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A79BA8251B46E1360086C2F6 /* Launch Screen.xib */; };
 		A79BA8431B46E55D0086C2F6 /* DTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79BA6571B46A1FB0086C2F6 /* DTFoundation.framework */; };
 		A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82317FC9648001EBA6E /* UIKit.framework */; };
-		A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79CA82517FC9651001EBA6E /* MobileCoreServices.framework */; };
 		A7A95D9514F3F45E002E3F7E /* LineHeight.html in Resources */ = {isa = PBXBuildFile; fileRef = A7A95D9414F3F45E002E3F7E /* LineHeight.html */; };
 		A7AE58101725374C00A9BF61 /* DTImageTextAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AE580B1725374C00A9BF61 /* DTImageTextAttachment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7AE58141725374C00A9BF61 /* DTImageTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AE580C1725374C00A9BF61 /* DTImageTextAttachment.m */; };
@@ -883,15 +883,17 @@
 		A776DBE71716A8EE00E71F36 /* NSStringParagraphTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringParagraphTest.m; sourceTree = "<group>"; };
 		A77A3E401779BF03000B290B /* NSMutableAttributedStringHTMLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMutableAttributedStringHTMLTest.h; sourceTree = "<group>"; };
 		A77A3E411779BF03000B290B /* NSMutableAttributedStringHTMLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSMutableAttributedStringHTMLTest.m; sourceTree = "<group>"; };
+		A77B76382535FDF20046FC0F /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		A77B763A2535FDFB0046FC0F /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		A783CE6717D11D0100C84C28 /* CSSOOMCrash.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CSSOOMCrash.plist; sourceTree = "<group>"; };
 		A785701C17FAA69D0080AB0A /* DTFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DTFoundation.xcodeproj; path = DTFoundation/DTFoundation.xcodeproj; sourceTree = "<group>"; };
 		A786FB91247BFC1D00890B3D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.5.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		A788C91014863E8700E1AFD9 /* DTAttributedTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextCell.h; sourceTree = "<group>"; };
 		A788C91114863E8700E1AFD9 /* DTAttributedTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A788C91214863E8700E1AFD9 /* DTAttributedTextContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextContentView.h; sourceTree = "<group>"; };
-		A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextContentView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextContentView.m; sourceTree = "<group>"; };
 		A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTAttributedTextView.h; sourceTree = "<group>"; };
-		A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DTAttributedTextView.m; sourceTree = "<group>"; };
 		A788C91814863E8700E1AFD9 /* DTCoreTextFontCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontCollection.h; sourceTree = "<group>"; };
 		A788C91914863E8700E1AFD9 /* DTCoreTextFontCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextFontCollection.m; sourceTree = "<group>"; };
 		A788C91A14863E8700E1AFD9 /* DTCoreTextFontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextFontDescriptor.h; sourceTree = "<group>"; };
@@ -1087,9 +1089,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A77B763B2535FDFB0046FC0F /* CoreServices.framework in Frameworks */,
 				A786FBAB247BFC1D00890B3D /* WebKit.framework in Frameworks */,
 				A7949A0014C6256B00A8CCDE /* libxml2.dylib in Frameworks */,
-				A75C6C72141798CE00AEE350 /* MobileCoreServices.framework in Frameworks */,
 				A7D29D661CB68D470068F043 /* DTCoreText.framework in Frameworks */,
 				A704C93A13901FDB0045CFC6 /* ImageIO.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -1121,8 +1123,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A77B76392535FDF20046FC0F /* CoreServices.framework in Frameworks */,
 				11848C17215E259000A18658 /* DTCoreText.framework in Frameworks */,
-				A79CA82617FC9651001EBA6E /* MobileCoreServices.framework in Frameworks */,
 				A79CA82417FC9648001EBA6E /* UIKit.framework in Frameworks */,
 				A788CA6C1486456100E1AFD9 /* Foundation.framework in Frameworks */,
 				A788CA80148647AC00E1AFD9 /* CoreGraphics.framework in Frameworks */,
@@ -1201,6 +1203,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A77B76382535FDF20046FC0F /* CoreServices.framework */,
+				A77B763A2535FDFB0046FC0F /* CoreServices.framework */,
 				A786FB91247BFC1D00890B3D /* WebKit.framework */,
 				A74A7AAC1B617250004163BE /* QuartzCore.framework */,
 				A74A7AAA1B617227004163BE /* CoreGraphics.framework */,
@@ -2784,10 +2788,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = appletvos;
@@ -2830,10 +2834,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = appletvos;
@@ -2877,10 +2881,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-fembed-bitcode",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.drobnik.DTCoreText;
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = appletvos;
@@ -3134,10 +3141,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
+				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
@@ -3181,10 +3189,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
+				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
@@ -3229,10 +3238,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Core/DTCoreText-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-fembed-bitcode",
+				);
+				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.drobnik.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = DTCoreText;
 				SDKROOT = iphoneos;
@@ -3248,6 +3261,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -3269,7 +3283,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.6.25;
+				CURRENT_PROJECT_VERSION = 1.6.26;
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -3289,9 +3304,12 @@
 					"${TARGET_BUILD_DIR}/**",
 					/usr/include/libxml2,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "-fembed-bitcode";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Coverage;
 		};
@@ -3391,6 +3409,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -3412,7 +3431,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.6.25;
+				CURRENT_PROJECT_VERSION = 1.6.26;
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
@@ -3437,10 +3457,13 @@
 					"${TARGET_BUILD_DIR}/**",
 					/usr/include/libxml2,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-fembed-bitcode";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Debug;
 		};
@@ -3448,6 +3471,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -3469,7 +3493,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.6.25;
+				CURRENT_PROJECT_VERSION = 1.6.26;
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -3489,10 +3514,15 @@
 					"${TARGET_BUILD_DIR}/**",
 					/usr/include/libxml2,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-fembed-bitcode",
+				);
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Core/Source\" \"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};

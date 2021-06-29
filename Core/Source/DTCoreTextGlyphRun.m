@@ -14,7 +14,7 @@
 #import "DTCoreTextParagraphStyle.h"
 #import "DTCoreTextFunctions.h"
 #import "NSDictionary+DTCoreText.h"
-#import "DTWeakSupport.h"
+#import <DTFoundation/DTWeakSupport.h>
 
 #import <DTFoundation/DTLog.h>
 
