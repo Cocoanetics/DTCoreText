@@ -19,7 +19,7 @@ A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers s
 
 Changelog: [GitHub Releases](https://github.com/Cocoanetics/DTCoreText/releases)
 
-There is also a [Programming Guide](Documentation/Programming Guide-template.markdown) with a set of solutions to common problems.
+There is also a [Programming Guide](Documentation/Programming%20Guide-template.markdown) with a set of solutions to common problems.
 
 Follow [@cocoanetics](http://twitter.com/cocoanetics) on Twitter or subscribe to the [Cocoanetics Blog](http://www.cocoanetics.com) for news and updates.
 
