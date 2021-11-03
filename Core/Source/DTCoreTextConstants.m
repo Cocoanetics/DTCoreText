@@ -19,6 +19,7 @@ NSString * const DTMaxImageSize = @"DTMaxImageSize";
 NSString * const DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString * const DTDefaultFontName = @"DTDefaultFontName";
 NSString * const DTDefaultFontSize = @"DTDefaultFontSize";
+NSString * const DTDefaultFontDescriptor = @"DTDefaultFontDescriptor";
 NSString * const DTDefaultTextColor = @"DTDefaultTextColor";
 NSString * const DTDefaultLinkColor = @"DTDefaultLinkColor";
 NSString * const DTDefaultLinkHighlightColor = @"DTDefaultLinkHighlightColor";

@@ -232,6 +232,10 @@
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
 
+	UIFontDescriptor *const defaultUIFontDescriptor = [_options objectForKey:DTDefaultFontDescriptor];
+	if (defaultUIFontDescriptor) {
+		_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithUIFontDescriptor:defaultUIFontDescriptor];
+	}
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	

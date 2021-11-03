@@ -39,6 +39,7 @@ typedef void(^DTHTMLAttributedStringBuilderParseErrorCallback)(NSAttributedStrin
  - DTDefaultFontFamily: the default font family to use instead of Times New Roman
  - DTDefaultFontName: the default font face to use instead of Times New Roman
  - DTDefaultFontSize: the default font size to use instead of 12
+ - DTDefaultFontDescriptor: the default font descriptor. This supercedes font family/name
  - DTDefaultTextColor: the default text color
  - DTDefaultLinkColor: the default color for hyperlink text
  - DTDefaultLinkDecoration: the default decoration for hyperlinks
