@@ -52,6 +52,38 @@
 	XCTAssertEqualObjects(fontDescriptor.fontFamily, @"Arial", @"Font should have fallen back to Arial");
 }
 
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
+- (void)testFontDescriptor
+{
+	UIFontDescriptor *descriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleBody];
+	UIFont *font = [UIFont fontWithDescriptor:descriptor size:descriptor.pointSize];
+	
+	NSDictionary *options = @{DTDefaultFontDescriptor: descriptor};
+
+	NSAttributedString *attributedString = [self attributedStringFromHTMLString:@"<html><body><p>Regular<b>Bold</b><i>Italic</i><p></body></html>" options:options];
+
+	NSDictionary *attributesPlain = [attributedString attributesAtIndex:0 effectiveRange:NULL];
+
+	DTCoreTextFontDescriptor *fontDescriptorPlain = [attributesPlain fontDescriptor];
+	XCTAssertEqualObjects(fontDescriptorPlain.fontFamily, font.familyName, @"Incorrect font family");
+	XCTAssertFalse(fontDescriptorPlain.boldTrait, @"Should not be bold");
+	XCTAssertFalse(fontDescriptorPlain.italicTrait, @"Should not be italic");
+	
+	NSDictionary *attributesBold = [attributedString attributesAtIndex:7 effectiveRange:NULL];
+
+	DTCoreTextFontDescriptor *fontDescriptorBold = [attributesBold fontDescriptor];
+	XCTAssertEqualObjects(fontDescriptorBold.fontFamily, font.familyName, @"Incorrect font family");
+	XCTAssertTrue(fontDescriptorBold.boldTrait, @"Should be bold");
+	XCTAssertFalse(fontDescriptorBold.italicTrait, @"Should not be italic");
+	
+	NSDictionary *attributesItalic = [attributedString attributesAtIndex:11 effectiveRange:NULL];
+
+	DTCoreTextFontDescriptor *fontDescriptorItalic = [attributesItalic fontDescriptor];
+	XCTAssertEqualObjects(fontDescriptorItalic.fontFamily, font.familyName, @"Incorrect font family");
+	XCTAssertFalse(fontDescriptorItalic.boldTrait, @"Should not be bold");
+	XCTAssertTrue(fontDescriptorItalic.italicTrait, @"Should be italic");
+}
+
 - (void)testFallbackFontFamilyWithoutFontTraits
 {
     [DTCoreTextFontDescriptor setFallbackFontFamily:@"Arial"];
@@ -70,6 +102,7 @@
 
 	XCTAssertTrue([font.familyName isEqualToString:@"Arial"]);
 }
+
 
 - (void)testFallbackFontFamilyWithBoldFontTrait
 {
@@ -108,6 +141,7 @@
 
 	XCTAssertTrue([font.familyName isEqualToString:@"Arial"]);
 }
+#endif
 
 - (void)testNilFallbackFamily
 {

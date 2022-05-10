@@ -200,41 +200,45 @@
 	_tmpString = [[NSMutableAttributedString alloc] init];
 	
 	// base tag with font defaults
-	_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
-	
-	
+
 	// set the default font size
 	CGFloat defaultFontSize = 12.0f;
+
+	CTFontDescriptorRef defaultFontDescriptor = (__bridge CTFontDescriptorRef)[_options objectForKey:DTDefaultFontDescriptor];
 	
-	NSNumber *defaultFontSizeNumber = [_options objectForKey:DTDefaultFontSize];
-	
-	if (defaultFontSizeNumber)
+	if (defaultFontDescriptor)
 	{
-		defaultFontSize = [defaultFontSizeNumber floatValue];
-	}
-	
-	_defaultFontDescriptor.pointSize = defaultFontSize * _textScale;
-	
-	NSString *defaultFontFamily = [_options objectForKey:DTDefaultFontFamily];
-	
-	if (defaultFontFamily)
-	{
-		_defaultFontDescriptor.fontFamily = defaultFontFamily;
+		_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithCTFontDescriptor:defaultFontDescriptor];
 	}
 	else
 	{
-		_defaultFontDescriptor.fontFamily = @"Times New Roman";
-	}
+		_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithFontAttributes:nil];
+		
+		NSNumber *defaultFontSizeNumber = [_options objectForKey:DTDefaultFontSize];
+		
+		if (defaultFontSizeNumber)
+		{
+			defaultFontSize = [defaultFontSizeNumber floatValue];
+		}
+		
+		_defaultFontDescriptor.pointSize = defaultFontSize * _textScale;
+		
+		NSString *defaultFontFamily = [_options objectForKey:DTDefaultFontFamily];
+		
+		if (defaultFontFamily)
+		{
+			_defaultFontDescriptor.fontFamily = defaultFontFamily;
+		}
+		else
+		{
+			_defaultFontDescriptor.fontFamily = @"Times New Roman";
+		}
 
-	NSString *defaultFontName = [_options objectForKey:DTDefaultFontName];
+		NSString *defaultFontName = [_options objectForKey:DTDefaultFontName];
 
-	if (defaultFontName) {
-		_defaultFontDescriptor.fontName = defaultFontName;
-	}
-
-	UIFontDescriptor *const defaultUIFontDescriptor = [_options objectForKey:DTDefaultFontDescriptor];
-	if (defaultUIFontDescriptor) {
-		_defaultFontDescriptor = [[DTCoreTextFontDescriptor alloc] initWithUIFontDescriptor:defaultUIFontDescriptor];
+		if (defaultFontName) {
+			_defaultFontDescriptor.fontName = defaultFontName;
+		}
 	}
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
