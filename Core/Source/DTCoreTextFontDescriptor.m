@@ -32,7 +32,9 @@ static BOOL _needsChineseFontCascadeFix = NO;
 {
 	NSString *_fontFamily;
 	NSString *_fontName;
-	
+
+	UIFontDescriptor *_uiFontDescriptor;
+
 	CGFloat _pointSize;
 	
 	CTFontSymbolicTraits _stylisticTraits;
@@ -274,7 +276,13 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		CFStringRef familyName = CTFontDescriptorCopyAttribute(ctFontDescriptor, kCTFontFamilyNameAttribute);
 		self.fontFamily = CFBridgingRelease(familyName);
 	}
-	
+
+	return self;
+}
+
+- (id)initWithUIFontDescriptor:(UIFontDescriptor *)uiFontDescriptor {
+	self = [self initWithCTFontDescriptor:(CTFontDescriptorRef)uiFontDescriptor];
+	_uiFontDescriptor = uiFontDescriptor;
 	return self;
 }
 
@@ -547,6 +555,11 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		return cachedFont;
 	}
 	
+	// If we have a UIFontDescriptor, we should directly instantiate using that. This overrides all.
+	if (_uiFontDescriptor) {
+		matchingFontDescriptor = (__bridge CTFontDescriptorRef)_uiFontDescriptor;
+	}
+
 	// check the override table that has all preinstalled fonts plus the ones the user registered
 	NSString *overrideName = nil;
 	
@@ -572,7 +585,7 @@ static BOOL _needsChineseFontCascadeFix = NO;
 		
 		matchingFont = CTFontCreateWithName((__bridge CFStringRef)usedName, _pointSize, NULL);
 	}
-	else
+	else if (matchingFontDescriptor != NULL)
 	{
 		// we need to search for a suitable font
 		

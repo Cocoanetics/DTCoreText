@@ -48,6 +48,14 @@
 - (id)initWithCTFontDescriptor:(CTFontDescriptorRef)ctFontDescriptor;
 
 /**
+ Creates a font descriptor from a UI font descriptor. This UIFontDescriptor
+ overrides the other properties.
+ @param uiFontDescriptor The UIFontDescriptor
+ @returns An initialized font descriptor
+ */
+- (id)initWithUIFontDescriptor:(UIFontDescriptor *)uiFontDescriptor;
+
+/**
  Creates a font descriptor from a Core Text font
  @param ctFont The Core Text font
  @returns An initialized font descriptor
