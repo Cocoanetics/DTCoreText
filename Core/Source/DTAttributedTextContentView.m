@@ -438,7 +438,22 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 	{
 		if (![self.layer isKindOfClass:[CATiledLayer class]])
 		{
-			NSLog(@"Warning: A %@ with size %@ is using a non-tiled layer. Set the layer class to a CATiledLayer subclass with [DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]].", NSStringFromClass([self class]), NSStringFromCGSize(self.bounds.size));
+            BOOL isContainedInTableViewCell = NO;
+            UIView* parentView = self.superview;
+            for (; parentView != nil ; parentView = parentView.superview)
+            {
+                if ([parentView isKindOfClass:[UITableViewCell class]])
+                {
+                    isContainedInTableViewCell = YES;
+                    break;
+                }
+            }
+            
+            if (isContainedInTableViewCell == NO)
+            {
+                NSLog(@"Warning: A %@ with size %@ is using a non-tiled layer. Set the layer class to a CATiledLayer subclass with [DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]].", NSStringFromClass([self class]), NSStringFromCGSize(self.bounds.size));
+
+            }
 		}
 	}
 	
