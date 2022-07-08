@@ -38,6 +38,8 @@
 	CGFloat _backgroundCornerRadius;
 	
 	CTUnderlineStyle _underlineStyle;
+    DTColor *_underlineColor;
+    CGFloat _underlineThickness;
 	
 	NSString *_beforeContent;
 	
@@ -196,6 +198,16 @@
  The underline style of the receiver, at present only none or single line are supported
  */
 @property (nonatomic, assign) CTUnderlineStyle underlineStyle;
+
+/**
+ The underline color of the receiver
+ */
+@property (nonatomic, strong) DTColor *underlineColor;
+
+/**
+ The underline thickness value of the receiver
+ */
+@property (nonatomic, assign) CGFloat underlineThickness;
 
 /**
  The strike-out style of the receiver
