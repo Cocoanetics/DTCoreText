@@ -225,20 +225,6 @@ NSDictionary *_classesForNames = nil;
             }
     }
     
-    // set underline thickness
-    if (_underlineThickness && _underlineStyle)
-        {
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-        if (___useiOS6Attributes)
-            {
-            [tmpDict setObject:[NSNumber numberWithFloat:_underlineThickness] forKey:NSUnderlineStyleAttributeName];
-            }
-        else
-#endif
-            {
-            [tmpDict setObject:[NSNumber numberWithFloat:_underlineThickness] forKey:(id)kCTUnderlineStyleAttributeName];
-            }
-        }
 	if (_textColor)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -1110,25 +1096,10 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
     
-    
     NSString *decorationColor = [[styles objectForKey:@"text-decoration-color"] lowercaseString];
     if (decorationColor && [decorationColor isKindOfClass:[NSString class]])
     {
         self.underlineColor = DTColorCreateWithHTMLName(decorationColor);
-    }
-    
-    NSString *decorationThickness = [[styles objectForKey:@"text-decoration-thickness"] lowercaseString];
-    if (decorationThickness && [decorationThickness isKindOfClass:[NSString class]])
-    {
-        if ([decorationThickness hasSuffix:@"px"]) {
-            NSString *pxThickness = [decorationThickness stringByReplacingOccurrencesOfString:@"px" withString:@""];
-            
-            CGFloat floatThickness = [pxThickness floatValue];
-            
-            if (floatThickness) {
-                self.underlineThickness = floatThickness;
-            }
-        }
     }
 	
 	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
@@ -1586,7 +1557,6 @@ NSDictionary *_classesForNames = nil;
 	_fontVariant = element.fontVariant;
 	_underlineStyle = element.underlineStyle;
     _underlineColor = element.underlineColor;
-    _underlineThickness = element.underlineThickness;
     
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
@@ -1788,7 +1758,6 @@ NSDictionary *_classesForNames = nil;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
 @synthesize underlineColor = _underlineColor;
-@synthesize underlineThickness = _underlineThickness;
 @synthesize textAttachment = _textAttachment;
 @synthesize strikeOut = _strikeOut;
 @synthesize superscriptStyle = _superscriptStyle;
