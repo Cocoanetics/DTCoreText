@@ -329,6 +329,7 @@
 	// workaround, only necessary while rdar://14684188 is not fixed
 	_defaultTag.textColor = [UIColor blackColor];
 #endif
+    _defaultTag.underlineColor = [UIColor blackColor];
 	
 	id defaultColor = [_options objectForKey:DTDefaultTextColor];
 	if (defaultColor)

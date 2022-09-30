@@ -209,7 +209,22 @@ NSDictionary *_classesForNames = nil;
 		// we could set an underline color as well if we wanted, but not supported by HTML
 		//      [attributes setObject:(id)[DTImage redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
 	}
-	
+    
+    // set underline color
+    if (_underlineColor)
+    {
+    #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+        if (___useiOS6Attributes)
+            {
+            [tmpDict setObject:_underlineColor forKey:NSUnderlineColorAttributeName];
+            }
+        else
+    #endif
+            {
+            [tmpDict setObject:_underlineColor.CGColor forKey:(id)kCTUnderlineColorAttributeName];
+            }
+    }
+    
 	if (_textColor)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -1080,6 +1095,12 @@ NSDictionary *_classesForNames = nil;
 			// nothing to do
 		}
 	}
+    
+    NSString *decorationColor = [[styles objectForKey:@"text-decoration-color"] lowercaseString];
+    if (decorationColor && [decorationColor isKindOfClass:[NSString class]])
+    {
+        self.underlineColor = DTColorCreateWithHTMLName(decorationColor);
+    }
 	
 	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
 	if (alignment && [alignment isKindOfClass:[NSString class]])
@@ -1535,6 +1556,8 @@ NSDictionary *_classesForNames = nil;
 
 	_fontVariant = element.fontVariant;
 	_underlineStyle = element.underlineStyle;
+    _underlineColor = element.underlineColor;
+    
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
 	_letterSpacing = element.letterSpacing;
@@ -1734,6 +1757,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize link = _link;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
+@synthesize underlineColor = _underlineColor;
 @synthesize textAttachment = _textAttachment;
 @synthesize strikeOut = _strikeOut;
 @synthesize superscriptStyle = _superscriptStyle;
