@@ -209,7 +209,22 @@ NSDictionary *_classesForNames = nil;
 		// we could set an underline color as well if we wanted, but not supported by HTML
 		//      [attributes setObject:(id)[DTImage redColor].CGColor forKey:(id)kCTUnderlineColorAttributeName];
 	}
-	
+    
+    // set underline color
+    if (_underlineColor)
+    {
+    #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
+        if (___useiOS6Attributes)
+            {
+            [tmpDict setObject:_underlineColor forKey:NSUnderlineColorAttributeName];
+            }
+        else
+    #endif
+            {
+            [tmpDict setObject:_underlineColor.CGColor forKey:(id)kCTUnderlineColorAttributeName];
+            }
+    }
+    
 	if (_textColor)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -756,7 +771,7 @@ NSDictionary *_classesForNames = nil;
 	// writing direction
 	NSString *directionStr = [_styles objectForKey:@"direction"];
 	
-	if (directionStr)
+	if (directionStr && [directionStr isKindOfClass:[NSString class]])
 	{
 		if ([directionStr isEqualToString:@"rtl"])
 		{
@@ -779,8 +794,24 @@ NSDictionary *_classesForNames = nil;
 	// register pseudo-selector contents
 	self.beforeContent = [[_styles objectForKey:@"before:content"] stringByDecodingCSSContentAttribute];
 	
-	NSString *fontSize = [styles objectForKey:@"font-size"];
-	if (fontSize)
+	id fontSizeObj = [styles objectForKey:@"font-size"];
+	NSString *fontSize = nil;
+	if (fontSizeObj)
+	{
+		if ([fontSizeObj isKindOfClass:[NSString class]])
+		{
+			fontSize = fontSizeObj;
+		}
+		else if ([fontSizeObj isKindOfClass:[NSArray class]])
+		{
+			id fontSizeLastObj = ((NSArray *)fontSizeObj).lastObject;
+			if ([fontSizeLastObj isKindOfClass:[NSString class]])
+			{
+				fontSize = fontSizeLastObj;
+			}
+		}
+	}
+	if (fontSize && [fontSize isKindOfClass:[NSString class]])
 	{
 		// absolute sizes based on 12.0 CoreText default size, Safari has 16.0
 		
@@ -835,20 +866,20 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *color = [styles objectForKey:@"color"];
-	if (color)
+	if (color && [color isKindOfClass:[NSString class]])
 	{
 		self.textColor = DTColorCreateWithHTMLName(color);
 	}
 	
 	NSString *bgColor = [styles objectForKey:@"background-color"];
-	if (bgColor)
+	if (bgColor && [bgColor isKindOfClass:[NSString class]])
 	{
 		self.backgroundColor = DTColorCreateWithHTMLName(bgColor);
 	}
 	
 	NSString *floatString = [styles objectForKey:@"float"];
 	
-	if (floatString)
+	if (floatString && [floatString isKindOfClass:[NSString class]])
 	{
 		if ([floatString isEqualToString:@"left"])
 		{
@@ -883,6 +914,10 @@ NSDictionary *_classesForNames = nil;
 		
 		for (NSString *fontFamily in fontFamilies)
 		{
+			if (![fontFamily isKindOfClass:[NSString class]]) {
+				continue;
+			}
+
 			_fontDescriptor.fontFamily = fontFamily;
 			
 			// check if this is a known font family
@@ -972,7 +1007,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
-	if (fontStyle)
+	if (fontStyle && [fontStyle isKindOfClass:[NSString class]])
 	{
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
@@ -992,7 +1027,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
-	if (fontWeight)
+	if (fontWeight && [fontWeight isKindOfClass:[NSString class]])
 	{
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
@@ -1031,7 +1066,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
-	if (decoration)
+	if (decoration && [decoration isKindOfClass:[NSString class]])
 	{
 		if ([decoration isEqualToString:@"underline"])
 		{
@@ -1060,9 +1095,15 @@ NSDictionary *_classesForNames = nil;
 			// nothing to do
 		}
 	}
+    
+    NSString *decorationColor = [[styles objectForKey:@"text-decoration-color"] lowercaseString];
+    if (decorationColor && [decorationColor isKindOfClass:[NSString class]])
+    {
+        self.underlineColor = DTColorCreateWithHTMLName(decorationColor);
+    }
 	
 	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
-	if (alignment)
+	if (alignment && [alignment isKindOfClass:[NSString class]])
 	{
 		if ([alignment isEqualToString:@"left"])
 		{
@@ -1103,7 +1144,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *verticalAlignment = [[styles objectForKey:@"vertical-align"] lowercaseString];
-	if (verticalAlignment)
+	if (verticalAlignment && [verticalAlignment isKindOfClass:[NSString class]])
 	{
 		if ([verticalAlignment isEqualToString:@"sub"])
 		{
@@ -1140,7 +1181,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
-	if (letterSpacing)
+	if (letterSpacing && [letterSpacing isKindOfClass:[NSString class]])
 	{
 		if ([letterSpacing isEqualToString:@"normal"])
 		{
@@ -1167,7 +1208,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
-	if (lineHeight)
+	if (lineHeight && [lineHeight isKindOfClass:[NSString class]])
 	{
 		if ([lineHeight isEqualToString:@"normal"])
 		{
@@ -1194,7 +1235,7 @@ NSDictionary *_classesForNames = nil;
     // Specializations on line-height:
     
     NSString *minimumLineHeight = [[styles objectForKey:@"minimum-line-height"] lowercaseString];
-    if (minimumLineHeight)
+    if (minimumLineHeight && [minimumLineHeight isKindOfClass:[NSString class]])
     {
         if ([minimumLineHeight isEqualToString:@"normal"])
         {
@@ -1216,7 +1257,7 @@ NSDictionary *_classesForNames = nil;
     }
 
     NSString *maximumLineHeight = [[styles objectForKey:@"maximum-line-height"] lowercaseString];
-    if (maximumLineHeight)
+    if (maximumLineHeight && [maximumLineHeight isKindOfClass:[NSString class]])
     {
         if ([maximumLineHeight isEqualToString:@"normal"])
         {
@@ -1242,7 +1283,7 @@ NSDictionary *_classesForNames = nil;
 
 	
 	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
-	if (fontVariantStr)
+	if (fontVariantStr && [fontVariantStr isKindOfClass:[NSString class]])
 	{
 		if ([fontVariantStr isEqualToString:@"small-caps"])
 		{
@@ -1259,19 +1300,19 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *widthString = [styles objectForKey:@"width"];
-	if (widthString && ![widthString isEqualToString:@"auto"])
+	if (widthString && [widthString isKindOfClass:[NSString class]] && ![widthString isEqualToString:@"auto"])
 	{
 		_size.width = [widthString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *heightString = [styles objectForKey:@"height"];
-	if (heightString && ![heightString isEqualToString:@"auto"])
+	if (heightString && [heightString isKindOfClass:[NSString class]] && ![heightString isEqualToString:@"auto"])
 	{
 		_size.height = [heightString pixelSizeOfCSSMeasureRelativeToCurrentTextSize:self.fontDescriptor.pointSize textScale:_textScale];
 	}
 	
 	NSString *whitespaceString = [styles objectForKey:@"white-space"];
-	if ([whitespaceString hasPrefix:@"pre"])
+	if ([whitespaceString isKindOfClass:[NSString class]] && [whitespaceString hasPrefix:@"pre"])
 	{
 		_preserveNewlines = YES;
 	}
@@ -1281,7 +1322,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *displayString = [styles objectForKey:@"display"];
-	if (displayString)
+	if (displayString && [displayString isKindOfClass:[NSString class]])
 	{
 		if ([displayString isEqualToString:@"none"])
 		{
@@ -1310,12 +1351,12 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *borderColor = [styles objectForKey:@"border-color"];
-	if (borderColor)
+	if (borderColor && [borderColor isKindOfClass:[NSString class]])
 	{
 		self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor);
 	}
 	NSString *borderWidth = [[styles objectForKey:@"border-width"] lowercaseString];
-	if (borderWidth)
+	if (borderWidth && [borderWidth isKindOfClass:[NSString class]])
 	{
 		_backgroundStrokeWidth = [borderWidth floatValue];
 	}
@@ -1323,7 +1364,7 @@ NSDictionary *_classesForNames = nil;
 		_backgroundStrokeWidth = 0.0f;
 	}
 	NSString *cornerRadius = [[styles objectForKey:@"border-radius"] lowercaseString];
-	if (cornerRadius)
+	if (cornerRadius && [cornerRadius isKindOfClass:[NSString class]])
 	{
 		_backgroundCornerRadius = [cornerRadius floatValue];
 	}
@@ -1332,7 +1373,7 @@ NSDictionary *_classesForNames = nil;
 	}
 	
 	NSString *textIndentStr = [styles objectForKey:@"text-indent"];
-	if (textIndentStr && [textIndentStr isCSSLengthValue])
+	if (textIndentStr && [textIndentStr isKindOfClass:[NSString class]] && [textIndentStr isCSSLengthValue])
 	{
 		_pTextIndent = [textIndentStr pixelSizeOfCSSMeasureRelativeToCurrentTextSize:_currentTextSize textScale:_textScale];
 	}
@@ -1434,7 +1475,7 @@ NSDictionary *_classesForNames = nil;
 	}
     
     NSString *coretextFontString = [styles objectForKey:@"-coretext-fontname"];
-    if (coretextFontString)
+    if (coretextFontString && [coretextFontString isKindOfClass:[NSString class]])
     {
         _fontDescriptor.fontName = [styles objectForKey:@"-coretext-fontname"];
     }
@@ -1502,7 +1543,8 @@ NSDictionary *_classesForNames = nil;
 
 - (NSString *)attributeForKey:(NSString *)key
 {
-	return [_attributes objectForKey:key];
+	NSString *attribute = [_attributes objectForKey:key];
+	return [attribute isKindOfClass:[NSString class]] ? attribute : nil;
 }
 
 - (void)inheritAttributesFromElement:(DTHTMLElement *)element
@@ -1514,6 +1556,8 @@ NSDictionary *_classesForNames = nil;
 
 	_fontVariant = element.fontVariant;
 	_underlineStyle = element.underlineStyle;
+    _underlineColor = element.underlineColor;
+    
 	_strikeOut = element.strikeOut;
 	_superscriptStyle = element.superscriptStyle;
 	_letterSpacing = element.letterSpacing;
@@ -1713,6 +1757,7 @@ NSDictionary *_classesForNames = nil;
 @synthesize link = _link;
 @synthesize anchorName = _anchorName;
 @synthesize underlineStyle = _underlineStyle;
+@synthesize underlineColor = _underlineColor;
 @synthesize textAttachment = _textAttachment;
 @synthesize strikeOut = _strikeOut;
 @synthesize superscriptStyle = _superscriptStyle;
