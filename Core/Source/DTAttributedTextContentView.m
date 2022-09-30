@@ -434,13 +434,13 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)layoutSubviews
 {
-	if (!_isTiling && (self.bounds.size.width>1024.0 || self.bounds.size.height>1024.0))
-	{
-		if (![self.layer isKindOfClass:[CATiledLayer class]])
-		{
-			NSLog(@"Warning: A %@ with size %@ is using a non-tiled layer. Set the layer class to a CATiledLayer subclass with [DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]].", NSStringFromClass([self class]), NSStringFromCGSize(self.bounds.size));
-		}
-	}
+//	if (!_isTiling && (self.bounds.size.width>1024.0 || self.bounds.size.height>1024.0))
+//	{
+//		if (![self.layer isKindOfClass:[CATiledLayer class]])
+//		{
+//			NSLog(@"Warning: A %@ with size %@ is using a non-tiled layer. Set the layer class to a CATiledLayer subclass with [DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]].", NSStringFromClass([self class]), NSStringFromCGSize(self.bounds.size));
+//		}
+//	}
 	
 	if (_shouldLayoutCustomSubviews)
 	{
