@@ -1220,7 +1220,7 @@ NSDictionary *_classesForNames = nil;
 		{
 			// no op, we already inherited it
 		}
-		else if ([lineHeight isNumeric])
+		else if ([lineHeight dt_isNumeric])
 		{
 			self.paragraphStyle.lineHeightMultiple = [lineHeight floatValue];
 		}
@@ -1245,7 +1245,7 @@ NSDictionary *_classesForNames = nil;
         {
             // no op, we already inherited it
         }
-        else if ([minimumLineHeight isNumeric])
+        else if ([minimumLineHeight dt_isNumeric])
         {
             self.paragraphStyle.minimumLineHeight = [minimumLineHeight floatValue];
         }
@@ -1267,7 +1267,7 @@ NSDictionary *_classesForNames = nil;
         {
             // no op, we already inherited it
         }
-        else if ([maximumLineHeight isNumeric])
+        else if ([maximumLineHeight dt_isNumeric])
         {
             self.paragraphStyle.minimumLineHeight = [maximumLineHeight floatValue];
         }
