@@ -24,7 +24,7 @@
  Test whether or not this string is numeric only.
  @returns If this string consists only of numeric characters 0-9. 
  */
-- (BOOL)isNumeric;
+- (BOOL)dt_isNumeric;
 
 /**
  Test whether the entire receiver consists of only whitespace characters.
