@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
 #import <XCTest/XCTest.h>
+
+@import DTCoreText;
 
 @interface DTCSSListStyleTest : XCTestCase
 

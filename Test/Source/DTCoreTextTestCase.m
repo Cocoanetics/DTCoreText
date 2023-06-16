@@ -8,6 +8,8 @@
 
 #import "DTCoreTextTestCase.h"
 
+@import DTCoreText;
+
 @implementation DTCoreTextTestCase
 
 - (NSAttributedString *)attributedStringFromTestFileName:(NSString *)testFileName

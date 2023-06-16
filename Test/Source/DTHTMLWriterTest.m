@@ -8,6 +8,8 @@
 
 #import "DTHTMLWriterTest.h"
 
+@import DTCoreText;
+
 @implementation DTHTMLWriterTest
 
 

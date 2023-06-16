@@ -8,6 +8,8 @@
 
 #import "NSStringParagraphTest.h"
 
+@import DTCoreText;
+
 @implementation NSStringParagraphTest
 
 - (void)testParagraphFinding
