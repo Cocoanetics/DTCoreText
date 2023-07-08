@@ -20,7 +20,7 @@
  UIView proxy for DTAttributedTextContentView custom subviews for text attachments.
  */
 
-@interface DTAccessibilityViewProxy : NSProxy
+@interface DTAccessibilityViewProxy : NSObject
 /**
  The delegate for the proxy
  */
