@@ -8,6 +8,8 @@
 
 #import "UIColorHTMLTest.h"
 
+@import DTCoreText;
+
 @implementation UIColorHTMLTest
 
 - (void)testValidColorWithHexString

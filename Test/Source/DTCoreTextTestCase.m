@@ -7,13 +7,23 @@
 //
 
 #import "DTCoreTextTestCase.h"
+#import <Foundation/Foundation.h>
+
+@import DTCoreText;
 
 @implementation DTCoreTextTestCase
 
+- (NSBundle*) testBundle {
+#if SWIFT_PACKAGE
+    return SWIFTPM_MODULE_BUNDLE;
+#else
+    return [NSBundle bundleForClass:[self class]];
+#endif
+}
+
 - (NSAttributedString *)attributedStringFromTestFileName:(NSString *)testFileName
 {
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *path = [bundle pathForResource:testFileName ofType:@"html"];
+	NSString *path = [[self testBundle] pathForResource:testFileName ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
 	
 	DTHTMLAttributedStringBuilder *builder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:nil documentAttributes:NULL];
@@ -23,10 +33,9 @@
 - (NSAttributedString *)attributedStringFromHTMLString:(NSString *)HTMLString options:(NSDictionary *)options
 {
 	NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-	
-	// set the base URL so that resources are found in the resource bundle
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSURL *baseURL = [bundle resourceURL];
+    
+    // set the base URL so that resources are found in the resource bundle
+	NSURL *baseURL = [[self testBundle] resourceURL];
 	
 	NSMutableDictionary *mutableOptions = [[NSMutableDictionary alloc] initWithDictionary:options];
 	mutableOptions[NSBaseURLDocumentOption] = baseURL;

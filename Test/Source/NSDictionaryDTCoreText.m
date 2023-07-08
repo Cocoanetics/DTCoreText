@@ -8,8 +8,9 @@
 
 #import "DTCoreTextTestCase.h"
 
-#import <DTCoreText/DTCoreText.h>
 #import <XCTest/XCTest.h>
+
+@import DTCoreText;
 
 @interface NSDictionaryDTCoreText : DTCoreTextTestCase
 @end

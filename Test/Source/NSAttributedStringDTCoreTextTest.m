@@ -8,6 +8,8 @@
 
 #import "NSAttributedStringDTCoreTextTest.h"
 
+@import DTCoreText;
+
 @implementation NSAttributedStringDTCoreTextTest
 
 - (void)testRangeOfAnchor

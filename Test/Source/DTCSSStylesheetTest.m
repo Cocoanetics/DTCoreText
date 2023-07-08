@@ -8,7 +8,7 @@
 
 #import "DTCSSStylesheetTest.h"
 
-#import <DTCoreText/DTCoreText.h>
+@import DTCoreText;
 
 @interface DTCSSStylesheet()
 - (NSInteger)_weightForSelector:(NSString *)selector;
