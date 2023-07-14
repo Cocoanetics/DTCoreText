@@ -10,11 +10,11 @@
 #import "DTTextAttachment.h"
 
 
-void embeddedObjectDeallocCallback(void *context)
+void embeddedObjectDeallocCallback(void *_Nullable context)
 {
 }
 
-CGFloat embeddedObjectGetAscentCallback(void *context)
+CGFloat embeddedObjectGetAscentCallback(void *_Nullable context)
 {
 	if ([(__bridge id)context isKindOfClass:[DTTextAttachment class]])
 	{
@@ -22,7 +22,7 @@ CGFloat embeddedObjectGetAscentCallback(void *context)
 	}
 	return 0;
 }
-CGFloat embeddedObjectGetDescentCallback(void *context)
+CGFloat embeddedObjectGetDescentCallback(void *_Nullable context)
 {
 	if ([(__bridge id)context isKindOfClass:[DTTextAttachment class]])
 	{
@@ -31,7 +31,7 @@ CGFloat embeddedObjectGetDescentCallback(void *context)
 	return 0;
 }
 
-CGFloat embeddedObjectGetWidthCallback(void * context)
+CGFloat embeddedObjectGetWidthCallback(void *_Nullable context)
 {
 	if ([(__bridge id)context isKindOfClass:[DTTextAttachment class]])
 	{
@@ -40,7 +40,7 @@ CGFloat embeddedObjectGetWidthCallback(void * context)
 	return 35;
 }
 
-CTRunDelegateRef createEmbeddedObjectRunDelegate(id obj)
+CTRunDelegateRef _Nullable createEmbeddedObjectRunDelegate(id _Nullable obj)
 {
 	CTRunDelegateCallbacks callbacks;
 	callbacks.version = kCTRunDelegateCurrentVersion;
@@ -49,5 +49,4 @@ CTRunDelegateRef createEmbeddedObjectRunDelegate(id obj)
 	callbacks.getDescent = embeddedObjectGetDescentCallback;
 	callbacks.getWidth = embeddedObjectGetWidthCallback;
 	return CTRunDelegateCreate(&callbacks, (__bridge void *)obj);
-	return NULL;
 }
