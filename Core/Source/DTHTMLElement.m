@@ -1380,7 +1380,7 @@ NSDictionary *_classesForNames = nil;
 	else {
 		_backgroundStrokeWidth = 0.0f;
 	}
-    NSString *cornerRadiusObject = [styles objectForKey:@"border-radius"];
+	NSString *cornerRadiusObject = [styles objectForKey:@"border-radius"];
 	if (cornerRadiusObject && [cornerRadiusObject isKindOfClass:[NSString class]])
 	{
 		_backgroundCornerRadius = [[cornerRadiusObject lowercaseString] floatValue];
