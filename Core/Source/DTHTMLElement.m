@@ -1372,18 +1372,18 @@ NSDictionary *_classesForNames = nil;
 	{
 		self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor);
 	}
-	NSString *borderWidth = [styles objectForKey:@"border-width"];
-	if (borderWidth && [borderWidth isKindOfClass:[NSString class]])
+	NSString *borderWidthObject = [styles objectForKey:@"border-width"];
+	if (borderWidthObject && [borderWidthObject isKindOfClass:[NSString class]])
 	{
-		_backgroundStrokeWidth = [[borderWidth lowercaseString] floatValue];
+		_backgroundStrokeWidth = [[borderWidthObject lowercaseString] floatValue];
 	}
 	else {
 		_backgroundStrokeWidth = 0.0f;
 	}
-    NSString *cornerRadius = [styles objectForKey:@"border-radius"];
-	if (cornerRadius && [cornerRadius isKindOfClass:[NSString class]])
+    NSString *cornerRadiusObject = [styles objectForKey:@"border-radius"];
+	if (cornerRadiusObject && [cornerRadiusObject isKindOfClass:[NSString class]])
 	{
-		_backgroundCornerRadius = [[cornerRadius lowercaseString] floatValue];
+		_backgroundCornerRadius = [[cornerRadiusObject lowercaseString] floatValue];
 	}
 	else {
 		_backgroundCornerRadius = 0.0f;
