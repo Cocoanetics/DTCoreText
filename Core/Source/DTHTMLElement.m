@@ -1363,10 +1363,10 @@ NSDictionary *_classesForNames = nil;
 	else {
 		_backgroundStrokeWidth = 0.0f;
 	}
-	NSString *cornerRadius = [[styles objectForKey:@"border-radius"] lowercaseString];
-	if (cornerRadius && [cornerRadius isKindOfClass:[NSString class]])
+    NSString *cornerRadiusObject = [styles objectForKey:@"border-radius"];
+	if (cornerRadiusObject && [cornerRadiusObject isKindOfClass:[NSString class]])
 	{
-		_backgroundCornerRadius = [cornerRadius floatValue];
+		_backgroundCornerRadius = [[cornerRadiusObject lowercaseString] floatValue];
 	}
 	else {
 		_backgroundCornerRadius = 0.0f;
