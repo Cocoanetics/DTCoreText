@@ -1009,7 +1009,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontStyleObject = [styles objectForKey:@"font-style"];
 	if (fontStyleObject && [fontStyleObject isKindOfClass:[NSString class]])
 	{
-        NSString *fontStyle = [fontSizeObj lowercaseString];
+		NSString *fontStyle = [fontSizeObj lowercaseString];
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
 		
@@ -1030,7 +1030,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontWeightObject = [styles objectForKey:@"font-weight"];
 	if (fontWeightObject && [fontWeightObject isKindOfClass:[NSString class]])
 	{
-        NSString *fontWeight = [fontWeightObject lowercaseString];
+		NSString *fontWeight = [fontWeightObject lowercaseString];
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
 		
@@ -1070,7 +1070,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *decorationObject = [styles objectForKey:@"text-decoration"];
 	if (decorationObject && [decorationObject isKindOfClass:[NSString class]])
 	{
-        NSString *decoration = [decorationObject lowercaseString];
+		NSString *decoration = [decorationObject lowercaseString];
 
 		if ([decoration isEqualToString:@"underline"])
 		{
@@ -1109,7 +1109,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *alignmentObject = [styles objectForKey:@"text-align"];
 	if (alignmentObject && [alignmentObject isKindOfClass:[NSString class]])
 	{
-        NSString *alignment = [alignmentObject lowercaseString];
+		NSString *alignment = [alignmentObject lowercaseString];
 
 		if ([alignment isEqualToString:@"left"])
 		{
@@ -1152,7 +1152,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *verticalAlignmentObject = [styles objectForKey:@"vertical-align"];
 	if (verticalAlignmentObject && [verticalAlignmentObject isKindOfClass:[NSString class]])
 	{
-        NSString *verticalAlignment = [verticalAlignmentObject lowercaseString];
+		NSString *verticalAlignment = [verticalAlignmentObject lowercaseString];
 
 		if ([verticalAlignment isEqualToString:@"sub"])
 		{
@@ -1191,7 +1191,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *letterSpacingObject = [styles objectForKey:@"letter-spacing"];
 	if (letterSpacingObject && [letterSpacingObject isKindOfClass:[NSString class]])
 	{
-        NSString *letterSpacing = [letterSpacingObject lowercaseString];
+		NSString *letterSpacing = [letterSpacingObject lowercaseString];
 
 		if ([letterSpacing isEqualToString:@"normal"])
 		{
@@ -1220,7 +1220,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *lineHeightObject = [styles objectForKey:@"line-height"];
 	if (lineHeightObject && [lineHeightObject isKindOfClass:[NSString class]])
 	{
-        NSString *lineHeight = [lineHeightObject lowercaseString];
+		NSString *lineHeight = [lineHeightObject lowercaseString];
 
 		if ([lineHeight isEqualToString:@"normal"])
 		{
@@ -1249,7 +1249,7 @@ NSDictionary *_classesForNames = nil;
     NSString *minimumLineHeightObject = [styles objectForKey:@"minimum-line-height"];
     if (minimumLineHeightObject && [minimumLineHeightObject isKindOfClass:[NSString class]])
     {
-        NSString *minimumLineHeight = [minimumLineHeightObject lowercaseString];
+		NSString *minimumLineHeight = [minimumLineHeightObject lowercaseString];
 
         if ([minimumLineHeight isEqualToString:@"normal"])
         {
@@ -1273,7 +1273,7 @@ NSDictionary *_classesForNames = nil;
     NSString *maximumLineHeightObject = [styles objectForKey:@"maximum-line-height"];
     if (maximumLineHeightObject && [maximumLineHeightObject isKindOfClass:[NSString class]])
     {
-        NSString *maximumLineHeight = [maximumLineHeightObject lowercaseString];
+		NSString *maximumLineHeight = [maximumLineHeightObject lowercaseString];
 
         if ([maximumLineHeight isEqualToString:@"normal"])
         {
@@ -1300,7 +1300,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontVariantStringObject = [styles objectForKey:@"font-variant"];
 	if (fontVariantStringObject && [fontVariantStringObject isKindOfClass:[NSString class]])
 	{
-        NSString *fontVariantStr = [fontVariantStringObject lowercaseString];
+		NSString *fontVariantStr = [fontVariantStringObject lowercaseString];
 
 		if ([fontVariantStr isEqualToString:@"small-caps"])
 		{
