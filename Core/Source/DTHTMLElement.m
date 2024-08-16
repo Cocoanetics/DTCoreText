@@ -1006,9 +1006,10 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	NSString *fontStyle = [[styles objectForKey:@"font-style"] lowercaseString];
-	if (fontStyle && [fontStyle isKindOfClass:[NSString class]])
+	NSString *fontStyleObject = [styles objectForKey:@"font-style"];
+	if (fontStyleObject && [fontStyleObject isKindOfClass:[NSString class]])
 	{
+		NSString *fontStyle = [fontSizeObj lowercaseString];
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
 		
@@ -1026,9 +1027,10 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	NSString *fontWeight = [[styles objectForKey:@"font-weight"] lowercaseString];
-	if (fontWeight && [fontWeight isKindOfClass:[NSString class]])
+	NSString *fontWeightObject = [styles objectForKey:@"font-weight"];
+	if (fontWeightObject && [fontWeightObject isKindOfClass:[NSString class]])
 	{
+		NSString *fontWeight = [fontWeightObject lowercaseString];
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
 		
@@ -1065,9 +1067,11 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	NSString *decoration = [[styles objectForKey:@"text-decoration"] lowercaseString];
-	if (decoration && [decoration isKindOfClass:[NSString class]])
+	NSString *decorationObject = [styles objectForKey:@"text-decoration"];
+	if (decorationObject && [decorationObject isKindOfClass:[NSString class]])
 	{
+		NSString *decoration = [decorationObject lowercaseString];
+
 		if ([decoration isEqualToString:@"underline"])
 		{
 			self.underlineStyle = kCTUnderlineStyleSingle;
@@ -1096,15 +1100,17 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
     
-    NSString *decorationColor = [[styles objectForKey:@"text-decoration-color"] lowercaseString];
-    if (decorationColor && [decorationColor isKindOfClass:[NSString class]])
+    NSString *decorationColorObject = [styles objectForKey:@"text-decoration-color"];
+    if (decorationColorObject && [decorationColorObject isKindOfClass:[NSString class]])
     {
-        self.underlineColor = DTColorCreateWithHTMLName(decorationColor);
+        self.underlineColor = DTColorCreateWithHTMLName([decorationColorObject lowercaseString]);
     }
 	
-	NSString *alignment = [[styles objectForKey:@"text-align"] lowercaseString];
-	if (alignment && [alignment isKindOfClass:[NSString class]])
+	NSString *alignmentObject = [styles objectForKey:@"text-align"];
+	if (alignmentObject && [alignmentObject isKindOfClass:[NSString class]])
 	{
+		NSString *alignment = [alignmentObject lowercaseString];
+
 		if ([alignment isEqualToString:@"left"])
 		{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -1143,9 +1149,11 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	NSString *verticalAlignment = [[styles objectForKey:@"vertical-align"] lowercaseString];
-	if (verticalAlignment && [verticalAlignment isKindOfClass:[NSString class]])
+	NSString *verticalAlignmentObject = [styles objectForKey:@"vertical-align"];
+	if (verticalAlignmentObject && [verticalAlignmentObject isKindOfClass:[NSString class]])
 	{
+		NSString *verticalAlignment = [verticalAlignmentObject lowercaseString];
+
 		if ([verticalAlignment isEqualToString:@"sub"])
 		{
 			self.superscriptStyle = -1;
@@ -1180,9 +1188,11 @@ NSDictionary *_classesForNames = nil;
 		}
 	}
 	
-	NSString *letterSpacing = [[styles objectForKey:@"letter-spacing"] lowercaseString];
-	if (letterSpacing && [letterSpacing isKindOfClass:[NSString class]])
+	NSString *letterSpacingObject = [styles objectForKey:@"letter-spacing"];
+	if (letterSpacingObject && [letterSpacingObject isKindOfClass:[NSString class]])
 	{
+		NSString *letterSpacing = [letterSpacingObject lowercaseString];
+
 		if ([letterSpacing isEqualToString:@"normal"])
 		{
 			_letterSpacing = 0;
@@ -1207,9 +1217,11 @@ NSDictionary *_classesForNames = nil;
 		self.shadows = [shadow arrayOfCSSShadowsWithCurrentTextSize:_fontDescriptor.pointSize currentColor:_textColor];
 	}
 	
-	NSString *lineHeight = [[styles objectForKey:@"line-height"] lowercaseString];
-	if (lineHeight && [lineHeight isKindOfClass:[NSString class]])
+	NSString *lineHeightObject = [styles objectForKey:@"line-height"];
+	if (lineHeightObject && [lineHeightObject isKindOfClass:[NSString class]])
 	{
+		NSString *lineHeight = [lineHeightObject lowercaseString];
+
 		if ([lineHeight isEqualToString:@"normal"])
 		{
 			self.paragraphStyle.lineHeightMultiple = 0.0; // default
@@ -1234,9 +1246,11 @@ NSDictionary *_classesForNames = nil;
     
     // Specializations on line-height:
     
-    NSString *minimumLineHeight = [[styles objectForKey:@"minimum-line-height"] lowercaseString];
-    if (minimumLineHeight && [minimumLineHeight isKindOfClass:[NSString class]])
+    NSString *minimumLineHeightObject = [styles objectForKey:@"minimum-line-height"];
+    if (minimumLineHeightObject && [minimumLineHeightObject isKindOfClass:[NSString class]])
     {
+		NSString *minimumLineHeight = [minimumLineHeightObject lowercaseString];
+
         if ([minimumLineHeight isEqualToString:@"normal"])
         {
             // no op, that was already done above
@@ -1256,9 +1270,11 @@ NSDictionary *_classesForNames = nil;
         }
     }
 
-    NSString *maximumLineHeight = [[styles objectForKey:@"maximum-line-height"] lowercaseString];
-    if (maximumLineHeight && [maximumLineHeight isKindOfClass:[NSString class]])
+    NSString *maximumLineHeightObject = [styles objectForKey:@"maximum-line-height"];
+    if (maximumLineHeightObject && [maximumLineHeightObject isKindOfClass:[NSString class]])
     {
+		NSString *maximumLineHeight = [maximumLineHeightObject lowercaseString];
+
         if ([maximumLineHeight isEqualToString:@"normal"])
         {
             // no op, that was already done above
@@ -1281,10 +1297,11 @@ NSDictionary *_classesForNames = nil;
     
     // End Specializations on line-height
 
-	
-	NSString *fontVariantStr = [[styles objectForKey:@"font-variant"] lowercaseString];
-	if (fontVariantStr && [fontVariantStr isKindOfClass:[NSString class]])
+	NSString *fontVariantStringObject = [styles objectForKey:@"font-variant"];
+	if (fontVariantStringObject && [fontVariantStringObject isKindOfClass:[NSString class]])
 	{
+		NSString *fontVariantStr = [fontVariantStringObject lowercaseString];
+
 		if ([fontVariantStr isEqualToString:@"small-caps"])
 		{
 			_fontVariant = DTHTMLElementFontVariantSmallCaps;
@@ -1344,7 +1361,7 @@ NSDictionary *_classesForNames = nil;
 		{
 			_displayStyle = DTHTMLElementDisplayStyleTable;
 		}
-		else if ([verticalAlignment isEqualToString:@"inherit"])
+		else if ([verticalAlignmentObject isEqualToString:@"inherit"])
 		{
 			// nothing to do
 		}
@@ -1355,18 +1372,18 @@ NSDictionary *_classesForNames = nil;
 	{
 		self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor);
 	}
-	NSString *borderWidth = [[styles objectForKey:@"border-width"] lowercaseString];
-	if (borderWidth && [borderWidth isKindOfClass:[NSString class]])
+	NSString *borderWidthObject = [styles objectForKey:@"border-width"];
+	if (borderWidthObject && [borderWidthObject isKindOfClass:[NSString class]])
 	{
-		_backgroundStrokeWidth = [borderWidth floatValue];
+		_backgroundStrokeWidth = [[borderWidthObject lowercaseString] floatValue];
 	}
 	else {
 		_backgroundStrokeWidth = 0.0f;
 	}
-	NSString *cornerRadius = [[styles objectForKey:@"border-radius"] lowercaseString];
-	if (cornerRadius && [cornerRadius isKindOfClass:[NSString class]])
+	NSString *cornerRadiusObject = [styles objectForKey:@"border-radius"];
+	if (cornerRadiusObject && [cornerRadiusObject isKindOfClass:[NSString class]])
 	{
-		_backgroundCornerRadius = [cornerRadius floatValue];
+		_backgroundCornerRadius = [[cornerRadiusObject lowercaseString] floatValue];
 	}
 	else {
 		_backgroundCornerRadius = 0.0f;
