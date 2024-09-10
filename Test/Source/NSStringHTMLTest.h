@@ -6,7 +6,6 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <DTCoreText/DTCoreText.h>
 #import <XCTest/XCTest.h>
 
 @interface NSStringHTMLTest : XCTestCase {

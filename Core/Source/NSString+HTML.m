@@ -23,7 +23,7 @@ static NSDictionary *entityReverseLookup = nil;
 	return (NSUInteger)result;
 }
 
-- (BOOL)isNumeric
+- (BOOL)dt_isNumeric
 {
 	const char *s = [self UTF8String];
 	

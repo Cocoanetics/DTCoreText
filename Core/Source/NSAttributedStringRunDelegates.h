@@ -16,8 +16,16 @@
 #import <ApplicationServices/ApplicationServices.h>
 #endif
 
-void embeddedObjectDeallocCallback(void *context);
-CGFloat embeddedObjectGetAscentCallback(void *context);
-CGFloat embeddedObjectGetDescentCallback(void *context);
-CGFloat embeddedObjectGetWidthCallback(void *context);
-CTRunDelegateRef createEmbeddedObjectRunDelegate(id obj);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void embeddedObjectDeallocCallback(void *_Nullable context);
+CGFloat embeddedObjectGetAscentCallback(void *_Nullable context);
+CGFloat embeddedObjectGetDescentCallback(void *_Nullable context);
+CGFloat embeddedObjectGetWidthCallback(void *_Nullable context);
+CTRunDelegateRef _Nullable createEmbeddedObjectRunDelegate(id _Nullable obj);
+
+#ifdef __cplusplus
+}
+#endif

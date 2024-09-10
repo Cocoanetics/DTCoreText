@@ -8,6 +8,8 @@
 
 #import "DTHTMLAttributedStringBuilderTest.h"
 
+@import DTCoreText;
+
 @implementation DTHTMLAttributedStringBuilderTest
 
 #pragma mark - Utilities

@@ -58,7 +58,8 @@
 
 
 	// runtime-check if NS-style attributes are allowed
-	static inline BOOL DTCoreTextModernAttributesPossible()
+    static inline BOOL DTCoreTextModernAttributesPossible(void);
+	static inline BOOL DTCoreTextModernAttributesPossible(void)
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
@@ -70,7 +71,8 @@
 	}
 
 	// runtime-check if CoreText draws underlines
-	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
+    static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs(void);
+	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs(void)
 	{
 		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_7_0)
 		{
@@ -124,28 +126,33 @@
 	#define CGSizeValue sizeValue
 
 	// String functions named differently on Mac
+    static inline NSString *NSStringFromCGRect(const CGRect rect);
 	static inline NSString *NSStringFromCGRect(const CGRect rect)
 	{
 		return NSStringFromRect(NSRectFromCGRect(rect));
 	}
 
+    static inline NSString *NSStringFromCGSize(const CGSize size);
 	static inline NSString *NSStringFromCGSize(const CGSize size)
 	{
 		return NSStringFromSize(NSSizeFromCGSize(size));
 	}
 
+    static inline NSString *NSStringFromCGPoint(const CGPoint point);
 	static inline NSString *NSStringFromCGPoint(const CGPoint point)
 	{
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
 
 	// runtime-check if NS-style attributes are allowed
+    static inline BOOL DTCoreTextModernAttributesPossible();
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
 		return YES;
 	}
 
 	// runtime-check if CoreText draws underlines
+    static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs();
 	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
 	{
 		return NO;

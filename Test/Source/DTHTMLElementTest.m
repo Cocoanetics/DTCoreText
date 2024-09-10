@@ -8,6 +8,8 @@
 
 #import "DTHTMLElementTest.h"
 
+@import DTCoreText;
+
 @implementation DTHTMLElementTest
 
 - (void)testHTMLAlign

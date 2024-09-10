@@ -8,6 +8,8 @@
 
 #import "NSStringHTMLTest.h"
 
+@import DTCoreText;
+
 @implementation NSStringHTMLTest
 
 - (void)testEmojiEncodingAndDecoding

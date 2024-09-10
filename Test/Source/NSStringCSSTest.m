@@ -8,6 +8,8 @@
 
 #import "NSStringCSSTest.h"
 
+@import DTCoreText;
+
 @implementation NSStringCSSTest
 
 - (void)testShadowColorFirst

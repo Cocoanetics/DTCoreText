@@ -7,9 +7,9 @@
 //
 
 #import "NSAttributedStringHTMLTest.h"
-#import <DTCoreText/DTCoreText.h>
 #import <XCTest/XCTest.h>
 
+@import DTCoreText;
 
 @implementation NSAttributedStringHTMLTest
 
