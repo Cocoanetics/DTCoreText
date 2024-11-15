@@ -14,7 +14,7 @@
 
 + (UIFont *)fontWithCTFont:(CTFontRef)ctFont
 {
-	NSString *fontName = (__bridge_transfer NSString *)CTFontCopyName(ctFont, kCTFontPostScriptNameKey);
+	NSString *fontName = (__bridge_transfer NSString *)CTFontCopyName(ctFont, kCTFontFullNameKey);
 
 	CGFloat fontSize = CTFontGetSize(ctFont);
 	UIFont *font = [UIFont fontWithName:fontName size:fontSize];
