@@ -876,7 +876,7 @@
 											[strongSelf->_tmpString deleteCharactersInRange:NSMakeRange([strongSelf->_tmpString length]-1, 1)];
 										}
 										
-										[strongSelf->_tmpString appendString:@"\n"];
+										[strongSelf->_tmpString dt_appendString:@"\n"];
 									}
 								}
 								

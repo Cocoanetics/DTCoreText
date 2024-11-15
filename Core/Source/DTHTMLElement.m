@@ -490,7 +490,7 @@ NSDictionary *_classesForNames = nil;
 						}
 						
 						// paragraph break
-						[tmpString appendString:@"\n"];
+						[tmpString dt_appendString:@"\n"];
 					}
 				}
 				

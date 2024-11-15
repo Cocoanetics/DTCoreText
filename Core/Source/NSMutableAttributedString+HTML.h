@@ -23,6 +23,7 @@
  If the last character of the receiver contains a placeholder for a <DTTextAttachment> it is removed from the appended string. Also fields (e.g. list prefixes) are not extended
  @param string The string to be appended to this string. */
 - (void)appendString:(NSString *)string;
+- (void)dt_appendString:(NSString *)string;// added this prefix version of appendString ,because the appendString method defined duplication in iOS18 ,appendString will also defined in ScreenReaderCore.framework
 
 /** 
  Appends a string with a given paragraph style and font to this string. 

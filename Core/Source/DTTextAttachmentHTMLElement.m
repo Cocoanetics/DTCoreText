@@ -69,7 +69,7 @@
 		// block-level elements get space trimmed and a newline
 		if (self.displayStyle != DTHTMLElementDisplayStyleInline)
 		{
-			[tmpString appendString:@"\n"];
+			[tmpString dt_appendString:@"\n"];
 		}
 		
 		return tmpString;

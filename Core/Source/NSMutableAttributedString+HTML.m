@@ -19,6 +19,39 @@
 
 @implementation NSMutableAttributedString (HTML)
 
+// the same as appendString just to avoid method repeat problem in iOS18 . If everything works well for somethime , the original appendString can be removed
+- (void)dt_appendString:(NSString *)string
+{
+    NSParameterAssert(string);
+    
+    NSUInteger length = [self length];
+    NSAttributedString *appendString = nil;
+    
+    if (length)
+    {
+        // get attributes at end of self
+        NSMutableDictionary *attributes = [[self attributesAtIndex:length-1 effectiveRange:NULL] mutableCopy];
+        
+        // we need to remove the image placeholder (if any) to prevent duplication
+        [attributes removeObjectForKey:NSAttachmentAttributeName];
+        [attributes removeObjectForKey:(id)kCTRunDelegateAttributeName];
+        
+        // we also remove field attribute, because appending plain strings should never extend an field
+        [attributes removeObjectForKey:DTFieldAttribute];
+        
+        // create a temp attributed string from the appended part
+        appendString = [[NSAttributedString alloc] initWithString:string attributes:attributes];
+    }
+    else
+    {
+        // no attributes to extend
+        appendString = [[NSAttributedString alloc] initWithString:string];
+    }
+
+    [self appendAttributedString:appendString];
+}
+
+
 
 // appends a plain string extending the attributes at this position
 - (void)appendString:(NSString *)string
