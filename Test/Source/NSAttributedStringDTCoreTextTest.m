@@ -82,22 +82,22 @@
 	XCTAssertFalse(effectiveList == newListStyle, @"Copy should have produced a different instance");
 	
 	// test new list inside range
-	NSRange nonFoundRange = [attributedString rangeOfTextList:newListStyle atIndex:innerRange.location];
+	NSRange nonFoundRange = [attributedString _DTRangeOfTextList:newListStyle atIndex:innerRange.location];
 	NSRange expectedRange = NSMakeRange(NSNotFound, 0);
 	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other list inside");
 
 	// test new list outside range
-	nonFoundRange = [attributedString rangeOfTextList:newListStyle atIndex:1];
+	nonFoundRange = [attributedString _DTRangeOfTextList:newListStyle atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
 	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find other list at index 1");
 
 	// test effective list inside range
-	NSRange foundRange = [attributedString rangeOfTextList:effectiveList atIndex:innerRange.location];
+	NSRange foundRange = [attributedString _DTRangeOfTextList:effectiveList atIndex:innerRange.location];
 	expectedRange = [[attributedString string] paragraphRangeForRange:innerRange];
 	XCTAssertTrue(NSEqualRanges(foundRange, expectedRange), @"Should find effective list around 'inner'");
 	
 	// test effective list outside range
-	nonFoundRange = [attributedString rangeOfTextList:effectiveList atIndex:1];
+	nonFoundRange = [attributedString _DTRangeOfTextList:effectiveList atIndex:1];
 	expectedRange = NSMakeRange(NSNotFound, 0);
 	XCTAssertTrue(NSEqualRanges(nonFoundRange, expectedRange), @"Should not find effective list at index 1");
 }
