@@ -84,7 +84,7 @@
 	DTCSSListStyle *outermostList = [textListsAtIndex objectAtIndex:0];
 	
 	// get the range of all lists
-	NSRange totalRange = [self rangeOfTextList:outermostList atIndex:location];
+	NSRange totalRange = [self _DTRangeOfTextList:outermostList atIndex:location];
 	
 	// get naked NSString
     NSString *string = [[self string] substringWithRange:totalRange];
@@ -212,7 +212,7 @@
 	}
 }
 
-- (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
+- (NSRange)_DTRangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location
 {
 	NSParameterAssert(list);
 	

@@ -882,7 +882,7 @@
 	
 	DTCSSListStyle *outerList = [lists lastObject];
 	
-	NSRange list1Range = [attributedString rangeOfTextList:outerList atIndex:0];
+	NSRange list1Range = [attributedString _DTRangeOfTextList:outerList atIndex:0];
 	
 	XCTAssertTrue(!list1Range.location, @"lists should start at index 0");
 	XCTAssertTrue(list1Range.length, @"lists should range for entire string");
@@ -897,7 +897,7 @@
 		XCTAssertTrue([innerLists objectAtIndex:0] == outerList , @"list at index 0 in inner lists should be same as outer list");
 	}
 	
-	NSRange list2Range = [attributedString rangeOfTextList:[innerLists lastObject] atIndex:innerRange.location];
+	NSRange list2Range = [attributedString _DTRangeOfTextList:[innerLists lastObject] atIndex:innerRange.location];
 	NSRange innerParagraph = [[attributedString string] paragraphRangeForRange:innerRange];
 	
 	XCTAssertTrue(NSEqualRanges(innerParagraph, list2Range), @"Inner list range should be equal to inner paragraph");
@@ -919,7 +919,7 @@
 	
 	[firstParagraphLists enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
 		
-		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:firstParagraphRange.location];
+		NSRange listRange = [attributedString _DTRangeOfTextList:oneList atIndex:firstParagraphRange.location];
 		
 		NSRange commonRange = NSIntersectionRange(listRange, firstParagraphRange);
 		
@@ -937,7 +937,7 @@
 	
 	[secondParagraphLists enumerateObjectsUsingBlock:^(DTCSSListStyle *oneList, NSUInteger idx, BOOL *stop) {
 		
-		NSRange listRange = [attributedString rangeOfTextList:oneList atIndex:secondParagraphRange.location];
+		NSRange listRange = [attributedString _DTRangeOfTextList:oneList atIndex:secondParagraphRange.location];
 		
 		NSRange commonRange = NSIntersectionRange(listRange, secondParagraphRange);
 		

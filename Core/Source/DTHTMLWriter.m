@@ -411,7 +411,7 @@
 				
 				for (DTCSSListStyle *oneList in currentListStyles)
 				{
-					NSRange listRange = [_attributedString rangeOfTextList:oneList atIndex:paragraphRange.location];
+					NSRange listRange = [_attributedString _DTRangeOfTextList:oneList atIndex:paragraphRange.location];
 					
 					if (listRange.location == paragraphRange.location)
 					{

@@ -49,11 +49,14 @@
 /**
  Returns the range of the given text list that contains the given location.
  
+ Prefix is used to avoid a presumed naming collision that causes this method
+ to be called unexpectedly by internal UIKit logic.
+
  @param list The text list.
  @param location The location in the text.
  @returns The range of the given text list containing the location.
  */
-- (NSRange)rangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location;
+- (NSRange)_DTRangeOfTextList:(DTCSSListStyle *)list atIndex:(NSUInteger)location;
 
 /**
  Returns the range of the given text block that contains the given location.
