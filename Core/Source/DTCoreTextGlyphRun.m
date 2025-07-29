@@ -239,7 +239,7 @@
 				}
 				
 				id colorValue = [_attributes objectForKey:NSUnderlineColorAttributeName];
-				if (colorValue != NULL && [colorValue isKindOfClass:[UIColor class]]) {
+				if (colorValue != nil && [colorValue isKindOfClass:[UIColor class]]) {
 					UIColor *underlineColor = (UIColor*) colorValue;
 					CGContextSetStrokeColorWithColor(context, underlineColor.CGColor);
 				}
