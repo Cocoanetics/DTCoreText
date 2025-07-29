@@ -74,6 +74,12 @@
     static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs(void);
 	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs(void)
 	{
+		// Fixed DTCoreText can't draw underline in iOS18 , see : https://github.com/Cocoanetics/DTCoreText/issues/1280
+		NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+		if (version.majorVersion == 18) {
+			return NO;
+		}
+		
 		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_7_0)
 		{
 			return YES;

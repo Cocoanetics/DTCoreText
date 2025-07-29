@@ -238,6 +238,11 @@
 					y += smallestPixelWidth/2.0f; // shift down half a pixel to avoid aliasing
 				}
 				
+				id colorValue = [_attributes objectForKey:NSUnderlineColorAttributeName];
+				if (colorValue != NULL && [colorValue isKindOfClass:[UIColor class]]) {
+					UIColor *underlineColor = (UIColor*) colorValue;
+					CGContextSetStrokeColorWithColor(context, underlineColor.CGColor);
+				}
 				CGContextMoveToPoint(context, runStrokeBounds.origin.x, y);
 				CGContextAddLineToPoint(context, runStrokeBounds.origin.x + runStrokeBounds.size.width, y);
 				
