@@ -12,7 +12,7 @@
 #if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
 #import "DTTextAttachment.h"
-#import <DTFoundation/DTWeakSupport.h>
+#import "DTWeakSupport.h"
 
 @protocol DTAccessibilityViewProxyDelegate;
 

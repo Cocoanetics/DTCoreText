@@ -15,10 +15,70 @@
 #import "DTImage+HTML.h"
 
 #if TARGET_OS_IPHONE
-	#import <DTFoundation/DTAnimatedGIF.h>
+	#import <ImageIO/ImageIO.h>
 #endif
 
-#import <DTFoundation/DTBase64Coding.h>
+#if TARGET_OS_IPHONE
+
+static NSUInteger _DTAnimatedGIFFrameDuration(CGImageSourceRef source, NSUInteger index)
+{
+	NSUInteger frameDuration = 10;
+	NSDictionary *frameProperties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(source, index, nil));
+	NSDictionary *gifProperties = frameProperties[(NSString *)kCGImagePropertyGIFDictionary];
+
+	NSNumber *unclampedDelay = gifProperties[(NSString *)kCGImagePropertyGIFUnclampedDelayTime];
+	if (unclampedDelay)
+		frameDuration = [unclampedDelay floatValue] * 100;
+	else {
+		NSNumber *delay = gifProperties[(NSString *)kCGImagePropertyGIFDelayTime];
+		if (delay)
+			frameDuration = [delay floatValue] * 100;
+	}
+	if (frameDuration < 1) frameDuration = 10;
+	return frameDuration;
+}
+
+static NSUInteger _DTGCD(NSUInteger a, NSUInteger b)
+{
+	NSUInteger t;
+	if (a < b) { t = a; a = b; b = t; }
+	NSUInteger r = a % b;
+	return r ? _DTGCD(b, r) : b;
+}
+
+static UIImage *_DTAnimatedGIFFromFile(NSString *path)
+{
+	NSURL *URL = [NSURL fileURLWithPath:path];
+	CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)URL, NULL);
+	if (!source) return nil;
+
+	size_t count = CGImageSourceGetCount(source);
+	if (count <= 1) {
+		// Not animated — fall back to normal image
+		CFRelease(source);
+		return nil;
+	}
+
+	NSUInteger gcf = _DTAnimatedGIFFrameDuration(source, 0);
+	for (NSUInteger i = 1; i < count; i++)
+		gcf = _DTGCD(gcf, _DTAnimatedGIFFrameDuration(source, i));
+
+	NSMutableArray *frames = [NSMutableArray arrayWithCapacity:count];
+	for (NSUInteger i = 0; i < count; i++) {
+		CGImageRef cgImage = CGImageSourceCreateImageAtIndex(source, i, NULL);
+		UIImage *frame = [UIImage imageWithCGImage:cgImage];
+		NSUInteger repeat = _DTAnimatedGIFFrameDuration(source, i) / gcf;
+		for (NSUInteger j = 0; j < repeat; j++)
+			[frames addObject:frame];
+		CGImageRelease(cgImage);
+	}
+	CFRelease(source);
+
+	NSTimeInterval duration = [frames count] * gcf / 100.0;
+	return [UIImage animatedImageWithImages:frames duration:duration];
+}
+
+#endif
 
 static NSCache *imageCache = nil;
 
@@ -101,7 +161,7 @@ static NSCache *imageCache = nil;
 				{
 					NSString *encodedData = [cleanStr substringFromIndex:range.location + range.length];
 					
-					decodedData = [DTBase64Coding dataByDecodingString:encodedData];
+					decodedData = [[NSData alloc] initWithBase64EncodedString:encodedData options:NSDataBase64DecodingIgnoreUnknownCharacters];
 				}
 			}
 			
@@ -224,15 +284,14 @@ static NSCache *imageCache = nil;
 			// only local files we can directly load without punishment
 			if ([contentURL isFileURL])
 			{
-#if TARGET_OS_IPHONE
+	#if TARGET_OS_IPHONE
 				NSString *ext = [[[contentURL lastPathComponent] pathExtension] lowercaseString];
-				
 				if ([ext isEqualToString:@"gif"])
 				{
-					image = DTAnimatedGIFFromFile([contentURL path]);
+					image = _DTAnimatedGIFFromFile([contentURL path]);
 				}
-				else
 #endif
+				if (!image)
 				{
 					image = [[DTImage alloc] initWithContentsOfFile:[contentURL path]];
 				}
@@ -333,7 +392,7 @@ static NSCache *imageCache = nil;
 	}
 	
 	NSData *data = [image dataForPNGRepresentation];
-	NSString *encoded = [DTBase64Coding stringByEncodingData:data];
+	NSString *encoded = [data base64EncodedStringWithOptions:0];
 	
 	return [@"data:image/png;base64," stringByAppendingString:encoded];
 }

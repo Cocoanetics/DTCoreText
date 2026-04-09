@@ -10,7 +10,7 @@
 
 #if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
-#import <DTFoundation/DTWeakSupport.h>
+#import "DTWeakSupport.h"
 
 static const CGPoint DTAccessibilityElementNullActivationPoint = {CGFLOAT_MAX, CGFLOAT_MAX};
 

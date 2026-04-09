@@ -27,9 +27,6 @@
 #import "NSMutableAttributedString+HTML.h"
 #import "NSCharacterSet+HTML.h"
 
-#import <DTFoundation/DTLog.h>
-#import <DTFoundation/NSString+DTUtilities.h>
-
 #import <CoreText/CoreText.h>
 
 #if TARGET_OS_IPHONE
@@ -1088,11 +1085,11 @@ NSDictionary *_classesForNames = nil;
 		}
 		else if ([decoration isEqualToString:@"overline"])
 		{
-			DTLogInfo(@"Note: 'overline' text decoration not supported");
+			NSLog(@"Note: 'overline' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"blink"])
 		{
-			DTLogInfo(@"Note: 'blink' text decoration not supported");
+			NSLog(@"Note: 'blink' text decoration not supported");
 		}
 		else if ([decoration isEqualToString:@"inherit"])
 		{
@@ -1722,7 +1719,7 @@ NSDictionary *_classesForNames = nil;
 
 - (void)setLink:(NSURL *)link
 {
-	_linkGUID = [NSString stringWithUUID];
+	_linkGUID = [[NSUUID UUID] UUIDString];
 	_link = [link copy];
 	
 	if (_textAttachment)

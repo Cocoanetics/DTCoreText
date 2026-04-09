@@ -1,15 +1,6 @@
 {
-  "originHash" : "a414f6157121d3fb2457a26bcd0204865ac0466c59c5963d62e9ea8a23b7000a",
+  "originHash" : "32cfa77406419aae79e427bd308d4dc993f7383803abb8f6ca986307e5afc19f",
   "pins" : [
-    {
-      "identity" : "dtfoundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Cocoanetics/DTFoundation.git",
-      "state" : {
-        "revision" : "a61be65dd7d5b2cde3acabd13bf320b71f2907a5",
-        "version" : "1.7.19"
-      }
-    },
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",

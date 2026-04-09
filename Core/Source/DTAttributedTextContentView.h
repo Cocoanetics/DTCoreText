@@ -11,7 +11,7 @@
 #if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 
 #import "DTCoreTextLayoutFrame.h"
-#import <DTFoundation/DTWeakSupport.h>
+#import "DTWeakSupport.h"
 
 @class DTAttributedTextContentView;
 @class DTCoreTextLayoutFrame;
@@ -207,6 +207,21 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  A layout frame is basically one rectangle, inset by the <edgeInsets>. By default this is automatically generated for the current <attributedString>. You can also create a <DTCoreTextLayoutFrame> seperately and set this property to display the layout frame. This is usedful for example if you layout entire e-book and then set the <layoutFrame> for displaying individual pages.
  */
 @property (atomic, strong) DTCoreTextLayoutFrame *layoutFrame;
+
+/**
+ The maximum number of lines to display. 0 means unlimited.
+ */
+@property (nonatomic, assign) NSInteger numberOfLines;
+
+/**
+ The line break mode used for truncation.
+ */
+@property (nonatomic, assign) NSLineBreakMode lineBreakMode;
+
+/**
+ The string to append when truncation occurs.
+ */
+@property (nonatomic, strong) NSAttributedString *truncationString;
 
 
 /**

@@ -8,7 +8,6 @@
 
 #import "DTCoreTextFunctions.h"
 
-#import <DTFoundation/DTLog.h>
 
 #if TARGET_OS_IPHONE
 CTFontRef DTCTFontCreateWithUIFont(UIFont *font)
@@ -123,7 +122,7 @@ CTTextAlignment DTNSTextAlignmentToCTTextAlignment(NSTextAlignment nsTextAlignme
 			
 		default:
 		{
-			DTLogError(@"Unknown alignment %d", (int)nsTextAlignment);
+			NSLog(@"Unknown alignment %d", (int)nsTextAlignment);
 			return 0;
 		}
 	}

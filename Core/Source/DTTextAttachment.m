@@ -16,8 +16,6 @@
 #import "DTVideoTextAttachment.h"
 #import "NSCoder+DTCompatibility.h"
 
-#import <DTFoundation/DTLog.h>
-#import <DTFoundation/DTCoreGraphicsUtils.h>
 
 
 static NSMutableDictionary *_classForTagNameLookup = nil;
@@ -186,7 +184,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 
 	if (previousClass)
 	{
-		DTLogDebug(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
+		NSLog(@"Replacing previously registered class '%@' for tag name '%@' with '%@'", NSStringFromClass(previousClass), tagName, NSStringFromClass(class));
 	}
 	
 	[_classForTagNameLookup setObject:class forKey:tagName];
@@ -240,7 +238,8 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	{
 		if (maxDisplaySize.width < displaySize.width || maxDisplaySize.height < displaySize.height)
 		{
-			displaySize = DTCGSizeThatFitsKeepingAspectRatio(displaySize, maxDisplaySize);
+			CGFloat scale = MIN(maxDisplaySize.width / displaySize.width, maxDisplaySize.height / displaySize.height);
+			displaySize = CGSizeMake(roundf(displaySize.width * scale), roundf(displaySize.height * scale));
 		}
 	}
 	
