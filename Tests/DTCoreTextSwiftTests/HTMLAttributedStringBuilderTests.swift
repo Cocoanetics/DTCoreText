@@ -138,15 +138,15 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromHTML: "<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>"))
 
 		let paragraphStyleRTL = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 0, effectiveRange: nil) as! CTParagraphStyle
-		let styleRTL = DTCoreTextParagraphStyle(ctParagraphStyle: paragraphStyleRTL)!
+		let styleRTL = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleRTL)!
 		#expect(styleRTL.baseWritingDirection == .rightToLeft, "Writing direction is not RTL")
 
 		let paragraphStyleLTR = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 4, effectiveRange: nil) as! CTParagraphStyle
-		let styleLTR = DTCoreTextParagraphStyle(ctParagraphStyle: paragraphStyleLTR)!
+		let styleLTR = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleLTR)!
 		#expect(styleLTR.baseWritingDirection == .leftToRight, "Writing direction is not LTR")
 
 		let paragraphStyleNatural = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 8, effectiveRange: nil) as! CTParagraphStyle
-		let styleNatural = DTCoreTextParagraphStyle(ctParagraphStyle: paragraphStyleNatural)!
+		let styleNatural = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleNatural)!
 		#expect(styleNatural.baseWritingDirection == .natural, "Writing direction is not Natural")
 	}
 
@@ -158,7 +158,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		#expect(output.length == 1, "Output length should be 1")
 
-		let attachment = try #require(output.attribute(.attachment, at: 0, effectiveRange: nil) as? DTTextAttachment)
+		let attachment = try #require(output.attribute(.attachment, at: 0, effectiveRange: nil) as? TextAttachment)
 
 		let expectedSize = CGSize(width: 150, height: 150)
 		#expect(attachment.originalSize == expectedSize, "Non-expected originalSize")
@@ -174,7 +174,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		#expect(output.length == 1, "Output length should be 1")
 
-		let attachment = try #require(output.attribute(.attachment, at: 0, effectiveRange: nil) as? DTTextAttachment)
+		let attachment = try #require(output.attribute(.attachment, at: 0, effectiveRange: nil) as? TextAttachment)
 
 		let expectedOriginalSize = CGSize(width: 150, height: 150)
 		let expectedDisplaySize = CGSize(width: 260, height: 260)
@@ -190,7 +190,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		#expect(output.length == 1, "Output length should be 1")
 
-		let attachment = output.attribute(.attachment, at: 0, effectiveRange: nil) as? DTTextAttachment
+		let attachment = output.attribute(.attachment, at: 0, effectiveRange: nil) as? TextAttachment
 		#expect(attachment != nil, "No attachment found in output")
 	}
 
@@ -206,11 +206,11 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(NSEqualRanges(NSRange(location: 22, length: 24), secondParagraphRange), "Second Paragraph Range should be {22,24}")
 
 		let firstPS = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: firstParagraphRange.location, effectiveRange: nil) as! CTParagraphStyle
-		let firstParaStyle = DTCoreTextParagraphStyle(ctParagraphStyle: firstPS)!
+		let firstParaStyle = CoreTextParagraphStyle(ctParagraphStyle: firstPS)!
 		#expect(firstParaStyle.baseWritingDirection == .rightToLeft, "First Paragraph Style is not RTL")
 
 		let secondPS = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: secondParagraphRange.location, effectiveRange: nil) as! CTParagraphStyle
-		let secondParaStyle = DTCoreTextParagraphStyle(ctParagraphStyle: secondPS)!
+		let secondParaStyle = CoreTextParagraphStyle(ctParagraphStyle: secondPS)!
 		#expect(secondParaStyle.baseWritingDirection == .rightToLeft, "Second Paragraph Style is not RTL")
 	}
 
@@ -253,7 +253,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		#expect(string.length == 1, "Output length should be 1")
 
-		let attachment = try #require(string.attribute(.attachment, at: 0, effectiveRange: nil) as? DTTextAttachment)
+		let attachment = try #require(string.attribute(.attachment, at: 0, effectiveRange: nil) as? TextAttachment)
 		let url = string.attribute(NSAttributedString.Key(DTLinkAttribute), at: 0, effectiveRange: nil) as? NSURL
 
 		#expect(url != nil, "Element URL is nil")
@@ -329,7 +329,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		#expect(attributedString.length == 1, "Output length should be 1")
 
-		let imageAttachment = try #require(attributedString.attribute(.attachment, at: 0, effectiveRange: nil) as? DTImageTextAttachment)
+		let imageAttachment = try #require(attributedString.attribute(.attachment, at: 0, effectiveRange: nil) as? ImageTextAttachment)
 
 		let expectedSize = CGSize(width: 200, height: 200)
 		#expect(imageAttachment.displaySize == expectedSize, "Expected size should be equal to display size")
@@ -446,7 +446,7 @@ struct HTMLAttributedStringBuilderTests {
 			#expect(NSEqualRanges(enclosingRange, fontRange), "Font should be on entire string")
 
 			guard let font = font else { return }
-			let descriptor = DTCoreTextFontDescriptor(for: font)!
+			let descriptor = CoreTextFontDescriptor(for: font)!
 
 			switch lineNumber {
 			case 0:
@@ -484,7 +484,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = DTCoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontFamily == "American Typewriter", "Font Family should be 'American Typewriter'")
 	}
 
@@ -497,7 +497,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = DTCoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontFamily == "American Typewriter", "Font Family should be 'American Typewriter'")
 	}
 
@@ -519,21 +519,21 @@ struct HTMLAttributedStringBuilderTests {
 		var (fontRange, font) = effectiveRangeOfFont(at: 0, in: attributedString)
 		var expectedRange = NSRange(location: 0, length: 20)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be 20 characters long")
-		var descriptor = DTCoreTextFontDescriptor(for: font!)!
+		var descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontName == "HelveticaNeue-Light", "Font face should be 'HelveticaNeue-Light'")
 
 		// test inherited font with bold
 		expectedRange = NSRange(location: 20, length: 4)
 		(fontRange, font) = effectiveRangeOfFont(at: expectedRange.location, in: attributedString)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Bold Font should be 4 characters long")
-		descriptor = DTCoreTextFontDescriptor(for: font!)!
+		descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontName == "HelveticaNeue-Bold", "Font face should be 'HelveticaNeue-Bold'")
 
 		// test inherited font with italic
 		expectedRange = NSRange(location: 25, length: 7)
 		(fontRange, font) = effectiveRangeOfFont(at: expectedRange.location, in: attributedString)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Italic Font should be 7 characters long")
-		descriptor = DTCoreTextFontDescriptor(for: font!)!
+		descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontName == "HelveticaNeue-Italic", "Font face should be 'HelveticaNeue-Italic'")
 	}
 
@@ -546,7 +546,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = DTCoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(for: font!)!
 		#expect(descriptor.fontName == "Arial-BoldMT", "Font should be 'Arial-BoldMT'")
 	}
 
@@ -701,7 +701,7 @@ struct HTMLAttributedStringBuilderTests {
 	func textListRanges() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"))
 
-		let lists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: 0, effectiveRange: nil) as? [DTCSSListStyle]
+		let lists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: 0, effectiveRange: nil) as? [CSSListStyle]
 		#expect(lists?.count == 1, "There should be 1 outer list")
 
 		let outerList = lists!.last!
@@ -711,7 +711,7 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(list1Range.length > 0, "lists should range for entire string")
 
 		let innerRange = (attributedString.string as NSString).range(of: "2a")
-		let innerLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: innerRange.location, effectiveRange: nil) as? [DTCSSListStyle]
+		let innerLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: innerRange.location, effectiveRange: nil) as? [CSSListStyle]
 		#expect(innerLists?.count == 2, "There should be 2 inner lists")
 
 		if let innerLists = innerLists, !innerLists.isEmpty {
@@ -729,7 +729,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"))
 
 		let firstParagraphRange = (attributedString.string as NSString).paragraphRange(for: NSRange(location: 0, length: 1))
-		let firstParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: firstParagraphRange.location, effectiveRange: nil) as? [DTCSSListStyle]
+		let firstParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: firstParagraphRange.location, effectiveRange: nil) as? [CSSListStyle]
 		let firstListsCount = firstParagraphLists?.count ?? 0
 
 		#expect(firstListsCount == 1, "There should be one list on the first paragraph")
@@ -744,7 +744,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		// second paragraph should have two lists
 		let secondParagraphRange = (attributedString.string as NSString).paragraphRange(for: NSRange(location: NSMaxRange(firstParagraphRange), length: 1))
-		let secondParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: secondParagraphRange.location, effectiveRange: nil) as? [DTCSSListStyle]
+		let secondParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: secondParagraphRange.location, effectiveRange: nil) as? [CSSListStyle]
 		let secondListsCount = secondParagraphLists?.count ?? 0
 
 		#expect(secondListsCount == 2, "There should be two lists on the second paragraph")
@@ -980,7 +980,7 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(attributedString.length == 2, "RetinaDataURL should be parsed as 2 characters")
 
 		var effectiveRange = NSRange()
-		let attachment = try #require(attributedString.attribute(.attachment, at: 0, effectiveRange: &effectiveRange) as? DTImageTextAttachment)
+		let attachment = try #require(attributedString.attribute(.attachment, at: 0, effectiveRange: &effectiveRange) as? ImageTextAttachment)
 
 		#expect(NSEqualRanges(effectiveRange, NSRange(location: 0, length: 1)), "Attachment should only be on first character")
 

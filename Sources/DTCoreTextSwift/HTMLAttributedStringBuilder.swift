@@ -10,7 +10,6 @@
 
 import Foundation
 import CoreGraphics
-import DTCoreText
 import HTMLParser
 import os.log
 
@@ -29,7 +28,7 @@ private typealias PlatformColor = NSColor
 private let logger = Logger(subsystem: "com.cocoanetics.DTCoreText", category: "HTMLAttributedStringBuilder")
 
 /// Block called before an element is flushed to the output attributed string.
-public typealias HTMLAttributedStringBuilderWillFlushCallback = @Sendable (DTHTMLElement) -> Void
+public typealias HTMLAttributedStringBuilderWillFlushCallback = @Sendable (HTMLElement) -> Void
 
 /// Block called when an HTML parsing error occurs.
 public typealias HTMLAttributedStringBuilderParseErrorCallback = @Sendable (NSAttributedString, Error) -> Void
@@ -39,9 +38,9 @@ public typealias HTMLAttributedStringBuilderParseErrorCallback = @Sendable (NSAt
 /// Owns all mutable parse/build state. Events are processed sequentially.
 private actor BuilderState {
 	// Parsing tree
-	var rootNode: DTHTMLElement?
-	var bodyElement: DTHTMLElement?
-	var currentTag: DTHTMLElement?
+	var rootNode: HTMLElement?
+	var bodyElement: HTMLElement?
+	var currentTag: HTMLElement?
 	var ignoreParseEvents = false
 
 	// Output
@@ -50,11 +49,11 @@ private actor BuilderState {
 	// Config (set once before parsing)
 	var textScale: CGFloat = 1.0
 	var defaultLinkColor: PlatformColor?
-	var globalStyleSheet: DTCSSStylesheet!
+	var globalStyleSheet: CSSStylesheet!
 	var baseURL: URL?
-	var defaultFontDescriptor: DTCoreTextFontDescriptor!
-	var defaultParagraphStyle: DTCoreTextParagraphStyle!
-	var defaultTag: DTHTMLElement!
+	var defaultFontDescriptor: CoreTextFontDescriptor!
+	var defaultParagraphStyle: CoreTextParagraphStyle!
+	var defaultTag: HTMLElement!
 	var shouldProcessCustomHTMLAttributes = false
 	var ignoreInlineStyles = false
 	var preserveDocumentTrailingSpaces = false
@@ -85,9 +84,9 @@ private actor BuilderState {
 		baseURL = options["NSBaseURLDocumentOption"] as? URL
 
 		// Global stylesheet
-		globalStyleSheet = DTCSSStylesheet.defaultStyleSheet().copy() as? DTCSSStylesheet
+		globalStyleSheet = CSSStylesheet.defaultStyleSheet().copy() as? CSSStylesheet
 
-		if let customSheet = options[DTDefaultStyleSheet] as? DTCSSStylesheet {
+		if let customSheet = options[DTDefaultStyleSheet] as? CSSStylesheet {
 			globalStyleSheet.merge(customSheet)
 		}
 
@@ -96,9 +95,9 @@ private actor BuilderState {
 
 		if let ctDescriptorValue = options[DTDefaultFontDescriptor],
 		   CFGetTypeID(ctDescriptorValue as CFTypeRef) == CTFontDescriptorGetTypeID() {
-			defaultFontDescriptor = DTCoreTextFontDescriptor(ctFontDescriptor: ctDescriptorValue as! CTFontDescriptor)
+			defaultFontDescriptor = CoreTextFontDescriptor(ctFontDescriptor: ctDescriptorValue as! CTFontDescriptor)
 		} else {
-			defaultFontDescriptor = DTCoreTextFontDescriptor(fontAttributes: nil)
+			defaultFontDescriptor = CoreTextFontDescriptor(fontAttributes: nil)
 
 			if let sizeNum = options[DTDefaultFontSize] as? NSNumber {
 				defaultFontSize = CGFloat(sizeNum.floatValue)
@@ -141,7 +140,7 @@ private actor BuilderState {
 		}
 
 		// Default paragraph style
-		defaultParagraphStyle = DTCoreTextParagraphStyle.`default`()
+		defaultParagraphStyle = CoreTextParagraphStyle.`default`()
 
 		if let lh = options[DTDefaultLineHeightMultiplier] as? NSNumber {
 			defaultParagraphStyle.lineHeightMultiple = CGFloat(lh.floatValue)
@@ -157,7 +156,7 @@ private actor BuilderState {
 		}
 
 		// Default tag element
-		defaultTag = DTHTMLElement()
+		defaultTag = HTMLElement()
 		defaultTag.fontDescriptor = defaultFontDescriptor
 		defaultTag.paragraphStyle = defaultParagraphStyle
 		defaultTag.textScale = textScale
@@ -207,14 +206,14 @@ private actor BuilderState {
 	private func handleStartElement(_ elementName: String, attributes attributeDict: [String: String]) {
 		guard !ignoreParseEvents else { return }
 
-		guard let newNode = DTHTMLElement(name: elementName, attributes: attributeDict as [AnyHashable: Any], options: options) else { return }
-		var previousLastChild: DTHTMLElement?
+		guard let newNode = HTMLElement(name: elementName, attributes: attributeDict as [AnyHashable: Any], options: options) else { return }
+		var previousLastChild: HTMLElement?
 
 		if let current = currentTag {
 			newNode.inheritAttributes(from: current)
 			newNode.interpretAttributes()
 
-			previousLastChild = current.childNodes?.last as? DTHTMLElement
+			previousLastChild = current.childNodes?.last as? HTMLElement
 			current.addChildNode(newNode)
 
 			if bodyElement == nil && newNode.name == "body" {
@@ -255,7 +254,7 @@ private actor BuilderState {
 
 		// Block element eliminates previous trailing whitespace
 		if let previousLastChild, newNode.displayStyle != .inline,
-		   let textElement = previousLastChild as? DTTextHTMLElement,
+		   let textElement = previousLastChild as? TextHTMLElement,
 		   textElement.text()?.isIgnorableWhitespace() == true {
 			currentTag?.removeChildNode(textElement)
 		}
@@ -268,7 +267,7 @@ private actor BuilderState {
 
 	// MARK: - Tag Start Handlers (inline)
 
-	private func applyTagStartHandler(_ name: String, tag: DTHTMLElement) {
+	private func applyTagStartHandler(_ name: String, tag: HTMLElement) {
 		switch name {
 		case "blockquote":
 			tag.paragraphStyle.headIndent += 25.0 * textScale
@@ -281,7 +280,7 @@ private actor BuilderState {
 		case "ul", "ol":
 			tag.paragraphStyle.firstLineHeadIndent = tag.paragraphStyle.headIndent
 			if let newListStyle = tag.listStyle() {
-				var textLists = (tag.paragraphStyle.textLists as? [DTCSSListStyle]) ?? []
+				var textLists = (tag.paragraphStyle.textLists as? [CSSListStyle]) ?? []
 				textLists.append(newListStyle)
 				tag.paragraphStyle.textLists = textLists
 			}
@@ -308,7 +307,7 @@ private actor BuilderState {
 		}
 	}
 
-	private func handleAnchorStart(_ tag: DTHTMLElement) {
+	private func handleAnchorStart(_ tag: HTMLElement) {
 		if tag.isColorInherited || tag.textColor == nil {
 			tag.textColor = defaultLinkColor
 			tag.isColorInherited = false
@@ -339,7 +338,7 @@ private actor BuilderState {
 		tag.link = link
 	}
 
-	private func handleFontStart(_ tag: DTHTMLElement) {
+	private func handleFontStart(_ tag: HTMLElement) {
 		var pointSize: CGFloat
 		if let sizeAttribute = tag.attribute(forKey: "size") {
 			switch Int(sizeAttribute) ?? 0 {
@@ -357,7 +356,7 @@ private actor BuilderState {
 		}
 		if let face = tag.attribute(forKey: "face") {
 			let font = CTFontCreateWithName(face as CFString, pointSize, nil)
-			tag.fontDescriptor = DTCoreTextFontDescriptor(ctFont: font)
+			tag.fontDescriptor = CoreTextFontDescriptor(ctFont: font)
 		} else {
 			tag.fontDescriptor.pointSize = pointSize
 		}
@@ -398,19 +397,19 @@ private actor BuilderState {
 
 	// MARK: - Tag End Handlers (inline)
 
-	private func applyTagEndHandler(_ name: String, tag: DTHTMLElement) {
+	private func applyTagEndHandler(_ name: String, tag: HTMLElement) {
 		switch name {
 		case "object":
-			if let attachmentElement = tag as? DTTextAttachmentHTMLElement,
-			   let objectAttachment = attachmentElement.textAttachment as? DTObjectTextAttachment {
+			if let attachmentElement = tag as? TextAttachmentHTMLElement,
+			   let objectAttachment = attachmentElement.textAttachment as? ObjectTextAttachment {
 				objectAttachment.childNodes = (tag.childNodes as NSArray?)?.copy() as? [Any]
 			}
 
 		case "video":
-			if let attachmentElement = tag as? DTTextAttachmentHTMLElement,
-			   let videoAttachment = attachmentElement.textAttachment as? DTVideoTextAttachment,
+			if let attachmentElement = tag as? TextAttachmentHTMLElement,
+			   let videoAttachment = attachmentElement.textAttachment as? VideoTextAttachment,
 			   videoAttachment.contentURL == nil {
-				for child in (attachmentElement.childNodes as? [DTHTMLElement]) ?? [] {
+				for child in (attachmentElement.childNodes as? [HTMLElement]) ?? [] {
 					if child.name == "source", let src = child.attribute(forKey: "src") {
 						videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
 						break
@@ -419,7 +418,7 @@ private actor BuilderState {
 			}
 
 		case "style":
-			if let stylesheetElement = tag as? DTStylesheetHTMLElement {
+			if let stylesheetElement = tag as? StylesheetHTMLElement {
 				globalStyleSheet.merge(stylesheetElement.stylesheet())
 			}
 
@@ -433,7 +432,7 @@ private actor BuilderState {
 				break
 			}
 			if let content = try? String(contentsOf: stylesheetURL, encoding: .utf8) {
-				globalStyleSheet.merge(DTCSSStylesheet(styleBlock: content))
+				globalStyleSheet.merge(CSSStylesheet(styleBlock: content))
 			}
 
 		default:
@@ -454,16 +453,16 @@ private actor BuilderState {
 			if current.displayStyle != .inline && (current.childNodes?.count ?? 0) == 0 {
 				return
 			}
-			if let previousTag = current.childNodes?.last as? DTHTMLElement,
+			if let previousTag = current.childNodes?.last as? HTMLElement,
 			   previousTag.displayStyle != .inline {
 				return
 			}
-			if current.childNodes?.last is DTBreakHTMLElement {
+			if current.childNodes?.last is BreakHTMLElement {
 				return
 			}
 		}
 
-		let textNode = DTTextHTMLElement()
+		let textNode = TextHTMLElement()
 		textNode.setValue(string, forKey: "text")
 		textNode.inheritAttributes(from: current)
 		textNode.interpretAttributes()
@@ -485,7 +484,7 @@ private actor BuilderState {
 	private func handleFoundCDATA(_ data: Data) {
 		guard !ignoreParseEvents, currentTag != nil else { return }
 		guard let styleBlock = String(data: data, encoding: .utf8) else { return }
-		let textNode = DTHTMLParserTextNode(characters: styleBlock)
+		let textNode = HTMLParserTextNode(characters: styleBlock)
 		currentTag?.addChildNode(textNode)
 	}
 
@@ -501,7 +500,7 @@ private actor BuilderState {
 
 	// MARK: - Flushing
 
-	private func flush(_ tag: DTHTMLElement) {
+	private func flush(_ tag: HTMLElement) {
 		guard tag.needsOutput() else { return }
 
 		willFlushCallback?(tag)

@@ -8,7 +8,7 @@ struct LayoutFrameTests {
 	func variableHeight() {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<b>Some bold text</b>")!
 
-		let layouter = DTCoreTextLayouter(attributedString: attributedString)!
+		let layouter = CoreTextLayouter(attributedString: attributedString)!
 
 		let maxRect = CGRect(x: 10, y: 20, width: 1024, height: CGFloat(CGFLOAT_HEIGHT_UNKNOWN))
 		let entireString = NSRange(location: 0, length: attributedString.length)
@@ -23,7 +23,7 @@ struct LayoutFrameTests {
 	func variableHeightAndWidth() {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<b>Some bold text</b>")!
 
-		let layouter = DTCoreTextLayouter(attributedString: attributedString)!
+		let layouter = CoreTextLayouter(attributedString: attributedString)!
 
 		let maxRect = CGRect(x: 10, y: 20, width: CGFloat(CGFLOAT_WIDTH_UNKNOWN), height: CGFloat(CGFLOAT_HEIGHT_UNKNOWN))
 		let entireString = NSRange(location: 0, length: attributedString.length)

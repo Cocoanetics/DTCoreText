@@ -12,7 +12,6 @@
 import UIKit
 import QuartzCore
 import os.log
-import DTCoreText
 
 // MARK: - Notification
 
@@ -50,24 +49,24 @@ public struct DTAttributedTextContentViewRelayoutMask: OptionSet, @unchecked Sen
 
 	/// Called before a layout frame is drawn.
 	@objc optional func attributedTextContentView(_ attributedTextContentView: DTAttributedTextContentView,
-												  willDrawLayoutFrame layoutFrame: DTCoreTextLayoutFrame,
+												  willDrawLayoutFrame layoutFrame: CoreTextLayoutFrame,
 												  in context: CGContext)
 
 	/// Called after a layout frame is drawn.
 	@objc optional func attributedTextContentView(_ attributedTextContentView: DTAttributedTextContentView,
-												  didDrawLayoutFrame layoutFrame: DTCoreTextLayoutFrame,
+												  didDrawLayoutFrame layoutFrame: CoreTextLayoutFrame,
 												  in context: CGContext)
 
 	/// Called before a text block background is drawn. Return `true` to draw the default background fill.
 	@objc optional func attributedTextContentView(_ attributedTextContentView: DTAttributedTextContentView,
-												  shouldDrawBackgroundFor textBlock: DTTextBlock,
+												  shouldDrawBackgroundFor textBlock: TextBlock,
 												  frame: CGRect,
 												  context: CGContext,
-												  forLayoutFrame layoutFrame: DTCoreTextLayoutFrame) -> Bool
+												  forLayoutFrame layoutFrame: CoreTextLayoutFrame) -> Bool
 
 	/// Provide a custom view for an attachment (e.g. an image view).
 	@objc optional func attributedTextContentView(_ attributedTextContentView: DTAttributedTextContentView,
-												  viewForAttachment attachment: DTTextAttachment,
+												  viewForAttachment attachment: TextAttachment,
 												  frame: CGRect) -> UIView?
 
 	/// Provide a custom view/button for a hyperlink.
@@ -112,7 +111,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 	@objc open var _attributedString: NSAttributedString?
 
 	/// The current layout frame.
-	@objc open var _layoutFrame: DTCoreTextLayoutFrame?
+	@objc open var _layoutFrame: CoreTextLayoutFrame?
 
 	/// Edge insets around the text content.
 	@objc open var _edgeInsets: UIEdgeInsets = .zero
@@ -146,7 +145,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 	private var _isTiling = false
 	private var _layoutFrameHeightIsConstrainedByBounds = false
 
-	private var _layouter: DTCoreTextLayouter?
+	private var _layouter: CoreTextLayouter?
 
 	private var _layoutOffset: CGPoint = .zero
 	private var _backgroundOffset: CGSize = .zero
@@ -255,11 +254,11 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 			return
 		}
 
-		let lines: [DTCoreTextLayoutLine]
+		let lines: [CoreTextLayoutLine]
 		if rect.isInfinite {
-			lines = (theLayoutFrame?.lines as? [DTCoreTextLayoutLine]) ?? []
+			lines = (theLayoutFrame?.lines as? [CoreTextLayoutLine]) ?? []
 		} else {
-			lines = (theLayoutFrame?.linesVisible(in: rect) as? [DTCoreTextLayoutLine]) ?? []
+			lines = (theLayoutFrame?.linesVisible(in: rect) as? [CoreTextLayoutLine]) ?? []
 		}
 
 		// Hide all custom views
@@ -270,7 +269,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 		for oneLine in lines {
 			var skipRunsBeforeLocation: Int = 0
 
-			guard let glyphRuns = oneLine.glyphRuns as? [DTCoreTextGlyphRun] else { continue }
+			guard let glyphRuns = oneLine.glyphRuns as? [CoreTextGlyphRun] else { continue }
 
 			for oneRun in glyphRuns {
 				let runRange = oneRun.stringRange()
@@ -280,7 +279,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 
 				// Check for link
 				var effectiveRangeOfLink = runRange
-				let attachment: DTTextAttachment? = oneRun.attachment
+				let attachment: TextAttachment? = oneRun.attachment
 				var linkURL = oneRun.attributes[DTLinkAttribute] as? URL
 
 				// Chain glyph runs for combined link buttons (skip attachments)
@@ -352,7 +351,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 					} else {
 						var newCustomAttachmentView: UIView?
 
-						if attachment is DTDictationPlaceholderTextAttachment {
+						if attachment is DictationPlaceholderTextAttachment {
 							newCustomAttachmentView = DictationPlaceholderView.placeholderView()
 							newCustomAttachmentView?.frame = frameForSubview
 						} else if _delegateFlags.supportsCustomViewsForAttachments {
@@ -797,13 +796,13 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 	// MARK: - Layouter (synchronized)
 
 	/// The layouter used for the receiver. Created automatically when needed.
-	@objc open var layouter: DTCoreTextLayouter? {
+	@objc open var layouter: CoreTextLayouter? {
 		get {
 			_lock.lock()
 			defer { _lock.unlock() }
 
 			if _layouter == nil, let string = _attributedString {
-				_layouter = DTCoreTextLayouter(attributedString: string)
+				_layouter = CoreTextLayouter(attributedString: string)
 				_layouter?.shouldCacheLayoutFrames = true
 			}
 			return _layouter
@@ -816,7 +815,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 	}
 
 	/// The layout frame used for the receiver. Created automatically when needed.
-	@objc open var layoutFrame: DTCoreTextLayoutFrame? {
+	@objc open var layoutFrame: CoreTextLayoutFrame? {
 		get {
 			_lock.lock()
 			defer { _lock.unlock() }
@@ -1008,7 +1007,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 
 	// MARK: - AccessibilityViewProxyDelegate
 
-	@objc public func view(forTextAttachment textAttachment: DTTextAttachment, proxy: AccessibilityViewProxy) -> UIView {
+	@objc public func view(forTextAttachment textAttachment: TextAttachment, proxy: AccessibilityViewProxy) -> UIView {
 		let indexKey = NSNumber(value: textAttachment.hash)
 		return (customViewsForAttachmentsIndex?.object(forKey: indexKey) as? UIView) ?? UIView()
 	}

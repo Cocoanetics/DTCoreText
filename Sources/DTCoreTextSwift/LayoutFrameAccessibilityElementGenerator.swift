@@ -10,17 +10,16 @@
 
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
-import DTCoreText
 
 /// Block that provides an accessibility object for a text attachment.
-public typealias AttachmentViewProvider = (DTTextAttachment) -> Any?
+public typealias AttachmentViewProvider = (TextAttachment) -> Any?
 
-/// Generates accessibility elements for a DTCoreTextLayoutFrame.
+/// Generates accessibility elements for a CoreTextLayoutFrame.
 @objc(DTCoreTextLayoutFrameAccessibilityElementGenerator)
 public class LayoutFrameAccessibilityElementGenerator: NSObject {
 
 	@objc
-	public func accessibilityElements(for frame: DTCoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
+	public func accessibilityElements(for frame: CoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
 		var elements = [Any]()
 
 		guard let paragraphRanges = frame.paragraphRanges as? [NSValue] else { return elements }
@@ -33,7 +32,7 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		return elements
 	}
 
-	private func accessibilityElements(inParagraphAt index: Int, layoutFrame frame: DTCoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
+	private func accessibilityElements(inParagraphAt index: Int, layoutFrame frame: CoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
 		var elements = [Any]()
 
 		enumerateAccessibleGroups(in: frame, forParagraphAt: index) { attrs, substringRange, _, runs in
@@ -45,16 +44,16 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		return elements
 	}
 
-	private func enumerateAccessibleGroups(in frame: DTCoreTextLayoutFrame, forParagraphAt index: Int, using block: (NSDictionary, NSRange, UnsafeMutablePointer<ObjCBool>, [DTCoreTextGlyphRun]) -> Void) {
+	private func enumerateAccessibleGroups(in frame: CoreTextLayoutFrame, forParagraphAt index: Int, using block: (NSDictionary, NSRange, UnsafeMutablePointer<ObjCBool>, [CoreTextGlyphRun]) -> Void) {
 		guard let paragraphRanges = frame.paragraphRanges as? [NSValue], index < paragraphRanges.count else { return }
 
 		let paragraphRange = paragraphRanges[index].rangeValue
-		guard let lines = frame.linesInParagraph(at: UInt(index)) as? [DTCoreTextLayoutLine] else { return }
+		guard let lines = frame.linesInParagraph(at: UInt(index)) as? [CoreTextLayoutLine] else { return }
 
 		frame.attributedStringFragment.enumerateAttributes(in: paragraphRange, options: []) { attrs, range, stop in
-			var runs = [DTCoreTextGlyphRun]()
+			var runs = [CoreTextGlyphRun]()
 			for line in lines {
-				if let lineRuns = line.glyphRuns(with: range) as? [DTCoreTextGlyphRun] {
+				if let lineRuns = line.glyphRuns(with: range) as? [CoreTextGlyphRun] {
 					runs.append(contentsOf: lineRuns)
 				}
 			}
@@ -62,14 +61,14 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		}
 	}
 
-	private func accessibilityElement(for attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [DTCoreTextGlyphRun], view: UIView, attachmentViewProvider block: AttachmentViewProvider) -> Any? {
-		if let attachment = attributes[NSAttributedString.Key.attachment] as? DTTextAttachment {
+	private func accessibilityElement(for attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [CoreTextGlyphRun], view: UIView, attachmentViewProvider block: AttachmentViewProvider) -> Any? {
+		if let attachment = attributes[NSAttributedString.Key.attachment] as? TextAttachment {
 			return block(attachment)
 		}
 		return accessibilityElement(forText: attributedString, at: range, attributes: attributes, runs: runs, view: view)
 	}
 
-	private func accessibilityElement(forText attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [DTCoreTextGlyphRun], view: UIView) -> AccessibilityElement {
+	private func accessibilityElement(forText attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [CoreTextGlyphRun], view: UIView) -> AccessibilityElement {
 		let text = (attributedString.string as NSString).substring(with: range)
 
 		let element = AccessibilityElement(parentView: view)
@@ -89,7 +88,7 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		return element
 	}
 
-	private func frameForRuns(_ runs: [DTCoreTextGlyphRun]) -> CGRect {
+	private func frameForRuns(_ runs: [CoreTextGlyphRun]) -> CGRect {
 		var frame = CGRect.null
 		for run in runs {
 			frame = frame.union(run.frame)

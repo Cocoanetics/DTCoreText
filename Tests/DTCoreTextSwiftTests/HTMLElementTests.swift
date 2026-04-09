@@ -29,11 +29,11 @@ struct HTMLElementTests {
 
 	@Test("Combining WebKit and normal margin")
 	func combiningWebKitAndNormalMargin() {
-		let element = DTHTMLElement()
+		let element = HTMLElement()
 		element.textScale = 1
-		element.paragraphStyle = DTCoreTextParagraphStyle.default()
+		element.paragraphStyle = CoreTextParagraphStyle.default()
 		let font = CTFontCreateWithName("Helvetica" as CFString, 20, nil)
-		element.fontDescriptor = DTCoreTextFontDescriptor(for: font)
+		element.fontDescriptor = CoreTextFontDescriptor(for: font)
 
 		let styles: [String: String] = [
 			"-webkit-margin-after": "1em",
@@ -54,13 +54,13 @@ struct HTMLElementTests {
 
 	@Test("Attachment with display:none should be invisible")
 	func attachmentWithDisplayNone() {
-		let element = DTHTMLElement()
+		let element = HTMLElement()
 		element.textScale = 1
-		element.paragraphStyle = DTCoreTextParagraphStyle.default()
+		element.paragraphStyle = CoreTextParagraphStyle.default()
 		let font = CTFontCreateWithName("Helvetica" as CFString, 20, nil)
-		element.fontDescriptor = DTCoreTextFontDescriptor(for: font)
+		element.fontDescriptor = CoreTextFontDescriptor(for: font)
 
-		let object = DTObjectTextAttachment(element: element, options: nil)
+		let object = ObjectTextAttachment(element: element, options: nil)
 		element.textAttachment = object
 
 		let styles: [String: String] = ["display": "none"]
@@ -83,7 +83,7 @@ struct HTMLElementTests {
 			DTDefaultFontSize: NSNumber(value: 16.0),
 		]
 
-		let attachment = DTHTMLElement(name: "img", attributes: nil, options: options)!
+		let attachment = HTMLElement(name: "img", attributes: nil, options: options)!
 		attachment.textAttachment!.originalSize = CGSize(width: 1000, height: 800)
 
 		attachment.applyStyleDictionary(["width": "100%", "height": "100%"])

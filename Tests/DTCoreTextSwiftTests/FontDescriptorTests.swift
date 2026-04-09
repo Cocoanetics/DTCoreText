@@ -13,13 +13,13 @@ struct FontDescriptorTests {
 	private var previousFallbackFontFamily: String?
 
 	init() {
-		previousFallbackFontFamily = DTCoreTextFontDescriptor.fallbackFontFamily()
+		previousFallbackFontFamily = CoreTextFontDescriptor.fallbackFontFamily()
 	}
 
 	@Test("Fallback font family is used for unknown fonts")
 	func fallbackFamily() {
-		DTCoreTextFontDescriptor.setFallbackFontFamily("Arial")
-		defer { DTCoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
+		CoreTextFontDescriptor.setFallbackFontFamily("Arial")
+		defer { CoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
 
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\">text</span>")
 		#expect(attributedString != nil)
@@ -68,8 +68,8 @@ struct FontDescriptorTests {
 
 	@Test("Fallback font family without font traits")
 	func fallbackFontFamilyWithoutFontTraits() {
-		DTCoreTextFontDescriptor.setFallbackFontFamily("Arial")
-		defer { DTCoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
+		CoreTextFontDescriptor.setFallbackFontFamily("Arial")
+		defer { CoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
 
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><p>text</p></span>")!
 
@@ -82,8 +82,8 @@ struct FontDescriptorTests {
 
 	@Test("Fallback font family with bold font trait")
 	func fallbackFontFamilyWithBoldFontTrait() {
-		DTCoreTextFontDescriptor.setFallbackFontFamily("Arial")
-		defer { DTCoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
+		CoreTextFontDescriptor.setFallbackFontFamily("Arial")
+		defer { CoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
 
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><b>text</b></span>")!
 
@@ -96,8 +96,8 @@ struct FontDescriptorTests {
 
 	@Test("Fallback font family with italic font trait")
 	func fallbackFontFamilyWithItalicFontTrait() {
-		DTCoreTextFontDescriptor.setFallbackFontFamily("Arial")
-		defer { DTCoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
+		CoreTextFontDescriptor.setFallbackFontFamily("Arial")
+		defer { CoreTextFontDescriptor.setFallbackFontFamily(previousFallbackFontFamily ?? "Times New Roman") }
 
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><em>text</em></span>")!
 

@@ -12,38 +12,25 @@ let package = Package(
     products: [
         .library(
             name: "DTCoreText",
-			// type: .dynamic,
             targets: ["DTCoreTextSwift"])
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
     ],
     targets: [
-        .target(
-            name: "DTCoreText",
-            dependencies: [],
-            path: "Core",
-			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],
-             resources: [
-            	.copy("Source/default.css")]
-        ),
 		.target(
 			name: "DTCoreTextSwift",
 			dependencies: [
-				"DTCoreText",
 				.product(name: "SwiftTextHTML", package: "SwiftText"),
 			],
-			path: "Sources/DTCoreTextSwift"
+			path: "Sources/DTCoreTextSwift",
+			resources: [
+				.copy("default.css")
+			]
 		),
-        .target(
-            name: "DTCoreTextTestHelpers",
-            dependencies: ["DTCoreText"],
-            path: "Tests/DTCoreTextTestHelpers",
-            publicHeadersPath: "include"
-        ),
         .testTarget(
             name: "DTCoreTextSwiftTests",
-            dependencies: ["DTCoreTextSwift", "DTCoreTextTestHelpers"],
+            dependencies: ["DTCoreTextSwift"],
             path: "Tests/DTCoreTextSwiftTests",
             resources: [
                 .copy("Resources/AppleConverted.html"),

@@ -10,7 +10,6 @@
 
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
-import DTCoreText
 import os.log
 
 private let logger = Logger(subsystem: "com.cocoanetics.DTCoreText", category: "AttributedTextCell")

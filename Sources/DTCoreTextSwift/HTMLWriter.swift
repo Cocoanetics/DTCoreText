@@ -11,7 +11,6 @@
 import Foundation
 import CoreGraphics
 import CoreText
-import DTCoreText
 
 /// The Unicode object replacement character U+FFFC.
 private let kUnicodeObjectPlaceholder = "\u{FFFC}"
@@ -72,7 +71,7 @@ public class HTMLWriter: NSObject {
 		return "\(prefix)\(index)"
 	}
 
-	private func _tagRepresentation(forListStyle listStyle: DTCSSListStyle, closingTag: Bool, listPadding: CGFloat, inlineStyles: Bool) -> String {
+	private func _tagRepresentation(forListStyle listStyle: CSSListStyle, closingTag: Bool, listPadding: CGFloat, inlineStyles: Bool) -> String {
 		var isOrdered = false
 		var typeString: String? = nil
 
@@ -200,7 +199,7 @@ public class HTMLWriter: NSObject {
 
 		var location = 0
 
-		var previousListStyles: [DTCSSListStyle]? = nil
+		var previousListStyles: [CSSListStyle]? = nil
 
 		for i in 0..<paragraphs.count {
 			let oneParagraph = paragraphs[i]
@@ -239,7 +238,7 @@ public class HTMLWriter: NSObject {
 			let paraAttributesDict = paraAttributes as NSDictionary
 
 			// lets see if we have a list style
-			let currentListStyles = paraAttributesDict.object(forKey: DTTextListsAttribute) as? [DTCSSListStyle]
+			let currentListStyles = paraAttributesDict.object(forKey: DTTextListsAttribute) as? [CSSListStyle]
 
 			let effectiveListStyle = currentListStyles?.last
 
@@ -269,7 +268,7 @@ public class HTMLWriter: NSObject {
 
 			if fontIsBlockLevel {
 				if let paragraphFont = paragraphFont,
-				   let desc = DTCoreTextFontDescriptor(ctFont: paragraphFont) {
+				   let desc = CoreTextFontDescriptor(ctFont: paragraphFont) {
 
 					if _textScale != 1.0 {
 						desc.pointSize /= _textScale
@@ -311,12 +310,12 @@ public class HTMLWriter: NSObject {
 				needsToRemovePrefix = true
 
 				// get lists that need to be opened here
-				var listsToOpen: [DTCSSListStyle]? = nil
+				var listsToOpen: [CSSListStyle]? = nil
 
 				if previousListStyles == nil {
 					listsToOpen = currentListStyles
 				} else {
-					var tmpArray: [DTCSSListStyle] = []
+					var tmpArray: [CSSListStyle] = []
 
 					if let currentListStyles = currentListStyles {
 						for oneList in currentListStyles {
@@ -524,13 +523,13 @@ public class HTMLWriter: NSObject {
 					return
 				}
 
-				var attachment = attributesDict.object(forKey: NSAttributedString.Key.attachment.rawValue) as? DTTextAttachment
+				var attachment = attributesDict.object(forKey: NSAttributedString.Key.attachment.rawValue) as? TextAttachment
 
 				if plainSubString == kUnicodeObjectPlaceholder {
 
 					// if there was no old-style attachment let's try new NS-style.
 					if attachment == nil {
-						attachment = attributesDict.object(forKey: "NSAttachment") as? DTTextAttachment
+						attachment = attributesDict.object(forKey: "NSAttachment") as? TextAttachment
 					}
 
 					// we don't want to output the placeholder character in any case
@@ -733,7 +732,7 @@ public class HTMLWriter: NSObject {
 				let nextParagraphStart = NSMaxRange(nsPlainString.paragraphRange(for: paragraphRange))
 
 				if nextParagraphStart < nsPlainString.length {
-					let nextListStyles = _attributedString.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: nextParagraphStart, effectiveRange: nil) as? [DTCSSListStyle]
+					let nextListStyles = _attributedString.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: nextParagraphStart, effectiveRange: nil) as? [CSSListStyle]
 
 					// LI are only closed if there is not a deeper list level following
 					if let nextListStyles = nextListStyles,

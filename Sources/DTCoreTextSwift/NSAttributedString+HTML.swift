@@ -9,7 +9,6 @@
 //
 
 import Foundation
-import DTCoreText
 
 extension NSAttributedString {
 
