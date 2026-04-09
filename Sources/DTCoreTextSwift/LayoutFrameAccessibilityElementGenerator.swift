@@ -69,10 +69,10 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		return accessibilityElement(forText: attributedString, at: range, attributes: attributes, runs: runs, view: view)
 	}
 
-	private func accessibilityElement(forText attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [DTCoreTextGlyphRun], view: UIView) -> DTAccessibilityElement {
+	private func accessibilityElement(forText attributedString: NSAttributedString, at range: NSRange, attributes: NSDictionary, runs: [DTCoreTextGlyphRun], view: UIView) -> AccessibilityElement {
 		let text = (attributedString.string as NSString).substring(with: range)
 
-		let element = DTAccessibilityElement(parentView: view)
+		let element = AccessibilityElement(parentView: view)
 		element.accessibilityLabel = text
 		element.localCoordinateAccessibilityFrame = frameForRuns(runs)
 

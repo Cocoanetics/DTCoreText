@@ -72,7 +72,6 @@
 
 #import "UIFont+DTCoreText.h"
 
-#import "DTAccessibilityElement.h"
 
 #endif
 
