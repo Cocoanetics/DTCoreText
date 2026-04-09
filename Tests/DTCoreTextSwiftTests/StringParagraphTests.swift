@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import DTCoreText
 
-@Suite("String Paragraph")
+@Suite("String Paragraph", .serialized)
 struct StringParagraphTests {
 	@Test("Finds paragraph ranges correctly")
 	func paragraphFinding() {

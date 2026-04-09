@@ -14,7 +14,7 @@ private func makeEdgeInsets(top: CGFloat, left: CGFloat, bottom: CGFloat, right:
 }
 #endif
 
-@Suite("Text Block")
+@Suite("Text Block", .serialized)
 struct TextBlockTests {
 	@Test("Equal blocks compare as equal")
 	func equals() {
@@ -34,6 +34,7 @@ struct TextBlockTests {
 		#expect(block1 != block2)
 
 		#expect(block1 != nil)
+		#expect(block1 != ("bla" as NSString))
 
 		// exactly same color
 		block2.backgroundColor = block1.backgroundColor

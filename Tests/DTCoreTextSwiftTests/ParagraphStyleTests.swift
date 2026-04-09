@@ -3,7 +3,7 @@ import Foundation
 import CoreText
 @testable import DTCoreText
 
-@Suite("Paragraph Style")
+@Suite("Paragraph Style", .serialized)
 struct ParagraphStyleTests {
 	@Test("Loss of tab stops after round-trip through CTParagraphStyle")
 	func lossOfTabStops() {

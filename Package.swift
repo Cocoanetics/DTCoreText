@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version:6.1
 
 import PackageDescription
 
@@ -13,10 +13,11 @@ let package = Package(
         .library(
             name: "DTCoreText",
 			// type: .dynamic,
-            targets: ["DTCoreText"])
+            targets: ["DTCoreTextSwift"])
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
+        .package(url: "https://github.com/Cocoanetics/SwiftText.git", from: "1.0.0", traits: ["HTML"]),
     ],
     targets: [
         .target(
@@ -29,41 +30,23 @@ let package = Package(
              resources: [
             	.copy("Source/default.css")]
         ),
-        .testTarget(
-            name: "DTCoreTextTests",
+		.target(
+			name: "DTCoreTextSwift",
+			dependencies: [
+				"DTCoreText",
+				.product(name: "SwiftTextHTML", package: "SwiftText"),
+			],
+			path: "Sources/DTCoreTextSwift"
+		),
+        .target(
+            name: "DTCoreTextTestHelpers",
             dependencies: ["DTCoreText"],
-			path: "Test/Source",
-            resources: [
-                .copy("Resources/AppleConverted.html"),
-                .copy("Resources/CSSCascading.html"),
-                .copy("Resources/CSSCascading.plist"),
-                .copy("Resources/CSSOOMCrash.html"),
-                .copy("Resources/CSSOOMCrash.plist"),
-                .copy("Resources/CustomFont.plist"),
-                .copy("Resources/Emoji.html"),
-                .copy("Resources/Empty_and_Unclosed_Paragraphs.html"),
-                .copy("Resources/EmptyLinesAndFontAttribute.html"),
-                .copy("Resources/KeepMeTogether.html"),
-                .copy("Resources/ListItemBulletColorAndFont.html"),
-                .copy("Resources/ListTest.plist"),
-                .copy("Resources/MalformedURL.html"),
-                .copy("Resources/NavTag.html"),
-                .copy("Resources/NavTag.plist"),
-                .copy("Resources/PreWhitespace.html"),
-                .copy("Resources/PreWhitespace.plist"),
-                .copy("Resources/RetinaDataURL.html"),
-                .copy("Resources/RTL.html"),
-                .copy("Resources/SpaceBetweenUnderlines.html"),
-                .copy("Resources/Video.plist"),
-                .copy("Resources/WarAndPeace.plist"),
-                .copy("Resources/WhitespaceFollowingImagePromotedToParagraph.html"),
-                .copy("Resources/Oliver.jpg"),
-                .copy("Resources/Oliver@2x.jpg"),
-            ]
-			),
+            path: "Tests/DTCoreTextTestHelpers",
+            publicHeadersPath: "include"
+        ),
         .testTarget(
             name: "DTCoreTextSwiftTests",
-            dependencies: ["DTCoreText"],
+            dependencies: ["DTCoreTextSwift", "DTCoreTextTestHelpers"],
             path: "Tests/DTCoreTextSwiftTests",
             resources: [
                 .copy("Resources/AppleConverted.html"),

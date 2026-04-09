@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import DTCoreText
 
-@Suite("Layout Frame")
+@Suite("Layout Frame", .serialized)
 struct LayoutFrameTests {
 	@Test("Variable height layout")
 	func variableHeight() {

@@ -3,7 +3,7 @@ import Foundation
 import CoreText
 @testable import DTCoreText
 
-@Suite("CSS Stylesheet")
+@Suite("CSS Stylesheet", .serialized)
 struct CSSStylesheetTests {
 
 	private func stylesForSelector(_ selector: String, in stylesheet: DTCSSStylesheet) -> [String: Any]? {

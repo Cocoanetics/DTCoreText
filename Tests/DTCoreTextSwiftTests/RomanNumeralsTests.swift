@@ -1,7 +1,7 @@
 import Testing
 @testable import DTCoreText
 
-@Suite("Roman Numerals")
+@Suite("Roman Numerals", .serialized)
 struct RomanNumeralsTests {
 	@Test("Converts numbers to Roman numerals", arguments: [
 		(1, "I"),

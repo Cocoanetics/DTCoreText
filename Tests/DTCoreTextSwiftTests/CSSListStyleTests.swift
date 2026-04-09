@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import DTCoreText
 
-@Suite("CSS List Style")
+@Suite("CSS List Style", .serialized)
 struct CSSListStyleTests {
 	@Test("NSCoding round-trip preserves equality")
 	func nsCodingEqual() throws {
