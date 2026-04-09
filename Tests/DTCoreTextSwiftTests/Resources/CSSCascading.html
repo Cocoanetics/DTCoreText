@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<style>
+			div {
+				line-height: 150%;
+			}
+			
+			.foo .bar {
+				font-size: 25pt;
+			}
+			
+			.foo .bar .bing {
+				color: green;
+			}
+			
+			.foo .bing {
+				font-weight: bold;
+			}
+			
+			.bar .bing {
+				text-decoration: underline;
+			}
+			
+			.zing {
+				color: orange;
+			}
+			
+			.meow {
+				font-weight: normal;
+			}
+			
+			.bar .zing {
+				font-style: italic;
+			}
+			
+			#blargh .zing {
+				text-decoration: line-through;
+			}
+			
+			#fizz #blargh {
+				color: purple;
+			}
+			
+			div div div .bling {
+				color: orange;
+			}
+			
+			div #moo {
+				color: #777;
+			}
+			
+			div .bling {
+				text-decoration: underline;
+			}
+			
+			/* intentionally inconsistent spacing to test selector cleanup */
+			#fizz  .bling  {
+				font-style: italic;
+				line-height: 175%;
+			}
+			</style>
+	</head>
+	<body>
+		<div id="fizz" class="foo">
+			<div>
+				<div class="bar">
+					<div class="bing">
+						me
+						<span id="blargh"> buzz <span class="zing  meow ">owzers</span></span>
+					</div>
+					<span style="color:red;">Me<span class="bing">ow</span></span>
+					<div><p class="bling">this is a test of by tag name styles targeted by class on an ancestor.</p></div>
+					<p id="moo">i'm gray text</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

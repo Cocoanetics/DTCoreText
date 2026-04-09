@@ -1009,7 +1009,7 @@ NSDictionary *_classesForNames = nil;
 	NSString *fontStyleObject = [styles objectForKey:@"font-style"];
 	if (fontStyleObject && [fontStyleObject isKindOfClass:[NSString class]])
 	{
-		NSString *fontStyle = [fontSizeObj lowercaseString];
+		NSString *fontStyle = [fontStyleObject lowercaseString];
 		// remove font name since this would cause font creation to ignore the trait
 		_fontDescriptor.fontName = nil;
 		

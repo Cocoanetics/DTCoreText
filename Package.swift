@@ -1,13 +1,13 @@
-// swift-tools-version:5.3
+// swift-tools-version:6.0
 
 import PackageDescription
 
 let package = Package(
     name: "DTCoreText",
     platforms: [
-        .iOS(.v9),         //.v8 - .v13
-        .macOS(.v10_10),    //.v10_10 - .v10_15
-        .tvOS(.v9),        //.v9 - .v13
+        .iOS(.v13),
+        .macOS(.v10_15),
+        .tvOS(.v13),
     ],
     products: [
         .library(
@@ -25,7 +25,7 @@ let package = Package(
                 .product(name: "DTFoundation", package: "DTFoundation"),
             ],
             path: "Core",
-			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],  
+			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],
              resources: [
             	.copy("Source/default.css")]
         ),
@@ -60,6 +60,38 @@ let package = Package(
                 .copy("Resources/Oliver.jpg"),
                 .copy("Resources/Oliver@2x.jpg"),
             ]
-			)
+			),
+        .testTarget(
+            name: "DTCoreTextSwiftTests",
+            dependencies: ["DTCoreText"],
+            path: "Tests/DTCoreTextSwiftTests",
+            resources: [
+                .copy("Resources/AppleConverted.html"),
+                .copy("Resources/CSSCascading.html"),
+                .copy("Resources/CSSCascading.plist"),
+                .copy("Resources/CSSOOMCrash.html"),
+                .copy("Resources/CSSOOMCrash.plist"),
+                .copy("Resources/CustomFont.plist"),
+                .copy("Resources/Emoji.html"),
+                .copy("Resources/Empty_and_Unclosed_Paragraphs.html"),
+                .copy("Resources/EmptyLinesAndFontAttribute.html"),
+                .copy("Resources/KeepMeTogether.html"),
+                .copy("Resources/ListItemBulletColorAndFont.html"),
+                .copy("Resources/ListTest.plist"),
+                .copy("Resources/MalformedURL.html"),
+                .copy("Resources/NavTag.html"),
+                .copy("Resources/NavTag.plist"),
+                .copy("Resources/PreWhitespace.html"),
+                .copy("Resources/PreWhitespace.plist"),
+                .copy("Resources/RetinaDataURL.html"),
+                .copy("Resources/RTL.html"),
+                .copy("Resources/SpaceBetweenUnderlines.html"),
+                .copy("Resources/Video.plist"),
+                .copy("Resources/WarAndPeace.plist"),
+                .copy("Resources/WhitespaceFollowingImagePromotedToParagraph.html"),
+                .copy("Resources/Oliver.jpg"),
+                .copy("Resources/Oliver@2x.jpg"),
+            ]
+        ),
     ]
 )
