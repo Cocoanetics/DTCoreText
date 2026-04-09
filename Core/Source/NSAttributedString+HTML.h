@@ -18,40 +18,8 @@
 
 @interface NSAttributedString (HTML)
 
-/**
- @name Creating an NSAttributedString
- */
-
-/**
- Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL.
- @param data The data in HTML format from which to create the attributed string.
- @param docAttributes Currently not in used.
- @returns Returns an initialized object, or `nil` if the data can’t be decoded.
- @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
- */
-- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
-
-/**
- Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL.
- @param data The data in HTML format from which to create the attributed string.
- @param baseURL An `NSURL` that represents the base URL for all links within the HTML.
- @param docAttributes Currently not in used.
- @returns Returns an initialized object, or `nil` if the data can’t be decoded.
- @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
- */
-- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)baseURL documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
-
-/**
- Initializes and returns a new `NSAttributedString` object from the HTML contained in the given object and base URL. 
- 
- @param data The data in HTML format from which to create the attributed string.
- @param options Specifies how the document should be loaded.
- @param docAttributes Currently not in used.
- @returns Returns an initialized object, or `nil` if the data can’t be decoded.
-  @see [DTHTMLAttributedStringBuilder initWithHTML:options:documentAttributes:] for a list of available options
- */
-- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes;
-
+// initWithHTMLData: convenience initializers have moved to Swift (DTCoreTextSwift target).
+// Import DTCoreTextSwift to use them.
 
 /**
  @name Working with Custom HTML Attributes

@@ -1,5 +1,5 @@
 {
-  "originHash" : "86eb010eec5bd3b447b46b5c7a3a554506f2c4f970cb7931107a67bc7707a587",
+  "originHash" : "a414f6157121d3fb2457a26bcd0204865ac0466c59c5963d62e9ea8a23b7000a",
   "pins" : [
     {
       "identity" : "dtfoundation",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Cocoanetics/SwiftText.git",
       "state" : {
-        "revision" : "9c98c377da8dd9d9e0f4217b992feef11496be28",
-        "version" : "1.1.7"
+        "branch" : "main",
+        "revision" : "b3fa323b3c9090138b62c5c279c5cce159f1b123"
       }
     },
     {

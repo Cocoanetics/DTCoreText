@@ -15,7 +15,7 @@ struct AttributedStringDTCoreTextTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<p>some text</p><a name=\"anchor\">anchor</a><p>more text</p>")!
 
 		let range = attributedString.range(ofAnchorNamed: "anchor")
-		#expect(range == NSRange(location: 10, length: 7))
+		#expect(range == NSRange(location: 10, length: 6))
 
 		let notFound = attributedString.range(ofAnchorNamed: "something")
 		#expect(notFound == NSRange(location: NSNotFound, length: 0))

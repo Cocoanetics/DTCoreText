@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import CoreText
 @testable import DTCoreText
+import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -16,7 +17,7 @@ struct AttributedStringHTMLTests {
 
 	private func attributedStringFromHTML(_ html: String) -> NSAttributedString? {
 		guard let data = html.data(using: .utf8) else { return nil }
-		let builder = DTHTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
 		return builder?.generatedAttributedString()
 	}
 

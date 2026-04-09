@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import CoreText
 @testable import DTCoreText
+import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
