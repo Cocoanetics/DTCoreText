@@ -5,9 +5,9 @@ import PackageDescription
 let package = Package(
     name: "DTCoreText",
     platforms: [
-        .iOS(.v13),
-        .macOS(.v10_15),
-        .tvOS(.v13),
+        .iOS(.v16),
+        .macOS(.v13),
+        .tvOS(.v16),
     ],
     products: [
         .library(
@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
-        .package(url: "https://github.com/Cocoanetics/SwiftText.git", from: "1.0.0", traits: ["HTML"]),
+        .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
     ],
     targets: [
         .target(

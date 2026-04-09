@@ -15,7 +15,6 @@
 
 #import "DTHTMLElement.h"
 #import "DTCoreTextConstants.h"
-#import "DTHTMLAttributedStringBuilder.h"
 #import "DTTextAttachment.h"
 
 #if TARGET_OS_IPHONE
@@ -24,46 +23,7 @@
 
 @implementation NSAttributedString (HTML)
 
-- (id)initWithHTMLData:(NSData *)data documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
-{
-	return [self initWithHTMLData:data options:nil documentAttributes:docAttributes];
-}
-
-- (id)initWithHTMLData:(NSData *)data baseURL:(NSURL *)base documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
-{
-	NSDictionary *optionsDict = nil;
-	
-	if (base)
-	{
-		optionsDict = [NSDictionary dictionaryWithObject:base forKey:NSBaseURLDocumentOption];
-	}
-	
-	return [self initWithHTMLData:data options:optionsDict documentAttributes:docAttributes];
-}
-
-- (id)initWithHTMLData:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
-{
-	// only with valid data
-	if (![data length])
-	{
-		return nil;
-	}
-	
-	DTHTMLAttributedStringBuilder *stringBuilder = [[DTHTMLAttributedStringBuilder alloc] initWithHTML:data options:options documentAttributes:docAttributes];
-	
-	void (^callBackBlock)(DTHTMLElement *element) = [options objectForKey:DTWillFlushBlockCallBack];
-	
-	if (callBackBlock)
-	{
-		[stringBuilder setWillFlushCallback:callBackBlock];
-	}
-	
-	// This needs to be on a separate line so that ARC can handle releasing the object properly
-	// return [stringBuilder generatedAttributedString]; shows leak in instruments
-	id string = [stringBuilder generatedAttributedString];
-	
-	return string;
-}
+// initWithHTMLData: methods are now implemented in Swift (DTCoreTextSwift target)
 
 #pragma mark - NSAttributedString Archiving
 + (NSMutableDictionary *)getArchivingDictionaryWith:(NSDictionary *)attrs

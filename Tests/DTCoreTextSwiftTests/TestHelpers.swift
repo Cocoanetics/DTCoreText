@@ -1,5 +1,6 @@
 import Foundation
 @testable import DTCoreText
+import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -20,7 +21,7 @@ enum TestHelpers {
 
 		DTTextAttachment.registerClass(DTObjectTextAttachment.self, forTagName: "oliver")
 
-		let builder = DTHTMLAttributedStringBuilder(html: data, options: mutableOptions, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: mutableOptions, documentAttributes: nil)
 		return builder?.generatedAttributedString()
 	}
 
@@ -28,7 +29,7 @@ enum TestHelpers {
 		guard let path = Bundle.module.path(forResource: name, ofType: "html") else { return nil }
 		guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { return nil }
 
-		let builder = DTHTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
 		return builder?.generatedAttributedString()
 	}
 }
