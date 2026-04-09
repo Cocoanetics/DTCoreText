@@ -13,7 +13,7 @@ import UIKit
 import QuartzCore
 import DTCoreText
 
-/// A `UIScrollView` subclass that displays a `DTAttributedTextContentView`
+/// A `UIScrollView` subclass that displays a `AttributedTextContentView`
 /// as its content view. Replacement for `UITextView` with rich text.
 @objc(DTAttributedTextView)
 public class AttributedTextView: UIScrollView {
@@ -21,12 +21,12 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Content View
 
 	/// Subclasses can access this ivar directly.
-	@objc public var _attributedTextContentView: DTAttributedTextContentView?
+	@objc public var _attributedTextContentView: AttributedTextContentView?
 
 	// MARK: - Private State
 
 	private var _backgroundView: UIView?
-	private weak var _textDelegate: (any DTAttributedTextContentViewDelegate)?
+	private weak var _textDelegate: (any AttributedTextContentViewDelegate)?
 	private var _attributedString: NSAttributedString?
 	private var _shouldDrawLinks = true
 	private var _shouldDrawImages = true
@@ -79,9 +79,9 @@ public class AttributedTextView: UIScrollView {
 
 	// MARK: - Content View Class
 
-	/// Override to provide a custom `DTAttributedTextContentView` subclass.
+	/// Override to provide a custom `AttributedTextContentView` subclass.
 	@objc open func classForContentView() -> AnyClass {
-		DTAttributedTextContentView.self
+		AttributedTextContentView.self
 	}
 
 	// MARK: - Public Methods
@@ -146,12 +146,12 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Properties
 
 	/// The attributed text content view (created lazily).
-	@objc public var attributedTextContentView: DTAttributedTextContentView {
+	@objc public var attributedTextContentView: AttributedTextContentView {
 		if let existing = _attributedTextContentView {
 			return existing
 		}
 
-		let classToUse = classForContentView() as! DTAttributedTextContentView.Type
+		let classToUse = classForContentView() as! AttributedTextContentView.Type
 		var frame = bounds.inset(by: contentInset)
 
 		if frame.size.width <= 0 || frame.size.height <= 0 {
@@ -160,10 +160,10 @@ public class AttributedTextView: UIScrollView {
 
 		// Force a tiled layer for content views
 		var previousLayerClass: AnyClass?
-		if classToUse.isSubclass(of: DTAttributedTextContentView.self) {
-			let layerClass = DTAttributedTextContentView.layerClass
+		if classToUse.isSubclass(of: AttributedTextContentView.self) {
+			let layerClass = AttributedTextContentView.layerClass
 			if !(layerClass is CATiledLayer.Type) {
-				DTAttributedTextContentView.setLayerClass(CATiledLayer.self)
+				AttributedTextContentView.setLayerClass(CATiledLayer.self)
 				previousLayerClass = layerClass
 			}
 		}
@@ -171,7 +171,7 @@ public class AttributedTextView: UIScrollView {
 		let contentView = classToUse.init(frame: frame)
 
 		if let previousLayerClass {
-			DTAttributedTextContentView.setLayerClass(previousLayerClass)
+			AttributedTextContentView.setLayerClass(previousLayerClass)
 		}
 
 		contentView.isUserInteractionEnabled = true
@@ -187,7 +187,7 @@ public class AttributedTextView: UIScrollView {
 
 		NotificationCenter.default.addObserver(self,
 											   selector: #selector(contentViewDidLayout(_:)),
-											   name: NSNotification.Name(DTAttributedTextContentViewDidFinishLayoutNotification),
+											   name: NSNotification.Name(AttributedTextContentViewDidFinishLayoutNotification),
 											   object: contentView)
 
 		contentView.frame = frame
@@ -239,7 +239,7 @@ public class AttributedTextView: UIScrollView {
 	}
 
 	/// Delegate for providing custom views for images and links.
-	@objc public weak var textDelegate: (any DTAttributedTextContentViewDelegate)? {
+	@objc public weak var textDelegate: (any AttributedTextContentViewDelegate)? {
 		get { _attributedTextContentView?.delegate ?? _textDelegate }
 		set {
 			_textDelegate = newValue

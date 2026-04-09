@@ -90,8 +90,7 @@ extern NSString * const DTArchivingAttribute;
 
 extern NSString * const DTListPrefixField;
 
-// iOS 6 compatibility
-extern BOOL ___useiOS6Attributes;
+// ___useiOS6Attributes removed — NS-style attributes always used on iOS 16+ / macOS 13+
 
 // exceptions
 extern NSString * const DTCoreTextFontDescriptorException;

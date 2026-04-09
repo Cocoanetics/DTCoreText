@@ -13,12 +13,12 @@ import UIKit
 import QuartzCore
 import DTCoreText
 
-/// A rich-text replacement for `UILabel`, inheriting from `DTAttributedTextContentView`.
+/// A rich-text replacement for `UILabel`, inheriting from `AttributedTextContentView`.
 ///
-/// Unlike `DTAttributedTextContentView`, the intrinsic content size is only as wide as the text content.
+/// Unlike `AttributedTextContentView`, the intrinsic content size is only as wide as the text content.
 /// Call `sizeToFit()` to shrink the label to that width.
 @objc(DTAttributedLabel)
-public class AttributedLabel: DTAttributedTextContentView {
+public class AttributedLabel: AttributedTextContentView {
 
 	// MARK: - Layer
 

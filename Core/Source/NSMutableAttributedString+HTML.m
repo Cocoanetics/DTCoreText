@@ -66,40 +66,24 @@
 		
 		if (paragraphStyle)
 		{
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-			if (___useiOS6Attributes)
-			{
-				NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
-				[attributes setObject:style forKey:NSParagraphStyleAttributeName];
-			}
-			else
-#endif
-			{
-				CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-				[attributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-			}
+			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
+			[attributes setObject:style forKey:NSParagraphStyleAttributeName];
 		}
 		
 		if (fontDescriptor)
 		{
 			CTFontRef newFont = [fontDescriptor newMatchingFont];
-			
+
 			if (newFont)
 			{
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
-				if (___useiOS6Attributes)
-				{
-					// convert to UIFont
-					UIFont *uiFont = [UIFont fontWithCTFont:newFont];
-					[attributes setObject:uiFont forKey:NSFontAttributeName];
-					
-					CFRelease(newFont);
-				}
-				else
+#if TARGET_OS_IPHONE
+				UIFont *uiFont = [UIFont fontWithCTFont:newFont];
+				[attributes setObject:uiFont forKey:NSFontAttributeName];
+				CFRelease(newFont);
+#else
+				[attributes setObject:(__bridge id)(newFont) forKey:NSFontAttributeName];
+				CFRelease(newFont);
 #endif
-				{
-					[attributes setObject:CFBridgingRelease(newFont) forKey:(id)kCTFontAttributeName];
-				}
 			}
 		}
 		
@@ -126,40 +110,18 @@
 	NSMutableDictionary *appendAttributes = [NSMutableDictionary dictionary];
 
 	
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	if (___useiOS6Attributes)
+	id font = [attributes objectForKey:NSFontAttributeName];
+
+	if (font)
 	{
-		id font = [attributes objectForKey:NSFontAttributeName];
-		
-		if (font)
-		{
-			[appendAttributes setObject:font forKey:NSFontAttributeName];
-		}
-		
-		id paragraphStyle = [attributes objectForKey:NSParagraphStyleAttributeName];
-		
-		if (paragraphStyle)
-		{
-			[appendAttributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-		}
-		
+		[appendAttributes setObject:font forKey:NSFontAttributeName];
 	}
-	else
-#endif
+
+	id paragraphStyle = [attributes objectForKey:NSParagraphStyleAttributeName];
+
+	if (paragraphStyle)
 	{
-		CTFontRef font = (__bridge CTFontRef)[attributes objectForKey:(id)kCTFontAttributeName];
-		
-		if (font)
-		{
-			[appendAttributes setObject:(__bridge id)(font) forKey:(id)kCTFontAttributeName];
-		}
-		
-		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[attributes objectForKey:(id)kCTParagraphStyleAttributeName];
-		
-		if (paragraphStyle)
-		{
-			[appendAttributes setObject:(__bridge id)(paragraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-		}
+		[appendAttributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
 	}
 	
 	// transfer blocks
@@ -179,34 +141,11 @@
 	}
 
 	// transfer foreground color
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	if (___useiOS6Attributes)
+	id foregroundColor = [attributes objectForKey:NSForegroundColorAttributeName];
+
+	if (foregroundColor)
 	{
-		id foregroundColor = [attributes objectForKey:NSForegroundColorAttributeName];
-		
-		if (foregroundColor)
-		{
-			[appendAttributes setObject:foregroundColor forKey:NSForegroundColorAttributeName];
-		}
-	}
-	else
-#endif
-	{
-		id foregroundColor = [attributes objectForKey:(id)kCTForegroundColorAttributeName];
-		
-		if (foregroundColor)
-		{
-#if TARGET_OS_IPHONE
-			if ([foregroundColor isKindOfClass:[UIColor class]])
-			{
-				[appendAttributes setObject:(id)[foregroundColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
-			}
-			else
-#endif
-			{
-				[appendAttributes setObject:foregroundColor forKey:(id)kCTForegroundColorAttributeName];
-			}
-		}
+		[appendAttributes setObject:foregroundColor forKey:NSForegroundColorAttributeName];
 	}
 
 	NSAttributedString *newlineString = [[NSAttributedString alloc] initWithString:@"\n" attributes:appendAttributes];
@@ -249,14 +188,6 @@
 				[mutableDictionary setObject:value forKey:name];
 				
 				// substitute attribute
-#if DTCORETEXT_NEEDS_ATTRIBUTE_REPLACEMENT_LEAK_FIX
-				if (NSFoundationVersionNumber <=  NSFoundationVersionNumber10_6_8)  // less than OS X 10.7 and less than iOS 5
-				{
-					// remove old (works around iOS 4.3 leak)
-					[self removeAttribute:DTCustomAttributesAttribute range:effectiveRange];
-				}
-#endif
-
 				[self addAttribute:DTCustomAttributesAttribute value:[mutableDictionary copy] range:effectiveRange];
 			}
 			else

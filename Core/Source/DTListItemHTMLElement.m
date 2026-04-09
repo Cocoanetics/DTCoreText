@@ -142,19 +142,11 @@
 		// first tab is to right-align bullet, numbering against
 		CGFloat tabOffset = paragraphStyle.headIndent - (CGFloat)5.0; // TODO: change with font size
 		
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTTextAlignmentRight];
-#else
-		[paragraphStyle addTabStopAtPosition:tabOffset alignment:kCTRightTextAlignment];
-#endif
 	}
 	
 	// second tab is for the beginning of first line after bullet
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
 	[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTTextAlignmentLeft];
-#else
-	[paragraphStyle addTabStopAtPosition:paragraphStyle.headIndent alignment:kCTLeftTextAlignment];
-#endif
 	
 	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
 	
@@ -166,54 +158,28 @@
 	
 	if (font)
 	{
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_5_1
-		if (___useiOS6Attributes)
-		{
-			UIFont *uiFont = [UIFont fontWithCTFont:font];
-			[newAttributes setObject:uiFont forKey:NSFontAttributeName];
-			
-			CFRelease(font);
-		}
-		else
+#if TARGET_OS_IPHONE
+		UIFont *uiFont = [UIFont fontWithCTFont:font];
+		[newAttributes setObject:uiFont forKey:NSFontAttributeName];
+		CFRelease(font);
+#else
+		[newAttributes setObject:(__bridge id)(font) forKey:NSFontAttributeName];
+		CFRelease(font);
 #endif
-		{
-			[newAttributes setObject:CFBridgingRelease(font) forKey:(id)kCTFontAttributeName];
-		}
 	}
 	
-	CGColorRef textColor = (__bridge CGColorRef)[attributes objectForKey:(id)kCTForegroundColorAttributeName];
-	
-	if (textColor)
+	DTColor *uiColor = [attributes foregroundColor];
+
+	if (uiColor)
 	{
-		[newAttributes setObject:(__bridge id)textColor forKey:(id)kCTForegroundColorAttributeName];
+		[newAttributes setObject:uiColor forKey:NSForegroundColorAttributeName];
 	}
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-	else if (___useiOS6Attributes)
-	{
-		DTColor *uiColor = [attributes foregroundColor];
-		
-		if (uiColor)
-		{
-			[newAttributes setObject:uiColor forKey:NSForegroundColorAttributeName];
-		}
-	}
-#endif
 	
 	// add paragraph style (this has the tabs)
 	if (paragraphStyle)
 	{
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (___useiOS6Attributes)
-		{
-			NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
-			[newAttributes setObject:style forKey:NSParagraphStyleAttributeName];
-		}
-		else
-#endif
-		{
-			CTParagraphStyleRef newParagraphStyle = [paragraphStyle createCTParagraphStyle];
-			[newAttributes setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
-		}
+		NSParagraphStyle *style = [paragraphStyle NSParagraphStyle];
+		[newAttributes setObject:style forKey:NSParagraphStyleAttributeName];
 	}
 	
 	// add textBlock if there's one (this has padding and background color)
@@ -269,7 +235,7 @@
 		attachment.image = image;
 		attachment.displaySize = image.size;
 		
-#if DTCORETEXT_SUPPORT_NS_ATTRIBUTES && TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
 		// need run delegate for sizing
 		CTRunDelegateRef embeddedObjectRunDelegate = createEmbeddedObjectRunDelegate(attachment);
 		[newAttributes setObject:CFBridgingRelease(embeddedObjectRunDelegate) forKey:(id)kCTRunDelegateAttributeName];

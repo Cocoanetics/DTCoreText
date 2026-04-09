@@ -60,9 +60,7 @@ NSString * const DTArchivingAttribute = @"DTArchivingAttribute";
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";
 
-// iOS 6 compatibility
-
-BOOL ___useiOS6Attributes = NO; // this gets set globally by DTHTMLAttributedStringBuilder
+// ___useiOS6Attributes removed — NS-style attributes always used
 
 
 // exceptions

@@ -15,13 +15,13 @@ import os.log
 
 private let logger = Logger(subsystem: "com.cocoanetics.DTCoreText", category: "AttributedTextCell")
 
-/// A table view cell that displays rich text via a `DTAttributedTextContentView`.
+/// A table view cell that displays rich text via a `AttributedTextContentView`.
 @objc(DTAttributedTextCell)
 public class AttributedTextCell: UITableViewCell {
 
-	private var _attributedTextContextView: DTAttributedTextContentView?
+	private var _attributedTextContextView: AttributedTextContentView?
 
-	private weak var _textDelegate: DTAttributedTextContentViewDelegate?
+	private weak var _textDelegate: AttributedTextContentViewDelegate?
 
 	private var _htmlHash: Int = 0
 
@@ -161,7 +161,7 @@ public class AttributedTextCell: UITableViewCell {
 	}
 
 	/// The delegate that provides custom subviews for images and links.
-	@objc public weak var textDelegate: DTAttributedTextContentViewDelegate? {
+	@objc public weak var textDelegate: AttributedTextContentViewDelegate? {
 		get { return _textDelegate }
 		set {
 			_textDelegate = newValue
@@ -170,12 +170,12 @@ public class AttributedTextCell: UITableViewCell {
 	}
 
 	/// The attributed text content view used to display rich text.
-	@objc public var attributedTextContextView: DTAttributedTextContentView {
+	@objc public var attributedTextContextView: AttributedTextContentView {
 		if let existing = _attributedTextContextView {
 			return existing
 		}
 
-		let view = DTAttributedTextContentView(frame: contentView.bounds)!
+		let view = AttributedTextContentView(frame: contentView.bounds)!
 		view.edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
 		view.layoutFrameHeightIsConstrainedByBounds = hasFixedRowHeight
 		view.delegate = _textDelegate

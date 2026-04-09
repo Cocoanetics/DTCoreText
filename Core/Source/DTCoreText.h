@@ -38,9 +38,7 @@
 #import "NSCharacterSet+HTML.h"
 #import "NSCoder+DTCompatibility.h"
 #import "NSDictionary+DTCoreText.h"
-#import "NSAttributedString+HTML.h"
 #import "NSAttributedString+SmallCaps.h"
-#import "NSAttributedString+DTCoreText.h"
 #import "NSMutableAttributedString+HTML.h"
 #import "NSScanner+HTML.h"
 #import "NSString+CSS.h"
@@ -70,7 +68,6 @@
 // TARGET_OS_IPHONE is both tvOS and iOS
 #if TARGET_OS_IPHONE
 
-#import "DTAttributedTextContentView.h"
 #import "DTCoreTextFontCollection.h"
 
 #import "UIFont+DTCoreText.h"
