@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import CoreText
 @testable import DTCoreText
+import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -17,7 +18,7 @@ struct HTMLWriterTests {
 	private func testListIndentRoundTrip(from html: String, fragmentMode: Bool) throws {
 		let string1 = try #require(TestHelpers.attributedString(fromHTML: html))
 
-		let writer1 = DTHTMLWriter(attributedString: string1)!
+		let writer1 = HTMLWriter(attributedString: string1)
 		let html1: String
 		if fragmentMode {
 			html1 = writer1.htmlFragment()
@@ -85,9 +86,9 @@ struct HTMLWriterTests {
 			attributedText.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: color.cgColor, range: range)
 		}
 
-		let writer = DTHTMLWriter(attributedString: attributedText)!
+		let writer = HTMLWriter(attributedString: attributedText)
 		writer.useAppleConvertedSpace = false
-		let html = writer.htmlFragment()!
+		let html = writer.htmlFragment()
 
 		let colorRange = (html as NSString).range(of: "background-color:#ffff00")
 		#expect(colorRange.location != NSNotFound, "html should contain background-color:#ffff00")
@@ -110,9 +111,9 @@ struct HTMLWriterTests {
 		let html = String(format: "<ul style=\"-webkit-padding-start:%fpx;padding-left:%fpx;\"><li>fooo</li><li>fooo</li><li>fooo</li></ul>", textSize * textScale, textSize * textScale)
 		let string = try #require(TestHelpers.attributedString(fromHTML: html))
 
-		let writer = DTHTMLWriter(attributedString: string)!
+		let writer = HTMLWriter(attributedString: string)
 		writer.textScale = textScale
-		let writtenHTML = writer.htmlFragment()!
+		let writtenHTML = writer.htmlFragment()
 
 		#expect((writtenHTML as NSString).range(of: "-webkit-padding-start:32px;padding-left:32px;").location != NSNotFound, "Text scale should not affect list indention amount")
 	}
@@ -149,7 +150,7 @@ struct HTMLWriterTests {
 	func nestedListOutput() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ol><li>1a<ul><li>2a</li></ul></li></ol>"))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let html = writer.htmlFragment().replacingOccurrences(of: "\n", with: "")
 
 		let rangeLILI = (html as NSString).range(of: "</li></ul></li></ol>")
@@ -166,7 +167,7 @@ struct HTMLWriterTests {
 	func nestedListOutputWithoutTextNode() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ul><li><ol><li>2a</li><li>2b</li></ol></li><li>1a</li></ul>"))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let html = writer.htmlFragment().replacingOccurrences(of: "\n", with: "")
 
 		let twoAOutsideOL = (html as NSString).range(of: "2a</span><ol")
@@ -179,7 +180,7 @@ struct HTMLWriterTests {
 	func kerning() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>"))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let html = writer.htmlFragment().replacingOccurrences(of: "\n", with: "")
 
 		let letterSpacingRange = (html as NSString).range(of: "letter-spacing:10px;")
@@ -198,7 +199,7 @@ struct HTMLWriterTests {
 		let kerningValue = (attributes as NSDictionary).kerning()
 		#expect(kerningValue == 30, "Scaled up kerning should be 30")
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let html = writer.htmlFragment().replacingOccurrences(of: "\n", with: "")
 
 		let letterSpacingRange = (html as NSString).range(of: "letter-spacing:10px;")
@@ -213,7 +214,7 @@ struct HTMLWriterTests {
 		let attributedString = NSMutableAttributedString(string: "first second third")
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameValue", range: NSRange(location: 6, length: 6))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<span>" +
 			"<span style=\"color:#000000;\">first </span>" +
@@ -233,7 +234,7 @@ struct HTMLWriterTests {
 		let color = DTColorCreateWithHexString("0000FF")!
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: color.cgColor, range: NSRange(location: 12, length: 14))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<span>" +
 			"<span style=\"color:#000000;\">single line </span>" +
@@ -256,7 +257,7 @@ struct HTMLWriterTests {
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: backgroundColor.cgColor, range: NSRange(location: 3, length: 7))
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameAttribute", range: NSRange(location: 2, length: 7))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<span>" +
 			"<span style=\"color:#000000;\">11</span>" +
@@ -279,7 +280,7 @@ struct HTMLWriterTests {
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: backgroundColor.cgColor, range: NSRange(location: 2, length: 7))
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameAttribute", range: NSRange(location: 3, length: 7))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<span>" +
 			"<span style=\"color:#000000;\">11</span>" +
@@ -299,7 +300,7 @@ struct HTMLWriterTests {
 		let attributedString = NSMutableAttributedString(string: "first line\nsecond line\nthird line")
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameValue", range: NSRange(location: 0, length: 22))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<p>" +
 			"<a name=\"nameValue\">" +
@@ -325,7 +326,7 @@ struct HTMLWriterTests {
 		let color = DTColorCreateWithHexString("0000FF")!
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: color.cgColor, range: NSRange(location: 12, length: 22))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<p>" +
 			"<span style=\"color:#000000;\">single line </span>" +
@@ -353,7 +354,7 @@ struct HTMLWriterTests {
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: backgroundColor.cgColor, range: NSRange(location: 2, length: 11))
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameAttribute", range: NSRange(location: 4, length: 7))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<p>" +
 			"<span style=\"color:#000000;\">11</span>" +
@@ -385,7 +386,7 @@ struct HTMLWriterTests {
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: backgroundColor.cgColor, range: NSRange(location: 5, length: 4))
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameAttribute", range: NSRange(location: 6, length: 4))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<p>" +
 			"<span style=\"color:#000000;\">111</span>" +
@@ -419,7 +420,7 @@ struct HTMLWriterTests {
 		attributedString.addAttribute(NSAttributedString.Key(DTBackgroundColorAttribute), value: backgroundColor.cgColor, range: NSRange(location: 6, length: 4))
 		attributedString.addAttribute(NSAttributedString.Key(DTAnchorAttribute), value: "nameAttribute", range: NSRange(location: 5, length: 4))
 
-		let writer = DTHTMLWriter(attributedString: attributedString)!
+		let writer = HTMLWriter(attributedString: attributedString)
 		let generatedHTMLFragment = writer.htmlFragment()
 		let expectedHTMLFragment = "<p>" +
 			"<span style=\"color:#000000;\">111</span>" +

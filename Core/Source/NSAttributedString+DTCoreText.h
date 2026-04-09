@@ -99,20 +99,8 @@
  @name Converting to Other Representations
  */
 
-/**
- Encodes the receiver into a generic HTML representation.
- 
- @returns An HTML string.
- */
-- (NSString *)htmlString;
-
-
-/**
- Encodes the receiver into a generic HTML fragment representation. Styles are inlined and no html or head tags are included.
- 
- @returns An HTML string.
- */
-- (NSString *)htmlFragment;
+// htmlString and htmlFragment have been moved to Swift (DTCoreTextSwift target).
+// Import DTCoreTextSwift to use them.
 
 /**
  Converts the receiver into plain text.
