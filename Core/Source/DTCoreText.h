@@ -73,8 +73,6 @@
 #import "UIFont+DTCoreText.h"
 
 #import "DTAccessibilityElement.h"
-#import "DTAccessibilityViewProxy.h"
-#import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
 
 #endif
 
