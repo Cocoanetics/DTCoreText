@@ -116,7 +116,6 @@ open class CoreTextLayoutFrame: NSObject {
         guard let framesetter = layouter.framesetter else { return nil }
 
         _framesetter = framesetter
-        CFRetain(_framesetter!)
 
         let path = CGMutablePath()
         path.addRect(frame)
@@ -124,11 +123,6 @@ open class CoreTextLayoutFrame: NSObject {
         _textFrame = CTFramesetterCreateFrame(framesetter, cfRange, path, nil)
 
         justifyRatio = 0.6
-    }
-
-    deinit {
-        if let textFrame = _textFrame { CFRelease(textFrame) }
-        if let framesetter = _framesetter { CFRelease(framesetter) }
     }
 
     open override var description: String {
@@ -143,7 +137,7 @@ open class CoreTextLayoutFrame: NSObject {
         let lineStartIndex = line.stringRange().location
 
         let lineParagraphStyle = fragment.attribute(.paragraphStyle, at: lineStartIndex, effectiveRange: nil) as! NSParagraphStyle
-        let ctStyle = lineParagraphStyle as CTParagraphStyle
+        let ctStyle = lineParagraphStyle as CFTypeRef as! CTParagraphStyle
 
         if previousLine == nil {
             if isLineFirst(inParagraph: line) {
@@ -182,7 +176,7 @@ open class CoreTextLayoutFrame: NSObject {
 
         if let previousLine = previousLine, isLineLast(inParagraph: previousLine) {
             let prevStyle = fragment.attribute(.paragraphStyle, at: previousLine.stringRange().location, effectiveRange: nil) as! NSParagraphStyle
-            let prevCtStyle = prevStyle as CTParagraphStyle
+            let prevCtStyle = prevStyle as CFTypeRef as! CTParagraphStyle
 
             var paraSpacing: CGFloat = 0
             CTParagraphStyleGetValueForSpecifier(prevCtStyle, .paragraphSpacing, MemoryLayout<CGFloat>.size, &paraSpacing)
@@ -297,10 +291,10 @@ open class CoreTextLayoutFrame: NSObject {
 
     /// Finds the appropriate baseline origin for a line.
     @objc open func baselineOrigin(toPositionLine line: CoreTextLayoutLine, afterLine previousLine: CoreTextLayoutLine?, options: DTCoreTextLayoutFrameLinePositioningOptions) -> CGPoint {
-        if options.rawValue & DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit.rawValue != 0 {
+        if options.rawValue & DTCoreTextLayoutFrameLinePositioningOptions.algorithmWebKit.rawValue != 0 {
             return _algorithmWebKit_BaselineOrigin(toPositionLine: line, afterLine: previousLine)
         }
-        if options.rawValue & DTCoreTextLayoutFrameLinePositioningOptionAlgorithmLegacy.rawValue != 0 {
+        if options.rawValue & DTCoreTextLayoutFrameLinePositioningOptions.algorithmLegacy.rawValue != 0 {
             return _algorithmLegacy_BaselineOrigin(toPositionLine: line, afterLine: previousLine)
         }
         return .zero
@@ -308,7 +302,7 @@ open class CoreTextLayoutFrame: NSObject {
 
     /// Deprecated: use baselineOrigin(toPositionLine:afterLine:options:) instead.
     @objc open func baselineOrigin(toPositionLine line: CoreTextLayoutLine, afterLine previousLine: CoreTextLayoutLine?) -> CGPoint {
-        return baselineOrigin(toPositionLine: line, afterLine: previousLine, options: DTCoreTextLayoutFrameLinePositioningOptionAlgorithmWebKit)
+        return baselineOrigin(toPositionLine: line, afterLine: previousLine, options: DTCoreTextLayoutFrameLinePositioningOptions.algorithmWebKit)
     }
 
     // MARK: - Building Lines
@@ -344,7 +338,7 @@ open class CoreTextLayoutFrame: NSObject {
             var tailIndent: CGFloat = 0
 
             let paragraphStyle = fragment.attribute(.paragraphStyle, at: lineRange.location, effectiveRange: nil) as! NSParagraphStyle
-            let ctStyle = paragraphStyle as CTParagraphStyle
+            let ctStyle = paragraphStyle as CFTypeRef as! CTParagraphStyle
 
             if isAtBeginOfParagraph {
                 CTParagraphStyleGetValueForSpecifier(ctStyle, .firstLineHeadIndent, MemoryLayout<CGFloat>.size, &headIndent)
@@ -651,8 +645,8 @@ open class CoreTextLayoutFrame: NSObject {
 
         let rect = context.boundingBoxOfClipPath
 
-        if _textFrame != nil { CFRetain(_textFrame!) }
-        defer { if _textFrame != nil { CFRelease(_textFrame!) } }
+        // Swift manages CF type lifetimes automatically
+        let _ = _textFrame // ensure retained for scope
 
         let visibleLines = linesVisible(in: rect)
         guard !visibleLines.isEmpty else { return }
@@ -679,7 +673,7 @@ open class CoreTextLayoutFrame: NSObject {
                 if oneRun.isTrailingWhitespace() { continue }
 
                 // set foreground color
-                let color = (oneRun.attributes as? [NSAttributedString.Key: Any])?.foregroundColor()
+                let color = (oneRun.attributes as? [NSAttributedString.Key: Any])?.dtct_foregroundColor()
                 if let color = color {
                     context.setStrokeColor(color.cgColor)
                 }

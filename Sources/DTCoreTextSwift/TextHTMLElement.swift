@@ -86,7 +86,7 @@ open class TextHTMLElement: HTMLElement {
 
                 return NSAttributedString(string: _text, attributes: smallAttributes)
             } else {
-                return NSAttributedString.synthesizedSmallCapsAttributedString(withText: _text, attributes: attributes)
+                return NSAttributedString.synthesizedSmallCapsAttributedString(withText: _text, attributes: attributes as NSDictionary)
             }
         }
     }

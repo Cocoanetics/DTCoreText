@@ -1,6 +1,5 @@
 import Foundation
-@testable import DTCoreText
-import DTCoreTextSwift
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit

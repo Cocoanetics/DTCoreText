@@ -9,6 +9,12 @@
 import Foundation
 import CoreText
 
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
+
 /// `CoreTextParagraphStyle` encapsulates the paragraph or ruler attributes used by the NSAttributedString classes.
 /// It is a replacement for `NSParagraphStyle` on platforms where CTParagraphStyle is used.
 @objc(DTCoreTextParagraphStyle)

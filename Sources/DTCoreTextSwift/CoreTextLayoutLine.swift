@@ -46,18 +46,13 @@ open class CoreTextLayoutLine: NSObject {
     /// Creates a layout line from a given CTLine with an optional string location offset.
     @objc public init?(line: CTLine, stringLocationOffset: Int) {
         _line = line
-        CFRetain(_line)
         _needsToDetectWritingDirection = true
         self.stringLocationOffset = stringLocationOffset
         super.init()
     }
 
-    deinit {
-        CFRelease(_line)
-    }
-
     open override var description: String {
-        return "<\(type(of: self)) origin=\(NSStringFromCGPoint(baselineOrigin)) frame=\(NSStringFromCGRect(self.frame)) range=\(NSStringFromRange(self.stringRange()))>"
+        return "<\(type(of: self)) origin=\(baselineOrigin) frame=\(self.frame) range=\(self.stringRange())>"
     }
 
     // MARK: - String Range
@@ -336,7 +331,7 @@ open class CoreTextLayoutLine: NSObject {
     /// The paragraph style of the paragraph this line belongs to.
     @objc open var paragraphStyle: CoreTextParagraphStyle? {
         guard let lastRun = (glyphRuns as? [CoreTextGlyphRun])?.last else { return nil }
-        return (lastRun.attributes as? [NSAttributedString.Key: Any])?.paragraphStyle()
+        return (lastRun.attributes as? [NSAttributedString.Key: Any])?.dtct_paragraphStyle()
     }
 
     /// The text blocks that the receiver belongs to.

@@ -72,7 +72,7 @@ public extension NSDictionary {
     @objc(dtct_paragraphStyle)
     func dtct_paragraphStyle() -> CoreTextParagraphStyle? {
         if let nsParagraphStyle = self[NSAttributedString.Key.paragraphStyle.rawValue] as? NSParagraphStyle {
-            return CoreTextParagraphStyle(nsParagraphStyle: nsParagraphStyle)
+            return CoreTextParagraphStyle.paragraphStyle(withNSParagraphStyle: nsParagraphStyle)
         }
 
         if let ctParagraphStyle = self[kCTParagraphStyleAttributeName as String] {
@@ -198,4 +198,44 @@ public extension NSDictionary {
 
 private extension Double {
     var toCGFloat: CGFloat { CGFloat(self) }
+}
+
+// MARK: - Swift Dictionary Extensions
+
+public extension Dictionary where Key == NSAttributedString.Key, Value == Any {
+
+    func dtct_paragraphStyle() -> CoreTextParagraphStyle? {
+        return (self as NSDictionary).dtct_paragraphStyle()
+    }
+
+    func dtct_fontDescriptor() -> CoreTextFontDescriptor? {
+        return (self as NSDictionary).dtct_fontDescriptor()
+    }
+
+    func dtct_foregroundColor() -> DTColor {
+        return (self as NSDictionary).dtct_foregroundColor()
+    }
+
+    func dtct_backgroundColor() -> DTColor? {
+        return (self as NSDictionary).dtct_backgroundColor()
+    }
+}
+
+public extension Dictionary where Key == String, Value == Any {
+
+    func dtct_paragraphStyle() -> CoreTextParagraphStyle? {
+        return (self as NSDictionary).dtct_paragraphStyle()
+    }
+
+    func dtct_fontDescriptor() -> CoreTextFontDescriptor? {
+        return (self as NSDictionary).dtct_fontDescriptor()
+    }
+
+    func dtct_foregroundColor() -> DTColor {
+        return (self as NSDictionary).dtct_foregroundColor()
+    }
+
+    func dtct_backgroundColor() -> DTColor? {
+        return (self as NSDictionary).dtct_backgroundColor()
+    }
 }

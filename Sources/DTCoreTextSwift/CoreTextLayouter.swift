@@ -46,7 +46,7 @@ open class CoreTextLayouter: NSObject {
         guard frame.size.width > 0 && frame.size.height > 0 else { return nil }
 
         if shouldCacheLayoutFrames {
-            cacheKey = "\(_attributedString?.hash ?? 0)-\(NSStringFromCGRect(frame))-\(NSStringFromRange(range))" as NSString
+            cacheKey = "\(_attributedString?.hash ?? 0)-\(frame)-\(range)" as NSString
 
             if let cachedLayoutFrame = _layoutFrameCache?.object(forKey: cacheKey!) {
                 return cachedLayoutFrame

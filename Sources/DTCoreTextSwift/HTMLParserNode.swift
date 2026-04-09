@@ -14,7 +14,7 @@ open class HTMLParserNode: NSObject {
     /// - Parameters:
     ///   - name: The element name
     ///   - attributes: The attributes dictionary
-    @objc public init(name: String, attributes: NSDictionary?) {
+    @objc public required init(name: String, attributes: NSDictionary?) {
         self.name = name
         super.init()
         self.attributes = attributes

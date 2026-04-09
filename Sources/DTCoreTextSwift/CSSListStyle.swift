@@ -8,6 +8,39 @@
 
 import Foundation
 
+// MARK: - List Style Enums
+
+/// The type of list marker for CSS lists.
+@objc(DTCSSListStyleType)
+public enum DTCSSListStyleType: UInt {
+    case invalid = 0
+    case inherit
+    case none
+    case circle
+    case square
+    case decimal
+    case decimalLeadingZero
+    case disc
+    case upperAlpha
+    case upperLatin
+    case lowerAlpha
+    case lowerLatin
+    case lowerRoman
+    case upperRoman
+    case plus
+    case underscore
+    case image
+}
+
+/// The position of the list marker.
+@objc(DTCSSListStylePosition)
+public enum DTCSSListStylePosition: UInt {
+    case invalid = 0
+    case inherit
+    case inside
+    case outside
+}
+
 /// This class is the equivalent of `NSTextList` on Mac with the added handling of the marker position.
 @objc(DTCSSListStyle)
 public class CSSListStyle: NSObject, NSCoding, NSCopying {

@@ -98,7 +98,7 @@ public func DTColorCreateWithHTMLName(_ name: String) -> DTColor? {
 /// - Parameter color: The color to convert.
 /// - Returns: A CSS hexadecimal string (e.g. "ff0000"), or nil for unsupported color spaces.
 public func DTHexStringFromDTColor(_ color: DTColor) -> String? {
-    guard let cgColor = color.cgColor else { return nil }
+    let cgColor = color.cgColor
 
     let count = cgColor.numberOfComponents
     guard let components = cgColor.components else { return nil }

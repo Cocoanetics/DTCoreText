@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import DTCoreText
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -31,7 +31,7 @@ struct FontDescriptorTests {
 		#expect(effectiveRange.length == expectedRange.length)
 		#expect(effectiveRange.location == expectedRange.location)
 
-		let fontDescriptor = attributes.fontDescriptor()
+		let fontDescriptor = attributes.dtct_fontDescriptor()
 		#expect(fontDescriptor?.fontFamily == "Arial")
 	}
 
@@ -48,19 +48,19 @@ struct FontDescriptorTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<html><body><p>Regular<b>Bold</b><i>Italic</i><p></body></html>", options: options)!
 
 		let attributesPlain = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let fontDescriptorPlain = attributesPlain.fontDescriptor()!
+		let fontDescriptorPlain = attributesPlain.dtct_fontDescriptor()!
 		#expect(fontDescriptorPlain.fontFamily == font.familyName)
 		#expect(!fontDescriptorPlain.boldTrait)
 		#expect(!fontDescriptorPlain.italicTrait)
 
 		let attributesBold = attributedString.attributes(at: 7, effectiveRange: nil) as NSDictionary
-		let fontDescriptorBold = attributesBold.fontDescriptor()!
+		let fontDescriptorBold = attributesBold.dtct_fontDescriptor()!
 		#expect(fontDescriptorBold.fontFamily == font.familyName)
 		#expect(fontDescriptorBold.boldTrait)
 		#expect(!fontDescriptorBold.italicTrait)
 
 		let attributesItalic = attributedString.attributes(at: 11, effectiveRange: nil) as NSDictionary
-		let fontDescriptorItalic = attributesItalic.fontDescriptor()!
+		let fontDescriptorItalic = attributesItalic.dtct_fontDescriptor()!
 		#expect(fontDescriptorItalic.fontFamily == font.familyName)
 		#expect(!fontDescriptorItalic.boldTrait)
 		#expect(fontDescriptorItalic.italicTrait)
@@ -74,7 +74,7 @@ struct FontDescriptorTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><p>text</p></span>")!
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let dtFontDescriptor = attributes.fontDescriptor()!
+		let dtFontDescriptor = attributes.dtct_fontDescriptor()!
 		#expect(!dtFontDescriptor.boldTrait)
 		#expect(!dtFontDescriptor.italicTrait)
 		#expect(dtFontDescriptor.fontFamily == "Arial")
@@ -88,7 +88,7 @@ struct FontDescriptorTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><b>text</b></span>")!
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let dtFontDescriptor = attributes.fontDescriptor()!
+		let dtFontDescriptor = attributes.dtct_fontDescriptor()!
 		#expect(dtFontDescriptor.boldTrait)
 		#expect(!dtFontDescriptor.italicTrait)
 		#expect(dtFontDescriptor.fontFamily == "Arial")
@@ -102,7 +102,7 @@ struct FontDescriptorTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"font-family:FooBar\"><em>text</em></span>")!
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let dtFontDescriptor = attributes.fontDescriptor()!
+		let dtFontDescriptor = attributes.dtct_fontDescriptor()!
 		#expect(!dtFontDescriptor.boldTrait)
 		#expect(dtFontDescriptor.italicTrait)
 		#expect(dtFontDescriptor.fontFamily == "Arial")

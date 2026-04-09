@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import DTCoreText
+@testable import DTCoreTextSwift
 
 @Suite("Layout Frame", .serialized)
 struct LayoutFrameTests {

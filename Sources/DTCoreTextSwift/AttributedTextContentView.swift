@@ -232,7 +232,7 @@ open class AttributedTextContentView: UIView, AccessibilityViewProxyDelegate {
 			extract = String(extract.prefix(10))
 		}
 
-		return "<\(type(of: self)) \(NSStringFromCGRect(self.frame)) range:\(NSStringFromRange(visibleRange)) '\(extract)...'>"
+		return "<\(type(of: self)) \(self.frame) range:\(visibleRange) '\(extract)...'>"
 	}
 
 	// MARK: - Layout Subviews

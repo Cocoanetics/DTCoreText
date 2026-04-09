@@ -6,6 +6,7 @@ public typealias DTEdgeInsets = UIEdgeInsets
 #elseif canImport(AppKit)
 import AppKit
 public typealias DTEdgeInsets = NSEdgeInsets
+public typealias UIEdgeInsets = NSEdgeInsets
 #endif
 
 public extension NSCoder {
@@ -47,6 +48,12 @@ public extension NSCoder {
 }
 
 #if canImport(AppKit) && !canImport(UIKit)
+extension NSEdgeInsets {
+    public static var zero: NSEdgeInsets {
+        return NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+}
+
 private func nsEdgeInsetsFromString(_ string: String) -> NSEdgeInsets {
     // Cut off curly brackets
     guard string.count > 2 else {

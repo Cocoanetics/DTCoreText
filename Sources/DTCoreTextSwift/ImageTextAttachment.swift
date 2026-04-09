@@ -62,7 +62,7 @@ private func _dtAnimatedGIFFromFile(_ path: String) -> UIImage? {
 }
 #endif
 
-private let imageCache = NSCache<NSString, DTImage>()
+nonisolated(unsafe) private let imageCache = NSCache<NSString, DTImage>()
 
 /// A specialized subclass in the TextAttachment class cluster to represent an embedded image.
 @objc(DTImageTextAttachment)
@@ -100,7 +100,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
     // MARK: - Image Decoding
 
     private func _decodeImage(from element: HTMLElement, options: [String: Any]?) {
-        let baseURL = options?[NSAttributedString.documentReadingOptionKey_baseURL] as? URL
+        let baseURL = options?[NSBaseURLDocumentOption] as? URL
             ?? (options as NSDictionary?)?[NSBaseURLDocumentOption as String] as? URL
         let src = (element.attributes as? [String: Any])?["src"] as? String
 
@@ -153,7 +153,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
                                     #if canImport(UIKit)
                                     decodedImage = DTImage(cgImage: decodedImage.cgImage!, scale: scale, orientation: decodedImage.imageOrientation)
                                     #else
-                                    decodedImage?.size = sizeAccordingToStyle
+                                    decodedImage.size = sizeAccordingToStyle
                                     #endif
                                 }
                             }
@@ -370,7 +370,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
 
     // MARK: - Properties
 
-    @objc open var image: DTImage? {
+    @objc open override var image: DTImage? {
         get {
             if _image == nil {
                 if let contentURL = contentURL {
