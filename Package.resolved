@@ -1,0 +1,42 @@
+{
+  "originHash" : "86eb010eec5bd3b447b46b5c7a3a554506f2c4f970cb7931107a67bc7707a587",
+  "pins" : [
+    {
+      "identity" : "dtfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Cocoanetics/DTFoundation.git",
+      "state" : {
+        "revision" : "a61be65dd7d5b2cde3acabd13bf320b71f2907a5",
+        "version" : "1.7.19"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
+        "version" : "1.7.1"
+      }
+    },
+    {
+      "identity" : "swifttext",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Cocoanetics/SwiftText.git",
+      "state" : {
+        "revision" : "9c98c377da8dd9d9e0f4217b992feef11496be28",
+        "version" : "1.1.7"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
+        "version" : "0.9.20"
+      }
+    }
+  ],
+  "version" : 3
+}
