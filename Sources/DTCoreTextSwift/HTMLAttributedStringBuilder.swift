@@ -87,7 +87,7 @@ private actor BuilderState {
 		globalStyleSheet = CSSStylesheet.defaultStyleSheet().copy() as? CSSStylesheet
 
 		if let customSheet = options[DTDefaultStyleSheet] as? CSSStylesheet {
-			globalStyleSheet.merge(customSheet)
+			globalStyleSheet.mergeStylesheet(customSheet)
 		}
 
 		// Default font
@@ -97,7 +97,7 @@ private actor BuilderState {
 		   CFGetTypeID(ctDescriptorValue as CFTypeRef) == CTFontDescriptorGetTypeID() {
 			defaultFontDescriptor = CoreTextFontDescriptor(ctFontDescriptor: ctDescriptorValue as! CTFontDescriptor)
 		} else {
-			defaultFontDescriptor = CoreTextFontDescriptor(fontAttributes: nil)
+			defaultFontDescriptor = CoreTextFontDescriptor()
 
 			if let sizeNum = options[DTDefaultFontSize] as? NSNumber {
 				defaultFontSize = CGFloat(sizeNum.floatValue)
@@ -140,7 +140,7 @@ private actor BuilderState {
 		}
 
 		// Default paragraph style
-		defaultParagraphStyle = CoreTextParagraphStyle.`default`()
+		defaultParagraphStyle = CoreTextParagraphStyle.defaultParagraphStyle()
 
 		if let lh = options[DTDefaultLineHeightMultiplier] as? NSNumber {
 			defaultParagraphStyle.lineHeightMultiple = CGFloat(lh.floatValue)
@@ -156,7 +156,7 @@ private actor BuilderState {
 		}
 
 		// Default tag element
-		defaultTag = HTMLElement()
+		defaultTag = HTMLElement(name: "default", attributes: nil)
 		defaultTag.fontDescriptor = defaultFontDescriptor
 		defaultTag.paragraphStyle = defaultParagraphStyle
 		defaultTag.textScale = textScale
@@ -206,14 +206,14 @@ private actor BuilderState {
 	private func handleStartElement(_ elementName: String, attributes attributeDict: [String: String]) {
 		guard !ignoreParseEvents else { return }
 
-		guard let newNode = HTMLElement(name: elementName, attributes: attributeDict as [AnyHashable: Any], options: options) else { return }
+		let newNode = HTMLElement.element(withName: elementName, attributes: attributeDict as NSDictionary, options: options as NSDictionary?)
 		var previousLastChild: HTMLElement?
 
 		if let current = currentTag {
 			newNode.inheritAttributes(from: current)
 			newNode.interpretAttributes()
 
-			previousLastChild = current.childNodes?.last as? HTMLElement
+			previousLastChild = current.childNodes?.lastObject as? HTMLElement
 			current.addChildNode(newNode)
 
 			if bodyElement == nil && newNode.name == "body" {
@@ -236,7 +236,7 @@ private actor BuilderState {
 		let mergedStyles = globalStyleSheet.mergedStyleDictionary(for: newNode, matchedSelectors: &matchedSelectors, ignoreInlineStyle: ignoreInlineStyles)
 
 		if let mergedStyles = mergedStyles as NSDictionary? {
-			newNode.applyStyleDictionary(mergedStyles as! [AnyHashable: Any])
+			newNode.applyStyleDictionary(mergedStyles)
 
 			if let matchedSelectors {
 				var classNamesToIgnore = Set<String>()
@@ -253,9 +253,9 @@ private actor BuilderState {
 		}
 
 		// Block element eliminates previous trailing whitespace
-		if let previousLastChild, newNode.displayStyle != .inline,
+		if let previousLastChild, newNode.displayStyle != DTHTMLElementDisplayStyle.inline,
 		   let textElement = previousLastChild as? TextHTMLElement,
-		   textElement.text()?.isIgnorableWhitespace() == true {
+		   (textElement.text() as NSString).isIgnorableWhitespace() {
 			currentTag?.removeChildNode(textElement)
 		}
 
@@ -279,11 +279,10 @@ private actor BuilderState {
 
 		case "ul", "ol":
 			tag.paragraphStyle.firstLineHeadIndent = tag.paragraphStyle.headIndent
-			if let newListStyle = tag.listStyle() {
-				var textLists = (tag.paragraphStyle.textLists as? [CSSListStyle]) ?? []
-				textLists.append(newListStyle)
-				tag.paragraphStyle.textLists = textLists
-			}
+			let newListStyle = tag.listStyle()
+			var textLists = (tag.paragraphStyle.textLists as? [CSSListStyle]) ?? []
+			textLists.append(newListStyle)
+			tag.paragraphStyle.textLists = textLists
 
 		case "h1": tag.headerLevel = 1
 		case "h2": tag.headerLevel = 2
@@ -313,22 +312,24 @@ private actor BuilderState {
 			tag.isColorInherited = false
 		}
 
-		tag.anchorName = tag.attribute(forKey: "name")
+		tag.anchorName = tag.attributeForKey("name")
 
-		guard var cleanString = tag.attribute(forKey: "href")?.replacingOccurrences(of: "\n", with: ""),
+		guard var cleanString = tag.attributeForKey("href")?.replacingOccurrences(of: "\n", with: ""),
 			  !cleanString.trimmingCharacters(in: .whitespaces).isEmpty else {
 			return
 		}
 		cleanString = cleanString.trimmingCharacters(in: .whitespaces)
 
 		var link = URL(string: cleanString)
-		if link == nil, let encoded = (cleanString as NSString).encodingNonASCIICharacters() {
+		if link == nil {
+			let encoded = (cleanString as NSString).stringByEncodingNonASCIICharacters()
 			link = URL(string: encoded)
 		}
 		if link?.scheme == nil {
 			if !cleanString.isEmpty {
 				link = URL(string: cleanString, relativeTo: baseURL)
-				if link == nil, let entityEncoded = (cleanString as NSString).addingHTMLEntities() {
+				if link == nil {
+					let entityEncoded = (cleanString as NSString).stringByAddingHTMLEntities()
 					link = URL(string: entityEncoded, relativeTo: baseURL)
 				}
 			} else {
@@ -340,7 +341,7 @@ private actor BuilderState {
 
 	private func handleFontStart(_ tag: HTMLElement) {
 		var pointSize: CGFloat
-		if let sizeAttribute = tag.attribute(forKey: "size") {
+		if let sizeAttribute = tag.attributeForKey("size") {
 			switch Int(sizeAttribute) ?? 0 {
 			case 1: pointSize = textScale * 10.0
 			case 2: pointSize = textScale * 13.0
@@ -354,13 +355,13 @@ private actor BuilderState {
 		} else {
 			pointSize = tag.fontDescriptor.pointSize
 		}
-		if let face = tag.attribute(forKey: "face") {
+		if let face = tag.attributeForKey("face") {
 			let font = CTFontCreateWithName(face as CFString, pointSize, nil)
 			tag.fontDescriptor = CoreTextFontDescriptor(ctFont: font)
 		} else {
 			tag.fontDescriptor.pointSize = pointSize
 		}
-		if let color = tag.attribute(forKey: "color") {
+		if let color = tag.attributeForKey("color") {
 			tag.textColor = DTColorCreateWithHTMLName(color)
 		}
 	}
@@ -377,14 +378,14 @@ private actor BuilderState {
 
 		// Flush if direct child of body or body itself
 		if let tag = currentTag, tag.displayStyle != DTHTMLElementDisplayStyle.none {
-			if tag === bodyElement || tag.parent() === bodyElement {
+			if tag === bodyElement || tag.parentElement() === bodyElement {
 				flush(tag)
 			}
 		}
 
 		// Walk up to find matching element
 		while currentTag?.name != elementName {
-			currentTag = currentTag?.parent()
+			currentTag = currentTag?.parentElement()
 		}
 
 		// Closing root node — ignore everything afterwards
@@ -392,7 +393,7 @@ private actor BuilderState {
 			ignoreParseEvents = true
 		}
 
-		currentTag = currentTag?.parent()
+		currentTag = currentTag?.parentElement()
 	}
 
 	// MARK: - Tag End Handlers (inline)
@@ -402,7 +403,7 @@ private actor BuilderState {
 		case "object":
 			if let attachmentElement = tag as? TextAttachmentHTMLElement,
 			   let objectAttachment = attachmentElement.textAttachment as? ObjectTextAttachment {
-				objectAttachment.childNodes = (tag.childNodes as NSArray?)?.copy() as? [Any]
+				objectAttachment.childNodes = tag.childNodes?.copy() as? NSArray
 			}
 
 		case "video":
@@ -410,7 +411,7 @@ private actor BuilderState {
 			   let videoAttachment = attachmentElement.textAttachment as? VideoTextAttachment,
 			   videoAttachment.contentURL == nil {
 				for child in (attachmentElement.childNodes as? [HTMLElement]) ?? [] {
-					if child.name == "source", let src = child.attribute(forKey: "src") {
+					if child.name == "source", let src = child.attributeForKey("src") {
 						videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
 						break
 					}
@@ -419,12 +420,12 @@ private actor BuilderState {
 
 		case "style":
 			if let stylesheetElement = tag as? StylesheetHTMLElement {
-				globalStyleSheet.merge(stylesheetElement.stylesheet())
+				globalStyleSheet.mergeStylesheet(stylesheetElement.stylesheet())
 			}
 
 		case "link":
-			guard let href = tag.attribute(forKey: "href"),
-				  let type = tag.attribute(forKey: "type")?.lowercased(),
+			guard let href = tag.attributeForKey("href"),
+				  let type = tag.attributeForKey("type")?.lowercased(),
 				  type == "text/css" else { break }
 			guard let stylesheetURL = URL(string: href, relativeTo: baseURL),
 				  stylesheetURL.isFileURL else {
@@ -432,7 +433,7 @@ private actor BuilderState {
 				break
 			}
 			if let content = try? String(contentsOf: stylesheetURL, encoding: .utf8) {
-				globalStyleSheet.merge(CSSStylesheet(styleBlock: content))
+				globalStyleSheet.mergeStylesheet(CSSStylesheet(styleBlock: content))
 			}
 
 		default:
@@ -453,24 +454,24 @@ private actor BuilderState {
 			if current.displayStyle != .inline && (current.childNodes?.count ?? 0) == 0 {
 				return
 			}
-			if let previousTag = current.childNodes?.last as? HTMLElement,
+			if let previousTag = current.childNodes?.lastObject as? HTMLElement,
 			   previousTag.displayStyle != .inline {
 				return
 			}
-			if current.childNodes?.last is BreakHTMLElement {
+			if current.childNodes?.lastObject is BreakHTMLElement {
 				return
 			}
 		}
 
-		let textNode = TextHTMLElement()
-		textNode.setValue(string, forKey: "text")
+		let textNode = TextHTMLElement(name: "#TEXT#", attributes: nil)
+		textNode.setText(string)
 		textNode.inheritAttributes(from: current)
 		textNode.interpretAttributes()
 		current.addChildNode(textNode)
 
 		// Text directly in body needs immediate output
 		if current === bodyElement {
-			tmpString.append(textNode.attributedString())
+			if let attrStr = textNode.attributedString() { tmpString.append(attrStr) }
 			current.didOutput = true
 
 			if shouldKeepDocumentNodeTree {
@@ -509,7 +510,7 @@ private actor BuilderState {
 
 		if tag.displayStyle != .inline {
 			if tmpString.length > 0 && !tmpString.string.hasSuffix("\n") {
-				while (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.ignorableWhitespace()) {
+				while (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
 					tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
 				}
 				tmpString.append(NSAttributedString(string: "\n"))

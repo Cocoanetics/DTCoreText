@@ -45,7 +45,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
         }
     }
 
-    required public init(name: String, attributes: NSDictionary?) {
+    required public override init(name: String, attributes: NSDictionary?) {
         super.init(name: name, attributes: attributes)
     }
 
@@ -60,7 +60,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
 
         // block-level elements get space trimmed and a newline
         if self.displayStyle != .inline {
-            tmpString.appendString("\n")
+            tmpString.dtct_appendString("\n")
         }
 
         return tmpString

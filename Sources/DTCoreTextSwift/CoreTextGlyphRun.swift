@@ -44,18 +44,13 @@ open class CoreTextGlyphRun: NSObject {
     /// Creates a new glyph run from a CTRun, belonging to a given layout line and with a given offset.
     @objc public init(run: CTRun, layoutLine: CoreTextLayoutLine, offset: CGFloat) {
         _run = run
-        CFRetain(_run)
         _offset = offset
         _line = layoutLine
         super.init()
     }
 
-    deinit {
-        CFRelease(_run)
-    }
-
     open override var description: String {
-        return "<\(type(of: self)) glyphs=\(numberOfGlyphs) \(NSStringFromCGRect(_frame))>"
+        return "<\(type(of: self)) glyphs=\(numberOfGlyphs) \(_frame)>"
     }
 
     // MARK: - Drawing
@@ -88,7 +83,7 @@ open class CoreTextGlyphRun: NSObject {
 
         let smallestPixelWidth: CGFloat = 1.0 / contentScale
 
-        let backgroundColor = (self.attributes as? [NSAttributedString.Key: Any])?.backgroundColor()
+        let backgroundColor = (self.attributes as? [NSAttributedString.Key: Any])?.dtct_backgroundColor()
 
         // Line-Out, Underline, Background-Color
         let drawStrikeOut = (_attributes?[NSAttributedString.Key(rawValue: DTStrikeOutAttribute)] as? NSNumber)?.boolValue ?? false

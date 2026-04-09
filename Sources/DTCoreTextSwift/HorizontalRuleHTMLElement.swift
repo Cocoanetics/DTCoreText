@@ -5,7 +5,7 @@ import Foundation
 open class HorizontalRuleHTMLElement: HTMLElement {
 
     @objc open override func attributesForAttributedStringRepresentation() -> NSDictionary {
-        let dict = (super.attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]).mutableCopy() as! NSMutableDictionary
+        let dict = super.attributesForAttributedStringRepresentation().mutableCopy() as! NSMutableDictionary
         dict[NSAttributedString.Key(rawValue: DTHorizontalRuleStyleAttribute)] = NSNumber(value: true)
         return dict
     }

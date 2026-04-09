@@ -11,7 +11,7 @@ open class CSSStylesheet: NSObject, NSCopying {
 
     // MARK: - Creating Stylesheets
 
-    private static var _defaultStylesheet: CSSStylesheet?
+    nonisolated(unsafe) private static var _defaultStylesheet: CSSStylesheet?
 
     /// Creates the default stylesheet loaded from default.css.
     @objc public class func defaultStyleSheet() -> CSSStylesheet {
@@ -70,7 +70,7 @@ open class CSSStylesheet: NSObject, NSCopying {
 
     // MARK: - Working with Style Blocks
 
-    private func _uncompressShorthands(_ styles: NSMutableDictionary) {
+    func _uncompressShorthands(_ styles: NSMutableDictionary) {
         // list-style shorthand
         if let shortHand = (styles["list-style"] as? String)?.lowercased() {
             styles.removeObject(forKey: "list-style")
@@ -96,7 +96,7 @@ open class CSSStylesheet: NSObject, NSCopying {
                 }
 
                 if !typeWasSet {
-                    let listStyleType = CSSListStyle.listStyleType(fromString: oneComponent)
+                    let listStyleType = CSSListStyle.listStyleType(from: oneComponent)
                     if listStyleType != .invalid {
                         styles["list-style-type"] = oneComponent
                         typeWasSet = true
@@ -105,7 +105,7 @@ open class CSSStylesheet: NSObject, NSCopying {
                 }
 
                 if !positionWasSet {
-                    let listStylePosition = CSSListStyle.listStylePosition(fromString: oneComponent)
+                    let listStylePosition = CSSListStyle.listStylePosition(from: oneComponent)
                     if listStylePosition != .invalid {
                         styles["list-style-position"] = oneComponent
                         positionWasSet = true
@@ -274,7 +274,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         for selector in split {
             var cleanSelector = selector.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            let ruleDictionary = ((rule as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:]).mutableCopy() as! NSMutableDictionary
+            let ruleDictionary = NSMutableDictionary(dictionary: (rule as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:])
 
             // remove !important, we're ignoring these
             for oneKey in ruleDictionary.allKeys.compactMap({ $0 as? String }) {
@@ -486,7 +486,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         if !ignoreInlineStyle {
             // Get tag's local style attribute
             if let styleString = (element.attributes as? [String: Any])?["style"] as? String, !styleString.isEmpty {
-                let localStyles = ((styleString as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:]).mutableCopy() as! NSMutableDictionary
+                let localStyles = NSMutableDictionary(dictionary: (styleString as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:])
 
                 // need to uncompress because otherwise we might get shorthands and non-shorthands together
                 _uncompressShorthands(localStyles)
@@ -589,7 +589,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     // This computes the specificity for a given selector
-    private func _weightForSelector(_ selector: String) -> Int {
+    func _weightForSelector(_ selector: String) -> Int {
         if selector.isEmpty { return 0 }
 
         var weight = 0

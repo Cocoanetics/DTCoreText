@@ -106,7 +106,7 @@ extension NSAttributedString {
 			var currentCounter: Int
 
 			if currentCounterNum == nil {
-				currentCounter = currentEffectiveList.startingItemNumber()
+				currentCounter = currentEffectiveList.startingItemNumber
 			} else {
 				currentCounter = currentCounterNum!.intValue + 1
 			}
@@ -211,7 +211,7 @@ extension NSAttributedString {
 		}
 
 		// extend list range to full paragraphs to be safe
-		listRange = (self.string as NSString).range(ofParagraphsContaining: listRange, parBeg: nil, parEnd: nil)
+		listRange = (self.string as NSString).rangeOfParagraphsContaining(listRange, parBegIndex: nil, parEndIndex: nil)
 
 		return listRange
 	}
@@ -359,11 +359,11 @@ extension NSAttributedString {
 			if listStyle.type != .none {
 				// first tab is to right-align bullet, numbering against
 				let tabOffset = paragraphStyle!.headIndent - 5.0
-				paragraphStyle!.addTabStop(atPosition: tabOffset, alignment: CTTextAlignment.right)
+				paragraphStyle!.addTabStop(at: tabOffset, alignment: CTTextAlignment.right)
 			}
 
 			// second tab is for the beginning of first line after bullet
-			paragraphStyle!.addTabStop(atPosition: paragraphStyle!.headIndent, alignment: CTTextAlignment.left)
+			paragraphStyle!.addTabStop(at: paragraphStyle!.headIndent, alignment: CTTextAlignment.left)
 		}
 
 		if let fontRef {
@@ -401,11 +401,8 @@ extension NSAttributedString {
 			newAttributes[ctForegroundColorKey] = textColor
 		} else if true {
 			let attributesDict = attributes as NSDictionary
-			let uiColor = attributesDict.foregroundColor()
-
-			if let uiColor {
-				newAttributes[.foregroundColor] = uiColor
-			}
+			let uiColor = attributesDict.dtct_foregroundColor()
+			newAttributes[.foregroundColor] = uiColor
 		}
 
 		// add paragraph style (this has the tabs)

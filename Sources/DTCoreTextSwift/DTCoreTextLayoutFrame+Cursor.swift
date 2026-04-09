@@ -64,7 +64,7 @@ extension CoreTextLayoutFrame {
 			return NSNotFound
 		}
 
-		var closestIndex = closestLine.stringIndex(forPosition: point)
+		var closestIndex = closestLine.stringIndex(for: point)
 		let maxIndex = NSMaxRange(closestLine.stringRange()) - 1
 
 		if closestIndex > maxIndex {
@@ -81,7 +81,7 @@ extension CoreTextLayoutFrame {
 	/// The rectangle for drawing a caret at the given string index.
 	@objc(cursorRectAtIndex:)
 	public func cursorRect(atIndex index: Int) -> CGRect {
-		guard let line = lineContaining(UInt(index)) else {
+		guard let line = lineContaining(index: UInt(index)) else {
 			return .zero
 		}
 

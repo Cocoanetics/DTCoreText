@@ -10,6 +10,8 @@ import UIKit
 public func DTCTFontCreateWithUIFont(_ font: UIFont) -> CTFont {
     return CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
 }
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 /// Converts an NSLineBreakMode into CoreText line truncation type

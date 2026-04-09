@@ -1,8 +1,7 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
-import DTCoreTextSwift
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -38,8 +37,8 @@ struct HTMLWriterTests {
 			let attributes1 = string1.attributes(at: substringRange.location, effectiveRange: nil)
 			let attributes2 = string2.attributes(at: substringRange.location, effectiveRange: nil)
 
-			let paraStyle1 = (attributes1 as NSDictionary).paragraphStyle()
-			let paraStyle2 = (attributes2 as NSDictionary).paragraphStyle()
+			let paraStyle1 = (attributes1 as NSDictionary).dtct_paragraphStyle()
+			let paraStyle2 = (attributes2 as NSDictionary).dtct_paragraphStyle()
 
 			let equal = paraStyle1?.isEqual(paraStyle2)
 			#expect(equal == true, "Paragraph Styles in range \(NSStringFromRange(substringRange)) should be equal")
@@ -66,8 +65,8 @@ struct HTMLWriterTests {
 				let attrs1After = string1.attributes(at: NSMaxRange(prefixRange), effectiveRange: nil)
 				let attrs2After = string2.attributes(at: NSMaxRange(prefixRange), effectiveRange: nil)
 
-				let paraStyle1After = (attrs1After as NSDictionary).paragraphStyle()
-				let paraStyle2After = (attrs2After as NSDictionary).paragraphStyle()
+				let paraStyle1After = (attrs1After as NSDictionary).dtct_paragraphStyle()
+				let paraStyle2After = (attrs2After as NSDictionary).dtct_paragraphStyle()
 
 				let equalAfter = paraStyle1After?.isEqual(paraStyle2After)
 				#expect(equalAfter == true, "Paragraph Styles following prefix in range \(NSStringFromRange(substringRange)) should be equal")
@@ -196,7 +195,7 @@ struct HTMLWriterTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>", options: options))
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-		let kerningValue = (attributes as NSDictionary).kerning()
+		let kerningValue = (attributes as NSDictionary).dtct_kerning()
 		#expect(kerningValue == 30, "Scaled up kerning should be 30")
 
 		let writer = HTMLWriter(attributedString: attributedString)

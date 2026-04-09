@@ -1,8 +1,7 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
-import DTCoreTextSwift
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -138,15 +137,15 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromHTML: "<p dir=\"rtl\">rtl</p><p dir=\"ltr\">ltr</p><p>normal</p>"))
 
 		let paragraphStyleRTL = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 0, effectiveRange: nil) as! CTParagraphStyle
-		let styleRTL = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleRTL)!
+		let styleRTL = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleRTL)
 		#expect(styleRTL.baseWritingDirection == .rightToLeft, "Writing direction is not RTL")
 
 		let paragraphStyleLTR = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 4, effectiveRange: nil) as! CTParagraphStyle
-		let styleLTR = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleLTR)!
+		let styleLTR = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleLTR)
 		#expect(styleLTR.baseWritingDirection == .leftToRight, "Writing direction is not LTR")
 
 		let paragraphStyleNatural = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: 8, effectiveRange: nil) as! CTParagraphStyle
-		let styleNatural = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleNatural)!
+		let styleNatural = CoreTextParagraphStyle(ctParagraphStyle: paragraphStyleNatural)
 		#expect(styleNatural.baseWritingDirection == .natural, "Writing direction is not Natural")
 	}
 
@@ -199,18 +198,18 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromTestFile: "RTL"))
 
 		var paraEndIndex: UInt = 0
-		let firstParagraphRange = output.string.range(ofParagraphsContaining: NSRange(location: 0, length: 0), parBeg: nil, parEnd: &paraEndIndex)
+		let firstParagraphRange = output.string.rangeOfParagraphsContaining(NSRange(location: 0, length: 0), parBegIndex: nil, parEndIndex: &paraEndIndex)
 		#expect(NSEqualRanges(NSRange(location: 0, length: 22), firstParagraphRange), "First Paragraph Range should be {0,22}")
 
-		let secondParagraphRange = output.string.range(ofParagraphsContaining: NSRange(location: Int(paraEndIndex), length: 0), parBeg: nil, parEnd: nil)
+		let secondParagraphRange = output.string.rangeOfParagraphsContaining(NSRange(location: Int(paraEndIndex), length: 0), parBegIndex: nil, parEndIndex: nil)
 		#expect(NSEqualRanges(NSRange(location: 22, length: 24), secondParagraphRange), "Second Paragraph Range should be {22,24}")
 
 		let firstPS = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: firstParagraphRange.location, effectiveRange: nil) as! CTParagraphStyle
-		let firstParaStyle = CoreTextParagraphStyle(ctParagraphStyle: firstPS)!
+		let firstParaStyle = CoreTextParagraphStyle(ctParagraphStyle: firstPS)
 		#expect(firstParaStyle.baseWritingDirection == .rightToLeft, "First Paragraph Style is not RTL")
 
 		let secondPS = output.attribute(NSAttributedString.Key(kCTParagraphStyleAttributeName as String), at: secondParagraphRange.location, effectiveRange: nil) as! CTParagraphStyle
-		let secondParaStyle = CoreTextParagraphStyle(ctParagraphStyle: secondPS)!
+		let secondParaStyle = CoreTextParagraphStyle(ctParagraphStyle: secondPS)
 		#expect(secondParaStyle.baseWritingDirection == .rightToLeft, "Second Paragraph Style is not RTL")
 	}
 
@@ -219,13 +218,13 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromTestFile: "EmptyLinesAndFontAttribute"))
 
 		var paraEndIndex: UInt = 0
-		let firstParagraphRange = output.string.range(ofParagraphsContaining: NSRange(location: 0, length: 0), parBeg: nil, parEnd: &paraEndIndex)
+		let firstParagraphRange = output.string.rangeOfParagraphsContaining(NSRange(location: 0, length: 0), parBegIndex: nil, parEndIndex: &paraEndIndex)
 		#expect(NSEqualRanges(NSRange(location: 0, length: 2), firstParagraphRange))
 
-		let secondParagraphRange = output.string.range(ofParagraphsContaining: NSRange(location: Int(paraEndIndex), length: 0), parBeg: nil, parEnd: &paraEndIndex)
+		let secondParagraphRange = output.string.rangeOfParagraphsContaining(NSRange(location: Int(paraEndIndex), length: 0), parBegIndex: nil, parEndIndex: &paraEndIndex)
 		#expect(NSEqualRanges(NSRange(location: 2, length: 1), secondParagraphRange))
 
-		let thirdParagraphRange = output.string.range(ofParagraphsContaining: NSRange(location: Int(paraEndIndex), length: 0), parBeg: nil, parEnd: nil)
+		let thirdParagraphRange = output.string.rangeOfParagraphsContaining(NSRange(location: Int(paraEndIndex), length: 0), parBegIndex: nil, parEndIndex: nil)
 		#expect(NSEqualRanges(NSRange(location: 3, length: 1), thirdParagraphRange))
 
 		let (firstFontRange, firstFont) = effectiveRangeOfFont(at: firstParagraphRange.location, in: output)
@@ -387,7 +386,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<html><body><p>Bla<p></body></html>", options: options))
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-		let fontDescriptor = (attributes as NSDictionary).fontDescriptor()!
+		let fontDescriptor = (attributes as NSDictionary).dtct_fontDescriptor()!
 
 		#expect(fontDescriptor.fontFamily == "Helvetica", "Incorrect font family")
 		#expect(fontDescriptor.boldTrait, "Should be bold")
@@ -404,7 +403,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<p style=\"font-family:Calibri\">Text</p>"))
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-		let fontDescriptor = (attributes as NSDictionary).fontDescriptor()!
+		let fontDescriptor = (attributes as NSDictionary).dtct_fontDescriptor()!
 
 		#expect(fontDescriptor.fontFamily == "Times New Roman", "Incorrect fallback font family")
 	}
@@ -414,7 +413,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<span style=\"font-size:30px\"><p style=\"font-size:normal\">Bla</p></span>"))
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-		let fontDescriptor = (attributes as NSDictionary).fontDescriptor()!
+		let fontDescriptor = (attributes as NSDictionary).dtct_fontDescriptor()!
 
 		#expect(fontDescriptor.pointSize == 30, "Should ignore invalid CSS length")
 	}
@@ -446,7 +445,7 @@ struct HTMLAttributedStringBuilderTests {
 			#expect(NSEqualRanges(enclosingRange, fontRange), "Font should be on entire string")
 
 			guard let font = font else { return }
-			let descriptor = CoreTextFontDescriptor(for: font)!
+			let descriptor = CoreTextFontDescriptor(ctFont: font)
 
 			switch lineNumber {
 			case 0:
@@ -484,7 +483,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = CoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontFamily == "American Typewriter", "Font Family should be 'American Typewriter'")
 	}
 
@@ -497,7 +496,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = CoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontFamily == "American Typewriter", "Font Family should be 'American Typewriter'")
 	}
 
@@ -519,21 +518,21 @@ struct HTMLAttributedStringBuilderTests {
 		var (fontRange, font) = effectiveRangeOfFont(at: 0, in: attributedString)
 		var expectedRange = NSRange(location: 0, length: 20)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be 20 characters long")
-		var descriptor = CoreTextFontDescriptor(for: font!)!
+		var descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontName == "HelveticaNeue-Light", "Font face should be 'HelveticaNeue-Light'")
 
 		// test inherited font with bold
 		expectedRange = NSRange(location: 20, length: 4)
 		(fontRange, font) = effectiveRangeOfFont(at: expectedRange.location, in: attributedString)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Bold Font should be 4 characters long")
-		descriptor = CoreTextFontDescriptor(for: font!)!
+		descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontName == "HelveticaNeue-Bold", "Font face should be 'HelveticaNeue-Bold'")
 
 		// test inherited font with italic
 		expectedRange = NSRange(location: 25, length: 7)
 		(fontRange, font) = effectiveRangeOfFont(at: expectedRange.location, in: attributedString)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Italic Font should be 7 characters long")
-		descriptor = CoreTextFontDescriptor(for: font!)!
+		descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontName == "HelveticaNeue-Italic", "Font face should be 'HelveticaNeue-Italic'")
 	}
 
@@ -546,7 +545,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(fontRange, expectedRange), "Font should be entire length")
 
-		let descriptor = CoreTextFontDescriptor(for: font!)!
+		let descriptor = CoreTextFontDescriptor(ctFont: font!)
 		#expect(descriptor.fontName == "Arial-BoldMT", "Font should be 'Arial-BoldMT'")
 	}
 
@@ -685,7 +684,7 @@ struct HTMLAttributedStringBuilderTests {
 		var effectiveRange = NSRange()
 		let attributes = attributedString.attributes(at: 4, effectiveRange: &effectiveRange)
 
-		let backgroundColor = (attributes as NSDictionary).backgroundColor()
+		let backgroundColor = (attributes as NSDictionary).dtct_backgroundColor()
 		#expect(backgroundColor != nil, "Missing Background Color")
 
 		let expectedRange = NSRange(location: 3, length: 5)
@@ -776,20 +775,20 @@ struct HTMLAttributedStringBuilderTests {
 		let attributes1 = output.attributes(at: index1, effectiveRange: nil)
 		let underLine1 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index1, effectiveRange: nil) as? Int
 		#expect((underLine1 ?? 0) == 1, "First item should be underlined")
-		let foreground1 = (attributes1 as NSDictionary).foregroundColor()!
+		let foreground1 = (attributes1 as NSDictionary).dtct_foregroundColor()
 		let foreground1HTML = DTHexStringFromDTColor(foreground1)
 		#expect(foreground1HTML == "008000", "First item should be green")
-		#expect((attributes1 as NSDictionary).fontDescriptor()!.boldTrait, "First item should be bold")
-		#expect(!(attributes1 as NSDictionary).fontDescriptor()!.italicTrait, "First item should not be italic")
+		#expect((attributes1 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "First item should be bold")
+		#expect(!(attributes1 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "First item should not be italic")
 
 		// check first "buzz"
 		let attributes2 = output.attributes(at: index2, effectiveRange: nil)
 		let underLine2 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index2, effectiveRange: nil) as? Int
 		#expect((underLine2 ?? 0) == 1, "Second item should be underlined")
-		let foreground2 = (attributes2 as NSDictionary).foregroundColor()!
+		let foreground2 = (attributes2 as NSDictionary).dtct_foregroundColor()
 		let foreground2HTML = DTHexStringFromDTColor(foreground2)
 		#expect(foreground2HTML == "800080", "Second item should be purple")
-		#expect((attributes2 as NSDictionary).fontDescriptor()!.boldTrait, "Second item should be bold")
+		#expect((attributes2 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Second item should be bold")
 
 		// check "owzers"
 		let attributes3 = output.attributes(at: index3, effectiveRange: nil)
@@ -800,51 +799,51 @@ struct HTMLAttributedStringBuilderTests {
 			strikeThrough3 = output.attribute(.strikethroughStyle, at: index3, effectiveRange: nil) as? Int
 		}
 		#expect((strikeThrough3 ?? 0) == 1, "Third item should have strike through")
-		let foreground3 = (attributes3 as NSDictionary).foregroundColor()!
+		let foreground3 = (attributes3 as NSDictionary).dtct_foregroundColor()
 		let foreground3HTML = DTHexStringFromDTColor(foreground3)
 		#expect(foreground3HTML == "ffa500", "Third item should be orange")
-		#expect(!(attributes3 as NSDictionary).fontDescriptor()!.boldTrait, "Third item should not be bold")
-		#expect((attributes3 as NSDictionary).fontDescriptor()!.italicTrait, "Third item should be italic")
+		#expect(!(attributes3 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Third item should not be bold")
+		#expect((attributes3 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "Third item should be italic")
 
 		// check second "Me"
 		let attributes4 = output.attributes(at: index4, effectiveRange: nil)
 		let underLine4 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index4, effectiveRange: nil) as? Int
 		#expect((underLine4 ?? 0) != 1, "Fourth item should not be underlined")
-		let foreground4 = (attributes4 as NSDictionary).foregroundColor()!
+		let foreground4 = (attributes4 as NSDictionary).dtct_foregroundColor()
 		let foreground4HTML = DTHexStringFromDTColor(foreground4)
 		#expect(foreground4HTML == "ff0000", "Fourth item should be red")
-		#expect(!(attributes4 as NSDictionary).fontDescriptor()!.boldTrait, "Fourth item should not be bold")
-		#expect(!(attributes4 as NSDictionary).fontDescriptor()!.italicTrait, "Fourth item should not be italic")
+		#expect(!(attributes4 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Fourth item should not be bold")
+		#expect(!(attributes4 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "Fourth item should not be italic")
 
 		// check "ow"
 		let attributes5 = output.attributes(at: index5, effectiveRange: nil)
 		let underLine5 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index5, effectiveRange: nil) as? Int
 		#expect((underLine5 ?? 0) == 1, "Fifth item should be underlined")
-		let foreground5 = (attributes5 as NSDictionary).foregroundColor()!
+		let foreground5 = (attributes5 as NSDictionary).dtct_foregroundColor()
 		let foreground5HTML = DTHexStringFromDTColor(foreground5)
 		#expect(foreground5HTML == "008000", "Fifth item should be green")
-		#expect((attributes5 as NSDictionary).fontDescriptor()!.boldTrait, "Fifth item should be bold")
-		#expect(!(attributes5 as NSDictionary).fontDescriptor()!.italicTrait, "Fifth item should not be italic")
+		#expect((attributes5 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Fifth item should be bold")
+		#expect(!(attributes5 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "Fifth item should not be italic")
 
 		// check "this is a test of by tag name..."
 		let attributes6 = output.attributes(at: index6, effectiveRange: nil)
 		let underLine6 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index6, effectiveRange: nil) as? Int
 		#expect((underLine6 ?? 0) == 1, "Sixth item should be underlined")
-		let foreground6 = (attributes6 as NSDictionary).foregroundColor()!
+		let foreground6 = (attributes6 as NSDictionary).dtct_foregroundColor()
 		let foreground6HTML = DTHexStringFromDTColor(foreground6)
 		#expect(foreground6HTML == "ffa500", "Sixth item should be orange")
-		#expect(!(attributes6 as NSDictionary).fontDescriptor()!.boldTrait, "Sixth item should not be bold")
-		#expect((attributes6 as NSDictionary).fontDescriptor()!.italicTrait, "Sixth item should be italic")
+		#expect(!(attributes6 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Sixth item should not be bold")
+		#expect((attributes6 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "Sixth item should be italic")
 
 		// check "i'm gray text"
 		let attributes7 = output.attributes(at: index7, effectiveRange: nil)
 		let underLine7 = output.attribute(NSAttributedString.Key(kCTUnderlineStyleAttributeName as String), at: index7, effectiveRange: nil) as? Int
 		#expect((underLine7 ?? 0) != 1, "Seventh item should not be underlined")
-		let foreground7 = (attributes7 as NSDictionary).foregroundColor()!
+		let foreground7 = (attributes7 as NSDictionary).dtct_foregroundColor()
 		let foreground7HTML = DTHexStringFromDTColor(foreground7)
 		#expect(foreground7HTML == "777777", "Seventh item should be gray")
-		#expect(!(attributes7 as NSDictionary).fontDescriptor()!.boldTrait, "Seventh item should not be bold")
-		#expect(!(attributes7 as NSDictionary).fontDescriptor()!.italicTrait, "Seventh item should not be italic")
+		#expect(!(attributes7 as NSDictionary).dtct_fontDescriptor()!.boldTrait, "Seventh item should not be bold")
+		#expect(!(attributes7 as NSDictionary).dtct_fontDescriptor()!.italicTrait, "Seventh item should not be italic")
 	}
 
 	@Test("Cascading out of memory")
@@ -861,10 +860,10 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromHTML: html))
 
 		let attributes1 = output.attributes(at: 1, effectiveRange: nil)
-		let text1FontDescriptor = (attributes1 as NSDictionary).fontDescriptor()!
+		let text1FontDescriptor = (attributes1 as NSDictionary).dtct_fontDescriptor()!
 
 		let attributes2 = output.attributes(at: 7, effectiveRange: nil)
-		let text2FontDescriptor = (attributes2 as NSDictionary).fontDescriptor()!
+		let text2FontDescriptor = (attributes2 as NSDictionary).dtct_fontDescriptor()!
 
 		#expect(text1FontDescriptor.pointSize == text2FontDescriptor.pointSize, "Point size should be the same when font-size is cascaded and inherited")
 	}
@@ -874,10 +873,10 @@ struct HTMLAttributedStringBuilderTests {
 		let html = "<html><head><style>.sample { color: green; }</style></head><body><div class=\"sample\">Text1<p> Text2</p></div></div></html>"
 		let output = try #require(TestHelpers.attributedString(fromHTML: html))
 
-		let foreground1 = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground1 = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foreground1HTML = DTHexStringFromDTColor(foreground1)
 
-		let foreground2 = (output.attributes(at: 7, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground2 = (output.attributes(at: 7, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foreground2HTML = DTHexStringFromDTColor(foreground2)
 
 		#expect(foreground1HTML == foreground2HTML, "Color should be inherited via cascaded selector")
@@ -888,7 +887,7 @@ struct HTMLAttributedStringBuilderTests {
 		let html = "<html><head><style> body .sample { color: red;} body .samples { color: green;}</style></head><body><div class=\"samples\">Text</div></html>"
 		let output = try #require(TestHelpers.attributedString(fromHTML: html))
 
-		let foreground = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foregroundHTML = DTHexStringFromDTColor(foreground)
 		#expect(foregroundHTML == "008000", "Color should be green and not red")
 	}
@@ -899,11 +898,11 @@ struct HTMLAttributedStringBuilderTests {
 		let output = try #require(TestHelpers.attributedString(fromHTML: html))
 
 		let attributes = output.attributes(at: 1, effectiveRange: nil)
-		let foreground = (attributes as NSDictionary).foregroundColor()!
+		let foreground = (attributes as NSDictionary).dtct_foregroundColor()
 		let foregroundHTML = DTHexStringFromDTColor(foreground)
 		#expect(foregroundHTML == "ff0000", "Color should be red and not green")
 
-		let textFontDescriptor = (attributes as NSDictionary).fontDescriptor()!
+		let textFontDescriptor = (attributes as NSDictionary).dtct_fontDescriptor()!
 		#expect(textFontDescriptor.pointSize == 24.0, "Point size should be 24 and not 225 or 100")
 	}
 
@@ -912,13 +911,13 @@ struct HTMLAttributedStringBuilderTests {
 		let html = "<html><head><style>#foo .bar { color: red; } #foo .bar { color: green; }</style> </head><body><div id=\"foo\"><div class=\"bar\">Text</div></div></body></html>"
 		let output = try #require(TestHelpers.attributedString(fromHTML: html))
 
-		let foreground = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground = (output.attributes(at: 1, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foregroundHTML = DTHexStringFromDTColor(foreground)
 		#expect(foregroundHTML == "008000", "Color should be green and not red")
 
 		let html2 = "<html><head><style>.bar { color: red; } .foo { color: green; } </style> </head><body><div class=\"foo\"><div class=\"bar\"><div>Text</div></div></div></body></html>"
 		let output2 = try #require(TestHelpers.attributedString(fromHTML: html2))
-		let foreground2 = (output2.attributes(at: 1, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground2 = (output2.attributes(at: 1, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foregroundHTML2 = DTHexStringFromDTColor(foreground2)
 		#expect(foregroundHTML2 == "ff0000", "Color should be red and not green")
 	}
@@ -927,7 +926,7 @@ struct HTMLAttributedStringBuilderTests {
 	func divDivSpan() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<html><head><style>div div {color:green;}</style></head><body><div><div><span>FOO</span></div></div></body></html>"))
 
-		let foreground1 = (attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary).foregroundColor()!
+		let foreground1 = (attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary).dtct_foregroundColor()
 		let foreground1HTML = DTHexStringFromDTColor(foreground1)
 		#expect(foreground1HTML == "008000", "First item should be green")
 	}
@@ -937,7 +936,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<h1 style=\"font-variant: small-caps; letter-spacing:10px\">one</h1>"))
 
 		let attributes1 = attributedString.attributes(at: 0, effectiveRange: nil)
-		let kerning = (attributes1 as NSDictionary).kerning()
+		let kerning = (attributes1 as NSDictionary).dtct_kerning()
 		#expect(kerning == 10, "Kerning should be 10px")
 	}
 
@@ -986,11 +985,11 @@ struct HTMLAttributedStringBuilderTests {
 
 		let targetSize = CGSize(width: 176, height: 68)
 
-		#expect(attachment.image.size == targetSize, "Attachment has incorrect image size")
+		#expect(attachment.image!.size == targetSize, "Attachment has incorrect image size")
 		#expect(attachment.originalSize == targetSize, "Attachment has incorrect original size")
 
 		#if canImport(UIKit)
-		#expect(attachment.image.scale == 2, "Attachment image should have scale 2")
+		#expect(attachment.image!.scale == 2, "Attachment image should have scale 2")
 		#endif
 	}
 
@@ -1007,7 +1006,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(expectedRange, effectiveRange), "Attributes should cover all text")
 
-		let color = (attributes as NSDictionary).foregroundColor()!
+		let color = (attributes as NSDictionary).dtct_foregroundColor()
 		let hexColor = DTHexStringFromDTColor(color)
 
 		#expect(hexColor == "ff0000", "Color should be red because inline style should be ignored through option")
@@ -1023,7 +1022,7 @@ struct HTMLAttributedStringBuilderTests {
 		let expectedRange = NSRange(location: 0, length: attributedString.length)
 		#expect(NSEqualRanges(expectedRange, effectiveRange), "Attributes should cover all text")
 
-		let color = (attributes as NSDictionary).foregroundColor()!
+		let color = (attributes as NSDictionary).dtct_foregroundColor()
 		let hexColor = DTHexStringFromDTColor(color)
 
 		#expect(hexColor == "0000ff", "Color should be blue because inline style should be processed")
@@ -1034,7 +1033,7 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ul style=\"list-style: none;\">\n<li style=\"color: #333; list-style-image: url(\'data:image/png;base64,ABCDEF\');\">Li item</li></ul>"))
 
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-		let color = (attributes as NSDictionary).foregroundColor()!
+		let color = (attributes as NSDictionary).dtct_foregroundColor()
 		let hexColor = DTHexStringFromDTColor(color)
 
 		#expect(hexColor == "333333", "Color attribute lost")

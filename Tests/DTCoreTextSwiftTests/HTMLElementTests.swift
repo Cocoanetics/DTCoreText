@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -29,11 +29,11 @@ struct HTMLElementTests {
 
 	@Test("Combining WebKit and normal margin")
 	func combiningWebKitAndNormalMargin() {
-		let element = HTMLElement()
+		let element = HTMLElement(name: "", attributes: nil)
 		element.textScale = 1
-		element.paragraphStyle = CoreTextParagraphStyle.default()
+		element.paragraphStyle = CoreTextParagraphStyle.defaultParagraphStyle()
 		let font = CTFontCreateWithName("Helvetica" as CFString, 20, nil)
-		element.fontDescriptor = CoreTextFontDescriptor(for: font)
+		element.fontDescriptor = CoreTextFontDescriptor(ctFont: font)
 
 		let styles: [String: String] = [
 			"-webkit-margin-after": "1em",
@@ -44,7 +44,7 @@ struct HTMLElementTests {
 			"margin-left": "40px",
 		]
 
-		element.applyStyleDictionary(styles)
+		element.applyStyleDictionary(styles as NSDictionary)
 
 		#expect(element.margins.left == 40)
 		#expect(element.margins.right == 0)
@@ -54,17 +54,17 @@ struct HTMLElementTests {
 
 	@Test("Attachment with display:none should be invisible")
 	func attachmentWithDisplayNone() {
-		let element = HTMLElement()
+		let element = HTMLElement(name: "", attributes: nil)
 		element.textScale = 1
-		element.paragraphStyle = CoreTextParagraphStyle.default()
+		element.paragraphStyle = CoreTextParagraphStyle.defaultParagraphStyle()
 		let font = CTFontCreateWithName("Helvetica" as CFString, 20, nil)
-		element.fontDescriptor = CoreTextFontDescriptor(for: font)
+		element.fontDescriptor = CoreTextFontDescriptor(ctFont: font)
 
-		let object = ObjectTextAttachment(element: element, options: nil)
+		let object = ObjectTextAttachment().configured(with: element, options: nil)
 		element.textAttachment = object
 
 		let styles: [String: String] = ["display": "none"]
-		element.applyStyleDictionary(styles)
+		element.applyStyleDictionary(styles as NSDictionary)
 
 		let attributedString = element.attributedString()
 		#expect(attributedString == nil)
@@ -83,22 +83,22 @@ struct HTMLElementTests {
 			DTDefaultFontSize: NSNumber(value: 16.0),
 		]
 
-		let attachment = HTMLElement(name: "img", attributes: nil, options: options)!
+		let attachment = HTMLElement.element(withName: "img", attributes: nil, options: options as NSDictionary)
 		attachment.textAttachment!.originalSize = CGSize(width: 1000, height: 800)
 
-		attachment.applyStyleDictionary(["width": "100%", "height": "100%"])
+		attachment.applyStyleDictionary(["width": "100%", "height": "100%"] as NSDictionary)
 		#expect(attachment.textAttachment!.displaySize.width == 500)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 
-		attachment.applyStyleDictionary(["width": "80%", "height": "100%"])
+		attachment.applyStyleDictionary(["width": "80%", "height": "100%"] as NSDictionary)
 		#expect(attachment.textAttachment!.displaySize.width == 400)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 
-		attachment.applyStyleDictionary(["width": "110%", "height": "80%"])
+		attachment.applyStyleDictionary(["width": "110%", "height": "80%"] as NSDictionary)
 		#expect(attachment.textAttachment!.displaySize.width == 500)
 		#expect(attachment.textAttachment!.displaySize.height == 364)
 
-		attachment.applyStyleDictionary(["width": "100%", "height": "110%"])
+		attachment.applyStyleDictionary(["width": "100%", "height": "110%"] as NSDictionary)
 		#expect(attachment.textAttachment!.displaySize.width == 455)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 	}

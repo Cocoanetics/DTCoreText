@@ -1,18 +1,18 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
+@testable import DTCoreTextSwift
 
 @Suite("Paragraph Style", .serialized)
 struct ParagraphStyleTests {
 	@Test("Loss of tab stops after round-trip through CTParagraphStyle")
 	func lossOfTabStops() {
 		let paragraphStyle = CoreTextParagraphStyle()
-		paragraphStyle.addTabStop(atPosition: 10, alignment: CTTextAlignment.left)
+		paragraphStyle.addTabStop(at: 10, alignment: CTTextAlignment.left)
 
-		let ctParagraphStyle = paragraphStyle.createCTParagraphStyle().takeRetainedValue()
+		let ctParagraphStyle = paragraphStyle.createCTParagraphStyle()
 
-		let newParagraphStyle = CoreTextParagraphStyle(ctParagraphStyle: ctParagraphStyle)!
+		let newParagraphStyle = CoreTextParagraphStyle(ctParagraphStyle: ctParagraphStyle)
 
 		#expect(newParagraphStyle.tabStops != nil, "There are no tab stops in newly created paragraph style")
 	}
@@ -20,18 +20,18 @@ struct ParagraphStyleTests {
 	@Test("Tab stops round-trip through NSParagraphStyle")
 	func tabsOnNSParagraphStyle() {
 		let paragraphStyle = CoreTextParagraphStyle()
-		paragraphStyle.addTabStop(atPosition: 10, alignment: CTTextAlignment.left)
-		paragraphStyle.addTabStop(atPosition: 15, alignment: CTTextAlignment.right)
-		paragraphStyle.addTabStop(atPosition: 20, alignment: CTTextAlignment.center)
-		paragraphStyle.addTabStop(atPosition: 25, alignment: CTTextAlignment.justified)
-		paragraphStyle.addTabStop(atPosition: 30, alignment: CTTextAlignment.natural)
+		paragraphStyle.addTabStop(at: 10, alignment: CTTextAlignment.left)
+		paragraphStyle.addTabStop(at: 15, alignment: CTTextAlignment.right)
+		paragraphStyle.addTabStop(at: 20, alignment: CTTextAlignment.center)
+		paragraphStyle.addTabStop(at: 25, alignment: CTTextAlignment.justified)
+		paragraphStyle.addTabStop(at: 30, alignment: CTTextAlignment.natural)
 
-		let nsParagraphStyle = paragraphStyle.nsParagraphStyle()!
+		let nsParagraphStyle = paragraphStyle.nsParagraphStyle()
 
 		let tabStops = nsParagraphStyle.value(forKey: "tabStops") as! [Any]
 		#expect(tabStops.count == 5, "There should be 5 tab stops")
 
-		let newParagraphStyle = CoreTextParagraphStyle(nsParagraphStyle: nsParagraphStyle)!
+		let newParagraphStyle = CoreTextParagraphStyle.paragraphStyle(withNSParagraphStyle: nsParagraphStyle)
 
 		let tabCount = newParagraphStyle.tabStops!.count
 		#expect(tabCount == 5, "There should be 5 tab stops")
@@ -64,7 +64,7 @@ struct ParagraphStyleTests {
 		let paragraphStyle = CoreTextParagraphStyle()
 		paragraphStyle.lineHeightMultiple = 3.1834
 
-		let nsParagraphStyle = paragraphStyle.nsParagraphStyle()!
+		let nsParagraphStyle = paragraphStyle.nsParagraphStyle()
 
 		#expect(nsParagraphStyle.lineHeightMultiple == CGFloat(paragraphStyle.lineHeightMultiple))
 	}

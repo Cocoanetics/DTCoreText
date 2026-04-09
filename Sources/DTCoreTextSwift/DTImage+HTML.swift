@@ -3,6 +3,9 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 
+/// Platform-independent image type alias.
+public typealias DTImage = UIImage
+
 /// Category used to have the same method available for unit testing on Mac on iOS.
 public extension UIImage {
 
@@ -16,6 +19,9 @@ public extension UIImage {
 
 #elseif canImport(AppKit)
 import AppKit
+
+/// Platform-independent image type alias.
+public typealias DTImage = NSImage
 
 /// Category used to have the same method available for unit testing on Mac on iOS.
 public extension NSImage {

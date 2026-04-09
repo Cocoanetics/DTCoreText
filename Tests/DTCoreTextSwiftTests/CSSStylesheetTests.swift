@@ -1,19 +1,19 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
+@testable import DTCoreTextSwift
 
 @Suite("CSS Stylesheet", .serialized)
 struct CSSStylesheetTests {
 
 	private func stylesForSelector(_ selector: String, in stylesheet: CSSStylesheet) -> [String: Any]? {
-		return stylesheet.styles()?[selector] as? [String: Any]
+		return stylesheet.styles()[selector] as? [String: Any]
 	}
 
 	@Test("Attribute with whitespace")
 	func attributeWithWhitespace() {
 		let css = "span { font-family: 'Trebuchet MS'; empty: ; empty2:; font-size: 16px; line-height: 20 px; font-style: italic }"
-		let stylesheet = CSSStylesheet(styleBlock: css)!
+		let stylesheet = CSSStylesheet(styleBlock: css)
 
 		let styles = stylesForSelector("span", in: stylesheet)!
 
@@ -28,7 +28,7 @@ struct CSSStylesheetTests {
 	@Test("Empty font family")
 	func emptyFontFamily() {
 		let css = "span { font-family: ''; empty: ; empty2:; font-size: 16px; line-height: 20 px; font-style: italic }"
-		let stylesheet = CSSStylesheet(styleBlock: css)!
+		let stylesheet = CSSStylesheet(styleBlock: css)
 
 		let styles = stylesForSelector("span", in: stylesheet)!
 
@@ -43,7 +43,7 @@ struct CSSStylesheetTests {
 	@Test("!important is stripped")
 	func important() {
 		let css = "p {align: center !IMPORTANT;color:blue;}"
-		let stylesheet = CSSStylesheet(styleBlock: css)!
+		let stylesheet = CSSStylesheet(styleBlock: css)
 
 		let styles = stylesForSelector("p", in: stylesheet)!
 
@@ -55,10 +55,10 @@ struct CSSStylesheetTests {
 	@Test("Merging stylesheets")
 	func merging() {
 		let stylesheet = CSSStylesheet.defaultStyleSheet().copy() as! CSSStylesheet
-		let otherStyleSheet = CSSStylesheet(styleBlock: "p {margin-bottom:30px;font-size:40px;}")!
-		stylesheet.merge(otherStyleSheet)
+		let otherStyleSheet = CSSStylesheet(styleBlock: "p {margin-bottom:30px;font-size:40px;}")
+		stylesheet.mergeStylesheet(otherStyleSheet)
 
-		let element = HTMLElement(name: "p", attributes: nil, options: nil)!
+		let element = HTMLElement.element(withName: "p", attributes: nil, options: nil)
 		element.fontDescriptor = CoreTextFontDescriptor()
 		element.textScale = 1.0
 
@@ -72,9 +72,9 @@ struct CSSStylesheetTests {
 
 	@Test("Merging with decompression")
 	func mergingWithDecompression() {
-		let stylesheet = CSSStylesheet(styleBlock: "p {font: italic small-caps bold 14.0px/100px \"Times New Roman\", serif;}")!
-		let otherStyleSheet = CSSStylesheet(styleBlock: "p {margin-bottom:30px;font-size:40px;}")!
-		stylesheet.merge(otherStyleSheet)
+		let stylesheet = CSSStylesheet(styleBlock: "p {font: italic small-caps bold 14.0px/100px \"Times New Roman\", serif;}")
+		let otherStyleSheet = CSSStylesheet(styleBlock: "p {margin-bottom:30px;font-size:40px;}")
+		stylesheet.mergeStylesheet(otherStyleSheet)
 
 		let styles = stylesForSelector("p", in: stylesheet)!
 
@@ -94,7 +94,7 @@ struct CSSStylesheetTests {
 
 	@Test("Multiple font families parsed correctly")
 	func multipleFontFamilies() {
-		let stylesheet = CSSStylesheet(styleBlock: "p {font-family:Helvetica,sans-serif !important;}")!
+		let stylesheet = CSSStylesheet(styleBlock: "p {font-family:Helvetica,sans-serif !important;}")
 		let styles = stylesForSelector("p", in: stylesheet)!
 		let expected: [String] = ["Helvetica", "sans-serif"]
 		#expect(styles["font-family"] as? [String] == expected)
@@ -102,10 +102,10 @@ struct CSSStylesheetTests {
 
 	@Test("Merge by ID selector")
 	func mergeByID() {
-		let stylesheet = CSSStylesheet(styleBlock: "#foo {color:red;} #bar {color:blue;} .foo {color:yellow;}")!
+		let stylesheet = CSSStylesheet(styleBlock: "#foo {color:red;} #bar {color:blue;} .foo {color:yellow;}")
 
 		let attributes: [String: String] = ["id": "foo"]
-		let element = HTMLElement(name: "dummy", attributes: attributes)!
+		let element = HTMLElement(name: "dummy", attributes: attributes as NSDictionary)
 
 		var matchedSelectors: NSSet?
 		let styles = stylesheet.mergedStyleDictionary(for: element, matchedSelectors: &matchedSelectors, ignoreInlineStyle: false)!
@@ -122,7 +122,7 @@ struct CSSStylesheetTests {
 
 	@Test("Compressed background with rgb color")
 	func compressedBackground() {
-		let stylesheet = CSSStylesheet(styleBlock: "p {background: none 0px 0px repeat scroll rgb(250, 250, 250);}")!
+		let stylesheet = CSSStylesheet(styleBlock: "p {background: none 0px 0px repeat scroll rgb(250, 250, 250);}")
 		let styles = stylesForSelector("p", in: stylesheet)!
 		#expect(styles["background-color"] as? String == "rgb(250, 250, 250)")
 	}
@@ -136,7 +136,7 @@ struct CSSStylesheetTests {
 		]
 
 		for cssStr in testCases {
-			let stylesheet = CSSStylesheet.defaultStyleSheet()!
+			let stylesheet = CSSStylesheet.defaultStyleSheet()
 			stylesheet.parseStyleBlock(cssStr)
 			let s1Styles = stylesForSelector("s1", in: stylesheet)
 			let s2Styles = stylesForSelector("s2", in: stylesheet)

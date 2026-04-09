@@ -14,6 +14,11 @@ open class HTMLParserTextNode: HTMLParserNode {
         super.init(name: "#TEXT#", attributes: nil)
     }
 
+    public required init(name: String, attributes: NSDictionary?) {
+        self.characters = ""
+        super.init(name: name, attributes: attributes)
+    }
+
     open override var description: String {
         return "<\(type(of: self)) content='\(characters)'>"
     }

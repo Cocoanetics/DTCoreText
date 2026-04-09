@@ -64,8 +64,8 @@ open class TextAttachment: NSTextAttachment {
             }
         }
     }
-    private var _originalSize: CGSize = .zero
-    internal var _maxImageSize: CGSize = .zero
+    open var _originalSize: CGSize = .zero
+    open var _maxImageSize: CGSize = .zero
 
     @objc public var contentURL: URL?
     @objc public var hyperLinkURL: URL?

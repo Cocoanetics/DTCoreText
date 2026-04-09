@@ -68,9 +68,9 @@ open class ListItemHTMLElement: HTMLElement {
 
     // creates an attributed list prefix
     private func _listPrefix() -> NSAttributedString? {
-        let paragraphStyle = CoreTextParagraphStyle.paragraphStyle(with: (attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any])[.paragraphStyle] as! NSParagraphStyle)
+        let paragraphStyle = CoreTextParagraphStyle.paragraphStyle(withNSParagraphStyle: (attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any])[.paragraphStyle] as? NSParagraphStyle)
 
-        let fontDescriptor = (attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]).fontDescriptor()
+        let fontDescriptor = (attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]).dtct_fontDescriptor()
 
         var effectiveList = self.paragraphStyle.textLists?.last as? CSSListStyle
         let listRoot = self.parentElement()
@@ -87,19 +87,19 @@ open class ListItemHTMLElement: HTMLElement {
         if let styleStr = self.attributeForKey("style") {
             let styles = (styleStr as NSString).dictionaryOfCSSStyles()
 
-            if let styles = styles, styles.count > 0 {
+            if styles.count > 0 {
                 // make a temp copy
                 effectiveList = effectiveList?.copy() as? CSSListStyle
 
                 // update from styles
-                effectiveList?.update(fromStyleDictionary: styles as? [AnyHashable: Any])
+                effectiveList?.updateFromStyleDictionary(styles)
             }
         }
 
         let attributes = tmpCopy.attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]
 
         // modify paragraph style
-        guard let ps = paragraphStyle else { return nil }
+        let ps = paragraphStyle
         ps.firstLineHeadIndent = self.paragraphStyle.headIndent - _margins.left - _padding.left
         ps.defaultTabInterval = 100
 
@@ -117,11 +117,11 @@ open class ListItemHTMLElement: HTMLElement {
             // first tab is to right-align bullet, numbering against
             let tabOffset = ps.headIndent - 5.0
 
-            ps.addTabStop(atPosition: tabOffset, alignment: .right)
+            ps.addTabStop(at: tabOffset, alignment: .right)
         }
 
         // second tab is for the beginning of first line after bullet
-        ps.addTabStop(atPosition: ps.headIndent, alignment: .left)
+        ps.addTabStop(at: ps.headIndent, alignment: .left)
 
         let newAttributes = NSMutableDictionary()
 
@@ -141,11 +141,8 @@ open class ListItemHTMLElement: HTMLElement {
             #endif
         }
 
-        let uiColor = attributes.foregroundColor()
-
-        if let uiColor = uiColor {
-            newAttributes[NSAttributedString.Key.foregroundColor] = uiColor
-        }
+        let uiColor = attributes.dtct_foregroundColor()
+        newAttributes[NSAttributedString.Key.foregroundColor] = uiColor
 
         // add paragraph style (this has the tabs)
         let style = ps.nsParagraphStyle()
@@ -242,7 +239,7 @@ open class ListItemHTMLElement: HTMLElement {
                 let field = childrenString.attribute(NSAttributedString.Key(rawValue: DTFieldAttribute), at: 0, effectiveRange: nil) as? String
 
                 if field == DTListPrefixField {
-                    tmpString.appendEndOfParagraph()
+                    tmpString.dtct_appendEndOfParagraph()
                 }
             }
         }

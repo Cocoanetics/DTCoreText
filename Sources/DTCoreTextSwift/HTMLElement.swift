@@ -208,9 +208,13 @@ open class HTMLElement: HTMLParserNode {
         // add shadow array if applicable
         if let shadows = _shadows, let firstShadow = shadows.first as? [String: Any] {
             let shadow = NSShadow()
+            #if canImport(UIKit)
             shadow.shadowOffset = (firstShadow["Offset"] as? NSValue)?.cgSizeValue ?? .zero
-            shadow.shadowColor = firstShadow["Color"]
-            shadow.shadowBlurRadius = (firstShadow["Blur"] as? NSNumber)?.floatValue ?? 0
+            #else
+            shadow.shadowOffset = (firstShadow["Offset"] as? NSValue)?.sizeValue ?? .zero
+            #endif
+            shadow.shadowColor = firstShadow["Color"] as? DTColor
+            shadow.shadowBlurRadius = CGFloat((firstShadow["Blur"] as? NSNumber)?.floatValue ?? 0)
             tmpDict[NSAttributedString.Key.shadow] = shadow
         }
 
@@ -294,7 +298,7 @@ open class HTMLElement: HTMLParserNode {
                 }
             }
 
-            attributedString.addHTMLAttribute(key, value: val, range: entireString, replaceExisting: false)
+            attributedString.dtct_addHTMLAttribute(key, value: val, range: entireString, replaceExisting: false)
         }
     }
 
@@ -328,11 +332,11 @@ open class HTMLElement: HTMLParserNode {
                 // if previous node was inline and this child is block, need a newline
                 if let prev = previousChild, prev.displayStyle == .inline, oneChild.displayStyle == .block {
                     // trim off whitespace suffix
-                    while (tmpString.string as NSString).hasSuffixCharacter(from: .ignorableWhitespaceCharacterSet()) {
+                    while (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
                         tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
                     }
                     // paragraph break
-                    tmpString.appendString("\n")
+                    tmpString.dtct_appendString("\n")
                 }
 
                 var nodeString = oneChild.attributedString()
@@ -340,7 +344,7 @@ open class HTMLElement: HTMLParserNode {
                 if var ns = nodeString {
                     if !oneChild._containsAppleConvertedSpace {
                         // we already have a white space in the string so far
-                        if (tmpString.string as NSString).hasSuffixCharacter(from: .ignorableWhitespaceCharacterSet()) {
+                        if (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
                             let charactersToIgnore = CharacterSet(charactersIn: " \n\t")
                             var mutableNS = ns.mutableCopy() as! NSMutableAttributedString
 
@@ -383,7 +387,7 @@ open class HTMLElement: HTMLParserNode {
             if self.name != "html" && self.name != "body" {
                 if !tmpString.string.hasSuffix("\n") {
                     if tmpString.length > 0 {
-                        tmpString.appendEndOfParagraph()
+                        tmpString.dtct_appendEndOfParagraph()
                     } else {
                         let attributedString = NSAttributedString(string: "\n", attributes: attributes)
                         tmpString.append(attributedString)
@@ -398,7 +402,7 @@ open class HTMLElement: HTMLParserNode {
                 let paragraphRange = (tmpString.string as NSString).rangeOfParagraph(at: UInt(tmpString.length - 1))
 
                 if let paraStyle = tmpString.attribute(.paragraphStyle, at: paragraphRange.location, effectiveRange: nil) as? NSParagraphStyle {
-                    let paragraphStyle = CoreTextParagraphStyle.paragraphStyle(with: paraStyle)
+                    let paragraphStyle = CoreTextParagraphStyle.paragraphStyle(withNSParagraphStyle: paraStyle)
 
                     if paragraphStyle.paragraphSpacing < self.paragraphStyle.paragraphSpacing {
                         paragraphStyle.paragraphSpacing = self.paragraphStyle.paragraphSpacing
@@ -479,11 +483,11 @@ open class HTMLElement: HTMLParserNode {
         // writing direction
         if let directionStr = styles["direction"] as? String {
             if directionStr == "rtl" {
-                _paragraphStyle?.baseWritingDirection = kCTWritingDirectionRightToLeft
+                _paragraphStyle?.baseWritingDirection = .rightToLeft
             } else if directionStr == "ltr" {
-                _paragraphStyle?.baseWritingDirection = kCTWritingDirectionLeftToRight
+                _paragraphStyle?.baseWritingDirection = .leftToRight
             } else if directionStr == "auto" {
-                _paragraphStyle?.baseWritingDirection = kCTWritingDirectionNatural
+                _paragraphStyle?.baseWritingDirection = .natural
             }
         }
 
@@ -624,10 +628,10 @@ open class HTMLElement: HTMLParserNode {
         // text-align
         if let alignment = (styles["text-align"] as? String)?.lowercased() {
             switch alignment {
-            case "left": self.paragraphStyle.alignment = kCTTextAlignmentLeft
-            case "right": self.paragraphStyle.alignment = kCTTextAlignmentRight
-            case "center": self.paragraphStyle.alignment = kCTTextAlignmentCenter
-            case "justify": self.paragraphStyle.alignment = kCTTextAlignmentJustified
+            case "left": self.paragraphStyle.alignment = .left
+            case "right": self.paragraphStyle.alignment = .right
+            case "center": self.paragraphStyle.alignment = .center
+            case "justify": self.paragraphStyle.alignment = .justified
             default: break
             }
         }
@@ -718,8 +722,8 @@ open class HTMLElement: HTMLParserNode {
         if let borderColor = styles["border-color"] as? String {
             self.backgroundStrokeColor = DTColorCreateWithHTMLName(borderColor)
         }
-        _backgroundStrokeWidth = ((styles["border-width"] as? String)?.lowercased() as NSString?)?.floatValue.map { CGFloat($0) } ?? 0
-        _backgroundCornerRadius = ((styles["border-radius"] as? String)?.lowercased() as NSString?)?.floatValue.map { CGFloat($0) } ?? 0
+        if let bw = (styles["border-width"] as? String)?.lowercased() as NSString? { _backgroundStrokeWidth = CGFloat(bw.floatValue) }
+        if let br = (styles["border-radius"] as? String)?.lowercased() as NSString? { _backgroundCornerRadius = CGFloat(br.floatValue) }
 
         // text-indent
         if let textIndentStr = styles["text-indent"] as? String, (textIndentStr as NSString).isCSSLengthValue() {
@@ -775,9 +779,9 @@ open class HTMLElement: HTMLParserNode {
                 _backgroundColor = nil
 
                 if let textBlocks = self.paragraphStyle.textBlocks {
-                    let mutableBlocks = textBlocks.mutableCopy() as! NSMutableArray
-                    mutableBlocks.add(newBlock)
-                    self.paragraphStyle.textBlocks = mutableBlocks.copy() as? [Any]
+                    var mutableBlocks = textBlocks
+                    mutableBlocks.append(newBlock)
+                    self.paragraphStyle.textBlocks = mutableBlocks
                 } else {
                     self.paragraphStyle.textBlocks = [newBlock]
                 }
@@ -794,7 +798,7 @@ open class HTMLElement: HTMLParserNode {
 
     /// Creates a CSSListStyle to match the CSS styles.
     @objc open func listStyle() -> CSSListStyle {
-        let style = CSSListStyle(styles: _styles as? [AnyHashable: Any])
+        let style = CSSListStyle(styles: (_styles as? [String: Any]) ?? [:])
 
         if let startingIndex = (self.attributes as? [String: Any])?["start"] as? String {
             style.startingItemNumber = (startingIndex as NSString).integerValue
@@ -836,8 +840,8 @@ open class HTMLElement: HTMLParserNode {
         _letterSpacing = element.letterSpacing
 
         _shadows = element.shadows?.map { $0 }
-        _link = element.link?.copy() as? URL
-        _anchorName = element.anchorName?.copy() as? String
+        _link = element.link
+        _anchorName = element.anchorName
         _linkGUID = element._linkGUID
 
         _textColor = element.textColor
@@ -872,9 +876,9 @@ open class HTMLElement: HTMLParserNode {
         // detect writing direction if set
         if let directionStr = attributeForKey("dir") {
             switch directionStr {
-            case "rtl": _paragraphStyle?.baseWritingDirection = kCTWritingDirectionRightToLeft
-            case "ltr": _paragraphStyle?.baseWritingDirection = kCTWritingDirectionLeftToRight
-            case "auto": _paragraphStyle?.baseWritingDirection = kCTWritingDirectionNatural
+            case "rtl": _paragraphStyle?.baseWritingDirection = .rightToLeft
+            case "ltr": _paragraphStyle?.baseWritingDirection = .leftToRight
+            case "auto": _paragraphStyle?.baseWritingDirection = .natural
             default: break
             }
         }
@@ -882,10 +886,10 @@ open class HTMLElement: HTMLParserNode {
         // handles align="justify"
         if let align = attributeForKey("align") {
             switch align {
-            case "justify": _paragraphStyle?.alignment = kCTTextAlignmentJustified
-            case "left": _paragraphStyle?.alignment = kCTTextAlignmentLeft
-            case "center": _paragraphStyle?.alignment = kCTTextAlignmentCenter
-            case "right": _paragraphStyle?.alignment = kCTTextAlignmentRight
+            case "justify": _paragraphStyle?.alignment = .justified
+            case "left": _paragraphStyle?.alignment = .left
+            case "center": _paragraphStyle?.alignment = .center
+            case "right": _paragraphStyle?.alignment = .right
             default: break
             }
         }
@@ -1117,7 +1121,4 @@ open class HTMLElement: HTMLParserNode {
     }
 }
 
-// MARK: - Compatibility type aliases
-#if !canImport(UIKit)
-typealias UIEdgeInsets = NSEdgeInsets
-#endif
+// UIEdgeInsets typealias for macOS is defined in NSCoder+DTCompatibility.swift

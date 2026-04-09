@@ -1,8 +1,7 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreText
-import DTCoreTextSwift
+@testable import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -20,7 +19,7 @@ struct MutableAttributedStringHTMLTests {
 		let entireString = NSRange(location: 0, length: attributedString.length)
 
 		// have a range with an attribute
-		attributedString.addHTMLAttribute("class", value: "oli", range: NSRange(location: 3, length: 2), replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("class", value: "oli", range: NSRange(location: 3, length: 2), replaceExisting: true)
 
 		var effectiveRange = NSRange()
 		var dict = attributedString.attribute(NSAttributedString.Key(DTCustomAttributesAttribute), at: 3, effectiveRange: &effectiveRange) as? [String: Any]
@@ -32,7 +31,7 @@ struct MutableAttributedStringHTMLTests {
 		#expect(value == "oli", "Attribute should be oli")
 
 		// add the same name attribute without replacing for the entire string
-		attributedString.addHTMLAttribute("class", value: "drops", range: entireString, replaceExisting: false)
+		attributedString.dtct_addHTMLAttribute("class", value: "drops", range: entireString, replaceExisting: false)
 
 		// part in the middle should still be oli
 		dict = attributedString.attribute(NSAttributedString.Key(DTCustomAttributesAttribute), at: 3, effectiveRange: &effectiveRange) as? [String: Any]
@@ -62,7 +61,7 @@ struct MutableAttributedStringHTMLTests {
 		#expect(value == "drops", "Attribute should be drops")
 
 		// replace everything
-		attributedString.addHTMLAttribute("class", value: "foo", range: entireString, replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("class", value: "foo", range: entireString, replaceExisting: true)
 
 		let rangeOfClass = attributedString.rangeOfHTMLAttribute( "class", at: 0)
 
@@ -82,10 +81,10 @@ struct MutableAttributedStringHTMLTests {
 		let entireString = NSRange(location: 0, length: attributedString.length)
 
 		// have a range with an attribute
-		attributedString.addHTMLAttribute("class", value: "oli", range: entireString, replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("class", value: "oli", range: entireString, replaceExisting: true)
 
 		// remove a part at the end
-		attributedString.removeHTMLAttribute("class", range: NSRange(location: 5, length: 10))
+		attributedString.dtct_removeHTMLAttribute("class", range: NSRange(location: 5, length: 10))
 
 		// tail should now be nil
 		var effectiveRange = NSRange()
@@ -113,8 +112,8 @@ struct MutableAttributedStringHTMLTests {
 		let entireString = NSRange(location: 0, length: attributedString.length)
 
 		// have a range with an attribute
-		attributedString.addHTMLAttribute("class", value: "oli", range: entireString, replaceExisting: true)
-		attributedString.addHTMLAttribute("foo", value: "bar", range: entireString, replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("class", value: "oli", range: entireString, replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("foo", value: "bar", range: entireString, replaceExisting: true)
 
 		// there should be two
 		var attributes = attributedString.attribute(NSAttributedString.Key(DTCustomAttributesAttribute), at: 2, effectiveRange: nil) as? [String: Any]
@@ -122,7 +121,7 @@ struct MutableAttributedStringHTMLTests {
 		#expect(count == 2, "There should be 2 custom attributes")
 
 		// now remove one
-		attributedString.removeHTMLAttribute("foo", range: entireString)
+		attributedString.dtct_removeHTMLAttribute("foo", range: entireString)
 
 		// there should be one
 		attributes = attributedString.attribute(NSAttributedString.Key(DTCustomAttributesAttribute), at: 2, effectiveRange: nil) as? [String: Any]
@@ -137,13 +136,13 @@ struct MutableAttributedStringHTMLTests {
 		let entireString = NSRange(location: 0, length: attributedString.length)
 
 		// have a range with an attribute
-		attributedString.addHTMLAttribute("class", value: "oli", range: NSRange(location: 3, length: 2), replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("class", value: "oli", range: NSRange(location: 3, length: 2), replaceExisting: true)
 
 		// add longer range
-		attributedString.addHTMLAttribute("class", value: "bar", range: entireString, replaceExisting: false)
+		attributedString.dtct_addHTMLAttribute("class", value: "bar", range: entireString, replaceExisting: false)
 
 		// add a second one on top of it all
-		attributedString.addHTMLAttribute("foo", value: "bar", range: entireString, replaceExisting: true)
+		attributedString.dtct_addHTMLAttribute("foo", value: "bar", range: entireString, replaceExisting: true)
 
 		// class element in middle is only valid for that range
 		var expectedRange = NSRange(location: 3, length: 2)
@@ -181,7 +180,7 @@ struct MutableAttributedStringHTMLTests {
 		testingString.addAttribute(NSAttributedString.Key(kCTForegroundColorAttributeName as String), value: redColorRef, range: entireString)
 
 		// append the end of a paragraph tag
-		testingString.appendEndOfParagraph()
+		testingString.dtct_appendEndOfParagraph()
 
 		// check the foreground color is preserved in the appended newline
 		var stringColorRef = testingString.attribute(NSAttributedString.Key(kCTForegroundColorAttributeName as String), at: testingString.length - 1, effectiveRange: nil)

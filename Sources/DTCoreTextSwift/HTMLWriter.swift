@@ -243,7 +243,7 @@ public class HTMLWriter: NSObject {
 			let effectiveListStyle = currentListStyles?.last
 
 			// retrieve the paragraph style
-			let paragraphStyle = paraAttributesDict.paragraphStyle()
+			let paragraphStyle = paraAttributesDict.dtct_paragraphStyle()
 			var paraStyleString: String? = nil
 
 			if let paragraphStyle = paragraphStyle, effectiveListStyle == nil {
@@ -267,8 +267,8 @@ public class HTMLWriter: NSObject {
 			}
 
 			if fontIsBlockLevel {
-				if let paragraphFont = paragraphFont,
-				   let desc = CoreTextFontDescriptor(ctFont: paragraphFont) {
+				if let paragraphFont = paragraphFont {
+				   let desc = CoreTextFontDescriptor(ctFont: paragraphFont)
 
 					if _textScale != 1.0 {
 						desc.pointSize /= _textScale
@@ -513,7 +513,7 @@ public class HTMLWriter: NSObject {
 					needsToRemovePrefix = false
 				}
 
-				var subString: String? = (plainSubString as NSString).addingHTMLEntities()
+				var subString: String? = (plainSubString as NSString).stringByAddingHTMLEntities()
 
 				if subString == nil {
 					if isLastPartOfHyperlink {
@@ -537,12 +537,8 @@ public class HTMLWriter: NSObject {
 				}
 
 				if let attachment = attachment {
-					if let persistableAttachment = attachment as? DTTextAttachmentHTMLPersistence {
-						let htmlString = persistableAttachment.stringByEncodingAsHTML()
-
-						if let htmlString = htmlString {
-							retString += htmlString
-						}
+					if let persistableAttachment = attachment as? TextAttachmentHTMLPersistence {
+						retString += persistableAttachment.stringByEncodingAsHTML()
 					}
 
 					if isLastPartOfHyperlink {
@@ -554,7 +550,7 @@ public class HTMLWriter: NSObject {
 
 				var fontStyle: String? = nil
 				if !fontIsBlockLevel {
-					let fontDescriptor = attributesDict.fontDescriptor()
+					let fontDescriptor = attributesDict.dtct_fontDescriptor()
 
 					if let fontDescriptor = fontDescriptor {
 						if self.textScale != 1.0 {
@@ -569,20 +565,17 @@ public class HTMLWriter: NSObject {
 					fontStyle = ""
 				}
 
-				let kerning = attributesDict.kerning() / self.textScale
+				let kerning = attributesDict.dtct_kerning() / self.textScale
 
 				if kerning != 0 {
 					fontStyle = fontStyle! + String(format: "letter-spacing:%.0fpx;", kerning)
 				}
 
-				let textColor = attributesDict.foregroundColor()
+				let textColor = attributesDict.dtct_foregroundColor()
+				let hex = DTHexStringFromDTColor(textColor) ?? ""
+				fontStyle = fontStyle! + "color:#\(hex);"
 
-				if let textColor = textColor {
-					let hex = DTHexStringFromDTColor(textColor) ?? ""
-					fontStyle = fontStyle! + "color:#\(hex);"
-				}
-
-				let backgroundColor = attributesDict.backgroundColor()
+				let backgroundColor = attributesDict.dtct_backgroundColor()
 
 				if let backgroundColor = backgroundColor {
 					let hex = DTHexStringFromDTColor(backgroundColor) ?? ""
@@ -808,13 +801,7 @@ public class HTMLWriter: NSObject {
 		}
 
 		if _useAppleConvertedSpace {
-			let convertedSpaces = (retString as NSString).addingAppleConvertedSpace()
-
-			if let convertedSpaces = convertedSpaces {
-				output += convertedSpaces
-			} else {
-				output += retString
-			}
+			output += (retString as NSString).stringByAddingAppleConvertedSpace()
 		} else {
 			output += retString
 		}
