@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import CoreText
 @testable import DTCoreText
+import DTCoreTextSwift
 
 #if canImport(UIKit)
 import UIKit
@@ -63,7 +64,7 @@ struct MutableAttributedStringHTMLTests {
 		// replace everything
 		attributedString.addHTMLAttribute("class", value: "foo", range: entireString, replaceExisting: true)
 
-		let rangeOfClass = attributedString.range(ofHTMLAttribute: "class", at: 0)
+		let rangeOfClass = attributedString.rangeOfHTMLAttribute( "class", at: 0)
 
 		expectedRange = NSRange(location: 0, length: 10)
 		#expect(NSEqualRanges(expectedRange, rangeOfClass), "Effective Range does not match")
@@ -146,24 +147,24 @@ struct MutableAttributedStringHTMLTests {
 
 		// class element in middle is only valid for that range
 		var expectedRange = NSRange(location: 3, length: 2)
-		var queriedRange = attributedString.range(ofHTMLAttribute: "class", at: 3)
+		var queriedRange = attributedString.rangeOfHTMLAttribute( "class", at: 3)
 		#expect(NSEqualRanges(expectedRange, queriedRange), "Range is incorrect")
 
 		// global foo is entire range
-		queriedRange = attributedString.range(ofHTMLAttribute: "foo", at: 3)
+		queriedRange = attributedString.rangeOfHTMLAttribute( "foo", at: 3)
 		#expect(NSEqualRanges(queriedRange, entireString), "Range is incorrect")
 
 		// global foo is entire range no matter where you query it
-		queriedRange = attributedString.range(ofHTMLAttribute: "foo", at: 9)
+		queriedRange = attributedString.rangeOfHTMLAttribute( "foo", at: 9)
 		#expect(NSEqualRanges(queriedRange, entireString), "Range is incorrect")
 
 		// the right part of class (with 'bar')
-		queriedRange = attributedString.range(ofHTMLAttribute: "class", at: 5)
+		queriedRange = attributedString.rangeOfHTMLAttribute( "class", at: 5)
 		expectedRange = NSRange(location: 5, length: 5)
 		#expect(NSEqualRanges(queriedRange, expectedRange), "Range is incorrect")
 
 		// the left part of class (with 'bar')
-		queriedRange = attributedString.range(ofHTMLAttribute: "class", at: 1)
+		queriedRange = attributedString.rangeOfHTMLAttribute( "class", at: 1)
 		expectedRange = NSRange(location: 0, length: 3)
 		#expect(NSEqualRanges(queriedRange, expectedRange), "Range is incorrect")
 	}

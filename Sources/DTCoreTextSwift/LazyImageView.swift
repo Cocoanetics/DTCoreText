@@ -60,7 +60,7 @@ public class LazyImageView: UIImageView, URLSessionDataDelegate {
 	}
 
 	/// The content view that owns this image view.
-	@objc public weak var contentView: DTAttributedTextContentView?
+	@objc public weak var contentView: AttributedTextContentView?
 
 	/// Whether to display the image progressively as it downloads.
 	@objc public var shouldShowProgressiveDownload: Bool = false

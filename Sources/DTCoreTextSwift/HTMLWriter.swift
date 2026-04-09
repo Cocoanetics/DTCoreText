@@ -320,7 +320,7 @@ public class HTMLWriter: NSObject {
 
 					if let currentListStyles = currentListStyles {
 						for oneList in currentListStyles {
-							let listRange = _attributedString.range(ofTextList: oneList, at: UInt(paragraphRange.location))
+							let listRange = _attributedString.rangeOfTextList(oneList, at: paragraphRange.location)
 
 							if listRange.location == paragraphRange.location {
 								// list starts here
@@ -370,7 +370,7 @@ public class HTMLWriter: NSObject {
 			}
 
 			// find which custom attributes are for the entire paragraph
-			let htmlAttributes = _attributedString.htmlAttributes(at: UInt(paragraphRange.location))
+			let htmlAttributes = _attributedString.htmlAttributes(at: paragraphRange.location)
 			let paragraphLevelHTMLAttributes = NSMutableDictionary()
 
 			if let htmlAttributes = htmlAttributes {
@@ -378,7 +378,7 @@ public class HTMLWriter: NSObject {
 					guard let key = key as? String else { continue }
 
 					// check if range is longer than current paragraph
-					let attributeEffectiveRange = _attributedString.range(ofHTMLAttribute: key, at: UInt(paragraphRange.location))
+					let attributeEffectiveRange = _attributedString.rangeOfHTMLAttribute(key, at: paragraphRange.location)
 
 					if NSIntersectionRange(attributeEffectiveRange, paragraphRange).length == paragraphRange.length {
 						paragraphLevelHTMLAttributes[key] = value
@@ -458,9 +458,9 @@ public class HTMLWriter: NSObject {
 
 				if (spanURL != nil || spanAnchorName != nil) && currentLinkRange.location == NSNotFound {
 					if spanURL != nil {
-						currentLinkRange = self.attributedString.rangeOfLink(at: UInt(spanRange.location), url: nil)
+						currentLinkRange = self.attributedString.rangeOfLink(at: spanRange.location, url: nil)
 					} else if spanAnchorName != nil {
-						currentLinkRange = self.attributedString.range(ofAnchorNamed: spanAnchorName!)
+						currentLinkRange = self.attributedString.rangeOfAnchorNamed( spanAnchorName!)
 					}
 
 					isFirstPartOfHyperlink = true
@@ -478,12 +478,12 @@ public class HTMLWriter: NSObject {
 					}
 
 					// find which custom attributes are for the link
-					if let localHTMLAttributes = self.attributedString.htmlAttributes(at: UInt(currentLinkRange.location)) {
+					if let localHTMLAttributes = self.attributedString.htmlAttributes(at: currentLinkRange.location) {
 						for (key, value) in localHTMLAttributes {
 							guard let key = key as? String else { continue }
 
 							// check if range is longer than current paragraph
-							let attributeEffectiveRange = self.attributedString.range(ofHTMLAttribute: key, at: UInt(currentLinkRange.location))
+							let attributeEffectiveRange = self.attributedString.rangeOfHTMLAttribute(key, at: currentLinkRange.location)
 
 							if NSEqualRanges(attributeEffectiveRange, currentLinkRange) {
 								linkLevelHTMLAttributes![key] = value
@@ -500,7 +500,7 @@ public class HTMLWriter: NSObject {
 				var plainSubString = nsPlainString.substring(with: spanRange)
 
 				if effectiveListStyle != nil && needsToRemovePrefix {
-					let prefixRange = self.attributedString.rangeOfField(at: UInt(spanRange.location))
+					let prefixRange = self.attributedString.rangeOfField(at: spanRange.location)
 
 					if prefixRange.location != NSNotFound {
 						if NSMaxRange(prefixRange) < (plainSubString as NSString).length {
@@ -652,7 +652,7 @@ public class HTMLWriter: NSObject {
 							}
 						}
 
-						let attributeEffectiveRange = self.attributedString.range(ofHTMLAttribute: key, at: UInt(spanRange.location))
+						let attributeEffectiveRange = self.attributedString.rangeOfHTMLAttribute(key, at: spanRange.location)
 
 						if currentLinkRange.location == NSNotFound || !NSEqualRanges(attributeEffectiveRange, currentLinkRange) {
 							spanLevelHTMLAttributes[key] = value
