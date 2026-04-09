@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import DTCoreText
 
-@Suite("String HTML Entities")
+@Suite("String HTML Entities", .serialized)
 struct StringHTMLTests {
 	@Test("Emoji encoding and decoding round-trip")
 	func emojiEncodingAndDecoding() {

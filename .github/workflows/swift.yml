@@ -28,6 +28,7 @@ jobs:
           xcodebuild test \
             -scheme DTCoreTextSwiftTests \
             -destination "platform=macOS" \
+            -parallel-testing-enabled NO \
             -skipPackagePluginValidation
 
   build-ios:
@@ -52,4 +53,5 @@ jobs:
           xcodebuild test \
             -scheme DTCoreTextSwiftTests \
             -destination "platform=iOS Simulator,name=iPhone 17,OS=latest" \
+            -parallel-testing-enabled NO \
             -skipPackagePluginValidation

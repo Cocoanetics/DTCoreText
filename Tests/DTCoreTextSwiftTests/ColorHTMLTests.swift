@@ -32,7 +32,7 @@ private func assertColorsEqual(_ color1: PlatformColor?, _ color2: PlatformColor
 	#expect(abs(a1 - a2) < 0.01, "Alpha components differ", sourceLocation: sourceLocation)
 }
 
-@Suite("Color HTML")
+@Suite("Color HTML", .serialized)
 struct ColorHTMLTests {
 	@Test("Creates valid colors from hex strings", arguments: [
 		("000000", 0.0, 0.0, 0.0),

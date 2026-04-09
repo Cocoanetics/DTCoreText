@@ -9,7 +9,7 @@ import UIKit
 import AppKit
 #endif
 
-@Suite("HTML Element")
+@Suite("HTML Element", .serialized)
 struct HTMLElementTests {
 	@Test("HTML align attribute sets correct text alignment", arguments: [
 		("<div align=\"justify\">text to align</div>", CTTextAlignment.justified),

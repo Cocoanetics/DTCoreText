@@ -8,7 +8,7 @@ import UIKit
 import AppKit
 #endif
 
-@Suite("NSDictionary+DTCoreText")
+@Suite("NSDictionary+DTCoreText", .serialized)
 struct DictionaryDTCoreTextTests {
 	@Test("Bold detection")
 	func bold() {
@@ -135,6 +135,31 @@ struct DictionaryDTCoreTextTests {
 	@Test("Valid colors from HTML")
 	func validColors() {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"color:red;background-color:blue;\">Paragraph</span>")!
+		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
+		let fgHex = DTHexStringFromDTColor(attributes.foregroundColor())
+		#expect(fgHex == "ff0000")
+		let bgHex = DTHexStringFromDTColor(attributes.backgroundColor())
+		#expect(bgHex == "0000ff")
+	}
+
+	@Test("NS valid colors from direct attributes")
+	func nsValidColors() {
+		let buildAttributes: [NSAttributedString.Key: Any] = [
+			.foregroundColor: DTColorCreateWithHTMLName("red")!,
+			.backgroundColor: DTColorCreateWithHTMLName("blue")!,
+		]
+		let attributedString = NSAttributedString(string: "string", attributes: buildAttributes)
+		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
+		let fgHex = DTHexStringFromDTColor(attributes.foregroundColor())
+		#expect(fgHex == "ff0000")
+		let bgHex = DTHexStringFromDTColor(attributes.backgroundColor())
+		#expect(bgHex == "0000ff")
+	}
+
+	@Test("NS valid colors from HTML with iOS6 attributes")
+	func nsValidColorsFromHTML() {
+		let options: [String: Any] = [DTUseiOS6Attributes: NSNumber(value: true)]
+		let attributedString = TestHelpers.attributedString(fromHTML: "<span style=\"color:red;background-color:blue;\">Paragraph</span>", options: options)!
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
 		let fgHex = DTHexStringFromDTColor(attributes.foregroundColor())
 		#expect(fgHex == "ff0000")

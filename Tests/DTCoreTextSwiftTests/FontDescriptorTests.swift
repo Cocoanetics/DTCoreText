@@ -38,7 +38,9 @@ struct FontDescriptorTests {
 	#if canImport(UIKit)
 	@Test("UIFontDescriptor option sets correct font family")
 	func fontDescriptor() {
-		let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body)
+		// Use a concrete font family instead of the system font, which has
+		// a private family name (.AppleSystemUIFont) that DTCoreText doesn't handle.
+		let descriptor = UIFontDescriptor(name: "Georgia", size: 17)
 		let font = UIFont(descriptor: descriptor, size: descriptor.pointSize)
 
 		let options: [String: Any] = [DTDefaultFontDescriptor: descriptor]

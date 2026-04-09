@@ -8,7 +8,7 @@ import UIKit
 import AppKit
 #endif
 
-@Suite("String CSS")
+@Suite("String CSS", .serialized)
 struct StringCSSTests {
 	private func parseShadow(_ css: String) -> [[String: Any]]? {
 		let string = css as NSString
@@ -35,6 +35,16 @@ struct StringCSSTests {
 			#endif
 		}()
 		#expect(offset == CGSize(width: 1, height: 2))
+
+		let shadowColor = oneShadow["Color"] as! PlatformColor
+		let redColor = PlatformColor.red
+		#if canImport(UIKit)
+		#expect(shadowColor == redColor)
+		#else
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.redComponent == redColor.redComponent)
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.greenComponent == redColor.greenComponent)
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.blueComponent == redColor.blueComponent)
+		#endif
 	}
 
 	@Test("Shadow with color last")
@@ -56,6 +66,16 @@ struct StringCSSTests {
 			#endif
 		}()
 		#expect(offset == CGSize(width: 1, height: 2))
+
+		let shadowColor = oneShadow["Color"] as! PlatformColor
+		let redColor = PlatformColor.red
+		#if canImport(UIKit)
+		#expect(shadowColor == redColor)
+		#else
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.redComponent == redColor.redComponent)
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.greenComponent == redColor.greenComponent)
+		#expect(shadowColor.usingColorSpace(.deviceRGB)!.blueComponent == redColor.blueComponent)
+		#endif
 	}
 
 	@Test("Invalid shadow returns nil")
@@ -183,12 +203,36 @@ struct StringCSSTests {
 		}
 
 		// 4 values: top right bottom left
+		let e4 = makeElement()
+		e4.applyStyleDictionary(["margin": "10px 20px 30px 40px"])
+		#expect(e4.margins.top == 10)
+		#expect(e4.margins.left == 40)
+		#expect(e4.margins.bottom == 30)
+		#expect(e4.margins.right == 20)
+
+		// 3 values: top left-right bottom
+		let e3 = makeElement()
+		e3.applyStyleDictionary(["margin": "10px 20px 30px"])
+		#expect(e3.margins.top == 10)
+		#expect(e3.margins.left == 20)
+		#expect(e3.margins.bottom == 30)
+		#expect(e3.margins.right == 20)
+
+		// 2 values: top-bottom left-right
+		let e2 = makeElement()
+		e2.applyStyleDictionary(["margin": "10px 20px"])
+		#expect(e2.margins.top == 10)
+		#expect(e2.margins.left == 20)
+		#expect(e2.margins.bottom == 10)
+		#expect(e2.margins.right == 20)
+
+		// 1 value: all sides
 		let e1 = makeElement()
-		e1.applyStyleDictionary(["margin": "10px 20px 30px 40px"])
+		e1.applyStyleDictionary(["margin": "10px"])
 		#expect(e1.margins.top == 10)
-		#expect(e1.margins.right == 20)
-		#expect(e1.margins.bottom == 30)
-		#expect(e1.margins.left == 40)
+		#expect(e1.margins.left == 10)
+		#expect(e1.margins.bottom == 10)
+		#expect(e1.margins.right == 10)
 	}
 
 	@Test("RGB in background should not cause array return")
