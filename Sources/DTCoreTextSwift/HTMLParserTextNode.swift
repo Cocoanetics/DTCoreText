@@ -1,0 +1,30 @@
+import Foundation
+
+/// Specialized subclass of HTMLParserNode that represents text inside a node
+@objc(DTHTMLParserTextNode)
+open class HTMLParserTextNode: HTMLParserNode {
+
+    /// The character contents of the text node
+    @objc public private(set) var characters: String
+
+    /// Designated initializer with the characters that make up the text.
+    /// - Parameter characters: The characters of the string
+    @objc public init(characters: String) {
+        self.characters = characters
+        super.init(name: "#TEXT#", attributes: nil)
+    }
+
+    open override var description: String {
+        return "<\(type(of: self)) content='\(characters)'>"
+    }
+
+    override func _appendHTML(to string: NSMutableString, indentLevel: Int) {
+        // indent to the level
+        for _ in 0..<indentLevel {
+            string.append("   ")
+        }
+
+        let normalized = (characters as NSString).stringByNormalizingWhitespace() ?? characters
+        string.append("\"\(normalized)\"\n")
+    }
+}

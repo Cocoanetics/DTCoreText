@@ -7,12 +7,12 @@ struct CSSListStyleTests {
 	@Test("NSCoding round-trip preserves equality")
 	func nsCodingEqual() throws {
 		let styles: [String: String] = ["list-style-type": "none", "list-style-position": "inherit"]
-		let listStyle = DTCSSListStyle(styles: styles)!
+		let listStyle = CSSListStyle(styles: styles)!
 
 		let data = try NSKeyedArchiver.archivedData(withRootObject: listStyle, requiringSecureCoding: false)
 		let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
 		unarchiver.requiresSecureCoding = false
-		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DTCSSListStyle
+		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! CSSListStyle
 
 		#expect(listStyle.isEqual(to: unarchived))
 	}
@@ -20,17 +20,17 @@ struct CSSListStyleTests {
 	@Test("NSCoding round-trip preserves inequality")
 	func nsCodingNotEqual() throws {
 		let styles1: [String: String] = ["list-style-type": "none", "list-style-position": "inherit"]
-		let listStyle1 = DTCSSListStyle(styles: styles1)!
+		let listStyle1 = CSSListStyle(styles: styles1)!
 
 		let styles2: [String: String] = ["list-style-type": "circle", "list-style-position": "inherit"]
-		let listStyle2 = DTCSSListStyle(styles: styles2)!
+		let listStyle2 = CSSListStyle(styles: styles2)!
 
 		#expect(!listStyle1.isEqual(to: listStyle2))
 
 		let data = try NSKeyedArchiver.archivedData(withRootObject: listStyle1, requiringSecureCoding: false)
 		let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
 		unarchiver.requiresSecureCoding = false
-		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DTCSSListStyle
+		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! CSSListStyle
 
 		#expect(!unarchived.isEqual(to: listStyle2))
 	}

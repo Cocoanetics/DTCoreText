@@ -11,7 +11,6 @@
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
 import QuartzCore
-import DTCoreText
 
 /// A `UIScrollView` subclass that displays a `AttributedTextContentView`
 /// as its content view. Replacement for `UITextView` with rich text.

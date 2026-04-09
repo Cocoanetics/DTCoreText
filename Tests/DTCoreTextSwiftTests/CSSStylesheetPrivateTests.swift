@@ -6,47 +6,47 @@ import DTCoreTextTestHelpers
 
 @Suite("CSS Stylesheet - Selector Weights", .serialized)
 struct CSSStylesheetWeightTests {
-	private func weight(forSelector selector: String?, in stylesheet: DTCSSStylesheet) -> Int {
+	private func weight(forSelector selector: String?, in stylesheet: CSSStylesheet) -> Int {
 		return Int(DTCSSStylesheetTestHelper.weight(forSelector: selector, inStylesheet: stylesheet))
 	}
 
 	@Test("Invalid selector has no weight")
 	func invalidSelectorHasNoWeight() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: "", in: stylesheet) == 0)
 		#expect(weight(forSelector: nil, in: stylesheet) == 0)
 	}
 
 	@Test("Classes weigh ten")
 	func classesWeighTen() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: ".foo", in: stylesheet) == 10)
 		#expect(weight(forSelector: ".foo .bar", in: stylesheet) == 20)
 	}
 
 	@Test("IDs weigh one hundred")
 	func idsWeightOneHundred() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: "#foo", in: stylesheet) == 100)
 		#expect(weight(forSelector: "#foo #bar", in: stylesheet) == 200)
 	}
 
 	@Test("Element names weigh one")
 	func elementNamesWeightOne() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: "div", in: stylesheet) == 1)
 		#expect(weight(forSelector: "span div", in: stylesheet) == 2)
 	}
 
 	@Test("Weights are summed")
 	func weightsAreSummed() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: ".foo #div bar", in: stylesheet) == 111)
 	}
 
 	@Test("Spaces do not affect weight")
 	func spacesDoNotAffectWeight() {
-		let stylesheet = DTCSSStylesheet(styleBlock: "")!
+		let stylesheet = CSSStylesheet(styleBlock: "")!
 		#expect(weight(forSelector: " .foo  #div    bar  ", in: stylesheet) == 111)
 	}
 }
@@ -54,7 +54,7 @@ struct CSSStylesheetWeightTests {
 @Suite("CSS Stylesheet - Shorthand Decompression", .serialized)
 struct CSSStylesheetShorthandTests {
 	private func uncompress(_ styles: [String: String]) -> [String: Any] {
-		let stylesheet = DTCSSStylesheet.defaultStyleSheet()!
+		let stylesheet = CSSStylesheet.defaultStyleSheet()!
 		return DTCSSStylesheetTestHelper.uncompressShorthands(styles, usingStylesheet: stylesheet) as! [String: Any]
 	}
 

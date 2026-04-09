@@ -18,11 +18,11 @@ private func makeEdgeInsets(top: CGFloat, left: CGFloat, bottom: CGFloat, right:
 struct TextBlockTests {
 	@Test("Equal blocks compare as equal")
 	func equals() {
-		let block1 = DTTextBlock()
+		let block1 = TextBlock()
 		block1.padding = makeEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
 		block1.backgroundColor = DTColorCreateWithHTMLName("red")
 
-		let block2 = DTTextBlock()
+		let block2 = TextBlock()
 		block2.padding = makeEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
 		block2.backgroundColor = DTColorCreateWithHTMLName("red")
 
@@ -48,7 +48,7 @@ struct TextBlockTests {
 
 	@Test("Hash is consistent")
 	func hashValue() {
-		let block = DTTextBlock()
+		let block = TextBlock()
 		block.padding = makeEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
 
 		#expect(block.hash == 201010757)
@@ -56,25 +56,25 @@ struct TextBlockTests {
 
 	@Test("NSCoding round-trip preserves equality")
 	func nsCodingEqual() throws {
-		let block = DTTextBlock()
+		let block = TextBlock()
 		block.padding = makeEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
 		block.backgroundColor = DTColorCreateWithHTMLName("red")
 
 		let data = try NSKeyedArchiver.archivedData(withRootObject: block, requiringSecureCoding: false)
 		let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
 		unarchiver.requiresSecureCoding = false
-		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DTTextBlock
+		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! TextBlock
 
 		#expect(block == unarchived)
 	}
 
 	@Test("NSCoding round-trip preserves inequality")
 	func nsCodingNotEqual() throws {
-		let block1 = DTTextBlock()
+		let block1 = TextBlock()
 		block1.padding = makeEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
 		block1.backgroundColor = DTColorCreateWithHTMLName("red")
 
-		let block2 = DTTextBlock()
+		let block2 = TextBlock()
 		block2.padding = makeEdgeInsets(top: 20, left: 30, bottom: 40, right: 50)
 		block2.backgroundColor = DTColorCreateWithHTMLName("blue")
 
@@ -83,7 +83,7 @@ struct TextBlockTests {
 		let data = try NSKeyedArchiver.archivedData(withRootObject: block1, requiringSecureCoding: false)
 		let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
 		unarchiver.requiresSecureCoding = false
-		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DTTextBlock
+		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! TextBlock
 
 		#expect(unarchived != block2)
 	}

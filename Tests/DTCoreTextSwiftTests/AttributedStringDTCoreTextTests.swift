@@ -28,11 +28,11 @@ struct AttributedStringDTCoreTextTests {
 
 		let innerRange = (attributedString.string as NSString).range(of: "inside\n")
 		let innerAttributes = attributedString.attributes(at: innerRange.location, effectiveRange: nil)
-		let blocks = innerAttributes[NSAttributedString.Key(rawValue: DTTextBlocksAttribute)] as! [DTTextBlock]
+		let blocks = innerAttributes[NSAttributedString.Key(rawValue: DTTextBlocksAttribute)] as! [TextBlock]
 		#expect(blocks.count == 1)
 		let effectiveBlock = blocks.first!
 
-		let newBlock = DTTextBlock()
+		let newBlock = TextBlock()
 		#if canImport(UIKit)
 		newBlock.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		#else
@@ -62,10 +62,10 @@ struct AttributedStringDTCoreTextTests {
 
 		let innerRange = (attributedString.string as NSString).range(of: "inside\n")
 		let innerAttributes = attributedString.attributes(at: innerRange.location, effectiveRange: nil)
-		let lists = innerAttributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as! [DTCSSListStyle]
+		let lists = innerAttributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as! [CSSListStyle]
 		#expect(lists.count == 1)
 		let effectiveList = lists.last!
-		let newListStyle = effectiveList.copy() as! DTCSSListStyle
+		let newListStyle = effectiveList.copy() as! CSSListStyle
 
 		#expect(effectiveList !== newListStyle)
 
@@ -104,7 +104,7 @@ struct AttributedStringDTCoreTextTests {
 			guard let substring = substring else { return }
 
 			let attributes = attributedString.attributes(at: substringRange.location, effectiveRange: nil)
-			let list = (attributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as? [DTCSSListStyle])?.last
+			let list = (attributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as? [CSSListStyle])?.last
 
 			let prefixRange = attributedString.rangeOfField(at: substringRange.location)
 			let textAfterPrefix = (substring as NSString).substring(from: prefixRange.length)

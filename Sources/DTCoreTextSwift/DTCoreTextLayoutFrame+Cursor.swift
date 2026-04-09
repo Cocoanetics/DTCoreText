@@ -1,5 +1,5 @@
 //
-//  DTCoreTextLayoutFrame+Cursor.swift
+//  CoreTextLayoutFrame+Cursor.swift
 //  DTCoreText
 //
 //  Created by Oliver Drobnik on 10.07.13.
@@ -10,14 +10,13 @@
 
 import Foundation
 import CoreGraphics
-import DTCoreText
 
-extension DTCoreTextLayoutFrame {
+extension CoreTextLayoutFrame {
 
 	/// Determines the closest string index to a point in the receiver's frame.
 	@objc(closestCursorIndexToPoint:)
 	public func closestCursorIndex(to point: CGPoint) -> Int {
-		guard let lines = self.lines as? [DTCoreTextLayoutLine], !lines.isEmpty else {
+		guard let lines = self.lines as? [CoreTextLayoutLine], !lines.isEmpty else {
 			return NSNotFound
 		}
 
@@ -35,7 +34,7 @@ extension DTCoreTextLayoutFrame {
 		}
 
 		// Find closest line
-		var closestLine: DTCoreTextLayoutLine?
+		var closestLine: CoreTextLayoutLine?
 		var closestDistance: CGFloat = .greatestFiniteMagnitude
 
 		for line in lines {

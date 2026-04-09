@@ -74,7 +74,7 @@ struct DictionaryDTCoreTextTests {
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
 		let paragraphStyle = attributes.paragraphStyle()
 		#expect(paragraphStyle != nil)
-		#expect(paragraphStyle is DTCoreTextParagraphStyle)
+		#expect(paragraphStyle is CoreTextParagraphStyle)
 	}
 
 	@Test("Nil paragraph style")
@@ -92,7 +92,7 @@ struct DictionaryDTCoreTextTests {
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
 		let paragraphStyle = attributes.paragraphStyle()
 		#expect(paragraphStyle != nil)
-		#expect(paragraphStyle is DTCoreTextParagraphStyle)
+		#expect(paragraphStyle is CoreTextParagraphStyle)
 	}
 
 	@Test("Font descriptor from HTML")

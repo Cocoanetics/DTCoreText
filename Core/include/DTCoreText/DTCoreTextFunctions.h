@@ -1,1 +1,0 @@
-../../Source/DTCoreTextFunctions.h

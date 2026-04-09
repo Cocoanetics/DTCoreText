@@ -10,7 +10,6 @@
 
 import Foundation
 import CoreText
-import DTCoreText
 
 #if os(iOS) || os(tvOS)
 import UIKit
@@ -26,7 +25,7 @@ extension NSAttributedString {
 
 	// MARK: Text Attachments
 
-	/// Retrieves the `DTTextAttachment` objects that match the given predicate.
+	/// Retrieves the `TextAttachment` objects that match the given predicate.
 	///
 	/// With this method you can for example find all images that have a certain URL.
 	///
@@ -35,16 +34,16 @@ extension NSAttributedString {
 	///   - theClass: The class that attachments need to have, or `nil` for all attachments regardless of class.
 	/// - Returns: The filtered array of attachments, or `nil` if none found.
 	@objc
-	public func textAttachments(with predicate: NSPredicate?, `class` theClass: AnyClass?) -> [DTTextAttachment]? {
+	public func textAttachments(with predicate: NSPredicate?, `class` theClass: AnyClass?) -> [TextAttachment]? {
 		guard self.length > 0 else {
 			return nil
 		}
 
-		var foundAttachments = [DTTextAttachment]()
+		var foundAttachments = [TextAttachment]()
 
 		let entireRange = NSRange(location: 0, length: self.length)
 		self.enumerateAttribute(.attachment, in: entireRange, options: .longestEffectiveRangeNotRequired) { value, _, _ in
-			guard let attachment = value as? DTTextAttachment else {
+			guard let attachment = value as? TextAttachment else {
 				return
 			}
 
@@ -71,9 +70,9 @@ extension NSAttributedString {
 	///   - location: The location of the item.
 	/// - Returns: The index within the list.
 	@objc
-	public func itemNumber(in list: DTCSSListStyle, at location: Int) -> Int {
+	public func itemNumber(in list: CSSListStyle, at location: Int) -> Int {
 		var effectiveRange = NSRange(location: 0, length: 0)
-		guard let textListsAtIndex = self.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: location, effectiveRange: &effectiveRange) as? [DTCSSListStyle] else {
+		guard let textListsAtIndex = self.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: location, effectiveRange: &effectiveRange) as? [CSSListStyle] else {
 			return 0
 		}
 
@@ -94,7 +93,7 @@ extension NSAttributedString {
 		// enumerating through the paragraphs in the plain text string
 		(string as NSString).enumerateSubstrings(in: range, options: .byParagraphs) { _, substringRange, enclosingRange, stop in
 			var paragraphListRange = NSRange(location: 0, length: 0)
-			let textLists = self.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: substringRange.location + totalRange.location, effectiveRange: &paragraphListRange) as? [DTCSSListStyle]
+			let textLists = self.attribute(NSAttributedString.Key(rawValue: DTTextListsAttribute), at: substringRange.location + totalRange.location, effectiveRange: &paragraphListRange) as? [CSSListStyle]
 
 			guard let currentEffectiveList = textLists?.last else {
 				return
@@ -201,7 +200,7 @@ extension NSAttributedString {
 	///   - location: The location in the text.
 	/// - Returns: The range of the given text list containing the location.
 	@objc
-	public func rangeOfTextList(_ list: DTCSSListStyle, at location: Int) -> NSRange {
+	public func rangeOfTextList(_ list: CSSListStyle, at location: Int) -> NSRange {
 		precondition(list !== nil as AnyObject?, "list must not be nil")
 
 		var listRange = _rangeOfObject(list, inArrayBehindAttribute: DTTextListsAttribute, at: location)
@@ -224,7 +223,7 @@ extension NSAttributedString {
 	///   - location: The location in the text.
 	/// - Returns: The range of the given text block containing the location.
 	@objc
-	public func rangeOfTextBlock(_ textBlock: DTTextBlock, at location: Int) -> NSRange {
+	public func rangeOfTextBlock(_ textBlock: TextBlock, at location: Int) -> NSRange {
 		precondition(textBlock !== nil as AnyObject?, "textBlock must not be nil")
 
 		return _rangeOfObject(textBlock, inArrayBehindAttribute: DTTextBlocksAttribute, at: location)
@@ -339,7 +338,7 @@ extension NSAttributedString {
 	///   - attributes: The attribute dictionary for the text to be prefixed.
 	/// - Returns: An attributed string with the list prefix.
 	@objc
-	public static func prefixForListItem(withCounter listCounter: UInt, listStyle: DTCSSListStyle, listIndent: CGFloat, attributes: [String: Any]) -> NSAttributedString? {
+	public static func prefixForListItem(withCounter listCounter: UInt, listStyle: CSSListStyle, listIndent: CGFloat, attributes: [String: Any]) -> NSAttributedString? {
 		// get existing values from attributes
 		let ctParagraphStyleKey = NSAttributedString.Key(rawValue: kCTParagraphStyleAttributeName as String)
 		let ctFontKey = NSAttributedString.Key(rawValue: kCTFontAttributeName as String)
@@ -347,12 +346,12 @@ extension NSAttributedString {
 		let paraStyle = attributes[kCTParagraphStyleAttributeName as String] as CFTypeRef?
 		let fontRef = attributes[kCTFontAttributeName as String] as CFTypeRef?
 
-		var fontDescriptor: DTCoreTextFontDescriptor?
-		var paragraphStyle: DTCoreTextParagraphStyle?
+		var fontDescriptor: CoreTextFontDescriptor?
+		var paragraphStyle: CoreTextParagraphStyle?
 
 		if let paraStyle {
 			let ctParaStyle = unsafeBitCast(paraStyle, to: CTParagraphStyle.self)
-			paragraphStyle = DTCoreTextParagraphStyle(ctParagraphStyle: ctParaStyle)
+			paragraphStyle = CoreTextParagraphStyle(ctParagraphStyle: ctParaStyle)
 
 			paragraphStyle!.tabStops = nil
 			paragraphStyle!.headIndent = listIndent
@@ -369,14 +368,14 @@ extension NSAttributedString {
 
 		if let fontRef {
 			let ctFont = unsafeBitCast(fontRef, to: CTFont.self)
-			fontDescriptor = DTCoreTextFontDescriptor(ctFont: ctFont)
+			fontDescriptor = CoreTextFontDescriptor(ctFont: ctFont)
 		}
 
 		var newAttributes = [NSAttributedString.Key: Any]()
 
 		if let fontDescriptor {
 			// make a font without italic or bold
-			let fontDesc = fontDescriptor.copy() as! DTCoreTextFontDescriptor
+			let fontDesc = fontDescriptor.copy() as! CoreTextFontDescriptor
 
 			fontDesc.boldTrait = false
 			fontDesc.italicTrait = false
@@ -457,7 +456,7 @@ extension NSAttributedString {
 
 		if let image {
 			// make an attachment for the image
-			let attachment = DTImageTextAttachment()
+			let attachment = ImageTextAttachment()
 			attachment.image = image
 			attachment.displaySize = image.size
 

@@ -7,19 +7,19 @@ import CoreText
 struct ParagraphStyleTests {
 	@Test("Loss of tab stops after round-trip through CTParagraphStyle")
 	func lossOfTabStops() {
-		let paragraphStyle = DTCoreTextParagraphStyle()
+		let paragraphStyle = CoreTextParagraphStyle()
 		paragraphStyle.addTabStop(atPosition: 10, alignment: CTTextAlignment.left)
 
 		let ctParagraphStyle = paragraphStyle.createCTParagraphStyle().takeRetainedValue()
 
-		let newParagraphStyle = DTCoreTextParagraphStyle(ctParagraphStyle: ctParagraphStyle)!
+		let newParagraphStyle = CoreTextParagraphStyle(ctParagraphStyle: ctParagraphStyle)!
 
 		#expect(newParagraphStyle.tabStops != nil, "There are no tab stops in newly created paragraph style")
 	}
 
 	@Test("Tab stops round-trip through NSParagraphStyle")
 	func tabsOnNSParagraphStyle() {
-		let paragraphStyle = DTCoreTextParagraphStyle()
+		let paragraphStyle = CoreTextParagraphStyle()
 		paragraphStyle.addTabStop(atPosition: 10, alignment: CTTextAlignment.left)
 		paragraphStyle.addTabStop(atPosition: 15, alignment: CTTextAlignment.right)
 		paragraphStyle.addTabStop(atPosition: 20, alignment: CTTextAlignment.center)
@@ -31,7 +31,7 @@ struct ParagraphStyleTests {
 		let tabStops = nsParagraphStyle.value(forKey: "tabStops") as! [Any]
 		#expect(tabStops.count == 5, "There should be 5 tab stops")
 
-		let newParagraphStyle = DTCoreTextParagraphStyle(nsParagraphStyle: nsParagraphStyle)!
+		let newParagraphStyle = CoreTextParagraphStyle(nsParagraphStyle: nsParagraphStyle)!
 
 		let tabCount = newParagraphStyle.tabStops!.count
 		#expect(tabCount == 5, "There should be 5 tab stops")
@@ -61,7 +61,7 @@ struct ParagraphStyleTests {
 
 	@Test("Line height multiple passes through to NSParagraphStyle")
 	func passLineHeightMultipleToNSParagraphStyle() {
-		let paragraphStyle = DTCoreTextParagraphStyle()
+		let paragraphStyle = CoreTextParagraphStyle()
 		paragraphStyle.lineHeightMultiple = 3.1834
 
 		let nsParagraphStyle = paragraphStyle.nsParagraphStyle()!

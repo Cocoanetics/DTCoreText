@@ -10,13 +10,12 @@
 
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
-import DTCoreText
 
-/// Protocol to provide custom views for accessibility elements representing a DTTextAttachment.
+/// Protocol to provide custom views for accessibility elements representing a TextAttachment.
 @objc(DTAccessibilityViewProxyDelegate)
 public protocol AccessibilityViewProxyDelegate {
 	/// Provides a view for an attachment.
-	func view(for attachment: DTTextAttachment, proxy: AccessibilityViewProxy) -> UIView?
+	func view(for attachment: TextAttachment, proxy: AccessibilityViewProxy) -> UIView?
 }
 
 /// UIView proxy for DTAttributedTextContentView custom subviews for text attachments.
@@ -24,10 +23,10 @@ public protocol AccessibilityViewProxyDelegate {
 public class AccessibilityViewProxy: NSObject {
 
 	@objc public private(set) weak var delegate: (any AccessibilityViewProxyDelegate)?
-	@objc public private(set) var textAttachment: DTTextAttachment
+	@objc public private(set) var textAttachment: TextAttachment
 
 	@objc
-	public init(textAttachment: DTTextAttachment, delegate: any AccessibilityViewProxyDelegate) {
+	public init(textAttachment: TextAttachment, delegate: any AccessibilityViewProxyDelegate) {
 		self.textAttachment = textAttachment
 		self.delegate = delegate
 	}

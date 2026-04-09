@@ -10,7 +10,6 @@
 
 import Foundation
 import CoreText
-import DTCoreText
 
 #if canImport(UIKit)
 import UIKit
@@ -42,7 +41,7 @@ extension NSAttributedString {
 				let typedAttrs = Dictionary(uniqueKeysWithValues: attrs.map { (NSAttributedString.Key(rawValue: $0.key.rawValue), $0.value) })
 				let dict = Self.getArchivingDictionary(with: typedAttrs)
 
-				if let attachment = attrs[.attachment] as? DTTextAttachment {
+				if let attachment = attrs[.attachment] as? TextAttachment {
 					var imgPath: String? = nil
 					if attachment.contentURL?.scheme == "file" {
 						imgPath = attachment.contentURL?.path
@@ -94,8 +93,8 @@ extension NSAttributedString {
 				NSParagraphStyle.self,
 				NSShadow.self,
 				NSURL.self,
-				DTTextAttachment.self,
-				DTImageTextAttachment.self
+				TextAttachment.self,
+				ImageTextAttachment.self
 			]
 			#if canImport(UIKit)
 			allowedClasses.append(contentsOf: [UIFont.self, UIColor.self])
@@ -115,7 +114,7 @@ extension NSAttributedString {
 		appendString.enumerateAttributes(in: NSRange(location: 0, length: length - 1), options: .longestEffectiveRangeNotRequired) { attrs, range, _ in
 
 			#if canImport(UIKit)
-			if let attachment = attrs[.attachment] as? DTTextAttachment {
+			if let attachment = attrs[.attachment] as? TextAttachment {
 				if attachment.contentURL?.scheme == "file" {
 					let typedAttrs = Dictionary(uniqueKeysWithValues: attrs.map { (NSAttributedString.Key(rawValue: $0.key.rawValue), $0.value) })
 					let dict = Self.getArchivingDictionary(with: typedAttrs)

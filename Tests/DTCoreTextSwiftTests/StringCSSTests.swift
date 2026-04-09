@@ -190,15 +190,15 @@ struct StringCSSTests {
 
 	// Note: DTEdgeInsetsRelativeToCurrentTextSize: returns DTEdgeInsets (a C macro for
 	// UIEdgeInsets/NSEdgeInsets) which is not importable in Swift. Testing edge insets
-	// parsing through DTHTMLElement.margins instead, which exercises the same code path.
+	// parsing through HTMLElement.margins instead, which exercises the same code path.
 	@Test("Edge insets via margin style dictionary")
 	func edgeInsetsViaMargin() {
-		func makeElement() -> DTHTMLElement {
-			let element = DTHTMLElement()
+		func makeElement() -> HTMLElement {
+			let element = HTMLElement()
 			element.textScale = 1
-			element.paragraphStyle = DTCoreTextParagraphStyle.default()
+			element.paragraphStyle = CoreTextParagraphStyle.default()
 			let font = CTFontCreateWithName("Helvetica" as CFString, 12, nil)
-			element.fontDescriptor = DTCoreTextFontDescriptor(for: font)
+			element.fontDescriptor = CoreTextFontDescriptor(for: font)
 			return element
 		}
 

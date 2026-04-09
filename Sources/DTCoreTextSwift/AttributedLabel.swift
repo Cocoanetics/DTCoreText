@@ -11,7 +11,6 @@
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
 import QuartzCore
-import DTCoreText
 
 /// A rich-text replacement for `UILabel`, inheriting from `AttributedTextContentView`.
 ///

@@ -19,7 +19,7 @@ enum TestHelpers {
 		let baseURL = Bundle.module.resourceURL
 		mutableOptions["NSBaseURLDocumentOption"] = baseURL
 
-		DTTextAttachment.registerClass(DTObjectTextAttachment.self, forTagName: "oliver")
+		TextAttachment.registerClass(ObjectTextAttachment.self, forTagName: "oliver")
 
 		let builder = HTMLAttributedStringBuilder(html: data, options: mutableOptions, documentAttributes: nil)
 		return builder?.generatedAttributedString()
