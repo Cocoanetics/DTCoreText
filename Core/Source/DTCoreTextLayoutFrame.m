@@ -18,7 +18,6 @@
 #import "NSString+Paragraphs.h"
 #import "CTLineUtils.h"
 
-#import <DTFoundation/DTLog.h>
 
 // global flag that shows debug frames
 static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;

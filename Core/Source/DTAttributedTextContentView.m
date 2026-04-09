@@ -18,7 +18,6 @@
 #import "DTAccessibilityElement.h"
 #import "DTCoreTextLayoutFrameAccessibilityElementGenerator.h"
 
-#import <DTFoundation/DTBlockFunctions.h>
 
 #if !__has_feature(objc_arc)
 #error THIS CODE MUST BE COMPILED WITH ARC ENABLED!
@@ -507,9 +506,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 
 - (void)relayoutText
 {
-	DT_WEAK_VARIABLE typeof(self) weakSelf = self;
-	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
-		DTAttributedTextContentView *strongSelf = weakSelf;
+	void (^block)(void) = ^{
+		DTAttributedTextContentView *strongSelf = self;
 		// Make sure we actually have a superview and a previous layout before attempting to relayout the text.
 		if (strongSelf->_layoutFrame && strongSelf.superview)
 		{
@@ -538,7 +536,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
             	[strongSelf invalidateIntrinsicContentSize];
 			}
 		}
-	});
+	};
+	if ([NSThread isMainThread]) { block(); } else { dispatch_async(dispatch_get_main_queue(), block); }
 }
 
 - (void)removeAllCustomViewsForLinks
@@ -1084,6 +1083,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 @synthesize customViewsForLinksIndex;
 @synthesize customViewsForAttachmentsIndex;
 @synthesize relayoutMask = _relayoutMask;
+@synthesize numberOfLines = _numberOfLines;
+@synthesize lineBreakMode = _lineBreakMode;
+@synthesize truncationString = _truncationString;
 
 @synthesize accessibilityElements = _accessibilityElements;
 

@@ -18,8 +18,6 @@
 #import "NSString+HTML.h"
 #import "DTColorFunctions.h"
 
-#import <DTFoundation/DTVersion.h>
-
 
 @implementation DTHTMLWriter
 {

@@ -16,15 +16,12 @@ let package = Package(
             targets: ["DTCoreTextSwift"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
         .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
     ],
     targets: [
         .target(
             name: "DTCoreText",
-            dependencies: [
-                .product(name: "DTFoundation", package: "DTFoundation"),
-            ],
+            dependencies: [],
             path: "Core",
 			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],
              resources: [

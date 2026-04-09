@@ -14,8 +14,7 @@
 
 #import "DTCoreText.h"
 
-#import <DTFoundation/DTTiledLayerWithoutFade.h>
-#import <DTFoundation/DTBlockFunctions.h>
+#import <QuartzCore/CATiledLayer.h>
 
 
 @interface DTAttributedTextView ()
@@ -138,19 +137,17 @@
 
 - (void)relayoutText
 {
-	DT_WEAK_VARIABLE typeof(self) weakSelf = self;
-	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
-		DTAttributedTextView *strongSelf = weakSelf;
-		
+	void (^block)(void) = ^{
 		// need to reset the layouter because otherwise we get the old framesetter or cached layout frames
-		strongSelf->_attributedTextContentView.layouter = nil;
-		
+		self->_attributedTextContentView.layouter = nil;
+
 		// here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
-		[strongSelf->_attributedTextContentView relayoutText];
-		
+		[self->_attributedTextContentView relayoutText];
+
 		// layout custom subviews for visible area
-		[strongSelf setNeedsLayout];
-	});
+		[self setNeedsLayout];
+	};
+	if ([NSThread isMainThread]) { block(); } else { dispatch_async(dispatch_get_main_queue(), block); }
 }
 
 #pragma mark - Working with a Cursor
@@ -176,22 +173,20 @@
 #pragma mark Notifications
 - (void)contentViewDidLayout:(NSNotification *)notification
 {
-	DT_WEAK_VARIABLE typeof(self) weakSelf = self;
-	DTBlockPerformSyncIfOnMainThreadElseAsync(^{
-		DTAttributedTextView *strongSelf = weakSelf;
-		
+	void (^block)(void) = ^{
 		NSDictionary *userInfo = [notification userInfo];
 		CGRect optimalFrame = [[userInfo objectForKey:@"OptimalFrame"] CGRectValue];
-		
+
 		CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
-		
+
 		// ignore possibly delayed layout notification for a different width
 		if (optimalFrame.size.width == frame.size.width)
 		{
-			strongSelf->_attributedTextContentView.frame = optimalFrame;
-			strongSelf.contentSize = [strongSelf->_attributedTextContentView intrinsicContentSize];
+			self->_attributedTextContentView.frame = optimalFrame;
+			self.contentSize = [self->_attributedTextContentView intrinsicContentSize];
 		}
-	});
+	};
+	if ([NSThread isMainThread]) { block(); } else { dispatch_async(dispatch_get_main_queue(), block); }
 }
 
 #pragma mark Properties
@@ -219,7 +214,7 @@
 			
 			if (![layerClass isSubclassOfClass:[CATiledLayer class]])
 			{
-				[DTAttributedTextContentView setLayerClass:[DTTiledLayerWithoutFade class]];
+				[DTAttributedTextContentView setLayerClass:[CATiledLayer class]];
 				previousLayerClass = layerClass;
 			}
 		}

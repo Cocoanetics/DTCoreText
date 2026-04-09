@@ -17,7 +17,6 @@
 #import "NSDictionary+DTCoreText.h"
 #import "NSAttributedStringRunDelegates.h"
 
-#import <DTFoundation/NSURL+DTComparing.h>
 
 #if TARGET_OS_IPHONE
 #import "UIFont+DTCoreText.h"
@@ -270,7 +269,7 @@
 		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:rangeSoFar.location-1 effectiveRange:&extendedRange];
 		
 		// abort search if key not found or value not identical
-		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		if (!extendedURL || ![extendedURL isEqual:foundURL])
 		{
 			break;
 		}
@@ -287,7 +286,7 @@
 		NSURL *extendedURL = [self attribute:DTLinkAttribute atIndex:NSMaxRange(rangeSoFar) effectiveRange:&extendedRange];
 		
 		// abort search if key not found or value not identical
-		if (!extendedURL || ![extendedURL isEqualToURL:foundURL])
+		if (!extendedURL || ![extendedURL isEqual:foundURL])
 		{
 			break;
 		}
