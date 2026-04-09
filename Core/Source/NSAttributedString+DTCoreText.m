@@ -7,7 +7,6 @@
 //
 
 #import "NSAttributedString+DTCoreText.h"
-#import "DTHTMLWriter.h"
 #import "DTCoreTextConstants.h"
 #import "DTCoreTextFontDescriptor.h"
 #import "DTCoreTextParagraphStyle.h"
@@ -322,25 +321,7 @@
 #pragma mark HTML Encoding
 
 #ifndef COVERAGE
-// exclude method from coverage testing, those are just convenience methods
-
-- (NSString *)htmlString
-{
-	// create a writer
-	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:self];
-	
-	// return it's output
-	return [writer HTMLString];
-}
-
-- (NSString *)htmlFragment
-{
-	// create a writer
-	DTHTMLWriter *writer = [[DTHTMLWriter alloc] initWithAttributedString:self];
-	
-	// return it's output
-	return [writer HTMLFragment];
-}
+// htmlString and htmlFragment have been moved to Swift (DTCoreTextSwift target)
 
 - (NSString *)plainTextString
 {

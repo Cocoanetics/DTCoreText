@@ -35,7 +35,6 @@
 #import "DTStylesheetHTMLElement.h"
 #import "DTTextAttachmentHTMLElement.h"
 #import "DTTextHTMLElement.h"
-#import "DTHTMLWriter.h"
 #import "NSCharacterSet+HTML.h"
 #import "NSCoder+DTCompatibility.h"
 #import "NSDictionary+DTCoreText.h"
@@ -65,7 +64,6 @@
 
 #import "DTCoreTextGlyphRun.h"
 #import "DTCoreTextLayoutFrame.h"
-#import "DTCoreTextLayoutFrame+Cursor.h"
 #import "DTCoreTextLayoutLine.h"
 #import "DTCoreTextLayouter.h"
 
@@ -73,7 +71,6 @@
 #if TARGET_OS_IPHONE
 
 #import "DTAttributedTextContentView.h"
-#import "DTAttributedTextView.h"
 #import "DTCoreTextFontCollection.h"
 
 #import "UIFont+DTCoreText.h"
