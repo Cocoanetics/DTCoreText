@@ -38,7 +38,7 @@ public protocol LazyImageViewDelegate: AnyObject {
 /// A `UIImageView` subclass that lazily loads an image from a URL
 /// and informs its delegate once the image size is known.
 @objc(DTLazyImageView)
-public class LazyImageView: UIImageView, URLSessionDataDelegate {
+public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate {
 
 	// MARK: - Static Cache
 
@@ -82,7 +82,6 @@ public class LazyImageView: UIImageView, URLSessionDataDelegate {
 	// MARK: - Lifecycle
 
 	deinit {
-		delegate = nil
 		dataTask?.cancel()
 		// imageSource is a class type in Swift; ARC handles it
 	}

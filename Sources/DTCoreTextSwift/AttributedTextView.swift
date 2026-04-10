@@ -25,7 +25,7 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Private State
 
 	private var _backgroundView: UIView?
-	private weak var _textDelegate: (any AttributedTextContentViewDelegate)?
+	private weak var _textDelegate: (any DTAttributedTextContentViewDelegate)?
 	private var _attributedString: NSAttributedString?
 	private var _shouldDrawLinks = true
 	private var _shouldDrawImages = true
@@ -52,10 +52,10 @@ public class AttributedTextView: UIScrollView {
 
 	private func setup() {
 		if let bg = backgroundColor {
-			opaque = bg.alphaComponent >= 1.0
+			isOpaque = bg.cgColor.alpha >= 1.0
 		} else {
 			backgroundColor = .white
-			opaque = true
+			isOpaque = true
 		}
 
 		autoresizesSubviews = false
@@ -86,8 +86,9 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Public Methods
 
 	/// Scrolls to the anchor with the given name.
-	@objc public func scrollToAnchor(named anchorName: String, animated: Bool) {
-		let range = attributedTextContentView.attributedString.range(ofAnchorNamed: anchorName)
+	@objc(scrollToAnchorNamed:animated:)
+	public func scrollToAnchor(named anchorName: String, animated: Bool) {
+		let range = attributedTextContentView.attributedString?.rangeOfAnchorNamed(anchorName) ?? NSRange(location: NSNotFound, length: 0)
 		if range.location != NSNotFound {
 			scrollRangeToVisible(range, animated: animated)
 		}
@@ -95,7 +96,7 @@ public class AttributedTextView: UIScrollView {
 
 	/// Scrolls until the given text range is visible.
 	@objc public func scrollRangeToVisible(_ range: NSRange, animated: Bool) {
-		guard let line = attributedTextContentView.layoutFrame?.lineContainingIndex(range.location) else { return }
+		guard let line = attributedTextContentView.layoutFrame?.lineContaining(index: UInt(range.location)) else { return }
 		let maxScrollPos = contentSize.height - bounds.size.height + contentInset.bottom + contentInset.top
 		let scrollPos = min(line.frame.origin.y, maxScrollPos)
 		setContentOffset(CGPoint(x: 0, y: scrollPos), animated: animated)
@@ -114,7 +115,8 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Cursor
 
 	/// Closest string index to a point in the receiver's frame.
-	@objc public func closestCursorIndex(to point: CGPoint) -> Int {
+	@objc(closestCursorIndexToPoint:)
+	public func closestCursorIndex(to point: CGPoint) -> Int {
 		let pointInContentView = attributedTextContentView.convert(point, from: self)
 		return attributedTextContentView.closestCursorIndex(to: pointInContentView)
 	}
@@ -178,7 +180,7 @@ public class AttributedTextView: UIScrollView {
 		contentView.shouldLayoutCustomSubviews = false
 
 		if let bg = backgroundColor {
-			contentView.isOpaque = bg.alphaComponent >= 1.0
+			contentView.isOpaque = bg.cgColor.alpha >= 1.0
 		}
 
 		contentView.delegate = _textDelegate
@@ -186,7 +188,7 @@ public class AttributedTextView: UIScrollView {
 
 		NotificationCenter.default.addObserver(self,
 											   selector: #selector(contentViewDidLayout(_:)),
-											   name: NSNotification.Name(AttributedTextContentViewDidFinishLayoutNotification),
+											   name: NSNotification.Name(DTAttributedTextContentViewDidFinishLayoutNotification),
 											   object: contentView)
 
 		contentView.frame = frame
@@ -201,7 +203,7 @@ public class AttributedTextView: UIScrollView {
 	@objc public override var backgroundColor: UIColor? {
 		get { super.backgroundColor }
 		set {
-			if let newColor = newValue, newColor.alphaComponent < 1.0 {
+			if let newColor = newValue, newColor.cgColor.alpha < 1.0 {
 				super.backgroundColor = newColor
 				_attributedTextContentView?.backgroundColor = .clear
 				isOpaque = false
@@ -238,7 +240,7 @@ public class AttributedTextView: UIScrollView {
 	}
 
 	/// Delegate for providing custom views for images and links.
-	@objc public weak var textDelegate: (any AttributedTextContentViewDelegate)? {
+	@objc public weak var textDelegate: (any DTAttributedTextContentViewDelegate)? {
 		get { _attributedTextContentView?.delegate ?? _textDelegate }
 		set {
 			_textDelegate = newValue

@@ -9,8 +9,7 @@
 #import "CoreTextDemoAppDelegate.h"
 #import "DemoSnippetsViewController.h"
 
-#import "DTCoreText.h"
-#import "UIView+DTDebug.h"
+@import DTCoreTextSwift;
 
 @implementation CoreTextDemoAppDelegate
 
@@ -23,9 +22,6 @@
 	
 	// preload font matching table
 	[DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
-	
-	// for debugging, we make sure that UIView methods are only called on main thread
-	[UIView toggleViewMainThreadChecking];
 	
 	// Create window
 	_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

@@ -291,7 +291,7 @@ public class HTMLWriter: NSObject {
 			let currStack = currentListStyles ?? []
 			var commonPrefixLen = 0
 			let minStackLen = min(prevStack.count, currStack.count)
-			while commonPrefixLen < minStackLen && prevStack[commonPrefixLen].isEqual(to: currStack[commonPrefixLen]) {
+			while commonPrefixLen < minStackLen && prevStack[commonPrefixLen].isEqualToListStyle(currStack[commonPrefixLen]) {
 				commonPrefixLen += 1
 			}
 
@@ -320,7 +320,7 @@ public class HTMLWriter: NSObject {
 						retString += "\n"
 
 						// all but the effective (innermost) list need an extra LI
-						if !oneList.isEqual(to: effectiveListStyle) {
+						if !oneList.isEqualToListStyle(effectiveListStyle) {
 							retString += "<li>"
 						}
 					}
@@ -707,7 +707,7 @@ public class HTMLWriter: NSObject {
 					// LI are only closed if there is not a deeper list level following
 					if let nextListStyles = nextListStyles,
 					   let effective = effectiveListStyle,
-					   nextListStyles.contains(where: { $0.isEqual(to: effective) }),
+					   nextListStyles.contains(where: { $0.isEqualToListStyle(effective) }),
 					   nextListStyles.count > (currentListStyles?.count ?? 0) {
 						// deeper list following
 						shouldCloseLI = false

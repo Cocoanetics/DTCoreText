@@ -6,8 +6,9 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import "DTAttributedTextView.h"
-#import "DTLazyImageView.h"
+#import <UIKit/UIKit.h>
+
+@import DTCoreTextSwift;
 
 @interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate, DTLazyImageViewDelegate>
 

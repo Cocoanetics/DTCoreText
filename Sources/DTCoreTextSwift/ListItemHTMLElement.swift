@@ -134,7 +134,7 @@ open class ListItemHTMLElement: HTMLElement {
 
         if let font = font {
             #if canImport(UIKit)
-            let uiFont = UIFont.font(withCTFont: font)
+            let uiFont = UIFont.font(with: font)
             newAttributes[NSAttributedString.Key.font] = uiFont
             #else
             newAttributes[NSAttributedString.Key.font] = font

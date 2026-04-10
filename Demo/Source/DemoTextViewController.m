@@ -10,8 +10,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <MediaPlayer/MediaPlayer.h>
 
-#import "DTTiledLayerWithoutFade.h"
 #import "DemoWebVideoView.h"
+#import "DTCoreTextConstants.h"
+
+@import DTCoreTextSwift;
 
 
 @interface DemoTextViewController ()
@@ -58,14 +60,7 @@
 	if (self)
 	{
 		NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
-		
-#ifdef DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
-		{
-			[items addObject:@"iOS 6"];
-		}
-#endif
-		
+
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
@@ -176,21 +171,21 @@
 }
 
 
-- (NSAttributedString *)_attributedStringForSnippetUsingiOS6Attributes:(BOOL)useiOS6Attributes
+- (NSAttributedString *)_attributedStringForSnippet
 {
 	// Load HTML data
 	NSString *readmePath = [[NSBundle mainBundle] pathForResource:_fileName ofType:nil];
 	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
+
 	// Create attributed string from HTML
 	CGSize maxImageSize = CGSizeMake(self.view.bounds.size.width - 20.0, self.view.bounds.size.height - 20.0);
-	
+
 	// example for setting a willFlushCallback, that gets called before elements are written to the generated attributed string
 	void (^callBackBlock)(DTHTMLElement *element) = ^(DTHTMLElement *element) {
-		
+
 		// the block is being called for an entire paragraph, so we check the individual elements
-		
+
 		for (DTHTMLElement *oneChildElement in element.childNodes)
 		{
 			// if an element is larger than twice the font size put it in it's own block
@@ -202,19 +197,14 @@
 			}
 		}
 	};
-	
+
 	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
 							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, @"red", DTDefaultLinkHighlightColor, callBackBlock, DTWillFlushBlockCallBack, nil];
-	
-	if (useiOS6Attributes)
-	{
-		[options setObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	}
-	
+
 	[options setObject:[NSURL fileURLWithPath:readmePath] forKey:NSBaseURLDocumentOption];
-	
+
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
-	
+
 	return string;
 }
 
@@ -227,7 +217,7 @@
 
 	// Display string
 	_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
-	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
+	_textView.attributedString = [self _attributedStringForSnippet];
 	
 	[self _segmentedControlChanged:nil];
 	
@@ -372,7 +362,7 @@
 		{
 			if (![_iOS6View.attributedText length])
 			{
-				_iOS6View.attributedText = [self _attributedStringForSnippetUsingiOS6Attributes:YES];
+				_iOS6View.attributedText = [self _attributedStringForSnippet];
 			}
 		}
 	}
@@ -446,11 +436,11 @@
 	button.GUID = identifier;
 	
 	// get image with normal link text
-	UIImage *normalImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDefault];
+	UIImage *normalImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingOptionsDefault];
 	[button setImage:normalImage forState:UIControlStateNormal];
-	
+
 	// get image for highlighted link text
-	UIImage *highlightImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDrawLinksHighlighted];
+	UIImage *highlightImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingOptionsDrawLinksHighlighted];
 	[button setImage:highlightImage forState:UIControlStateHighlighted];
 	
 	// use normal push action for opening URL
@@ -471,7 +461,7 @@
 		
 		// we could customize the view that shows before playback starts
 		UIView *grayView = [[UIView alloc] initWithFrame:frame];
-		grayView.backgroundColor = [DTColor blackColor];
+		grayView.backgroundColor = [UIColor blackColor];
 		
 		// find a player for this URL if we already got one
 		MPMoviePlayerController *player = nil;

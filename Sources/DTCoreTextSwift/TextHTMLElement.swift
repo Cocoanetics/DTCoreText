@@ -82,7 +82,7 @@ open class TextHTMLElement: HTMLElement {
 
                 if let smallerFont = smallerFont {
                     #if canImport(UIKit)
-                    let font = UIFont.font(withCTFont: smallerFont)
+                    let font = UIFont.font(with: smallerFont)
                     smallAttributes[.font] = font
                     #else
                     smallAttributes[.font] = smallerFont

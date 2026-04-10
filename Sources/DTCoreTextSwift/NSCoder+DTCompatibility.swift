@@ -27,7 +27,7 @@ public extension NSCoder {
     /// Encodes DTEdgeInsets for the given key.
     @objc func encodeDTEdgeInsets(_ insets: DTEdgeInsets, forKey key: String) {
         #if canImport(UIKit)
-        encodeUIEdgeInsets(insets, forKey: key)
+        encode(insets, forKey: key)
         #else
         let string = String(format: "{%f,%f,%f,%f}", insets.top, insets.left, insets.bottom, insets.right)
         encode(string, forKey: key)

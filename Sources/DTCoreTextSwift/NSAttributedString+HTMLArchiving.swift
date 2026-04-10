@@ -128,8 +128,7 @@ extension NSAttributedString {
 					}
 				}
 
-				if let unmanagedRunDelegate = createEmbeddedObjectRunDelegate(attachment) {
-					let runDelegate = unmanagedRunDelegate.takeRetainedValue()
+				if let runDelegate = createEmbeddedObjectRunDelegate(attachment) {
 					appendString.addAttribute(
 						NSAttributedString.Key(rawValue: kCTRunDelegateAttributeName as String),
 						value: runDelegate,

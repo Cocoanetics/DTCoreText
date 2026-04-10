@@ -13,23 +13,27 @@ import Foundation
 extension NSAttributedString {
 
 	/// Creates an attributed string from HTML data.
-	@objc
+	@objc(initWithHTMLData:documentAttributes:)
 	public convenience init?(htmlData data: Data, documentAttributes: AutoreleasingUnsafeMutablePointer<NSDictionary?>?) {
 		self.init(htmlData: data, options: [:], documentAttributes: documentAttributes)
 	}
 
 	/// Creates an attributed string from HTML data with a base URL.
-	@objc
+	@objc(initWithHTMLData:baseURL:documentAttributes:)
 	public convenience init?(htmlData data: Data, baseURL: URL?, documentAttributes: AutoreleasingUnsafeMutablePointer<NSDictionary?>?) {
 		var options = [String: Any]()
 		if let baseURL {
+			#if os(macOS)
 			options[NSAttributedString.DocumentReadingOptionKey.baseURL.rawValue] = baseURL
+			#else
+			options["NSBaseURLDocumentOption"] = baseURL
+			#endif
 		}
 		self.init(htmlData: data, options: options, documentAttributes: documentAttributes)
 	}
 
 	/// Creates an attributed string from HTML data with options.
-	@objc
+	@objc(initWithHTMLData:options:documentAttributes:)
 	public convenience init?(htmlData data: Data, options: [String: Any], documentAttributes: AutoreleasingUnsafeMutablePointer<NSDictionary?>?) {
 		guard !data.isEmpty else { return nil }
 
