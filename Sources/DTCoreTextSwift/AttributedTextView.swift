@@ -15,7 +15,7 @@
   /// A `UIScrollView` subclass that displays a `AttributedTextContentView`
   /// as its content view. Replacement for `UITextView` with rich text.
   @objc(DTAttributedTextView)
-  public class AttributedTextView: UIScrollView {
+  open class AttributedTextView: UIScrollView {
 
     // MARK: - Content View
 

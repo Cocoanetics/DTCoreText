@@ -114,7 +114,6 @@
 		A740369016E51C9800ECCDE0 /* About.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
 		A74C953514DC0C69002B5A45 /* MalformedURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MalformedURL.html; sourceTree = "<group>"; };
 		A74C973D14DC5294002B5A45 /* Emoji.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Emoji.html; sourceTree = "<group>"; };
-		A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = DTCoreText.podspec; path = ../DTCoreText.podspec; sourceTree = "<group>"; };
 		A74F6FD416DBA48E00C12307 /* DTCoreTextParagraphStyleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTCoreTextParagraphStyleTest.h; sourceTree = "<group>"; };
 		A74F6FD516DBA48E00C12307 /* DTCoreTextParagraphStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTCoreTextParagraphStyleTest.m; sourceTree = "<group>"; };
 		A768BE4617FC547E008834C6 /* NSDictionaryDTCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryDTCoreText.m; sourceTree = "<group>"; };
@@ -252,7 +251,6 @@
 			children = (
 				A70D37DE16DCFD89003F21C9 /* Guides */,
 				A7CF230916DE1DF7005A4A6E /* AppledocSettings.plist */,
-				A74F6FCB16DB9AF500C12307 /* DTCoreText.podspec */,
 				A70B4C9C1486525200873A4A /* LICENSE */,
 				A70B4C9D1486525200873A4A /* Readme.markdown */,
 			);

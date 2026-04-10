@@ -28,7 +28,7 @@ open class CSSStylesheet: NSObject, NSCopying {
       #else
         var path = Bundle(for: self).path(forResource: "default", ofType: "css")
 
-        // Cocoapods uses a separate Resources bundle to include default.css
+        // Older integrations may place default.css into a separate Resources bundle.
         if path == nil {
           let resourcesBundlePath = Bundle(for: self).path(
             forResource: "Resources", ofType: "bundle")
