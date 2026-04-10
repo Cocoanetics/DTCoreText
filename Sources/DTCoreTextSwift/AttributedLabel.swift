@@ -34,7 +34,7 @@ public class AttributedLabel: AttributedTextContentView {
 
 	// MARK: - Init
 
-	public override init(frame: CGRect) {
+	public required override init(frame: CGRect) {
 		super.init(frame: frame)
 		setupAttributedLabel()
 	}

@@ -6,6 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 @class DemoTextViewController;
 
 @interface CoreTextDemoAppDelegate : NSObject <UIApplicationDelegate> 

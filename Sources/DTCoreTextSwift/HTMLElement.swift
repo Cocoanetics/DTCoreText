@@ -156,7 +156,7 @@ open class HTMLElement: HTMLParserNode {
 
             if let font = font {
                 #if canImport(UIKit)
-                let uiFont = UIFont.font(withCTFont: font)
+                let uiFont = UIFont.font(with: font)
                 tmpDict[NSAttributedString.Key.font] = uiFont
                 #else
                 tmpDict[NSAttributedString.Key.font] = font

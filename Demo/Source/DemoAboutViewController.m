@@ -7,6 +7,9 @@
 //
 
 #import "DemoAboutViewController.h"
+#import "DTCoreTextConstants.h"
+
+@import DTCoreTextSwift;
 
 @interface DemoAboutViewController ()
 
@@ -33,13 +36,7 @@
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"About" ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
 	
-	NSDictionary *options;
-	
-	if (@available(iOS 13.0, *)) {
-		options = @{DTDefaultTextColor: [UIColor labelColor], DTUseiOS6Attributes: @(YES)};
-	} else {
-		options = @{DTDefaultTextColor: [UIColor blackColor], DTUseiOS6Attributes: @(YES)};
-	}
+	NSDictionary *options = @{DTDefaultTextColor: [UIColor labelColor]};
 	
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 

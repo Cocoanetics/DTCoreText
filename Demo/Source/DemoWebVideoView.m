@@ -7,7 +7,8 @@
 //
 
 #import "DemoWebVideoView.h"
-#import "DTIframeTextAttachment.h"
+
+@import DTCoreTextSwift;
 
 @interface DemoWebVideoView ()
 
@@ -20,7 +21,7 @@
 {
 	DTTextAttachment *_attachment;
 	
-	DT_WEAK_VARIABLE id <DemoWebVideoViewDelegate> _delegate;
+	__weak id <DemoWebVideoViewDelegate> _delegate;
 	
 	WKWebView *_webView;
 }

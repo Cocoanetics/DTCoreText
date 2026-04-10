@@ -35,8 +35,9 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 	private func accessibilityElements(inParagraphAt index: Int, layoutFrame frame: CoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
 		var elements = [Any]()
 
+		guard let fragment = frame.attributedStringFragment() else { return elements }
 		enumerateAccessibleGroups(in: frame, forParagraphAt: index) { attrs, substringRange, _, runs in
-			if let element = self.accessibilityElement(for: frame.attributedStringFragment, at: substringRange, attributes: attrs, runs: runs, view: view, attachmentViewProvider: block) {
+			if let element = self.accessibilityElement(for: fragment, at: substringRange, attributes: attrs, runs: runs, view: view, attachmentViewProvider: block) {
 				elements.append(element)
 			}
 		}
@@ -50,7 +51,8 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 		let paragraphRange = paragraphRanges[index].rangeValue
 		guard let lines = frame.linesInParagraph(at: UInt(index)) as? [CoreTextLayoutLine] else { return }
 
-		frame.attributedStringFragment.enumerateAttributes(in: paragraphRange, options: []) { attrs, range, stop in
+		guard let fragment = frame.attributedStringFragment() else { return }
+		fragment.enumerateAttributes(in: paragraphRange, options: []) { attrs, range, stop in
 			var runs = [CoreTextGlyphRun]()
 			for line in lines {
 				if let lineRuns = line.glyphRuns(with: range) as? [CoreTextGlyphRun] {

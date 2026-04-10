@@ -20,7 +20,7 @@ public class AttributedTextCell: UITableViewCell {
 
 	private var _attributedTextContextView: AttributedTextContentView?
 
-	private weak var _textDelegate: AttributedTextContentViewDelegate?
+	private weak var _textDelegate: DTAttributedTextContentViewDelegate?
 
 	private var _htmlHash: Int = 0
 
@@ -98,7 +98,7 @@ public class AttributedTextCell: UITableViewCell {
 	}
 
 	/// Returns the required row height for this cell in the given table view.
-	@objc
+	@objc(requiredRowHeightInTableView:)
 	public func requiredRowHeight(in tableView: UITableView?) -> CGFloat {
 		if hasFixedRowHeight {
 			logger.warning("requiredRowHeight(in:) called on a cell configured with fixed row height")
@@ -160,7 +160,7 @@ public class AttributedTextCell: UITableViewCell {
 	}
 
 	/// The delegate that provides custom subviews for images and links.
-	@objc public weak var textDelegate: AttributedTextContentViewDelegate? {
+	@objc public weak var textDelegate: DTAttributedTextContentViewDelegate? {
 		get { return _textDelegate }
 		set {
 			_textDelegate = newValue
@@ -174,7 +174,7 @@ public class AttributedTextCell: UITableViewCell {
 			return existing
 		}
 
-		let view = AttributedTextContentView(frame: contentView.bounds)!
+		let view = AttributedTextContentView(frame: contentView.bounds)
 		view.edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
 		view.layoutFrameHeightIsConstrainedByBounds = hasFixedRowHeight
 		view.delegate = _textDelegate

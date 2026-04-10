@@ -385,7 +385,7 @@ extension NSAttributedString {
 			if let newFont {
 				if true {
 					#if os(iOS) || os(tvOS)
-					let uiFont = UIFont.font(withCTFont: newFont)
+					let uiFont = UIFont.font(with: newFont)
 					newAttributes[.font] = uiFont
 					#endif
 				} else {

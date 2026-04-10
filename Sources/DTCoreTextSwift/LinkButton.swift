@@ -23,10 +23,10 @@ public extension Notification.Name {
 public class LinkButton: UIButton {
 
 	/// The URL that this button corresponds to.
-	@objc public var url: URL?
+	@objc(URL) public var url: URL?
 
 	/// The unique identifier that all parts of the same hyperlink share.
-	@objc public var guid: String?
+	@objc(GUID) public var guid: String?
 
 	/// The minimum size that the receiver should respond to hits with.
 	@objc public var minimumHitSize: CGSize = .zero {
@@ -36,9 +36,6 @@ public class LinkButton: UIButton {
 		}
 	}
 
-	/// Whether tapping the button causes it to show a gray rounded rectangle. Default is `true`.
-	@objc public var showsTouchWhenHighlighted: Bool = true
-
 	// MARK: - Init
 
 	public override init(frame: CGRect) {
@@ -47,6 +44,9 @@ public class LinkButton: UIButton {
 		isUserInteractionEnabled = true
 		isEnabled = true
 		isOpaque = false
+
+		// inherited from UIButton; default to true so taps show the highlight
+		showsTouchWhenHighlighted = true
 
 		NotificationCenter.default.addObserver(self, selector: #selector(highlightNotification(_:)), name: .dtLinkButtonDidHighlight, object: nil)
 	}

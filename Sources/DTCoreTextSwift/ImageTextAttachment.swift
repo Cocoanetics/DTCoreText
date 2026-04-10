@@ -143,17 +143,17 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
                             sizeAccordingToStyle.width = (widthStr as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: 0, textScale: 1)
                             sizeAccordingToStyle.height = (heightStr as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: 0, textScale: 1)
 
-                            if let decodedImage = decodedImage,
-                               sizeAccordingToStyle.width != 0, sizeAccordingToStyle.width < decodedImage.size.width,
-                               sizeAccordingToStyle.height != 0, sizeAccordingToStyle.height < decodedImage.size.height {
+                            if let currentImage = decodedImage,
+                               sizeAccordingToStyle.width != 0, sizeAccordingToStyle.width < currentImage.size.width,
+                               sizeAccordingToStyle.height != 0, sizeAccordingToStyle.height < currentImage.size.height {
 
-                                let scale = round(decodedImage.size.width / sizeAccordingToStyle.width)
+                                let scale = round(currentImage.size.width / sizeAccordingToStyle.width)
 
                                 if scale >= 2.0 && scale <= 5.0 {
                                     #if canImport(UIKit)
-                                    decodedImage = DTImage(cgImage: decodedImage.cgImage!, scale: scale, orientation: decodedImage.imageOrientation)
+                                    decodedImage = DTImage(cgImage: currentImage.cgImage!, scale: scale, orientation: currentImage.imageOrientation)
                                     #else
-                                    decodedImage.size = sizeAccordingToStyle
+                                    currentImage.size = sizeAccordingToStyle
                                     #endif
                                 }
                             }

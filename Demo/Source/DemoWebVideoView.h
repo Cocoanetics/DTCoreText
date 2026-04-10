@@ -6,7 +6,7 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-#import <DTFoundation/DTWeakSupport.h>
+#import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 
 @class DemoWebVideoView;
@@ -43,7 +43,7 @@
 /**
  The delegate of the video view
  */
-@property (nonatomic, DT_WEAK_PROPERTY) id <DemoWebVideoViewDelegate> delegate;
+@property (nonatomic, weak) id <DemoWebVideoViewDelegate> delegate;
 
 /**
  The text attachment representing an embedded video.

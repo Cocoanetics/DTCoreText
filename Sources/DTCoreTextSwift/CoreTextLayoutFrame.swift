@@ -765,7 +765,8 @@ open class CoreTextLayoutFrame: NSObject {
     }
 
     /// The array of all text attachments matching the specified predicate.
-    @objc open func textAttachments(with predicate: NSPredicate) -> [TextAttachment] {
+    @objc(textAttachmentsWithPredicate:)
+    open func textAttachments(with predicate: NSPredicate) -> [TextAttachment] {
         return (textAttachments() as NSArray).filtered(using: predicate) as? [TextAttachment] ?? []
     }
 

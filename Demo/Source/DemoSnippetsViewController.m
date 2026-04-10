@@ -11,6 +11,8 @@
 #import "DemoAboutViewController.h"
 #import "AutoLayoutDemoViewController.h"
 
+@import DTCoreTextSwift;
+
 // identifier for cell reuse
 NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseIdentifier";
 

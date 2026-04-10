@@ -394,7 +394,7 @@ public class CoreTextParagraphStyle: NSObject, NSCopying {
         if let tb = textBlocks as NSArray?, !(tb.isEqual(to: otherStyle.textBlocks ?? [])) {
             return false
         }
-        if let ts = _tabStops, !(ts.isEqual(to: otherStyle._tabStops ?? NSMutableArray())) {
+        if let ts = _tabStops, !(ts.isEqual(to: (otherStyle._tabStops ?? NSMutableArray()) as [AnyObject])) {
             return false
         }
 
