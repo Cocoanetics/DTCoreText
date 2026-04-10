@@ -29,9 +29,9 @@ let package = Package(
 			]
 		),
         .testTarget(
-            name: "DTCoreTextSwiftTests",
+            name: "DTCoreTextTests",
             dependencies: ["DTCoreTextSwift"],
-            path: "Tests/DTCoreTextSwiftTests",
+            path: "Tests/DTCoreTextTests",
             resources: [
                 .copy("Resources/AppleConverted.html"),
                 .copy("Resources/CSSCascading.html"),
