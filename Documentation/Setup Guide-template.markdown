@@ -3,7 +3,7 @@ Setup Guide
 
 You have multiple options available for integrating DTCoreText into your own apps. Ranked from most to least convenient they are:
 
-- [Using Cocoapods](#Cocoapods)
+- [Using Swift Package Manager](#SwiftPackageManager)
 - [As Sub-Project and/or Git Submodule](#Subproject)
 - [As Framework](#Framework)
 
@@ -21,20 +21,31 @@ DTCoreText needs a minimum iOS deployment target of iOS 4.2 because of:
 
 Support for OS X is currently being developed.
 
-<a id="Cocoapods"></a>
-Integrating via Cocoapods
--------------------------
+<a id="SwiftPackageManager"></a>
+Integrating via Swift Package Manager
+-------------------------------------
 
-Having [set up Cocoapods](http://www.cocoanetics.com/2013/01/digging-into-cocoapods/) you add DTCoreText to your `Podfile` like this:
+DTCoreText now ships as a Swift package.
 
-    platform :ios
-    pod 'DTCoreText'
+### In Xcode
 
-This always gets the latest version of the pod spec from the global repository. It also automatically resolves the DTFoundation reference.
+Use **File > Add Package Dependencies…** and add:
 
-Cocoapods works by copying all source files into an Xcode project that compiles into a static library. It also automatically sets up all header search path and dependencies.
+    https://github.com/Cocoanetics/DTCoreText.git
 
-One mild disadvantage of using Cocoapods is that you cannot easily make changes and submit them as pull requests. But generally you should not need to modify DTCoreText code anyway.
+Then add the `DTCoreText` library product to your target.
+
+### In Package.swift
+
+Add DTCoreText as a dependency:
+
+    .package(url: "https://github.com/Cocoanetics/DTCoreText.git", branch: "develop")
+
+and depend on the product from your target:
+
+    .product(name: "DTCoreText", package: "DTCoreText")
+
+Swift Package Manager is the recommended integration path for current versions of DTCoreText.
 
 <a id="Subproject"></a>
 Integrating via Sub-Project
