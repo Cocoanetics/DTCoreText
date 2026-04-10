@@ -38,7 +38,7 @@ public protocol LazyImageViewDelegate: AnyObject {
 /// A `UIImageView` subclass that lazily loads an image from a URL
 /// and informs its delegate once the image size is known.
 @objc(DTLazyImageView)
-public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate {
+public class LazyImageView: UIImageView {
 
 	// MARK: - Static Cache
 
@@ -61,7 +61,8 @@ public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate 
 	/// The content view that owns this image view.
 	@objc public weak var contentView: AttributedTextContentView?
 
-	/// Whether to display the image progressively as it downloads.
+	/// Deprecated. Progressive download is no longer supported; setting this has no effect.
+	/// Kept for ABI compatibility.
 	@objc public var shouldShowProgressiveDownload: Bool = false
 
 	/// The delegate informed about image-size changes.
@@ -69,60 +70,24 @@ public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate 
 
 	// MARK: - Private State
 
-	private var dataTask: URLSessionDataTask?
-	private var session: URLSession?
-	private var receivedData: NSMutableData?
-
-	// Progressive download
-	private var imageSource: CGImageSource?
-	private var fullWidth: CGFloat = -1
-	private var fullHeight: CGFloat = -1
-	private var expectedSize: Int = 0
+	private var loadTask: Task<Void, Never>?
+	private var fullWidth: CGFloat = 0
+	private var fullHeight: CGFloat = 0
 
 	// MARK: - Lifecycle
 
 	deinit {
-		dataTask?.cancel()
-		// imageSource is a class type in Swift; ARC handles it
+		loadTask?.cancel()
 	}
 
 	// MARK: - Loading
-
-	private func loadImage(at url: NSURL) {
-		// Handle local files and data URLs synchronously
-		if url.isFileURL || url.scheme == "data" {
-			DispatchQueue.global().async { [weak self] in
-				guard let data = try? Data(contentsOf: url as URL) else { return }
-				DispatchQueue.main.async {
-					self?.completeDownload(with: data)
-				}
-			}
-			return
-		}
-
-		if urlRequest == nil {
-			urlRequest = NSMutableURLRequest(url: url as URL, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10.0)
-		} else {
-			urlRequest?.cachePolicy = .returnCacheDataElseLoad
-			urlRequest?.timeoutInterval = 10.0
-		}
-
-		NotificationCenter.default.post(name: .dtLazyImageViewWillStartDownload, object: self)
-
-		if session == nil {
-			session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
-		}
-
-		dataTask = session?.dataTask(with: urlRequest! as URLRequest)
-		dataTask?.resume()
-	}
 
 	public override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 
 		guard image == nil,
 			  let url,
-			  dataTask == nil,
+			  loadTask == nil,
 			  superview != nil else { return }
 
 		// Check cache first
@@ -134,63 +99,80 @@ public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate 
 			return
 		}
 
-		loadImage(at: url)
+		loadTask = Task { [weak self] in
+			await self?.performLoad(url: url)
+		}
 	}
 
 	/// Cancels the current download.
 	@objc
 	public func cancelLoading() {
-		dataTask?.cancel()
-		dataTask = nil
-		receivedData = nil
+		loadTask?.cancel()
+		loadTask = nil
 	}
 
-	// MARK: - Progressive Image
-
-	private func newTransitoryImage(from partialImage: CGImage) -> CGImage? {
-		let height = CGFloat(partialImage.height)
-		let colorSpace = CGColorSpaceCreateDeviceRGB()
-		let lFullWidth = Int(ceil(fullWidth))
-		let lFullHeight = Int(ceil(fullHeight))
-
-		guard let ctx = CGContext(
-			data: nil,
-			width: lFullWidth,
-			height: lFullHeight,
-			bitsPerComponent: 8,
-			bytesPerRow: lFullWidth * 4,
-			space: colorSpace,
-			bitmapInfo: CGBitmapInfo.byteOrderDefault.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
-		) else { return nil }
-
-		ctx.draw(partialImage, in: CGRect(x: 0, y: 0, width: fullWidth, height: height))
-		return ctx.makeImage()
+	public override func removeFromSuperview() {
+		super.removeFromSuperview()
+		cancelLoading()
 	}
 
-	private func createAndShowProgressiveImage() {
-		guard let imageSource else { return }
+	// MARK: - Async Loading
 
-		let totalSize = receivedData?.length ?? 0
-		CGImageSourceUpdateData(imageSource, (receivedData ?? NSMutableData()) as CFData, totalSize == expectedSize)
+	/// Reads the bytes of a local-file or data-URL off the main actor.
+	private nonisolated static func readLocalData(at url: URL) -> Data? {
+		try? Data(contentsOf: url)
+	}
 
-		if fullHeight > 0 && fullWidth > 0 {
-			guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else { return }
+	private func performLoad(url: NSURL) async {
+		defer { loadTask = nil }
 
-			if let transitoryImage = newTransitoryImage(from: cgImage) {
-				let uiImage = UIImage(cgImage: transitoryImage)
-				DispatchQueue.main.async { [weak self] in
-					self?.image = uiImage
-				}
+		// file:// and data: URLs: read off-actor, then complete on the main actor.
+		if url.isFileURL || url.scheme == "data" {
+			let data = await Task.detached(priority: .utility) {
+				LazyImageView.readLocalData(at: url as URL)
+			}.value
+
+			guard !Task.isCancelled else { return }
+
+			if let data {
+				completeDownload(with: data, for: url)
 			}
+			return
+		}
+
+		// Build the request, defaulting to a 10s timeout that prefers cache.
+		let request: URLRequest
+		if let existing = urlRequest {
+			existing.cachePolicy = .returnCacheDataElseLoad
+			existing.timeoutInterval = 10.0
+			request = existing as URLRequest
 		} else {
-			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any] else { return }
+			let mutable = NSMutableURLRequest(url: url as URL, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10.0)
+			urlRequest = mutable
+			request = mutable as URLRequest
+		}
 
-			if let h = properties[kCGImagePropertyPixelHeight] as? CGFloat {
-				fullHeight = h
+		NotificationCenter.default.post(name: .dtLazyImageViewWillStartDownload, object: self)
+
+		do {
+			let (data, response) = try await URLSession.shared.data(for: request)
+
+			try Task.checkCancellation()
+
+			// Reject non-image responses (matches the old behavior).
+			if let httpResponse = response as? HTTPURLResponse,
+			   httpResponse.mimeType?.hasPrefix("image") != true {
+				throw URLError(.cannotDecodeContentData)
 			}
-			if let w = properties[kCGImagePropertyPixelWidth] as? CGFloat {
-				fullWidth = w
-			}
+
+			completeDownload(with: data, for: url)
+			NotificationCenter.default.post(name: .dtLazyImageViewDidFinishDownload, object: self)
+		} catch is CancellationError {
+			// Expected on cancel; no notification.
+		} catch where (error as? URLError)?.code == .cancelled {
+			// URLSession cancellation funnels here.
+		} catch {
+			handleDownloadFailure(error: error)
 		}
 	}
 
@@ -200,7 +182,7 @@ public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate 
 		delegate?.lazyImageView?(self, didChangeImageSize: CGSize(width: fullWidth, height: fullHeight))
 	}
 
-	private func completeDownload(with data: Data) {
+	private func completeDownload(with data: Data, for url: NSURL) {
 		let downloadedImage = UIImage(data: data)
 		self.image = downloadedImage
 		fullWidth = downloadedImage?.size.width ?? 0
@@ -208,83 +190,14 @@ public class LazyImageView: UIImageView, @preconcurrency URLSessionDataDelegate 
 
 		notifyDelegate()
 
-		if let url {
-			if let downloadedImage {
-				Self.imageCache.setObject(downloadedImage, forKey: url)
-			} else {
-				logger.warning("Did not get an image for \(url.absoluteString ?? "unknown")")
-			}
+		if let downloadedImage {
+			Self.imageCache.setObject(downloadedImage, forKey: url)
+		} else {
+			logger.warning("Did not get an image for \(url.absoluteString ?? "unknown")")
 		}
-	}
-
-	// MARK: - Remove from Superview
-
-	public override func removeFromSuperview() {
-		super.removeFromSuperview()
-
-		dataTask?.cancel()
-		session?.invalidateAndCancel()
-	}
-
-	// MARK: - URLSessionDataDelegate
-
-	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-		receivedData = nil
-
-		if let httpResponse = response as? HTTPURLResponse {
-			guard httpResponse.mimeType?.hasPrefix("image") == true else {
-				completionHandler(.cancel)
-				return
-			}
-		}
-
-		completionHandler(.allow)
-
-		fullWidth = -1
-		fullHeight = -1
-		expectedSize = Int(response.expectedContentLength)
-		receivedData = NSMutableData()
-	}
-
-	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-		receivedData?.append(data)
-
-		guard shouldShowProgressiveDownload else { return }
-
-		if imageSource == nil {
-			imageSource = CGImageSourceCreateIncremental(nil)
-		}
-
-		createAndShowProgressiveImage()
-	}
-
-	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-		if let error {
-			handleDownloadFailure(error: error)
-			return
-		}
-
-		if let data = receivedData as Data? {
-			DispatchQueue.main.sync { [weak self] in
-				self?.completeDownload(with: data)
-			}
-			receivedData = nil
-		}
-
-		self.session?.finishTasksAndInvalidate()
-		self.dataTask = nil
-
-		imageSource = nil
-
-		NotificationCenter.default.post(name: .dtLazyImageViewDidFinishDownload, object: self)
 	}
 
 	private func handleDownloadFailure(error: Error) {
-		session?.invalidateAndCancel()
-		dataTask = nil
-		receivedData = nil
-		imageSource = nil
-
 		let userInfo: [String: Any] = ["Error": error]
 		NotificationCenter.default.post(name: .dtLazyImageViewDidFinishDownload, object: self, userInfo: userInfo)
 	}
