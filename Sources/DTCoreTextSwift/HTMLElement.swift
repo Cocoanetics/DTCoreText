@@ -344,7 +344,7 @@ open class HTMLElement: HTMLParserNode {
                 // if previous node was inline and this child is block, need a newline
                 if let prev = previousChild, prev.displayStyle == .inline, oneChild.displayStyle == .block {
                     // trim off whitespace suffix
-                    while (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
+                    while tmpString.dt_hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
                         tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
                     }
                     // paragraph break
@@ -356,18 +356,20 @@ open class HTMLElement: HTMLParserNode {
                 if var ns = nodeString {
                     if !oneChild._containsAppleConvertedSpace {
                         // we already have a white space in the string so far
-                        if (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
+                        if tmpString.dt_hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
                             let charactersToIgnore = CharacterSet(charactersIn: " \n\t")
-                            var mutableNS = ns.mutableCopy() as! NSMutableAttributedString
+                            let mutableNS = ns.mutableCopy() as! NSMutableAttributedString
 
-                            while mutableNS.length > 0 && (mutableNS.string as NSString).hasPrefixCharacter(from: charactersToIgnore) {
+                            // Strip leading whitespace in place rather than rebuilding the
+                            // attributed string on every iteration (which is O(N) per char).
+                            while mutableNS.length > 0 && mutableNS.dt_hasPrefixCharacter(from: charactersToIgnore) {
                                 let field = mutableNS.attribute(NSAttributedString.Key(rawValue: DTFieldAttribute), at: 0, effectiveRange: nil) as? String
                                 if field == DTListPrefixField { break }
 
                                 let isHR = (mutableNS.attribute(NSAttributedString.Key(rawValue: DTHorizontalRuleStyleAttribute), at: 0, effectiveRange: nil) as? NSNumber)?.boolValue ?? false
                                 if isHR { break }
 
-                                mutableNS = mutableNS.attributedSubstring(from: NSRange(location: 1, length: mutableNS.length - 1)).mutableCopy() as! NSMutableAttributedString
+                                mutableNS.deleteCharacters(in: NSRange(location: 0, length: 1))
                             }
 
                             ns = mutableNS
