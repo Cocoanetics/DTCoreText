@@ -11,9 +11,15 @@ open class IframeTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
     let baseURL = (options as? [String: Any])?[NSBaseURLDocumentOption as String] as? URL
     var src = (element.attributes as? [String: Any])?["src"] as? String
 
-    // prepend http: if URL string starts with // (seems to do with youtube iframes as standard)
+    // prepend https: if URL string starts with // (seems to do with youtube iframes as standard)
     if let s = src, s.hasPrefix("//") {
-      src = "http:" + s
+      src = "https:" + s
+    }
+
+    // upgrade http:// YouTube embed URLs to https:// — YouTube blocks the
+    // insecure scheme and returns a "Video player configuration" error.
+    if let s = src, s.hasPrefix("http://") {
+      src = "https://" + String(s.dropFirst("http://".count))
     }
 
     // content URL
