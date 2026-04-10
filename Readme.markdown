@@ -13,6 +13,12 @@ This is useful for drawing simple rich text like any HTML document without havin
 Documentation
 -------------
 
+DTCoreText v2 is self-contained and distributed as a Swift package. Add it in Xcode via **File > Add Package Dependencies…** using:
+
+    https://github.com/Cocoanetics/DTCoreText.git
+
+and link the `DTCoreText` product to your target.
+
 Documentation can be [browsed online](https://docs.cocoanetics.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](https://docs.cocoanetics.com/DTCoreText/DTCoreText.atom).
 
 A [Q&A](http://www.cocoanetics.com/2011/08/nsattributedstringhtml-qa/) answers some frequently asked questions.

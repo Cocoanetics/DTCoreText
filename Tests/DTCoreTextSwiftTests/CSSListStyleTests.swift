@@ -14,7 +14,7 @@ struct CSSListStyleTests {
 		unarchiver.requiresSecureCoding = false
 		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! CSSListStyle
 
-		#expect(listStyle.isEqual(to: unarchived))
+		#expect(listStyle.isEqualToListStyle(unarchived))
 	}
 
 	@Test("NSCoding round-trip preserves inequality")
@@ -25,13 +25,13 @@ struct CSSListStyleTests {
 		let styles2: [String: String] = ["list-style-type": "circle", "list-style-position": "inherit"]
 		let listStyle2 = CSSListStyle(styles: styles2)
 
-		#expect(!listStyle1.isEqual(to: listStyle2))
+		#expect(!listStyle1.isEqualToListStyle(listStyle2))
 
 		let data = try NSKeyedArchiver.archivedData(withRootObject: listStyle1, requiringSecureCoding: false)
 		let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
 		unarchiver.requiresSecureCoding = false
 		let unarchived = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! CSSListStyle
 
-		#expect(!unarchived.isEqual(to: listStyle2))
+		#expect(!unarchived.isEqualToListStyle(listStyle2))
 	}
 }

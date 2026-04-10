@@ -7,7 +7,7 @@ You have multiple options available for integrating DTCoreText into your own app
 - [As Sub-Project and/or Git Submodule](#Subproject)
 - [As Framework](#Framework)
 
-GitHub offers tar balls for the individual tagged versions but you shouldn't try to set these up with your project because those are missing the external references. Doing a recursive clone insures that you get all the files from all involved GitHub repositories.
+GitHub offers tar balls for the individual tagged versions, but current DTCoreText v2 checkouts are self-contained and no longer require bundled external repositories.
 
 Requirements
 ------------
@@ -53,7 +53,7 @@ Integrating via Sub-Project
 
 This is the recommended approach as it lets Xcode see all the project symbols and dependencies.
 
-If you use `git` as SCM of your apps you would add DTCoreText as a submodule, if not then you would simply clone the project into an Externals sub-folder of your project. The repo URL can either be the one of the master repository or - if you plan to [contribute to it](http://www.cocoanetics.com/2012/01/github-fork-fix-pull-request/) - could be a fork of the project.
+If you use `git` as SCM of your apps you can add DTCoreText as a submodule, or simply clone it into any folder in your workspace. The repo URL can either be the master repository or, if you plan to [contribute to it](http://www.cocoanetics.com/2012/01/github-fork-fix-pull-request/), your fork.
 
 ### Getting the Files
 
@@ -63,22 +63,18 @@ The process of getting the source files of DTCoreText differs slightly whether o
 
 You add DTCoreText as a submodule:
 
-    git submodule add https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
-   
-DTCoreText has several dependencies into the DTFoundation project. To have git clone the main project and also set up the dependencies do this:
-	
-    git submodule update --init --recursive
-   
-Now you have a clone of DTCoreText in Externals/DTCoreText as well as a clone of DTFoundation in Externals/DTCoreText/Core/Externals/DTFoundation.
+    git submodule add https://github.com/Cocoanetics/DTCoreText.git Vendor/DTCoreText
+
+Now you have a clone of DTCoreText in `Vendor/DTCoreText`.
 
    
 #### As Git Clone
 
-If you don't use git for your project's SCM you clone the project into the Externals folder:
+If you don't use git for your project's SCM you clone the project into a folder in your workspace:
 
-    git clone --recursive https://github.com/Cocoanetics/DTCoreText.git Externals/DTCoreText
-   
-Now you have a clone of DTCoreText in `Externals/DTCoreText` as well as a clone of DTFoundation in `Externals/DTCoreText/Core/Externals/DTFoundation`.
+    git clone https://github.com/Cocoanetics/DTCoreText.git Vendor/DTCoreText
+
+Now you have a clone of DTCoreText in `Vendor/DTCoreText`.
 
 ### Project Setup
 
@@ -86,9 +82,9 @@ You want to add a reference to `DTCoreText.xcodeproj` in your Xcode project so t
 
 #### Adding the Sub-Project
 
-Open the destination project and create an "Externals" group.
+Open the destination project and create a group for external dependencies, for example "Vendor".
 
-Add files… or drag `DTCoreText.xcodeproj` to the Externals group. Make sure to uncheck the Copy checkbox. You want to create a reference, not a copy.
+Add files… or drag `DTCoreText.xcodeproj` to that group. Make sure to uncheck the Copy checkbox. You want to create a reference, not a copy.
 
 ![DTCoreText_Reference](DTCoreText_Reference.png)
 

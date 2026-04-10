@@ -197,7 +197,7 @@
 		A7E8E1D316D22B7E001EDE51 /* EmptyLinesAndFontAttribute.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EmptyLinesAndFontAttribute.html; sourceTree = "<group>"; };
 		A7EB84FB168ED63A00D686B7 /* FontSizes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FontSizes.html; sourceTree = "<group>"; };
 		A7EB8542169065F200D686B7 /* WhitespaceFollowingImagePromotedToParagraph.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WhitespaceFollowingImagePromotedToParagraph.html; sourceTree = "<group>"; };
-		A7F0C4231965A0D600D7FAFB /* simpson20.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = simpson20.gif; path = Externals/DTFoundation/Demo/DTAnimatedGIF/Resources/simpson20.gif; sourceTree = SOURCE_ROOT; };
+		A7F0C4231965A0D600D7FAFB /* simpson20.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = simpson20.gif; path = simpson20.gif; sourceTree = "<group>"; };
 		A7F16CF41698491400B0E843 /* NSStringCSSTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringCSSTest.h; sourceTree = "<group>"; };
 		A7F16CF51698491400B0E843 /* NSStringCSSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringCSSTest.m; sourceTree = "<group>"; };
 		A7F34D3F16CFC7C90054A512 /* RTL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = RTL.html; sourceTree = "<group>"; };
@@ -709,7 +709,6 @@
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Core/Source\"",
-					"\"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**",
 				);
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -814,7 +813,6 @@
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Core/Source\"",
-					"\"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**",
 				);
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -880,7 +878,6 @@
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Core/Source\"",
-					"\"$(SRCROOT)/Externals/DTFoundation/Core/Source\"/**",
 				);
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
