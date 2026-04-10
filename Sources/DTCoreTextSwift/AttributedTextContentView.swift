@@ -295,9 +295,20 @@
 
     /// Removes invisible custom subviews and lays out subviews visible in the given rectangle.
     @objc open func layoutSubviews(in rect: CGRect) {
-      // If called for a partial (non-infinite) rect, remove unneeded subviews first
+      // If called for a partial (non-infinite) rect, remove unneeded subviews first.
+      // Guard against degenerate rects (zero/tiny size) which can occur
+      // transiently during view controller transitions (e.g. AVPlayerViewController
+      // entering/exiting fullscreen) — without this check a spurious
+      // layoutSubviews(in:) call with a near-zero bounds would wipe out every
+      // custom view because they'd all fall outside the rect.
       if !rect.isInfinite {
-        removeSubviewsOutside(rect)
+        if rect.size.width >= 1 && rect.size.height >= 1 {
+          removeSubviewsOutside(rect)
+        } else {
+          // Too-small rect — skip this layout pass entirely; UIKit will
+          // re-trigger layoutSubviews once bounds settle.
+          return
+        }
       }
 
       CATransaction.begin()
@@ -317,9 +328,19 @@
         lines = (theLayoutFrame?.linesVisible(in: rect) as? [CoreTextLayoutLine]) ?? []
       }
 
-      // Hide all custom views
-      for view in _customViews {
-        (view as? UIView)?.isHidden = true
+      // Hide all custom views only for a full (infinite-rect) layout
+      // pass — the iteration below will unhide the ones that should be
+      // visible. For a partial-rect pass (triggered e.g. by a scroll
+      // view bounds change or by AVPlayerViewController returning from
+      // fullscreen), the iteration only reaches lines inside the rect,
+      // so a blanket hide-all would leave every custom view outside
+      // the rect permanently hidden. Partial passes therefore leave
+      // existing views alone; `removeSubviewsOutside(rect)` above has
+      // already pruned anything that's no longer needed.
+      if rect.isInfinite {
+        for view in _customViews {
+          (view as? UIView)?.isHidden = true
+        }
       }
 
       for oneLine in lines {
