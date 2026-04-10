@@ -157,7 +157,41 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 	private weak var _delegate: (any DTAttributedTextContentViewDelegate)?
 
 	/// Lock for synchronizing access to layouter/layoutFrame.
-	private let _lock = NSLock()
+	// Recursive because layoutFrame.getter calls layouter.getter — both lock _lock.
+	nonisolated(unsafe) private let _lock = NSRecursiveLock()
+
+	// MARK: - Nonisolated render mirror (for background tile rendering)
+
+	/// Snapshot of all state the nonisolated `draw(_:in:)` method needs.
+	/// CATiledLayer calls draw on background tile threads, which can't read
+	/// @MainActor UIView properties; we mirror them here under `_lock`.
+	private struct RenderSnapshot {
+		var backgroundColor: CGColor?
+		var backgroundOffset: CGSize = .zero
+		var layoutOffset: CGPoint = .zero
+		var shouldDrawImages = true
+		var shouldDrawLinks = true
+		var delegateSupportsBeforeDrawing = false
+		var delegateSupportsAfterDrawing = false
+	}
+
+	nonisolated(unsafe) private var _renderSnapshot = RenderSnapshot()
+
+	/// Rebuilds `_renderSnapshot` from current @MainActor state. Must be called
+	/// on main. Cheap enough to call from every layout pass.
+	private func updateRenderSnapshot() {
+		_lock.lock()
+		defer { _lock.unlock() }
+		_renderSnapshot = RenderSnapshot(
+			backgroundColor: backgroundColor?.cgColor,
+			backgroundOffset: _backgroundOffset,
+			layoutOffset: _layoutOffset,
+			shouldDrawImages: _shouldDrawImages,
+			shouldDrawLinks: _shouldDrawLinks,
+			delegateSupportsBeforeDrawing: _delegateFlags.supportsNotificationBeforeDrawing,
+			delegateSupportsAfterDrawing: _delegateFlags.supportsNotificationAfterDrawing
+		)
+	}
 
 	private var _accessibilityElements: [Any]?
 
@@ -196,6 +230,8 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 			tiledLayer.tileSize = tileSize
 			_isTiling = true
 		}
+
+		updateRenderSnapshot()
 	}
 
 	public required override init(frame: CGRect) {
@@ -433,51 +469,84 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 
 	// MARK: - Drawing
 
-	open override func draw(_ layer: CALayer, in ctx: CGContext) {
+	// This is called by CATiledLayer on a background tile-rendering thread, and
+	// by CALayer on the main thread. It must be `nonisolated` or the Swift
+	// runtime's main-actor executor check traps when tile threads enter.
+	// All state accessed here is read from `_renderSnapshot` (guarded by
+	// `_lock`), from the locked `layoutFrame` getter, or is @objc optional
+	// delegate dispatch on a weak reference.
+	nonisolated open override func draw(_ layer: CALayer, in ctx: CGContext) {
 		let rect = ctx.boundingBoxOfClipPath
 
-		if _backgroundOffset.height != 0 || _backgroundOffset.width != 0 {
-			ctx.setPatternPhase(_backgroundOffset)
+		// Snapshot all @MainActor-derived state once up front.
+		_lock.lock()
+		let snapshot = _renderSnapshot
+		_lock.unlock()
+
+		if snapshot.backgroundOffset != .zero {
+			ctx.setPatternPhase(snapshot.backgroundOffset)
 		}
 
-		if let bgColor = backgroundColor?.cgColor {
+		if let bgColor = snapshot.backgroundColor {
 			ctx.setFillColor(bgColor)
 		}
 		ctx.fill(rect)
 
 		// Offset layout if necessary
-		if _layoutOffset != .zero {
-			let transform = CGAffineTransform(translationX: _layoutOffset.x, y: _layoutOffset.y)
+		if snapshot.layoutOffset != .zero {
+			let transform = CGAffineTransform(translationX: snapshot.layoutOffset.x, y: snapshot.layoutOffset.y)
 			ctx.concatenate(transform)
 		}
 
-		let theLayoutFrame = self.layoutFrame // synchronized
+		let theLayoutFrame = self.nonisolatedLayoutFrame()
 
 		// Construct drawing options
 		var options = CoreTextLayoutFrameDrawingOptions.default.rawValue
 
-		if !_shouldDrawImages {
+		if !snapshot.shouldDrawImages {
 			options |= CoreTextLayoutFrameDrawingOptions.omitAttachments.rawValue
 		}
 
-		if !_shouldDrawLinks {
+		if !snapshot.shouldDrawLinks {
 			options |= CoreTextLayoutFrameDrawingOptions.omitLinks.rawValue
 		}
 
-		if _delegateFlags.supportsNotificationBeforeDrawing {
-			_delegate?.attributedTextContentView?(self, willDrawLayoutFrame: theLayoutFrame!, in: ctx)
+		// Delegate notifications. @objc optional protocol methods ignore actor
+		// isolation at the dispatch layer; if a delegate implementation needs
+		// main-actor-only state it's responsible for hopping itself.
+		let delegate = nonisolatedDelegate()
+
+		if snapshot.delegateSupportsBeforeDrawing, let theLayoutFrame {
+			delegate?.attributedTextContentView?(self, willDrawLayoutFrame: theLayoutFrame, in: ctx)
 		}
 
 		theLayoutFrame?.draw(in: ctx, options: options)
 
-		if _delegateFlags.supportsNotificationAfterDrawing {
-			_delegate?.attributedTextContentView?(self, didDrawLayoutFrame: theLayoutFrame!, in: ctx)
+		if snapshot.delegateSupportsAfterDrawing, let theLayoutFrame {
+			delegate?.attributedTextContentView?(self, didDrawLayoutFrame: theLayoutFrame, in: ctx)
 		}
 	}
 
-	open override func draw(_ rect: CGRect) {
+	nonisolated open override func draw(_ rect: CGRect) {
 		guard let context = UIGraphicsGetCurrentContext() else { return }
-		self.layoutFrame?.draw(in: context, options: CoreTextLayoutFrameDrawingOptions.default.rawValue)
+		nonisolatedLayoutFrame()?.draw(in: context, options: CoreTextLayoutFrameDrawingOptions.default.rawValue)
+	}
+
+	/// Nonisolated accessor for the layout frame; reads under `_lock`. The
+	/// layout frame is built on the main thread (via a layout pass); if it
+	/// hasn't been built yet the background tile will draw a blank background
+	/// and the next main-thread layout pass will trigger a redraw.
+	nonisolated private func nonisolatedLayoutFrame() -> CoreTextLayoutFrame? {
+		_lock.lock()
+		defer { _lock.unlock() }
+		return _layoutFrame
+	}
+
+	/// Nonisolated accessor for the weak delegate reference.
+	nonisolated private func nonisolatedDelegate() -> (any DTAttributedTextContentViewDelegate)? {
+		_lock.lock()
+		defer { _lock.unlock() }
+		return _delegate
 	}
 
 	// MARK: - Relayout
@@ -716,6 +785,7 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 		set {
 			if _shouldDrawImages != newValue {
 				_shouldDrawImages = newValue
+				updateRenderSnapshot()
 				setNeedsDisplay()
 				invalidateIntrinsicContentSize()
 			}
@@ -728,6 +798,7 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 		set {
 			if _shouldDrawLinks != newValue {
 				_shouldDrawLinks = newValue
+				updateRenderSnapshot()
 				setNeedsDisplay()
 				invalidateIntrinsicContentSize()
 			}
@@ -743,6 +814,7 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 			} else {
 				isOpaque = true
 			}
+			updateRenderSnapshot()
 		}
 	}
 
@@ -761,13 +833,19 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 	/// The amount by which all content is offset for display and subview layouting.
 	@objc open var layoutOffset: CGPoint {
 		get { _layoutOffset }
-		set { _layoutOffset = newValue }
+		set {
+			_layoutOffset = newValue
+			updateRenderSnapshot()
+		}
 	}
 
 	/// The offset applied when drawing a pattern background color.
 	@objc open var backgroundOffset: CGSize {
 		get { _backgroundOffset }
-		set { _backgroundOffset = newValue }
+		set {
+			_backgroundOffset = newValue
+			updateRenderSnapshot()
+		}
 	}
 
 	/// Bit mask that determines how the receiver relayouts when its bounds change.
@@ -927,6 +1005,8 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 			} else {
 				_shouldDrawImages = true
 			}
+
+			updateRenderSnapshot()
 		}
 	}
 
