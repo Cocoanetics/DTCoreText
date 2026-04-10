@@ -32,11 +32,10 @@
 {
 	[super viewDidLoad];
 
-	// The xib sets `view` AND `attributedTextView` to the same DTAttributedTextView,
-	// so `self.view` is the scroll view directly. Explicitly request automatic
-	// content inset adjustment so the nav bar and safe areas are honoured on
-	// modern iOS (the default is .automatic but DTAttributedTextView sometimes
-	// sets different content/scroll indicator insets in its init).
+	// self.view IS the DTAttributedTextView scroll view (wired from the XIB),
+	// so it extends behind the translucent nav bar. Ask UIKit to include the
+	// nav-bar / safe-area insets in the scroll view's adjustedContentInset so
+	// the text never draws underneath the bar.
 	self.attributedTextView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"About" ofType:@"html"];

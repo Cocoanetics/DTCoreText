@@ -26,7 +26,7 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 - (id)init
 {
 	self = [super initWithStyle:UITableViewStylePlain];
-	
+
 	if (self)
 	{
 		self.title = @"Snippets";

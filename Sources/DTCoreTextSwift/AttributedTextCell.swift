@@ -55,11 +55,20 @@ public class AttributedTextCell: UITableViewCell {
 
 		guard superview != nil else { return }
 
+		// Honour the cell's layout margins so the text sits inside the standard
+		// horizontal padding — the DT content view is a plain UIView and
+		// doesn't pick those up on its own.
+		let margins = contentView.layoutMargins
+		let insetBounds = contentView.bounds.inset(by: UIEdgeInsets(
+			top: 0, left: margins.left, bottom: 0, right: margins.right
+		))
+
 		if hasFixedRowHeight {
-			attributedTextContextView.frame = contentView.bounds
+			attributedTextContextView.frame = insetBounds
 		} else {
 			let neededHeight = requiredRowHeight(in: _containingTableView)
-			let frame = CGRect(x: 0, y: 0, width: contentView.bounds.width, height: neededHeight)
+			let frame = CGRect(x: insetBounds.origin.x, y: insetBounds.origin.y,
+							   width: insetBounds.size.width, height: neededHeight)
 			attributedTextContextView.frame = frame
 		}
 	}
@@ -123,6 +132,11 @@ public class AttributedTextCell: UITableViewCell {
 		@unknown default:
 			logger.warning("AccessoryType \(self.accessoryType.rawValue) not implemented on \(type(of: self))")
 		}
+
+		// Match the horizontal layout-margin inset applied in layoutSubviews()
+		// so the height calculation uses the same available width.
+		let margins = contentView.layoutMargins
+		contentWidth -= margins.left + margins.right
 
 		let neededSize = attributedTextContextView.suggestedFrameSizeToFitEntireStringConstrainted(toWidth: contentWidth)
 		return neededSize.height

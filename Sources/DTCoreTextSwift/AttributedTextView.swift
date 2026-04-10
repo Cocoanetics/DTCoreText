@@ -136,10 +136,19 @@ public class AttributedTextView: UIScrollView {
 		guard let userInfo = notification.userInfo,
 			  let optimalFrame = (userInfo["OptimalFrame"] as? NSValue)?.cgRectValue else { return }
 
-		let frame = bounds.inset(by: contentInset)
+		// Use bounds.size — not bounds.inset(by:) — because a scroll view's
+		// bounds.origin reflects its contentOffset, which is negative when
+		// contentInsetAdjustmentBehavior pushes content below a nav bar. That
+		// would make the inset frame start with a negative origin.y.
+		let availableWidth = bounds.size.width - contentInset.left - contentInset.right
 
-		if optimalFrame.size.width == frame.size.width {
-			_attributedTextContentView?.frame = optimalFrame
+		if optimalFrame.size.width == availableWidth {
+			// Always position the content view at (0, 0) in the scroll view's
+			// content coordinate space. The scroll view itself handles pushing
+			// content down for the adjusted content inset.
+			var frameToSet = optimalFrame
+			frameToSet.origin = .zero
+			_attributedTextContentView?.frame = frameToSet
 			contentSize = _attributedTextContentView?.intrinsicContentSize ?? .zero
 		}
 	}
@@ -153,7 +162,15 @@ public class AttributedTextView: UIScrollView {
 		}
 
 		let classToUse = classForContentView() as! AttributedTextContentView.Type
-		var frame = bounds.inset(by: contentInset)
+		// Place the content view at (0, 0) in the scroll view's content
+		// coordinate space. We must NOT use bounds.inset(by:) because
+		// UIScrollView's bounds.origin reflects contentOffset, which becomes
+		// negative when contentInsetAdjustmentBehavior pushes content below a
+		// nav bar — that would leave the content view with a negative origin.
+		var frame = CGRect(x: 0,
+						   y: 0,
+						   width: bounds.size.width - contentInset.left - contentInset.right,
+						   height: bounds.size.height - contentInset.top - contentInset.bottom)
 
 		if frame.size.width <= 0 || frame.size.height <= 0 {
 			frame = .zero
