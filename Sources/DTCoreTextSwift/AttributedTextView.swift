@@ -70,7 +70,14 @@
 
     public override func layoutSubviews() {
       super.layoutSubviews()
-      attributedTextContentView.edgeInsets = contentInset
+      // The content view's frame is already sized to exclude the scroll
+      // view's `contentInset` (see `attributedTextContentView` getter),
+      // so the content view itself must NOT apply any additional edge
+      // insets — otherwise the text layout rect is insetted twice and
+      // block-level attachments sized against the outer inset (e.g. an
+      // iframe using `view.bounds.width - 20`) overflow the content
+      // view's right edge by the second inset.
+      attributedTextContentView.edgeInsets = .zero
       _attributedTextContentView?.layoutSubviews(in: bounds)
     }
 
