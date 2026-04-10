@@ -251,6 +251,30 @@
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
 
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+	[super willMoveToParentViewController:parent];
+
+	if (parent == nil)
+	{
+		// We're about to be popped off the nav stack. Fully tear down any
+		// AVPlayerViewController children BEFORE the pop animation starts —
+		// AVPlayerViewController holds internal UIScrollViews (scrubber,
+		// controls) that, if left attached during the pop transition,
+		// reference freed state inside their own `dealloc` and crash in
+		// -[UIScrollView _stopScrollingAndZoomingAnimations...].
+		for (AVPlayerViewController *playerVC in self.mediaPlayers)
+		{
+			[playerVC.player pause];
+			playerVC.player = nil;
+			[playerVC willMoveToParentViewController:nil];
+			[playerVC.view removeFromSuperview];
+			[playerVC removeFromParentViewController];
+		}
+		[self.mediaPlayers removeAllObjects];
+	}
+}
+
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[self.navigationController setToolbarHidden:YES animated:YES];
@@ -537,7 +561,7 @@
 	{
 		DemoWebVideoView *videoView = [[DemoWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
-		
+
 		return videoView;
 	}
 	else if ([attachment isKindOfClass:[DTObjectTextAttachment class]])

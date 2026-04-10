@@ -46,8 +46,35 @@
 
 - (void)dealloc
 {
+	[self teardownWebView];
+}
+
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+	[super willMoveToWindow:newWindow];
+
+	// iOS 26 workaround: if we're about to leave the window (e.g. the
+	// hosting nav controller is popping our view controller), tear the
+	// WKWebView down eagerly. Leaving it in place until our own dealloc
+	// lets UIKit's pop-transition teardown walk into WKWebView's internal
+	// UIScrollView after its tracking state has been freed, crashing in
+	// -[UIScrollView _didEndDirectManipulationWithScrubbingDirection:].
+	if (newWindow == nil)
+	{
+		[self teardownWebView];
+	}
+}
+
+- (void)teardownWebView
+{
+	if (!_webView) return;
+
 	_webView.navigationDelegate = nil;
-	
+	_webView.UIDelegate = nil;
+	_webView.scrollView.delegate = nil;
+	[_webView stopLoading];
+	[_webView removeFromSuperview];
+	_webView = nil;
 }
 
 
