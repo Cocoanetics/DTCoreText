@@ -23,6 +23,11 @@ open class TextHTMLElement: HTMLElement {
         return _text
     }
 
+    /// Override to return our stored text instead of walking children.
+    @objc open override func text() -> String {
+        return _text
+    }
+
     open override func _appendHTML(to string: NSMutableString, indentLevel: Int) {
         // indent to the level
         for _ in 0..<indentLevel {

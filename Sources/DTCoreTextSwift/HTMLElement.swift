@@ -319,6 +319,11 @@ open class HTMLElement: HTMLParserNode {
 
         let attributes = attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]
 
+        if name == "blockquote" {
+            if let children = self.childNodes as? [HTMLParserNode] {
+            }
+        }
+
         var tmpString: NSMutableAttributedString
 
         if _textAttachment != nil {
