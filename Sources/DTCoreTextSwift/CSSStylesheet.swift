@@ -5,24 +5,24 @@ import Foundation
 @objc(DTCSSStylesheet)
 open class CSSStylesheet: NSObject, NSCopying {
 
-  private var _styles = NSMutableDictionary()
-  private var _orderedSelectorWeights = NSMutableDictionary()
-  private var _orderedSelectors = NSMutableArray()
+  private var stylesBySelector: [String: NSDictionary] = [:]
+  private var orderedSelectorWeights: [String: Int] = [:]
+  private var orderedSelectorsStorage: [String] = []
 
   // MARK: - Creating Stylesheets
 
-  nonisolated(unsafe) private static var _defaultStylesheet: CSSStylesheet?
+  nonisolated(unsafe) private static var defaultStylesheetStorage: CSSStylesheet?
 
   /// Creates the default stylesheet loaded from default.css.
   @objc public class func defaultStyleSheet() -> CSSStylesheet {
-    if let existing = _defaultStylesheet {
+    if let existing = defaultStylesheetStorage {
       return existing
     }
 
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
-    if _defaultStylesheet == nil {
+    if defaultStylesheetStorage == nil {
       #if SWIFT_PACKAGE
         let path = Bundle.module.path(forResource: "default", ofType: "css")
       #else
@@ -43,11 +43,11 @@ open class CSSStylesheet: NSObject, NSCopying {
 
       if let path = path {
         let cssString = try? String(contentsOfFile: path, encoding: .utf8)
-        _defaultStylesheet = CSSStylesheet(styleBlock: cssString ?? "")
+        defaultStylesheetStorage = CSSStylesheet(styleBlock: cssString ?? "")
       }
     }
 
-    return _defaultStylesheet!
+    return defaultStylesheetStorage!
   }
 
   /// Creates a stylesheet with a given style block.
@@ -66,12 +66,12 @@ open class CSSStylesheet: NSObject, NSCopying {
   }
 
   open override var description: String {
-    return _styles.description
+    return stylesBySelector.description
   }
 
   // MARK: - Working with Style Blocks
 
-  func _uncompressShorthands(_ styles: NSMutableDictionary) {
+  func uncompressShorthands(_ styles: NSMutableDictionary) {
     // list-style shorthand
     if let shortHand = (styles["list-style"] as? String)?.lowercased() {
       styles.removeObject(forKey: "list-style")
@@ -308,7 +308,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
   }
 
-  private func _addStyleRule(_ rule: String, withSelector selectors: String) {
+  private func addStyleRule(_ rule: String, withSelector selectors: String) {
     let split = selectors.components(separatedBy: ",")
 
     for selector in split {
@@ -341,7 +341,7 @@ open class CSSStylesheet: NSObject, NSCopying {
       }
 
       // need to uncompress because otherwise we might get shorthands and non-shorthands together
-      _uncompressShorthands(ruleDictionary)
+      uncompressShorthands(ruleDictionary)
 
       // check if there is a pseudo selector
       if let colonRange = cleanSelector.range(of: ":") {
@@ -359,12 +359,12 @@ open class CSSStylesheet: NSObject, NSCopying {
         }
       }
 
-      if let existingRulesForSelector = _styles[cleanSelector] as? NSDictionary {
+      if let existingRulesForSelector = stylesBySelector[cleanSelector] {
         let tmpDict = existingRulesForSelector.mutableCopy() as! NSMutableDictionary
         tmpDict.addEntries(from: ruleDictionary as! [AnyHashable: Any])
-        _addStyles(tmpDict, withSelector: cleanSelector)
+        addStyles(tmpDict, withSelector: cleanSelector)
       } else {
-        _addStyles(ruleDictionary, withSelector: cleanSelector)
+        addStyles(ruleDictionary, withSelector: cleanSelector)
       }
     }
   }
@@ -414,7 +414,7 @@ open class CSSStylesheet: NSObject, NSCopying {
       } else if c == "}" {
         if braceLevel == 1 {
           let rule = String(css[braceMarker..<i])
-          _addStyleRule(rule, withSelector: selector)
+          addStyleRule(rule, withSelector: selector)
           braceMarker = css.index(after: i)
         } else if braceLevel < 1 {
           braceMarker = css.index(after: braceMarker)
@@ -433,26 +433,26 @@ open class CSSStylesheet: NSObject, NSCopying {
 
     for oneKey in otherKeys {
       guard let key = oneKey as? String else { continue }
-      let existingStyles = _styles[key] as? NSDictionary
+      let existingStyles = stylesBySelector[key]
       let stylesToMerge = stylesheet.styles()[key] as? NSDictionary
 
       if let existingStyles = existingStyles, let stylesToMerge = stylesToMerge {
         let mutableStyles = existingStyles.mutableCopy() as! NSMutableDictionary
         mutableStyles.addEntries(from: stylesToMerge as! [AnyHashable: Any])
-        _addStyles(mutableStyles, withSelector: key)
+        addStyles(mutableStyles, withSelector: key)
       } else if let stylesToMerge = stylesToMerge {
-        _addStyles(stylesToMerge, withSelector: key)
+        addStyles(stylesToMerge, withSelector: key)
       }
     }
   }
 
-  private func _addStyles(_ styles: NSDictionary, withSelector selector: String) {
+  private func addStyles(_ styles: NSDictionary, withSelector selector: String) {
     // Always copy to avoid sharing references with other stylesheets (e.g. the default)
-    _styles[selector] = styles.copy() as! NSDictionary
+    stylesBySelector[selector] = styles.copy() as? NSDictionary
 
-    if !_orderedSelectors.contains(selector) {
-      _orderedSelectors.add(selector)
-      _orderedSelectorWeights[selector] = NSNumber(value: _weightForSelector(selector))
+    if !orderedSelectorsStorage.contains(selector) {
+      orderedSelectorsStorage.append(selector)
+      orderedSelectorWeights[selector] = weightForSelector(selector)
     }
   }
 
@@ -466,7 +466,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     let tmpDict = NSMutableDictionary()
 
     // Get based on element
-    if let byTagName = _styles[element.name] as? NSDictionary {
+    if let byTagName = stylesBySelector[element.name] {
       tmpDict.addEntries(from: byTagName as! [AnyHashable: Any])
     }
 
@@ -478,12 +478,12 @@ open class CSSStylesheet: NSObject, NSCopying {
     let matchingCascadingSelectors = self.matchingComplexCascadingSelectors(for: element)
     matchingCascadingSelectors.sort { s1, s2 in
       guard let sel1 = s1 as? String, let sel2 = s2 as? String else { return .orderedSame }
-      var weight1 = (_orderedSelectorWeights[sel1] as? NSNumber)?.intValue ?? 0
-      var weight2 = (_orderedSelectorWeights[sel2] as? NSNumber)?.intValue ?? 0
+      var weight1 = orderedSelectorWeights[sel1] ?? 0
+      var weight2 = orderedSelectorWeights[sel2] ?? 0
 
       if weight1 == weight2 {
-        weight1 += _orderedSelectors.index(of: sel1)
-        weight2 += _orderedSelectors.index(of: sel2)
+        weight1 += orderedSelectorsStorage.firstIndex(of: sel1) ?? 0
+        weight2 += orderedSelectorsStorage.firstIndex(of: sel2) ?? 0
       }
 
       if weight1 > weight2 { return .orderedDescending }
@@ -499,7 +499,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     // Apply complex cascading selectors first, then apply most specific selectors
     for cascadingSelector in matchingCascadingSelectors {
       guard let sel = cascadingSelector as? String else { continue }
-      if let byCascadingSelector = _styles[sel] as? NSDictionary {
+      if let byCascadingSelector = stylesBySelector[sel] {
         tmpDict.addEntries(from: byCascadingSelector as! [AnyHashable: Any])
         tmpMatchedSelectors?.add(sel)
       }
@@ -508,13 +508,13 @@ open class CSSStylesheet: NSObject, NSCopying {
     // Applied the parameter element's classes last
     for className in classes {
       let classRule = ".\(className)"
-      if let byClass = _styles[classRule] as? NSDictionary {
+      if let byClass = stylesBySelector[classRule] {
         tmpDict.addEntries(from: byClass as! [AnyHashable: Any])
         tmpMatchedSelectors?.add(className)
       }
 
       let classAndTagRule = "\(element.name).\(className)"
-      if let byClassAndName = _styles[classAndTagRule] as? NSDictionary {
+      if let byClassAndName = stylesBySelector[classAndTagRule] {
         tmpDict.addEntries(from: byClassAndName as! [AnyHashable: Any])
         tmpMatchedSelectors?.add(classAndTagRule)
       }
@@ -523,7 +523,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     // Get based on id
     if let elementId = (element.attributes as? [String: Any])?["id"] as? String {
       let idRule = "#\(elementId)"
-      if let byID = _styles[idRule] as? NSDictionary {
+      if let byID = stylesBySelector[idRule] {
         tmpDict.addEntries(from: byID as! [AnyHashable: Any])
         tmpMatchedSelectors?.add(idRule)
       }
@@ -538,7 +538,7 @@ open class CSSStylesheet: NSObject, NSCopying {
           dictionary: (styleString as NSString).dictionaryOfCSSStyles())
 
         // need to uncompress because otherwise we might get shorthands and non-shorthands together
-        _uncompressShorthands(localStyles)
+        uncompressShorthands(localStyles)
 
         tmpDict.addEntries(from: localStyles as! [AnyHashable: Any])
       }
@@ -556,12 +556,12 @@ open class CSSStylesheet: NSObject, NSCopying {
 
   /// Returns a dictionary of the styles of the receiver.
   @objc open func styles() -> NSDictionary {
-    return _styles
+    return stylesBySelector as NSDictionary
   }
 
   /// Returns an ordered (by declaration) set of the selectors for all of the styles.
   @objc open func orderedSelectors() -> NSArray {
-    return _orderedSelectors
+    return orderedSelectorsStorage as NSArray
   }
 
   // MARK: - Complex Cascading Selectors
@@ -569,8 +569,7 @@ open class CSSStylesheet: NSObject, NSCopying {
   private func matchingComplexCascadingSelectors(for element: HTMLElement) -> NSMutableArray {
     let matchedSelectors = NSMutableArray()
 
-    for selector in _orderedSelectors {
-      guard let selectorStr = selector as? String else { continue }
+    for selectorStr in orderedSelectorsStorage {
 
       // We only process the selector if it has more than 1 part
       guard selectorStr.contains(" ") else { continue }
@@ -639,7 +638,7 @@ open class CSSStylesheet: NSObject, NSCopying {
   }
 
   // This computes the specificity for a given selector
-  func _weightForSelector(_ selector: String) -> Int {
+  func weightForSelector(_ selector: String) -> Int {
     if selector.isEmpty { return 0 }
 
     var weight = 0

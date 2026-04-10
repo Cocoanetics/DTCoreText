@@ -378,6 +378,16 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(result != nil, "Should be able to parse without crash")
 	}
 
+	@Test("Direct body text is not duplicated when keeping node tree")
+	func directBodyTextNotDuplicatedWhenKeepingNodeTree() {
+		let data = Data("<html><body>Hello</body></html>".utf8)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		builder?.shouldKeepDocumentNodeTree = true
+
+		let result = builder?.generatedAttributedString()
+		#expect(result?.string == "Hello")
+	}
+
 	// MARK: - Fonts
 
 	@Test("Default font name")

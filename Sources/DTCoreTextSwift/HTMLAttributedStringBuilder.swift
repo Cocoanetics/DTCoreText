@@ -73,6 +73,12 @@ private actor BuilderState {
     shouldKeepDocumentNodeTree: Bool
   ) {
 
+    rootNode = nil
+    bodyElement = nil
+    currentTag = nil
+    ignoreParseEvents = false
+    tmpString = NSMutableAttributedString()
+
     self.options = options
     self.willFlushCallback = willFlushCallback
     self.parseErrorCallback = parseErrorCallback
@@ -501,8 +507,8 @@ private actor BuilderState {
       if let attrStr = textNode.attributedString() { tmpString.append(attrStr) }
       current.didOutput = true
 
-      if shouldKeepDocumentNodeTree {
-        current.addChildNode(textNode)
+      if !shouldKeepDocumentNodeTree {
+        current.removeChildNode(textNode)
       }
     }
   }

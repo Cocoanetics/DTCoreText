@@ -8,7 +8,7 @@ open class HTMLParserNode: NSObject {
   @objc public var attributes: NSDictionary?
   @objc public weak var parentNode: HTMLParserNode?
 
-  private var _childNodes: NSMutableArray?
+  private var childNodeStorage: [HTMLParserNode] = []
 
   /// Designated initializer
   /// - Parameters:
@@ -24,7 +24,7 @@ open class HTMLParserNode: NSObject {
   @objc public var childNodes: NSArray? {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
-    return _childNodes
+    return childNodeStorage.isEmpty ? nil : childNodeStorage as NSArray
   }
 
   /// Adds a child node to the receiver.
@@ -33,12 +33,8 @@ open class HTMLParserNode: NSObject {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
-    if _childNodes == nil {
-      _childNodes = NSMutableArray()
-    }
-
     childNode.parentNode = self
-    _childNodes?.add(childNode)
+    childNodeStorage.append(childNode)
   }
 
   /// Removes a child node from the receiver
@@ -46,21 +42,21 @@ open class HTMLParserNode: NSObject {
   @objc public func removeChildNode(_ childNode: HTMLParserNode) {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
-    _childNodes?.remove(childNode)
+    childNodeStorage.removeAll { $0 === childNode }
   }
 
   /// Removes all child nodes from the receiver
   @objc public func removeAllChildNodes() {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
-    _childNodes?.removeAllObjects()
+    childNodeStorage.removeAll()
   }
 
   open override var description: String {
     return "<\(type(of: self)) name='\(name)'>"
   }
 
-  func _appendHTML(to string: NSMutableString, indentLevel: Int) {
+  func appendHTML(to string: NSMutableString, indentLevel: Int) {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
@@ -82,7 +78,7 @@ open class HTMLParserNode: NSObject {
       }
     }
 
-    guard let children = _childNodes, children.count > 0 else {
+    guard !childNodeStorage.isEmpty else {
       string.append(" \\>\n")
       return
     }
@@ -90,10 +86,8 @@ open class HTMLParserNode: NSObject {
     string.append(">\n")
 
     // output children
-    for child in children {
-      if let childNode = child as? HTMLParserNode {
-        childNode._appendHTML(to: string, indentLevel: indentLevel + 1)
-      }
+    for childNode in childNodeStorage {
+      childNode.appendHTML(to: string, indentLevel: indentLevel + 1)
     }
 
     // indent to the level
@@ -111,7 +105,7 @@ open class HTMLParserNode: NSObject {
     defer { objc_sync_exit(self) }
 
     let tmpString = NSMutableString()
-    _appendHTML(to: tmpString, indentLevel: 0)
+    appendHTML(to: tmpString, indentLevel: 0)
     return tmpString as String
   }
 
@@ -122,11 +116,9 @@ open class HTMLParserNode: NSObject {
 
     let result = NSMutableString()
 
-    if let children = _childNodes {
-      for child in children {
-        if let textNode = child as? HTMLParserTextNode {
-          result.append(textNode.characters)
-        }
+    for child in childNodeStorage {
+      if let textNode = child as? HTMLParserTextNode {
+        result.append(textNode.characters)
       }
     }
 

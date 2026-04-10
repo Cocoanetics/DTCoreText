@@ -23,7 +23,7 @@ open class HTMLParserTextNode: HTMLParserNode {
     return "<\(type(of: self)) content='\(characters)'>"
   }
 
-  override func _appendHTML(to string: NSMutableString, indentLevel: Int) {
+  override func appendHTML(to string: NSMutableString, indentLevel: Int) {
     // indent to the level
     for _ in 0..<indentLevel {
       string.append("   ")
