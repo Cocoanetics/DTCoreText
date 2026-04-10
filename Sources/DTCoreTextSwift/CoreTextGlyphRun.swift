@@ -200,7 +200,7 @@ open class CoreTextGlyphRun: NSObject {
             glyphTransform = glyphTransform.scaledBy(x: 1, y: -1)
 
             if let glyphPath = CTFontCreatePathForGlyph(font, glyph, &glyphTransform) {
-                var posTransform = CGAffineTransform(translationX: position.x, y: position.y)
+                let posTransform = CGAffineTransform(translationX: position.x, y: position.y)
                 mutablePath.addPath(glyphPath, transform: posTransform)
             }
         }

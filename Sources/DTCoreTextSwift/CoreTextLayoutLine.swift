@@ -87,7 +87,7 @@ open class CoreTextLayoutLine: NSObject {
 
         for oneRun in runs {
             if let glyphPath = oneRun.newPathWithGlyphs() {
-                var posTransform = CGAffineTransform(translationX: baselineOrigin.x, y: baselineOrigin.y)
+                let posTransform = CGAffineTransform(translationX: baselineOrigin.x, y: baselineOrigin.y)
                 mutablePath.addPath(glyphPath, transform: posTransform)
             }
         }

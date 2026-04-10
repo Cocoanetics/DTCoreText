@@ -350,7 +350,7 @@ extension NSAttributedString {
 		var paragraphStyle: CoreTextParagraphStyle?
 
 		if let paraStyle {
-			let ctParaStyle = unsafeBitCast(paraStyle, to: CTParagraphStyle.self)
+			let ctParaStyle = unsafeDowncast(paraStyle, to: CTParagraphStyle.self)
 			paragraphStyle = CoreTextParagraphStyle(ctParagraphStyle: ctParaStyle)
 
 			paragraphStyle!.tabStops = nil
@@ -367,7 +367,7 @@ extension NSAttributedString {
 		}
 
 		if let fontRef {
-			let ctFont = unsafeBitCast(fontRef, to: CTFont.self)
+			let ctFont = unsafeDowncast(fontRef, to: CTFont.self)
 			fontDescriptor = CoreTextFontDescriptor(ctFont: ctFont)
 		}
 

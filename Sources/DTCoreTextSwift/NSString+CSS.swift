@@ -41,18 +41,15 @@ extension NSString {
     @objc public func isCSSLengthValue() -> Bool {
         let scanner = Scanner(string: self as String)
 
-        var numberStr: NSString?
-        if !scanner.scanCharacters(from: NSCharacterSet.dt_cssLengthValueCharacterSet, into: &numberStr) {
+        if scanner.scanCharacters(from: NSCharacterSet.dt_cssLengthValueCharacterSet) == nil {
             return false
         }
 
-        var numberUnitStr: NSString?
-        if !scanner.scanCharacters(from: NSCharacterSet.dt_cssLengthUnitCharacterSet, into: &numberUnitStr) {
+        guard let unit = scanner.scanCharacters(from: NSCharacterSet.dt_cssLengthUnitCharacterSet) else {
             return true
         }
 
-        if let unit = numberUnitStr as String?,
-           (unit == "em" || unit == "px" || unit == "pt") {
+        if unit == "em" || unit == "px" || unit == "pt" {
             return true
         }
 
@@ -180,83 +177,79 @@ extension NSString {
 
         while !scanner.isAtEnd {
             var shadowColor: DTColor?
-            var offsetXString: NSString?
-            var offsetYString: NSString?
-            var blurString: NSString?
-
             var colorPtr: DTColor?
 
             if scanner.scanHTMLColor(&colorPtr) {
                 shadowColor = colorPtr
 
                 // format: <color> <length> <length> <length>?
-                if scanner.scanUpToCharacters(from: tokenEndSet, into: &offsetXString) {
-                    if scanner.scanUpToCharacters(from: tokenEndSet, into: &offsetYString) {
-                        // blur is optional
-                        scanner.scanUpToCharacters(from: tokenEndSet, into: &blurString)
+                if let offsetXString = scanner.scanUpToCharacters(from: tokenEndSet),
+                   let offsetYString = scanner.scanUpToCharacters(from: tokenEndSet) {
+                    // blur is optional
+                    let blurString = scanner.scanUpToCharacters(from: tokenEndSet)
 
-                        let offsetX = (offsetXString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
-                        let offsetY = (offsetYString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
-                        let offset = CGSize(width: offsetX, height: offsetY)
-                        let blur = blurString != nil ? (blurString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
+                    let offsetX = (offsetXString as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
+                    let offsetY = (offsetYString as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
+                    let offset = CGSize(width: offsetX, height: offsetY)
+                    let blur = blurString != nil ? (blurString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
 
-                        #if os(iOS)
-                        let offsetValue = NSValue(cgSize: offset)
-                        #else
-                        let offsetValue = NSValue(size: offset)
-                        #endif
+                    #if os(iOS)
+                    let offsetValue = NSValue(cgSize: offset)
+                    #else
+                    let offsetValue = NSValue(size: offset)
+                    #endif
 
-                        var shadowDict: [String: Any] = [
-                            "Offset": offsetValue,
-                            "Blur": NSNumber(value: Double(blur)),
-                        ]
-                        if let sc = shadowColor {
-                            shadowDict["Color"] = sc
-                        }
-                        tmpArray.append(shadowDict)
+                    var shadowDict: [String: Any] = [
+                        "Offset": offsetValue,
+                        "Blur": NSNumber(value: Double(blur)),
+                    ]
+                    if let sc = shadowColor {
+                        shadowDict["Color"] = sc
                     }
+                    tmpArray.append(shadowDict)
                 }
             } else {
                 // format: <length> <length> <length>? <color>?
-                if scanner.scanUpToCharacters(from: tokenEndSet, into: &offsetXString) {
-                    if scanner.scanUpToCharacters(from: tokenEndSet, into: &offsetYString) {
-                        // blur is optional
-                        if !scanner.scanHTMLColor(&colorPtr) {
-                            if scanner.scanUpToCharacters(from: tokenEndSet, into: &blurString) {
-                                scanner.scanHTMLColor(&colorPtr)
-                            }
+                if let offsetXString = scanner.scanUpToCharacters(from: tokenEndSet),
+                   let offsetYString = scanner.scanUpToCharacters(from: tokenEndSet) {
+                    // blur is optional
+                    var blurString: String?
+                    if !scanner.scanHTMLColor(&colorPtr) {
+                        blurString = scanner.scanUpToCharacters(from: tokenEndSet)
+                        if blurString != nil {
+                            _ = scanner.scanHTMLColor(&colorPtr)
                         }
-                        shadowColor = colorPtr
-
-                        if shadowColor == nil {
-                            shadowColor = color
-                        }
-
-                        let offsetX = (offsetXString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
-                        let offsetY = (offsetYString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
-                        let offset = CGSize(width: offsetX, height: offsetY)
-                        let blur = blurString != nil ? (blurString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
-
-                        #if os(iOS)
-                        let offsetValue = NSValue(cgSize: offset)
-                        #else
-                        let offsetValue = NSValue(size: offset)
-                        #endif
-
-                        var shadowDict: [String: Any] = [
-                            "Offset": offsetValue,
-                            "Blur": NSNumber(value: Double(blur)),
-                        ]
-                        if let sc = shadowColor {
-                            shadowDict["Color"] = sc
-                        }
-                        tmpArray.append(shadowDict)
                     }
+                    shadowColor = colorPtr
+
+                    if shadowColor == nil {
+                        shadowColor = color
+                    }
+
+                    let offsetX = (offsetXString as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
+                    let offsetY = (offsetYString as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0)
+                    let offset = CGSize(width: offsetX, height: offsetY)
+                    let blur = blurString != nil ? (blurString! as NSString).pixelSizeOfCSSMeasure(relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
+
+                    #if os(iOS)
+                    let offsetValue = NSValue(cgSize: offset)
+                    #else
+                    let offsetValue = NSValue(size: offset)
+                    #endif
+
+                    var shadowDict: [String: Any] = [
+                        "Offset": offsetValue,
+                        "Blur": NSNumber(value: Double(blur)),
+                    ]
+                    if let sc = shadowColor {
+                        shadowDict["Color"] = sc
+                    }
+                    tmpArray.append(shadowDict)
                 }
             }
 
             // now there should be a comma
-            if !scanner.scanString(",", into: nil) {
+            if scanner.scanString(",") == nil {
                 break
             }
         }

@@ -7,36 +7,23 @@
 //
 
 #import "CoreTextDemoAppDelegate.h"
-#import "DemoSnippetsViewController.h"
-
-@import DTCoreTextSwift;
+#import "DemoSceneDelegate.h"
 
 @implementation CoreTextDemoAppDelegate
 
-@synthesize window = _window;
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	// register a custom class for a tag
-	[DTTextAttachment registerClass:[DTObjectTextAttachment class] forTagName:@"oliver"];
-	
-	// preload font matching table
-	[DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
-	
-	// Create window
-	_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	
-	// Create the view controller
-	DemoSnippetsViewController *snippetsViewController = [[DemoSnippetsViewController alloc] init];
-	_navigationController = [[UINavigationController alloc] initWithRootViewController:snippetsViewController];
-	
-	// Display the window
-	_window.rootViewController = _navigationController;
-	[_window makeKeyAndVisible];
-	
+	// Scene-based lifecycle; window setup happens in DemoSceneDelegate.
 	return YES;
 }
 
+#pragma mark - UISceneSession lifecycle
 
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options
+{
+	UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
+	configuration.delegateClass = [DemoSceneDelegate class];
+	return configuration;
+}
 
 @end

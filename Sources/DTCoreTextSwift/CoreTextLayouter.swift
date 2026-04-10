@@ -65,7 +65,7 @@ open class CoreTextLayouter: NSObject {
     }
 
     private func _discardFramesetter() {
-        if let framesetter = _framesetter {
+        if _framesetter != nil {
             _framesetter = nil
         }
     }

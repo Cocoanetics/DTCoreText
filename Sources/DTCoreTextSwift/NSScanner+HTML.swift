@@ -30,63 +30,54 @@ extension Scanner {
         let cssStyleAttributeNameCharacterSet = NSCharacterSet.dt_cssStyleAttributeNameCharacterSet
 
         // scan attribute name
-        var scannedName: NSString?
-        guard scanCharacters(from: cssStyleAttributeNameCharacterSet, into: &scannedName) else {
+        guard let scannedName = scanCharacters(from: cssStyleAttributeNameCharacterSet) else {
             return false
         }
-        attrName = scannedName
+        attrName = scannedName as NSString
 
         // skip whitespace
-        scanCharacters(from: whiteCharacterSet, into: nil)
+        _ = scanCharacters(from: whiteCharacterSet)
 
         // expect :
-        guard scanString(":", into: nil) else {
+        guard scanString(":") != nil else {
             currentIndex = initialScanLocation
             return false
         }
 
         // skip whitespace
-        scanCharacters(from: whiteCharacterSet, into: nil)
+        _ = scanCharacters(from: whiteCharacterSet)
 
         let results = NSMutableArray()
         var nextIterationAddsNewEntry = true
 
-        while !isAtEnd && !scanString(";", into: nil) && !scanString("'';", into: nil) && !scanString("\"\";", into: nil) {
+        while !isAtEnd && scanString(";") == nil && scanString("'';") == nil && scanString("\"\";") == nil {
             // skip whitespace
-            scanCharacters(from: whiteCharacterSet, into: nil)
+            _ = scanCharacters(from: whiteCharacterSet)
 
-            var quote: NSString?
-            if scanCharacters(from: NSCharacterSet.dt_quoteCharacterSet, into: &quote), let quoteStr = quote as String? {
-                var quotedValue: NSString?
-
+            if let quoteStr = scanCharacters(from: NSCharacterSet.dt_quoteCharacterSet) {
                 // attribute is quoted
-                if !scanUpTo(quoteStr, into: &quotedValue) {
+                guard let quotedValue = scanUpToString(quoteStr) else {
                     currentIndex = initialScanLocation
                     return false
+                }
+
+                if nextIterationAddsNewEntry {
+                    results.add(quotedValue)
+                    nextIterationAddsNewEntry = false
                 } else {
-                    if let qv = quotedValue as String? {
-                        if nextIterationAddsNewEntry {
-                            results.add(qv)
-                            nextIterationAddsNewEntry = false
-                        } else {
-                            let combined = "\(results.lastObject!) \(quoteStr)\(qv)\(quoteStr)"
-                            results.removeLastObject()
-                            results.add(combined)
-                        }
-                    }
+                    let combined = "\(results.lastObject!) \(quoteStr)\(quotedValue)\(quoteStr)"
+                    results.removeLastObject()
+                    results.add(combined)
                 }
 
                 // skip ending quote
-                scanString(quoteStr, into: nil)
+                _ = scanString(quoteStr)
             } else {
                 // attribute is not quoted
-                var valueString: NSString?
-
-                if scanString("rgb(", into: &valueString) {
-                    if (valueString as String?) == "rgb(" {
-                        var rgbContent: NSString?
-                        scanUpTo(";", into: &rgbContent)
-                        let formattedRGBString = "rgb(\(rgbContent ?? "")"
+                if let scanned = scanString("rgb(") {
+                    if scanned == "rgb(" {
+                        let rgbContent = scanUpToString(";") ?? ""
+                        let formattedRGBString = "rgb(\(rgbContent)"
 
                         if nextIterationAddsNewEntry {
                             results.add(formattedRGBString)
@@ -97,27 +88,27 @@ extension Scanner {
                             results.add(combined)
                         }
                     }
-                } else if scanString(",", into: &valueString) {
+                } else if let scanned = scanString(",") {
                     var isStringOnlyCSSProperty = false
 
-                    if (valueString as String?) != "," {
-                        results.add((valueString as String?) ?? "")
+                    if scanned != "," {
+                        results.add(scanned)
                     } else if let name = attrName as String?,
                               (name == "font" ||
                                name.range(of: "color") != nil ||
                                name.range(of: "shadow") != nil ||
                                name.range(of: "background") != nil) {
-                        let combined = "\(results.lastObject!)\(valueString!)"
+                        let combined = "\(results.lastObject!)\(scanned)"
                         results.removeLastObject()
                         results.add(combined)
                         isStringOnlyCSSProperty = true
                     }
 
-                    if (valueString as String?) == "," && !isStringOnlyCSSProperty {
+                    if scanned == "," && !isStringOnlyCSSProperty {
                         nextIterationAddsNewEntry = true
                     }
-                } else if scanCharacters(from: nonWhiteCommaCharacterSet, into: &valueString) {
-                    if let vs = valueString as String?, !vs.isEmpty && vs != "," {
+                } else if let vs = scanCharacters(from: nonWhiteCommaCharacterSet) {
+                    if !vs.isEmpty && vs != "," {
                         if nextIterationAddsNewEntry {
                             results.add(vs)
                             nextIterationAddsNewEntry = false
@@ -131,7 +122,7 @@ extension Scanner {
             }
 
             // skip whitespace
-            scanCharacters(from: whiteCharacterSet, into: nil)
+            _ = scanCharacters(from: whiteCharacterSet)
         }
 
         // Success
@@ -154,18 +145,17 @@ extension Scanner {
 
     /// Scans for URLs used in CSS style sheets.
     @objc public func scanCSSURL(_ urlString: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-        guard scanString("url(", into: nil) else {
+        guard scanString("url(") != nil else {
             return false
         }
 
         let quoteCharacterSet = NSCharacterSet.dt_quoteCharacterSet
         var attrValue: NSString?
 
-        var quote: NSString?
-        if scanCharacters(from: quoteCharacterSet, into: &quote) {
-            if let quoteStr = quote as String?, quoteStr.count == 1 {
-                scanUpTo(quoteStr, into: &attrValue)
-                scanString(quoteStr, into: nil)
+        if let quoteStr = scanCharacters(from: quoteCharacterSet) {
+            if quoteStr.count == 1 {
+                attrValue = scanUpToString(quoteStr) as NSString?
+                _ = scanString(quoteStr)
             } else {
                 // most likely e.g. href=""
                 attrValue = "" as NSString
@@ -175,8 +165,8 @@ extension Scanner {
             attrValue = (attrValue as String?)?.stringByReplacingHTMLEntities() as NSString? ?? attrValue
         } else {
             // non-quoted attribute, ends at )
-            if scanUpTo(")", into: &attrValue) {
-                attrValue = (attrValue as String?)?.stringByReplacingHTMLEntities() as NSString? ?? attrValue
+            if let scanned = scanUpToString(")") {
+                attrValue = scanned.stringByReplacingHTMLEntities() as NSString
             }
         }
 
@@ -199,11 +189,11 @@ extension Scanner {
         var tokenEndSet = CharacterSet.whitespacesAndNewlines
         tokenEndSet.insert(charactersIn: ",")
 
-        if scanString("#", into: nil) {
+        if scanString("#") != nil {
             currentIndex = indexBefore
-            scanUpToCharacters(from: tokenEndSet, into: &colorName)
-        } else if scanString("rgb", into: nil) {
-            if scanUpTo(")", into: nil) {
+            colorName = scanUpToCharacters(from: tokenEndSet) as NSString?
+        } else if scanString("rgb") != nil {
+            if scanUpToString(")") != nil {
                 let str = self.string
                 let afterRGB = str.index(after: currentIndex)
                 if afterRGB <= str.endIndex {
@@ -214,7 +204,7 @@ extension Scanner {
             }
         } else {
             // could be a plain html color name
-            scanCharacters(from: .alphanumerics, into: &colorName)
+            colorName = scanCharacters(from: .alphanumerics) as NSString?
         }
 
         var foundColor: DTColor?

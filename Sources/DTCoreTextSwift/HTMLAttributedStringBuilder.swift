@@ -117,8 +117,7 @@ private actor BuilderState {
 			} else if let color = linkColor as? PlatformColor {
 				defaultLinkColor = color
 			}
-			if let color = defaultLinkColor {
-				let hex = DTHexStringFromDTColor(color)
+			if let color = defaultLinkColor, let hex = DTHexStringFromDTColor(color) {
 				globalStyleSheet.parseStyleBlock("a {color:#\(hex);}")
 			}
 		}
@@ -133,8 +132,7 @@ private actor BuilderState {
 			var color: PlatformColor?
 			if let s = highlight as? String { color = DTColorCreateWithHTMLName(s) }
 			else if let c = highlight as? PlatformColor { color = c }
-			if let color {
-				let hex = DTHexStringFromDTColor(color)
+			if let color, let hex = DTHexStringFromDTColor(color) {
 				globalStyleSheet.parseStyleBlock("a:active {color:#\(hex);}")
 			}
 		}

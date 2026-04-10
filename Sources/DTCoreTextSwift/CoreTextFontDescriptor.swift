@@ -484,7 +484,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
         }
     }
 
-    private class func _createDictionaryOfAllAvailableFontOverrideNames(completion: @escaping ([String: String]) -> Void) {
+    private class func _createDictionaryOfAllAvailableFontOverrideNames(completion: @escaping @Sendable ([String: String]) -> Void) {
         DispatchQueue.global(qos: .background).async {
             let allFonts = CoreTextFontCollection.availableFontsCollection()
             guard let descriptors = allFonts.fontDescriptors() as? [CoreTextFontDescriptor] else {

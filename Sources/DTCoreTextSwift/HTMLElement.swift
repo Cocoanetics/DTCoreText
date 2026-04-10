@@ -320,8 +320,7 @@ open class HTMLElement: HTMLParserNode {
         let attributes = attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]
 
         if name == "blockquote" {
-            if let children = self.childNodes as? [HTMLParserNode] {
-            }
+            _ = self.childNodes as? [HTMLParserNode]
         }
 
         var tmpString: NSMutableAttributedString
@@ -352,7 +351,7 @@ open class HTMLElement: HTMLParserNode {
                     tmpString.dtct_appendString("\n")
                 }
 
-                var nodeString = oneChild.attributedString()
+                let nodeString = oneChild.attributedString()
 
                 if var ns = nodeString {
                     if !oneChild._containsAppleConvertedSpace {
@@ -1118,7 +1117,7 @@ open class HTMLElement: HTMLParserNode {
 
     /// Internal method for value inheritance.
     @objc open func value(forKeyPathWithInheritance keyPath: String) -> Any? {
-        var value = self.value(forKeyPath: keyPath)
+        let value = self.value(forKeyPath: keyPath)
 
         if value == nil, let parent = self.parentElement() {
             return parent.value(forKeyPathWithInheritance: keyPath)

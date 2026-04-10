@@ -190,9 +190,8 @@ extension NSString {
 
     /// Read through this string and store the numbers included, then divide them by 100 giving a percentage.
     @objc public func percentValue() -> Float {
-        var result: Float = 1
         let scanner = Scanner(string: self as String)
-        scanner.scanFloat(&result)
+        let result = scanner.scanFloat(representation: .decimal) ?? 1
         return result / 100.0
     }
 

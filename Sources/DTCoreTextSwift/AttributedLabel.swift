@@ -46,7 +46,7 @@ public class AttributedLabel: AttributedTextContentView {
 
 	public override func awakeFromNib() {
 		super.awakeFromNib()
-		setupAttributedLabel()
+		MainActor.assumeIsolated { setupAttributedLabel() }
 	}
 
 	// MARK: - Sizing
