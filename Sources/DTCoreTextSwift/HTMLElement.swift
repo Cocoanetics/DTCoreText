@@ -101,8 +101,10 @@ open class HTMLElement: HTMLParserNode {
     @objc public class func element(withName name: String, attributes: NSDictionary?, options: NSDictionary?) -> HTMLElement {
         _ = _initOnce
 
+        let lowercaseName = name.lowercased()
+
         // look for specialized class
-        var cls: AnyClass? = _classesForNames?[name]
+        var cls: AnyClass? = _classesForNames?[lowercaseName]
 
         if cls == nil {
             // see if this is a custom attachment class
