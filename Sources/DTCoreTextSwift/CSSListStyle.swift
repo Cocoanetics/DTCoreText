@@ -228,6 +228,11 @@ public class CSSListStyle: NSObject, NSCoding, NSCopying {
 
     // MARK: - Comparing
 
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? CSSListStyle else { return false }
+        return isEqualToListStyle(other)
+    }
+
     /// Determine if another list style has equivalent settings.
     @objc(isEqualToListStyle:)
     public func isEqualToListStyle(_ otherListStyle: CSSListStyle?) -> Bool {
