@@ -1027,7 +1027,32 @@ open class CoreTextLayoutFrame: NSObject {
         context.textPosition = textPosition
 
         if oneRun.attachment == nil {
-          oneRun.draw(in: context)
+          // If the run was built with
+          // kCTForegroundColorFromContextAttributeName = true (the anchor
+          // element sets this when a link-highlight color exists so the
+          // highlight color can be swapped at draw time), CTRunDraw will
+          // ignore the run's own foreground color attribute and use the
+          // current fill color of the context instead. We therefore have
+          // to push the run's own foreground color onto the context so
+          // the link text draws in the expected color rather than the
+          // default black.
+          let foregroundFromContext =
+            (oneRun.attributes[
+              NSAttributedString.Key(
+                rawValue: kCTForegroundColorFromContextAttributeName as String)]
+            as? NSNumber)?.boolValue ?? false
+
+          if foregroundFromContext,
+            let runColor = (oneRun.attributes as? [NSAttributedString.Key: Any])?
+              .dtct_foregroundColor()
+          {
+            context.saveGState()
+            context.setFillColor(runColor.cgColor)
+            oneRun.draw(in: context)
+            context.restoreGState()
+          } else {
+            oneRun.draw(in: context)
+          }
         }
       }
     }
