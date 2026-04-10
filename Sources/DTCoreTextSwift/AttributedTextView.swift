@@ -47,7 +47,9 @@ public class AttributedTextView: UIScrollView {
 
 	public override func awakeFromNib() {
 		super.awakeFromNib()
-		setup()
+		MainActor.assumeIsolated {
+			setup()
+		}
 	}
 
 	private func setup() {
@@ -104,12 +106,11 @@ public class AttributedTextView: UIScrollView {
 
 	/// Performs a new text layout pass.
 	@objc public func relayoutText() {
-		let block = { [self] in
-			_attributedTextContentView?.layouter = nil
-			_attributedTextContentView?.relayoutText()
-			setNeedsLayout()
-		}
-		if Thread.isMainThread { block() } else { DispatchQueue.main.async(execute: block) }
+		// We're already main-actor-isolated; the content view's layouter must be
+		// reset on the main thread.
+		_attributedTextContentView?.layouter = nil
+		_attributedTextContentView?.relayoutText()
+		setNeedsLayout()
 	}
 
 	// MARK: - Cursor
@@ -130,18 +131,17 @@ public class AttributedTextView: UIScrollView {
 	// MARK: - Notifications
 
 	@objc private func contentViewDidLayout(_ notification: Notification) {
-		let block = { [self] in
-			guard let userInfo = notification.userInfo,
-				  let optimalFrame = (userInfo["OptimalFrame"] as? NSValue)?.cgRectValue else { return }
+		// The content view always posts this notification while main-actor-isolated;
+		// no need to hop threads.
+		guard let userInfo = notification.userInfo,
+			  let optimalFrame = (userInfo["OptimalFrame"] as? NSValue)?.cgRectValue else { return }
 
-			let frame = bounds.inset(by: contentInset)
+		let frame = bounds.inset(by: contentInset)
 
-			if optimalFrame.size.width == frame.size.width {
-				_attributedTextContentView?.frame = optimalFrame
-				contentSize = _attributedTextContentView?.intrinsicContentSize ?? .zero
-			}
+		if optimalFrame.size.width == frame.size.width {
+			_attributedTextContentView?.frame = optimalFrame
+			contentSize = _attributedTextContentView?.intrinsicContentSize ?? .zero
 		}
-		if Thread.isMainThread { block() } else { DispatchQueue.main.async(execute: block) }
 	}
 
 	// MARK: - Properties
@@ -159,10 +159,14 @@ public class AttributedTextView: UIScrollView {
 			frame = .zero
 		}
 
-		// Force a tiled layer for content views
+		// Force a tiled layer for content views so long documents render
+		// incrementally on background tile threads. The content view's
+		// `draw(_:in:)` is `nonisolated` and reads drawing state from a locked
+		// `RenderSnapshot` mirror updated on the main actor, so this is safe
+		// with Swift Concurrency's main-actor isolation check.
 		var previousLayerClass: AnyClass?
 		if classToUse.isSubclass(of: AttributedTextContentView.self) {
-			let layerClass = AttributedTextContentView.layerClass
+			let layerClass: AnyClass = AttributedTextContentView.layerClass
 			if !(layerClass is CATiledLayer.Type) {
 				AttributedTextContentView.setLayerClass(CATiledLayer.self)
 				previousLayerClass = layerClass

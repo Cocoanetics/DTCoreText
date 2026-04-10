@@ -45,7 +45,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
         }
     }
 
-    required public override init(name: String, attributes: NSDictionary?) {
+    required public init(name: String, attributes: NSDictionary?) {
         super.init(name: name, attributes: attributes)
     }
 

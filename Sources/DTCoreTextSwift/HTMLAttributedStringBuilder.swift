@@ -605,7 +605,13 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
 		let semaphore = DispatchSemaphore(value: 0)
 		nonisolated(unsafe) var result: NSAttributedString?
 
-		Task { [self] in
+		// IMPORTANT: must be `Task.detached`, not `Task { ... }`. A non-detached
+		// Task inherits the calling actor, which means if this is called from
+		// the main thread the spawned Task — and the inner Task that
+		// SwiftText's `HTMLParser.parseEvents()` spawns to drive libxml2 — will
+		// both try to run on the main actor. The main thread is blocked on the
+		// semaphore below, so the parser can never run, and the wait deadlocks.
+		Task.detached(priority: .userInitiated) { [self] in
 			result = await self.generatedAttributedString()
 			semaphore.signal()
 		}
