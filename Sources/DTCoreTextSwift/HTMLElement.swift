@@ -15,6 +15,12 @@ nonisolated(unsafe) private var _classesForNames: [String: AnyClass]?
 @objc(DTHTMLElement)
 open class HTMLElement: HTMLParserNode {
 
+    public required init(name: String, attributes: NSDictionary?) {
+        super.init(name: name, attributes: attributes)
+        // didSet doesn't fire during init, so manually decode size from attributes
+        _updateSizeFromAttributes()
+    }
+
     // MARK: - Exposed IVARs (for subclass access)
 
     @objc open var _fontDescriptor: CoreTextFontDescriptor?
@@ -913,7 +919,6 @@ open class HTMLElement: HTMLParserNode {
             newValue?.verticalAlignment = _textAttachmentAlignment
             _textAttachment = newValue
             _textAttachment?.hyperLinkGUID = _linkGUID
-            _textAttachment?.displaySize = _size
         }
     }
 
@@ -1088,12 +1093,15 @@ open class HTMLElement: HTMLParserNode {
 
     override open var attributes: NSDictionary? {
         didSet {
-            // decode size contained in attributes
-            _size = CGSize(
-                width: CGFloat((attributeForKey("width") as NSString?)?.floatValue ?? 0),
-                height: CGFloat((attributeForKey("height") as NSString?)?.floatValue ?? 0)
-            )
+            _updateSizeFromAttributes()
         }
+    }
+
+    private func _updateSizeFromAttributes() {
+        _size = CGSize(
+            width: CGFloat((attributeForKey("width") as NSString?)?.floatValue ?? 0),
+            height: CGFloat((attributeForKey("height") as NSString?)?.floatValue ?? 0)
+        )
     }
 
     /// Returns the parent element.
