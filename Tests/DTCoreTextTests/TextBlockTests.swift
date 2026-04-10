@@ -33,7 +33,6 @@ struct TextBlockTests {
 		block2.backgroundColor = DTColorCreateWithHTMLName("blue")
 		#expect(block1 != block2)
 
-		#expect(block1 != nil)
 		#expect(block1 != ("bla" as NSString))
 
 		// exactly same color
