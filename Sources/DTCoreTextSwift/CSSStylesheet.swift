@@ -263,7 +263,7 @@ open class CSSStylesheet: NSObject, NSCopying {
                     }
                     break
                 }
-                scanner.scanUpToCharacters(from: tokenDelimiters, into: nil)
+                _ = scanner.scanUpToCharacters(from: tokenDelimiters)
             }
         }
     }
@@ -274,7 +274,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         for selector in split {
             var cleanSelector = selector.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            let ruleDictionary = NSMutableDictionary(dictionary: (rule as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:])
+            let ruleDictionary = NSMutableDictionary(dictionary: (rule as NSString).dictionaryOfCSSStyles())
 
             // remove !important, we're ignoring these
             for oneKey in ruleDictionary.allKeys.compactMap({ $0 as? String }) {
@@ -487,7 +487,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         if !ignoreInlineStyle {
             // Get tag's local style attribute
             if let styleString = (element.attributes as? [String: Any])?["style"] as? String, !styleString.isEmpty {
-                let localStyles = NSMutableDictionary(dictionary: (styleString as NSString).dictionaryOfCSSStyles() as? [String: Any] ?? [:])
+                let localStyles = NSMutableDictionary(dictionary: (styleString as NSString).dictionaryOfCSSStyles())
 
                 // need to uncompress because otherwise we might get shorthands and non-shorthands together
                 _uncompressShorthands(localStyles)
@@ -534,7 +534,6 @@ open class CSSStylesheet: NSObject, NSCopying {
             var nextElement: HTMLElement? = element
 
             // Walking up the hierarchy so start at the right side of the selector and work to the left
-            var allMatched = true
             for j in stride(from: selectorParts.count - 1, through: 0, by: -1) {
                 let selectorPart = selectorParts[j]
                 var matched = false
@@ -575,7 +574,6 @@ open class CSSStylesheet: NSObject, NSCopying {
                 }
 
                 if !matched {
-                    allMatched = false
                     break
                 }
 

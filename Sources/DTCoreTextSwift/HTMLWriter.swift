@@ -351,8 +351,6 @@ public class HTMLWriter: NSObject {
 
 			if let htmlAttributes = htmlAttributes {
 				for (key, value) in htmlAttributes {
-					guard let key = key as? String else { continue }
-
 					// check if range is longer than current paragraph
 					let attributeEffectiveRange = _attributedString.rangeOfHTMLAttribute(key, at: paragraphRange.location)
 
@@ -456,8 +454,6 @@ public class HTMLWriter: NSObject {
 					// find which custom attributes are for the link
 					if let localHTMLAttributes = self.attributedString.htmlAttributes(at: currentLinkRange.location) {
 						for (key, value) in localHTMLAttributes {
-							guard let key = key as? String else { continue }
-
 							// check if range is longer than current paragraph
 							let attributeEffectiveRange = self.attributedString.rangeOfHTMLAttribute(key, at: currentLinkRange.location)
 

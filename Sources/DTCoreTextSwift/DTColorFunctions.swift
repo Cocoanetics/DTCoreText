@@ -11,8 +11,8 @@ public typealias DTColor = NSColor
 // MARK: - Private Helpers
 
 private func _integerValueFromHexString(_ hexString: String) -> UInt {
-    var result: UInt32 = 0
-    Scanner(string: hexString).scanHexInt32(&result)
+    var result: UInt64 = 0
+    Scanner(string: hexString).scanHexInt64(&result)
     return UInt(result)
 }
 

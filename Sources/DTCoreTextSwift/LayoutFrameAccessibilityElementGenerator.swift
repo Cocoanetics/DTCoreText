@@ -15,6 +15,9 @@ import UIKit
 public typealias AttachmentViewProvider = (TextAttachment) -> Any?
 
 /// Generates accessibility elements for a CoreTextLayoutFrame.
+/// Main-actor isolated because the returned `AccessibilityElement` subclass
+/// wraps UIAccessibilityElement, which is @MainActor.
+@MainActor
 @objc(DTCoreTextLayoutFrameAccessibilityElementGenerator)
 public class LayoutFrameAccessibilityElementGenerator: NSObject {
 
@@ -22,7 +25,7 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 	public func accessibilityElements(for frame: CoreTextLayoutFrame, view: UIView, attachmentViewProvider block: @escaping AttachmentViewProvider) -> [Any] {
 		var elements = [Any]()
 
-		guard let paragraphRanges = frame.paragraphRanges as? [NSValue] else { return elements }
+		guard let paragraphRanges = frame.paragraphRanges else { return elements }
 
 		for idx in 0..<paragraphRanges.count {
 			let paragraphElements = accessibilityElements(inParagraphAt: idx, layoutFrame: frame, view: view, attachmentViewProvider: block)
@@ -46,18 +49,16 @@ public class LayoutFrameAccessibilityElementGenerator: NSObject {
 	}
 
 	private func enumerateAccessibleGroups(in frame: CoreTextLayoutFrame, forParagraphAt index: Int, using block: (NSDictionary, NSRange, UnsafeMutablePointer<ObjCBool>, [CoreTextGlyphRun]) -> Void) {
-		guard let paragraphRanges = frame.paragraphRanges as? [NSValue], index < paragraphRanges.count else { return }
+		guard let paragraphRanges = frame.paragraphRanges, index < paragraphRanges.count else { return }
 
 		let paragraphRange = paragraphRanges[index].rangeValue
-		guard let lines = frame.linesInParagraph(at: UInt(index)) as? [CoreTextLayoutLine] else { return }
+		guard let lines = frame.linesInParagraph(at: UInt(index)) else { return }
 
 		guard let fragment = frame.attributedStringFragment() else { return }
 		fragment.enumerateAttributes(in: paragraphRange, options: []) { attrs, range, stop in
 			var runs = [CoreTextGlyphRun]()
 			for line in lines {
-				if let lineRuns = line.glyphRuns(with: range) as? [CoreTextGlyphRun] {
-					runs.append(contentsOf: lineRuns)
-				}
+				runs.append(contentsOf: line.glyphRuns(with: range))
 			}
 			block(attrs as NSDictionary, range, stop, runs)
 		}

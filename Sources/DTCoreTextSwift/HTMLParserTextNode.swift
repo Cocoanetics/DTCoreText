@@ -29,7 +29,7 @@ open class HTMLParserTextNode: HTMLParserNode {
             string.append("   ")
         }
 
-        let normalized = (characters as NSString).stringByNormalizingWhitespace() ?? characters
+        let normalized = (characters as NSString).stringByNormalizingWhitespace()
         string.append("\"\(normalized)\"\n")
     }
 }

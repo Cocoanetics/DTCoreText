@@ -8,14 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class DemoTextViewController;
-
-@interface CoreTextDemoAppDelegate : NSObject <UIApplicationDelegate> 
-{
-    UIWindow *_window;
-	UINavigationController *_navigationController;
-}
-
-@property (nonatomic, strong) UIWindow *window;
+@interface CoreTextDemoAppDelegate : UIResponder <UIApplicationDelegate>
 
 @end

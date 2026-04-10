@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const DTDefaultTextColor;
 extern NSString * const DTDefaultLinkColor;
 extern NSString * const DTDefaultLinkHighlightColor;
@@ -23,4 +25,6 @@ extern NSString * const NSBaseURLDocumentOption;
 extern NSString * const NSTextSizeMultiplierDocumentOption;
 
 // CSS-style color name → UIColor
-UIColor * _Nullable DTColorCreateWithHTMLName(NSString * _Nonnull name);
+UIColor * _Nullable DTColorCreateWithHTMLName(NSString *name);
+
+NS_ASSUME_NONNULL_END

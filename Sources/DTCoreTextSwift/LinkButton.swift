@@ -38,6 +38,9 @@ public class LinkButton: UIButton {
 
 	// MARK: - Init
 
+	/// Whether to show a highlight effect when the user touches the button.
+	@objc public var showsHighlightOnTouch: Bool = true
+
 	public override init(frame: CGRect) {
 		super.init(frame: frame)
 
@@ -45,8 +48,10 @@ public class LinkButton: UIButton {
 		isEnabled = true
 		isOpaque = false
 
-		// inherited from UIButton; default to true so taps show the highlight
-		showsTouchWhenHighlighted = true
+		// use a plain configuration so the modern insets API works
+		var config = UIButton.Configuration.plain()
+		config.contentInsets = .zero
+		self.configuration = config
 
 		NotificationCenter.default.addObserver(self, selector: #selector(highlightNotification(_:)), name: .dtLinkButtonDidHighlight, object: nil)
 	}
@@ -63,9 +68,15 @@ public class LinkButton: UIButton {
 	// MARK: - Drawing
 
 	public override func draw(_ rect: CGRect) {
-		guard let ctx = UIGraphicsGetCurrentContext(), isHighlighted, showsTouchWhenHighlighted else { return }
+		guard let ctx = UIGraphicsGetCurrentContext(), isHighlighted, showsHighlightOnTouch else { return }
 
-		let imageRect = contentRect(forBounds: bounds)
+		let insets = configuration?.contentInsets ?? .zero
+		let imageRect = bounds.inset(by: UIEdgeInsets(
+			top: insets.top,
+			left: insets.leading,
+			bottom: insets.bottom,
+			right: insets.trailing
+		))
 		let roundedPath = UIBezierPath(roundedRect: imageRect, cornerRadius: 3.0)
 		ctx.setFillColor(gray: 0.73, alpha: 0.4)
 		roundedPath.fill()
@@ -87,18 +98,18 @@ public class LinkButton: UIButton {
 		}
 
 		if widthExtend > 0 || heightExtend > 0 {
-			let insets = UIEdgeInsets(
+			let insets = NSDirectionalEdgeInsets(
 				top: ceil(heightExtend / 2.0),
-				left: ceil(widthExtend / 2.0),
+				leading: ceil(widthExtend / 2.0),
 				bottom: ceil(heightExtend / 2.0),
-				right: ceil(widthExtend / 2.0)
+				trailing: ceil(widthExtend / 2.0)
 			)
-			currentBounds.size.width += insets.left + insets.right
+			currentBounds.size.width += insets.leading + insets.trailing
 			currentBounds.size.height += insets.top + insets.bottom
 			bounds = currentBounds
-			contentEdgeInsets = insets
+			configuration?.contentInsets = insets
 		} else {
-			contentEdgeInsets = .zero
+			configuration?.contentInsets = .zero
 		}
 	}
 

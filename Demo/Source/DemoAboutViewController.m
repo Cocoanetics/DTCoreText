@@ -30,14 +30,20 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-	
+	[super viewDidLoad];
+
+	// The xib sets `view` AND `attributedTextView` to the same DTAttributedTextView,
+	// so `self.view` is the scroll view directly. Explicitly request automatic
+	// content inset adjustment so the nav bar and safe areas are honoured on
+	// modern iOS (the default is .automatic but DTAttributedTextView sometimes
+	// sets different content/scroll indicator insets in its init).
+	self.attributedTextView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
+
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"About" ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
-	
+
 	NSDictionary *options = @{DTDefaultTextColor: [UIColor labelColor]};
-	
+
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 
 	self.attributedTextView.attributedString = attributedString;

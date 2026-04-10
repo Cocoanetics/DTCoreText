@@ -650,12 +650,35 @@ open class CoreTextLayoutFrame: NSObject {
     /// Draws the receiver into the given graphics context.
     @objc open func draw(in context: CGContext, options: UInt) {
         let drawLinks = (options & CoreTextLayoutFrameDrawingOptions.omitLinks.rawValue) == 0
-        let drawImages = (options & CoreTextLayoutFrameDrawingOptions.omitAttachments.rawValue) == 0
+        let _ = (options & CoreTextLayoutFrameDrawingOptions.omitAttachments.rawValue) == 0 // drawImages currently unused; attachments are drawn via subviews
 
         let rect = context.boundingBoxOfClipPath
 
         // Swift manages CF type lifetimes automatically
         let _ = _textFrame // ensure retained for scope
+
+        if _shouldDrawDebugFrames {
+            context.saveGState()
+
+            // stroke the frame because the layout frame might be open ended
+            context.saveGState()
+            let dashes: [CGFloat] = [10.0, 2.0]
+            context.setLineDash(phase: 0, lengths: dashes)
+            context.stroke(self.frame)
+
+            // draw center line
+            context.move(to: CGPoint(x: self.frame.midX, y: self.frame.origin.y))
+            context.addLine(to: CGPoint(x: self.frame.midX, y: self.frame.maxY))
+            context.strokePath()
+
+            context.restoreGState()
+
+            // stroke the clip rect in semi-transparent red
+            context.setStrokeColor(red: 1, green: 0, blue: 0, alpha: 0.5)
+            context.stroke(rect)
+
+            context.restoreGState()
+        }
 
         let visibleLines = linesVisible(in: rect)
         guard !visibleLines.isEmpty else { return }
@@ -674,6 +697,29 @@ open class CoreTextLayoutFrame: NSObject {
         for oneLine in visibleLines {
             if oneLine.isHorizontalRule() { continue }
             guard let runs = oneLine.glyphRuns as? [CoreTextGlyphRun] else { continue }
+
+            if _shouldDrawDebugFrames {
+                // line bounds (blue) and baseline
+                context.setStrokeColor(red: 0, green: 0, blue: 1, alpha: 1)
+                context.stroke(oneLine.frame)
+
+                context.move(to: CGPoint(x: oneLine.baselineOrigin.x - 5, y: oneLine.baselineOrigin.y))
+                context.addLine(to: CGPoint(x: oneLine.baselineOrigin.x + oneLine.frame.size.width + 5, y: oneLine.baselineOrigin.y))
+                context.strokePath()
+
+                // alternating red/green fills on each glyph run
+                var runIndex = 0
+                for oneRun in runs {
+                    guard rect.intersects(oneRun.frame) else { continue }
+                    if runIndex % 2 == 0 {
+                        context.setFillColor(red: 1, green: 0, blue: 0, alpha: 0.2)
+                    } else {
+                        context.setFillColor(red: 0, green: 1, blue: 0, alpha: 0.2)
+                    }
+                    context.fill(oneRun.frame)
+                    runIndex += 1
+                }
+            }
 
             for oneRun in runs {
                 guard rect.intersects(oneRun.frame) else { continue }

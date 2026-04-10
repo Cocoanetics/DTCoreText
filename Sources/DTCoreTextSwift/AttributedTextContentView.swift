@@ -114,7 +114,9 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 	@objc open var _attributedString: NSAttributedString?
 
 	/// The current layout frame.
-	@objc open var _layoutFrame: CoreTextLayoutFrame?
+	// nonisolated(unsafe) so the nonisolated `draw(_:in:)` path can read it
+	// under `_lock`. Writes happen on the main actor; reads on tile threads.
+	@objc open nonisolated(unsafe) var _layoutFrame: CoreTextLayoutFrame?
 
 	/// Edge insets around the text content.
 	@objc open var _edgeInsets: UIEdgeInsets = .zero
@@ -154,11 +156,13 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 	private var _backgroundOffset: CGSize = .zero
 
 	private var _delegateFlags = DelegateFlags()
-	private weak var _delegate: (any DTAttributedTextContentViewDelegate)?
+	// nonisolated(unsafe) so the nonisolated `draw(_:in:)` path can read the
+	// weak reference under `_lock`. Writes happen on the main actor.
+	nonisolated(unsafe) private weak var _delegate: (any DTAttributedTextContentViewDelegate)?
 
 	/// Lock for synchronizing access to layouter/layoutFrame.
 	// Recursive because layoutFrame.getter calls layouter.getter — both lock _lock.
-	nonisolated(unsafe) private let _lock = NSRecursiveLock()
+	private let _lock = NSRecursiveLock()
 
 	// MARK: - Nonisolated render mirror (for background tile rendering)
 
@@ -245,23 +249,23 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 
 	open override func awakeFromNib() {
 		super.awakeFromNib()
-		setup()
+		MainActor.assumeIsolated { setup() }
 	}
 
 	deinit {
-		if _isTiling {
-			layer.contents = nil
-			layer.delegate = nil
-		}
-		removeAllCustomViews()
+		// Tile-layer teardown and custom view removal were performed in
+		// willMove(toSuperview:) and during view removal; by deinit the
+		// view is already detached from its window and nothing is drawing.
 	}
 
 	// MARK: - Debug
 
-	open override var debugDescription: String {
+	// debugDescription is nonisolated on NSObject, so we can only access
+	// `nonisolated(unsafe)` state here — `_layoutFrame` is marked as such.
+	nonisolated open override var debugDescription: String {
 		guard let layoutFrame = _layoutFrame,
 			  let fragment = layoutFrame.attributedStringFragment() else {
-			return super.debugDescription
+			return "<\(type(of: self))>"
 		}
 
 		let visibleRange = layoutFrame.visibleStringRange()
@@ -271,7 +275,7 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 			extract = String(extract.prefix(10))
 		}
 
-		return "<\(type(of: self)) \(self.frame) range:\(visibleRange) '\(extract)...'>"
+		return "<\(type(of: self)) range:\(NSStringFromRange(visibleRange)) '\(extract)...'>"
 	}
 
 	// MARK: - Layout Subviews
@@ -553,37 +557,42 @@ open class AttributedTextContentView: UIView, @preconcurrency AccessibilityViewP
 
 	/// Discards the current layout frame and creates a new one based on the attributed string.
 	@objc open func relayoutText() {
-		let block: () -> Void = { [weak self] in
-			guard let self else { return }
-			guard _layoutFrame != nil, superview != nil else { return }
-
-			// Need new layout frame; layouter can remain because the attributed string is probably the same
-			self.layoutFrame = nil
-
-			// Remove all links because they might have merged or split
-			removeAllCustomViewsForLinks()
-
-			if _attributedString != nil {
-				// Triggers new layout
-				let neededSize = intrinsicContentSize
-
-				let optimalFrame = CGRect(x: frame.origin.x, y: frame.origin.y,
-										  width: neededSize.width, height: neededSize.height)
-				let userInfo: [String: Any] = ["OptimalFrame": NSValue(cgRect: optimalFrame)]
-
-				NotificationCenter.default.post(
-					name: .DTAttributedTextContentViewDidFinishLayout,
-					object: self,
-					userInfo: userInfo
-				)
+		if Thread.isMainThread {
+			MainActor.assumeIsolated { _relayoutTextOnMain() }
+		} else {
+			DispatchQueue.main.async { [weak self] in
+				self?._relayoutTextOnMain()
 			}
+		}
+	}
 
-			setNeedsLayout()
-			setNeedsDisplay(bounds)
-			invalidateIntrinsicContentSize()
+	private func _relayoutTextOnMain() {
+		guard _layoutFrame != nil, superview != nil else { return }
+
+		// Need new layout frame; layouter can remain because the attributed string is probably the same
+		self.layoutFrame = nil
+
+		// Remove all links because they might have merged or split
+		removeAllCustomViewsForLinks()
+
+		if _attributedString != nil {
+			// Triggers new layout
+			let neededSize = intrinsicContentSize
+
+			let optimalFrame = CGRect(x: frame.origin.x, y: frame.origin.y,
+									  width: neededSize.width, height: neededSize.height)
+			let userInfo: [String: Any] = ["OptimalFrame": NSValue(cgRect: optimalFrame)]
+
+			NotificationCenter.default.post(
+				name: .DTAttributedTextContentViewDidFinishLayout,
+				object: self,
+				userInfo: userInfo
+			)
 		}
 
-		if Thread.isMainThread { block() } else { DispatchQueue.main.async(execute: block) }
+		setNeedsLayout()
+		setNeedsDisplay(bounds)
+		invalidateIntrinsicContentSize()
 	}
 
 	// MARK: - Custom View Management
