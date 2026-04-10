@@ -8,6 +8,27 @@ import UIKit
 /// Methods for appending NSString instances to mutable attributed strings
 public extension NSMutableAttributedString {
 
+    /// Fast last-character test that avoids bridging the whole backing store
+    /// through a Swift `String`. Essential inside parser flush loops that can
+    /// be invoked hundreds of thousands of times on a large document.
+    @objc func dt_hasSuffixCharacter(from characterSet: CharacterSet) -> Bool {
+        guard length > 0 else { return false }
+        let lastChar = mutableString.character(at: length - 1)
+        guard let scalar = Unicode.Scalar(lastChar) else { return false }
+        return characterSet.contains(scalar)
+    }
+
+    /// Fast first-character test, same rationale as `dt_hasSuffixCharacter`.
+    @objc func dt_hasPrefixCharacter(from characterSet: CharacterSet) -> Bool {
+        guard length > 0 else { return false }
+        let firstChar = mutableString.character(at: 0)
+        guard let scalar = Unicode.Scalar(firstChar) else { return false }
+        return characterSet.contains(scalar)
+    }
+}
+
+public extension NSMutableAttributedString {
+
     /// Appends a string with the same attributes as the end of this string.
     /// Removes attachment placeholders and field attributes from the appended part.
     @objc(dtct_appendString:)

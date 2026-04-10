@@ -491,7 +491,7 @@ private actor BuilderState {
 
 	private func handleEndDocument() {
 		if !preserveDocumentTrailingSpaces {
-			while (tmpString.string as NSString).hasSuffixCharacter(from: .whitespaces) {
+			while tmpString.dt_hasSuffixCharacter(from: .whitespaces) {
 				tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
 			}
 		}
@@ -507,11 +507,16 @@ private actor BuilderState {
 		guard let nodeString = tag.attributedString() else { return }
 
 		if tag.displayStyle != .inline {
-			if tmpString.length > 0 && !tmpString.string.hasSuffix("\n") {
-				while (tmpString.string as NSString).hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
-					tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
+			if tmpString.length > 0 {
+				// Check last character without bridging the full backing store
+				// into a Swift String — this is hot during large-document parses.
+				let lastChar = tmpString.mutableString.character(at: tmpString.length - 1)
+				if lastChar != 0x0A /* \n */ {
+					while tmpString.dt_hasSuffixCharacter(from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet) {
+						tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
+					}
+					tmpString.append(NSAttributedString(string: "\n"))
 				}
-				tmpString.append(NSAttributedString(string: "\n"))
 			}
 		}
 
