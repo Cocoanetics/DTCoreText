@@ -117,14 +117,14 @@ struct HTMLWriterTests {
 		#expect((writtenHTML as NSString).range(of: "-webkit-padding-start:32px;padding-left:32px;").location != NSNotFound, "Text scale should not affect list indention amount")
 	}
 
-	@Test("Nested list round trip", .disabled("Flaky — HTMLWriter nested list serialization depends on global state — see #1305"))
+	@Test("Nested list round trip")
 	func nestedListRoundTrip() throws {
 		let html = "<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"
 		try testListIndentRoundTrip(from: html, fragmentMode: false)
 		try testListIndentRoundTrip(from: html, fragmentMode: true)
 	}
 
-	@Test("Nested list round trip with preceding element", .disabled("List round-trip comparison mismatch with preceding paragraph — see #1305"))
+	@Test("Nested list round trip with preceding element")
 	func nestedListRoundTripWithPrecedingElement() throws {
 		let html = "<p>This breaks writing nested lists</p><ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"
 		try testListIndentRoundTrip(from: html, fragmentMode: false)
@@ -138,14 +138,14 @@ struct HTMLWriterTests {
 		try testListIndentRoundTrip(from: html, fragmentMode: true)
 	}
 
-	@Test("Nested list output without text node round trip", .disabled("List round-trip length mismatch — see #1305"))
+	@Test("Nested list output without text node round trip")
 	func nestedListOutputWithoutTextNodeRoundTrip() throws {
 		let html = "<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"
 		try testListIndentRoundTrip(from: html, fragmentMode: false)
 		try testListIndentRoundTrip(from: html, fragmentMode: true)
 	}
 
-	@Test("Nested list output", .disabled("HTMLWriter nested list LI/UL ordering changed after text() fix — see #1305"))
+	@Test("Nested list output")
 	func nestedListOutput() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ol><li>1a<ul><li>2a</li></ul></li></ol>"))
 

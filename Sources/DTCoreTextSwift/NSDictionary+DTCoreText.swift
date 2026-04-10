@@ -71,7 +71,10 @@ public extension NSDictionary {
     /// Retrieves the CoreTextParagraphStyle from the receiver's attributes.
     @objc(dtct_paragraphStyle)
     func dtct_paragraphStyle() -> CoreTextParagraphStyle? {
-        if let nsParagraphStyle = self[NSAttributedString.Key.paragraphStyle.rawValue] as? NSParagraphStyle {
+        // Try both the raw string key and the Key type (NSDictionary bridging may produce either)
+        let nsValue = self[NSAttributedString.Key.paragraphStyle.rawValue]
+            ?? self[NSAttributedString.Key.paragraphStyle]
+        if let nsParagraphStyle = nsValue as? NSParagraphStyle {
             return CoreTextParagraphStyle.paragraphStyle(withNSParagraphStyle: nsParagraphStyle)
         }
 

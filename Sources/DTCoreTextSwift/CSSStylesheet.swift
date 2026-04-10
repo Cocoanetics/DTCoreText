@@ -405,7 +405,8 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     private func _addStyles(_ styles: NSDictionary, withSelector selector: String) {
-        _styles[selector] = styles
+        // Always copy to avoid sharing references with other stylesheets (e.g. the default)
+        _styles[selector] = styles.copy() as! NSDictionary
 
         if !_orderedSelectors.contains(selector) {
             _orderedSelectors.add(selector)
@@ -432,8 +433,8 @@ open class CSSStylesheet: NSObject, NSCopying {
         let matchingCascadingSelectors = self.matchingComplexCascadingSelectors(for: element)
         matchingCascadingSelectors.sort { s1, s2 in
             guard let sel1 = s1 as? String, let sel2 = s2 as? String else { return .orderedSame }
-            var weight1 = (_orderedSelectorWeights[sel1] as? Int) ?? 0
-            var weight2 = (_orderedSelectorWeights[sel2] as? Int) ?? 0
+            var weight1 = (_orderedSelectorWeights[sel1] as? NSNumber)?.intValue ?? 0
+            var weight2 = (_orderedSelectorWeights[sel2] as? NSNumber)?.intValue ?? 0
 
             if weight1 == weight2 {
                 weight1 += _orderedSelectors.index(of: sel1)

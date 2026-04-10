@@ -284,66 +284,43 @@ public class HTMLWriter: NSObject {
 
 			var blockElement: String
 
-			// close until we are at current or nil
-			if let prevStyles = previousListStyles, prevStyles.count > (currentListStyles?.count ?? 0) {
-				var closingStyles = prevStyles
+			// Compute common prefix between previous and current list stacks using value equality.
+			// This is robust regardless of whether list style objects share identity across paragraphs
+			// (NSAttributedString may coalesce equal attribute values, breaking identity comparison).
+			let prevStack = previousListStyles ?? []
+			let currStack = currentListStyles ?? []
+			var commonPrefixLen = 0
+			let minStackLen = min(prevStack.count, currStack.count)
+			while commonPrefixLen < minStackLen && prevStack[commonPrefixLen].isEqual(to: currStack[commonPrefixLen]) {
+				commonPrefixLen += 1
+			}
 
-				repeat {
-					guard let closingStyle = closingStyles.last else { break }
-
-					if closingStyle === effectiveListStyle {
-						break
-					}
-
-					// end of a list block
+			// Close lists from previous that are not in the common prefix (in reverse order).
+			if prevStack.count > commonPrefixLen {
+				for idx in stride(from: prevStack.count - 1, through: commonPrefixLen, by: -1) {
+					let closingStyle = prevStack[idx]
 					retString += _tagRepresentation(forListStyle: closingStyle, closingTag: true, listPadding: 0, inlineStyles: fragment)
 					retString += "\n"
-
-					closingStyles.removeLast()
-
-					previousListStyles = closingStyles
-				} while closingStyles.count > 0
+				}
 			}
 
 			if let effectiveListStyle = effectiveListStyle {
 				// next text needs to have list prefix removed
 				needsToRemovePrefix = true
 
-				// get lists that need to be opened here
-				var listsToOpen: [CSSListStyle]? = nil
+				// Open lists from current that are not in the common prefix.
+				if currStack.count > commonPrefixLen {
+					let listPadding = ((paragraphStyle?.headIndent ?? 0) - (paragraphStyle?.firstLineHeadIndent ?? 0)) / self.textScale
 
-				if previousListStyles == nil {
-					listsToOpen = currentListStyles
-				} else {
-					var tmpArray: [CSSListStyle] = []
-
-					if let currentListStyles = currentListStyles {
-						for oneList in currentListStyles {
-							let listRange = _attributedString.rangeOfTextList(oneList, at: paragraphRange.location)
-
-							if listRange.location == paragraphRange.location {
-								// list starts here
-								tmpArray.append(oneList)
-							}
-						}
-					}
-
-					if tmpArray.count > 0 {
-						listsToOpen = tmpArray
-					}
-				}
-
-				if let listsToOpen = listsToOpen {
-					for oneList in listsToOpen {
-						// only padding can be reconstructed so far
-						let listPadding = ((paragraphStyle?.headIndent ?? 0) - (paragraphStyle?.firstLineHeadIndent ?? 0)) / self.textScale
+					for idx in commonPrefixLen..<currStack.count {
+						let oneList = currStack[idx]
 
 						// beginning of a list block
 						retString += _tagRepresentation(forListStyle: oneList, closingTag: false, listPadding: listPadding, inlineStyles: fragment)
 						retString += "\n"
 
-						// all but the effective list need an extra LI
-						if oneList !== effectiveListStyle {
+						// all but the effective (innermost) list need an extra LI
+						if !oneList.isEqual(to: effectiveListStyle) {
 							retString += "<li>"
 						}
 					}
@@ -729,7 +706,8 @@ public class HTMLWriter: NSObject {
 
 					// LI are only closed if there is not a deeper list level following
 					if let nextListStyles = nextListStyles,
-					   nextListStyles.contains(where: { $0 === effectiveListStyle }),
+					   let effective = effectiveListStyle,
+					   nextListStyles.contains(where: { $0.isEqual(to: effective) }),
 					   nextListStyles.count > (currentListStyles?.count ?? 0) {
 						// deeper list following
 						shouldCloseLI = false
