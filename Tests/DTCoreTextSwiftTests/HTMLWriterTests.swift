@@ -57,7 +57,7 @@ struct HTMLWriterTests {
 
 			if sameNumberOfLists, let lists1 = lists1, let lists2 = lists2 {
 				for index in 0..<lists1.count {
-					#expect(lists1[index].isEqual(to: lists2[index]), "List Style at index \(index) is not equal")
+					#expect(lists1[index].isEqualToListStyle(lists2[index]), "List Style at index \(index) is not equal")
 				}
 			}
 
