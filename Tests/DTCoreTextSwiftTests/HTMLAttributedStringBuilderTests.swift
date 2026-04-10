@@ -336,7 +336,7 @@ struct HTMLAttributedStringBuilderTests {
 
 	// MARK: - Horizontal Rules
 
-	@Test("Horizontal rules inside blockquote", .disabled("HR attribute not propagated inside nested blockquote — see #1305"))
+	@Test("Horizontal rules inside blockquote")
 	func horizontalRulesInsideBlockquote() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<HR><BLOCKQUOTE><hr>one<hr><br>two<hr></BLOCKQUOTE><hr>"))
 
