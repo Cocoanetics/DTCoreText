@@ -429,11 +429,9 @@
 	{
 		NSURL *url = (id)attachment.contentURL;
 
-		// we could customize the view that shows before playback starts;
-		// use a light gray background so the white AVPlayer controls are
-		// visible before the first frame loads
+		// black placeholder that shows before playback starts
 		UIView *grayView = [[UIView alloc] initWithFrame:frame];
-		grayView.backgroundColor = [UIColor lightGrayColor];
+		grayView.backgroundColor = [UIColor blackColor];
 
 		// find a player for this URL if we already got one
 		AVPlayerViewController *playerVC = nil;
