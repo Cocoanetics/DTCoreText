@@ -93,9 +93,10 @@
 	{
 		if (!_htmlOutputTypeSegment)
 		{
-			// Compact single-letter labels to fit alongside the other toolbar buttons.
-			// "D" = Document, "F" = Fragment (also exposed via accessibility label).
-			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[@"Doc", @"Frag"]];
+			// SF Symbols: "doc.text" = full Document, "text.quote" = Fragment.
+			UIImage *docImage = [UIImage systemImageNamed:@"doc.text"];
+			UIImage *fragImage = [UIImage systemImageNamed:@"text.quote"];
+			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[docImage, fragImage]];
 			_htmlOutputTypeSegment.selectedSegmentIndex = 0;
 			_htmlOutputTypeSegment.accessibilityLabel = @"HTML output format";
 			_htmlOutputTypeSegment.apportionsSegmentWidthsByContent = YES;
@@ -158,9 +159,8 @@
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
 	[_textView addGestureRecognizer:tap];
 
-	// Rely on UIScrollView's automatic safe-area inset adjustment for the
-	// nav bar and toolbar. A small decorative contentInset is added on top
-	// of the auto-adjusted safe-area insets.
+	// Extend behind the translucent nav bar / toolbar; let UIKit add the
+	// safe-area insets on top of the small decorative contentInset.
 	_textView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 	_textView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
 
@@ -235,7 +235,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	
+
 	// now the bar is up so we can autoresize again
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
