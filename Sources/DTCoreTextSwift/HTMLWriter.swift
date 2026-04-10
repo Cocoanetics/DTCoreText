@@ -597,7 +597,8 @@ public class HTMLWriter: NSObject {
           fontStyle = fontStyle! + "text-decoration:underline;"
         } else {
           // there can be no underline and strike-through at the same time
-          let strikeout = attributesDict.object(forKey: DTStrikeOutAttribute) as? NSNumber
+          let strikeout =
+            attributesDict.object(forKey: NSAttributedString.Key.strikethroughStyle) as? NSNumber
           if strikeout?.boolValue == true {
             fontStyle = fontStyle! + "text-decoration:line-through;"
           }

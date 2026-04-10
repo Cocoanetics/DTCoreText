@@ -1,5 +1,11 @@
 import Foundation
 
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+
 // MARK: - Unicode Characters
 
 public let UNICODE_OBJECT_PLACEHOLDER = "\u{fffc}"
@@ -29,9 +35,26 @@ public let UNICODE_ZERO_WIDTH_NO_BREAK_SPACE = "\u{feff}"
 
 // MARK: - Standard Options
 
-public let NSBaseURLDocumentOption: String = "NSBaseURLDocumentOption"
-public let NSTextEncodingNameDocumentOption: String = "NSTextEncodingNameDocumentOption"
-public let NSTextSizeMultiplierDocumentOption: String = "NSTextSizeMultiplierDocumentOption"
+extension NSAttributedString.DocumentReadingOptionKey {
+  /// Base URL used to resolve relative links and resources when parsing HTML.
+  /// Mirrors the AppKit `NSBaseURLDocumentOption` constant on platforms where it is not natively available.
+  public static let dtBaseURL = NSAttributedString.DocumentReadingOptionKey("NSBaseURLDocumentOption")
+
+  /// IANA text encoding name used when decoding HTML data.
+  public static let dtTextEncodingName = NSAttributedString.DocumentReadingOptionKey(
+    "NSTextEncodingNameDocumentOption")
+
+  /// Scale factor applied to HTML font sizes on import.
+  public static let dtTextSizeMultiplier = NSAttributedString.DocumentReadingOptionKey(
+    "NSTextSizeMultiplierDocumentOption")
+}
+
+public let NSBaseURLDocumentOption: String =
+  NSAttributedString.DocumentReadingOptionKey.dtBaseURL.rawValue
+public let NSTextEncodingNameDocumentOption: String =
+  NSAttributedString.DocumentReadingOptionKey.dtTextEncodingName.rawValue
+public let NSTextSizeMultiplierDocumentOption: String =
+  NSAttributedString.DocumentReadingOptionKey.dtTextSizeMultiplier.rawValue
 
 // MARK: - Custom Options
 
@@ -64,8 +87,8 @@ public let DTLinkHighlightColorAttribute: String = "DTLinkHighlightColor"
 public let DTAnchorAttribute: String = "DTAnchor"
 public let DTGUIDAttribute: String = "DTGUID"
 public let DTHeaderLevelAttribute: String = "DTHeaderLevel"
-public let DTStrikeOutAttribute: String = "DTStrikethrough"
-public let DTBackgroundColorAttribute: String = "DTBackgroundColor"
+public let DTStrikeOutAttribute: String = NSAttributedString.Key.strikethroughStyle.rawValue
+public let DTBackgroundColorAttribute: String = NSAttributedString.Key.backgroundColor.rawValue
 public let DTShadowsAttribute: String = "DTShadows"
 public let DTHorizontalRuleStyleAttribute: String = "DTHorizontalRuleStyle"
 public let DTTextBlocksAttribute: String = "DTTextBlocks"
