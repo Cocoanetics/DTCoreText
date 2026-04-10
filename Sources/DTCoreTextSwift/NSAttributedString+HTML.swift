@@ -28,11 +28,7 @@ extension NSAttributedString {
   ) {
     var options = [String: Any]()
     if let baseURL {
-      #if os(macOS)
-        options[NSAttributedString.DocumentReadingOptionKey.baseURL.rawValue] = baseURL
-      #else
-        options["NSBaseURLDocumentOption"] = baseURL
-      #endif
+      options[NSBaseURLDocumentOption] = baseURL
     }
     self.init(htmlData: data, options: options, documentAttributes: documentAttributes)
   }

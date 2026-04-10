@@ -109,7 +109,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
   private func _decodeImage(from element: HTMLElement, options: [String: Any]?) {
     let baseURL =
       options?[NSBaseURLDocumentOption] as? URL
-      ?? (options as NSDictionary?)?[NSBaseURLDocumentOption as String] as? URL
+      ?? (options as NSDictionary?)?[NSBaseURLDocumentOption] as? URL
     let src = (element.attributes as? [String: Any])?["src"] as? String
 
     var contentURL: URL? = nil

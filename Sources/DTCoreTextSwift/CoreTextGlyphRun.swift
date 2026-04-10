@@ -88,7 +88,7 @@ open class CoreTextGlyphRun: NSObject {
 
     // Line-Out, Underline, Background-Color
     let drawStrikeOut =
-      (_attributes?[NSAttributedString.Key(rawValue: DTStrikeOutAttribute)] as? NSNumber)?.boolValue
+      (_attributes?[NSAttributedString.Key.strikethroughStyle] as? NSNumber)?.boolValue
       ?? false
     let drawUnderline =
       (_attributes?[NSAttributedString.Key(rawValue: kCTUnderlineStyleAttributeName as String)]

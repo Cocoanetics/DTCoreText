@@ -85,13 +85,13 @@ private actor BuilderState {
     self.shouldKeepDocumentNodeTree = shouldKeepDocumentNodeTree
 
     // Text scale
-    if let scaleValue = options["NSTextSizeMultiplierDocumentOption"] as? NSNumber {
+    if let scaleValue = options[NSTextSizeMultiplierDocumentOption] as? NSNumber {
       textScale = CGFloat(scaleValue.floatValue)
     }
     if textScale == 0 { textScale = 1.0 }
 
     // Base URL
-    baseURL = options["NSBaseURLDocumentOption"] as? URL
+    baseURL = options[NSBaseURLDocumentOption] as? URL
 
     // Global stylesheet
     globalStyleSheet = CSSStylesheet.defaultStyleSheet().copy() as? CSSStylesheet
@@ -603,7 +603,7 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
     self.options = options ?? [:]
 
     var encoding: String.Encoding = .utf8
-    if let encodingName = self.options["NSTextEncodingNameDocumentOption"] as? String {
+    if let encodingName = self.options[NSTextEncodingNameDocumentOption] as? String {
       let cfEncoding = CFStringConvertIANACharSetNameToEncoding(encodingName as CFString)
       if cfEncoding != kCFStringEncodingInvalidId {
         encoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))

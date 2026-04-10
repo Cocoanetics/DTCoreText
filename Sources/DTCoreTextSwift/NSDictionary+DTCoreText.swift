@@ -39,10 +39,6 @@ extension NSDictionary {
   /// Whether the receiver's attributes contains strike-through.
   @objc(dtct_isStrikethrough)
   public func dtct_isStrikethrough() -> Bool {
-    if let strikethroughStyle = self[DTStrikeOutAttribute as String] as? NSNumber {
-      return strikethroughStyle.boolValue
-    }
-
     if let strikethroughStyle = self[NSAttributedString.Key.strikethroughStyle.rawValue]
       as? NSNumber
     {
@@ -135,26 +131,24 @@ extension NSDictionary {
   /// Retrieves the background color.
   @objc(dtct_backgroundColor)
   public func dtct_backgroundColor() -> DTColor? {
-    if let cgColorObj = self[DTBackgroundColorAttribute as String] {
-      if CFGetTypeID(cgColorObj as CFTypeRef) == CGColor.typeID {
-        let cgColor = unsafeBitCast(cgColorObj as AnyObject, to: CGColor.self)
-        #if canImport(UIKit)
-          return DTColor(cgColor: cgColor)
-        #else
-          return DTColor(cgColor: cgColor)
-        #endif
-      }
-    }
+    let backgroundValue = self[NSAttributedString.Key.backgroundColor.rawValue]
 
     #if canImport(UIKit)
-      if let color = self[NSAttributedString.Key.backgroundColor.rawValue] as? UIColor {
+      if let color = backgroundValue as? UIColor {
         return color
       }
     #elseif canImport(AppKit)
-      if let color = self[NSAttributedString.Key.backgroundColor.rawValue] as? NSColor {
+      if let color = backgroundValue as? NSColor {
         return color
       }
     #endif
+
+    if let cgColorObj = backgroundValue,
+      CFGetTypeID(cgColorObj as CFTypeRef) == CGColor.typeID
+    {
+      let cgColor = unsafeBitCast(cgColorObj as AnyObject, to: CGColor.self)
+      return DTColor(cgColor: cgColor)
+    }
 
     return nil
   }
