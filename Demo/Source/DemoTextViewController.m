@@ -64,8 +64,6 @@
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
 		self.navigationItem.titleView = _segmentedControl;
-
-		[self _updateToolbarForMode];
 	}
 	return self;
 }
@@ -82,7 +80,16 @@
 {
 	NSMutableArray *toolbarItems = [NSMutableArray array];
 
-	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"square.dashed"] style:UIBarButtonItemStylePlain target:self action:@selector(debugButton:)];
+	// Note: we deliberately wrap a UIButton in a customView bar button item
+	// instead of using `initWithImage:` here. UIKit's image-based
+	// UIBarButtonItem produces spurious "IB_Trailing_Trailing" /
+	// "UIView-Encapsulated-Layout-Width == 0" constraint warnings during the
+	// push transition; the UIButton customView route avoids them.
+	UIButton *debugButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	[debugButton setImage:[UIImage systemImageNamed:@"square.dashed"] forState:UIControlStateNormal];
+	[debugButton addTarget:self action:@selector(debugButton:) forControlEvents:UIControlEventTouchUpInside];
+	[debugButton sizeToFit];
+	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithCustomView:debugButton];
 	debug.accessibilityLabel = @"Debug Frames";
 	[toolbarItems addObject:debug];
 
@@ -114,7 +121,11 @@
 		[toolbarItems addObject:spacer];
 	}
 
-	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"camera"] style:UIBarButtonItemStylePlain target:self action:@selector(screenshot:)];
+	UIButton *screenshotButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	[screenshotButton setImage:[UIImage systemImageNamed:@"camera"] forState:UIControlStateNormal];
+	[screenshotButton addTarget:self action:@selector(screenshot:) forControlEvents:UIControlEventTouchUpInside];
+	[screenshotButton sizeToFit];
+	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithCustomView:screenshotButton];
 	screenshot.accessibilityLabel = @"Screenshot";
 	[toolbarItems addObject:screenshot];
 
@@ -228,7 +239,7 @@
 	_textView.attributedString = [self _attributedStringForSnippet];
 	
 	[self _segmentedControlChanged:nil];
-	
+
 	[self.navigationController setToolbarHidden:NO animated:YES];
 }
 
