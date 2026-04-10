@@ -28,7 +28,7 @@ open class TextHTMLElement: HTMLElement {
     return _text
   }
 
-  open override func _appendHTML(to string: NSMutableString, indentLevel: Int) {
+  open override func appendHTML(to string: NSMutableString, indentLevel: Int) {
     // indent to the level
     for _ in 0..<indentLevel {
       string.append("   ")

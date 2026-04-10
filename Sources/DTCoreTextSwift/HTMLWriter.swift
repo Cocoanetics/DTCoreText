@@ -21,40 +21,46 @@ public class HTMLWriter: NSObject {
 
   // MARK: - Private Properties
 
-  private let _attributedString: NSAttributedString
-  private var _HTMLString: String?
-  private var _textScale: CGFloat = 1.0
-  private var _useAppleConvertedSpace: Bool = true
-  private var _styleLookup: [String: [String]] = [:]
+  private let attributedStringStorage: NSAttributedString
+  private var htmlDocumentCache: String?
+  private var htmlFragmentCache: String?
+  private var textScaleStorage: CGFloat = 1.0
+  private var useAppleConvertedSpaceStorage: Bool = true
+  private var styleLookup: [String: [String]] = [:]
 
   /// The HTML element tag name to use for paragraphs. Defaults to "p".
-  @objc public var paragraphTagName: String = "p"
+  @objc public var paragraphTagName: String = "p" {
+    didSet {
+      guard oldValue != paragraphTagName else { return }
+      htmlDocumentCache = nil
+      htmlFragmentCache = nil
+    }
+  }
 
   // MARK: - Init
 
   /// Creates a writer with a given `NSAttributedString` as input.
   @objc public init(attributedString: NSAttributedString) {
-    _attributedString = attributedString
+    attributedStringStorage = attributedString
     super.init()
   }
 
   // MARK: - Generating HTML
 
   private func _styleArray(forElement elementName: String) -> [String] {
-    if let existing = _styleLookup[elementName] {
+    if let existing = styleLookup[elementName] {
       return existing
     }
 
-    // first time we see this element
     let styleArray: [String] = []
-    _styleLookup[elementName] = styleArray
+    styleLookup[elementName] = styleArray
     return styleArray
   }
 
   /// Checks the style against previous styles and returns the style class for this element/style pair.
   private func _styleClass(forElement elementName: String, style: String) -> String {
     // get array of styles for element
-    var styleArray = _styleLookup[elementName] ?? []
+    var styleArray = styleLookup[elementName] ?? []
 
     var index: Int
 
@@ -63,7 +69,7 @@ public class HTMLWriter: NSObject {
     } else {
       // need to add this style
       styleArray.append(style)
-      _styleLookup[elementName] = styleArray
+      styleLookup[elementName] = styleArray
       index = styleArray.count
     }
 
@@ -190,9 +196,9 @@ public class HTMLWriter: NSObject {
 
   private func _buildOutput(asHTMLFragment fragment: Bool) {
     // reusable styles
-    _styleLookup = [:]
+    styleLookup = [:]
 
-    let plainString = _attributedString.string
+    let plainString = attributedStringStorage.string
     let nsPlainString = plainString as NSString
 
     // divide the string into its blocks (we assume that these are the P)
@@ -226,7 +232,7 @@ public class HTMLWriter: NSObject {
       if paragraphRange.length > 0 {
         let fontKey = NSAttributedString.Key(rawValue: kCTFontAttributeName as String)
         paragraphFont =
-          _attributedString.attribute(
+          attributedStringStorage.attribute(
             fontKey, at: paragraphRange.location, longestEffectiveRange: &fontEffectiveRange,
             in: paragraphRange) as! CTFont?
       } else {
@@ -240,7 +246,7 @@ public class HTMLWriter: NSObject {
       // next paragraph start
       location = location + paragraphRange.length + 1
 
-      let paraAttributes = _attributedString.attributes(
+      let paraAttributes = attributedStringStorage.attributes(
         at: paragraphRange.location, effectiveRange: nil)
       let paraAttributesDict = paraAttributes as NSDictionary
 
@@ -255,18 +261,18 @@ public class HTMLWriter: NSObject {
       var paraStyleString: String? = nil
 
       if let paragraphStyle = paragraphStyle, effectiveListStyle == nil {
-        if _textScale != 1.0 {
-          paragraphStyle.minimumLineHeight = round(paragraphStyle.minimumLineHeight / _textScale)
-          paragraphStyle.maximumLineHeight = round(paragraphStyle.maximumLineHeight / _textScale)
+        if textScaleStorage != 1.0 {
+          paragraphStyle.minimumLineHeight = round(paragraphStyle.minimumLineHeight / textScaleStorage)
+          paragraphStyle.maximumLineHeight = round(paragraphStyle.maximumLineHeight / textScaleStorage)
 
-          paragraphStyle.paragraphSpacing = round(paragraphStyle.paragraphSpacing / _textScale)
+          paragraphStyle.paragraphSpacing = round(paragraphStyle.paragraphSpacing / textScaleStorage)
           paragraphStyle.paragraphSpacingBefore = round(
-            paragraphStyle.paragraphSpacingBefore / _textScale)
+            paragraphStyle.paragraphSpacingBefore / textScaleStorage)
 
           paragraphStyle.firstLineHeadIndent = round(
-            paragraphStyle.firstLineHeadIndent / _textScale)
-          paragraphStyle.headIndent = round(paragraphStyle.headIndent / _textScale)
-          paragraphStyle.tailIndent = round(paragraphStyle.tailIndent / _textScale)
+            paragraphStyle.firstLineHeadIndent / textScaleStorage)
+          paragraphStyle.headIndent = round(paragraphStyle.headIndent / textScaleStorage)
+          paragraphStyle.tailIndent = round(paragraphStyle.tailIndent / textScaleStorage)
         }
 
         paraStyleString = paragraphStyle.cssStyleRepresentation()
@@ -280,8 +286,8 @@ public class HTMLWriter: NSObject {
         if let paragraphFont = paragraphFont {
           let desc = CoreTextFontDescriptor(ctFont: paragraphFont)
 
-          if _textScale != 1.0 {
-            desc.pointSize /= _textScale
+          if textScaleStorage != 1.0 {
+            desc.pointSize /= textScaleStorage
           }
 
           let paraFontStyle = desc.cssStyleRepresentation()
@@ -363,13 +369,13 @@ public class HTMLWriter: NSObject {
       }
 
       // find which custom attributes are for the entire paragraph
-      let htmlAttributes = _attributedString.htmlAttributes(at: paragraphRange.location)
+      let htmlAttributes = attributedStringStorage.htmlAttributes(at: paragraphRange.location)
       let paragraphLevelHTMLAttributes = NSMutableDictionary()
 
       if let htmlAttributes = htmlAttributes {
         for (key, value) in htmlAttributes {
           // check if range is longer than current paragraph
-          let attributeEffectiveRange = _attributedString.rangeOfHTMLAttribute(
+          let attributeEffectiveRange = attributedStringStorage.rangeOfHTMLAttribute(
             key, at: paragraphRange.location)
 
           if NSIntersectionRange(attributeEffectiveRange, paragraphRange).length
@@ -440,7 +446,7 @@ public class HTMLWriter: NSObject {
 
       // ----- SPAN enumeration
 
-      _attributedString.enumerateAttributes(in: paragraphRange, options: []) {
+      attributedStringStorage.enumerateAttributes(in: paragraphRange, options: []) {
         [self] (attributes, spanRange, stopEnumerateAttributes) in
 
         let attributesDict = attributes as NSDictionary
@@ -735,7 +741,7 @@ public class HTMLWriter: NSObject {
 
         if nextParagraphStart < nsPlainString.length {
           let nextListStyles =
-            _attributedString.attribute(
+            attributedStringStorage.attribute(
               NSAttributedString.Key(rawValue: DTTextListsAttribute), at: nextParagraphStart,
               effectiveRange: nil) as? [CSSListStyle]
 
@@ -789,10 +795,10 @@ public class HTMLWriter: NSObject {
       // append style block before text
       var styleBlock = ""
 
-      let keys = _styleLookup.keys.sorted()
+      let keys = styleLookup.keys.sorted()
 
       for oneKey in keys {
-        if let styleArray = _styleLookup[oneKey] {
+        if let styleArray = styleLookup[oneKey] {
           for (idx, style) in styleArray.enumerated() {
             let className = "\(String(oneKey[oneKey.startIndex]))\(idx + 1)"
             styleBlock += "\(oneKey).\(className) {\(style)}\n"
@@ -818,7 +824,7 @@ public class HTMLWriter: NSObject {
       }
     }
 
-    if _useAppleConvertedSpace {
+    if useAppleConvertedSpaceStorage {
       output += (retString as NSString).stringByAddingAppleConvertedSpace()
     } else {
       output += retString
@@ -828,7 +834,11 @@ public class HTMLWriter: NSObject {
       output += "</body>\n</html>\n"
     }
 
-    _HTMLString = output
+    if fragment {
+      htmlFragmentCache = output
+    } else {
+      htmlDocumentCache = output
+    }
   }
 
   // MARK: - Public
@@ -836,39 +846,49 @@ public class HTMLWriter: NSObject {
   /// Generates a HTML representation of the attributed string.
   @objc(HTMLString)
   public func htmlString() -> String {
-    if _HTMLString == nil {
+    if htmlDocumentCache == nil {
       _buildOutput()
     }
 
-    return _HTMLString!
+    return htmlDocumentCache!
   }
 
   /// Generates a HTML fragment representation of the attributed string including inlined styles and no html or head elements.
   @objc(HTMLFragment)
   public func htmlFragment() -> String {
-    if _HTMLString == nil {
+    if htmlFragmentCache == nil {
       _buildOutput(asHTMLFragment: true)
     }
 
-    return _HTMLString!
+    return htmlFragmentCache!
   }
 
   // MARK: - Properties
 
   /// The attributed string that the writer is processing.
   @objc public var attributedString: NSAttributedString {
-    return _attributedString
+    return attributedStringStorage
   }
 
   /// If specified then all absolute font sizes (px) will be divided by this value.
   @objc public var textScale: CGFloat {
-    get { return _textScale }
-    set { _textScale = newValue }
+    get { return textScaleStorage }
+    set {
+      guard textScaleStorage != newValue else { return }
+      textScaleStorage = newValue
+      htmlDocumentCache = nil
+      htmlFragmentCache = nil
+    }
   }
 
   /// If YES, preserve whitespaces in HTML by using "Apple-converted-space". Default YES.
   @objc public var useAppleConvertedSpace: Bool {
-    get { return _useAppleConvertedSpace }
-    set { _useAppleConvertedSpace = newValue }
+    get { return useAppleConvertedSpaceStorage }
+    set {
+      guard useAppleConvertedSpaceStorage != newValue else { return }
+      useAppleConvertedSpaceStorage = newValue
+      htmlDocumentCache = nil
+      htmlFragmentCache = nil
+    }
   }
 }

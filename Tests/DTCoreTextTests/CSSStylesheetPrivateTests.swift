@@ -7,7 +7,7 @@ import CoreText
 struct CSSStylesheetWeightTests {
 	private func weight(forSelector selector: String?, in stylesheet: CSSStylesheet) -> Int {
 		guard let selector, !selector.isEmpty else { return 0 }
-		return stylesheet._weightForSelector(selector)
+		return stylesheet.weightForSelector(selector)
 	}
 
 	@Test("Invalid selector has no weight")
@@ -56,7 +56,7 @@ struct CSSStylesheetShorthandTests {
 	private func uncompress(_ styles: [String: String]) -> [String: Any] {
 		let stylesheet = CSSStylesheet.defaultStyleSheet()
 		let mutable = NSMutableDictionary(dictionary: styles)
-		stylesheet._uncompressShorthands(mutable)
+		stylesheet.uncompressShorthands(mutable)
 		return mutable as! [String: Any]
 	}
 

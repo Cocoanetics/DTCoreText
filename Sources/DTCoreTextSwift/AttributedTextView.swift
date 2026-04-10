@@ -20,15 +20,15 @@
     // MARK: - Content View
 
     /// Subclasses can access this ivar directly.
-    @objc public var _attributedTextContentView: AttributedTextContentView?
+    @objc public var attributedTextContentView: AttributedTextContentView?
 
     // MARK: - Private State
 
-    private var _backgroundView: UIView?
-    private weak var _textDelegate: (any DTAttributedTextContentViewDelegate)?
-    private var _attributedString: NSAttributedString?
-    private var _shouldDrawLinks = true
-    private var _shouldDrawImages = true
+    private var backgroundViewStorage: UIView?
+    private weak var textDelegate: (any DTAttributedTextContentViewDelegate)?
+    private var attributedStringStorage: NSAttributedString?
+    private var shouldDrawLinksStorage = true
+    private var shouldDrawImagesStorage = true
 
     // MARK: - Init
 
@@ -62,8 +62,8 @@
 
       autoresizesSubviews = false
       clipsToBounds = true
-      _shouldDrawLinks = true
-      _shouldDrawImages = true
+      shouldDrawLinksStorage = true
+      shouldDrawImagesStorage = true
     }
 
     // MARK: - Layout
@@ -78,7 +78,7 @@
       // iframe using `view.bounds.width - 20`) overflow the content
       // view's right edge by the second inset.
       attributedTextContentView.edgeInsets = .zero
-      _attributedTextContentView?.layoutSubviews(in: bounds)
+      attributedTextContentView?.layoutSubviews(in: bounds)
     }
 
     public override func safeAreaInsetsDidChange() {
@@ -121,8 +121,8 @@
     @objc public func relayoutText() {
       // We're already main-actor-isolated; the content view's layouter must be
       // reset on the main thread.
-      _attributedTextContentView?.layouter = nil
-      _attributedTextContentView?.relayoutText()
+      attributedTextContentView?.layouter = nil
+      attributedTextContentView?.relayoutText()
       setNeedsLayout()
     }
 
@@ -162,8 +162,8 @@
         // content down for the adjusted content inset.
         var frameToSet = optimalFrame
         frameToSet.origin = .zero
-        _attributedTextContentView?.frame = frameToSet
-        contentSize = _attributedTextContentView?.intrinsicContentSize ?? .zero
+        attributedTextContentView?.frame = frameToSet
+        contentSize = attributedTextContentView?.intrinsicContentSize ?? .zero
       }
     }
 
@@ -171,7 +171,7 @@
 
     /// The attributed text content view (created lazily).
     @objc public var attributedTextContentView: AttributedTextContentView {
-      if let existing = _attributedTextContentView {
+      if let existing = attributedTextContentView {
         return existing
       }
 
@@ -219,8 +219,8 @@
         contentView.isOpaque = bg.cgColor.alpha >= 1.0
       }
 
-      contentView.delegate = _textDelegate
-      contentView.shouldDrawLinks = _shouldDrawLinks
+      contentView.delegate = textDelegate
+      contentView.shouldDrawLinks = shouldDrawLinksStorage
 
       NotificationCenter.default.addObserver(
         self,
@@ -229,10 +229,10 @@
         object: contentView)
 
       contentView.frame = frame
-      contentView.attributedString = _attributedString
+      contentView.attributedString = attributedStringStorage
 
       addSubview(contentView)
-      _attributedTextContentView = contentView
+      attributedTextContentView = contentView
 
       return contentView
     }
@@ -242,12 +242,12 @@
       set {
         if let newColor = newValue, newColor.cgColor.alpha < 1.0 {
           super.backgroundColor = newColor
-          _attributedTextContentView?.backgroundColor = .clear
+          attributedTextContentView?.backgroundColor = .clear
           isOpaque = false
         } else {
           super.backgroundColor = newValue
-          if _attributedTextContentView?.isOpaque == true {
-            _attributedTextContentView?.backgroundColor = newValue
+          if attributedTextContentView?.isOpaque == true {
+            attributedTextContentView?.backgroundColor = newValue
           }
         }
       }
@@ -260,80 +260,80 @@
         let contentFrame = CGRect(
           x: 0, y: 0,
           width: frame.size.width - newValue.left - newValue.right,
-          height: _attributedTextContentView?.frame.size.height ?? 0)
-        if _attributedTextContentView?.frame != contentFrame {
-          _attributedTextContentView?.frame = contentFrame
+          height: attributedTextContentView?.frame.size.height ?? 0)
+        if attributedTextContentView?.frame != contentFrame {
+          attributedTextContentView?.frame = contentFrame
         }
       }
     }
 
     /// The attributed string to display.
     @objc public var attributedString: NSAttributedString? {
-      get { _attributedString }
+      get { attributedStringStorage }
       set {
-        _attributedString = newValue
+        attributedStringStorage = newValue
         setNeedsLayout()
-        _attributedTextContentView?.attributedString = newValue
+        attributedTextContentView?.attributedString = newValue
       }
     }
 
     /// Delegate for providing custom views for images and links.
     @objc public weak var textDelegate: (any DTAttributedTextContentViewDelegate)? {
-      get { _attributedTextContentView?.delegate ?? _textDelegate }
+      get { attributedTextContentView?.delegate ?? textDelegate }
       set {
-        _textDelegate = newValue
-        _attributedTextContentView?.delegate = newValue
+        textDelegate = newValue
+        attributedTextContentView?.delegate = newValue
       }
     }
 
     /// Whether the content view should draw links.
     @objc public var shouldDrawLinks: Bool {
-      get { _shouldDrawLinks }
+      get { shouldDrawLinksStorage }
       set {
-        _shouldDrawLinks = newValue
-        _attributedTextContentView?.shouldDrawLinks = newValue
+        shouldDrawLinksStorage = newValue
+        attributedTextContentView?.shouldDrawLinks = newValue
       }
     }
 
     /// Whether the content view should draw images.
     @objc public var shouldDrawImages: Bool {
-      get { _shouldDrawImages }
+      get { shouldDrawImagesStorage }
       set {
-        _shouldDrawImages = newValue
-        _attributedTextContentView?.shouldDrawImages = newValue
+        shouldDrawImagesStorage = newValue
+        attributedTextContentView?.shouldDrawImages = newValue
       }
     }
 
     /// A view displayed behind the text content.
     @objc public var backgroundView: UIView? {
       get {
-        if _backgroundView == nil {
+        if backgroundViewStorage == nil {
           let bg = UIView(frame: bounds)
           bg.backgroundColor = .white
           bg.isUserInteractionEnabled = false
           insertSubview(bg, belowSubview: attributedTextContentView)
-          _attributedTextContentView?.backgroundColor = .clear
-          _attributedTextContentView?.isOpaque = false
-          _backgroundView = bg
+          attributedTextContentView?.backgroundColor = .clear
+          attributedTextContentView?.isOpaque = false
+          backgroundViewStorage = bg
         }
-        return _backgroundView
+        return backgroundViewStorage
       }
       set {
-        guard _backgroundView !== newValue else { return }
-        _backgroundView?.removeFromSuperview()
-        _backgroundView = newValue
+        guard backgroundViewStorage !== newValue else { return }
+        backgroundViewStorage?.removeFromSuperview()
+        backgroundViewStorage = newValue
 
         if let newValue {
-          if let contentView = _attributedTextContentView {
+          if let contentView = attributedTextContentView {
             insertSubview(newValue, belowSubview: contentView)
           } else {
             addSubview(newValue)
           }
-          _attributedTextContentView?.backgroundColor = .clear
-          _attributedTextContentView?.isOpaque = false
+          attributedTextContentView?.backgroundColor = .clear
+          attributedTextContentView?.isOpaque = false
         } else {
-          _attributedTextContentView?.backgroundColor = .white
-          _attributedTextContentView?.isOpaque = true
+          attributedTextContentView?.backgroundColor = .white
+          attributedTextContentView?.isOpaque = true
         }
       }
     }
@@ -348,8 +348,8 @@
             let contentFrame = CGRect(
               x: 0, y: 0,
               width: newValue.size.width - contentInset.left - contentInset.right,
-              height: _attributedTextContentView?.frame.size.height ?? 0)
-            _attributedTextContentView?.frame = contentFrame
+              height: attributedTextContentView?.frame.size.height ?? 0)
+            attributedTextContentView?.frame = contentFrame
           }
         }
       }

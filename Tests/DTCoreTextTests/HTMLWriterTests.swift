@@ -93,6 +93,18 @@ struct HTMLWriterTests {
 		#expect(colorRange.location != NSNotFound, "html should contain background-color:#ffff00")
 	}
 
+	@Test("Document and fragment caches stay separate")
+	func separateDocumentAndFragmentCaches() {
+		let writer = HTMLWriter(attributedString: NSAttributedString(string: "Hello"))
+
+		let document = writer.htmlString()
+		let fragment = writer.htmlFragment()
+
+		#expect(document.contains("<!DOCTYPE"))
+		#expect(!fragment.contains("<!DOCTYPE"))
+		#expect(document != fragment)
+	}
+
 	// MARK: - List Output
 
 	@Test("Simple list round trip")

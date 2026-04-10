@@ -19,11 +19,11 @@
   @objc(DTAttributedTextCell)
   public class AttributedTextCell: UITableViewCell {
 
-    private var _attributedTextContextView: AttributedTextContentView?
+    private var attributedTextContextView: AttributedTextContentView?
 
-    private weak var _textDelegate: DTAttributedTextContentViewDelegate?
+    private weak var textDelegate: DTAttributedTextContentViewDelegate?
 
-    private var _htmlHash: Int = 0
+    private var htmlHash: Int = 0
 
     /// Whether the cell uses a fixed row height.
     @objc public var hasFixedRowHeight: Bool = false {
@@ -34,7 +34,7 @@
       }
     }
 
-    private weak var _containingTableView: UITableView?
+    private weak var containingTableView: UITableView?
 
     // MARK: - Init
 
@@ -67,7 +67,7 @@
       if hasFixedRowHeight {
         attributedTextContextView.frame = insetBounds
       } else {
-        let neededHeight = requiredRowHeight(in: _containingTableView)
+        let neededHeight = requiredRowHeight(in: containingTableView)
         let frame = CGRect(
           x: insetBounds.origin.x, y: insetBounds.origin.y,
           width: insetBounds.size.width, height: neededHeight)
@@ -90,7 +90,7 @@
 
     public override func didMoveToSuperview() {
       super.didMoveToSuperview()
-      _containingTableView = findContainingTableView()
+      containingTableView = findContainingTableView()
     }
 
     // MARK: - Row Height
@@ -159,8 +159,8 @@
     public func setHTMLString(_ html: String, options: [String: Any]?) {
       let newHash = html.hashValue
 
-      guard newHash != _htmlHash else { return }
-      _htmlHash = newHash
+      guard newHash != htmlHash else { return }
+      htmlHash = newHash
 
       guard let data = html.data(using: .utf8) else { return }
       let string = NSAttributedString(
@@ -174,31 +174,31 @@
 
     /// The attributed string displayed by this cell.
     @objc public var attributedString: NSAttributedString? {
-      get { return _attributedTextContextView?.attributedString }
+      get { return attributedTextContextView?.attributedString }
       set { attributedTextContextView.attributedString = newValue }
     }
 
     /// The delegate that provides custom subviews for images and links.
     @objc public weak var textDelegate: DTAttributedTextContentViewDelegate? {
-      get { return _textDelegate }
+      get { return textDelegate }
       set {
-        _textDelegate = newValue
-        _attributedTextContextView?.delegate = newValue
+        textDelegate = newValue
+        attributedTextContextView?.delegate = newValue
       }
     }
 
     /// The attributed text content view used to display rich text.
     @objc public var attributedTextContextView: AttributedTextContentView {
-      if let existing = _attributedTextContextView {
+      if let existing = attributedTextContextView {
         return existing
       }
 
       let view = AttributedTextContentView(frame: contentView.bounds)
       view.edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
       view.layoutFrameHeightIsConstrainedByBounds = hasFixedRowHeight
-      view.delegate = _textDelegate
+      view.delegate = textDelegate
       contentView.addSubview(view)
-      _attributedTextContextView = view
+      attributedTextContextView = view
       return view
     }
   }
