@@ -625,6 +625,153 @@ open class CoreTextLayoutFrame: NSObject {
         return lineString.hasSuffix("\n")
     }
 
+    // MARK: - Text Block Helpers
+
+    /// Determines the frame to use for a text block with a given effective range
+    /// at a specific block nesting level.
+    private func _blockFrame(forEffectiveRange effectiveRange: NSRange, level: Int) -> CGRect {
+        guard let allLines = self.lines as? [CoreTextLayoutLine],
+              let screenFirstLine = allLines.first,
+              let screenLastLine = allLines.last else {
+            return .zero
+        }
+
+        // Bail out if the effective range is entirely off-screen
+        if NSMaxRange(screenLastLine.stringRange()) <= effectiveRange.location ||
+            screenFirstLine.stringRange().location >= NSMaxRange(effectiveRange) {
+            return .zero
+        }
+
+        // Find the first/last lines of this block
+        let firstBlockLine = self.lineContaining(index: UInt(effectiveRange.location))
+        let lastBlockLine = self.lineContaining(index: UInt(max(NSMaxRange(effectiveRange) - 1, effectiveRange.location)))
+
+        var blockFrame = CGRect.zero
+        blockFrame.origin = firstBlockLine?.frame.origin ?? _frame.origin
+        blockFrame.origin.x = _frame.origin.x
+        blockFrame.size.width = _frame.size.width
+
+        if let lastBlockLine {
+            blockFrame.size.height = lastBlockLine.frame.maxY - blockFrame.origin.y
+        } else {
+            blockFrame.size.height = _frame.maxY - blockFrame.origin.y
+        }
+
+        // Add top padding from nested blocks in the first line
+        if let textBlocks = firstBlockLine?.textBlocks as? [TextBlock] {
+            var i = textBlocks.count - 1
+            while i >= level {
+                let oneBlock = textBlocks[i]
+                blockFrame.origin.y -= oneBlock.padding.top
+                blockFrame.size.height += oneBlock.padding.top
+                i -= 1
+            }
+        }
+
+        // Add bottom padding from nested blocks in the last line
+        if let textBlocks = lastBlockLine?.textBlocks as? [TextBlock] {
+            var i = textBlocks.count - 1
+            while i >= level {
+                let oneBlock = textBlocks[i]
+                blockFrame.size.height += oneBlock.padding.bottom
+                i -= 1
+            }
+        }
+
+        // Shrink left/right by the outer blocks' horizontal padding
+        if let textBlocks = firstBlockLine?.textBlocks as? [TextBlock] {
+            for i in 0..<min(level, textBlocks.count) {
+                let outerBlock = textBlocks[i]
+                blockFrame.origin.x += outerBlock.padding.left
+                blockFrame.size.width -= (outerBlock.padding.left + outerBlock.padding.right)
+            }
+        }
+
+        return blockFrame.integral
+    }
+
+    /// Enumerates text blocks at a single nesting level within the given range.
+    /// - Returns: `true` if at least one block was found at this level.
+    private func _enumerateTextBlocks(
+        atLevel level: Int,
+        inRange range: NSRange,
+        using block: (TextBlock, CGRect, NSRange, inout Bool) -> Void
+    ) -> Bool {
+        guard let fragment = _attributedStringFragment else { return false }
+        let length = fragment.length
+        var index = range.location
+        var foundBlockAtLevel = false
+
+        while index < NSMaxRange(range) {
+            var textBlocksArrayRange = NSRange(location: 0, length: 0)
+            let textBlocks = fragment.attribute(
+                NSAttributedString.Key(rawValue: DTTextBlocksAttribute),
+                at: index,
+                longestEffectiveRange: &textBlocksArrayRange,
+                in: range
+            ) as? [TextBlock]
+
+            index += textBlocksArrayRange.length
+
+            guard let textBlocks, textBlocks.count > level else { continue }
+
+            foundBlockAtLevel = true
+
+            let blockAtLevelToHandle = textBlocks[level]
+            var searchIndex = NSMaxRange(textBlocksArrayRange)
+            var currentBlockEffectiveRange = textBlocksArrayRange
+
+            // Search forward for the end of this specific block
+            while searchIndex < length && searchIndex < NSMaxRange(range) {
+                var laterBlocksRange = NSRange(location: 0, length: 0)
+                let laterBlocks = fragment.attribute(
+                    NSAttributedString.Key(rawValue: DTTextBlocksAttribute),
+                    at: searchIndex,
+                    longestEffectiveRange: &laterBlocksRange,
+                    in: range
+                ) as? [TextBlock]
+
+                if laterBlocks?.contains(blockAtLevelToHandle) != true {
+                    break
+                }
+
+                currentBlockEffectiveRange = NSUnionRange(currentBlockEffectiveRange, laterBlocksRange)
+                searchIndex = NSMaxRange(laterBlocksRange)
+            }
+
+            index = searchIndex
+            let blockFrame = _blockFrame(forEffectiveRange: currentBlockEffectiveRange, level: level)
+
+            var shouldStop = false
+            block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop)
+            if shouldStop { return true }
+        }
+
+        return foundBlockAtLevel
+    }
+
+    /// Enumerates all text blocks (at all nesting levels) within the given range.
+    private func _enumerateTextBlocks(
+        inRange range: NSRange,
+        using block: (TextBlock, CGRect, NSRange, inout Bool) -> Void
+    ) {
+        var level = 0
+        while _enumerateTextBlocks(atLevel: level, inRange: range, using: block) {
+            level += 1
+        }
+    }
+
+    /// Draws the background / borders of visible text blocks into the context.
+    private func _drawTextBlocks(in context: CGContext, range: NSRange) {
+        let clipRect = context.boundingBoxOfClipPath
+
+        _enumerateTextBlocks(inRange: range) { textBlock, frame, _, _ in
+            let visiblePart = frame.intersection(clipRect)
+            if visiblePart.isNull { return }
+            _drawTextBlock(textBlock, in: context, frame: frame)
+        }
+    }
+
     // MARK: - Drawing
 
     private func _drawTextBlock(_ textBlock: TextBlock, in context: CGContext, frame blockFrame: CGRect) {
@@ -682,6 +829,17 @@ open class CoreTextLayoutFrame: NSObject {
 
         let visibleLines = linesVisible(in: rect)
         guard !visibleLines.isEmpty else { return }
+
+        // Draw the background / borders of any visible text blocks below the
+        // text. The block range only needs to span the visible lines.
+        if let fragment = _attributedStringFragment, fragment.length > 0 {
+            let firstLine = visibleLines.first!
+            let lastLine = visibleLines.last!
+            let blockRangeStart = firstLine.stringRange().location
+            let blockRangeEnd = NSMaxRange(lastLine.stringRange())
+            let blockRange = NSRange(location: blockRangeStart, length: blockRangeEnd - blockRangeStart)
+            _drawTextBlocks(in: context, range: blockRange)
+        }
 
         context.saveGState()
 
