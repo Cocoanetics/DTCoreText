@@ -12,28 +12,28 @@ import Foundation
 
 extension NSMutableString {
 
-	/// Removes trailing whitespace characters (space, tab, newlines, vertical tab, form feed, NEL) from the receiver.
-	@objc
-	public func removeTrailingWhitespace() {
-		let len = length
-		guard len > 0 else { return }
+  /// Removes trailing whitespace characters (space, tab, newlines, vertical tab, form feed, NEL) from the receiver.
+  @objc
+  public func removeTrailingWhitespace() {
+    let len = length
+    guard len > 0 else { return }
 
-		var index = len - 1
-		var whitespaceLength = 0
+    var index = len - 1
+    var whitespaceLength = 0
 
-		while index >= 0 {
-			let c = character(at: index)
-			if c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85 {
-				whitespaceLength += 1
-				if index == 0 { break }
-				index -= 1
-			} else {
-				break
-			}
-		}
+    while index >= 0 {
+      let c = character(at: index)
+      if c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85 {
+        whitespaceLength += 1
+        if index == 0 { break }
+        index -= 1
+      } else {
+        break
+      }
+    }
 
-		if whitespaceLength > 0 {
-			deleteCharacters(in: NSRange(location: len - whitespaceLength, length: whitespaceLength))
-		}
-	}
+    if whitespaceLength > 0 {
+      deleteCharacters(in: NSRange(location: len - whitespaceLength, length: whitespaceLength))
+    }
+  }
 }
