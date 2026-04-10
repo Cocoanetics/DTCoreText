@@ -32,7 +32,16 @@ nonisolated(unsafe) private var _shouldDrawDebugFrames = false
 open class CoreTextLayoutFrame: NSObject {
 
     /// The frame rectangle for the layout frame.
-    @objc open private(set) var frame: CGRect = .zero
+    /// Accessing this triggers line building if needed, then adjusts height/width for unknown dimensions.
+    @objc open var frame: CGRect {
+        get {
+            if _lines == nil { _buildLines() }
+            _updateFrameSize()
+            return _frame
+        }
+        set { _frame = newValue }
+    }
+    private var _frame: CGRect = .zero
 
     private var _lines: [CoreTextLayoutLine]?
     private var _paragraphRanges: [NSValue]?
@@ -59,7 +68,7 @@ open class CoreTextLayoutFrame: NSObject {
         didSet {
             if numberOfLines != oldValue {
                 _lines = nil
-                frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
+                _frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
             }
         }
     }
@@ -69,7 +78,7 @@ open class CoreTextLayoutFrame: NSObject {
         didSet {
             if lineBreakMode != oldValue {
                 _lines = nil
-                frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
+                _frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
             }
         }
     }
@@ -80,7 +89,7 @@ open class CoreTextLayoutFrame: NSObject {
             if truncationString != oldValue {
                 if numberOfLines > 0 {
                     _lines = nil
-                    frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
+                    _frame.size.height = CGFLOAT_HEIGHT_UNKNOWN
                 }
             }
         }
@@ -97,7 +106,7 @@ open class CoreTextLayoutFrame: NSObject {
     @objc public init?(frame: CGRect, layouter: CoreTextLayouter, range: NSRange) {
         super.init()
 
-        self.frame = frame
+        self._frame = frame
         _attributedStringFragment = layouter.attributedString?.mutableCopy() as? NSAttributedString
 
         guard let fragment = _attributedStringFragment else { return nil }
@@ -249,7 +258,7 @@ open class CoreTextLayoutFrame: NSObject {
                 }
             }
         } else {
-            baselineOrigin = frame.origin
+            baselineOrigin = _frame.origin
         }
 
         baselineOrigin.y += line.ascent
@@ -320,7 +329,7 @@ open class CoreTextLayoutFrame: NSObject {
         var currentParagraphRange = paragraphRanges[0].rangeValue
 
         var lineRange = _requestedStringRange
-        let maxY = frame.maxY
+        let maxY = _frame.maxY
         let maxIndex = NSMaxRange(_requestedStringRange)
         var fittingLength = 0
         var shouldTruncateLine = false
@@ -360,7 +369,7 @@ open class CoreTextLayoutFrame: NSObject {
 
             var availableSpace: CGFloat
             if tailIndent <= 0 {
-                availableSpace = frame.size.width - headIndent - totalRightPadding + tailIndent - totalLeftPadding
+                availableSpace = _frame.size.width - headIndent - totalRightPadding + tailIndent - totalLeftPadding
             } else {
                 availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding
             }
@@ -462,33 +471,33 @@ open class CoreTextLayoutFrame: NSObject {
 
             switch textAlignment {
             case .left:
-                lineOriginX = frame.origin.x + offset
+                lineOriginX = _frame.origin.x + offset
             case .natural:
-                lineOriginX = frame.origin.x + offset
+                lineOriginX = _frame.origin.x + offset
                 if baseWritingDirection == .rightToLeft {
-                    lineOriginX = frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
+                    lineOriginX = _frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
                 }
             case .right:
-                lineOriginX = frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
+                lineOriginX = _frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
             case .center:
-                lineOriginX = frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 0.5, Double(availableSpace)))
+                lineOriginX = _frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 0.5, Double(availableSpace)))
             case .justified:
                 let isAtEndOfParagraph = (currentParagraphRange.location + currentParagraphRange.length <= lineRange.location + lineRange.length ||
                     (fragment.string as NSString).character(at: lineRange.location + lineRange.length - 1) == 0x2028)
 
-                if !isAtEndOfParagraph && currentLineWidth > justifyRatio * frame.size.width {
+                if !isAtEndOfParagraph && currentLineWidth > justifyRatio * _frame.size.width {
                     if let justifiedLine = CTLineCreateJustifiedLine(ctLine, 1.0, Double(availableSpace)) {
                         ctLine = justifiedLine
                     }
                 }
 
                 if isRTL {
-                    lineOriginX = frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
+                    lineOriginX = _frame.origin.x + offset + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
                 } else {
-                    lineOriginX = frame.origin.x + offset
+                    lineOriginX = _frame.origin.x + offset
                 }
             @unknown default:
-                lineOriginX = frame.origin.x + offset
+                lineOriginX = _frame.origin.x + offset
             }
 
             guard let newLine = CoreTextLayoutLine(line: ctLine, stringLocationOffset: isHyphenatedString ? lineRange.location : 0) else {
@@ -532,7 +541,7 @@ open class CoreTextLayoutFrame: NSObject {
         _stringRange.location = _requestedStringRange.location
         _stringRange.length = fittingLength
 
-        if frame.size.height == CGFLOAT_HEIGHT_UNKNOWN, let lastLine = _lines?.last {
+        if _frame.size.height == CGFLOAT_HEIGHT_UNKNOWN, let lastLine = _lines?.last {
             var totalPadding: CGFloat = 0
             if let blocks = lastLine.textBlocks as? [TextBlock] {
                 for block in blocks { totalPadding += block.padding.bottom }
@@ -542,7 +551,7 @@ open class CoreTextLayoutFrame: NSObject {
     }
 
     private func _buildLines() {
-        guard frame.size.width > 0 else { return }
+        guard _frame.size.width > 0 else { return }
         _buildLinesWithTypesetter()
     }
 
@@ -908,26 +917,22 @@ open class CoreTextLayoutFrame: NSObject {
 // Extension to compute the frame property correctly
 extension CoreTextLayoutFrame {
 
-    // Override the frame getter to compute properly
-    @objc func computedFrame() -> CGRect {
-        if _lines == nil { _buildLines() }
-        guard let lines = _lines, !lines.isEmpty else { return .zero }
+    private func _updateFrameSize() {
+        guard let lines = _lines, !lines.isEmpty else { return }
 
-        if frame.size.height == CGFLOAT_HEIGHT_UNKNOWN {
+        if _frame.size.height == CGFLOAT_HEIGHT_UNKNOWN {
             if let lastLine = lines.last {
-                frame.size.height = ceil(lastLine.frame.maxY - frame.origin.y + 1.5 + _additionalPaddingAtBottom)
+                _frame.size.height = ceil(lastLine.frame.maxY - _frame.origin.y + 1.5 + _additionalPaddingAtBottom)
             }
         }
 
-        if frame.size.width == CGFLOAT_WIDTH_UNKNOWN {
+        if _frame.size.width == CGFLOAT_WIDTH_UNKNOWN {
             var maxWidth: CGFloat = 0
             for oneLine in lines {
-                let lineWidthFromFrameOrigin = oneLine.frame.maxX - frame.origin.x
+                let lineWidthFromFrameOrigin = oneLine.frame.maxX - _frame.origin.x
                 maxWidth = max(maxWidth, lineWidthFromFrameOrigin)
             }
-            frame.size.width = ceil(maxWidth)
+            _frame.size.width = ceil(maxWidth)
         }
-
-        return frame
     }
 }
