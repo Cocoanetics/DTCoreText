@@ -69,12 +69,10 @@ struct DictionaryDTCoreTextTests {
 	}
 
 	@Test("Paragraph style from HTML")
-	func paragraphStyle() {
+	func paragraphStyle() throws {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<p>Paragraph</p>")!
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let paragraphStyle = attributes.dtct_paragraphStyle()
-		#expect(paragraphStyle != nil)
-		#expect(paragraphStyle is CoreTextParagraphStyle)
+		_ = try #require(attributes.dtct_paragraphStyle())
 	}
 
 	@Test("Nil paragraph style")
@@ -85,14 +83,12 @@ struct DictionaryDTCoreTextTests {
 	}
 
 	@Test("NS paragraph style")
-	func nsParagraphStyle() {
+	func nsParagraphStyle() throws {
 		let nsParagraphStyle = NSMutableParagraphStyle()
 		let buildAttributes: [NSAttributedString.Key: Any] = [.paragraphStyle: nsParagraphStyle]
 		let attributedString = NSAttributedString(string: "string", attributes: buildAttributes)
 		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
-		let paragraphStyle = attributes.dtct_paragraphStyle()
-		#expect(paragraphStyle != nil)
-		#expect(paragraphStyle is CoreTextParagraphStyle)
+		_ = try #require(attributes.dtct_paragraphStyle())
 	}
 
 	@Test("Font descriptor from HTML")

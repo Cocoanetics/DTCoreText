@@ -89,7 +89,9 @@ struct CSSStylesheetTests {
 	@Test("Multiple font families do not crash")
 	func multipleFontFamiliesCrash() {
 		let stylesheet = CSSStylesheet(styleBlock: "p {font-family:Helvetica,sans-serif;}")
-		#expect(stylesheet != nil)
+		let styles = stylesForSelector("p", in: stylesheet)
+		let expected: [String] = ["Helvetica", "sans-serif"]
+		#expect(styles?["font-family"] as? [String] == expected)
 	}
 
 	@Test("Multiple font families parsed correctly")
