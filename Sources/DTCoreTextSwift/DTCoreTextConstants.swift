@@ -88,41 +88,41 @@ public let DTCoreTextFontDescriptorException: String = "DTCoreTextFontDescriptor
 // MARK: - Enums
 
 @objc public enum DTHTMLElementDisplayStyle: UInt {
-    /// The element is inline text
-    case inline = 0
-    /// The element is not displayed
-    case none
-    /// The element is a block
-    case block
-    /// The element is an item in a list
-    case listItem
-    /// The element is a table
-    case table
+  /// The element is inline text
+  case inline = 0
+  /// The element is not displayed
+  case none
+  /// The element is a block
+  case block
+  /// The element is an item in a list
+  case listItem
+  /// The element is a table
+  case table
 }
 
 @objc public enum DTHTMLElementFloatStyle: UInt {
-    /// The element does not float
-    case none = 0
-    /// The element should float left-aligned
-    case left
-    /// The element should float right-aligned
-    case right
+  /// The element does not float
+  case none = 0
+  /// The element should float left-aligned
+  case left
+  /// The element should float right-aligned
+  case right
 }
 
 @objc public enum DTHTMLElementFontVariant: UInt {
-    /// The element inherits the font variant
-    case inherit = 0
-    /// The element uses the normal font variant
-    case normal
-    /// The element should display in small caps
-    case smallCaps
+  /// The element inherits the font variant
+  case inherit = 0
+  /// The element uses the normal font variant
+  case normal
+  /// The element should display in small caps
+  case smallCaps
 }
 
 @objc public enum DTCoreTextLayoutFrameLinePositioningOptions: UInt {
-    /// The line positioning algorithm is similar to how Safari positions lines
-    case algorithmWebKit = 1
-    /// The line positioning algorithm is how it was before the implementation of algorithmWebKit
-    case algorithmLegacy = 2
+  /// The line positioning algorithm is similar to how Safari positions lines
+  case algorithmWebKit = 1
+  /// The line positioning algorithm is how it was before the implementation of algorithmWebKit
+  case algorithmLegacy = 2
 }
 
 // MARK: - Layouting Constants
@@ -134,5 +134,5 @@ public let CGFLOAT_HEIGHT_UNKNOWN: CGFloat = 16777215.0
 
 /// Checks if a character is whitespace (space, tab, or line ending)
 public func IS_WHITESPACE(_ c: unichar) -> Bool {
-    return c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85
+  return c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85
 }

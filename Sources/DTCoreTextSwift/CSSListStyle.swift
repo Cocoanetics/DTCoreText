@@ -13,335 +13,337 @@ import Foundation
 /// The type of list marker for CSS lists.
 @objc(DTCSSListStyleType)
 public enum DTCSSListStyleType: UInt {
-    case invalid = 0
-    case inherit
-    case none
-    case circle
-    case square
-    case decimal
-    case decimalLeadingZero
-    case disc
-    case upperAlpha
-    case upperLatin
-    case lowerAlpha
-    case lowerLatin
-    case lowerRoman
-    case upperRoman
-    case plus
-    case underscore
-    case image
+  case invalid = 0
+  case inherit
+  case none
+  case circle
+  case square
+  case decimal
+  case decimalLeadingZero
+  case disc
+  case upperAlpha
+  case upperLatin
+  case lowerAlpha
+  case lowerLatin
+  case lowerRoman
+  case upperRoman
+  case plus
+  case underscore
+  case image
 }
 
 /// The position of the list marker.
 @objc(DTCSSListStylePosition)
 public enum DTCSSListStylePosition: UInt {
-    case invalid = 0
-    case inherit
-    case inside
-    case outside
+  case invalid = 0
+  case inherit
+  case inside
+  case outside
 }
 
 /// This class is the equivalent of `NSTextList` on Mac with the added handling of the marker position.
 @objc(DTCSSListStyle)
 public class CSSListStyle: NSObject, NSCoding, NSCopying {
 
-    /// If the list style is inherited.
-    @objc public var inherit: Bool = false
+  /// If the list style is inherited.
+  @objc public var inherit: Bool = false
 
-    /// The type of the text list.
-    @objc public var type: DTCSSListStyleType = .inherit
+  /// The type of the text list.
+  @objc public var type: DTCSSListStyleType = .inherit
 
-    /// The position of the marker in the prefix.
-    @objc public var position: DTCSSListStylePosition = .inherit
+  /// The position of the marker in the prefix.
+  @objc public var position: DTCSSListStylePosition = .inherit
 
-    /// The image name to use for the marker.
-    @objc public var imageName: String?
+  /// The image name to use for the marker.
+  @objc public var imageName: String?
 
-    /// The starting item number for the text list.
-    @objc public var startingItemNumber: Int = 1
+  /// The starting item number for the text list.
+  @objc public var startingItemNumber: Int = 1
 
-    // MARK: - Initialization
+  // MARK: - Initialization
 
-    @objc public override init() {
-        super.init()
+  @objc public override init() {
+    super.init()
+  }
+
+  /// Creates a list style from the passed CSS style dictionary.
+  @objc public init(styles: [String: Any]) {
+    super.init()
+
+    // defaults
+    position = .outside
+    startingItemNumber = 1
+
+    updateFromStyleDictionary(styles)
+  }
+
+  // MARK: - NSCoding
+
+  @objc public required init?(coder aDecoder: NSCoder) {
+    super.init()
+    inherit = aDecoder.decodeBool(forKey: "inherit")
+    type = DTCSSListStyleType(rawValue: UInt(aDecoder.decodeInteger(forKey: "type"))) ?? .inherit
+    position =
+      DTCSSListStylePosition(rawValue: UInt(aDecoder.decodeInteger(forKey: "position"))) ?? .inherit
+    imageName = aDecoder.decodeObject(forKey: "imageName") as? String
+    startingItemNumber = aDecoder.decodeInteger(forKey: "startingItemNumber")
+  }
+
+  @objc public func encode(with aCoder: NSCoder) {
+    aCoder.encode(inherit, forKey: "inherit")
+    aCoder.encode(Int(type.rawValue), forKey: "type")
+    aCoder.encode(Int(position.rawValue), forKey: "position")
+    aCoder.encode(imageName, forKey: "imageName")
+    aCoder.encode(startingItemNumber, forKey: "startingItemNumber")
+  }
+
+  // MARK: - Type/Position from String
+
+  /// Convert a string into a list style type.
+  @objc public class func listStyleType(from string: String?) -> DTCSSListStyleType {
+    guard let string = string?.lowercased() else {
+      return .invalid
     }
 
-    /// Creates a list style from the passed CSS style dictionary.
-    @objc public init(styles: [String: Any]) {
-        super.init()
+    switch string {
+    case "inherit": return .inherit
+    case "none": return .none
+    case "circle": return .circle
+    case "square": return .square
+    case "decimal": return .decimal
+    case "decimal-leading-zero": return .decimalLeadingZero
+    case "disc": return .disc
+    case "upper-alpha", "upper-latin": return .upperAlpha
+    case "lower-alpha", "lower-latin": return .lowerAlpha
+    case "lower-roman": return .lowerRoman
+    case "upper-roman": return .upperRoman
+    case "plus": return .plus
+    case "underscore": return .underscore
+    default: return .none
+    }
+  }
 
-        // defaults
-        position = .outside
-        startingItemNumber = 1
-
-        updateFromStyleDictionary(styles)
+  /// Convert a string into a marker position.
+  @objc public class func listStylePosition(from string: String?) -> DTCSSListStylePosition {
+    guard let string = string?.lowercased() else {
+      return .invalid
     }
 
-    // MARK: - NSCoding
-
-    @objc public required init?(coder aDecoder: NSCoder) {
-        super.init()
-        inherit = aDecoder.decodeBool(forKey: "inherit")
-        type = DTCSSListStyleType(rawValue: UInt(aDecoder.decodeInteger(forKey: "type"))) ?? .inherit
-        position = DTCSSListStylePosition(rawValue: UInt(aDecoder.decodeInteger(forKey: "position"))) ?? .inherit
-        imageName = aDecoder.decodeObject(forKey: "imageName") as? String
-        startingItemNumber = aDecoder.decodeInteger(forKey: "startingItemNumber")
+    switch string {
+    case "inherit": return .inherit
+    case "inside": return .inside
+    case "outside": return .outside
+    default: return .inherit
     }
+  }
 
-    @objc public func encode(with aCoder: NSCoder) {
-        aCoder.encode(inherit, forKey: "inherit")
-        aCoder.encode(Int(type.rawValue), forKey: "type")
-        aCoder.encode(Int(position.rawValue), forKey: "position")
-        aCoder.encode(imageName, forKey: "imageName")
-        aCoder.encode(startingItemNumber, forKey: "startingItemNumber")
+  // MARK: - Private Helpers
+
+  private func setType(with string: String?) -> Bool {
+    let type = CSSListStyle.listStyleType(from: string)
+    if type == .invalid {
+      return false
     }
+    self.type = type
+    return true
+  }
 
-    // MARK: - Type/Position from String
+  private func setPosition(with string: String?) -> Bool {
+    let position = CSSListStyle.listStylePosition(from: string)
+    if position == .invalid {
+      return false
+    }
+    self.position = position
+    return true
+  }
 
-    /// Convert a string into a list style type.
-    @objc public class func listStyleType(from string: String?) -> DTCSSListStyleType {
-        guard let string = string?.lowercased() else {
-            return .invalid
+  // MARK: - Update from Style Dictionary
+
+  /// Update the receiver from the CSS styles dictionary passed.
+  @objc public func updateFromStyleDictionary(_ styles: [String: Any]) {
+    if let shortHand = (styles["list-style"] as? String)?.lowercased() {
+      if shortHand == "inherit" {
+        inherit = true
+        return
+      }
+
+      let components = shortHand.components(separatedBy: .whitespaces)
+
+      var typeWasSet = false
+      var positionWasSet = false
+
+      for oneComponent in components {
+        if oneComponent.hasPrefix("url") {
+          let scanner = Scanner(string: oneComponent)
+          var urlString: NSString?
+          if scanner.scanCSSURL(&urlString) {
+            imageName = urlString as String?
+            continue
+          }
         }
 
-        switch string {
-        case "inherit": return .inherit
-        case "none": return .none
-        case "circle": return .circle
-        case "square": return .square
-        case "decimal": return .decimal
-        case "decimal-leading-zero": return .decimalLeadingZero
-        case "disc": return .disc
-        case "upper-alpha", "upper-latin": return .upperAlpha
-        case "lower-alpha", "lower-latin": return .lowerAlpha
-        case "lower-roman": return .lowerRoman
-        case "upper-roman": return .upperRoman
-        case "plus": return .plus
-        case "underscore": return .underscore
-        default: return .none
+        if !typeWasSet && setType(with: oneComponent) {
+          typeWasSet = true
+          continue
         }
+
+        if !positionWasSet && setPosition(with: oneComponent) {
+          positionWasSet = true
+          continue
+        }
+      }
+
+      return
     }
 
-    /// Convert a string into a marker position.
-    @objc public class func listStylePosition(from string: String?) -> DTCSSListStylePosition {
-        guard let string = string?.lowercased() else {
-            return .invalid
-        }
+    // not a short hand, set from individual types
+    _ = setType(with: styles["list-style-type"] as? String)
+    _ = setPosition(with: styles["list-style-position"] as? String)
 
-        switch string {
-        case "inherit": return .inherit
-        case "inside": return .inside
-        case "outside": return .outside
-        default: return .inherit
-        }
+    if let tmpValue = styles["list-style-image"] as? String {
+      let scanner = Scanner(string: tmpValue)
+      var urlString: NSString?
+      if scanner.scanCSSURL(&urlString) {
+        imageName = urlString as String?
+      }
+    }
+  }
+
+  // MARK: - Description
+
+  public override var description: String {
+    return
+      "<\(Swift.type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()) type=\(type.rawValue) position=\(position.rawValue)>"
+  }
+
+  // MARK: - Hashing
+
+  public override var hash: Int {
+    var calcHash = 7
+    calcHash = calcHash &* 31 &+ (imageName?.hash ?? 0)
+    calcHash = calcHash &* 31 &+ Int(type.rawValue)
+    calcHash = calcHash &* 31 &+ Int(position.rawValue)
+    calcHash = calcHash &* 31 &+ startingItemNumber
+    calcHash = calcHash &* 31 &+ (inherit ? 1 : 0)
+    return calcHash
+  }
+
+  // MARK: - Comparing
+
+  public override func isEqual(_ object: Any?) -> Bool {
+    guard let other = object as? CSSListStyle else { return false }
+    return isEqualToListStyle(other)
+  }
+
+  /// Determine if another list style has equivalent settings.
+  @objc(isEqualToListStyle:)
+  public func isEqualToListStyle(_ otherListStyle: CSSListStyle?) -> Bool {
+    guard let otherListStyle = otherListStyle else {
+      return false
     }
 
-    // MARK: - Private Helpers
-
-    private func setType(with string: String?) -> Bool {
-        let type = CSSListStyle.listStyleType(from: string)
-        if type == .invalid {
-            return false
-        }
-        self.type = type
-        return true
+    if otherListStyle === self {
+      return true
     }
 
-    private func setPosition(with string: String?) -> Bool {
-        let position = CSSListStyle.listStylePosition(from: string)
-        if position == .invalid {
-            return false
-        }
-        self.position = position
-        return true
+    if inherit != otherListStyle.inherit { return false }
+    if type != otherListStyle.type { return false }
+    if position != otherListStyle.position { return false }
+    if startingItemNumber != otherListStyle.startingItemNumber { return false }
+
+    if imageName == otherListStyle.imageName { return true }
+    return imageName == otherListStyle.imageName
+  }
+
+  // MARK: - NSCopying
+
+  @objc public func copy(with zone: NSZone? = nil) -> Any {
+    let newStyle = CSSListStyle()
+    newStyle.type = type
+    newStyle.position = position
+    newStyle.imageName = imageName
+    newStyle.startingItemNumber = startingItemNumber
+    return newStyle
+  }
+
+  // MARK: - Prefix
+
+  /// Returns the prefix for lists of the receiver's settings.
+  @objc public func prefix(withCounter counter: Int) -> String? {
+    var token: String?
+
+    var listStyleType = type
+
+    if imageName != nil {
+      listStyleType = .image
     }
 
-    // MARK: - Update from Style Dictionary
+    switch listStyleType {
+    case .none, .inherit, .invalid:
+      return nil
 
-    /// Update the receiver from the CSS styles dictionary passed.
-    @objc public func updateFromStyleDictionary(_ styles: [String: Any]) {
-        if let shortHand = (styles["list-style"] as? String)?.lowercased() {
-            if shortHand == "inherit" {
-                inherit = true
-                return
-            }
+    case .image:
+      token = "\u{fffc}"  // UNICODE_OBJECT_PLACEHOLDER
 
-            let components = shortHand.components(separatedBy: .whitespaces)
+    case .circle:
+      token = "\u{25e6}"
 
-            var typeWasSet = false
-            var positionWasSet = false
+    case .square:
+      token = "\u{25aa}"
 
-            for oneComponent in components {
-                if oneComponent.hasPrefix("url") {
-                    let scanner = Scanner(string: oneComponent)
-                    var urlString: NSString?
-                    if scanner.scanCSSURL(&urlString) {
-                        imageName = urlString as String?
-                        continue
-                    }
-                }
+    case .decimal:
+      token = "\(counter)."
 
-                if !typeWasSet && setType(with: oneComponent) {
-                    typeWasSet = true
-                    continue
-                }
+    case .decimalLeadingZero:
+      token = String(format: "%02d.", counter)
 
-                if !positionWasSet && setPosition(with: oneComponent) {
-                    positionWasSet = true
-                    continue
-                }
-            }
+    case .disc:
+      token = "\u{2022}"
 
-            return
-        }
+    case .upperAlpha, .upperLatin:
+      let letter = Character(UnicodeScalar(UInt8(65 + counter - 1)))  // 'A' + counter - 1
+      token = "\(letter)."
 
-        // not a short hand, set from individual types
-        _ = setType(with: styles["list-style-type"] as? String)
-        _ = setPosition(with: styles["list-style-position"] as? String)
+    case .lowerAlpha, .lowerLatin:
+      let letter = Character(UnicodeScalar(UInt8(97 + counter - 1)))  // 'a' + counter - 1
+      token = "\(letter)."
 
-        if let tmpValue = styles["list-style-image"] as? String {
-            let scanner = Scanner(string: tmpValue)
-            var urlString: NSString?
-            if scanner.scanCSSURL(&urlString) {
-                imageName = urlString as String?
-            }
-        }
+    case .plus:
+      token = "+"
+
+    case .underscore:
+      token = "_"
+
+    case .upperRoman:
+      token = "\(NSNumber(value: counter).romanNumeral())."
+
+    case .lowerRoman:
+      token = "\(NSNumber(value: counter).romanNumeral().lowercased())."
+
+    @unknown default:
+      return nil
     }
 
-    // MARK: - Description
+    guard let token = token else { return nil }
 
-    public override var description: String {
-        return "<\(Swift.type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()) type=\(type.rawValue) position=\(position.rawValue)>"
+    if position == .inside {
+      #if os(iOS)
+        return "\t\t\(token)"
+      #else
+        return "\t\(token)\t"
+      #endif
+    } else {
+      return "\t\(token)\t"
     }
+  }
 
-    // MARK: - Hashing
-
-    public override var hash: Int {
-        var calcHash = 7
-        calcHash = calcHash &* 31 &+ (imageName?.hash ?? 0)
-        calcHash = calcHash &* 31 &+ Int(type.rawValue)
-        calcHash = calcHash &* 31 &+ Int(position.rawValue)
-        calcHash = calcHash &* 31 &+ startingItemNumber
-        calcHash = calcHash &* 31 &+ (inherit ? 1 : 0)
-        return calcHash
+  /// Returns if the receiver is an ordered or unordered list.
+  @objc public func isOrdered() -> Bool {
+    switch type {
+    case .decimal, .decimalLeadingZero, .upperAlpha, .upperLatin, .lowerAlpha, .lowerLatin:
+      return true
+    default:
+      return false
     }
-
-    // MARK: - Comparing
-
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? CSSListStyle else { return false }
-        return isEqualToListStyle(other)
-    }
-
-    /// Determine if another list style has equivalent settings.
-    @objc(isEqualToListStyle:)
-    public func isEqualToListStyle(_ otherListStyle: CSSListStyle?) -> Bool {
-        guard let otherListStyle = otherListStyle else {
-            return false
-        }
-
-        if otherListStyle === self {
-            return true
-        }
-
-        if inherit != otherListStyle.inherit { return false }
-        if type != otherListStyle.type { return false }
-        if position != otherListStyle.position { return false }
-        if startingItemNumber != otherListStyle.startingItemNumber { return false }
-
-        if imageName == otherListStyle.imageName { return true }
-        return imageName == otherListStyle.imageName
-    }
-
-    // MARK: - NSCopying
-
-    @objc public func copy(with zone: NSZone? = nil) -> Any {
-        let newStyle = CSSListStyle()
-        newStyle.type = type
-        newStyle.position = position
-        newStyle.imageName = imageName
-        newStyle.startingItemNumber = startingItemNumber
-        return newStyle
-    }
-
-    // MARK: - Prefix
-
-    /// Returns the prefix for lists of the receiver's settings.
-    @objc public func prefix(withCounter counter: Int) -> String? {
-        var token: String?
-
-        var listStyleType = type
-
-        if imageName != nil {
-            listStyleType = .image
-        }
-
-        switch listStyleType {
-        case .none, .inherit, .invalid:
-            return nil
-
-        case .image:
-            token = "\u{fffc}" // UNICODE_OBJECT_PLACEHOLDER
-
-        case .circle:
-            token = "\u{25e6}"
-
-        case .square:
-            token = "\u{25aa}"
-
-        case .decimal:
-            token = "\(counter)."
-
-        case .decimalLeadingZero:
-            token = String(format: "%02d.", counter)
-
-        case .disc:
-            token = "\u{2022}"
-
-        case .upperAlpha, .upperLatin:
-            let letter = Character(UnicodeScalar(UInt8(65 + counter - 1)))  // 'A' + counter - 1
-            token = "\(letter)."
-
-        case .lowerAlpha, .lowerLatin:
-            let letter = Character(UnicodeScalar(UInt8(97 + counter - 1)))  // 'a' + counter - 1
-            token = "\(letter)."
-
-        case .plus:
-            token = "+"
-
-        case .underscore:
-            token = "_"
-
-        case .upperRoman:
-            token = "\(NSNumber(value: counter).romanNumeral())."
-
-        case .lowerRoman:
-            token = "\(NSNumber(value: counter).romanNumeral().lowercased())."
-
-        @unknown default:
-            return nil
-        }
-
-        guard let token = token else { return nil }
-
-        if position == .inside {
-            #if os(iOS)
-            return "\t\t\(token)"
-            #else
-            return "\t\(token)\t"
-            #endif
-        } else {
-            return "\t\(token)\t"
-        }
-    }
-
-    /// Returns if the receiver is an ordered or unordered list.
-    @objc public func isOrdered() -> Bool {
-        switch type {
-        case .decimal, .decimalLeadingZero, .upperAlpha, .upperLatin, .lowerAlpha, .lowerLatin:
-            return true
-        default:
-            return false
-        }
-    }
+  }
 }

@@ -4,11 +4,12 @@ import Foundation
 @objc(DTBreakHTMLElement)
 open class BreakHTMLElement: HTMLElement {
 
-    @objc open override func attributedString() -> NSAttributedString? {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
+  @objc open override func attributedString() -> NSAttributedString? {
+    objc_sync_enter(self)
+    defer { objc_sync_exit(self) }
 
-        let attributes = attributesForAttributedStringRepresentation()
-        return NSAttributedString(string: UNICODE_LINE_FEED, attributes: attributes as? [NSAttributedString.Key: Any])
-    }
+    let attributes = attributesForAttributedStringRepresentation()
+    return NSAttributedString(
+      string: UNICODE_LINE_FEED, attributes: attributes as? [NSAttributedString.Key: Any])
+  }
 }
