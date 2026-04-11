@@ -489,14 +489,16 @@ open class CSSStylesheet: NSObject, NSCopying {
 
   // MARK: - Accessing Style Information
 
-  /// Returns a dictionary that contains the merged style for a given element.
-  @objc open func mergedStyleDictionary(
-    for element: HTMLElement, matchedSelectors: AutoreleasingUnsafeMutablePointer<NSSet?>?,
-    ignoreInlineStyle: Bool
-  ) -> NSDictionary? {
+  /// Computes the merged CSS style for a given element, together with the set of selectors
+  /// that contributed to the match.
+  ///
+  /// Pure-Swift surface. Returns `nil` for `styles` when no rules match (the `matched`
+  /// set will also be empty in that case).
+  public func mergedStyles(for element: HTMLElement, ignoreInlineStyle: Bool) -> (
+    styles: CSSStyleRule?, matched: Set<String>
+  ) {
     var merged: CSSStyleRule = [:]
     var matchedSelectorSet = Set<String>()
-    let trackMatched = matchedSelectors != nil
 
     // Get based on element tag name
     if let byTagName = stylesBySelector[element.name] {
@@ -504,7 +506,8 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     // Get based on class(es)
-    let classString = (element.attributes as? [String: Any])?["class"] as? String
+    let attrs = element.attributes as? [String: Any]
+    let classString = attrs?["class"] as? String
     let classes = classString?.components(separatedBy: " ") ?? []
 
     // Cascaded selectors with more than one part are sorted by specificity
@@ -523,7 +526,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     for sel in matchingCascading {
       if let byCascadingSelector = stylesBySelector[sel] {
         for (k, v) in byCascadingSelector { merged[k] = v }
-        if trackMatched { matchedSelectorSet.insert(sel) }
+        matchedSelectorSet.insert(sel)
       }
     }
 
@@ -532,47 +535,34 @@ open class CSSStylesheet: NSObject, NSCopying {
       let classRule = ".\(className)"
       if let byClass = stylesBySelector[classRule] {
         for (k, v) in byClass { merged[k] = v }
-        if trackMatched { matchedSelectorSet.insert(className) }
+        matchedSelectorSet.insert(className)
       }
 
       let classAndTagRule = "\(element.name).\(className)"
       if let byClassAndName = stylesBySelector[classAndTagRule] {
         for (k, v) in byClassAndName { merged[k] = v }
-        if trackMatched { matchedSelectorSet.insert(classAndTagRule) }
+        matchedSelectorSet.insert(classAndTagRule)
       }
     }
 
     // Get based on id
-    if let elementId = (element.attributes as? [String: Any])?["id"] as? String {
+    if let elementId = attrs?["id"] as? String {
       let idRule = "#\(elementId)"
       if let byID = stylesBySelector[idRule] {
         for (k, v) in byID { merged[k] = v }
-        if trackMatched { matchedSelectorSet.insert(idRule) }
+        matchedSelectorSet.insert(idRule)
       }
     }
 
     if !ignoreInlineStyle {
-      if let styleString = (element.attributes as? [String: Any])?["style"] as? String,
-        !styleString.isEmpty
-      {
+      if let styleString = attrs?["style"] as? String, !styleString.isEmpty {
         var localStyles: CSSStyleRule = styleString.dictionaryOfCSSStyles()
         uncompressShorthands(&localStyles)
         for (k, v) in localStyles { merged[k] = v }
       }
     }
 
-    if merged.isEmpty {
-      return nil
-    }
-
-    if trackMatched && !matchedSelectorSet.isEmpty {
-      matchedSelectors?.pointee = NSSet(array: Array(matchedSelectorSet))
-    }
-
-    // Bridge once at the boundary for the existing `@objc` consumer surface. The returned
-    // NSDictionary is freshly built from a local Swift dict, so it's not shared across
-    // threads.
-    return merged as NSDictionary
+    return (merged.isEmpty ? nil : merged, matchedSelectorSet)
   }
 
   /// Returns a dictionary of the styles of the receiver.

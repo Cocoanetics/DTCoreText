@@ -41,10 +41,7 @@ extension NSAttributedString {
   ) {
     guard !data.isEmpty else { return nil }
 
-    guard
-      let builder = HTMLAttributedStringBuilder(
-        html: data, options: options, documentAttributes: documentAttributes)
-    else {
+    guard let builder = HTMLAttributedStringBuilder(html: data, options: options) else {
       return nil
     }
 

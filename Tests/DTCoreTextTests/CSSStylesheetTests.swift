@@ -62,9 +62,8 @@ struct CSSStylesheetTests {
 		element.fontDescriptor = CoreTextFontDescriptor()
 		element.textScale = 1.0
 
-		var matchedSelectors: NSSet?
-		let styles = stylesheet.mergedStyleDictionary(for: element, matchedSelectors: &matchedSelectors, ignoreInlineStyle: false)!
-		element.applyStyleDictionary(styles)
+		let (styles, _) = stylesheet.mergedStyles(for: element, ignoreInlineStyle: false)
+		element.applyStyles(styles!)
 
 		#expect(element.displayStyle == .block)
 		#expect(Float(element.fontDescriptor.pointSize) == 40.0)
@@ -107,19 +106,16 @@ struct CSSStylesheetTests {
 		let stylesheet = CSSStylesheet(styleBlock: "#foo {color:red;} #bar {color:blue;} .foo {color:yellow;}")
 
 		let attributes: [String: String] = ["id": "foo"]
-		let element = HTMLElement(name: "dummy", attributes: attributes as NSDictionary)
+		let element = HTMLElement.element(name: "dummy", attributes: attributes, options: nil)
 
-		var matchedSelectors: NSSet?
-		let styles = stylesheet.mergedStyleDictionary(for: element, matchedSelectors: &matchedSelectors, ignoreInlineStyle: false)!
+		let (styles, matchedSelectors) = stylesheet.mergedStyles(for: element, ignoreInlineStyle: false)
+		let unwrappedStyles = styles!
 
-		#expect(styles.count == 1)
-		#expect(matchedSelectors?.count == 1)
+		#expect(unwrappedStyles.count == 1)
+		#expect(matchedSelectors.count == 1)
+		#expect(matchedSelectors.first == "#foo")
 
-		if let selector = matchedSelectors?.anyObject() as? String {
-			#expect(selector == "#foo")
-		}
-
-		#expect(styles["color"] as? String == "red")
+		#expect(unwrappedStyles["color"] as? String == "red")
 	}
 
 	@Test("Compressed background with rgb color")

@@ -85,8 +85,8 @@ private actor BuilderState {
     self.shouldKeepDocumentNodeTree = shouldKeepDocumentNodeTree
 
     // Text scale
-    if let scaleValue = options[NSTextSizeMultiplierDocumentOption] as? NSNumber {
-      textScale = CGFloat(scaleValue.floatValue)
+    if let scaleValue = options[NSTextSizeMultiplierDocumentOption] as? Double {
+      textScale = CGFloat(scaleValue)
     }
     if textScale == 0 { textScale = 1.0 }
 
@@ -111,8 +111,8 @@ private actor BuilderState {
     } else {
       defaultFontDescriptor = CoreTextFontDescriptor()
 
-      if let sizeNum = options[DTDefaultFontSize] as? NSNumber {
-        defaultFontSize = CGFloat(sizeNum.floatValue)
+      if let sizeNum = options[DTDefaultFontSize] as? Double {
+        defaultFontSize = CGFloat(sizeNum)
       }
       defaultFontDescriptor.pointSize = defaultFontSize * textScale
       defaultFontDescriptor.fontFamily =
@@ -136,7 +136,7 @@ private actor BuilderState {
     }
 
     // Link decoration
-    if let dec = options[DTDefaultLinkDecoration] as? NSNumber, !dec.boolValue {
+    if let dec = options[DTDefaultLinkDecoration] as? Bool, !dec {
       globalStyleSheet.parseStyleBlock("a {text-decoration:none;}")
     }
 
@@ -156,17 +156,17 @@ private actor BuilderState {
     // Default paragraph style
     defaultParagraphStyle = CoreTextParagraphStyle.defaultParagraphStyle()
 
-    if let lh = options[DTDefaultLineHeightMultiplier] as? NSNumber {
-      defaultParagraphStyle.lineHeightMultiple = CGFloat(lh.floatValue)
+    if let lh = options[DTDefaultLineHeightMultiplier] as? Double {
+      defaultParagraphStyle.lineHeightMultiple = CGFloat(lh)
     }
-    if let align = options[DTDefaultTextAlignment] as? NSNumber {
-      defaultParagraphStyle.alignment = CTTextAlignment(rawValue: UInt8(align.intValue)) ?? .natural
+    if let align = options[DTDefaultTextAlignment] as? Int {
+      defaultParagraphStyle.alignment = CTTextAlignment(rawValue: UInt8(align)) ?? .natural
     }
-    if let fi = options[DTDefaultFirstLineHeadIndent] as? NSNumber {
-      defaultParagraphStyle.firstLineHeadIndent = CGFloat(fi.intValue)
+    if let fi = options[DTDefaultFirstLineHeadIndent] as? Int {
+      defaultParagraphStyle.firstLineHeadIndent = CGFloat(fi)
     }
-    if let hi = options[DTDefaultHeadIndent] as? NSNumber {
-      defaultParagraphStyle.headIndent = CGFloat(hi.intValue)
+    if let hi = options[DTDefaultHeadIndent] as? Int {
+      defaultParagraphStyle.headIndent = CGFloat(hi)
     }
 
     // Default tag element
@@ -185,11 +185,9 @@ private actor BuilderState {
       }
     }
 
-    shouldProcessCustomHTMLAttributes =
-      (options[DTProcessCustomHTMLAttributes] as? NSNumber)?.boolValue ?? false
-    ignoreInlineStyles = (options[DTIgnoreInlineStylesOption] as? NSNumber)?.boolValue ?? false
-    preserveDocumentTrailingSpaces =
-      (options[DTDocumentPreserveTrailingSpaces] as? NSNumber)?.boolValue ?? false
+    shouldProcessCustomHTMLAttributes = (options[DTProcessCustomHTMLAttributes] as? Bool) ?? false
+    ignoreInlineStyles = (options[DTIgnoreInlineStylesOption] as? Bool) ?? false
+    preserveDocumentTrailingSpaces = (options[DTDocumentPreserveTrailingSpaces] as? Bool) ?? false
   }
 
   // MARK: - Event Handling
@@ -226,16 +224,14 @@ private actor BuilderState {
   {
     guard !ignoreParseEvents else { return }
 
-    let newNode = HTMLElement.element(
-      withName: elementName, attributes: attributeDict as NSDictionary,
-      options: options as NSDictionary?)
+    let newNode = HTMLElement.element(name: elementName, attributes: attributeDict, options: options)
     var previousLastChild: HTMLElement?
 
     if let current = currentTag {
       newNode.inheritAttributes(from: current)
       newNode.interpretAttributes()
 
-      previousLastChild = current.childNodes?.lastObject as? HTMLElement
+      previousLastChild = current.lastChild as? HTMLElement
       current.addChildNode(newNode)
 
       if bodyElement == nil && newNode.name == "body" {
@@ -254,33 +250,28 @@ private actor BuilderState {
     }
 
     // Apply styles from merged stylesheet
-    var matchedSelectors: NSSet?
-    let mergedStyles = globalStyleSheet.mergedStyleDictionary(
-      for: newNode, matchedSelectors: &matchedSelectors, ignoreInlineStyle: ignoreInlineStyles)
+    let (mergedStyles, matchedSelectors) = globalStyleSheet.mergedStyles(
+      for: newNode, ignoreInlineStyle: ignoreInlineStyles)
 
-    if let mergedStyles = mergedStyles as NSDictionary? {
-      newNode.applyStyleDictionary(mergedStyles)
+    if let mergedStyles {
+      newNode.applyStyles(mergedStyles)
 
-      if let matchedSelectors {
-        var classNamesToIgnore = Set<String>()
-        for case let selector as String in matchedSelectors {
-          if let periodRange = selector.range(of: ".") {
-            classNamesToIgnore.insert(
-              String(selector[selector.index(after: periodRange.lowerBound)...]))
-          }
+      var classNamesToIgnore = Set<String>()
+      for selector in matchedSelectors {
+        if let periodRange = selector.range(of: ".") {
+          classNamesToIgnore.insert(
+            String(selector[selector.index(after: periodRange.lowerBound)...]))
         }
-        if !classNamesToIgnore.isEmpty {
-          newNode.setValue(
-            NSSet(array: classNamesToIgnore.map { $0 as NSString }),
-            forKey: "CSSClassNamesToIgnoreForCustomAttributes")
-        }
+      }
+      if !classNamesToIgnore.isEmpty {
+        newNode.setCSSClassNamesToIgnoreForCustomAttributes(classNamesToIgnore)
       }
     }
 
     // Block element eliminates previous trailing whitespace
     if let previousLastChild, newNode.displayStyle != DTHTMLElementDisplayStyle.inline,
       let textElement = previousLastChild as? TextHTMLElement,
-      (textElement.text() as NSString).isIgnorableWhitespace()
+      textElement.text().isIgnorableWhitespace
     {
       currentTag?.removeChildNode(textElement)
     }
@@ -350,15 +341,13 @@ private actor BuilderState {
 
     var link = URL(string: cleanString)
     if link == nil {
-      let encoded = (cleanString as NSString).stringByEncodingNonASCIICharacters()
-      link = URL(string: encoded)
+      link = URL(string: cleanString.encodingNonASCIICharacters())
     }
     if link?.scheme == nil {
       if !cleanString.isEmpty {
         link = URL(string: cleanString, relativeTo: baseURL)
         if link == nil {
-          let entityEncoded = (cleanString as NSString).stringByAddingHTMLEntities()
-          link = URL(string: entityEncoded, relativeTo: baseURL)
+          link = URL(string: cleanString.addingHTMLEntities(), relativeTo: baseURL)
         }
       } else {
         link = baseURL
@@ -432,7 +421,8 @@ private actor BuilderState {
       if let attachmentElement = tag as? TextAttachmentHTMLElement,
         let objectAttachment = attachmentElement.textAttachment as? ObjectTextAttachment
       {
-        objectAttachment.childNodes = tag.childNodes?.copy() as? NSArray
+        let snapshot = tag.children
+        objectAttachment.childNodes = snapshot.isEmpty ? nil : (snapshot as NSArray)
       }
 
     case "video":
@@ -440,11 +430,12 @@ private actor BuilderState {
         let videoAttachment = attachmentElement.textAttachment as? VideoTextAttachment,
         videoAttachment.contentURL == nil
       {
-        for child in (attachmentElement.childNodes as? [HTMLElement]) ?? [] {
-          if child.name == "source", let src = child.attributeForKey("src") {
-            videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
-            break
-          }
+        for child in attachmentElement.children {
+          guard let htmlChild = child as? HTMLElement, htmlChild.name == "source",
+            let src = htmlChild.attributeForKey("src")
+          else { continue }
+          videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
+          break
         }
       }
 
@@ -482,16 +473,16 @@ private actor BuilderState {
       return
     }
 
-    if !current.preserveNewlines && (string as NSString).isIgnorableWhitespace() {
-      if current.displayStyle != .inline && (current.childNodes?.count ?? 0) == 0 {
+    if !current.preserveNewlines && string.isIgnorableWhitespace {
+      if current.displayStyle != .inline && current.children.isEmpty {
         return
       }
-      if let previousTag = current.childNodes?.lastObject as? HTMLElement,
+      if let previousTag = current.lastChild as? HTMLElement,
         previousTag.displayStyle != .inline
       {
         return
       }
-      if current.childNodes?.lastObject is BreakHTMLElement {
+      if current.lastChild is BreakHTMLElement {
         return
       }
     }
@@ -595,10 +586,7 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
 
   /// Creates a builder from HTML data.
   @objc
-  public init?(
-    html data: Data, options: [String: Any]?,
-    documentAttributes: AutoreleasingUnsafeMutablePointer<NSDictionary?>?
-  ) {
+  public init?(html data: Data, options: [String: Any]?) {
     self.data = data
     self.options = options ?? [:]
 
