@@ -86,8 +86,9 @@
         return
       }
 
-      // The content lives inside the (possibly-enlarged) bounds, offset by our tracked
-      // hit-size insets — equivalent to the old `contentRect(forBounds:)` call.
+      // Highlight rect covers the original (pre-growth) content area — the visible link
+      // text. The image and the highlight live in `bounds.inset(by: hitSizeInsets)`,
+      // which is where the glyph sits inside the possibly-enlarged hit-test bounds.
       let imageRect = bounds.inset(by: hitSizeInsets)
       let roundedPath = UIBezierPath(roundedRect: imageRect, cornerRadius: 3.0)
       ctx.setFillColor(gray: 0.73, alpha: 0.4)
@@ -99,18 +100,23 @@
     public override func layoutSubviews() {
       super.layoutSubviews()
 
-      // `UIButton.contentEdgeInsets` is deprecated since iOS 15 and we're intentionally
-      // not using `UIButton.Configuration`, so we position `imageView` and `titleLabel`
-      // ourselves to compensate for the extra hit-test bounds we added in
-      // `adjustBoundsIfNecessary()`. Without this, `super.layoutSubviews()` lays them
-      // out in the top-left of the enlarged bounds.
+      // When `adjustBoundsIfNecessary()` grows the button's bounds for hit-testing, the
+      // button has a content image (set via `setImage(_:for:)`) that must stay at the
+      // glyph's original position and size — NOT stretched or re-centered by UIButton's
+      // default image layout. `contentEdgeInsets` used to do this for us pre-iOS 15.
+      //
+      // Explicitly place `imageView` (and `titleLabel`, for symmetry) into the original
+      // content rect: `bounds.inset(by: hitSizeInsets)`, which is exactly the glyph's
+      // pre-growth rectangle. Runs only when we've actually enlarged the bounds; with
+      // zero insets `super.layoutSubviews()` already does the right thing.
       guard hitSizeInsets != .zero else { return }
 
-      if let iv = imageView, !iv.isHidden {
-        iv.frame = iv.frame.offsetBy(dx: hitSizeInsets.left, dy: hitSizeInsets.top)
+      let contentRect = bounds.inset(by: hitSizeInsets)
+      if let iv = imageView, !iv.isHidden, iv.image != nil {
+        iv.frame = contentRect
       }
-      if let tl = titleLabel, !tl.isHidden {
-        tl.frame = tl.frame.offsetBy(dx: hitSizeInsets.left, dy: hitSizeInsets.top)
+      if let tl = titleLabel, !tl.isHidden, tl.text?.isEmpty == false {
+        tl.frame = contentRect
       }
     }
 
