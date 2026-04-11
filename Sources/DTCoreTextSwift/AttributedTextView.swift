@@ -199,8 +199,8 @@
       var previousLayerClass: AnyClass?
       if classToUse.isSubclass(of: AttributedTextContentView.self) {
         let layerClass: AnyClass = AttributedTextContentView.layerClass
-        if !(layerClass is CATiledLayer.Type) {
-          AttributedTextContentView.setLayerClass(CATiledLayer.self)
+        if layerClass != TiledLayerWithoutFade.self {
+          AttributedTextContentView.setLayerClass(TiledLayerWithoutFade.self)
           previousLayerClass = layerClass
         }
       }
