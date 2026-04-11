@@ -80,6 +80,11 @@ public let DTDocumentPreserveTrailingSpaces: String = "DTDocumentPreserveTrailin
 
 // MARK: - Attributed String Attribute Constants
 
+/// Legacy attribute key for the list-stack array. **Read-only / legacy.** New DTCoreText
+/// output stores the list array on `NSParagraphStyle.textLists` instead. This key is kept
+/// so that attributed strings persisted under the pre-migration scheme can still be read
+/// (see `NSMutableAttributedString.dtct_migrateLegacyListAttribute()`), but DTCoreText no
+/// longer writes it on emission.
 public let DTTextListsAttribute: String = "DTTextLists"
 public let DTAttachmentParagraphSpacingAttribute: String = "DTAttachmentParagraphSpacing"
 public let DTLinkAttribute: String = "NSLink"

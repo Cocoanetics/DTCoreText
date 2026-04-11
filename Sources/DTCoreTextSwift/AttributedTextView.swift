@@ -17,15 +17,11 @@
   @objc(DTAttributedTextView)
   open class AttributedTextView: UIScrollView {
 
-    // MARK: - Content View
-
-    /// Subclasses can access this ivar directly.
-    @objc public var attributedTextContentView: AttributedTextContentView?
-
     // MARK: - Private State
 
+    private var _attributedTextContentView: AttributedTextContentView?
     private var backgroundViewStorage: UIView?
-    private weak var textDelegate: (any DTAttributedTextContentViewDelegate)?
+    private weak var _textDelegate: (any DTAttributedTextContentViewDelegate)?
     private var attributedStringStorage: NSAttributedString?
     private var shouldDrawLinksStorage = true
     private var shouldDrawImagesStorage = true
@@ -78,7 +74,7 @@
       // iframe using `view.bounds.width - 20`) overflow the content
       // view's right edge by the second inset.
       attributedTextContentView.edgeInsets = .zero
-      attributedTextContentView?.layoutSubviews(in: bounds)
+      attributedTextContentView.layoutSubviews(in: bounds)
     }
 
     public override func safeAreaInsetsDidChange() {
@@ -121,8 +117,8 @@
     @objc public func relayoutText() {
       // We're already main-actor-isolated; the content view's layouter must be
       // reset on the main thread.
-      attributedTextContentView?.layouter = nil
-      attributedTextContentView?.relayoutText()
+      _attributedTextContentView?.layouter = nil
+      _attributedTextContentView?.relayoutText()
       setNeedsLayout()
     }
 
@@ -162,8 +158,8 @@
         // content down for the adjusted content inset.
         var frameToSet = optimalFrame
         frameToSet.origin = .zero
-        attributedTextContentView?.frame = frameToSet
-        contentSize = attributedTextContentView?.intrinsicContentSize ?? .zero
+        _attributedTextContentView?.frame = frameToSet
+        contentSize = _attributedTextContentView?.intrinsicContentSize ?? .zero
       }
     }
 
@@ -171,7 +167,7 @@
 
     /// The attributed text content view (created lazily).
     @objc public var attributedTextContentView: AttributedTextContentView {
-      if let existing = attributedTextContentView {
+      if let existing = _attributedTextContentView {
         return existing
       }
 
@@ -219,7 +215,7 @@
         contentView.isOpaque = bg.cgColor.alpha >= 1.0
       }
 
-      contentView.delegate = textDelegate
+      contentView.delegate = _textDelegate
       contentView.shouldDrawLinks = shouldDrawLinksStorage
 
       NotificationCenter.default.addObserver(
@@ -232,7 +228,7 @@
       contentView.attributedString = attributedStringStorage
 
       addSubview(contentView)
-      attributedTextContentView = contentView
+      _attributedTextContentView = contentView
 
       return contentView
     }
@@ -242,12 +238,12 @@
       set {
         if let newColor = newValue, newColor.cgColor.alpha < 1.0 {
           super.backgroundColor = newColor
-          attributedTextContentView?.backgroundColor = .clear
+          _attributedTextContentView?.backgroundColor = .clear
           isOpaque = false
         } else {
           super.backgroundColor = newValue
-          if attributedTextContentView?.isOpaque == true {
-            attributedTextContentView?.backgroundColor = newValue
+          if _attributedTextContentView?.isOpaque == true {
+            _attributedTextContentView?.backgroundColor = newValue
           }
         }
       }
@@ -260,9 +256,9 @@
         let contentFrame = CGRect(
           x: 0, y: 0,
           width: frame.size.width - newValue.left - newValue.right,
-          height: attributedTextContentView?.frame.size.height ?? 0)
-        if attributedTextContentView?.frame != contentFrame {
-          attributedTextContentView?.frame = contentFrame
+          height: _attributedTextContentView?.frame.size.height ?? 0)
+        if _attributedTextContentView?.frame != contentFrame {
+          _attributedTextContentView?.frame = contentFrame
         }
       }
     }
@@ -273,16 +269,16 @@
       set {
         attributedStringStorage = newValue
         setNeedsLayout()
-        attributedTextContentView?.attributedString = newValue
+        _attributedTextContentView?.attributedString = newValue
       }
     }
 
     /// Delegate for providing custom views for images and links.
     @objc public weak var textDelegate: (any DTAttributedTextContentViewDelegate)? {
-      get { attributedTextContentView?.delegate ?? textDelegate }
+      get { _attributedTextContentView?.delegate ?? _textDelegate }
       set {
-        textDelegate = newValue
-        attributedTextContentView?.delegate = newValue
+        _textDelegate = newValue
+        _attributedTextContentView?.delegate = newValue
       }
     }
 
@@ -291,7 +287,7 @@
       get { shouldDrawLinksStorage }
       set {
         shouldDrawLinksStorage = newValue
-        attributedTextContentView?.shouldDrawLinks = newValue
+        _attributedTextContentView?.shouldDrawLinks = newValue
       }
     }
 
@@ -300,7 +296,7 @@
       get { shouldDrawImagesStorage }
       set {
         shouldDrawImagesStorage = newValue
-        attributedTextContentView?.shouldDrawImages = newValue
+        _attributedTextContentView?.shouldDrawImages = newValue
       }
     }
 
@@ -312,8 +308,8 @@
           bg.backgroundColor = .white
           bg.isUserInteractionEnabled = false
           insertSubview(bg, belowSubview: attributedTextContentView)
-          attributedTextContentView?.backgroundColor = .clear
-          attributedTextContentView?.isOpaque = false
+          _attributedTextContentView?.backgroundColor = .clear
+          _attributedTextContentView?.isOpaque = false
           backgroundViewStorage = bg
         }
         return backgroundViewStorage
@@ -324,16 +320,16 @@
         backgroundViewStorage = newValue
 
         if let newValue {
-          if let contentView = attributedTextContentView {
+          if let contentView = _attributedTextContentView {
             insertSubview(newValue, belowSubview: contentView)
           } else {
             addSubview(newValue)
           }
-          attributedTextContentView?.backgroundColor = .clear
-          attributedTextContentView?.isOpaque = false
+          _attributedTextContentView?.backgroundColor = .clear
+          _attributedTextContentView?.isOpaque = false
         } else {
-          attributedTextContentView?.backgroundColor = .white
-          attributedTextContentView?.isOpaque = true
+          _attributedTextContentView?.backgroundColor = .white
+          _attributedTextContentView?.isOpaque = true
         }
       }
     }
@@ -348,8 +344,8 @@
             let contentFrame = CGRect(
               x: 0, y: 0,
               width: newValue.size.width - contentInset.left - contentInset.right,
-              height: attributedTextContentView?.frame.size.height ?? 0)
-            attributedTextContentView?.frame = contentFrame
+              height: _attributedTextContentView?.frame.size.height ?? 0)
+            _attributedTextContentView?.frame = contentFrame
           }
         }
       }

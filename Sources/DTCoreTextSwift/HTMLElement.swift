@@ -242,9 +242,8 @@ open class HTMLElement: HTMLParserNode {
         value: _headerLevel)
     }
 
-    if let textLists = _paragraphStyle?.textLists {
-      tmpDict[NSAttributedString.Key(rawValue: DTTextListsAttribute)] = textLists
-    }
+    // List metadata rides on `NSParagraphStyle.textLists` (set by
+    // `CoreTextParagraphStyle.nsParagraphStyle()`), so no separate attribute write.
 
     if let textBlocks = _paragraphStyle?.textBlocks {
       tmpDict[NSAttributedString.Key(rawValue: DTTextBlocksAttribute)] = textBlocks
@@ -901,9 +900,9 @@ open class HTMLElement: HTMLParserNode {
     }
   }
 
-  /// Creates a CSSListStyle to match the CSS styles.
-  @objc open func listStyle() -> CSSListStyle {
-    let style = CSSListStyle(styles: (_styles as? [String: Any]) ?? [:])
+  /// Creates a `DTTextList` to match the CSS styles.
+  open func listStyle() -> DTTextList {
+    let style = DTTextList(styles: (_styles as? [String: Any]) ?? [:])
 
     if let startingIndex = (self.attributes as? [String: Any])?["start"] as? String {
       style.startingItemNumber = (startingIndex as NSString).integerValue

@@ -1,53 +1,74 @@
 import Foundation
 
+/// A single parsed CSS rule — a map from property name (e.g. `color`, `font-size`) to its
+/// value. Values are `Any` because the CSS parser may produce either a plain `String` or
+/// an array of strings (for properties like `font-family` that take comma-separated lists).
+public typealias CSSStyleRule = [String: Any]
+
 /// Represents a CSS style sheet used for specifying formatting for certain CSS selectors.
 /// It supports matching styles by class, by id or by tag name.
 @objc(DTCSSStylesheet)
 open class CSSStylesheet: NSObject, NSCopying {
 
-  private var stylesBySelector: [String: NSDictionary] = [:]
+  /// Parsed style rules keyed by CSS selector. Pure Swift storage — no Cocoa bridging
+  /// in the hot path, so concurrent readers of the shared default stylesheet don't go
+  /// through `_SwiftDeferredNSDictionary` wrappers that previously caused tagged-pointer
+  /// type-confusion crashes in `mergeStylesheet` under test parallelism.
+  private var stylesBySelector: [String: CSSStyleRule] = [:]
   private var orderedSelectorWeights: [String: Int] = [:]
   private var orderedSelectorsStorage: [String] = []
 
+  /// Serializes concurrent access to this stylesheet's stored Swift collections.
+  ///
+  /// The shared default stylesheet (`defaultStyleSheet()`) is copied concurrently by
+  /// multiple builder actors during test parallelism. Even though reads of an immutable
+  /// Swift `Dictionary` are meant to be safe, in practice Swift's COW backing buffer
+  /// refcounting and hash-table traversal from multiple threads at once can produce
+  /// hard-to-diagnose segfaults. Serializing the read snapshot in `mergeStylesheet`
+  /// (and matching the write side in `addStyles`) eliminates the window entirely.
+  /// The lock is uncontended in normal use — only builder-setup copies of the default
+  /// stylesheet take it, and those happen once per parse.
+  private let _accessLock = NSLock()
+
   // MARK: - Creating Stylesheets
 
-  nonisolated(unsafe) private static var defaultStylesheetStorage: CSSStylesheet?
+  /// Lazily-initialized default stylesheet loaded from `default.css`.
+  ///
+  /// Initialization runs exactly once and is published with a release barrier via
+  /// Swift's `static let` lowering (`swift_once`). That guarantees any thread that
+  /// observes a non-nil `_defaultStylesheet` also observes every write performed
+  /// by the initializer — fixing a publication race on ARM's weak memory model
+  /// where concurrent first-time callers could see a half-constructed stylesheet
+  /// whose `stylesBySelector` hadn't finished populating, leading to
+  /// type-confusion crashes inside `mergeStylesheet`.
+  nonisolated(unsafe) private static let _defaultStylesheet: CSSStylesheet = {
+    #if SWIFT_PACKAGE
+      let path = Bundle.module.path(forResource: "default", ofType: "css")
+    #else
+      var path = Bundle(for: CSSStylesheet.self).path(forResource: "default", ofType: "css")
 
-  /// Creates the default stylesheet loaded from default.css.
-  @objc public class func defaultStyleSheet() -> CSSStylesheet {
-    if let existing = defaultStylesheetStorage {
-      return existing
-    }
-
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
-
-    if defaultStylesheetStorage == nil {
-      #if SWIFT_PACKAGE
-        let path = Bundle.module.path(forResource: "default", ofType: "css")
-      #else
-        var path = Bundle(for: self).path(forResource: "default", ofType: "css")
-
-        // Older integrations may place default.css into a separate Resources bundle.
-        if path == nil {
-          let resourcesBundlePath = Bundle(for: self).path(
-            forResource: "Resources", ofType: "bundle")
-          if let resourcesBundlePath = resourcesBundlePath {
-            let resourcesBundle = Bundle(path: resourcesBundlePath)
-            path = resourcesBundle?.path(forResource: "default", ofType: "css")
-          }
+      // Older integrations may place default.css into a separate Resources bundle.
+      if path == nil {
+        let resourcesBundlePath = Bundle(for: CSSStylesheet.self).path(
+          forResource: "Resources", ofType: "bundle")
+        if let resourcesBundlePath = resourcesBundlePath {
+          let resourcesBundle = Bundle(path: resourcesBundlePath)
+          path = resourcesBundle?.path(forResource: "default", ofType: "css")
         }
-      #endif
-
-      assert(path != nil, "Missing default.css")
-
-      if let path = path {
-        let cssString = try? String(contentsOfFile: path, encoding: .utf8)
-        defaultStylesheetStorage = CSSStylesheet(styleBlock: cssString ?? "")
       }
-    }
+    #endif
 
-    return defaultStylesheetStorage!
+    assert(path != nil, "Missing default.css")
+
+    if let path = path, let cssString = try? String(contentsOfFile: path, encoding: .utf8) {
+      return CSSStylesheet(styleBlock: cssString)
+    }
+    return CSSStylesheet(styleBlock: "")
+  }()
+
+  /// Returns the shared default stylesheet loaded from `default.css`.
+  @objc public class func defaultStyleSheet() -> CSSStylesheet {
+    return _defaultStylesheet
   }
 
   /// Creates a stylesheet with a given style block.
@@ -71,10 +92,10 @@ open class CSSStylesheet: NSObject, NSCopying {
 
   // MARK: - Working with Style Blocks
 
-  func uncompressShorthands(_ styles: NSMutableDictionary) {
+  func uncompressShorthands(_ styles: inout CSSStyleRule) {
     // list-style shorthand
     if let shortHand = (styles["list-style"] as? String)?.lowercased() {
-      styles.removeObject(forKey: "list-style")
+      styles.removeValue(forKey: "list-style")
 
       if shortHand == "inherit" {
         styles["list-style-type"] = "inherit"
@@ -90,15 +111,14 @@ open class CSSStylesheet: NSObject, NSCopying {
       for oneComponent in components {
         if oneComponent.hasPrefix("url") {
           let scanner = Scanner(string: oneComponent)
-          if scanner.scanCSSURL(nil) {
+          if scanner.scanCSSURL() != nil {
             styles["list-style-image"] = oneComponent
             continue
           }
         }
 
         if !typeWasSet {
-          let listStyleType = CSSListStyle.listStyleType(from: oneComponent)
-          if listStyleType != .invalid {
+          if DTTextList.isValidListStyleTypeString(oneComponent) {
             styles["list-style-type"] = oneComponent
             typeWasSet = true
             continue
@@ -106,8 +126,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         }
 
         if !positionWasSet {
-          let listStylePosition = CSSListStyle.listStylePosition(from: oneComponent)
-          if listStylePosition != .invalid {
+          if DTTextList.isValidListStylePositionString(oneComponent) {
             styles["list-style-position"] = oneComponent
             positionWasSet = true
             continue
@@ -196,7 +215,7 @@ open class CSSStylesheet: NSObject, NSCopying {
         }
       }
 
-      styles.removeObject(forKey: "font")
+      styles.removeValue(forKey: "font")
 
       // size and family are mandatory
       if fontSize.count > 0 && fontFamily.length > 0 {
@@ -245,7 +264,7 @@ open class CSSStylesheet: NSObject, NSCopying {
       if styles["margin-bottom"] == nil { styles["margin-bottom"] = bottom }
       if styles["margin-left"] == nil { styles["margin-left"] = left }
 
-      styles.removeObject(forKey: "margin")
+      styles.removeValue(forKey: "margin")
     }
 
     // padding shorthand
@@ -284,23 +303,20 @@ open class CSSStylesheet: NSObject, NSCopying {
       if styles["padding-bottom"] == nil { styles["padding-bottom"] = bottom }
       if styles["padding-left"] == nil { styles["padding-left"] = left }
 
-      styles.removeObject(forKey: "padding")
+      styles.removeValue(forKey: "padding")
     }
 
     // background shorthand
     if let shortHand = styles["background"] as? String {
-      styles.removeObject(forKey: "background")
+      styles.removeValue(forKey: "background")
 
       let tokenDelimiters = CharacterSet.whitespacesAndNewlines
       let trimmedString = shortHand.trimmingCharacters(in: tokenDelimiters)
       let scanner = Scanner(string: trimmedString)
 
       while !scanner.isAtEnd {
-        var colorName: NSString?
-        if scanner.scanHTMLColor(nil, htmlName: &colorName) {
-          if let colorName = colorName {
-            styles["background-color"] = colorName as String
-          }
+        if let result = scanner.scanHTMLColor() {
+          styles["background-color"] = result.name
           break
         }
         _ = scanner.scanUpToCharacters(from: tokenDelimiters)
@@ -314,11 +330,10 @@ open class CSSStylesheet: NSObject, NSCopying {
     for selector in split {
       var cleanSelector = selector.trimmingCharacters(in: .whitespacesAndNewlines)
 
-      let ruleDictionary = NSMutableDictionary(
-        dictionary: (rule as NSString).dictionaryOfCSSStyles())
+      var ruleDictionary: CSSStyleRule = rule.dictionaryOfCSSStyles()
 
       // remove !important, we're ignoring these
-      for oneKey in ruleDictionary.allKeys.compactMap({ $0 as? String }) {
+      for oneKey in Array(ruleDictionary.keys) {
         if let value = ruleDictionary[oneKey] as? String {
           if let range = value.range(of: "!important", options: .caseInsensitive) {
             var cleaned = value
@@ -341,7 +356,7 @@ open class CSSStylesheet: NSObject, NSCopying {
       }
 
       // need to uncompress because otherwise we might get shorthands and non-shorthands together
-      uncompressShorthands(ruleDictionary)
+      uncompressShorthands(&ruleDictionary)
 
       // check if there is a pseudo selector
       if let colonRange = cleanSelector.range(of: ":") {
@@ -350,19 +365,19 @@ open class CSSStylesheet: NSObject, NSCopying {
         cleanSelector = String(cleanSelector[cleanSelector.startIndex..<colonRange.lowerBound])
 
         // prefix all rules with the pseudo-selector
-        let keys = ruleDictionary.allKeys.compactMap { $0 as? String }
-        for oneRuleKey in keys {
-          let value = ruleDictionary[oneRuleKey]!
-          let prefixedKey = "\(pseudoSelector):\(oneRuleKey)"
-          ruleDictionary[prefixedKey] = value
-          ruleDictionary.removeObject(forKey: oneRuleKey)
+        var prefixed: CSSStyleRule = [:]
+        for (k, v) in ruleDictionary {
+          prefixed["\(pseudoSelector):\(k)"] = v
         }
+        ruleDictionary = prefixed
       }
 
       if let existingRulesForSelector = stylesBySelector[cleanSelector] {
-        let tmpDict = existingRulesForSelector.mutableCopy() as! NSMutableDictionary
-        tmpDict.addEntries(from: ruleDictionary as! [AnyHashable: Any])
-        addStyles(tmpDict, withSelector: cleanSelector)
+        var merged = existingRulesForSelector
+        for (k, v) in ruleDictionary {
+          merged[k] = v
+        }
+        addStyles(merged, withSelector: cleanSelector)
       } else {
         addStyles(ruleDictionary, withSelector: cleanSelector)
       }
@@ -428,32 +443,48 @@ open class CSSStylesheet: NSObject, NSCopying {
   }
 
   /// Merges styles from given stylesheet into the receiver.
+  ///
+  /// Reads the source's Swift storage directly (same-file `private` access allows it) and
+  /// merges via Swift value-type dictionaries. No Cocoa bridging, no `_SwiftDeferredNSDictionary`
+  /// wrappers — so concurrent callers copying the shared default stylesheet don't race on
+  /// lazy-bridged views of the same backing storage. Swift dictionaries with value semantics
+  /// are safe for concurrent reads when not mutated.
   @objc open func mergeStylesheet(_ stylesheet: CSSStylesheet) {
-    let otherKeys = stylesheet.orderedSelectors()
+    // Snapshot the source under its access lock. This decouples us from any concurrent
+    // reader/writer and gives us pure Swift value-type copies we can iterate freely.
+    let (selectorsSnapshot, stylesSnapshot) = stylesheet._lockedSnapshot()
 
-    for oneKey in otherKeys {
-      guard let key = oneKey as? String else { continue }
-      let existingStyles = stylesBySelector[key]
-      let stylesToMerge = stylesheet.styles()[key] as? NSDictionary
+    for key in selectorsSnapshot {
+      guard let stylesToMerge = stylesSnapshot[key] else { continue }
 
-      if let existingStyles = existingStyles, let stylesToMerge = stylesToMerge {
-        let mutableStyles = existingStyles.mutableCopy() as! NSMutableDictionary
-        mutableStyles.addEntries(from: stylesToMerge as! [AnyHashable: Any])
-        addStyles(mutableStyles, withSelector: key)
-      } else if let stylesToMerge = stylesToMerge {
+      if var existingStyles = stylesBySelector[key] {
+        for (k, v) in stylesToMerge {
+          existingStyles[k] = v
+        }
+        addStyles(existingStyles, withSelector: key)
+      } else {
         addStyles(stylesToMerge, withSelector: key)
       }
     }
   }
 
-  private func addStyles(_ styles: NSDictionary, withSelector selector: String) {
-    // Always copy to avoid sharing references with other stylesheets (e.g. the default)
-    stylesBySelector[selector] = styles.copy() as? NSDictionary
+  private func addStyles(_ styles: CSSStyleRule, withSelector selector: String) {
+    _accessLock.lock()
+    defer { _accessLock.unlock() }
+    stylesBySelector[selector] = styles
 
     if !orderedSelectorsStorage.contains(selector) {
       orderedSelectorsStorage.append(selector)
       orderedSelectorWeights[selector] = weightForSelector(selector)
     }
+  }
+
+  /// Returns a point-in-time snapshot of the selectors and styles under the access lock.
+  /// Paired with `addStyles`'s write lock so readers never see a torn state.
+  private func _lockedSnapshot() -> (selectors: [String], styles: [String: CSSStyleRule]) {
+    _accessLock.lock()
+    defer { _accessLock.unlock() }
+    return (orderedSelectorsStorage, stylesBySelector)
   }
 
   // MARK: - Accessing Style Information
@@ -463,11 +494,13 @@ open class CSSStylesheet: NSObject, NSCopying {
     for element: HTMLElement, matchedSelectors: AutoreleasingUnsafeMutablePointer<NSSet?>?,
     ignoreInlineStyle: Bool
   ) -> NSDictionary? {
-    let tmpDict = NSMutableDictionary()
+    var merged: CSSStyleRule = [:]
+    var matchedSelectorSet = Set<String>()
+    let trackMatched = matchedSelectors != nil
 
-    // Get based on element
+    // Get based on element tag name
     if let byTagName = stylesBySelector[element.name] {
-      tmpDict.addEntries(from: byTagName as! [AnyHashable: Any])
+      for (k, v) in byTagName { merged[k] = v }
     }
 
     // Get based on class(es)
@@ -475,48 +508,37 @@ open class CSSStylesheet: NSObject, NSCopying {
     let classes = classString?.components(separatedBy: " ") ?? []
 
     // Cascaded selectors with more than one part are sorted by specificity
-    let matchingCascadingSelectors = self.matchingComplexCascadingSelectors(for: element)
-    matchingCascadingSelectors.sort { s1, s2 in
-      guard let sel1 = s1 as? String, let sel2 = s2 as? String else { return .orderedSame }
+    let matchingCascading = self.matchingComplexCascadingSelectors(for: element).sorted {
+      sel1, sel2 in
       var weight1 = orderedSelectorWeights[sel1] ?? 0
       var weight2 = orderedSelectorWeights[sel2] ?? 0
-
       if weight1 == weight2 {
         weight1 += orderedSelectorsStorage.firstIndex(of: sel1) ?? 0
         weight2 += orderedSelectorsStorage.firstIndex(of: sel2) ?? 0
       }
-
-      if weight1 > weight2 { return .orderedDescending }
-      if weight1 < weight2 { return .orderedAscending }
-      return .orderedSame
+      return weight1 < weight2  // ascending — so more specific wins via later merge
     }
 
-    var tmpMatchedSelectors: NSMutableSet? = nil
-    if matchedSelectors != nil {
-      tmpMatchedSelectors = NSMutableSet()
-    }
-
-    // Apply complex cascading selectors first, then apply most specific selectors
-    for cascadingSelector in matchingCascadingSelectors {
-      guard let sel = cascadingSelector as? String else { continue }
+    // Apply complex cascading selectors first, then most specific
+    for sel in matchingCascading {
       if let byCascadingSelector = stylesBySelector[sel] {
-        tmpDict.addEntries(from: byCascadingSelector as! [AnyHashable: Any])
-        tmpMatchedSelectors?.add(sel)
+        for (k, v) in byCascadingSelector { merged[k] = v }
+        if trackMatched { matchedSelectorSet.insert(sel) }
       }
     }
 
-    // Applied the parameter element's classes last
+    // Apply the parameter element's classes last
     for className in classes {
       let classRule = ".\(className)"
       if let byClass = stylesBySelector[classRule] {
-        tmpDict.addEntries(from: byClass as! [AnyHashable: Any])
-        tmpMatchedSelectors?.add(className)
+        for (k, v) in byClass { merged[k] = v }
+        if trackMatched { matchedSelectorSet.insert(className) }
       }
 
       let classAndTagRule = "\(element.name).\(className)"
       if let byClassAndName = stylesBySelector[classAndTagRule] {
-        tmpDict.addEntries(from: byClassAndName as! [AnyHashable: Any])
-        tmpMatchedSelectors?.add(classAndTagRule)
+        for (k, v) in byClassAndName { merged[k] = v }
+        if trackMatched { matchedSelectorSet.insert(classAndTagRule) }
       }
     }
 
@@ -524,50 +546,56 @@ open class CSSStylesheet: NSObject, NSCopying {
     if let elementId = (element.attributes as? [String: Any])?["id"] as? String {
       let idRule = "#\(elementId)"
       if let byID = stylesBySelector[idRule] {
-        tmpDict.addEntries(from: byID as! [AnyHashable: Any])
-        tmpMatchedSelectors?.add(idRule)
+        for (k, v) in byID { merged[k] = v }
+        if trackMatched { matchedSelectorSet.insert(idRule) }
       }
     }
 
     if !ignoreInlineStyle {
-      // Get tag's local style attribute
       if let styleString = (element.attributes as? [String: Any])?["style"] as? String,
         !styleString.isEmpty
       {
-        let localStyles = NSMutableDictionary(
-          dictionary: (styleString as NSString).dictionaryOfCSSStyles())
-
-        // need to uncompress because otherwise we might get shorthands and non-shorthands together
-        uncompressShorthands(localStyles)
-
-        tmpDict.addEntries(from: localStyles as! [AnyHashable: Any])
+        var localStyles: CSSStyleRule = styleString.dictionaryOfCSSStyles()
+        uncompressShorthands(&localStyles)
+        for (k, v) in localStyles { merged[k] = v }
       }
     }
 
-    if tmpDict.count > 0 {
-      if let tmpMatchedSelectors = tmpMatchedSelectors, tmpMatchedSelectors.count > 0 {
-        matchedSelectors?.pointee = tmpMatchedSelectors.copy() as? NSSet
-      }
-      return tmpDict
+    if merged.isEmpty {
+      return nil
     }
 
-    return nil
+    if trackMatched && !matchedSelectorSet.isEmpty {
+      matchedSelectors?.pointee = NSSet(array: Array(matchedSelectorSet))
+    }
+
+    // Bridge once at the boundary for the existing `@objc` consumer surface. The returned
+    // NSDictionary is freshly built from a local Swift dict, so it's not shared across
+    // threads.
+    return merged as NSDictionary
   }
 
   /// Returns a dictionary of the styles of the receiver.
+  ///
+  /// This is a one-shot bridging wrapper for the legacy `@objc` surface — internally,
+  /// DTCoreText uses pure Swift access to `stylesBySelector`. Each call constructs a
+  /// fresh `NSDictionary` with independent storage, so the returned value is not a
+  /// lazy wrapper over the receiver's Swift storage and can be consumed safely.
   @objc open func styles() -> NSDictionary {
-    return stylesBySelector as NSDictionary
+    return NSDictionary(dictionary: stylesBySelector)
   }
 
   /// Returns an ordered (by declaration) set of the selectors for all of the styles.
+  ///
+  /// One-shot bridging wrapper; see `styles()` for the rationale.
   @objc open func orderedSelectors() -> NSArray {
-    return orderedSelectorsStorage as NSArray
+    return NSArray(array: orderedSelectorsStorage)
   }
 
   // MARK: - Complex Cascading Selectors
 
-  private func matchingComplexCascadingSelectors(for element: HTMLElement) -> NSMutableArray {
-    let matchedSelectors = NSMutableArray()
+  private func matchingComplexCascadingSelectors(for element: HTMLElement) -> [String] {
+    var matchedSelectors: [String] = []
 
     for selectorStr in orderedSelectorsStorage {
 
@@ -629,7 +657,7 @@ open class CSSStylesheet: NSObject, NSCopying {
 
         // Only match if we really are on the last part of the selector and all other parts have matched
         if j == 0 && matched && !matchedSelectors.contains(selectorStr) {
-          matchedSelectors.add(selectorStr)
+          matchedSelectors.append(selectorStr)
         }
       }
     }

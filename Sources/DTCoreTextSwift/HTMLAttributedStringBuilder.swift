@@ -306,7 +306,7 @@ private actor BuilderState {
     case "ul", "ol":
       tag.paragraphStyle.firstLineHeadIndent = tag.paragraphStyle.headIndent
       let newListStyle = tag.listStyle()
-      var textLists = (tag.paragraphStyle.textLists as? [CSSListStyle]) ?? []
+      var textLists = tag.paragraphStyle.textLists ?? []
       textLists.append(newListStyle)
       tag.paragraphStyle.textLists = textLists
 

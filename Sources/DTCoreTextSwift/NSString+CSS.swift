@@ -14,28 +14,33 @@ private func isWhitespace(_ c: unichar) -> Bool {
   return c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85
 }
 
-/// Methods to make dealing with CSS strings easier.
-extension NSString {
+/// Methods to make dealing with CSS strings easier (pure Swift surface).
+extension String {
 
-  /// Examine a string for all CSS styles that are applied to it and return a dictionary of those styles.
-  @objc public func dictionaryOfCSSStyles() -> [String: Any] {
-    let scanner = Scanner(string: self as String)
+  /// Examine a string for all CSS styles that are applied to it and return a dictionary
+  /// of those styles.
+  ///
+  /// Pure Swift — no `@objc`, so Swift callers get a native-variant `Dictionary<String, Any>`
+  /// back with no lazy `_SwiftDeferredNSDictionary` bridging wrapper around it. Storing
+  /// the result in another Swift dictionary is safe for concurrent reads from multiple
+  /// threads. See the history of `CSSStylesheet.mergeStylesheet` for why this matters.
+  public func dictionaryOfCSSStyles() -> [String: Any] {
+    let scanner = Scanner(string: self)
 
     var tmpDict = [String: Any]()
 
     autoreleasepool {
-      var namePtr: NSString?
-      var valuePtr: AnyObject?
-
-      while scanner.scanCSSAttribute(&namePtr, value: &valuePtr) {
-        if let name = namePtr as String?, let value = valuePtr {
-          tmpDict[name] = value
-        }
+      while let attr = scanner.scanCSSAttribute() {
+        tmpDict[attr.name] = attr.value
       }
     }
 
     return tmpDict
   }
+}
+
+/// Methods to make dealing with CSS strings easier.
+extension NSString {
 
   /// Determines if the receiver contains a CSS length value.
   @objc public func isCSSLengthValue() -> Bool {
@@ -195,10 +200,9 @@ extension NSString {
 
     while !scanner.isAtEnd {
       var shadowColor: DTColor?
-      var colorPtr: DTColor?
 
-      if scanner.scanHTMLColor(&colorPtr) {
-        shadowColor = colorPtr
+      if let firstColor = scanner.scanHTMLColor() {
+        shadowColor = firstColor.color
 
         // format: <color> <length> <length> <length>?
         if let offsetXString = scanner.scanUpToCharacters(from: tokenEndSet),
@@ -239,13 +243,14 @@ extension NSString {
         {
           // blur is optional
           var blurString: String?
-          if !scanner.scanHTMLColor(&colorPtr) {
+          if let afterOffsets = scanner.scanHTMLColor() {
+            shadowColor = afterOffsets.color
+          } else {
             blurString = scanner.scanUpToCharacters(from: tokenEndSet)
-            if blurString != nil {
-              _ = scanner.scanHTMLColor(&colorPtr)
+            if blurString != nil, let afterBlur = scanner.scanHTMLColor() {
+              shadowColor = afterBlur.color
             }
           }
-          shadowColor = colorPtr
 
           if shadowColor == nil {
             shadowColor = color

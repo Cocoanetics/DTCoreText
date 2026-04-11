@@ -3,6 +3,8 @@ import Foundation
 
 #if canImport(UIKit)
   import UIKit
+#elseif canImport(AppKit)
+  import AppKit
 #endif
 
 /// Methods for appending NSString instances to mutable attributed strings
@@ -24,6 +26,46 @@ extension NSMutableAttributedString {
     let firstChar = mutableString.character(at: 0)
     guard let scalar = Unicode.Scalar(firstChar) else { return false }
     return characterSet.contains(scalar)
+  }
+
+  /// Legacy up-migration: scan the receiver for the internal `DTTextListsAttribute` key,
+  /// copy each array onto the corresponding paragraph style's `textLists`, and strip the
+  /// old attribute. Call this at every public entry point that accepts externally-supplied
+  /// attributed strings so that DTCoreText's own code paths can rely on
+  /// `NSParagraphStyle.textLists` as the single source of truth.
+  ///
+  /// No-op for attributed strings produced by current DTCoreText code (they already carry
+  /// `textLists` on the paragraph style, and do not set `DTTextListsAttribute`). Only
+  /// attributed strings persisted under the pre-migration scheme need this.
+  @objc public func dtct_migrateLegacyListAttribute() {
+    let listsKey = NSAttributedString.Key(rawValue: DTTextListsAttribute)
+    let paragraphKey = NSAttributedString.Key.paragraphStyle
+    let fullRange = NSRange(location: 0, length: length)
+
+    var foundAny = false
+
+    enumerateAttribute(listsKey, in: fullRange, options: []) { value, range, _ in
+      guard let lists = value as? [NSTextList], !lists.isEmpty else { return }
+      foundAny = true
+
+      // Walk the run and rewrite each sub-range's paragraph style to include the lists.
+      enumerateAttribute(paragraphKey, in: range, options: []) { psValue, psRange, _ in
+        let mps: NSMutableParagraphStyle
+        if let existing = psValue as? NSParagraphStyle {
+          mps = existing.mutableCopy() as! NSMutableParagraphStyle
+        } else {
+          mps = NSMutableParagraphStyle()
+        }
+        if mps.textLists != lists {
+          mps.textLists = lists
+        }
+        addAttribute(paragraphKey, value: mps, range: psRange)
+      }
+    }
+
+    if foundAny {
+      removeAttribute(listsKey, range: fullRange)
+    }
   }
 }
 
@@ -119,10 +161,7 @@ extension NSMutableAttributedString {
       appendAttributes[NSAttributedString.Key(DTTextBlocksAttribute as String)] = blocks
     }
 
-    // transfer lists
-    if let lists = attributes[NSAttributedString.Key(DTTextListsAttribute as String)] {
-      appendAttributes[NSAttributedString.Key(DTTextListsAttribute as String)] = lists
-    }
+    // List metadata is carried by the paragraph style (transferred just above).
 
     // transfer foreground color
     if let foregroundColor = attributes[.foregroundColor] {

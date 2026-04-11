@@ -19,9 +19,9 @@
   @objc(DTAttributedTextCell)
   public class AttributedTextCell: UITableViewCell {
 
-    private var attributedTextContextView: AttributedTextContentView?
+    private var _attributedTextContextView: AttributedTextContentView?
 
-    private weak var textDelegate: DTAttributedTextContentViewDelegate?
+    private weak var _textDelegate: DTAttributedTextContentViewDelegate?
 
     private var htmlHash: Int = 0
 
@@ -174,31 +174,31 @@
 
     /// The attributed string displayed by this cell.
     @objc public var attributedString: NSAttributedString? {
-      get { return attributedTextContextView?.attributedString }
+      get { return _attributedTextContextView?.attributedString }
       set { attributedTextContextView.attributedString = newValue }
     }
 
     /// The delegate that provides custom subviews for images and links.
     @objc public weak var textDelegate: DTAttributedTextContentViewDelegate? {
-      get { return textDelegate }
+      get { return _textDelegate }
       set {
-        textDelegate = newValue
-        attributedTextContextView?.delegate = newValue
+        _textDelegate = newValue
+        _attributedTextContextView?.delegate = newValue
       }
     }
 
     /// The attributed text content view used to display rich text.
     @objc public var attributedTextContextView: AttributedTextContentView {
-      if let existing = attributedTextContextView {
+      if let existing = _attributedTextContextView {
         return existing
       }
 
       let view = AttributedTextContentView(frame: contentView.bounds)
       view.edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
       view.layoutFrameHeightIsConstrainedByBounds = hasFixedRowHeight
-      view.delegate = textDelegate
+      view.delegate = _textDelegate
       contentView.addSubview(view)
-      attributedTextContextView = view
+      _attributedTextContextView = view
       return view
     }
   }

@@ -60,30 +60,27 @@ struct AttributedStringDTCoreTextTests {
 		let attributedString = TestHelpers.attributedString(fromHTML: "<p>some text</p><ul><li>inside</li></ul><p>following</p>")!
 
 		let innerRange = (attributedString.string as NSString).range(of: "inside\n")
-		let innerAttributes = attributedString.attributes(at: innerRange.location, effectiveRange: nil)
-		let lists = innerAttributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as! [CSSListStyle]
+		// Read the list from the paragraph style (the canonical source).
+		let paraStyle = attributedString.attribute(.paragraphStyle, at: innerRange.location, effectiveRange: nil) as! NSParagraphStyle
+		let lists = paraStyle.textLists as! [DTTextList]
 		#expect(lists.count == 1)
 		let effectiveList = lists.last!
-		let newListStyle = effectiveList.copy() as! CSSListStyle
-
-		#expect(effectiveList !== newListStyle)
-
-		// test new list inside range
-		var nonFoundRange = attributedString.rangeOfTextList(newListStyle, at: innerRange.location)
-		#expect(nonFoundRange == NSRange(location: NSNotFound, length: 0))
-
-		// test new list outside range
-		nonFoundRange = attributedString.rangeOfTextList(newListStyle, at: 1)
-		#expect(nonFoundRange == NSRange(location: NSNotFound, length: 0))
 
 		// test effective list inside range
-		let foundRange = attributedString.rangeOfTextList(effectiveList, at: innerRange.location)
+		let foundRange = attributedString.rangeOfTextList(effectiveList, atIndex: innerRange.location)
 		let expectedRange = (attributedString.string as NSString).paragraphRange(for: innerRange)
 		#expect(foundRange == expectedRange)
 
-		// test effective list outside range
-		nonFoundRange = attributedString.rangeOfTextList(effectiveList, at: 1)
+		// test effective list outside range — paragraph 0 ("some text") has no list
+		let nonFoundRange = attributedString.rangeOfTextList(effectiveList, atIndex: 1)
 		#expect(nonFoundRange == NSRange(location: NSNotFound, length: 0))
+
+		// Value-equal copies find the same range (attribute coalescing may strip instance
+		// identity, so rangeOfTextList uses value equality, not `===`, to locate the list).
+		let copy = effectiveList.copy() as! DTTextList
+		#expect(effectiveList !== copy)
+		let copyFound = attributedString.rangeOfTextList(copy, atIndex: innerRange.location)
+		#expect(copyFound == expectedRange)
 	}
 
 	@Test("Text list ranges")
@@ -103,13 +100,14 @@ struct AttributedStringDTCoreTextTests {
 			guard let substring = substring else { return }
 
 			let attributes = attributedString.attributes(at: substringRange.location, effectiveRange: nil)
-			let list = (attributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] as? [CSSListStyle])?.last
+			let paraStyle = attributes[.paragraphStyle] as? NSParagraphStyle
+			let list = (paraStyle?.textLists as? [DTTextList])?.last
 
 			let prefixRange = attributedString.rangeOfField(at: substringRange.location)
 			let textAfterPrefix = (substring as NSString).substring(from: prefixRange.length)
 			let number = Int(textAfterPrefix) ?? 0
 
-			let index = attributedString.itemNumber(in: list!, at: substringRange.location)
+			let index = attributedString.itemNumber(in: list!, atIndex: substringRange.location)
 
 			#expect(number == index, "Item number should match the text for range \(NSStringFromRange(substringRange))")
 		}

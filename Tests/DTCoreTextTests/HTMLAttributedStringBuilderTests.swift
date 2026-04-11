@@ -575,8 +575,8 @@ struct HTMLAttributedStringBuilderTests {
 
 			switch lineNumber {
 			case 1:
-				let lists = attributedSubstring.attribute(NSAttributedString.Key(DTTextListsAttribute), at: 0, effectiveRange: nil) as? [Any]
-				let numLists = lists?.count ?? 0
+				let paraStyle = attributedSubstring.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle
+				let numLists = paraStyle?.textLists.count ?? 0
 				#expect(numLists == 2, "There should be two lists active on line 2")
 
 				let subString = attributedSubstring.string.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -710,24 +710,26 @@ struct HTMLAttributedStringBuilderTests {
 	func textListRanges() throws {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ol><li>1a<ul><li>2a</li></ul></li><li>more</li><li>more</li></ol>"))
 
-		let lists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: 0, effectiveRange: nil) as? [CSSListStyle]
+		let outerPS = attributedString.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle
+		let lists = outerPS?.textLists as? [DTTextList]
 		#expect(lists?.count == 1, "There should be 1 outer list")
 
 		let outerList = lists!.last!
-		let list1Range = attributedString.rangeOfTextList(outerList, at: 0)
+		let list1Range = attributedString.rangeOfTextList(outerList, atIndex: 0)
 
 		#expect(list1Range.location == 0, "lists should start at index 0")
 		#expect(list1Range.length > 0, "lists should range for entire string")
 
 		let innerRange = (attributedString.string as NSString).range(of: "2a")
-		let innerLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: innerRange.location, effectiveRange: nil) as? [CSSListStyle]
+		let innerPS = attributedString.attribute(.paragraphStyle, at: innerRange.location, effectiveRange: nil) as? NSParagraphStyle
+		let innerLists = innerPS?.textLists as? [DTTextList]
 		#expect(innerLists?.count == 2, "There should be 2 inner lists")
 
 		if let innerLists = innerLists, !innerLists.isEmpty {
 			#expect(innerLists[0].isEqual(outerList), "list at index 0 in inner lists should be equal to outer list")
 		}
 
-		let list2Range = attributedString.rangeOfTextList(innerLists!.last!, at: innerRange.location)
+		let list2Range = attributedString.rangeOfTextList(innerLists!.last!, atIndex: innerRange.location)
 		let innerParagraph = (attributedString.string as NSString).paragraphRange(for: innerRange)
 
 		#expect(NSEqualRanges(innerParagraph, list2Range), "Inner list range should be equal to inner paragraph")
@@ -738,14 +740,15 @@ struct HTMLAttributedStringBuilderTests {
 		let attributedString = try #require(TestHelpers.attributedString(fromHTML: "<ul>\n<li>\n<ol>\n<li>Foo</li>\n<li>Bar</li>\n</ol>\n</li>\n<li>BLAH</li>\n</ul>"))
 
 		let firstParagraphRange = (attributedString.string as NSString).paragraphRange(for: NSRange(location: 0, length: 1))
-		let firstParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: firstParagraphRange.location, effectiveRange: nil) as? [CSSListStyle]
+		let firstPS = attributedString.attribute(.paragraphStyle, at: firstParagraphRange.location, effectiveRange: nil) as? NSParagraphStyle
+		let firstParagraphLists = firstPS?.textLists as? [DTTextList]
 		let firstListsCount = firstParagraphLists?.count ?? 0
 
 		#expect(firstListsCount == 1, "There should be one list on the first paragraph")
 
 		if let firstParagraphLists = firstParagraphLists {
 			for (idx, oneList) in firstParagraphLists.enumerated() {
-				let listRange = attributedString.rangeOfTextList(oneList, at: firstParagraphRange.location)
+				let listRange = attributedString.rangeOfTextList(oneList, atIndex: firstParagraphRange.location)
 				let commonRange = NSIntersectionRange(listRange, firstParagraphRange)
 				#expect(NSEqualRanges(commonRange, firstParagraphRange), "List \(idx + 1) does not cover entire paragraph")
 			}
@@ -753,14 +756,15 @@ struct HTMLAttributedStringBuilderTests {
 
 		// second paragraph should have two lists
 		let secondParagraphRange = (attributedString.string as NSString).paragraphRange(for: NSRange(location: NSMaxRange(firstParagraphRange), length: 1))
-		let secondParagraphLists = attributedString.attribute(NSAttributedString.Key(DTTextListsAttribute), at: secondParagraphRange.location, effectiveRange: nil) as? [CSSListStyle]
+		let secondPS = attributedString.attribute(.paragraphStyle, at: secondParagraphRange.location, effectiveRange: nil) as? NSParagraphStyle
+		let secondParagraphLists = secondPS?.textLists as? [DTTextList]
 		let secondListsCount = secondParagraphLists?.count ?? 0
 
 		#expect(secondListsCount == 2, "There should be two lists on the second paragraph")
 
 		if let secondParagraphLists = secondParagraphLists {
 			for (idx, oneList) in secondParagraphLists.enumerated() {
-				let listRange = attributedString.rangeOfTextList(oneList, at: secondParagraphRange.location)
+				let listRange = attributedString.rangeOfTextList(oneList, atIndex: secondParagraphRange.location)
 				let commonRange = NSIntersectionRange(listRange, secondParagraphRange)
 				#expect(NSEqualRanges(commonRange, secondParagraphRange), "List \(idx + 1) does not cover entire paragraph")
 			}

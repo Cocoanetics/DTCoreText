@@ -76,7 +76,7 @@ open class ListItemHTMLElement: HTMLElement {
       (attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any])
       .dtct_fontDescriptor()
 
-    var effectiveList = self.paragraphStyle.textLists?.last as? CSSListStyle
+    var effectiveList = self.paragraphStyle.textLists?.last as? DTTextList
     let listRoot = self.parentElement()
     let listCounter =
       _indexOfListItemInListRoot(listRoot!) + Int(effectiveList?.startingItemNumber ?? 1)
@@ -90,14 +90,11 @@ open class ListItemHTMLElement: HTMLElement {
 
     // check for list-style:none modifier
     if let styleStr = self.attributeForKey("style") {
-      let styles = (styleStr as NSString).dictionaryOfCSSStyles()
+      let styles = styleStr.dictionaryOfCSSStyles()
 
       if styles.count > 0 {
-        // make a temp copy
-        effectiveList = effectiveList?.copy() as? CSSListStyle
-
-        // update from styles
-        effectiveList?.updateFromStyleDictionary(styles)
+        // apply any list-style overrides from inline CSS on top of the current list
+        effectiveList = effectiveList?.applyingStyles(styles)
       }
     }
 
@@ -115,7 +112,7 @@ open class ListItemHTMLElement: HTMLElement {
     guard let effectiveList = effectiveList else { return nil }
 
     // set tab stops
-    if effectiveList.type != .none {
+    if effectiveList.hasMarker {
       if _margins.left <= 0 {
         return nil
       }
@@ -159,15 +156,12 @@ open class ListItemHTMLElement: HTMLElement {
       newAttributes[NSAttributedString.Key(rawValue: DTTextBlocksAttribute)] = textBlocks
     }
 
-    // transfer all lists so that
-    if let lists = attributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] {
-      newAttributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] = lists
-    }
+    // List metadata rides on the paragraph style (added above), so no separate transfer.
 
     // add a marker so that we know that this is a field/prefix
     newAttributes[NSAttributedString.Key(rawValue: DTFieldAttribute)] = DTListPrefixField
 
-    guard var prefix = effectiveList.prefix(withCounter: listCounter) else {
+    guard var prefix = effectiveList.formattedMarker(forItemNumber: listCounter) else {
       return nil
     }
 
@@ -180,7 +174,7 @@ open class ListItemHTMLElement: HTMLElement {
         // image invalid
         effectiveList.imageName = nil
 
-        guard let newPrefix = effectiveList.prefix(withCounter: listCounter) else {
+        guard let newPrefix = effectiveList.formattedMarker(forItemNumber: listCounter) else {
           return nil
         }
         prefix = newPrefix

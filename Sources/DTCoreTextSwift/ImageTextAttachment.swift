@@ -141,7 +141,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
 
           // we don't know the content scale from such images, need to infer it from size in style
           if let stylesStr = (element.attributes as? [String: Any])?["style"] as? String {
-            let attributes = (stylesStr as NSString).dictionaryOfCSSStyles() as? [String: String]
+            let attributes = stylesStr.dictionaryOfCSSStyles() as? [String: String]
 
             if let widthStr = attributes?["width"],
               let heightStr = attributes?["height"],
