@@ -65,6 +65,70 @@ extension NSAttributedString {
     return foundAttachments.isEmpty ? nil : foundAttachments
   }
 
+  // MARK: - Paragraph-style list helpers
+
+  /// Returns the `NSTextList` array for the paragraph that contains `location`, reading
+  /// from `NSParagraphStyle.textLists` (the canonical source). Returns `nil` if the
+  /// paragraph has no list metadata.
+  fileprivate func _textListsForParagraph(at location: Int) -> [NSTextList]? {
+    guard location >= 0, location < length else { return nil }
+    guard
+      let ps = self.attribute(.paragraphStyle, at: location, effectiveRange: nil)
+        as? NSParagraphStyle
+    else {
+      return nil
+    }
+    return ps.textLists.isEmpty ? nil : ps.textLists
+  }
+
+  /// Finds the full range of paragraphs that share the given `list` object on their
+  /// `NSParagraphStyle.textLists`. Uses `NSTextList.isEqual(_:)` for comparison — for
+  /// `DTTextList` this delegates to `isEqualTo(_:)` (value equality), which is robust
+  /// against attribute coalescing stripping instance identity.
+  fileprivate func _rangeOfTextListByParagraph(_ list: NSTextList, at location: Int) -> NSRange {
+    let nsString = self.string as NSString
+    let stringLength = self.length
+    guard location >= 0, location < stringLength else {
+      return NSRange(location: NSNotFound, length: 0)
+    }
+
+    func containsList(_ lists: [NSTextList]) -> Bool {
+      return lists.contains(where: { $0.isEqual(list) })
+    }
+
+    // Confirm the starting paragraph contains this list.
+    guard let startLists = _textListsForParagraph(at: location), containsList(startLists) else {
+      return NSRange(location: NSNotFound, length: 0)
+    }
+
+    // Walk backwards paragraph-by-paragraph while the list is still present.
+    var totalRange = nsString.paragraphRange(for: NSRange(location: location, length: 0))
+    while totalRange.location > 0 {
+      let prevEnd = totalRange.location - 1
+      let prevPara = nsString.paragraphRange(for: NSRange(location: prevEnd, length: 0))
+      guard let prevLists = _textListsForParagraph(at: prevPara.location),
+        containsList(prevLists)
+      else {
+        break
+      }
+      totalRange = NSUnionRange(prevPara, totalRange)
+    }
+
+    // Walk forwards paragraph-by-paragraph while the list is still present.
+    while NSMaxRange(totalRange) < stringLength {
+      let nextStart = NSMaxRange(totalRange)
+      let nextPara = nsString.paragraphRange(for: NSRange(location: nextStart, length: 0))
+      guard let nextLists = _textListsForParagraph(at: nextPara.location),
+        containsList(nextLists)
+      else {
+        break
+      }
+      totalRange = NSUnionRange(totalRange, nextPara)
+    }
+
+    return totalRange
+  }
+
   // MARK: Calculating Ranges
 
   /// Returns the index of the item at the given location within the list.
@@ -73,13 +137,8 @@ extension NSAttributedString {
   ///   - list: The text list.
   ///   - location: The location of the item.
   /// - Returns: The index within the list.
-  @objc
-  public func itemNumber(in list: CSSListStyle, at location: Int) -> Int {
-    var effectiveRange = NSRange(location: 0, length: 0)
-    guard
-      let textListsAtIndex = self.attribute(
-        NSAttributedString.Key(rawValue: DTTextListsAttribute), at: location,
-        effectiveRange: &effectiveRange) as? [CSSListStyle]
+  public func itemNumber(in list: NSTextList, atIndex location: Int) -> Int {
+    guard let textListsAtIndex = self._textListsForParagraph(at: location), !textListsAtIndex.isEmpty
     else {
       return 0
     }
@@ -88,7 +147,7 @@ extension NSAttributedString {
     let outermostList = textListsAtIndex[0]
 
     // get the range of all lists
-    let totalRange = self.rangeOfTextList(outermostList, at: location)
+    let totalRange = self.rangeOfTextList(outermostList, atIndex: location)
 
     // get naked NSString
     let string = (self.string as NSString).substring(with: totalRange)
@@ -101,12 +160,8 @@ extension NSAttributedString {
     // enumerating through the paragraphs in the plain text string
     (string as NSString).enumerateSubstrings(in: range, options: .byParagraphs) {
       _, substringRange, enclosingRange, stop in
-      var paragraphListRange = NSRange(location: 0, length: 0)
-      let textLists =
-        self.attribute(
-          NSAttributedString.Key(rawValue: DTTextListsAttribute),
-          at: substringRange.location + totalRange.location, effectiveRange: &paragraphListRange)
-        as? [CSSListStyle]
+      let textLists = self._textListsForParagraph(
+        at: substringRange.location + totalRange.location)
 
       guard let currentEffectiveList = textLists?.last else {
         return
@@ -120,7 +175,9 @@ extension NSAttributedString {
       var currentCounter: Int
 
       if currentCounterNum == nil {
-        currentCounter = currentEffectiveList.startingItemNumber
+        // Unordered lists carry `startingItemNumber == 0` (Apple's convention meaning
+        // "not ordered") — treat that as 1 so counting still yields a 1-based index.
+        currentCounter = max(currentEffectiveList.startingItemNumber, 1)
       } else {
         currentCounter = currentCounterNum!.intValue + 1
       }
@@ -221,22 +278,8 @@ extension NSAttributedString {
   ///   - list: The text list.
   ///   - location: The location in the text.
   /// - Returns: The range of the given text list containing the location.
-  @objc
-  public func rangeOfTextList(_ list: CSSListStyle, at location: Int) -> NSRange {
-    precondition(list !== nil as AnyObject?, "list must not be nil")
-
-    var listRange = _rangeOfObject(list, inArrayBehindAttribute: DTTextListsAttribute, at: location)
-
-    if listRange.location == NSNotFound {
-      // list was not found
-      return listRange
-    }
-
-    // extend list range to full paragraphs to be safe
-    listRange = (self.string as NSString).rangeOfParagraphsContaining(
-      listRange, parBegIndex: nil, parEndIndex: nil)
-
-    return listRange
+  public func rangeOfTextList(_ list: NSTextList, atIndex location: Int) -> NSRange {
+    return _rangeOfTextListByParagraph(list, at: location)
   }
 
   /// Returns the range of the given text block that contains the given location.
@@ -378,9 +421,8 @@ extension NSAttributedString {
   ///   - listIndent: The amount in px to indent the list.
   ///   - attributes: The attribute dictionary for the text to be prefixed.
   /// - Returns: An attributed string with the list prefix.
-  @objc
   public static func prefixForListItem(
-    withCounter listCounter: UInt, listStyle: CSSListStyle, listIndent: CGFloat,
+    withCounter listCounter: UInt, listStyle: DTTextList, listIndent: CGFloat,
     attributes: [String: Any]
   ) -> NSAttributedString? {
     // get existing values from attributes
@@ -401,7 +443,7 @@ extension NSAttributedString {
       paragraphStyle!.tabStops = nil
       paragraphStyle!.headIndent = listIndent
 
-      if listStyle.type != .none {
+      if listStyle.hasMarker {
         // first tab is to right-align bullet, numbering against
         let tabOffset = paragraphStyle!.headIndent - 5.0
         paragraphStyle!.addTabStop(at: tabOffset, alignment: CTTextAlignment.right)
@@ -409,6 +451,20 @@ extension NSAttributedString {
 
       // second tab is for the beginning of first line after bullet
       paragraphStyle!.addTabStop(at: paragraphStyle!.headIndent, alignment: CTTextAlignment.left)
+
+      // Preserve list metadata from the caller's original paragraph style. CT paragraph
+      // styles don't carry NSTextList info, so reach into the NSParagraphStyle (or the
+      // legacy DTTextListsAttribute) on the attributes dict directly.
+      if let nsPS = attributes[NSAttributedString.Key.paragraphStyle.rawValue]
+        as? NSParagraphStyle, !nsPS.textLists.isEmpty
+      {
+        paragraphStyle!.textLists = nsPS.textLists
+      } else if let legacyLists = attributes[DTTextListsAttribute] as? [NSTextList] {
+        paragraphStyle!.textLists = legacyLists
+      } else {
+        // Last resort: the only list we definitely know about is the one passed in.
+        paragraphStyle!.textLists = [listStyle]
+      }
     }
 
     if let fontRef {
@@ -467,15 +523,13 @@ extension NSAttributedString {
       newAttributes[NSAttributedString.Key(rawValue: DTTextBlocksAttribute)] = textBlocks
     }
 
-    // transfer all lists
-    if let lists = attributes[DTTextListsAttribute] {
-      newAttributes[NSAttributedString.Key(rawValue: DTTextListsAttribute)] = lists
-    }
+    // list metadata now rides on the paragraph style (added above), so no separate
+    // DTTextListsAttribute transfer is needed.
 
     // add a marker so that we know that this is a field/prefix
     newAttributes[NSAttributedString.Key(rawValue: DTFieldAttribute)] = DTListPrefixField
 
-    let prefix = listStyle.prefix(withCounter: Int(listCounter))
+    let prefix = listStyle.formattedMarker(forItemNumber: Int(listCounter))
 
     guard let prefix else {
       return nil

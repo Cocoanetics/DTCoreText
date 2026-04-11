@@ -92,7 +92,7 @@ struct StringCSSTests {
 
 	@Test("OneNote style parsing")
 	func oneNoteStyle() {
-		let style = "background-image:none;background-attachment:scroll;background-color:transparent;background-position-x:0%;background-position-y:0%;background-repeat:repeat;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:medium;border-left-color:#000000;border-left-style:none;border-left-width:medium;border-right-color:#000000;border-right-style:none;border-right-width:medium;border-top-color:#000000;border-top-style:none;border-top-width:medium;border-width:medium;clear:none;color:#000000;display:inline;font-family:Times New Roman;font-size:7pt;font-style:normal;font-variant:normal;letter-spacing:normal;line-height:normal;list-style-image:none;list-style-position:outside;list-style-type:disc;overflow:visible;padding:0px;padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;position:static;float:none;text-align:left;text-decoration:none;text-indent:-0.25in;text-transform:none;visibility:inherit; FONT: 7pt &amp;quot;Times New Roman&amp;quot;" as NSString
+		let style = "background-image:none;background-attachment:scroll;background-color:transparent;background-position-x:0%;background-position-y:0%;background-repeat:repeat;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:medium;border-left-color:#000000;border-left-style:none;border-left-width:medium;border-right-color:#000000;border-right-style:none;border-right-width:medium;border-top-color:#000000;border-top-style:none;border-top-width:medium;border-width:medium;clear:none;color:#000000;display:inline;font-family:Times New Roman;font-size:7pt;font-style:normal;font-variant:normal;letter-spacing:normal;line-height:normal;list-style-image:none;list-style-position:outside;list-style-type:disc;overflow:visible;padding:0px;padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;position:static;float:none;text-align:left;text-decoration:none;text-indent:-0.25in;text-transform:none;visibility:inherit; FONT: 7pt &amp;quot;Times New Roman&amp;quot;"
 		let styles = style.dictionaryOfCSSStyles()
 
 		let fontFamily = styles["font-family"] as? String
@@ -110,7 +110,7 @@ struct StringCSSTests {
 
 	@Test("Multiple font families")
 	func multiFontFamily() {
-		let style = "font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace" as NSString
+		let style = "font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let font = dictionary["font-family"]!
 
@@ -120,7 +120,7 @@ struct StringCSSTests {
 
 	@Test("Simple quoted font family")
 	func simpleQuotedFontFamily() {
-		let style = "font-family: 'Courier New'" as NSString
+		let style = "font-family: 'Courier New'"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let font = dictionary["font-family"] as? String
 
@@ -129,7 +129,7 @@ struct StringCSSTests {
 
 	@Test("Simple unquoted font family")
 	func simpleUnquotedFontFamily() {
-		let style = "font-family: Courier New" as NSString
+		let style = "font-family: Courier New"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let font = dictionary["font-family"] as? String
 
@@ -138,7 +138,7 @@ struct StringCSSTests {
 
 	@Test("Multiple font families with size")
 	func multiFontFamilyWithSize() {
-		let style = "font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace; font-size: 60px;" as NSString
+		let style = "font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', Times New Roman, monospace; font-size: 60px;"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let font = dictionary["font-family"]!
 		let size = dictionary["font-size"] as? String
@@ -150,7 +150,7 @@ struct StringCSSTests {
 
 	@Test("Text shadow CSS parsing")
 	func textShadow() {
-		let style = "font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE" as NSString
+		let style = "font-family:Helvetica;font-weight:bold;font-size:30px; color:#FFF; text-shadow: -1px -1px #555, 1px 1px #EEE"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let shadow = dictionary["text-shadow"]
 
@@ -160,7 +160,7 @@ struct StringCSSTests {
 
 	@Test("Color CSS parsing")
 	func color() {
-		let style = "font-family:Helvetica;font-weight:bold;color:rgb(255, 0, 0);font-size:30px;" as NSString
+		let style = "font-family:Helvetica;font-weight:bold;color:rgb(255, 0, 0);font-size:30px;"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let color = dictionary["color"]
 
@@ -170,7 +170,7 @@ struct StringCSSTests {
 
 	@Test("Background color CSS parsing")
 	func backgroundColor() {
-		let style = "font-family:Helvetica;font-weight:bold;background-color:rgb(255, 88, 44);font-size:30px;" as NSString
+		let style = "font-family:Helvetica;font-weight:bold;background-color:rgb(255, 88, 44);font-size:30px;"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let color = dictionary["background-color"]
 
@@ -180,7 +180,7 @@ struct StringCSSTests {
 
 	@Test("Background RGB CSS parsing")
 	func backgroundRGB() {
-		let style = "font-family:Helvetica;font-weight:bold;background:rgb(255, 88, 44);font-size:30px;" as NSString
+		let style = "font-family:Helvetica;font-weight:bold;background:rgb(255, 88, 44);font-size:30px;"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let color = dictionary["background"]
 
@@ -237,7 +237,7 @@ struct StringCSSTests {
 
 	@Test("RGB in background should not cause array return")
 	func styleWithRGB() {
-		let style = "background:foo bar rgb(255, 255, 255)" as NSString
+		let style = "background:foo bar rgb(255, 255, 255)"
 		let dictionary = style.dictionaryOfCSSStyles()
 		let result = dictionary["background"]
 

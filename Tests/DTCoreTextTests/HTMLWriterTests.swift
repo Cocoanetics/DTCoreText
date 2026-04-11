@@ -49,15 +49,17 @@ struct HTMLWriterTests {
 
 			#expect(prefix1 == prefix2, "List prefix fields should be equal")
 
-			let lists1 = attributes1[NSAttributedString.Key(DTTextListsAttribute)] as? [CSSListStyle]
-			let lists2 = attributes2[NSAttributedString.Key(DTTextListsAttribute)] as? [CSSListStyle]
+			let listsPS1 = attributes1[.paragraphStyle] as? NSParagraphStyle
+			let listsPS2 = attributes2[.paragraphStyle] as? NSParagraphStyle
+			let lists1 = listsPS1?.textLists as? [DTTextList]
+			let lists2 = listsPS2?.textLists as? [DTTextList]
 
 			let sameNumberOfLists = (lists1?.count ?? 0) == (lists2?.count ?? 0)
 			#expect(sameNumberOfLists, "Should be same number of lists")
 
 			if sameNumberOfLists, let lists1 = lists1, let lists2 = lists2 {
 				for index in 0..<lists1.count {
-					#expect(lists1[index].isEqualToListStyle(lists2[index]), "List Style at index \(index) is not equal")
+					#expect(lists1[index].isEqualTo(lists2[index]), "List Style at index \(index) is not equal")
 				}
 			}
 

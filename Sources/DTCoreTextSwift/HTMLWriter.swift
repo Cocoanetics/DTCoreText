@@ -12,6 +12,12 @@ import CoreGraphics
 import CoreText
 import Foundation
 
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+
 /// The Unicode object replacement character U+FFFC.
 private let kUnicodeObjectPlaceholder = "\u{FFFC}"
 
@@ -41,7 +47,12 @@ public class HTMLWriter: NSObject {
 
   /// Creates a writer with a given `NSAttributedString` as input.
   @objc public init(attributedString: NSAttributedString) {
-    attributedStringStorage = attributedString
+    // Up-migrate any legacy `DTTextListsAttribute` into `NSParagraphStyle.textLists`
+    // so that the rest of the writer can read list info from a single source of truth.
+    // For attributed strings produced by current DTCoreText code this is a cheap no-op.
+    let mutable = attributedString.mutableCopy() as! NSMutableAttributedString
+    mutable.dtct_migrateLegacyListAttribute()
+    attributedStringStorage = mutable
     super.init()
   }
 
@@ -78,77 +89,9 @@ public class HTMLWriter: NSObject {
   }
 
   private func _tagRepresentation(
-    forListStyle listStyle: CSSListStyle, closingTag: Bool, listPadding: CGFloat, inlineStyles: Bool
+    forListStyle listStyle: DTTextList, closingTag: Bool, listPadding: CGFloat, inlineStyles: Bool
   ) -> String {
-    var isOrdered = false
-    var typeString: String? = nil
-
-    switch listStyle.type {
-    case .inherit, .disc:
-      typeString = "disc"
-      isOrdered = false
-
-    case .circle:
-      typeString = "circle"
-      isOrdered = false
-
-    case .square:
-      typeString = "square"
-      isOrdered = false
-
-    case .plus:
-      typeString = "plus"
-      isOrdered = false
-
-    case .underscore:
-      typeString = "underscore"
-      isOrdered = false
-
-    case .image:
-      typeString = "image"
-      isOrdered = false
-
-    case .decimal:
-      typeString = "decimal"
-      isOrdered = true
-
-    case .decimalLeadingZero:
-      typeString = "decimal-leading-zero"
-      isOrdered = true
-
-    case .upperAlpha:
-      typeString = "upper-alpha"
-      isOrdered = true
-
-    case .upperLatin:
-      typeString = "upper-latin"
-      isOrdered = true
-
-    case .upperRoman:
-      typeString = "upper-roman"
-      isOrdered = true
-
-    case .lowerAlpha:
-      typeString = "lower-alpha"
-      isOrdered = true
-
-    case .lowerLatin:
-      typeString = "lower-latin"
-      isOrdered = true
-
-    case .lowerRoman:
-      typeString = "lower-roman"
-      isOrdered = true
-
-    case .none:
-      typeString = "none"
-
-    case .invalid:
-      break
-
-    @unknown default:
-      break
-    }
+    let isOrdered = listStyle.isOrdered
 
     if closingTag {
       if isOrdered {
@@ -157,13 +100,11 @@ public class HTMLWriter: NSObject {
         return "</ul>"
       }
     } else {
-      if var ts = typeString {
-        if listStyle.position == .inside {
-          ts += " inside"
-        } else if listStyle.position == .outside {
-          ts += " outside"
-        }
-        typeString = ts
+      var typeString = listStyle.cssListStyleTypeString
+      if listStyle.position == .inside {
+        typeString += " inside"
+      } else if listStyle.position == .outside {
+        typeString += " outside"
       }
 
       let blockElement: String
@@ -173,7 +114,7 @@ public class HTMLWriter: NSObject {
         blockElement = "ul"
       }
 
-      var listStyleString = "list-style:'\(typeString ?? "")';"
+      var listStyleString = "list-style:'\(typeString)';"
 
       if listPadding > 0 {
         listStyleString += String(
@@ -208,7 +149,7 @@ public class HTMLWriter: NSObject {
 
     var location = 0
 
-    var previousListStyles: [CSSListStyle]? = nil
+    var previousListStyles: [DTTextList]? = nil
 
     for i in 0..<paragraphs.count {
       let oneParagraph = paragraphs[i]
@@ -250,14 +191,13 @@ public class HTMLWriter: NSObject {
         at: paragraphRange.location, effectiveRange: nil)
       let paraAttributesDict = paraAttributes as NSDictionary
 
-      // lets see if we have a list style
-      let currentListStyles =
-        paraAttributesDict.object(forKey: DTTextListsAttribute) as? [CSSListStyle]
+      // retrieve the paragraph style — it is now the canonical source for the list array
+      let paragraphStyle = paraAttributesDict.dtct_paragraphStyle()
+
+      // list styles live on the paragraph style's textLists array
+      let currentListStyles = paragraphStyle?.textLists as? [DTTextList]
 
       let effectiveListStyle = currentListStyles?.last
-
-      // retrieve the paragraph style
-      let paragraphStyle = paraAttributesDict.dtct_paragraphStyle()
       var paraStyleString: String? = nil
 
       if let paragraphStyle = paragraphStyle, effectiveListStyle == nil {
@@ -308,7 +248,7 @@ public class HTMLWriter: NSObject {
       var commonPrefixLen = 0
       let minStackLen = min(prevStack.count, currStack.count)
       while commonPrefixLen < minStackLen
-        && prevStack[commonPrefixLen].isEqualToListStyle(currStack[commonPrefixLen])
+        && prevStack[commonPrefixLen].isEqualTo(currStack[commonPrefixLen])
       {
         commonPrefixLen += 1
       }
@@ -343,7 +283,7 @@ public class HTMLWriter: NSObject {
             retString += "\n"
 
             // all but the effective (innermost) list need an extra LI
-            if !oneList.isEqualToListStyle(effectiveListStyle) {
+            if !oneList.isEqualTo(effectiveListStyle) {
               retString += "<li>"
             }
           }
@@ -741,15 +681,15 @@ public class HTMLWriter: NSObject {
         let nextParagraphStart = NSMaxRange(nsPlainString.paragraphRange(for: paragraphRange))
 
         if nextParagraphStart < nsPlainString.length {
-          let nextListStyles =
+          let nextParaStyle =
             attributedStringStorage.attribute(
-              NSAttributedString.Key(rawValue: DTTextListsAttribute), at: nextParagraphStart,
-              effectiveRange: nil) as? [CSSListStyle]
+              .paragraphStyle, at: nextParagraphStart, effectiveRange: nil) as? NSParagraphStyle
+          let nextListStyles = nextParaStyle?.textLists as? [DTTextList]
 
           // LI are only closed if there is not a deeper list level following
           if let nextListStyles = nextListStyles,
             let effective = effectiveListStyle,
-            nextListStyles.contains(where: { $0.isEqualToListStyle(effective) }),
+            nextListStyles.contains(where: { $0.isEqualTo(effective) }),
             nextListStyles.count > (currentListStyles?.count ?? 0)
           {
             // deeper list following

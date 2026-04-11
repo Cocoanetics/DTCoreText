@@ -55,9 +55,9 @@ struct CSSStylesheetWeightTests {
 struct CSSStylesheetShorthandTests {
 	private func uncompress(_ styles: [String: String]) -> [String: Any] {
 		let stylesheet = CSSStylesheet.defaultStyleSheet()
-		let mutable = NSMutableDictionary(dictionary: styles)
-		stylesheet.uncompressShorthands(mutable)
-		return mutable as! [String: Any]
+		var dict: [String: Any] = styles
+		stylesheet.uncompressShorthands(&dict)
+		return dict
 	}
 
 	@Test("Font shorthand decompression")

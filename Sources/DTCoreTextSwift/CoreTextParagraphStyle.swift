@@ -67,7 +67,7 @@ public class CoreTextParagraphStyle: NSObject, NSCopying {
   }
 
   /// Text lists containing the paragraph, nested from outermost to innermost.
-  @objc public var textLists: [Any]?
+  @objc public var textLists: [NSTextList]?
 
   /// Text blocks containing the paragraph, nested from outermost to innermost.
   @objc public var textBlocks: [Any]?
@@ -184,6 +184,12 @@ public class CoreTextParagraphStyle: NSObject, NSCopying {
     }
 
     retStyle.defaultTabInterval = ps.defaultTabInterval
+
+    // Text lists — `NSParagraphStyle.textLists` is now the canonical source
+    // of truth for list metadata, so propagate it onto the wrapper.
+    if !ps.textLists.isEmpty {
+      retStyle.textLists = ps.textLists
+    }
 
     return retStyle
   }
@@ -309,6 +315,13 @@ public class CoreTextParagraphStyle: NSObject, NSCopying {
       }
 
       mps.defaultTabInterval = defaultTabInterval
+    }
+
+    // Text lists — forward onto the native NSParagraphStyle so consumers see them
+    // where TextKit and Apple's own importer place them (the baked-in marker run
+    // is still the rendering mechanism, but the list metadata lives here).
+    if let textLists = textLists, !textLists.isEmpty {
+      mps.textLists = textLists
     }
 
     return mps
