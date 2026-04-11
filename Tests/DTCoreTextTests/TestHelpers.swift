@@ -20,7 +20,7 @@ enum TestHelpers {
 
 		TextAttachment.registerClass(ObjectTextAttachment.self, forTagName: "oliver")
 
-		let builder = HTMLAttributedStringBuilder(html: data, options: mutableOptions, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: mutableOptions)
 		return builder?.generatedAttributedString()
 	}
 
@@ -28,7 +28,7 @@ enum TestHelpers {
 		guard let path = Bundle.module.path(forResource: name, ofType: "html") else { return nil }
 		guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { return nil }
 
-		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil)
 		return builder?.generatedAttributedString()
 	}
 }

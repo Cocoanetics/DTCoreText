@@ -459,7 +459,7 @@ public class HTMLWriter: NSObject {
           needsToRemovePrefix = false
         }
 
-        var subString: String? = (plainSubString as NSString).stringByAddingHTMLEntities()
+        var subString: String? = plainSubString.addingHTMLEntities()
 
         if subString == nil {
           if isLastPartOfHyperlink {
@@ -766,7 +766,7 @@ public class HTMLWriter: NSObject {
     }
 
     if useAppleConvertedSpaceStorage {
-      output += (retString as NSString).stringByAddingAppleConvertedSpace()
+      output += retString.addingAppleConvertedSpace()
     } else {
       output += retString
     }

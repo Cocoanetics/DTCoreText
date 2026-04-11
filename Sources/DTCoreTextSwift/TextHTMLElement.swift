@@ -34,7 +34,7 @@ open class TextHTMLElement: HTMLElement {
       string.append("   ")
     }
 
-    string.append("\"\((_text as NSString).stringByNormalizingWhitespace())\"\n")
+    string.append("\"\(_text.normalizingWhitespace())\"\n")
   }
 
   @objc open override func attributedString() -> NSAttributedString? {
@@ -63,7 +63,7 @@ open class TextHTMLElement: HTMLElement {
       // replace nbsp; with regular space
       text = _text.replacingOccurrences(of: UNICODE_NON_BREAKING_SPACE, with: " ")
     } else {
-      text = (_text as NSString).stringByNormalizingWhitespace() as String
+      text = _text.normalizingWhitespace()
     }
 
     let attributes = attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]

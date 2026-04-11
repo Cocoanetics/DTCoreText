@@ -63,9 +63,9 @@ open class VideoTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
       tmpAttributes.removeValue(forKey: "height")
 
       for key in tmpAttributes.keys {
-        let encodedKey = (key as NSString).stringByAddingHTMLEntities()
+        let encodedKey = key.addingHTMLEntities()
         let value = "\(tmpAttributes[key]!)"
-        let encodedValue = (value as NSString).stringByAddingHTMLEntities()
+        let encodedValue = value.addingHTMLEntities()
         retString += " \(encodedKey)=\"\(encodedValue)\""
       }
     }

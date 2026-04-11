@@ -161,48 +161,31 @@ private func isWhitespace(_ c: unichar) -> Bool {
   return c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0B || c == 0x0C || c == 0x0D || c == 0x85
 }
 
-/// Methods for making HTML strings easier and quicker to handle.
-extension NSString {
+/// Native Swift HTML helpers on `String`.
+extension String {
 
-  /// Extract the numbers from this string and return them as an NSUInteger.
-  @objc public func integerValueFromHex() -> UInt {
-    var result: UInt64 = 0
-    let scanner = Scanner(string: self as String)
-    scanner.scanHexInt64(&result)
-    return UInt(result)
+  /// True when the receiver is empty or contains only whitespace characters.
+  public var isIgnorableWhitespace: Bool {
+    return trimmingCharacters(in: NSCharacterSet.dt_ignorableWhitespaceCharacterSet).isEmpty
   }
 
-  /// Test whether or not this string is numeric only.
-  @objc public func dt_isNumeric() -> Bool {
-    for char in (self as String).utf8 {
-      if (char < UInt8(ascii: "0") || char > UInt8(ascii: "9")) && char != UInt8(ascii: ".") {
+  /// True when the receiver contains only digits and the `.` character.
+  public var isNumericOnly: Bool {
+    for byte in utf8 {
+      if (byte < UInt8(ascii: "0") || byte > UInt8(ascii: "9")) && byte != UInt8(ascii: ".") {
         return false
       }
     }
     return true
   }
 
-  /// Test whether the entire receiver consists of only whitespace characters.
-  @objc public func isIgnorableWhitespace() -> Bool {
-    let trimmed = (self as String).trimmingCharacters(
-      in: NSCharacterSet.dt_ignorableWhitespaceCharacterSet)
-    return trimmed.isEmpty
-  }
-
-  /// Read through this string and store the numbers included, then divide them by 100 giving a percentage.
-  @objc public func percentValue() -> Float {
-    let scanner = Scanner(string: self as String)
-    let result = scanner.scanFloat(representation: .decimal) ?? 1
-    return result / 100.0
-  }
-
-  /// Return a copy of this string with all whitespace characters replaced by space characters.
-  @objc public func stringByNormalizingWhitespace() -> String {
-    let str = self as String
-    let stringLength = str.utf16.count
+  /// Returns a copy of the receiver with all runs of whitespace collapsed to a single
+  /// space character (U+0020).
+  public func normalizingWhitespace() -> String {
+    let stringLength = utf16.count
     guard stringLength > 0 else { return "" }
 
-    var characters = Array(str.utf16)
+    var characters = Array(utf16)
     var outputLength = 0
     var inWhite = false
 
@@ -224,108 +207,80 @@ extension NSString {
     return String(utf16CodeUnits: Array(characters[0..<outputLength]), count: outputLength)
   }
 
-  /// Determines if the first character of this string is in the parameter characterSet.
-  @objc public func hasPrefixCharacter(from characterSet: CharacterSet) -> Bool {
-    guard self.length > 0 else { return false }
-    let firstChar = self.character(at: 0)
-    guard let scalar = Unicode.Scalar(firstChar) else { return false }
-    return characterSet.contains(scalar)
-  }
-
-  /// Determines if the last character of this string is in the parameter characterSet.
-  @objc public func hasSuffixCharacter(from characterSet: CharacterSet) -> Bool {
-    guard self.length > 0 else { return false }
-    let lastChar = self.character(at: self.length - 1)
-    guard let scalar = Unicode.Scalar(lastChar) else { return false }
-    return characterSet.contains(scalar)
-  }
-
-  /// Convert a string into a proper HTML string by converting special characters into HTML entities.
-  @objc public func stringByAddingHTMLEntities() -> String {
+  /// Returns a copy of the receiver with non-ASCII characters replaced by their HTML
+  /// entity references (named entities where available, numeric references otherwise).
+  public func addingHTMLEntities() -> String {
     var tmpString = ""
-    let str = self as String
+    let codeUnits = utf16
 
-    var index = str.utf16.startIndex
-    let utf16 = str.utf16
+    var index = codeUnits.startIndex
 
-    while index < utf16.endIndex {
-      let oneChar = utf16[index]
+    while index < codeUnits.endIndex {
+      let oneChar = codeUnits[index]
       let key = Int(oneChar)
 
       if let entity = entityReverseLookup[key] {
         tmpString.append(entity)
-      } else {
-        if oneChar <= 255 {
-          tmpString.append(Character(Unicode.Scalar(oneChar)!))
-        } else if UTF16.isLeadSurrogate(oneChar) {
-          let nextIndex = utf16.index(after: index)
-          if nextIndex < utf16.endIndex {
-            let lowChar = utf16[nextIndex]
-            let u32code = UTF16.decode(UTF16.EncodedScalar([oneChar, lowChar]))
-            tmpString.append("&#\(u32code.value);")
-            index = nextIndex
-          }
-        } else {
-          tmpString.append("&#\(oneChar);")
+      } else if oneChar <= 255 {
+        tmpString.append(Character(Unicode.Scalar(oneChar)!))
+      } else if UTF16.isLeadSurrogate(oneChar) {
+        let nextIndex = codeUnits.index(after: index)
+        if nextIndex < codeUnits.endIndex {
+          let lowChar = codeUnits[nextIndex]
+          let u32code = UTF16.decode(UTF16.EncodedScalar([oneChar, lowChar]))
+          tmpString.append("&#\(u32code.value);")
+          index = nextIndex
         }
+      } else {
+        tmpString.append("&#\(oneChar);")
       }
-      index = utf16.index(after: index)
+      index = codeUnits.index(after: index)
     }
 
     return tmpString
   }
 
-  /// Convert a string from HTML entities into correct character representations.
-  @objc public func stringByReplacingHTMLEntities() -> String {
-    let scanner = Scanner(string: self as String)
+  /// Returns a copy of the receiver with HTML entity references replaced by their
+  /// Unicode character equivalents.
+  public func replacingHTMLEntities() -> String {
+    let scanner = Scanner(string: self)
     scanner.charactersToBeSkipped = nil
 
     var output = ""
 
     while !scanner.isAtEnd {
-      if let scanned = scanner.dt_scanUpToString("&") {
+      if let scanned = scanner.scanUpToString("&") {
         output.append(scanned)
       }
 
-      if scanner.dt_scanString("&") != nil {
+      if scanner.scanString("&") != nil {
         let originalLocation = scanner.currentIndex
         var matched = false
 
-        if scanner.dt_scanString("#x") != nil {
-          var scannedValue: UInt64 = 0
-          if scanner.scanHexInt64(&scannedValue) && scannedValue <= UInt64(UInt32.max) {
-            if scanner.dt_scanString(";") != nil {
-              let inputChar = UInt32(scannedValue).littleEndian
-              var bytes = inputChar
-              if let string = String(
-                bytes: withUnsafeBytes(of: &bytes) { Array($0) }, encoding: .utf32LittleEndian)
-              {
-                output.append(string)
-                matched = true
-              }
-            }
+        if scanner.scanString("#x") != nil {
+          if let scannedValue = scanner.scanUInt64(representation: .hexadecimal),
+            scannedValue <= UInt64(UInt32.max),
+            scanner.scanString(";") != nil,
+            let scalar = Unicode.Scalar(UInt32(scannedValue))
+          {
+            output.unicodeScalars.append(scalar)
+            matched = true
           }
-        } else if scanner.dt_scanString("#") != nil {
-          var scannedValue: UInt64 = 0
-          if scanner.scanUnsignedLongLong(&scannedValue) && scannedValue <= UInt64(UInt32.max) {
-            if scanner.dt_scanString(";") != nil {
-              let inputChar = UInt32(scannedValue).littleEndian
-              var bytes = inputChar
-              if let string = String(
-                bytes: withUnsafeBytes(of: &bytes) { Array($0) }, encoding: .utf32LittleEndian)
-              {
-                output.append(string)
-                matched = true
-              }
-            }
+        } else if scanner.scanString("#") != nil {
+          if let scannedValue = scanner.scanUInt64(),
+            scannedValue <= UInt64(UInt32.max),
+            scanner.scanString(";") != nil,
+            let scalar = Unicode.Scalar(UInt32(scannedValue))
+          {
+            output.unicodeScalars.append(scalar)
+            matched = true
           }
-        } else if let afterAmpersand = scanner.dt_scanUpToString(";") {
-          if scanner.dt_scanString(";") != nil {
-            if let converted = entityLookup[afterAmpersand] {
-              output.append(converted)
-              matched = true
-            }
-          }
+        } else if let afterAmpersand = scanner.scanUpToString(";"),
+          scanner.scanString(";") != nil,
+          let converted = entityLookup[afterAmpersand]
+        {
+          output.append(converted)
+          matched = true
         }
 
         if !matched {
@@ -338,20 +293,22 @@ extension NSString {
     return output
   }
 
-  /// Replaces occurrences of two or more spaces with alternating non-breaking space and regular space.
-  @objc public func stringByAddingAppleConvertedSpace() -> String {
+  /// Replaces runs of two or more spaces with alternating non-breaking and regular
+  /// spaces wrapped in an `Apple-converted-space` span (matching Web-Kit's clipboard
+  /// serialization).
+  public func addingAppleConvertedSpace() -> String {
     var output = ""
-    let scanner = Scanner(string: self as String)
+    let scanner = Scanner(string: self)
     scanner.charactersToBeSkipped = nil
 
     let spaceSet = CharacterSet(charactersIn: " ")
 
     while !scanner.isAtEnd {
-      if let part = scanner.dt_scanUpToString("  ") {
+      if let part = scanner.scanUpToString("  ") {
         output.append(part)
       }
 
-      if let spaces = scanner.dt_scanCharacters(from: spaceSet) {
+      if let spaces = scanner.scanCharacters(from: spaceSet) {
         // first space always output as is
         output.append(" ")
 
@@ -377,61 +334,10 @@ extension NSString {
     return output
   }
 
-  /// Percent-encodes all characters outside the normal ASCII range.
-  @objc public func stringByEncodingNonASCIICharacters() -> String {
-    return (self as String).addingPercentEncoding(
-      withAllowedCharacters: NSCharacterSet.dt_ASCIICharacterSet) ?? (self as String)
+  /// Returns a copy of the receiver with non-ASCII characters percent-encoded.
+  public func encodingNonASCIICharacters() -> String {
+    return addingPercentEncoding(withAllowedCharacters: NSCharacterSet.dt_ASCIICharacterSet)
+      ?? self
   }
 }
 
-// MARK: - Scanner Helpers
-
-extension Scanner {
-  fileprivate func dt_scanString(_ string: String) -> String? {
-    if #available(iOS 13.0, macOS 10.15, *) {
-      return self.scanString(string)
-    } else {
-      var result: NSString?
-      if scanString(string, into: &result) {
-        return result as String?
-      }
-      return nil
-    }
-  }
-
-  fileprivate func dt_scanUpToString(_ string: String) -> String? {
-    if #available(iOS 13.0, macOS 10.15, *) {
-      return self.scanUpToString(string)
-    } else {
-      var result: NSString?
-      if scanUpTo(string, into: &result) {
-        return result as String?
-      }
-      return nil
-    }
-  }
-
-  fileprivate func dt_scanCharacters(from set: CharacterSet) -> String? {
-    if #available(iOS 13.0, macOS 10.15, *) {
-      return self.scanCharacters(from: set)
-    } else {
-      var result: NSString?
-      if scanCharacters(from: set, into: &result) {
-        return result as String?
-      }
-      return nil
-    }
-  }
-
-  fileprivate func scanUnsignedLongLong(_ result: inout UInt64) -> Bool {
-    if #available(iOS 13.0, macOS 10.15, *) {
-      if let value = self.scanUInt64() {
-        result = value
-        return true
-      }
-      return false
-    } else {
-      return self.scanUnsignedLongLong(&result)
-    }
-  }
-}

@@ -16,7 +16,7 @@ struct AttributedStringHTMLTests {
 
 	private func attributedStringFromHTML(_ html: String) -> NSAttributedString? {
 		guard let data = html.data(using: .utf8) else { return nil }
-		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil)
 		return builder?.generatedAttributedString()
 	}
 

@@ -27,6 +27,20 @@ open class HTMLParserNode: NSObject {
     return childNodeStorage.isEmpty ? nil : childNodeStorage as NSArray
   }
 
+  /// Swift-native view of the receiver's child nodes, without NSArray bridging.
+  public var children: [HTMLParserNode] {
+    objc_sync_enter(self)
+    defer { objc_sync_exit(self) }
+    return childNodeStorage
+  }
+
+  /// The last child node, or `nil` if the receiver has no children.
+  public var lastChild: HTMLParserNode? {
+    objc_sync_enter(self)
+    defer { objc_sync_exit(self) }
+    return childNodeStorage.last
+  }
+
   /// Adds a child node to the receiver.
   /// - Parameter childNode: The child node to be appended to the list of children
   @objc public func addChildNode(_ childNode: HTMLParserNode) {

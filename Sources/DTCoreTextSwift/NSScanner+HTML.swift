@@ -143,10 +143,10 @@ extension Scanner {
         attrValue = ""
       }
 
-      attrValue = attrValue?.stringByReplacingHTMLEntities()
+      attrValue = attrValue?.replacingHTMLEntities()
     } else if let scanned = scanUpToString(")") {
       // non-quoted attribute, ends at )
-      attrValue = scanned.stringByReplacingHTMLEntities()
+      attrValue = scanned.replacingHTMLEntities()
     }
 
     return attrValue
@@ -193,10 +193,3 @@ extension Scanner {
   }
 }
 
-// MARK: - Private helper to call stringByReplacingHTMLEntities on String
-
-extension String {
-  fileprivate func stringByReplacingHTMLEntities() -> String {
-    return (self as NSString).stringByReplacingHTMLEntities()
-  }
-}

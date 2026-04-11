@@ -381,7 +381,7 @@ struct HTMLAttributedStringBuilderTests {
 	@Test("Direct body text is not duplicated when keeping node tree")
 	func directBodyTextNotDuplicatedWhenKeepingNodeTree() {
 		let data = Data("<html><body>Hello</body></html>".utf8)
-		let builder = HTMLAttributedStringBuilder(html: data, options: nil, documentAttributes: nil)
+		let builder = HTMLAttributedStringBuilder(html: data, options: nil)
 		builder?.shouldKeepDocumentNodeTree = true
 
 		let result = builder?.generatedAttributedString()

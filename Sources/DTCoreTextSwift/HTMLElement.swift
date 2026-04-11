@@ -97,6 +97,16 @@ open class HTMLElement: HTMLParserNode {
 
   // MARK: - Creating HTML Elements
 
+  /// Swift-native factory method. Creates the appropriate element subclass for the given
+  /// tag name, and installs attributes and creation-time options using native Swift types.
+  public class func element(
+    name: String, attributes: [String: String]?, options: [String: Any]?
+  ) -> HTMLElement {
+    let bridgedAttributes = attributes.map { $0 as NSDictionary }
+    let bridgedOptions = options.map { $0 as NSDictionary }
+    return element(withName: name, attributes: bridgedAttributes, options: bridgedOptions)
+  }
+
   /// Factory method that creates the appropriate element subclass.
   @objc public class func element(
     withName name: String, attributes: NSDictionary?, options: NSDictionary?
@@ -529,6 +539,12 @@ open class HTMLElement: HTMLParserNode {
     return didModify
   }
 
+  /// Swift-native entry point for applying a style dictionary. Bridges to the
+  /// `NSDictionary` version so existing subclass overrides continue to work.
+  public func applyStyles(_ styles: [String: Any]) {
+    applyStyleDictionary(styles as NSDictionary)
+  }
+
   /// Applies the style information contained in a styles dictionary to the receiver.
   @objc open func applyStyleDictionary(_ styles: NSDictionary) {
     guard styles.count > 0 else { return }
@@ -748,8 +764,8 @@ open class HTMLElement: HTMLParserNode {
         self.paragraphStyle.minimumLineHeight = 0
         self.paragraphStyle.maximumLineHeight = 0
       } else if lineHeight != "inherit" {
-        if (lineHeight as NSString).dt_isNumeric() {
-          self.paragraphStyle.lineHeightMultiple = CGFloat((lineHeight as NSString).floatValue)
+        if lineHeight.isNumericOnly {
+          self.paragraphStyle.lineHeightMultiple = CGFloat(Float(lineHeight) ?? 0)
         } else {
           let lhValue = (lineHeight as NSString).pixelSizeOfCSSMeasure(
             relativeToCurrentTextSize: _fontDescriptor?.pointSize ?? 12, textScale: _textScale)
@@ -930,6 +946,12 @@ open class HTMLElement: HTMLParserNode {
   @objc open var CSSClassNamesToIgnoreForCustomAttributes: NSSet? {
     get { return _CSSClassNamesToIgnoreForCustomAttributes }
     set { _CSSClassNamesToIgnoreForCustomAttributes = newValue }
+  }
+
+  /// Swift-native setter for the CSS class names that should not be serialized as
+  /// custom HTML attributes.
+  public func setCSSClassNamesToIgnoreForCustomAttributes(_ names: Set<String>) {
+    _CSSClassNamesToIgnoreForCustomAttributes = NSSet(set: names)
   }
 
   /// Copies and inherits relevant attributes from the given parent element.
