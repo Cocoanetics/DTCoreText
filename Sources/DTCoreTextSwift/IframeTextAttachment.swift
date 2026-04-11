@@ -4,12 +4,12 @@ import Foundation
 @objc(DTIframeTextAttachment)
 open class IframeTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
 
-  @objc open override func configured(with element: HTMLElement, options: NSDictionary?) -> Self {
+  open override func configured(with element: HTMLElement, options: [String: Any]?) -> Self {
     let result = super.configured(with: element, options: options)
 
     // get base URL
-    let baseURL = (options as? [String: Any])?[NSBaseURLDocumentOption as String] as? URL
-    var src = (element.attributes as? [String: Any])?["src"] as? String
+    let baseURL = options?[NSBaseURLDocumentOption] as? URL
+    var src = element.attributes?["src"]
 
     // prepend https: if URL string starts with // (seems to do with youtube iframes as standard)
     if let s = src, s.hasPrefix("//") {
@@ -66,7 +66,7 @@ open class IframeTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
     }
 
     // attach the attributes dictionary
-    if let attrs = attributes as? [String: Any] {
+    if let attrs = attributes {
       var tmpAttributes = attrs
       tmpAttributes.removeValue(forKey: "src")
       tmpAttributes.removeValue(forKey: "style")

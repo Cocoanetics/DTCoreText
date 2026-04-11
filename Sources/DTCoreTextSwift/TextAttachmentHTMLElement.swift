@@ -8,12 +8,11 @@ import Foundation
 #endif
 
 /// Specialized subclass of HTMLElement for dealing with text attachment instances, e.g. images.
-@objc(DTTextAttachmentHTMLElement)
 open class TextAttachmentHTMLElement: HTMLElement {
 
   private var _maxDisplaySize: CGSize = .zero
 
-  @objc public init(name: String, attributes: NSDictionary?, options: NSDictionary?) {
+  public init(name: String, attributes: [String: String]?, options: [String: Any]?) {
     super.init(name: name, attributes: attributes)
 
     // make appropriate attachment
@@ -35,8 +34,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
       // remember the maximum display size
       _maxDisplaySize = .zero
 
-      if let maxImageSizeValue = (options as? [String: Any])?[DTMaxImageSize as String] as? NSValue
-      {
+      if let maxImageSizeValue = options?[DTMaxImageSize] as? NSValue {
         #if canImport(UIKit)
           _maxDisplaySize = maxImageSizeValue.cgSizeValue
         #else
@@ -46,11 +44,11 @@ open class TextAttachmentHTMLElement: HTMLElement {
     }
   }
 
-  required public init(name: String, attributes: NSDictionary?) {
+  required public init(name: String, attributes: [String: String]?) {
     super.init(name: name, attributes: attributes)
   }
 
-  @objc open override func attributedString() -> NSAttributedString? {
+  open override func attributedString() -> NSAttributedString? {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
@@ -69,7 +67,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
   }
 
   // workaround, because we don't support float yet. float causes the image to be its own block
-  @objc open override var displayStyle: DTHTMLElementDisplayStyle {
+  open override var displayStyle: DTHTMLElementDisplayStyle {
     get {
       if super.floatStyle == .none {
         return super.displayStyle
@@ -81,9 +79,9 @@ open class TextAttachmentHTMLElement: HTMLElement {
     }
   }
 
-  @objc open override func applyStyleDictionary(_ styles: NSDictionary) {
+  open override func applyStyles(_ styles: [String: Any]) {
     // element size is determined in super (tag attribute and style)
-    super.applyStyleDictionary(styles)
+    super.applyStyles(styles)
 
     // at this point we have the size from width/height attribute or style in _size
 
@@ -97,13 +95,13 @@ open class TextAttachmentHTMLElement: HTMLElement {
 
     if let widthString = widthString, widthString.count > 1, widthString.hasSuffix("%") {
       let scaleStr = String(widthString.dropLast())
-      let scale = CGFloat((scaleStr as NSString).floatValue) / 100.0
+      let scale = CGFloat(Float(scaleStr) ?? 0) / 100.0
       _size.width = _maxDisplaySize.width * scale
     }
 
     if let heightString = heightString, heightString.count > 1, heightString.hasSuffix("%") {
       let scaleStr = String(heightString.dropLast())
-      let scale = CGFloat((scaleStr as NSString).floatValue) / 100.0
+      let scale = CGFloat(Float(scaleStr) ?? 0) / 100.0
       _size.height = _maxDisplaySize.height * scale
     }
 

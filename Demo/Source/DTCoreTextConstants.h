@@ -18,7 +18,6 @@ extern NSString * const DTDefaultLinkColor;
 extern NSString * const DTDefaultLinkHighlightColor;
 extern NSString * const DTDefaultFontFamily;
 extern NSString * const DTMaxImageSize;
-extern NSString * const DTWillFlushBlockCallBack;
 extern NSString * const DTLinkAttribute;
 extern NSString * const DTGUIDAttribute;
 extern NSString * const NSBaseURLDocumentOption;

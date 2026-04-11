@@ -73,7 +73,6 @@ public let DTDefaultFirstLineHeadIndent: String = "DTDefaultFirstLineHeadIndent"
 public let DTDefaultHeadIndent: String = "DTDefaultHeadIndent"
 public let DTDefaultStyleSheet: String = "DTDefaultStyleSheet"
 public let DTUseiOS6Attributes: String = "DTUseiOS6Attributes"
-public let DTWillFlushBlockCallBack: String = "DTWillFlushBlockCallBack"
 public let DTProcessCustomHTMLAttributes: String = "DTProcessCustomHTMLAttributes"
 public let DTIgnoreInlineStylesOption: String = "DTIgnoreInlineStyles"
 public let DTDocumentPreserveTrailingSpaces: String = "DTDocumentPreserveTrailingSpaces"
@@ -115,7 +114,7 @@ public let DTCoreTextFontDescriptorException: String = "DTCoreTextFontDescriptor
 
 // MARK: - Enums
 
-@objc public enum DTHTMLElementDisplayStyle: UInt {
+public enum DTHTMLElementDisplayStyle: UInt, Sendable {
   /// The element is inline text
   case inline = 0
   /// The element is not displayed
@@ -128,7 +127,7 @@ public let DTCoreTextFontDescriptorException: String = "DTCoreTextFontDescriptor
   case table
 }
 
-@objc public enum DTHTMLElementFloatStyle: UInt {
+public enum DTHTMLElementFloatStyle: UInt, Sendable {
   /// The element does not float
   case none = 0
   /// The element should float left-aligned
@@ -137,7 +136,7 @@ public let DTCoreTextFontDescriptorException: String = "DTCoreTextFontDescriptor
   case right
 }
 
-@objc public enum DTHTMLElementFontVariant: UInt {
+public enum DTHTMLElementFontVariant: UInt, Sendable {
   /// The element inherits the font variant
   case inherit = 0
   /// The element uses the normal font variant

@@ -98,19 +98,17 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
     self.image = image
   }
 
-  @objc open override func configured(with element: HTMLElement, options: NSDictionary?) -> Self {
+  open override func configured(with element: HTMLElement, options: [String: Any]?) -> Self {
     let result = super.configured(with: element, options: options)
-    result._decodeImage(from: element, options: options as? [String: Any])
+    result._decodeImage(from: element, options: options)
     return result
   }
 
   // MARK: - Image Decoding
 
   private func _decodeImage(from element: HTMLElement, options: [String: Any]?) {
-    let baseURL =
-      options?[NSBaseURLDocumentOption] as? URL
-      ?? (options as NSDictionary?)?[NSBaseURLDocumentOption] as? URL
-    let src = (element.attributes as? [String: Any])?["src"] as? String
+    let baseURL = options?[NSBaseURLDocumentOption] as? URL
+    let src = element.attributes?["src"]
 
     var contentURL: URL? = nil
 
@@ -140,7 +138,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
           var decodedImage = DTImage(data: decodedData)
 
           // we don't know the content scale from such images, need to infer it from size in style
-          if let stylesStr = (element.attributes as? [String: Any])?["style"] as? String {
+          if let stylesStr = element.attributes?["style"] {
             let attributes = stylesStr.dictionaryOfCSSStyles() as? [String: String]
 
             if let widthStr = attributes?["width"],
@@ -363,7 +361,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
     }
 
     // attach the attributes dictionary
-    if let attrs = attributes as? [String: Any] {
+    if let attrs = attributes {
       var tmpAttributes = attrs
       tmpAttributes.removeValue(forKey: "src")
       tmpAttributes.removeValue(forKey: "style")

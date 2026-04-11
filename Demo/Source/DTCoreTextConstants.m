@@ -10,7 +10,6 @@ NSString * const DTDefaultLinkColor = @"DTDefaultLinkColor";
 NSString * const DTDefaultLinkHighlightColor = @"DTDefaultLinkHighlightColor";
 NSString * const DTDefaultFontFamily = @"DTDefaultFontFamily";
 NSString * const DTMaxImageSize = @"DTMaxImageSize";
-NSString * const DTWillFlushBlockCallBack = @"DTWillFlushBlockCallBack";
 NSString * const DTLinkAttribute = @"NSLink";
 NSString * const DTGUIDAttribute = @"DTGUID";
 NSString * const NSBaseURLDocumentOption = @"NSBaseURLDocumentOption";

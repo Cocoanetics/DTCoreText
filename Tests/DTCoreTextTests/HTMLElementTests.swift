@@ -44,7 +44,7 @@ struct HTMLElementTests {
 			"margin-left": "40px",
 		]
 
-		element.applyStyleDictionary(styles as NSDictionary)
+		element.applyStyles(styles)
 
 		#expect(element.margins.left == 40)
 		#expect(element.margins.right == 0)
@@ -64,7 +64,7 @@ struct HTMLElementTests {
 		element.textAttachment = object
 
 		let styles: [String: String] = ["display": "none"]
-		element.applyStyleDictionary(styles as NSDictionary)
+		element.applyStyles(styles)
 
 		let attributedString = element.attributedString()
 		#expect(attributedString == nil)
@@ -83,22 +83,22 @@ struct HTMLElementTests {
 			DTDefaultFontSize: NSNumber(value: 16.0),
 		]
 
-		let attachment = HTMLElement.element(withName: "img", attributes: nil, options: options as NSDictionary)
+		let attachment = HTMLElement.element(name: "img", attributes: nil, options: options)
 		attachment.textAttachment!.originalSize = CGSize(width: 1000, height: 800)
 
-		attachment.applyStyleDictionary(["width": "100%", "height": "100%"] as NSDictionary)
+		attachment.applyStyles(["width": "100%", "height": "100%"])
 		#expect(attachment.textAttachment!.displaySize.width == 500)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 
-		attachment.applyStyleDictionary(["width": "80%", "height": "100%"] as NSDictionary)
+		attachment.applyStyles(["width": "80%", "height": "100%"])
 		#expect(attachment.textAttachment!.displaySize.width == 400)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 
-		attachment.applyStyleDictionary(["width": "110%", "height": "80%"] as NSDictionary)
+		attachment.applyStyles(["width": "110%", "height": "80%"])
 		#expect(attachment.textAttachment!.displaySize.width == 500)
 		#expect(attachment.textAttachment!.displaySize.height == 364)
 
-		attachment.applyStyleDictionary(["width": "100%", "height": "110%"] as NSDictionary)
+		attachment.applyStyles(["width": "100%", "height": "110%"])
 		#expect(attachment.textAttachment!.displaySize.width == 455)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 	}

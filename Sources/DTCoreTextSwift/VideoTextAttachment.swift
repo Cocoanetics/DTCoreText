@@ -4,12 +4,12 @@ import Foundation
 @objc(DTVideoTextAttachment)
 open class VideoTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
 
-  @objc open override func configured(with element: HTMLElement, options: NSDictionary?) -> Self {
+  open override func configured(with element: HTMLElement, options: [String: Any]?) -> Self {
     let result = super.configured(with: element, options: options)
 
     // get base URL
-    let baseURL = (options as? [String: Any])?[NSBaseURLDocumentOption as String] as? URL
-    let src = (element.attributes as? [String: Any])?["src"] as? String
+    let baseURL = options?[NSBaseURLDocumentOption] as? URL
+    let src = element.attributes?["src"]
 
     // content URL
     if let src = src {
@@ -55,7 +55,7 @@ open class VideoTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
     }
 
     // attach the attributes dictionary
-    if let attrs = attributes as? [String: Any] {
+    if let attrs = attributes {
       var tmpAttributes = attrs
       tmpAttributes.removeValue(forKey: "src")
       tmpAttributes.removeValue(forKey: "style")

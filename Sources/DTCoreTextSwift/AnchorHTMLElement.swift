@@ -7,14 +7,13 @@ import Foundation
 #endif
 
 /// Specialized subclass of HTMLElement that represents a hyperlink.
-@objc(DTAnchorHTMLElement)
 open class AnchorHTMLElement: HTMLElement {
 
   /// Foreground text color of the receiver when highlighted
-  @objc open var highlightedTextColor: DTColor?
+  open var highlightedTextColor: DTColor?
 
-  @objc open override func applyStyleDictionary(_ styles: NSDictionary) {
-    super.applyStyleDictionary(styles)
+  open override func applyStyles(_ styles: [String: Any]) {
+    super.applyStyles(styles)
 
     // get highlight color from a:active pseudo-selector
     if let activeColor = styles["active:color"] as? String {
@@ -22,7 +21,7 @@ open class AnchorHTMLElement: HTMLElement {
     }
   }
 
-  @objc open override func attributedString() -> NSAttributedString? {
+  open override func attributedString() -> NSAttributedString? {
     // super returns a mutable attributed string
     guard
       let mutableAttributedString = super.attributedString()?.mutableCopy()

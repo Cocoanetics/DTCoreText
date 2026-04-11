@@ -5,30 +5,30 @@ import Foundation
 open class ObjectTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
 
   /// The HTMLElement child nodes of the receiver. This array is only used for object tags at the moment.
-  @objc open var childNodes: NSArray?
+  public var childNodes: [HTMLElement]?
 
   // MARK: - NSCoding
 
   public required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
-    childNodes = aDecoder.decodeObject(forKey: "childNodes") as? NSArray
+    // childNodes are transient; they are not restored from an archive.
   }
 
   open override func encode(with aCoder: NSCoder) {
     super.encode(with: aCoder)
-    aCoder.encode(childNodes, forKey: "childNodes")
+    // childNodes are transient; they are not written to an archive.
   }
 
   public override init(data contentData: Data?, ofType uti: String?) {
     super.init(data: contentData, ofType: uti)
   }
 
-  @objc open override func configured(with element: HTMLElement, options: NSDictionary?) -> Self {
+  open override func configured(with element: HTMLElement, options: [String: Any]?) -> Self {
     let result = super.configured(with: element, options: options)
 
     // get base URL
-    let baseURL = (options as? [String: Any])?[NSBaseURLDocumentOption as String] as? URL
-    let src = (element.attributes as? [String: Any])?["src"] as? String
+    let baseURL = options?[NSBaseURLDocumentOption] as? URL
+    let src = element.attributes?["src"]
 
     // content URL
     if let src = src {
@@ -74,7 +74,7 @@ open class ObjectTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
     }
 
     // attach the attributes dictionary
-    if let attrs = attributes as? [String: Any] {
+    if let attrs = attributes {
       var tmpAttributes = attrs
       tmpAttributes.removeValue(forKey: "src")
       tmpAttributes.removeValue(forKey: "style")
@@ -89,13 +89,11 @@ open class ObjectTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
       }
     }
 
-    if let childNodes = childNodes, childNodes.count > 0 {
+    if let childNodes = childNodes, !childNodes.isEmpty {
       retString += ">"
 
-      for oneChild in childNodes {
-        if let element = oneChild as? HTMLElement {
-          retString += element.debugDescription
-        }
+      for element in childNodes {
+        retString += element.debugDescription
       }
 
       retString += "</object>"

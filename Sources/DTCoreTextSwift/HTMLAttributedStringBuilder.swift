@@ -28,13 +28,6 @@ import os.log
 private let logger = Logger(
   subsystem: "com.cocoanetics.DTCoreText", category: "HTMLAttributedStringBuilder")
 
-/// Block called before an element is flushed to the output attributed string.
-public typealias HTMLAttributedStringBuilderWillFlushCallback = @Sendable (HTMLElement) -> Void
-
-/// Block called when an HTML parsing error occurs.
-public typealias HTMLAttributedStringBuilderParseErrorCallback =
-  @Sendable (NSAttributedString, Error) -> Void
-
 // MARK: - Builder State Actor
 
 /// Owns all mutable parse/build state. Events are processed sequentially.
@@ -60,16 +53,12 @@ private actor BuilderState {
   var ignoreInlineStyles = false
   var preserveDocumentTrailingSpaces = false
   var shouldKeepDocumentNodeTree = false
-  var willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback?
-  var parseErrorCallback: HTMLAttributedStringBuilderParseErrorCallback?
   var options: [String: Any] = [:]
 
   // MARK: - Configuration
 
   func configure(
     options: [String: Any],
-    willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback?,
-    parseErrorCallback: HTMLAttributedStringBuilderParseErrorCallback?,
     shouldKeepDocumentNodeTree: Bool
   ) {
 
@@ -80,8 +69,6 @@ private actor BuilderState {
     tmpString = NSMutableAttributedString()
 
     self.options = options
-    self.willFlushCallback = willFlushCallback
-    self.parseErrorCallback = parseErrorCallback
     self.shouldKeepDocumentNodeTree = shouldKeepDocumentNodeTree
 
     // Text scale
@@ -208,8 +195,8 @@ private actor BuilderState {
       handleFoundCDATA(data)
     case .comment, .processingInstruction:
       break
-    case .parseError(let error):
-      parseErrorCallback?(tmpString, error)
+    case .parseError:
+      break
     }
   }
 
@@ -421,8 +408,8 @@ private actor BuilderState {
       if let attachmentElement = tag as? TextAttachmentHTMLElement,
         let objectAttachment = attachmentElement.textAttachment as? ObjectTextAttachment
       {
-        let snapshot = tag.children
-        objectAttachment.childNodes = snapshot.isEmpty ? nil : (snapshot as NSArray)
+        let snapshot = tag.elementChildren
+        objectAttachment.childNodes = snapshot.isEmpty ? nil : snapshot
       }
 
     case "video":
@@ -430,12 +417,11 @@ private actor BuilderState {
         let videoAttachment = attachmentElement.textAttachment as? VideoTextAttachment,
         videoAttachment.contentURL == nil
       {
-        for child in attachmentElement.children {
-          guard let htmlChild = child as? HTMLElement, htmlChild.name == "source",
-            let src = htmlChild.attributeForKey("src")
-          else { continue }
-          videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
-          break
+        for htmlChild in attachmentElement.elementChildren where htmlChild.name == "source" {
+          if let src = htmlChild.attributeForKey("src") {
+            videoAttachment.contentURL = URL(string: src, relativeTo: baseURL)
+            break
+          }
         }
       }
 
@@ -527,9 +513,6 @@ private actor BuilderState {
 
   private func flush(_ tag: HTMLElement) {
     guard tag.needsOutput() else { return }
-
-    willFlushCallback?(tag)
-
     guard let nodeString = tag.attributedString() else { return }
 
     if tag.displayStyle != .inline {
@@ -560,8 +543,7 @@ private actor BuilderState {
 // MARK: - Builder
 
 /// Builds an `NSAttributedString` from an HTML document.
-@objc(DTHTMLAttributedStringBuilder)
-public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
+public final class HTMLAttributedStringBuilder: @unchecked Sendable {
 
   private let data: Data
   private let options: [String: Any]
@@ -573,19 +555,12 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
 
   // MARK: - Public Properties
 
-  /// Block called before each element is flushed to the output string.
-  @objc public var willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback?
-
-  /// Block called when an HTML parsing error occurs.
-  @objc public var parseErrorCallback: HTMLAttributedStringBuilderParseErrorCallback?
-
   /// Whether to preserve the document node tree after generation.
-  @objc public var shouldKeepDocumentNodeTree = false
+  public var shouldKeepDocumentNodeTree = false
 
   // MARK: - Init
 
   /// Creates a builder from HTML data.
-  @objc
   public init?(html data: Data, options: [String: Any]?) {
     self.data = data
     self.options = options ?? [:]
@@ -599,7 +574,6 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
     }
 
     self.parser = HTMLParser(data: data, encoding: encoding)
-    super.init()
   }
 
   // MARK: - Async API (preferred)
@@ -611,8 +585,6 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
 
     await state.configure(
       options: options,
-      willFlushCallback: willFlushCallback,
-      parseErrorCallback: parseErrorCallback,
       shouldKeepDocumentNodeTree: shouldKeepDocumentNodeTree
     )
 
@@ -625,11 +597,10 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
     return result
   }
 
-  // MARK: - Sync API (ObjC compatibility shim)
+  // MARK: - Sync API
 
   /// Generates and returns the attributed string from the HTML.
   /// Blocks the calling thread. Prefer the async version for Swift callers.
-  @objc
   public func generatedAttributedString() -> NSAttributedString? {
     if let cachedResult { return cachedResult }
 
@@ -653,7 +624,6 @@ public final class HTMLAttributedStringBuilder: NSObject, @unchecked Sendable {
   }
 
   /// Aborts the current parsing operation.
-  @objc
   public func abortParsing() {
     parser.abortParsing()
   }

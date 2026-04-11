@@ -13,7 +13,7 @@ extension NSMutableAttributedString {
   /// Fast last-character test that avoids bridging the whole backing store
   /// through a Swift `String`. Essential inside parser flush loops that can
   /// be invoked hundreds of thousands of times on a large document.
-  @objc public func dt_hasSuffixCharacter(from characterSet: CharacterSet) -> Bool {
+  public func dt_hasSuffixCharacter(from characterSet: CharacterSet) -> Bool {
     guard length > 0 else { return false }
     let lastChar = mutableString.character(at: length - 1)
     guard let scalar = Unicode.Scalar(lastChar) else { return false }
@@ -21,7 +21,7 @@ extension NSMutableAttributedString {
   }
 
   /// Fast first-character test, same rationale as `dt_hasSuffixCharacter`.
-  @objc public func dt_hasPrefixCharacter(from characterSet: CharacterSet) -> Bool {
+  public func dt_hasPrefixCharacter(from characterSet: CharacterSet) -> Bool {
     guard length > 0 else { return false }
     let firstChar = mutableString.character(at: 0)
     guard let scalar = Unicode.Scalar(firstChar) else { return false }
@@ -37,7 +37,7 @@ extension NSMutableAttributedString {
   /// No-op for attributed strings produced by current DTCoreText code (they already carry
   /// `textLists` on the paragraph style, and do not set `DTTextListsAttribute`). Only
   /// attributed strings persisted under the pre-migration scheme need this.
-  @objc public func dtct_migrateLegacyListAttribute() {
+  public func dtct_migrateLegacyListAttribute() {
     let listsKey = NSAttributedString.Key(rawValue: DTTextListsAttribute)
     let paragraphKey = NSAttributedString.Key.paragraphStyle
     let fullRange = NSRange(location: 0, length: length)
@@ -73,7 +73,6 @@ extension NSMutableAttributedString {
 
   /// Appends a string with the same attributes as the end of this string.
   /// Removes attachment placeholders and field attributes from the appended part.
-  @objc(dtct_appendString:)
   public func dtct_appendString(_ string: String) {
     let length = self.length
 
@@ -97,7 +96,6 @@ extension NSMutableAttributedString {
   }
 
   /// Appends a string with a given paragraph style and font to this string.
-  @objc(dtct_appendString:withParagraphStyle:fontDescriptor:)
   public func dtct_appendString(
     _ string: String, withParagraphStyle paragraphStyle: CoreTextParagraphStyle?,
     fontDescriptor: CoreTextFontDescriptor?
@@ -138,7 +136,6 @@ extension NSMutableAttributedString {
   }
 
   /// Adds the paragraph terminator and makes sure that the previous font and paragraph styles extend to include it
-  @objc(dtct_appendEndOfParagraph)
   public func dtct_appendEndOfParagraph() {
     let length = self.length
 
@@ -175,7 +172,6 @@ extension NSMutableAttributedString {
   // MARK: - Working with Custom HTML Attributes
 
   /// Adds a custom HTML attribute with the given value on the given range.
-  @objc(dtct_addHTMLAttribute:value:range:replaceExisting:)
   public func dtct_addHTMLAttribute(
     _ name: String, value: Any, range: NSRange, replaceExisting: Bool
   ) {
@@ -214,7 +210,6 @@ extension NSMutableAttributedString {
   }
 
   /// Removes the custom HTML attribute with the given name from the given range.
-  @objc(dtct_removeHTMLAttribute:range:)
   public func dtct_removeHTMLAttribute(_ name: String, range: NSRange) {
     let safeRange = NSIntersectionRange(range, NSRange(location: 0, length: self.length))
     let customKey = NSAttributedString.Key(DTCustomAttributesAttribute as String)

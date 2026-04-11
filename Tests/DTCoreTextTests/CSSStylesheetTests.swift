@@ -58,7 +58,7 @@ struct CSSStylesheetTests {
 		let otherStyleSheet = CSSStylesheet(styleBlock: "p {margin-bottom:30px;font-size:40px;}")
 		stylesheet.mergeStylesheet(otherStyleSheet)
 
-		let element = HTMLElement.element(withName: "p", attributes: nil, options: nil)
+		let element = HTMLElement.element(name: "p", attributes: nil, options: nil)
 		element.fontDescriptor = CoreTextFontDescriptor()
 		element.textScale = 1.0
 

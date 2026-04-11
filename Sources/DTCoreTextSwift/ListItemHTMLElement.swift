@@ -8,7 +8,6 @@ import Foundation
 #endif
 
 /// Specialized subclass of HTMLElement that deals with list items.
-@objc(DTListItemHTMLElement)
 open class ListItemHTMLElement: HTMLElement {
 
   private func _indexOfListItemInListRoot(_ listRoot: HTMLElement) -> Int {
@@ -17,9 +16,7 @@ open class ListItemHTMLElement: HTMLElement {
 
     var index: Int = -1
 
-    guard let childNodes = listRoot.childNodes as? [HTMLElement] else { return 0 }
-
-    for oneElement in childNodes {
+    for oneElement in listRoot.elementChildren {
       if oneElement is ListItemHTMLElement {
         index += 1
       }
@@ -54,8 +51,8 @@ open class ListItemHTMLElement: HTMLElement {
     return indent
   }
 
-  @objc open override func applyStyleDictionary(_ styles: NSDictionary) {
-    super.applyStyleDictionary(styles)
+  open override func applyStyles(_ styles: [String: Any]) {
+    super.applyStyles(styles)
 
     let parentPadding = self.parentElement()?._listIndent ?? 0
     let listIndents = _sumOfListIndents()
@@ -230,7 +227,7 @@ open class ListItemHTMLElement: HTMLElement {
     return tmpStr
   }
 
-  @objc open override func attributedString() -> NSAttributedString? {
+  open override func attributedString() -> NSAttributedString? {
     let tmpString = NSMutableAttributedString()
 
     // append child elements
