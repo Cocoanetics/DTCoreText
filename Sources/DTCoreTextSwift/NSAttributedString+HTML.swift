@@ -41,17 +41,9 @@ extension NSAttributedString {
   ) {
     guard !data.isEmpty else { return nil }
 
-    guard let builder = HTMLAttributedStringBuilder(html: data, options: options) else {
-      return nil
-    }
-
-    if let callbackBlock = options[DTWillFlushBlockCallBack]
-      as? HTMLAttributedStringBuilderWillFlushCallback
-    {
-      builder.willFlushCallback = callbackBlock
-    }
-
-    guard let string = builder.generatedAttributedString() else {
+    guard let builder = HTMLAttributedStringBuilder(html: data, options: options),
+      let string = builder.generatedAttributedString()
+    else {
       return nil
     }
 

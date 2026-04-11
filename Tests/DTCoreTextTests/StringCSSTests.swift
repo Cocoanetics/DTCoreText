@@ -204,7 +204,7 @@ struct StringCSSTests {
 
 		// 4 values: top right bottom left
 		let e4 = makeElement()
-		e4.applyStyleDictionary(["margin": "10px 20px 30px 40px"] as NSDictionary)
+		e4.applyStyles(["margin": "10px 20px 30px 40px"])
 		#expect(e4.margins.top == 10)
 		#expect(e4.margins.left == 40)
 		#expect(e4.margins.bottom == 30)
@@ -212,7 +212,7 @@ struct StringCSSTests {
 
 		// 3 values: top left-right bottom
 		let e3 = makeElement()
-		e3.applyStyleDictionary(["margin": "10px 20px 30px"] as NSDictionary)
+		e3.applyStyles(["margin": "10px 20px 30px"])
 		#expect(e3.margins.top == 10)
 		#expect(e3.margins.left == 20)
 		#expect(e3.margins.bottom == 30)
@@ -220,7 +220,7 @@ struct StringCSSTests {
 
 		// 2 values: top-bottom left-right
 		let e2 = makeElement()
-		e2.applyStyleDictionary(["margin": "10px 20px"] as NSDictionary)
+		e2.applyStyles(["margin": "10px 20px"])
 		#expect(e2.margins.top == 10)
 		#expect(e2.margins.left == 20)
 		#expect(e2.margins.bottom == 10)
@@ -228,7 +228,7 @@ struct StringCSSTests {
 
 		// 1 value: all sides
 		let e1 = makeElement()
-		e1.applyStyleDictionary(["margin": "10px"] as NSDictionary)
+		e1.applyStyles(["margin": "10px"])
 		#expect(e1.margins.top == 10)
 		#expect(e1.margins.left == 10)
 		#expect(e1.margins.bottom == 10)

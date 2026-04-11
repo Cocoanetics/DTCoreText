@@ -1,10 +1,9 @@
 import Foundation
 
 /// Specialized subclass of HTMLElement that represents a line break.
-@objc(DTBreakHTMLElement)
 open class BreakHTMLElement: HTMLElement {
 
-  @objc open override func attributedString() -> NSAttributedString? {
+  open override func attributedString() -> NSAttributedString? {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 

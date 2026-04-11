@@ -116,7 +116,7 @@ open class TextAttachment: NSTextAttachment {
   @objc public var hyperLinkURL: URL?
   @objc public var hyperLinkGUID: String?
 
-  @objc open var attributes: NSDictionary?
+  @objc public var attributes: [String: String]?
 
   @objc public var verticalAlignment: TextAttachmentVerticalAlignment = .baseline
 
@@ -127,7 +127,7 @@ open class TextAttachment: NSTextAttachment {
   // MARK: - Creating Text Attachments
 
   /// Factory method that returns the appropriate subclass for the given element's tag name.
-  @objc public class func textAttachment(with element: HTMLElement, options: NSDictionary?)
+  public class func textAttachment(with element: HTMLElement, options: [String: Any]?)
     -> TextAttachment?
   {
     guard let cls = TextAttachmentRegistry.classForTagName(element.name) else {
@@ -143,11 +143,11 @@ open class TextAttachment: NSTextAttachment {
   }
 
   /// The designated initializer for members of the TextAttachment class cluster.
-  @objc open func configured(with element: HTMLElement, options: NSDictionary?) -> Self {
+  open func configured(with element: HTMLElement, options: [String: Any]?) -> Self {
     _originalSize = element.size
 
     _maxImageSize = .zero
-    if let maxImageSizeValue = (options as? [String: Any])?[DTMaxImageSize as String] as? NSValue {
+    if let maxImageSizeValue = options?[DTMaxImageSize] as? NSValue {
       #if canImport(UIKit)
         _maxImageSize = maxImageSizeValue.cgSizeValue
       #else
@@ -157,7 +157,7 @@ open class TextAttachment: NSTextAttachment {
 
     setDisplaySize(_originalSize, withMaxDisplaySize: _maxImageSize)
 
-    attributes = element.attributes as NSDictionary?
+    attributes = element.attributes
     return self
   }
 
@@ -169,7 +169,7 @@ open class TextAttachment: NSTextAttachment {
     coder.encode(_originalSize, forKey: "originalSize")
     coder.encode(_maxImageSize, forKey: "maxImageSize")
     coder.encode(contentURL, forKey: "contentURL")
-    coder.encode(attributes, forKey: "attributes")
+    coder.encode(attributes as NSDictionary?, forKey: "attributes")
     coder.encode(verticalAlignment.rawValue, forKey: "verticalAlignment")
   }
 
@@ -179,7 +179,7 @@ open class TextAttachment: NSTextAttachment {
     _originalSize = coder.decodeCGSize(forKey: "originalSize")
     _maxImageSize = coder.decodeCGSize(forKey: "maxImageSize")
     contentURL = coder.decodeObject(forKey: "contentURL") as? URL
-    attributes = coder.decodeObject(forKey: "attributes") as? NSDictionary
+    attributes = coder.decodeObject(forKey: "attributes") as? [String: String]
     verticalAlignment =
       TextAttachmentVerticalAlignment(
         rawValue: UInt(coder.decodeInteger(forKey: "verticalAlignment"))) ?? .baseline

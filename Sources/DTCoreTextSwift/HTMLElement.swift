@@ -12,10 +12,9 @@ nonisolated(unsafe) private var _classesForNames: [String: AnyClass]?
 
 /// Central HTML element class. Has a factory method that creates specific subclasses
 /// for known tags (e.g. BreakHTMLElement, AnchorHTMLElement, etc.).
-@objc(DTHTMLElement)
 open class HTMLElement: HTMLParserNode {
 
-  public required init(name: String, attributes: NSDictionary?) {
+  public required init(name: String, attributes: [String: String]?) {
     super.init(name: name, attributes: attributes)
     // didSet doesn't fire during init, so manually decode size from attributes
     _updateSizeFromAttributes()
@@ -23,15 +22,15 @@ open class HTMLElement: HTMLParserNode {
 
   // MARK: - Exposed IVARs (for subclass access)
 
-  @objc open var _fontDescriptor: CoreTextFontDescriptor?
-  @objc open var _paragraphStyle: CoreTextParagraphStyle?
-  @objc open var _textAttachment: TextAttachment?
+  internal var _fontDescriptor: CoreTextFontDescriptor?
+  internal var _paragraphStyle: CoreTextParagraphStyle?
+  internal var _textAttachment: TextAttachment?
   private var _textAttachmentAlignment: TextAttachmentVerticalAlignment = .baseline
   private var _link: URL?
   private var _anchorName: String?
 
-  @objc open var _textColor: DTColor?
-  @objc open var _backgroundColor: DTColor?
+  internal var _textColor: DTColor?
+  internal var _backgroundColor: DTColor?
 
   private var _backgroundStrokeColor: DTColor?
   private var _backgroundStrokeWidth: CGFloat = 0
@@ -43,7 +42,7 @@ open class HTMLElement: HTMLParserNode {
   private var _beforeContent: String?
   private var _linkGUID: String?
 
-  @objc open var _strikeOut: Bool = false
+  internal var _strikeOut: Bool = false
   private var _superscriptStyle: Int = 0
   private var _headerLevel: Int = 0
 
@@ -52,22 +51,22 @@ open class HTMLElement: HTMLParserNode {
   private var _displayStyle: DTHTMLElementDisplayStyle = .inline
   private var _floatStyle: DTHTMLElementFloatStyle = .none
 
-  @objc open var _isColorInherited: Bool = false
-  @objc open var _preserveNewlines: Bool = false
-  @objc open var _containsAppleConvertedSpace: Bool = false
+  internal var _isColorInherited: Bool = false
+  internal var _preserveNewlines: Bool = false
+  internal var _containsAppleConvertedSpace: Bool = false
 
   private var _fontVariant: DTHTMLElementFontVariant = .normal
 
-  @objc open var _textScale: CGFloat = 0
-  @objc open var _size: CGSize = .zero
+  internal var _textScale: CGFloat = 0
+  internal var _size: CGSize = .zero
 
-  private var _styles: NSDictionary?
+  private var _styles: [String: Any]?
   private var _didOutput: Bool = false
 
-  @objc open var _margins: UIEdgeInsets = .zero
-  @objc open var _padding: UIEdgeInsets = .zero
+  internal var _margins: UIEdgeInsets = .zero
+  internal var _padding: UIEdgeInsets = .zero
 
-  @objc open var _listIndent: CGFloat = 0
+  internal var _listIndent: CGFloat = 0
   private var _pTextIndent: CGFloat = 0
   private var _letterSpacing: CGFloat = 0
 
@@ -75,7 +74,7 @@ open class HTMLElement: HTMLParserNode {
 
   private var _currentTextSize: CGFloat = 0
 
-  private var _CSSClassNamesToIgnoreForCustomAttributes: NSSet?
+  private var _CSSClassNamesToIgnoreForCustomAttributes: Set<String>?
 
   // MARK: - Class initialization
 
@@ -97,19 +96,10 @@ open class HTMLElement: HTMLParserNode {
 
   // MARK: - Creating HTML Elements
 
-  /// Swift-native factory method. Creates the appropriate element subclass for the given
-  /// tag name, and installs attributes and creation-time options using native Swift types.
+  /// Factory method that creates the appropriate element subclass for the given
+  /// tag name, and installs attributes and creation-time options.
   public class func element(
     name: String, attributes: [String: String]?, options: [String: Any]?
-  ) -> HTMLElement {
-    let bridgedAttributes = attributes.map { $0 as NSDictionary }
-    let bridgedOptions = options.map { $0 as NSDictionary }
-    return element(withName: name, attributes: bridgedAttributes, options: bridgedOptions)
-  }
-
-  /// Factory method that creates the appropriate element subclass.
-  @objc public class func element(
-    withName name: String, attributes: NSDictionary?, options: NSDictionary?
   ) -> HTMLElement {
     _ = _initOnce
 
@@ -133,19 +123,18 @@ open class HTMLElement: HTMLParserNode {
       return TextAttachmentHTMLElement(name: name, attributes: attributes, options: options)
     }
 
-    let element = elementClass.init(name: name, attributes: attributes)
-    return element
+    return elementClass.init(name: name, attributes: attributes)
   }
 
   /// Internal initializer with options (for subclasses that need it).
-  @objc public func initializeWithOptions(_ options: NSDictionary?) {
+  open func initializeWithOptions(_ options: [String: Any]?) {
     // base class does nothing with options
   }
 
   // MARK: - Creating Attributed Strings
 
   /// The dictionary of Core Text attributes for creating an NSAttributedString representation.
-  @objc open func attributesForAttributedStringRepresentation() -> NSDictionary {
+  open func attributesForAttributedStringRepresentation() -> NSDictionary {
     let tmpDict = NSMutableDictionary()
 
     // add text attachment
@@ -277,12 +266,17 @@ open class HTMLElement: HTMLParserNode {
     return tmpDict
   }
 
+  /// Child nodes of the receiver, filtered to `HTMLElement` instances.
+  internal var elementChildren: [HTMLElement] {
+    return self.children.compactMap { $0 as? HTMLElement }
+  }
+
   /// Whether this element still requires output.
-  @objc open func needsOutput() -> Bool {
+  open func needsOutput() -> Bool {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
-    guard let children = self.childNodes as? [HTMLElement] else { return true }
+    let children = self.elementChildren
     if children.isEmpty { return true }
 
     for oneChild in children {
@@ -302,30 +296,22 @@ open class HTMLElement: HTMLParserNode {
   }
 
   private func _addCustomHTMLAttributes(to attributedString: NSMutableAttributedString) {
-    let attributesToIgnore = type(of: self).attributesToIgnoreForCustomAttributesAttribute()
+    let attributesToIgnore = type(of: self).attributesToIgnoreForCustomAttributesAttribute
     let entireString = NSRange(location: 0, length: attributedString.length)
 
-    guard let attrs = self.attributes as? [String: Any] else { return }
+    guard let attrs = self.attributes else { return }
 
     for (key, value) in attrs {
       if attributesToIgnore.contains(key) { continue }
-      if key == "class" && (value as? String) == "Apple-converted-space" { continue }
+      if key == "class" && value == "Apple-converted-space" { continue }
 
       var val: Any = value
 
       if let cssNames = _CSSClassNamesToIgnoreForCustomAttributes, key == "class" {
-        var components: [String]?
-        if let strVal = value as? String {
-          components = strVal.components(separatedBy: .whitespacesAndNewlines)
-        } else if let arrVal = value as? [String] {
-          components = arrVal
-        }
-
-        if let components = components {
-          let kept = components.filter { !cssNames.contains($0) }
-          if kept.isEmpty { continue }
-          val = kept.joined(separator: " ")
-        }
+        let components = value.components(separatedBy: .whitespacesAndNewlines)
+        let kept = components.filter { !cssNames.contains($0) }
+        if kept.isEmpty { continue }
+        val = kept.joined(separator: " ")
       }
 
       attributedString.dtct_addHTMLAttribute(
@@ -334,17 +320,13 @@ open class HTMLElement: HTMLParserNode {
   }
 
   /// Creates an NSAttributedString that represents the receiver including all its children.
-  @objc open func attributedString() -> NSAttributedString? {
+  open func attributedString() -> NSAttributedString? {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 
     if _displayStyle == .none || _didOutput { return nil }
 
     let attributes = attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]
-
-    if name == "blockquote" {
-      _ = self.childNodes as? [HTMLParserNode]
-    }
 
     var tmpString: NSMutableAttributedString
 
@@ -355,10 +337,10 @@ open class HTMLElement: HTMLParserNode {
       tmpString = NSMutableAttributedString()
 
       var previousChild: HTMLElement? = nil
+      let children = self.elementChildren
 
-      guard let children = self.childNodes as? [HTMLElement] else {
+      if children.isEmpty {
         // no children, nothing to do
-        tmpString = NSMutableAttributedString()
         return _finishAttributedString(tmpString, attributes: attributes)
       }
 
@@ -480,13 +462,13 @@ open class HTMLElement: HTMLParserNode {
   // MARK: - Working with CSS Styles
 
   private func _parseEdgeInsets(
-    from styles: NSDictionary, forAttributesWithPrefix prefix: String,
+    from stylesDict: [String: Any], forAttributesWithPrefix prefix: String,
     writingDirection: CTWritingDirection, intoEdgeInsets insets: inout UIEdgeInsets
   ) -> Bool {
     var edgeInsets = insets
     var didModify = false
 
-    guard styles.count > 0 else { return false }
+    guard !stylesDict.isEmpty else { return false }
 
     let isWebKitAttribute = prefix.hasPrefix("-webkit")
 
@@ -503,7 +485,6 @@ open class HTMLElement: HTMLParserNode {
     let topKey = isWebKitAttribute ? "-before" : "-top"
     let bottomKey = isWebKitAttribute ? "-after" : "-bottom"
 
-    guard let stylesDict = styles as? [String: Any] else { return false }
 
     for oneKey in stylesDict.keys {
       guard oneKey.hasPrefix(prefix) else { continue }
@@ -539,15 +520,9 @@ open class HTMLElement: HTMLParserNode {
     return didModify
   }
 
-  /// Swift-native entry point for applying a style dictionary. Bridges to the
-  /// `NSDictionary` version so existing subclass overrides continue to work.
-  public func applyStyles(_ styles: [String: Any]) {
-    applyStyleDictionary(styles as NSDictionary)
-  }
-
   /// Applies the style information contained in a styles dictionary to the receiver.
-  @objc open func applyStyleDictionary(_ styles: NSDictionary) {
-    guard styles.count > 0 else { return }
+  open func applyStyles(_ styles: [String: Any]) {
+    guard !styles.isEmpty else { return }
     _styles = styles
 
     // writing direction
@@ -837,7 +812,7 @@ open class HTMLElement: HTMLParserNode {
         || _backgroundStrokeWidth > 0)
 
     var hasMargins = false
-    let allKeys = (styles.allKeys as? [String])?.joined(separator: ";") ?? ""
+    let allKeys = styles.keys.joined(separator: ";")
 
     if allKeys.contains("-webkit-margin") {
       hasMargins =
@@ -918,10 +893,10 @@ open class HTMLElement: HTMLParserNode {
 
   /// Creates a `DTTextList` to match the CSS styles.
   open func listStyle() -> DTTextList {
-    let style = DTTextList(styles: (_styles as? [String: Any]) ?? [:])
+    let style = DTTextList(styles: _styles ?? [:])
 
-    if let startingIndex = (self.attributes as? [String: Any])?["start"] as? String {
-      style.startingItemNumber = (startingIndex as NSString).integerValue
+    if let startingIndex = self.attributes?["start"], let value = Int(startingIndex) {
+      style.startingItemNumber = value
     }
 
     return style
@@ -930,20 +905,19 @@ open class HTMLElement: HTMLParserNode {
   // MARK: - Working with HTML Attributes
 
   /// Retrieves an attribute with a given key.
-  @objc open func attributeForKey(_ key: String) -> String? {
-    let attribute = (self.attributes as? [String: Any])?[key]
-    return attribute as? String
+  open func attributeForKey(_ key: String) -> String? {
+    return self.attributes?[key]
   }
 
   /// HTML attributes to ignore for custom attributes.
-  @objc open class func attributesToIgnoreForCustomAttributesAttribute() -> NSSet {
-    return NSSet(array: [
+  open class var attributesToIgnoreForCustomAttributesAttribute: Set<String> {
+    return [
       "style", "dir", "align", "src", "href", "color", "face", "size", "name", "height", "width",
-    ])
+    ]
   }
 
-  /// CSS class names to ignore for custom attributes.
-  @objc open var CSSClassNamesToIgnoreForCustomAttributes: NSSet? {
+  /// CSS class names that should not be serialized as custom HTML attributes.
+  open var CSSClassNamesToIgnoreForCustomAttributes: Set<String>? {
     get { return _CSSClassNamesToIgnoreForCustomAttributes }
     set { _CSSClassNamesToIgnoreForCustomAttributes = newValue }
   }
@@ -951,11 +925,11 @@ open class HTMLElement: HTMLParserNode {
   /// Swift-native setter for the CSS class names that should not be serialized as
   /// custom HTML attributes.
   public func setCSSClassNamesToIgnoreForCustomAttributes(_ names: Set<String>) {
-    _CSSClassNamesToIgnoreForCustomAttributes = NSSet(set: names)
+    _CSSClassNamesToIgnoreForCustomAttributes = names
   }
 
   /// Copies and inherits relevant attributes from the given parent element.
-  @objc open func inheritAttributes(from element: HTMLElement) {
+  open func inheritAttributes(from element: HTMLElement) {
     _fontDescriptor = element.fontDescriptor.copy() as? CoreTextFontDescriptor
     _paragraphStyle = element.paragraphStyle.copy() as? CoreTextParagraphStyle
 
@@ -993,7 +967,7 @@ open class HTMLElement: HTMLParserNode {
   }
 
   /// Interprets the tag attributes for e.g. writing direction.
-  @objc open func interpretAttributes() {
+  open func interpretAttributes() {
     guard self.attributes != nil else { return }
 
     // transfer Apple Converted Space tag
@@ -1025,17 +999,17 @@ open class HTMLElement: HTMLParserNode {
 
   // MARK: - Properties
 
-  @objc open var fontDescriptor: CoreTextFontDescriptor {
+  open var fontDescriptor: CoreTextFontDescriptor {
     get { return _fontDescriptor ?? CoreTextFontDescriptor() }
     set { _fontDescriptor = newValue }
   }
 
-  @objc open var paragraphStyle: CoreTextParagraphStyle {
+  open var paragraphStyle: CoreTextParagraphStyle {
     get { return _paragraphStyle ?? CoreTextParagraphStyle() }
     set { _paragraphStyle = newValue }
   }
 
-  @objc open var textAttachment: TextAttachment? {
+  open var textAttachment: TextAttachment? {
     get { return _textAttachment }
     set {
       newValue?.verticalAlignment = _textAttachmentAlignment
@@ -1044,7 +1018,7 @@ open class HTMLElement: HTMLParserNode {
     }
   }
 
-  @objc open var link: URL? {
+  open var link: URL? {
     get { return _link }
     set {
       _linkGUID = UUID().uuidString
@@ -1053,12 +1027,12 @@ open class HTMLElement: HTMLParserNode {
     }
   }
 
-  @objc open var anchorName: String? {
+  open var anchorName: String? {
     get { return _anchorName }
     set { _anchorName = newValue }
   }
 
-  @objc open var textColor: DTColor? {
+  open var textColor: DTColor? {
     get { return _textColor }
     set {
       _textColor = newValue
@@ -1066,91 +1040,91 @@ open class HTMLElement: HTMLParserNode {
     }
   }
 
-  @objc open var backgroundColor: DTColor? {
+  open var backgroundColor: DTColor? {
     get { return _backgroundColor }
     set { _backgroundColor = newValue }
   }
 
-  @objc open var backgroundStrokeColor: DTColor? {
+  open var backgroundStrokeColor: DTColor? {
     get { return _backgroundStrokeColor }
     set { _backgroundStrokeColor = newValue }
   }
 
-  @objc open var backgroundStrokeWidth: CGFloat {
+  open var backgroundStrokeWidth: CGFloat {
     get { return _backgroundStrokeWidth }
     set { _backgroundStrokeWidth = newValue }
   }
 
-  @objc open var backgroundCornerRadius: CGFloat {
+  open var backgroundCornerRadius: CGFloat {
     get { return _backgroundCornerRadius }
     set { _backgroundCornerRadius = newValue }
   }
 
-  @objc open var pTextIndent: CGFloat {
+  open var pTextIndent: CGFloat {
     get { return _pTextIndent }
     set { _pTextIndent = newValue }
   }
 
-  @objc open var letterSpacing: CGFloat {
+  open var letterSpacing: CGFloat {
     get { return _letterSpacing }
     set { _letterSpacing = newValue }
   }
 
-  @objc open var beforeContent: String? {
+  open var beforeContent: String? {
     get { return _beforeContent }
     set { _beforeContent = newValue }
   }
 
-  @objc open var shadows: [Any]? {
+  open var shadows: [Any]? {
     get { return _shadows }
     set { _shadows = newValue }
   }
 
-  @objc open var underlineStyle: CTUnderlineStyle {
+  open var underlineStyle: CTUnderlineStyle {
     get { return _underlineStyle }
     set { _underlineStyle = newValue }
   }
 
-  @objc open var underlineColor: DTColor? {
+  open var underlineColor: DTColor? {
     get { return _underlineColor }
     set { _underlineColor = newValue }
   }
 
-  @objc open var strikeOut: Bool {
+  open var strikeOut: Bool {
     get { return _strikeOut }
     set { _strikeOut = newValue }
   }
 
-  @objc open var superscriptStyle: Int {
+  open var superscriptStyle: Int {
     get { return _superscriptStyle }
     set { _superscriptStyle = newValue }
   }
 
-  @objc open var headerLevel: Int {
+  open var headerLevel: Int {
     get { return _headerLevel }
     set { _headerLevel = newValue }
   }
 
-  @objc open var displayStyle: DTHTMLElementDisplayStyle {
+  open var displayStyle: DTHTMLElementDisplayStyle {
     get { return _displayStyle }
     set { _displayStyle = newValue }
   }
 
-  @objc open var floatStyle: DTHTMLElementFloatStyle {
+  open var floatStyle: DTHTMLElementFloatStyle {
     return _floatStyle
   }
 
-  @objc open var isColorInherited: Bool {
+  open var isColorInherited: Bool {
     get { return _isColorInherited }
     set { _isColorInherited = newValue }
   }
 
-  @objc open var preserveNewlines: Bool {
+  open var preserveNewlines: Bool {
     get { return _preserveNewlines }
     set { _preserveNewlines = newValue }
   }
 
-  @objc open var fontVariant: DTHTMLElementFontVariant {
+  open var fontVariant: DTHTMLElementFontVariant {
     get {
       if _fontVariant == .inherit {
         return self.parentElement()?.fontVariant ?? .normal
@@ -1160,7 +1134,7 @@ open class HTMLElement: HTMLParserNode {
     set { _fontVariant = newValue }
   }
 
-  @objc open var currentTextSize: CGFloat {
+  open var currentTextSize: CGFloat {
     get {
       if _currentTextSize == 0, let parent = self.parentElement() {
         return parent.currentTextSize
@@ -1170,37 +1144,37 @@ open class HTMLElement: HTMLParserNode {
     set { _currentTextSize = newValue }
   }
 
-  @objc open var textScale: CGFloat {
+  open var textScale: CGFloat {
     get { return _textScale }
     set { _textScale = newValue }
   }
 
-  @objc open var size: CGSize {
+  open var size: CGSize {
     get { return _size }
     set { _size = newValue }
   }
 
-  @objc open var margins: UIEdgeInsets {
+  open var margins: UIEdgeInsets {
     get { return _margins }
     set { _margins = newValue }
   }
 
-  @objc open var padding: UIEdgeInsets {
+  open var padding: UIEdgeInsets {
     get { return _padding }
     set { _padding = newValue }
   }
 
-  @objc open var containsAppleConvertedSpace: Bool {
+  open var containsAppleConvertedSpace: Bool {
     get { return _containsAppleConvertedSpace }
     set { _containsAppleConvertedSpace = newValue }
   }
 
-  @objc open var shouldProcessCustomHTMLAttributes: Bool {
+  open var shouldProcessCustomHTMLAttributes: Bool {
     get { return _shouldProcessCustomHTMLAttributes }
     set { _shouldProcessCustomHTMLAttributes = newValue }
   }
 
-  @objc open var didOutput: Bool {
+  open var didOutput: Bool {
     get {
       objc_sync_enter(self)
       defer { objc_sync_exit(self) }
@@ -1213,7 +1187,7 @@ open class HTMLElement: HTMLParserNode {
     }
   }
 
-  override open var attributes: NSDictionary? {
+  override open var attributes: [String: String]? {
     didSet {
       _updateSizeFromAttributes()
     }
@@ -1221,33 +1195,14 @@ open class HTMLElement: HTMLParserNode {
 
   private func _updateSizeFromAttributes() {
     _size = CGSize(
-      width: CGFloat((attributeForKey("width") as NSString?)?.floatValue ?? 0),
-      height: CGFloat((attributeForKey("height") as NSString?)?.floatValue ?? 0)
+      width: CGFloat(Float(attributeForKey("width") ?? "") ?? 0),
+      height: CGFloat(Float(attributeForKey("height") ?? "") ?? 0)
     )
   }
 
   /// Returns the parent element.
-  @objc open func parentElement() -> HTMLElement? {
+  open func parentElement() -> HTMLElement? {
     return self.parentNode as? HTMLElement
-  }
-
-  /// Internal method for value inheritance.
-  @objc open func value(forKeyPathWithInheritance keyPath: String) -> Any? {
-    let value = self.value(forKeyPath: keyPath)
-
-    if value == nil, let parent = self.parentElement() {
-      return parent.value(forKeyPathWithInheritance: keyPath)
-    }
-
-    if let number = value as? NSNumber, number.intValue == 0, let parent = self.parentElement() {
-      return parent.value(forKeyPathWithInheritance: keyPath)
-    }
-
-    if let string = value as? String, string == "inherit", let parent = self.parentElement() {
-      return parent.value(forKeyPathWithInheritance: keyPath)
-    }
-
-    return value
   }
 }
 

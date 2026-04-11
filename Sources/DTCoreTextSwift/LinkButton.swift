@@ -37,6 +37,14 @@
       }
     }
 
+    /// Insets recording how much the bounds were grown beyond the button's natural
+    /// content size to accommodate `minimumHitSize`. Tracked locally instead of on
+    /// `UIButton.contentEdgeInsets` (deprecated in iOS 15, routes through
+    /// `UIButton.Configuration` which we intentionally don't use — see `init(frame:)`).
+    /// Used by `draw(_:)` to compute the inner content rect and by `layoutSubviews()`
+    /// to re-center the image and title subviews inside the enlarged bounds.
+    private var hitSizeInsets: UIEdgeInsets = .zero
+
     // MARK: - Init
 
     /// Whether to show a highlight effect when the user touches the button.
@@ -78,10 +86,32 @@
         return
       }
 
-      let imageRect = contentRect(forBounds: bounds)
+      // The content lives inside the (possibly-enlarged) bounds, offset by our tracked
+      // hit-size insets — equivalent to the old `contentRect(forBounds:)` call.
+      let imageRect = bounds.inset(by: hitSizeInsets)
       let roundedPath = UIBezierPath(roundedRect: imageRect, cornerRadius: 3.0)
       ctx.setFillColor(gray: 0.73, alpha: 0.4)
       roundedPath.fill()
+    }
+
+    // MARK: - Layout
+
+    public override func layoutSubviews() {
+      super.layoutSubviews()
+
+      // `UIButton.contentEdgeInsets` is deprecated since iOS 15 and we're intentionally
+      // not using `UIButton.Configuration`, so we position `imageView` and `titleLabel`
+      // ourselves to compensate for the extra hit-test bounds we added in
+      // `adjustBoundsIfNecessary()`. Without this, `super.layoutSubviews()` lays them
+      // out in the top-left of the enlarged bounds.
+      guard hitSizeInsets != .zero else { return }
+
+      if let iv = imageView, !iv.isHidden {
+        iv.frame = iv.frame.offsetBy(dx: hitSizeInsets.left, dy: hitSizeInsets.top)
+      }
+      if let tl = titleLabel, !tl.isHidden {
+        tl.frame = tl.frame.offsetBy(dx: hitSizeInsets.left, dy: hitSizeInsets.top)
+      }
     }
 
     // MARK: - Hit Size Adjustment
@@ -109,10 +139,11 @@
         currentBounds.size.width += insets.left + insets.right
         currentBounds.size.height += insets.top + insets.bottom
         bounds = currentBounds
-        contentEdgeInsets = insets
+        hitSizeInsets = insets
       } else {
-        contentEdgeInsets = .zero
+        hitSizeInsets = .zero
       }
+      setNeedsLayout()
     }
 
     // MARK: - Synchronized Highlighting

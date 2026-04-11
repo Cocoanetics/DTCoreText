@@ -8,36 +8,30 @@ import Foundation
 #endif
 
 /// Specialized subclass of HTMLElement that deals with text. It represents a text node.
-@objc(DTTextHTMLElement)
 open class TextHTMLElement: HTMLElement {
 
   /// The text content of the element.
-  /// Uses setValue to avoid shadowing the superclass text() method from HTMLParserNode.
   private var _text: String = ""
 
-  @objc open func setText(_ text: String) {
+  open func setText(_ text: String) {
     _text = text
   }
 
-  @objc open func getText() -> String {
+  open func getText() -> String {
     return _text
   }
 
   /// Override to return our stored text instead of walking children.
-  @objc open override func text() -> String {
+  open override func text() -> String {
     return _text
   }
 
-  open override func appendHTML(to string: NSMutableString, indentLevel: Int) {
-    // indent to the level
-    for _ in 0..<indentLevel {
-      string.append("   ")
-    }
-
+  override func appendHTML(to string: inout String, indentLevel: Int) {
+    for _ in 0..<indentLevel { string.append("   ") }
     string.append("\"\(_text.normalizingWhitespace())\"\n")
   }
 
-  @objc open override func attributedString() -> NSAttributedString? {
+  open override func attributedString() -> NSAttributedString? {
     objc_sync_enter(self)
     defer { objc_sync_exit(self) }
 

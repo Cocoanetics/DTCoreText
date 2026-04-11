@@ -506,8 +506,8 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     // Get based on class(es)
-    let attrs = element.attributes as? [String: Any]
-    let classString = attrs?["class"] as? String
+    let attrs = element.attributes
+    let classString = attrs?["class"]
     let classes = classString?.components(separatedBy: " ") ?? []
 
     // Cascaded selectors with more than one part are sorted by specificity
@@ -546,7 +546,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     // Get based on id
-    if let elementId = attrs?["id"] as? String {
+    if let elementId = attrs?["id"] {
       let idRule = "#\(elementId)"
       if let byID = stylesBySelector[idRule] {
         for (k, v) in byID { merged[k] = v }
@@ -555,7 +555,7 @@ open class CSSStylesheet: NSObject, NSCopying {
     }
 
     if !ignoreInlineStyle {
-      if let styleString = attrs?["style"] as? String, !styleString.isEmpty {
+      if let styleString = attrs?["style"], !styleString.isEmpty {
         var localStyles: CSSStyleRule = styleString.dictionaryOfCSSStyles()
         uncompressShorthands(&localStyles)
         for (k, v) in localStyles { merged[k] = v }
@@ -608,7 +608,7 @@ open class CSSStylesheet: NSObject, NSCopying {
             nextElement = currentElement.parentElement()
 
             if selectorPart.hasPrefix("#") {
-              let currentElementId = (currentElement.attributes as? [String: Any])?["id"] as? String
+              let currentElementId = currentElement.attributes?["id"]
               if let currentElementId = currentElementId,
                 String(selectorPart.dropFirst()) == currentElementId
               {
@@ -616,8 +616,7 @@ open class CSSStylesheet: NSObject, NSCopying {
                 break
               }
             } else if selectorPart.hasPrefix(".") {
-              let currentElementClassesString =
-                (currentElement.attributes as? [String: Any])?["class"] as? String
+              let currentElementClassesString = currentElement.attributes?["class"]
               let currentElementClasses =
                 currentElementClassesString?.components(separatedBy: " ") ?? []
 

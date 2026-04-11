@@ -1,91 +1,87 @@
 import Foundation
 
 /// Represents one node in an HTML DOM tree.
-@objc(DTHTMLParserNode)
-open class HTMLParserNode: NSObject {
+open class HTMLParserNode {
 
-  @objc public var name: String
-  @objc public var attributes: NSDictionary?
-  @objc public weak var parentNode: HTMLParserNode?
+  public var name: String
+  public var attributes: [String: String]?
+  public weak var parentNode: HTMLParserNode?
 
   private var childNodeStorage: [HTMLParserNode] = []
+  private let lock = NSLock()
 
   /// Designated initializer
   /// - Parameters:
   ///   - name: The element name
   ///   - attributes: The attributes dictionary
-  @objc public required init(name: String, attributes: NSDictionary?) {
+  public required init(name: String, attributes: [String: String]?) {
     self.name = name
-    super.init()
     self.attributes = attributes
   }
 
-  /// The child nodes of the receiver
-  @objc public var childNodes: NSArray? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
-    return childNodeStorage.isEmpty ? nil : childNodeStorage as NSArray
-  }
-
-  /// Swift-native view of the receiver's child nodes, without NSArray bridging.
+  /// The child nodes of the receiver.
   public var children: [HTMLParserNode] {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    lock.lock()
+    defer { lock.unlock() }
     return childNodeStorage
   }
 
   /// The last child node, or `nil` if the receiver has no children.
   public var lastChild: HTMLParserNode? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    lock.lock()
+    defer { lock.unlock() }
     return childNodeStorage.last
   }
 
   /// Adds a child node to the receiver.
-  /// - Parameter childNode: The child node to be appended to the list of children
-  @objc public func addChildNode(_ childNode: HTMLParserNode) {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+  public func addChildNode(_ childNode: HTMLParserNode) {
+    lock.lock()
+    defer { lock.unlock() }
 
     childNode.parentNode = self
     childNodeStorage.append(childNode)
   }
 
-  /// Removes a child node from the receiver
-  /// - Parameter childNode: The child node to remove
-  @objc public func removeChildNode(_ childNode: HTMLParserNode) {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+  /// Removes a child node from the receiver.
+  public func removeChildNode(_ childNode: HTMLParserNode) {
+    lock.lock()
+    defer { lock.unlock() }
     childNodeStorage.removeAll { $0 === childNode }
   }
 
-  /// Removes all child nodes from the receiver
-  @objc public func removeAllChildNodes() {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+  /// Removes all child nodes from the receiver.
+  public func removeAllChildNodes() {
+    lock.lock()
+    defer { lock.unlock() }
     childNodeStorage.removeAll()
   }
 
-  open override var description: String {
-    return "<\(type(of: self)) name='\(name)'>"
+  /// Concatenated contents of all text-node children.
+  public func text() -> String {
+    lock.lock()
+    defer { lock.unlock() }
+
+    var result = ""
+    for child in childNodeStorage {
+      if let textNode = child as? HTMLParserTextNode {
+        result.append(textNode.characters)
+      }
+    }
+    return result
   }
 
-  func appendHTML(to string: NSMutableString, indentLevel: Int) {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+  // MARK: - Debug description
 
-    // indent to the level
-    for _ in 0..<indentLevel {
-      string.append("   ")
-    }
+  func appendHTML(to string: inout String, indentLevel: Int) {
+    lock.lock()
+    defer { lock.unlock() }
 
-    // write own name tag open
+    for _ in 0..<indentLevel { string.append("   ") }
+
     string.append("<\(name)")
 
-    // sort attribute names
-    if let attrs = attributes as? [String: Any] {
-      let sortedKeys = attrs.keys.sorted()
-      for key in sortedKeys {
+    if let attrs = attributes {
+      for key in attrs.keys.sorted() {
         if let value = attrs[key] {
           string.append(" \(key)=\"\(value)\"")
         }
@@ -99,43 +95,19 @@ open class HTMLParserNode: NSObject {
 
     string.append(">\n")
 
-    // output children
     for childNode in childNodeStorage {
-      childNode.appendHTML(to: string, indentLevel: indentLevel + 1)
+      childNode.appendHTML(to: &string, indentLevel: indentLevel + 1)
     }
 
-    // indent to the level
-    for _ in 0..<indentLevel {
-      string.append("   ")
-    }
+    for _ in 0..<indentLevel { string.append("   ") }
 
-    // write own name tag close
     string.append("</\(name)>\n")
   }
 
-  /// Hierarchy representation of the receiver including all attributes and children
-  @objc open override var debugDescription: String {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
-
-    let tmpString = NSMutableString()
-    appendHTML(to: tmpString, indentLevel: 0)
-    return tmpString as String
-  }
-
-  /// Concatenated contents of all text nodes
-  @objc public func text() -> String {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
-
-    let result = NSMutableString()
-
-    for child in childNodeStorage {
-      if let textNode = child as? HTMLParserTextNode {
-        result.append(textNode.characters)
-      }
-    }
-
-    return result as String
+  /// Hierarchy representation of the receiver including all attributes and children.
+  public var debugDescription: String {
+    var out = ""
+    appendHTML(to: &out, indentLevel: 0)
+    return out
   }
 }
