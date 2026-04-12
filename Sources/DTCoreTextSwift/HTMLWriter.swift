@@ -471,13 +471,13 @@ public class HTMLWriter: NSObject {
 
         var attachment =
           attributesDict.object(forKey: NSAttributedString.Key.attachment.rawValue)
-          as? TextAttachment
+          as? NSTextAttachment
 
         if plainSubString == kUnicodeObjectPlaceholder {
 
           // if there was no old-style attachment let's try new NS-style.
           if attachment == nil {
-            attachment = attributesDict.object(forKey: "NSAttachment") as? TextAttachment
+            attachment = attributesDict.object(forKey: "NSAttachment") as? NSTextAttachment
           }
 
           // we don't want to output the placeholder character in any case
@@ -487,6 +487,14 @@ public class HTMLWriter: NSObject {
         if let attachment = attachment {
           if let persistableAttachment = attachment as? TextAttachmentHTMLPersistence {
             retString += persistableAttachment.stringByEncodingAsHTML()
+          } else if let image = attachment.image,
+                    let pngData = image.dataForPNGRepresentation() {
+            // Plain `NSTextAttachment` with an image — emit a data-URL <img>.
+            let encoded = pngData.base64EncodedString()
+            let size = image.size
+            retString +=
+              "<img style=\"width:\(Int(size.width))px;height:\(Int(size.height))px;\" "
+              + "src=\"data:image/png;base64,\(encoded)\" />"
           }
 
           if isLastPartOfHyperlink {
