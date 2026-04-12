@@ -31,7 +31,7 @@ open class CoreTextGlyphRun: NSObject {
   private var _stringIndices: [NSNumber]?
   private var _stringRange: NSRange = NSRange(location: 0, length: 0)
 
-  private var _attachment: TextAttachment?
+  private var _attachment: NSTextAttachment?
   private var _hyperlink: Bool = false
 
   private var _didCheckForAttachmentInAttributes = false
@@ -305,7 +305,7 @@ open class CoreTextGlyphRun: NSObject {
         calculateMetrics()
       }
       _descent = 0
-      _ascent = attachment.displaySize.height
+      _ascent = dtAttachmentLayoutSize(attachment).height
     }
   }
 
@@ -360,10 +360,13 @@ open class CoreTextGlyphRun: NSObject {
   }
 
   /// The text attachment of the receiver, or nil if there is none.
-  @objc open var attachment: TextAttachment? {
+  ///
+  /// Returns any `NSTextAttachment` (including the DTCoreText `TextAttachment`
+  /// subclass) that the glyph run carries via `NSAttachmentAttributeName`.
+  @objc open var attachment: NSTextAttachment? {
     if _attachment == nil && !_didCheckForAttachmentInAttributes {
       _attachment =
-        (self.attributes as? [NSAttributedString.Key: Any])?[.attachment] as? TextAttachment
+        (self.attributes as? [NSAttributedString.Key: Any])?[.attachment] as? NSTextAttachment
       _didCheckForAttachmentInAttributes = true
     }
     return _attachment

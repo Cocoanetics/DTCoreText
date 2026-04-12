@@ -355,8 +355,11 @@ open class CoreTextLayoutLine: NSObject {
   }
 
   /// The text attachments occurring in glyph runs of the receiver.
+  ///
+  /// Elements are `NSTextAttachment` (or subclasses); any native attachment on
+  /// the run, not just `TextAttachment`, is included.
   @objc open var attachments: NSArray? {
-    var tmpArray = [TextAttachment]()
+    var tmpArray = [NSTextAttachment]()
     guard let runs = glyphRuns as? [CoreTextGlyphRun] else { return nil }
     for oneRun in runs {
       if let attachment = oneRun.attachment {

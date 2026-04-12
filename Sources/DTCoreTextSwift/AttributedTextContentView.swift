@@ -356,7 +356,7 @@
 
           // Check for link
           var effectiveRangeOfLink = runRange
-          let attachment: TextAttachment? = oneRun.attachment
+          let attachment: NSTextAttachment? = oneRun.attachment
           var linkURL = oneRun.attributes[DTLinkAttribute] as? URL
 
           // Chain glyph runs for combined link buttons (skip attachments)
@@ -377,8 +377,8 @@
             skipRunsBeforeLocation = NSMaxRange(effectiveRangeOfLink)
           } else {
             if let attachment {
-              let ascender = attachment.ascentForLayout()
-              let descender = attachment.descentForLayout()
+              let ascender = dtAttachmentLayoutAscent(attachment)
+              let descender = dtAttachmentLayoutDescent(attachment)
               frameForSubview = CGRect(
                 x: oneRun.frame.origin.x,
                 y: oneLine.baselineOrigin.y - ascender,
@@ -434,9 +434,12 @@
               if attachment is DictationPlaceholderTextAttachment {
                 newCustomAttachmentView = DictationPlaceholderView.placeholderView()
                 newCustomAttachmentView?.frame = frameForSubview
-              } else if _delegateFlags.supportsCustomViewsForAttachments {
+              } else if _delegateFlags.supportsCustomViewsForAttachments,
+                        let dtAttachment = attachment as? TextAttachment {
+                // The public delegate callback still takes a `TextAttachment`;
+                // plain `NSTextAttachment`s bypass this custom-view path.
                 newCustomAttachmentView = _delegate?.attributedTextContentView?(
-                  self, viewForAttachment: attachment, frame: frameForSubview)
+                  self, viewForAttachment: dtAttachment, frame: frameForSubview)
               } else if _delegateFlags.supportsGenericCustomViews {
                 let string =
                   layoutString.attributedSubstring(from: runRange).mutableCopy()
