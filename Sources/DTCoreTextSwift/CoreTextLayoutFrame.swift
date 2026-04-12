@@ -47,7 +47,7 @@ open class CoreTextLayoutFrame: NSObject {
 
   private var _lines: [CoreTextLayoutLine]?
   private var _paragraphRanges: [NSValue]?
-  private var _textAttachments: [TextAttachment]?
+  private var _textAttachments: [NSTextAttachment]?
   private var _attributedStringFragment: NSAttributedString?
 
   private var _textFrame: CTFrame?
@@ -1077,9 +1077,12 @@ open class CoreTextLayoutFrame: NSObject {
   // MARK: - Text Attachments
 
   /// The array of all text attachments that belong to the receiver.
-  @objc open func textAttachments() -> [TextAttachment] {
+  ///
+  /// Any `NSTextAttachment` (including the DTCoreText `TextAttachment`
+  /// subclass) encountered on a glyph run is included.
+  @objc open func textAttachments() -> [NSTextAttachment] {
     if _textAttachments == nil {
-      var tmpAttachments = [TextAttachment]()
+      var tmpAttachments = [NSTextAttachment]()
       guard let lines = self.lines as? [CoreTextLayoutLine] else { return [] }
       for oneLine in lines {
         guard let runs = oneLine.glyphRuns as? [CoreTextGlyphRun] else { continue }
@@ -1094,8 +1097,8 @@ open class CoreTextLayoutFrame: NSObject {
 
   /// The array of all text attachments matching the specified predicate.
   @objc(textAttachmentsWithPredicate:)
-  open func textAttachments(with predicate: NSPredicate) -> [TextAttachment] {
-    return (textAttachments() as NSArray).filtered(using: predicate) as? [TextAttachment] ?? []
+  open func textAttachments(with predicate: NSPredicate) -> [NSTextAttachment] {
+    return (textAttachments() as NSArray).filtered(using: predicate) as? [NSTextAttachment] ?? []
   }
 
   // MARK: - Calculations
