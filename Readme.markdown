@@ -18,7 +18,7 @@ DTCoreText is a Swift package. Add it in Xcode via **File > Add Package Dependen
 Or in your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/Cocoanetics/DTCoreText.git", branch: "develop")
+.package(url: "https://github.com/Cocoanetics/DTCoreText.git", from: "2.0.0")
 ```
 
 Then link the `DTCoreText` product to your target.

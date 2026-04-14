@@ -26,7 +26,7 @@ Add DTCoreText as a dependency:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Cocoanetics/DTCoreText.git", branch: "develop")
+    .package(url: "https://github.com/Cocoanetics/DTCoreText.git", from: "2.0.0")
 ]
 ```
 
