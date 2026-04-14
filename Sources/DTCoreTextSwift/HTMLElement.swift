@@ -7,8 +7,7 @@ import Foundation
   import AppKit
 #endif
 
-// Global lookup table for element subclasses
-nonisolated(unsafe) private var _classesForNames: [String: AnyClass]?
+import os
 
 /// Central HTML element class. Has a factory method that creates specific subclasses
 /// for known tags (e.g. BreakHTMLElement, AnchorHTMLElement, etc.).
@@ -78,21 +77,19 @@ open class HTMLElement: HTMLParserNode {
 
   // MARK: - Class initialization
 
-  private static let _initOnce: Void = {
-    var tmpDict = [String: AnyClass]()
-
-    tmpDict["a"] = AnchorHTMLElement.self
-    tmpDict["br"] = BreakHTMLElement.self
-    tmpDict["hr"] = HorizontalRuleHTMLElement.self
-    tmpDict["li"] = ListItemHTMLElement.self
-    tmpDict["style"] = StylesheetHTMLElement.self
-    tmpDict["img"] = TextAttachmentHTMLElement.self
-    tmpDict["object"] = TextAttachmentHTMLElement.self
-    tmpDict["video"] = TextAttachmentHTMLElement.self
-    tmpDict["iframe"] = TextAttachmentHTMLElement.self
-
-    _classesForNames = tmpDict
-  }()
+  /// Thread-safe registry of tag-name → HTMLElement subclass mappings.
+  private static let _elementClasses = OSAllocatedUnfairLock<[String: AnyClass]>(
+    initialState: [
+      "a": AnchorHTMLElement.self,
+      "br": BreakHTMLElement.self,
+      "hr": HorizontalRuleHTMLElement.self,
+      "li": ListItemHTMLElement.self,
+      "style": StylesheetHTMLElement.self,
+      "img": TextAttachmentHTMLElement.self,
+      "object": TextAttachmentHTMLElement.self,
+      "video": TextAttachmentHTMLElement.self,
+      "iframe": TextAttachmentHTMLElement.self,
+    ])
 
   // MARK: - Creating HTML Elements
 
@@ -101,12 +98,10 @@ open class HTMLElement: HTMLParserNode {
   public class func element(
     name: String, attributes: [String: String]?, options: [String: Any]?
   ) -> HTMLElement {
-    _ = _initOnce
-
     let lowercaseName = name.lowercased()
 
     // look for specialized class
-    var cls: AnyClass? = _classesForNames?[lowercaseName]
+    var cls: AnyClass? = _elementClasses.withLock { $0[lowercaseName] }
 
     if cls == nil {
       // see if this is a custom attachment class

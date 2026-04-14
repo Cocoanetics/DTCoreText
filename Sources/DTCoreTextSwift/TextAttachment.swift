@@ -7,62 +7,35 @@ import Foundation
   import AppKit
 #endif
 
-/// Thread-safe, Swift-native tag-name → `TextAttachment` subclass registry.
-///
-/// Background: DTCoreText's original registry was an `NSMutableDictionary` guarded only
-/// by a `nonisolated(unsafe)` flag with double-checked-locking-without-a-lock. Under
-/// test parallelism — where many `BuilderState` actors read the registry via
-/// `TextAttachment.textAttachment(with:options:)` while test setup concurrently writes
-/// via `TextAttachment.registerClass(_:forTagName:)` — `NSMutableDictionary`'s internal
-/// hash table could resize under a reader's traversal, producing silent memory
-/// corruption and SIGSEGV crashes much later.
-///
-/// This enum namespace provides:
-///
-/// - A pure Swift `[String: AnyClass]` storage (no Cocoa bridging, no NSMutableDictionary).
-/// - An `NSLock` that serializes all reads and writes so the dict is never observed
-///   mid-mutation.
-/// - One-shot bootstrap via a `static let` closure, whose lowering to `swift_once`
-///   provides a release barrier on publish — fixing the classic publication race where
-///   a second thread could observe the "initialized" flag before the writes that
-///   populated the standard tags became visible.
-/// - Deduplicated "Replacing previously registered class" log: only fires when the new
-///   class is actually different, so test re-registrations of the same class don't spam.
-private enum TextAttachmentRegistry {
-  private static let lock = NSLock()
-  nonisolated(unsafe) private static var lookup: [String: AnyClass] = [:]
+import os
 
-  /// One-shot registration of the four built-in attachment subclasses. Lazily triggered
-  /// by the first call to `register(_:forTagName:)` or `classForTagName(_:)` via
-  /// `_ = bootstrap`. Runs exactly once under `swift_once` (release-published, so any
-  /// thread that observes bootstrap being done also observes the four writes below).
-  private static let bootstrap: Void = {
-    // These writes happen inside swift_once and before bootstrap's result is published,
-    // so they cannot race with any lock-protected reader or writer — readers block on
-    // bootstrap's once-lock until this closure returns.
-    lookup["img"] = ImageTextAttachment.self
-    lookup["video"] = VideoTextAttachment.self
-    lookup["iframe"] = IframeTextAttachment.self
-    lookup["object"] = ObjectTextAttachment.self
-  }()
+/// Thread-safe tag-name → `TextAttachment` subclass registry.
+///
+/// Uses `OSAllocatedUnfairLock` to protect a `[String: AnyClass]` dictionary
+/// that is lazily bootstrapped with the four built-in attachment subclasses on
+/// first access.
+private enum TextAttachmentRegistry {
+  private static let storage = OSAllocatedUnfairLock<[String: AnyClass]>(
+    initialState: [
+      "img": ImageTextAttachment.self,
+      "video": VideoTextAttachment.self,
+      "iframe": IframeTextAttachment.self,
+      "object": ObjectTextAttachment.self,
+    ])
 
   static func register(_ cls: AnyClass, forTagName tagName: String) {
-    _ = bootstrap
-    lock.lock()
-    defer { lock.unlock() }
-    if let previous = lookup[tagName], previous !== cls {
-      NSLog(
-        "Replacing previously registered class '%@' for tag name '%@' with '%@'",
-        NSStringFromClass(previous), tagName, NSStringFromClass(cls))
+    storage.withLock { lookup in
+      if let previous = lookup[tagName], previous !== cls {
+        NSLog(
+          "Replacing previously registered class '%@' for tag name '%@' with '%@'",
+          NSStringFromClass(previous), tagName, NSStringFromClass(cls))
+      }
+      lookup[tagName] = cls
     }
-    lookup[tagName] = cls
   }
 
   static func classForTagName(_ tagName: String) -> AnyClass? {
-    _ = bootstrap
-    lock.lock()
-    defer { lock.unlock() }
-    return lookup[tagName]
+    storage.withLock { $0[tagName] }
   }
 }
 

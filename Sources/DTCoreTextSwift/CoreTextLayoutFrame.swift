@@ -12,8 +12,10 @@ public typealias CoreTextLayoutFrameTextBlockHandler = (
   TextBlock, CGRect, CGContext, UnsafeMutablePointer<ObjCBool>
 ) -> Void
 
-/// Global flag for debug frames.
-nonisolated(unsafe) private var _shouldDrawDebugFrames = false
+import os
+
+/// Global flag for debug frames, protected by an unfair lock for thread safety.
+private let _debugFrames = OSAllocatedUnfairLock(initialState: false)
 
 /// Represents a single frame of text, wrapping CTFrame. Provides an array of text lines
 /// that fit in the given rectangle.
@@ -861,7 +863,7 @@ open class CoreTextLayoutFrame: NSObject {
       }
     }
 
-    if _shouldDrawDebugFrames {
+    if _debugFrames.withLock({ $0 }) {
       context.saveGState()
       context.setStrokeColor(red: 0.5, green: 0, blue: 0.5, alpha: 1.0)
       context.setLineWidth(2)
@@ -880,7 +882,7 @@ open class CoreTextLayoutFrame: NSObject {
     // Swift manages CF type lifetimes automatically
     let _ = _textFrame  // ensure retained for scope
 
-    if _shouldDrawDebugFrames {
+    if _debugFrames.withLock({ $0 }) {
       context.saveGState()
 
       // stroke the frame because the layout frame might be open ended
@@ -932,7 +934,7 @@ open class CoreTextLayoutFrame: NSObject {
       if oneLine.isHorizontalRule() { continue }
       guard let runs = oneLine.glyphRuns as? [CoreTextGlyphRun] else { continue }
 
-      if _shouldDrawDebugFrames {
+      if _debugFrames.withLock({ $0 }) {
         // line bounds (blue) and baseline
         context.setStrokeColor(red: 0, green: 0, blue: 1, alpha: 1)
         context.stroke(oneLine.frame)
@@ -1228,12 +1230,12 @@ open class CoreTextLayoutFrame: NSObject {
 
   /// Switches on the debug drawing mode.
   @objc public class func setShouldDrawDebugFrames(_ debugFrames: Bool) {
-    _shouldDrawDebugFrames = debugFrames
+    _debugFrames.withLock { $0 = debugFrames }
   }
 
   /// Returns the current value of the debug frame drawing.
   @objc public class func shouldDrawDebugFrames() -> Bool {
-    return _shouldDrawDebugFrames
+    _debugFrames.withLock { $0 }
   }
 }
 

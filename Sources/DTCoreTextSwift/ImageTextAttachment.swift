@@ -68,7 +68,15 @@ import Foundation
   }
 #endif
 
-nonisolated(unsafe) private let imageCache = NSCache<NSString, DTImage>()
+/// Thread-safe image cache shared across all `ImageTextAttachment` instances.
+private let imageCache: SendableCache<NSString, DTImage> = .init()
+
+/// Sendable wrapper around NSCache, which is thread-safe but lacks Sendable conformance.
+private final class SendableCache<Key: AnyObject, Value: AnyObject>: @unchecked Sendable {
+  private let cache = NSCache<Key, Value>()
+  func object(forKey key: Key) -> Value? { cache.object(forKey: key) }
+  func setObject(_ obj: Value, forKey key: Key) { cache.setObject(obj, forKey: key) }
+}
 
 /// A specialized subclass in the TextAttachment class cluster to represent an embedded image.
 @objc(DTImageTextAttachment)

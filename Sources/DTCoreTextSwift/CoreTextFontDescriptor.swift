@@ -7,40 +7,118 @@ import Foundation
   import AppKit
 #endif
 
-nonisolated(unsafe) private var _fontCache = NSCache<NSNumber, AnyObject>()
-nonisolated(unsafe) private var _fontOverrides = NSMutableDictionary()
-nonisolated(unsafe) private var _fallbackFontFamily = "Times New Roman"
-nonisolated(unsafe) private var _needsChineseFontCascadeFix = false
-nonisolated(unsafe) private var _fontDescriptorInitialized = false
+import os
 
-private func _ensureInitialized() {
-  guard !_fontDescriptorInitialized else { return }
-  _fontDescriptorInitialized = true
+/// Thread-safe registry for font overrides, fallback family, and matched-font cache.
+struct FontRegistry: Sendable {
+  static let shared = FontRegistry()
 
-  // load overrides from plist
-  let path =
-    Bundle(for: CoreTextFontDescriptor.self).path(
-      forResource: "DTCoreTextFontOverrides", ofType: "plist")
-    ?? Bundle.main.path(forResource: "DTCoreTextFontOverrides", ofType: "plist")
+  /// NSCache is thread-safe; marked nonisolated(unsafe) only because it lacks Sendable conformance.
+  nonisolated(unsafe) private let fontCache = NSCache<NSNumber, AnyObject>()
 
-  if let path = path, let fileArray = NSArray(contentsOfFile: path) as? [[String: Any]] {
-    for oneOverride in fileArray {
-      guard let fontFamily = oneOverride["FontFamily"] as? String,
-        let overrideFontName = oneOverride["OverrideFontName"] as? String
-      else { continue }
+  private struct State: Sendable {
+    var overrides = [String: String]()
+    var fallbackFontFamily = "Times New Roman"
+    var needsChineseFontCascadeFix = false
+    var initialized = false
+  }
 
-      let bold = (oneOverride["Bold"] as? NSNumber)?.boolValue ?? false
-      let italic = (oneOverride["Italic"] as? NSNumber)?.boolValue ?? false
-      let smallcaps = (oneOverride["SmallCaps"] as? NSNumber)?.boolValue ?? false
+  private let state = OSAllocatedUnfairLock(initialState: State())
 
-      if smallcaps {
-        CoreTextFontDescriptor.setSmallCapsFontName(
-          overrideFontName, forFontFamily: fontFamily, bold: bold, italic: italic)
-      } else {
-        CoreTextFontDescriptor.setOverrideFontName(
-          overrideFontName, forFontFamily: fontFamily, bold: bold, italic: italic)
+  private init() {}
+
+  // MARK: - Initialization
+
+  func ensureInitialized() {
+    let needsInit = state.withLock { s -> Bool in
+      guard !s.initialized else { return false }
+      s.initialized = true
+      return true
+    }
+    guard needsInit else { return }
+
+    let path =
+      Bundle(for: CoreTextFontDescriptor.self).path(
+        forResource: "DTCoreTextFontOverrides", ofType: "plist")
+      ?? Bundle.main.path(forResource: "DTCoreTextFontOverrides", ofType: "plist")
+
+    if let path = path, let fileArray = NSArray(contentsOfFile: path) as? [[String: Any]] {
+      for oneOverride in fileArray {
+        guard let fontFamily = oneOverride["FontFamily"] as? String,
+          let overrideFontName = oneOverride["OverrideFontName"] as? String
+        else { continue }
+
+        let bold = (oneOverride["Bold"] as? NSNumber)?.boolValue ?? false
+        let italic = (oneOverride["Italic"] as? NSNumber)?.boolValue ?? false
+        let smallcaps = (oneOverride["SmallCaps"] as? NSNumber)?.boolValue ?? false
+
+        if smallcaps {
+          setSmallCapsFontName(overrideFontName, forFontFamily: fontFamily, bold: bold, italic: italic)
+        } else {
+          setOverrideFontName(overrideFontName, forFontFamily: fontFamily, bold: bold, italic: italic)
+        }
       }
     }
+  }
+
+  // MARK: - Font Cache
+
+  func cachedFont(forKey key: NSNumber) -> CTFont? {
+    fontCache.object(forKey: key) as! CTFont?
+  }
+
+  func cacheFont(_ font: CTFont, forKey key: NSNumber) {
+    fontCache.setObject(font, forKey: key)
+  }
+
+  // MARK: - Overrides
+
+  func setOverrideFontName(_ fontName: String, forFontFamily family: String, bold: Bool, italic: Bool) {
+    let key = "\(family)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-override"
+    state.withLock { $0.overrides[key] = fontName }
+  }
+
+  func overrideFontName(forFontFamily family: String, bold: Bool, italic: Bool) -> String? {
+    let key = "\(family)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-override"
+    return state.withLock { $0.overrides[key] }
+  }
+
+  func setSmallCapsFontName(_ fontName: String, forFontFamily family: String, bold: Bool, italic: Bool) {
+    let key = "\(family)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-smallcaps"
+    state.withLock { $0.overrides[key] = fontName }
+  }
+
+  func smallCapsFontName(forFontFamily family: String, bold: Bool, italic: Bool) -> String? {
+    let key = "\(family)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-smallcaps"
+    return state.withLock { $0.overrides[key] }
+  }
+
+  func mergeOverrides(_ dictionary: [String: String]) {
+    state.withLock { s in
+      for (key, value) in dictionary where s.overrides[key] == nil {
+        s.overrides[key] = value
+      }
+    }
+  }
+
+  // MARK: - Fallback Font Family
+
+  var fallbackFontFamily: String {
+    state.withLock { $0.fallbackFontFamily }
+  }
+
+  func setFallbackFontFamily(_ family: String) {
+    state.withLock { $0.fallbackFontFamily = family }
+  }
+
+  // MARK: - Chinese Font Cascade Fix
+
+  var needsChineseFontCascadeFix: Bool {
+    state.withLock { $0.needsChineseFontCascadeFix }
+  }
+
+  func setNeedsChineseFontCascadeFix(_ value: Bool) {
+    state.withLock { $0.needsChineseFontCascadeFix = value }
   }
 }
 
@@ -71,7 +149,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
 
   public override init() {
     super.init()
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
   }
 
   // MARK: - Creating Font Descriptors
@@ -91,14 +169,14 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
   /// Creates a font descriptor from a font attributes dictionary
   @objc public init(fontAttributes attributes: NSDictionary) {
     super.init()
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
     setFontAttributes(attributes)
   }
 
   /// Creates a font descriptor from a Core Text font descriptor
   @objc public init(ctFontDescriptor: CTFontDescriptor) {
     super.init()
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
 
     let dict = CTFontDescriptorCopyAttributes(ctFontDescriptor) as NSDictionary
     _sizeCategory = (dict["NSCTFontSizeCategoryAttribute"] as? NSNumber)?.intValue ?? 0
@@ -122,7 +200,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
   /// Creates a font descriptor from a Core Text font
   @objc public init(ctFont: CTFont) {
     super.init()
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
 
     let fd = CTFontCopyFontDescriptor(ctFont)
     let dict = CTFontDescriptorCopyAttributes(fd) as NSDictionary
@@ -229,7 +307,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
       tmpDict["NSCTFontUIUsageAttribute"] = usageAttribute
     }
 
-    if !self.boldTrait && _needsChineseFontCascadeFix {
+    if !self.boldTrait && FontRegistry.shared.needsChineseFontCascadeFix {
       let desc = CTFontDescriptorCreateWithNameAndSize(
         "STHeitiSC-Light" as CFString, self.pointSize)
       tmpDict[kCTFontCascadeListAttribute as String] = [desc]
@@ -466,7 +544,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
 
   @objc public required init?(coder: NSCoder) {
     super.init()
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
     fontName = coder.decodeObject(forKey: "FontName") as? String
     fontFamily = coder.decodeObject(forKey: "FontFamily") as? String
     boldTrait = coder.decodeBool(forKey: "BoldTrait")
@@ -491,60 +569,54 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
   // MARK: - Global Font Overriding
 
   /// Preloads all available system fonts into a lookup table for faster font matching.
+  /// ObjC-compatible fire-and-forget entry point.
   @objc public class func asyncPreloadFontLookupTable() {
-    _ensureInitialized()
-    _createDictionaryOfAllAvailableFontOverrideNames { dictionary in
-      objc_sync_enter(_fontOverrides)
-      defer { objc_sync_exit(_fontOverrides) }
-
-      for (key, value) in dictionary {
-        if _fontOverrides[key] == nil {
-          _fontOverrides[key] = value
-        }
-      }
+    FontRegistry.shared.ensureInitialized()
+    Task.detached(priority: .utility) {
+      await preloadFontLookupTable()
     }
   }
 
-  private class func _createDictionaryOfAllAvailableFontOverrideNames(
-    completion: @escaping @Sendable ([String: String]) -> Void
-  ) {
-    DispatchQueue.global(qos: .background).async {
-      let allFonts = CoreTextFontCollection.availableFontsCollection()
-      guard let descriptors = allFonts.fontDescriptors() as? [CoreTextFontDescriptor] else {
-        completion([:])
-        return
-      }
+  /// Preloads all available system fonts into a lookup table for faster font matching.
+  public class func preloadFontLookupTable() async {
+    FontRegistry.shared.ensureInitialized()
+    let dictionary = await _allAvailableFontOverrideNames()
+    FontRegistry.shared.mergeOverrides(dictionary)
+  }
 
-      var tmpDictionary = [String: String]()
-
-      // sort by family name then font name (shorter names preferred)
-      let sortedFonts = descriptors.sorted { lhs, rhs in
-        let familyCompare = (lhs.fontFamily ?? "").compare(rhs.fontFamily ?? "")
-        if familyCompare != .orderedSame { return familyCompare == .orderedAscending }
-        return (lhs.fontName ?? "").compare(rhs.fontName ?? "") == .orderedAscending
-      }
-
-      for oneFontDescriptor in sortedFonts {
-        let key =
-          "\(oneFontDescriptor.fontFamily ?? "")-\(oneFontDescriptor.boldTrait ? 1 : 0)-\(oneFontDescriptor.italicTrait ? 1 : 0)-override"
-
-        if let existing = tmpDictionary[key] {
-          // prefer fonts with shorter name
-          if let name = oneFontDescriptor.fontName, existing.count > name.count {
-            tmpDictionary[key] = name
-          }
-        } else {
-          tmpDictionary[key] = oneFontDescriptor.fontName
-        }
-      }
-
-      completion(tmpDictionary)
+  private class func _allAvailableFontOverrideNames() async -> [String: String] {
+    let allFonts = CoreTextFontCollection.availableFontsCollection()
+    guard let descriptors = allFonts.fontDescriptors() as? [CoreTextFontDescriptor] else {
+      return [:]
     }
+
+    var tmpDictionary = [String: String]()
+
+    let sortedFonts = descriptors.sorted { lhs, rhs in
+      let familyCompare = (lhs.fontFamily ?? "").compare(rhs.fontFamily ?? "")
+      if familyCompare != .orderedSame { return familyCompare == .orderedAscending }
+      return (lhs.fontName ?? "").compare(rhs.fontName ?? "") == .orderedAscending
+    }
+
+    for oneFontDescriptor in sortedFonts {
+      let key =
+        "\(oneFontDescriptor.fontFamily ?? "")-\(oneFontDescriptor.boldTrait ? 1 : 0)-\(oneFontDescriptor.italicTrait ? 1 : 0)-override"
+
+      if let existing = tmpDictionary[key] {
+        if let name = oneFontDescriptor.fontName, existing.count > name.count {
+          tmpDictionary[key] = name
+        }
+      } else {
+        tmpDictionary[key] = oneFontDescriptor.fontName
+      }
+    }
+
+    return tmpDictionary
   }
 
   /// Sets the font family to use if the font family in a font descriptor is invalid.
   @objc public class func setFallbackFontFamily(_ fontFamily: String) {
-    _ensureInitialized()
+    FontRegistry.shared.ensureInitialized()
 
     guard !fontFamily.isEmpty else {
       NSException(
@@ -554,7 +626,6 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
       return
     }
 
-    // make sure that only valid font families can be registered
     let attributes: NSDictionary = [kCTFontFamilyNameAttribute as String: fontFamily]
     let fontDesc = CTFontDescriptorCreateWithAttributes(attributes)
     let font = CTFontCreateWithFontDescriptor(fontDesc, 12, nil)
@@ -568,57 +639,45 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
       return
     }
 
-    _fallbackFontFamily = fontFamily
+    FontRegistry.shared.setFallbackFontFamily(fontFamily)
   }
 
   /// Returns the font family to use if the font family in a font descriptor is invalid.
   @objc public class func fallbackFontFamily() -> String {
-    _ensureInitialized()
-    return _fallbackFontFamily
+    FontRegistry.shared.ensureInitialized()
+    return FontRegistry.shared.fallbackFontFamily
   }
 
   /// Sets the global font name override for a given font family with bold and italic traits.
   @objc public class func setOverrideFontName(
     _ fontName: String, forFontFamily fontFamily: String, bold: Bool, italic: Bool
   ) {
-    _ensureInitialized()
-    objc_sync_enter(_fontOverrides)
-    defer { objc_sync_exit(_fontOverrides) }
-    let key = "\(fontFamily)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-override"
-    _fontOverrides[key] = fontName
+    FontRegistry.shared.ensureInitialized()
+    FontRegistry.shared.setOverrideFontName(fontName, forFontFamily: fontFamily, bold: bold, italic: italic)
   }
 
   /// Retrieves the global font name override for a given font family with bold and italic traits.
   @objc public class func overrideFontName(
     forFontFamily fontFamily: String, bold: Bool, italic: Bool
   ) -> String? {
-    _ensureInitialized()
-    objc_sync_enter(_fontOverrides)
-    defer { objc_sync_exit(_fontOverrides) }
-    let key = "\(fontFamily)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-override"
-    return _fontOverrides[key] as? String
+    FontRegistry.shared.ensureInitialized()
+    return FontRegistry.shared.overrideFontName(forFontFamily: fontFamily, bold: bold, italic: italic)
   }
 
   /// Sets the global font name override for small caps text.
   @objc public class func setSmallCapsFontName(
     _ fontName: String, forFontFamily fontFamily: String, bold: Bool, italic: Bool
   ) {
-    _ensureInitialized()
-    objc_sync_enter(_fontOverrides)
-    defer { objc_sync_exit(_fontOverrides) }
-    let key = "\(fontFamily)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-smallcaps"
-    _fontOverrides[key] = fontName
+    FontRegistry.shared.ensureInitialized()
+    FontRegistry.shared.setSmallCapsFontName(fontName, forFontFamily: fontFamily, bold: bold, italic: italic)
   }
 
   /// Retrieves the global font name override for small caps text.
   @objc public class func smallCapsFontName(
     forFontFamily fontFamily: String, bold: Bool, italic: Bool
   ) -> String? {
-    _ensureInitialized()
-    objc_sync_enter(_fontOverrides)
-    defer { objc_sync_exit(_fontOverrides) }
-    let key = "\(fontFamily)-\(bold ? 1 : 0)-\(italic ? 1 : 0)-smallcaps"
-    return _fontOverrides[key] as? String
+    FontRegistry.shared.ensureInitialized()
+    return FontRegistry.shared.smallCapsFontName(forFontFamily: fontFamily, bold: bold, italic: italic)
   }
 
   // MARK: - Private Font Matching
@@ -645,7 +704,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
 
     // check the cache first
     let cacheKey = NSNumber(value: self.hash)
-    if let cachedFont = _fontCache.object(forKey: cacheKey) {
+    if let cachedFont = FontRegistry.shared.cachedFont(forKey: cacheKey) {
       return (cachedFont as! CTFont)
     }
 
@@ -663,7 +722,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
     }
 
     // if we use the chinese font cascade fix we cannot use fast method
-    let useFastFontCreation = !(_needsChineseFontCascadeFix && !self.boldTrait)
+    let useFastFontCreation = !(FontRegistry.shared.needsChineseFontCascadeFix && !self.boldTrait)
 
     if useFastFontCreation
       && ((fontName != nil && !(fontName?.hasPrefix(".") ?? false)) || overrideName != nil)
@@ -735,7 +794,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
       if matchingFontDescriptor == nil {
         // try with fallback font family
         let mutableAttributes = NSMutableDictionary(dictionary: attrs)
-        mutableAttributes[kCTFontFamilyNameAttribute as String] = _fallbackFontFamily
+        mutableAttributes[kCTFontFamilyNameAttribute as String] = FontRegistry.shared.fallbackFontFamily
 
         searchingFontDescriptor = CTFontDescriptorCreateWithAttributes(mutableAttributes)
 
@@ -784,7 +843,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
 
     // add found font to cache
     if let font = matchingFont {
-      _fontCache.setObject(font, forKey: cacheKey)
+      FontRegistry.shared.cacheFont(font, forKey: cacheKey)
     }
 
     return matchingFont

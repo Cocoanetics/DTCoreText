@@ -1,24 +1,25 @@
 import CoreText
 import Foundation
+import os
 
 /// Class representing a collection of fonts
 @objc(DTCoreTextFontCollection)
-open class CoreTextFontCollection: NSObject {
+open class CoreTextFontCollection: NSObject, @unchecked Sendable {
 
   private var _fontDescriptors: NSArray?
   private var _fontMatchCache: NSCache<NSString, CoreTextFontDescriptor>?
 
-  nonisolated(unsafe) private static var _availableFontsCollection: CoreTextFontCollection?
+  private static let _sharedCollection = OSAllocatedUnfairLock<CoreTextFontCollection?>(
+    initialState: nil)
 
   /// Creates a font collection with all available fonts on the system
   @objc public class func availableFontsCollection() -> CoreTextFontCollection {
-    if let existing = _availableFontsCollection {
-      return existing
+    _sharedCollection.withLock { cached in
+      if let existing = cached { return existing }
+      let instance = CoreTextFontCollection(availableFonts: ())
+      cached = instance
+      return instance
     }
-
-    let instance = CoreTextFontCollection(availableFonts: ())
-    _availableFontsCollection = instance
-    return instance
   }
 
   private init(availableFonts: Void) {
