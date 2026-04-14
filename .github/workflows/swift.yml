@@ -26,7 +26,7 @@ jobs:
       - name: Build & Test (macOS)
         run: |
           xcodebuild test \
-            -scheme DTCoreTextSwiftTests \
+            -scheme DTCoreTextTests \
             -destination "platform=macOS" \
             -parallel-testing-enabled NO \
             -skipPackagePluginValidation
@@ -51,7 +51,7 @@ jobs:
       - name: Test on iOS Simulator
         run: |
           xcodebuild test \
-            -scheme DTCoreTextSwiftTests \
+            -scheme DTCoreTextTests \
             -destination "platform=iOS Simulator,name=iPhone 17,OS=latest" \
             -parallel-testing-enabled NO \
             -skipPackagePluginValidation

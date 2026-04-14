@@ -32,6 +32,10 @@ private let logger = Logger(
 /// Builds an `NSAttributedString` from an HTML document.
 public final class HTMLAttributedStringBuilder: @unchecked Sendable {
 
+  private final class SyncResultBox: @unchecked Sendable {
+    var result: NSAttributedString?
+  }
+
   private let data: Data
   private let options: [String: Any]
   private let parser: HTMLParser
@@ -95,22 +99,22 @@ public final class HTMLAttributedStringBuilder: @unchecked Sendable {
     if let cachedResult { return cachedResult }
 
     let semaphore = DispatchSemaphore(value: 0)
-    nonisolated(unsafe) var result: NSAttributedString?
+    let resultBox = SyncResultBox()
 
     // IMPORTANT: must be `Task.detached`, not `Task { ... }`. A non-detached
     // Task inherits the calling actor, which means if this is called from
-    // the main thread the spawned Task — and the inner Task that
-    // SwiftText's `HTMLParser.parseEvents()` spawns to drive libxml2 — will
+    // the main thread the spawned Task, and the inner Task that
+    // SwiftText's `HTMLParser.parseEvents()` spawns to drive libxml2, will
     // both try to run on the main actor. The main thread is blocked on the
     // semaphore below, so the parser can never run, and the wait deadlocks.
-    Task.detached(priority: .userInitiated) { [self] in
-      result = await self.generatedAttributedString()
+    Task.detached(priority: .userInitiated) { [self, semaphore, resultBox] in
+      resultBox.result = await self.generatedAttributedString()
       semaphore.signal()
     }
 
     semaphore.wait()
-    cachedResult = result
-    return result
+    cachedResult = resultBox.result
+    return resultBox.result
   }
 
   /// Aborts the current parsing operation.
