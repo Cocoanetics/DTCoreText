@@ -149,8 +149,6 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(styleNatural.baseWritingDirection == .natural, "Writing direction is not Natural")
 	}
 
-	// Image size resolution depends on UIImage which isn't available on macOS
-	#if canImport(UIKit)
 	@Test("Attachment display size")
 	func attachmentDisplaySize() throws {
 		let output = try #require(TestHelpers.attributedString(fromHTML: "<img src=\"Oliver.jpg\" style=\"foo:bar\">"))
@@ -163,10 +161,7 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(attachment.originalSize == expectedSize, "Non-expected originalSize")
 		#expect(attachment.displaySize == expectedSize, "Non-expected displaySize")
 	}
-	#endif
 
-	// Image size resolution depends on UIImage which isn't available on macOS
-	#if canImport(UIKit)
 	@Test("Attachment auto size")
 	func attachmentAutoSize() throws {
 		let output = try #require(TestHelpers.attributedString(fromHTML: "<img src=\"Oliver.jpg\" style=\"width:260px; height:auto;\">"))
@@ -181,7 +176,6 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(attachment.originalSize == expectedOriginalSize, "Non-expected originalSize")
 		#expect(attachment.displaySize == expectedDisplaySize, "Non-expected displaySize")
 	}
-	#endif
 
 	@Test("Missing closing bracket")
 	func missingClosingBracket() throws {
@@ -1004,6 +998,12 @@ struct HTMLAttributedStringBuilderTests {
 
 		#if canImport(UIKit)
 		#expect(attachment.image!.scale == 2, "Attachment image should have scale 2")
+		#elseif canImport(AppKit)
+		// On AppKit, NSImage doesn't have a scale property. Instead, the pixel
+		// dimensions of the backing representation should be 2x the point size.
+		let rep = try #require(attachment.image!.representations.first)
+		let pixelScale = Double(rep.pixelsWide) / attachment.image!.size.width
+		#expect(pixelScale == 2.0, "Backing representation should be 2x the point size")
 		#endif
 	}
 

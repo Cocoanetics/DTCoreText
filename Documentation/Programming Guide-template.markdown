@@ -1,204 +1,215 @@
 DTCoreText Programming Guide
 ============================
 
-This document is meant to serve as a collection of programming questions related to DTCoreText.
+This document is a collection of recipes for common DTCoreText tasks.
 
 Smoke Test
 ----------
 
-After having integrated DTCoreText and its dependencies into your project you should be able to build your app be able to use DTCoreText functionality. As a quick *Smoke Test* - to see if all is setup correctly - you can test your setup by adding this code to your app delegate:
+After adding DTCoreText to your project via Swift Package Manager, verify the setup with:
 
+```swift
+import DTCoreTextSwift
 
+let html = "<p>Some Text</p>"
+let data = html.data(using: .utf8)!
+
+if let attrString = NSAttributedString(htmlData: data, documentAttributes: nil) {
+    print(attrString)
+}
 ```
-#import "DTCoreText.h"
 
-NSString *html = @"<p>Some Text</p>";
-NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
+You should see a description of the generated attributed string in the console.
 
-NSAttributedString *attrString = [[NSAttributedString alloc] initWithHTMLData:data documentAttributes:NULL];
-NSLog(@"%@", attrString);
+### SwiftUI AttributedString
+
+DTCoreText can also produce a SwiftUI `AttributedString` that preserves all custom attributes:
+
+```swift
+let attrStr = try AttributedString(htmlData: data)
 ```
 
-You should see that this executes and that the NSLog outputs a description of the generated attributed string.
+Or asynchronously with cancellation support:
+
+```swift
+let attrStr = try await AttributedString(htmlData: data, options: options)
+```
+
+Basic text styling (fonts, colors, links) renders natively in SwiftUI `Text`. DTCoreText-specific attributes (text blocks, header levels, anchors, etc.) are preserved in the attribute runs for custom view implementations.
 
 Using Helvetica Neue Light
 --------------------------
 
-If you want to use a specific font to be used there are 2 ways: 1) use the **font** tag specifiying the postscript font face name 2) use the **font-family** CSS attribute and specify an override face name.
+There are two ways to use a specific font:
 
-Variant 1:
+**Variant 1** — specify the PostScript font face name via the `font` tag:
 
-```
+```html
 <p><font face="HelveticaNeue-Light">HelveticaNeue-Light</font></p>
 ```
 
-Setting the font face will use exactly this font face if it exists on the system. If not then the fallback mechanism will be used (see below). Tags which modify the bold or italic traits cause the font face to be removed from the inheritance and instead the font family technique be used.
+Setting the font face uses exactly this font if it exists on the system. If not, the fallback mechanism is used (see below). Tags that modify bold or italic traits cause the font face to be removed from the inheritance, using the font family technique instead.
 
-Variant 2:
+**Variant 2** — register a font name override in code:
 
+```swift
+CoreTextFontDescriptor.setOverrideFontName(
+    "HelveticaNeue-Light",
+    forFontFamily: "Helvetica Neue",
+    bold: false,
+    italic: false
+)
 ```
-[DTCoreTextFontDescriptor setOverrideFontName:@"HelveticaNeue-Light" forFontFamily:@"Helvetica Neue" bold:NO italic:NO];
-```
 
-This has the effect that whenever a font is needed with a family "Helvetica Neue" that is neither bold nor italic then the "HelveticaNeue-Light" font face will be used. 
+This makes DTCoreText use "HelveticaNeue-Light" whenever a non-bold, non-italic "Helvetica Neue" font is requested.
 
 
 Font Matching Performance
 -------------------------
 
-DTCoreText employs an internal lookup table which contains a font face name for each combination of font family and bold and italic traits. This lookup table can be initialized by including a `DTCoreTextFontOverrides.plist` in your app bundle and/or prepopulating it with all available system fonts. Which of these you want to use depends on your app.
+DTCoreText uses an internal lookup table mapping font family + bold/italic traits to a specific font face name. You can prepopulate this table by including a `DTCoreTextFontOverrides.plist` in your app bundle.
 
-If you only use a very limited number of fonts you should have the plist file contain only these.
+For most use cases the overrides plist from the DTCoreText demo app covers the commonly used fonts.
 
-For most normal use cases you can use the overrides plist that is part of the DTCoreText demo app. This contains most commonly used fonts on iOS.
+If you don't know the set of fonts your app will encounter, trigger an asynchronous preload:
 
-If you don't know the set of fonts used by your app you can trigger an asynchronous pre-loading of the internal lookup table. To start the loading process you add the following to your app delegate.
-
+```swift
+await CoreTextFontDescriptor.preloadFontLookupTable()
 ```
-// preload font matching table
-[DTCoreTextFontDescriptor asyncPreloadFontLookupTable];
-```
-	 
-Calling this does not replace entries already existing in the lookup table, for example loaded from the `DTCoreTextFontOverrides.plist` included in the app bundle.
+
+Calling this does not replace entries already loaded from the plist.
 
 Setting a Fallback Font Family
 ------------------------------
 
-When encountering a font family in HTML that is not known to the system the fallback font family is used. This can be set like this:
+When DTCoreText encounters a font family not installed on the system, it falls back to a configurable default:
 
+```swift
+try CoreTextFontDescriptor.setFallbackFontFamily("Helvetica Neue")
 ```
-[DTCoreTextFontDescriptor setFallbackFontFamily:@"Helvetica Neue"];
-```
-	
-Note that the font family name must be valid on the system that this run on, either because it is a system font or a font you have installed at runtime. If you try to set an invalid font family name an exception will be thrown.
+
+The font family must be valid on the system. An invalid name throws `CoreTextFontDescriptor.FontError.unknownFontFamily`.
 
 Getting a Tapped Word
 -----------------------
 
-To retrieve the word a user tapped on you get the closest cursor position to the tapped point. Then you iterate over the plain text's words until you find the one that contains the cursor position's string index.
+To retrieve the word a user tapped on, get the closest cursor position to the tapped point, then find the enclosing word range:
 
-```
-- (void)handleTap:(UITapGestureRecognizer *)gesture
-{
-    if (gesture.state == UIGestureRecognizerStateRecognized)
-    {
-        CGPoint location = [gesture locationInView:_textView];
-        NSUInteger tappedIndex = [_textView closestCursorIndexToPoint:location];
-    
-        __block NSRange wordRange = NSMakeRange(0, 0);
-    
-        [plainText enumerateSubstringsInRange:NSMakeRange(0, [plainText length]) options:NSStringEnumerationByWords usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-            if (NSLocationInRange(tappedIndex, enclosingRange))
-            {
-                *stop = YES;
-                wordRange = substringRange;
-            }
-        }];
-    
-        NSString *word = [plainText substringWithRange:wordRange];
-        NSLog(@"%d: '%@' word: '%@'", tappedIndex, tappedChar, word);
+```swift
+@objc func handleTap(_ gesture: UITapGestureRecognizer) {
+    guard gesture.state == .recognized else { return }
+
+    let location = gesture.location(in: textView)
+    let tappedIndex = textView.closestCursorIndex(to: location)
+    let plainText = textView.attributedString.string
+
+    var wordRange = plainText.startIndex..<plainText.startIndex
+    plainText.enumerateSubstrings(
+        in: plainText.startIndex...,
+        options: .byWords
+    ) { _, substringRange, enclosingRange, stop in
+        let nsRange = NSRange(enclosingRange, in: plainText)
+        if NSLocationInRange(Int(tappedIndex), nsRange) {
+            wordRange = substringRange
+            stop = true
+        }
     }
+
+    let word = String(plainText[wordRange])
+    print("Tapped word: '\(word)'")
 }
 ```
-    
 
 Visible String Range
 --------------------
 
-To retrieve the string range in the `NSAttributedString` you set on an DTAttributedTextView you have to get the scroll view bounds. Then you retrieve an array of lines visible in this rectangle from the DTCoreTextLayoutFrame. Finally you retrieve and create a union of the string ranges.
+To retrieve the visible string range from a `DTAttributedTextView`:
 
-```
-CGRect visibleRect = _textView.bounds;
-NSArray *visibleLines = [_textView.attributedTextContentView.layoutFrame linesVisibleInRect:visibleRect];
+```swift
+let visibleRect = textView.bounds
+let visibleLines = textView.attributedTextContentView.layoutFrame.linesVisible(in: visibleRect)
 
-NSRange stringRange = [visibleLines[0] stringRange];
-stringRange = NSUnionRange([[visibleLines lastObject] stringRange], stringRange);
-
-NSLog(@"visible string range: %@", NSStringFromRange(stringRange));
-```
-
-Determing Size Required for an Attributed String
-------------------------------------------------
-
-When creating a DTCoreTextLayoutFrame you can specify the maximum width and height that should be filled with text. If you specify `CGFLOAT_WIDTH_UNKNOWN` for the frame size width then the needed with will be calculated. If you specify `CGFLOAT_HEIGHT_UNKNOWN` the height will be calculated. You can get the needed size from the layoutFrame's frame property.
-
-```
-NSAttributedString *attributedString = ...
-DTCoreTextLayouter *layouter = [[DTCoreTextLayouter alloc] initWithAttributedString:attributedString];
-
-CGRect maxRect = CGRectMake(10, 20, CGFLOAT_WIDTH_UNKNOWN, CGFLOAT_HEIGHT_UNKNOWN);
-NSRange entireString = NSMakeRange(0, [attributedString length]);
-DTCoreTextLayoutFrame *layoutFrame = [layouter layoutFrameWithRect:maxRect range:entireString];
-
-CGSize sizeNeeded = [layoutFrame frame].size;
+if let first = visibleLines.first, let last = visibleLines.last {
+    var range = first.stringRange()
+    range = NSUnionRange(last.stringRange(), range)
+    print("Visible range: \(range)")
+}
 ```
 
+Determining Size Required for an Attributed String
+---------------------------------------------------
 
-Displaying remote images
+When creating a `CoreTextLayoutFrame` you can specify `CGFLOAT_WIDTH_UNKNOWN` or `CGFLOAT_HEIGHT_UNKNOWN` to have the needed dimensions calculated:
+
+```swift
+let layouter = CoreTextLayouter(attributedString: attributedString)
+
+let maxRect = CGRect(x: 10, y: 20, width: CGFLOAT_WIDTH_UNKNOWN, height: CGFLOAT_HEIGHT_UNKNOWN)
+let entireString = NSRange(location: 0, length: attributedString.length)
+let layoutFrame = layouter.layoutFrame(with: maxRect, range: entireString)
+
+let sizeNeeded = layoutFrame.frame.size
+```
+
+
+Displaying Remote Images
 ------------------------
 
-The best way to display remote images is to use `DTLazyImageView`. 
-First you will need to return `DTLazyImageView` instance for your image attachments.
+Use `DTLazyImageView` for deferred image loading. Return it from the text content view delegate:
 
-```
-- (UIView *)attributedTextContentView:(DTAttributedTextContentView *)attributedTextContentView viewForAttachment:(DTTextAttachment *)attachment frame:(CGRect)frame
-{
-    if([attachment isKindOfClass:[DTImageTextAttachment class]])
-	 {
-        DTLazyImageView *imageView = [[DTLazyImageView alloc] initWithFrame:frame];
-        imageView.delegate = self;
+```swift
+func attributedTextContentView(
+    _ attributedTextContentView: DTAttributedTextContentView,
+    viewForAttachment attachment: DTTextAttachment,
+    frame: CGRect
+) -> UIView? {
+    guard let imageAttachment = attachment as? DTImageTextAttachment else { return nil }
 
-        // url for deferred loading
-        imageView.url = attachment.contentURL;
-        return imageView;
-    }
-    return nil;
+    let imageView = DTLazyImageView(frame: frame)
+    imageView.delegate = self
+    imageView.url = imageAttachment.contentURL
+    return imageView
 }
 ```
 
-Then in the in delegate method for `DTLazyImageView` reset the layout for the affected `DTAttributedContextView`.
+Then update the layout when the image loads:
 
-```
-- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size 
-{
-    NSURL *url = lazyImageView.url;
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"contentURL == %@", url];
+```swift
+func lazyImageView(_ lazyImageView: DTLazyImageView, didChangeImageSize size: CGSize) {
+    guard let url = lazyImageView.url else { return }
+    let pred = NSPredicate(format: "contentURL == %@", url as CVarArg)
 
-    // update all attachments that matching this URL
-    for (DTTextAttachment *oneAttachment in [self.attributedTextContentView.layoutFrame textAttachmentsWithPredicate:pred]) 
-	 {
-        oneAttachment.originalSize = size;
+    for attachment in attributedTextContentView.layoutFrame.textAttachments(with: pred) {
+        attachment.originalSize = size
     }
 
-    // need to reset the layouter because otherwise we get the old framesetter or cached layout frames
-    self.attributedTextContentView.layouter = nil;
-
-    // here we're layouting the entire string,
-    // might be more efficient to only relayout the paragraphs that contain these attachments
-    [self.attributedTextContentView relayoutText];
+    attributedTextContentView.layouter = nil
+    attributedTextContentView.relayoutText()
 }
 ```
 
-Changing the default font and font size
----------------------------------------
-When you want to render the HTML in a different font and fontsize, you need to specify this using the `options` parameter.
+Changing the Default Font
+-------------------------
 
-```
-NSDictionary* options = @{ NSTextSizeMultiplierDocumentOption: [NSNumber numberWithFloat: 1.0],
-			  				DTDefaultFontFamily: @"Helvetica Neue",
-			  			};
+Specify font options when creating the attributed string:
 
-NSString *html = @"<p>Some Text</p>";
-NSData* descriptionData = [html dataUsingEncoding:NSUTF8StringEncoding];
-NSAttributedString* attributedDescription = [[NSAttributedString alloc] initWithHTMLData:descriptionData options:options documentAttributes:NULL];
-```
+```swift
+let options: [String: Any] = [
+    NSTextSizeMultiplierDocumentOption: 1.0,
+    DTDefaultFontFamily: "Helvetica Neue"
+]
 
-Adding Custom Font with FontFaceName
---------------------------------
-When you want to add a custom font to the HTML being rendered using FontFaceName, you can add ```-coretext-fontname: SourceSansPro-Light;``` to the stylesheet.
-An example would be:
-```
-    let customStyleSheet = DTCSSStylesheet(styleBlock: "body { -coretext-fontname: SourceSansPro-Light; }")
-    DTCSSStylesheet.defaultStyleSheet().mergeStylesheet(customStyleSheet)
+let html = "<p>Some Text</p>"
+let data = html.data(using: .utf8)!
+let attributedString = NSAttributedString(htmlData: data, options: options, documentAttributes: nil)
 ```
 
+Adding a Custom Font via CSS
+----------------------------
+
+Use the `-coretext-fontname` CSS property:
+
+```swift
+let customStyleSheet = CSSStylesheet(styleBlock: "body { -coretext-fontname: SourceSansPro-Light; }")
+CSSStylesheet.defaultStyleSheet().merge(customStyleSheet)
+```

@@ -614,16 +614,31 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
     return tmpDictionary
   }
 
+  /// Errors that can occur when configuring font descriptors.
+  public enum FontError: LocalizedError, Equatable {
+    /// The font family string was empty.
+    case emptyFontFamily
+    /// The font family is not installed on the system.
+    case unknownFontFamily(String)
+
+    public var errorDescription: String? {
+      switch self {
+      case .emptyFontFamily:
+        return "Fallback font family cannot be empty"
+      case .unknownFontFamily(let family):
+        return "Fallback font family '\(family)' is not registered on the system"
+      }
+    }
+  }
+
   /// Sets the font family to use if the font family in a font descriptor is invalid.
-  @objc public class func setFallbackFontFamily(_ fontFamily: String) {
+  /// - Throws: `FontError.emptyFontFamily` or `FontError.unknownFontFamily` if the family
+  ///   is empty or not installed on the system.
+  public class func setFallbackFontFamily(_ fontFamily: String) throws {
     FontRegistry.shared.ensureInitialized()
 
     guard !fontFamily.isEmpty else {
-      NSException(
-        name: NSExceptionName(DTCoreTextFontDescriptorException as String),
-        reason: "Fallback Font Family cannot be nil"
-      ).raise()
-      return
+      throw FontError.emptyFontFamily
     }
 
     let attributes: NSDictionary = [kCTFontFamilyNameAttribute as String: fontFamily]
@@ -632,14 +647,22 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
 
     let usedFontFamily = CTFontCopyFamilyName(font) as String
     guard usedFontFamily == fontFamily else {
-      NSException(
-        name: NSExceptionName(DTCoreTextFontDescriptorException as String),
-        reason: "Fallback Font Family '\(fontFamily)' not registered on the system"
-      ).raise()
-      return
+      throw FontError.unknownFontFamily(fontFamily)
     }
 
     FontRegistry.shared.setFallbackFontFamily(fontFamily)
+  }
+
+  /// ObjC-compatible wrapper that raises `NSException` on failure.
+  @objc public class func objc_setFallbackFontFamily(_ fontFamily: String) {
+    do {
+      try setFallbackFontFamily(fontFamily)
+    } catch {
+      NSException(
+        name: NSExceptionName(DTCoreTextFontDescriptorException),
+        reason: error.localizedDescription
+      ).raise()
+    }
   }
 
   /// Returns the font family to use if the font family in a font descriptor is invalid.

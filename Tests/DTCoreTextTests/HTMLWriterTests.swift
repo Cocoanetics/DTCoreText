@@ -200,8 +200,6 @@ struct HTMLWriterTests {
 		#expect(letterSpacingRange.location != NSNotFound, "Letter-spacing missing")
 	}
 
-	// NSTextSizeMultiplierDocumentOption is an AppKit constant not recognized by DTCoreText on macOS
-	#if canImport(UIKit)
 	@Test("Kerning with text scale")
 	func kerningWithTextScale() throws {
 		let options: [String: Any] = [NSTextSizeMultiplierDocumentOption: NSNumber(value: 3.0)]
@@ -218,7 +216,6 @@ struct HTMLWriterTests {
 		let letterSpacingRange = (html as NSString).range(of: "letter-spacing:10px;")
 		#expect(letterSpacingRange.location == NSNotFound, "Letter-spacing missing")
 	}
-	#endif
 
 	// MARK: - Link generation
 
