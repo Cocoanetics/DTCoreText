@@ -369,7 +369,11 @@ internal actor BuilderState {
 
     // Flush if direct child of body or body itself
     if let tag = currentTag, tag.displayStyle != DTHTMLElementDisplayStyle.none {
-      if tag === bodyElement || tag.parentElement() === bodyElement {
+      let body = bodyElement
+      let isBodyElement = tag === body
+      let isDirectChildOfBody = tag.parentElement() === body
+
+      if isBodyElement || isDirectChildOfBody {
         flush(tag)
       }
     }
