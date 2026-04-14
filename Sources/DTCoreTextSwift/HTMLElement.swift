@@ -62,6 +62,10 @@ open class HTMLElement: HTMLParserNode {
   private var _styles: [String: Any]?
   private var _didOutput: Bool = false
 
+  /// Lock protecting mutable state accessed across threads (e.g. `_didOutput`,
+  /// `attributedString()` output guard). Internal so subclass overrides can use it.
+  internal let _outputLock = OSAllocatedUnfairLock()
+
   internal var _margins: UIEdgeInsets = .zero
   internal var _padding: UIEdgeInsets = .zero
 
@@ -281,8 +285,8 @@ open class HTMLElement: HTMLParserNode {
 
   /// Whether this element still requires output.
   open func needsOutput() -> Bool {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
 
     let children = self.elementChildren
     if children.isEmpty { return true }
@@ -329,8 +333,8 @@ open class HTMLElement: HTMLParserNode {
 
   /// Creates an NSAttributedString that represents the receiver including all its children.
   open func attributedString() -> NSAttributedString? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
 
     if _displayStyle == .none || _didOutput { return nil }
 
@@ -1184,13 +1188,13 @@ open class HTMLElement: HTMLParserNode {
 
   open var didOutput: Bool {
     get {
-      objc_sync_enter(self)
-      defer { objc_sync_exit(self) }
+      _outputLock.lock()
+      defer { _outputLock.unlock() }
       return _didOutput
     }
     set {
-      objc_sync_enter(self)
-      defer { objc_sync_exit(self) }
+      _outputLock.lock()
+      defer { _outputLock.unlock() }
       _didOutput = newValue
     }
   }

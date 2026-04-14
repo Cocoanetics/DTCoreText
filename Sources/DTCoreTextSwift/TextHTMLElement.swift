@@ -32,8 +32,8 @@ open class TextHTMLElement: HTMLElement {
   }
 
   open override func attributedString() -> NSAttributedString? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
 
     var text: String
 

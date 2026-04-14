@@ -11,8 +11,8 @@ open class HorizontalRuleHTMLElement: HTMLElement {
   }
 
   open override func attributedString() -> NSAttributedString? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
 
     let attributes = attributesForAttributedStringRepresentation()
     return NSAttributedString(

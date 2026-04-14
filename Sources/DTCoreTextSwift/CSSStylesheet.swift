@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// A single parsed CSS rule — a map from property name (e.g. `color`, `font-size`) to its
 /// value. Values are `Any` because the CSS parser may produce either a plain `String` or
@@ -28,7 +29,7 @@ open class CSSStylesheet: NSObject, NSCopying {
   /// (and matching the write side in `addStyles`) eliminates the window entirely.
   /// The lock is uncontended in normal use — only builder-setup copies of the default
   /// stylesheet take it, and those happen once per parse.
-  private let _accessLock = NSLock()
+  private let _accessLock = OSAllocatedUnfairLock()
 
   // MARK: - Creating Stylesheets
 

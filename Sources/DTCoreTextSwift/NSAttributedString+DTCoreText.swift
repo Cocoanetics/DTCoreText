@@ -204,10 +204,6 @@ extension NSAttributedString {
   private func _rangeOfObject(
     _ object: AnyObject, inArrayBehindAttribute attribute: String, at location: Int
   ) -> NSRange {
-    let lock = NSLock()
-    lock.lock()
-    defer { lock.unlock() }
-
     let stringLength = self.length
     var searchIndex = location
 

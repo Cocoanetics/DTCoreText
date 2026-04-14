@@ -11,8 +11,8 @@ import Foundation
 open class ListItemHTMLElement: HTMLElement {
 
   private func _indexOfListItemInListRoot(_ listRoot: HTMLElement) -> Int {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
 
     var index: Int = -1
 

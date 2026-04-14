@@ -1,5 +1,6 @@
 import CoreText
 import Foundation
+import os
 
 #if canImport(UIKit)
   import UIKit
@@ -38,6 +39,8 @@ open class CoreTextGlyphRun: NSObject {
   private var _didCheckForHyperlinkInAttributes = false
   private var _didCalculateMetrics = false
   private var _didDetermineTrailingWhitespace = false
+
+  private let _lock = OSAllocatedUnfairLock()
 
   // MARK: - Creating Glyph Runs
 
@@ -296,8 +299,8 @@ open class CoreTextGlyphRun: NSObject {
   // MARK: - Calculations
 
   private func calculateMetrics() {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _lock.lock()
+    defer { _lock.unlock() }
 
     if !_didCalculateMetrics {
       _width = CGFloat(

@@ -1,5 +1,6 @@
 import CoreText
 import Foundation
+import os
 
 /// Owns an attributed string and is able to create layout frames for certain ranges in this string.
 @objc(DTCoreTextLayouter)
@@ -8,6 +9,8 @@ open class CoreTextLayouter: NSObject {
   private var _framesetter: CTFramesetter?
   private var _attributedString: NSAttributedString?
   private var _layoutFrameCache: NSCache<NSString, CoreTextLayoutFrame>?
+
+  private let _lock = OSAllocatedUnfairLock()
 
   /// If set to YES then the receiver will cache layout frames.
   @objc open var shouldCacheLayoutFrames: Bool = false {
@@ -74,8 +77,8 @@ open class CoreTextLayouter: NSObject {
 
   /// The internal framesetter of the receiver.
   @objc open var framesetter: CTFramesetter? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _lock.lock()
+    defer { _lock.unlock() }
 
     if _framesetter == nil {
       guard let attributedString = _attributedString else { return nil }
@@ -89,8 +92,8 @@ open class CoreTextLayouter: NSObject {
   @objc open var attributedString: NSAttributedString? {
     get { return _attributedString }
     set {
-      objc_sync_enter(self)
-      defer { objc_sync_exit(self) }
+      _lock.lock()
+      defer { _lock.unlock() }
 
       if _attributedString !== newValue {
         _attributedString = newValue

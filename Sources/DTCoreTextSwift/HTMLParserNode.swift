@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Represents one node in an HTML DOM tree.
 open class HTMLParserNode {
@@ -8,7 +9,7 @@ open class HTMLParserNode {
   public weak var parentNode: HTMLParserNode?
 
   private var childNodeStorage: [HTMLParserNode] = []
-  private let lock = NSLock()
+  private let lock = OSAllocatedUnfairLock()
 
   /// Designated initializer
   /// - Parameters:

@@ -1,5 +1,6 @@
 import CoreText
 import Foundation
+import os
 
 #if canImport(UIKit)
   import UIKit
@@ -32,6 +33,8 @@ open class CoreTextLayoutLine: NSObject {
   private var _writingDirectionIsRightToLeft = false
   private var _needsToDetectWritingDirection = true
   private var _hasScannedGlyphRunsForValues = false
+
+  private let _lock = OSAllocatedUnfairLock()
 
   /// Offset to modify internal string location to get actual location.
   @objc public private(set) var stringLocationOffset: Int = 0
@@ -200,8 +203,8 @@ open class CoreTextLayoutLine: NSObject {
   }
 
   private func _calculateMetrics() {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _lock.lock()
+    defer { _lock.unlock() }
 
     if !_didCalculateMetrics {
       _width = CGFloat(CTLineGetTypographicBounds(_line, &_ascent, &_descent, &_leading))
@@ -223,8 +226,8 @@ open class CoreTextLayoutLine: NSObject {
   // MARK: - Determining Values from the glyph runs
 
   private func _scanGlyphRunsForValues() {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _lock.lock()
+    defer { _lock.unlock() }
 
     var maxOffset: CGFloat = 0
     var maxFontSize: CGFloat = 0
@@ -249,8 +252,8 @@ open class CoreTextLayoutLine: NSObject {
 
   /// The glyph runs that the line contains.
   @objc open var glyphRuns: NSArray? {
-    objc_sync_enter(self)
-    defer { objc_sync_exit(self) }
+    _lock.lock()
+    defer { _lock.unlock() }
 
     if _glyphRuns == nil {
       let runs = CTLineGetGlyphRuns(_line)
