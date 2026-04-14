@@ -35,19 +35,15 @@ struct ShadowAttributeTests {
 
 	// MARK: - Multiple Shadows
 
-	@Test("Multiple text-shadows produce both NSShadow and DTShadowsAttribute")
+	@Test("Multiple text-shadows produce DTShadowsAttribute without native .shadow")
 	func multipleShadows() {
 		let html = "<span style=\"text-shadow: -1px -1px #555, 1px 1px #EEE;\">text</span>"
 		let attributedString = TestHelpers.attributedString(fromHTML: html)!
 
-		// Native NSShadow should be the first shadow
-		let shadow = attributedString.attribute(.shadow, at: 0, effectiveRange: nil) as? NSShadow
-		#expect(shadow != nil)
-		#if canImport(UIKit)
-		#expect(shadow?.shadowOffset == CGSize(width: -1, height: -1))
-		#else
-		#expect(shadow?.shadowOffset == NSSize(width: -1, height: -1))
-		#endif
+		// Native .shadow should NOT be set for multiple shadows (avoids
+		// CTRunDraw drawing its own shadow that conflicts with multi-shadow rendering)
+		let shadow = attributedString.attribute(.shadow, at: 0, effectiveRange: nil)
+		#expect(shadow == nil)
 
 		// DTShadowsAttribute should contain all shadows as NSShadow objects
 		let dtShadows = attributedString.attribute(
@@ -55,6 +51,15 @@ struct ShadowAttributeTests {
 			as? [NSShadow]
 		#expect(dtShadows != nil)
 		#expect(dtShadows?.count == 2)
+
+		// First shadow
+		let first = dtShadows?[0]
+		#expect(first != nil)
+		#if canImport(UIKit)
+		#expect(first?.shadowOffset == CGSize(width: -1, height: -1))
+		#else
+		#expect(first?.shadowOffset == NSSize(width: -1, height: -1))
+		#endif
 
 		// Second shadow
 		let second = dtShadows?[1]

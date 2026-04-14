@@ -215,31 +215,27 @@ open class HTMLElement: HTMLParserNode {
     }
 
     // add shadow array if applicable
-    if let shadows = _shadows, let firstShadow = shadows.first as? [String: Any] {
-      let shadow = NSShadow()
-      #if canImport(UIKit)
-        shadow.shadowOffset = (firstShadow["Offset"] as? NSValue)?.cgSizeValue ?? .zero
-      #else
-        shadow.shadowOffset = (firstShadow["Offset"] as? NSValue)?.sizeValue ?? .zero
-      #endif
-      shadow.shadowColor = firstShadow["Color"] as? DTColor
-      shadow.shadowBlurRadius = CGFloat((firstShadow["Blur"] as? NSNumber)?.floatValue ?? 0)
-      tmpDict[NSAttributedString.Key.shadow] = shadow
+    if let shadows = _shadows, !shadows.isEmpty {
+      let nsShadows = shadows.compactMap { entry -> NSShadow? in
+        guard let dict = entry as? [String: Any] else { return nil }
+        let s = NSShadow()
+        #if canImport(UIKit)
+          s.shadowOffset = (dict["Offset"] as? NSValue)?.cgSizeValue ?? .zero
+        #else
+          s.shadowOffset = (dict["Offset"] as? NSValue)?.sizeValue ?? .zero
+        #endif
+        s.shadowColor = dict["Color"] as? DTColor
+        s.shadowBlurRadius = CGFloat((dict["Blur"] as? NSNumber)?.floatValue ?? 0)
+        return s
+      }
 
-      // store full array for multi-shadow rendering
-      if shadows.count > 1 {
-        let nsShadows = shadows.compactMap { entry -> NSShadow? in
-          guard let dict = entry as? [String: Any] else { return nil }
-          let s = NSShadow()
-          #if canImport(UIKit)
-            s.shadowOffset = (dict["Offset"] as? NSValue)?.cgSizeValue ?? .zero
-          #else
-            s.shadowOffset = (dict["Offset"] as? NSValue)?.sizeValue ?? .zero
-          #endif
-          s.shadowColor = dict["Color"] as? DTColor
-          s.shadowBlurRadius = CGFloat((dict["Blur"] as? NSNumber)?.floatValue ?? 0)
-          return s
-        }
+      if nsShadows.count == 1 {
+        // Single shadow: use native .shadow so CTRunDraw handles it
+        tmpDict[NSAttributedString.Key.shadow] = nsShadows[0]
+      } else if nsShadows.count > 1 {
+        // Multiple shadows: only set DTShadowsAttribute so CTRunDraw
+        // doesn't draw its own shadow that would conflict with our
+        // multi-shadow rendering.
         tmpDict[NSAttributedString.Key(rawValue: DTShadowsAttribute)] = nsShadows
       }
     }

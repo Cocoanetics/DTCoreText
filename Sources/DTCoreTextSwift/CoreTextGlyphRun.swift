@@ -57,11 +57,21 @@ open class CoreTextGlyphRun: NSObject {
 
   /// Draws the receiver into the given context.
   @objc open func draw(in context: CGContext) {
-    // Check for multiple shadows stored via DTShadowsAttribute
-    if let shadows = (_attributes as? [NSAttributedString.Key: Any])?[
-      NSAttributedString.Key(rawValue: DTShadowsAttribute)] as? [NSShadow],
-      shadows.count > 1
+    let attrs = _attributes as? [NSAttributedString.Key: Any]
+
+    // Prefer DTShadowsAttribute when present; fall back to native .shadow
+    let shadows: [NSShadow]
+    if let dtShadows = attrs?[NSAttributedString.Key(rawValue: DTShadowsAttribute)] as? [NSShadow],
+      !dtShadows.isEmpty
     {
+      shadows = dtShadows
+    } else if let single = attrs?[.shadow] as? NSShadow {
+      shadows = [single]
+    } else {
+      shadows = []
+    }
+
+    if !shadows.isEmpty {
       drawWithMultipleShadows(shadows, in: context)
       return
     }
@@ -95,8 +105,6 @@ open class CoreTextGlyphRun: NSObject {
         color: (shadow.shadowColor as AnyObject?)?.cgColor
       )
 
-      // Set text color to clear so only the shadow draws
-      context.setFillColor(DTColor.clear.cgColor)
       context.textPosition = savedPosition
 
       if textMatrix.isIdentity {
@@ -109,7 +117,6 @@ open class CoreTextGlyphRun: NSObject {
         CTRunDraw(_run, context, CFRangeMake(0, 0))
         context.textMatrix = .identity
       }
-
       context.restoreGState()
     }
 
