@@ -705,7 +705,7 @@ open class CoreTextFontDescriptor: NSObject, NSCopying, NSCoding {
     // check the cache first
     let cacheKey = NSNumber(value: self.hash)
     if let cachedFont = FontRegistry.shared.cachedFont(forKey: cacheKey) {
-      return (cachedFont as! CTFont)
+      return cachedFont
     }
 
     // check the override table
