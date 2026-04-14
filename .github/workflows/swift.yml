@@ -25,11 +25,7 @@ jobs:
         run: swift --version
       - name: Build & Test (macOS)
         run: |
-          xcodebuild test \
-            -scheme DTCoreTextTests \
-            -destination "platform=macOS" \
-            -parallel-testing-enabled NO \
-            -skipPackagePluginValidation
+          swift test --enable-swift-testing
 
   build-ios:
     runs-on: macos-latest
