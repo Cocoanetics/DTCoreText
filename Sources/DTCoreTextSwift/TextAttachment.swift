@@ -7,33 +7,6 @@ import Foundation
   import AppKit
 #endif
 
-/// Text Attachment vertical alignment
-@objc(DTTextAttachmentVerticalAlignment)
-public enum TextAttachmentVerticalAlignment: UInt {
-  /// Baseline alignment (default)
-  case baseline = 0
-  /// Align with top edge
-  case top
-  /// Align with center
-  case center
-  /// Align with bottom edge
-  case bottom
-}
-
-/// Methods to implement for attachments to support inline drawing.
-@objc(DTTextAttachmentDrawing)
-public protocol TextAttachmentDrawing {
-  /// Draws the contents of the receiver into a graphics context
-  func draw(in rect: CGRect, context: CGContext)
-}
-
-/// Methods to implement for attachments to support output to HTML.
-@objc(DTTextAttachmentHTMLPersistence)
-public protocol TextAttachmentHTMLPersistence {
-  /// Creates a HTML representation of the receiver
-  func stringByEncodingAsHTML() -> String
-}
-
 /// Thread-safe, Swift-native tag-name → `TextAttachment` subclass registry.
 ///
 /// Background: DTCoreText's original registry was an `NSMutableDictionary` guarded only

@@ -208,46 +208,6 @@ public let DTListPrefixField: String = "{listprefix}"
 
 public let DTCoreTextFontDescriptorException: String = "DTCoreTextFontDescriptorException"
 
-// MARK: - Enums
-
-public enum DTHTMLElementDisplayStyle: UInt, Sendable {
-  /// The element is inline text
-  case inline = 0
-  /// The element is not displayed
-  case none
-  /// The element is a block
-  case block
-  /// The element is an item in a list
-  case listItem
-  /// The element is a table
-  case table
-}
-
-public enum DTHTMLElementFloatStyle: UInt, Sendable {
-  /// The element does not float
-  case none = 0
-  /// The element should float left-aligned
-  case left
-  /// The element should float right-aligned
-  case right
-}
-
-public enum DTHTMLElementFontVariant: UInt, Sendable {
-  /// The element inherits the font variant
-  case inherit = 0
-  /// The element uses the normal font variant
-  case normal
-  /// The element should display in small caps
-  case smallCaps
-}
-
-@objc public enum DTCoreTextLayoutFrameLinePositioningOptions: UInt {
-  /// The line positioning algorithm is similar to how Safari positions lines
-  case algorithmWebKit = 1
-  /// The line positioning algorithm is how it was before the implementation of algorithmWebKit
-  case algorithmLegacy = 2
-}
-
 // MARK: - Layouting Constants
 
 public let CGFLOAT_WIDTH_UNKNOWN: CGFloat = 16777215.0
