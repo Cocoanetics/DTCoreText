@@ -589,8 +589,11 @@ public final class HTMLAttributedStringBuilder: @unchecked Sendable {
     )
 
     for await event in parser.parseEvents() {
+      if Task.isCancelled { break }
       await state.handle(event)
     }
+
+    if Task.isCancelled { return nil }
 
     let result = await state.result()
     cachedResult = result

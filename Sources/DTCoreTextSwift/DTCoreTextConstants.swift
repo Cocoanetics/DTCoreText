@@ -34,48 +34,144 @@ public let UNICODE_IDEOGRAPHIC_SPACE = "\u{3000}"
 public let UNICODE_ZERO_WIDTH_NO_BREAK_SPACE = "\u{feff}"
 
 // MARK: - Standard Options
+//
+// On AppKit, .baseURL / .textEncodingName / .textSizeMultiplier are provided
+// by the system.  On UIKit and other platforms they don't exist, so we add
+// them with matching raw values for cross-platform consistency.
 
+#if !canImport(AppKit) || targetEnvironment(macCatalyst)
 extension NSAttributedString.DocumentReadingOptionKey {
   /// Base URL used to resolve relative links and resources when parsing HTML.
-  /// Mirrors the AppKit `NSBaseURLDocumentOption` constant on platforms where it is not natively available.
-  public static let dtBaseURL = NSAttributedString.DocumentReadingOptionKey("NSBaseURLDocumentOption")
+  public static let baseURL = NSAttributedString.DocumentReadingOptionKey("BaseURL")
 
   /// IANA text encoding name used when decoding HTML data.
-  public static let dtTextEncodingName = NSAttributedString.DocumentReadingOptionKey(
-    "NSTextEncodingNameDocumentOption")
+  public static let textEncodingName = NSAttributedString.DocumentReadingOptionKey(
+    "TextEncodingName")
 
   /// Scale factor applied to HTML font sizes on import.
-  public static let dtTextSizeMultiplier = NSAttributedString.DocumentReadingOptionKey(
-    "NSTextSizeMultiplierDocumentOption")
+  public static let textSizeMultiplier = NSAttributedString.DocumentReadingOptionKey(
+    "TextSizeMultiplier")
 }
+#endif
 
 public let NSBaseURLDocumentOption: String =
-  NSAttributedString.DocumentReadingOptionKey.dtBaseURL.rawValue
+  NSAttributedString.DocumentReadingOptionKey.baseURL.rawValue
 public let NSTextEncodingNameDocumentOption: String =
-  NSAttributedString.DocumentReadingOptionKey.dtTextEncodingName.rawValue
+  NSAttributedString.DocumentReadingOptionKey.textEncodingName.rawValue
 public let NSTextSizeMultiplierDocumentOption: String =
-  NSAttributedString.DocumentReadingOptionKey.dtTextSizeMultiplier.rawValue
+  NSAttributedString.DocumentReadingOptionKey.textSizeMultiplier.rawValue
 
 // MARK: - Custom Options
 
-public let DTMaxImageSize: String = "DTMaxImageSize"
-public let DTDefaultFontFamily: String = "DTDefaultFontFamily"
-public let DTDefaultFontName: String = "DTDefaultFontName"
-public let DTDefaultFontSize: String = "DTDefaultFontSize"
-public let DTDefaultFontDescriptor: String = "DTDefaultFontDescriptor"
-public let DTDefaultTextColor: String = "DTDefaultTextColor"
-public let DTDefaultLinkColor: String = "DTDefaultLinkColor"
-public let DTDefaultLinkHighlightColor: String = "DTDefaultLinkHighlightColor"
-public let DTDefaultLinkDecoration: String = "DTDefaultLinkDecoration"
-public let DTDefaultTextAlignment: String = "DTDefaultTextAlignment"
-public let DTDefaultLineHeightMultiplier: String = "DTDefaultLineHeightMultiplier"
-public let DTDefaultFirstLineHeadIndent: String = "DTDefaultFirstLineHeadIndent"
-public let DTDefaultHeadIndent: String = "DTDefaultHeadIndent"
-public let DTDefaultStyleSheet: String = "DTDefaultStyleSheet"
-public let DTUseiOS6Attributes: String = "DTUseiOS6Attributes"
-public let DTProcessCustomHTMLAttributes: String = "DTProcessCustomHTMLAttributes"
-public let DTIgnoreInlineStylesOption: String = "DTIgnoreInlineStyles"
-public let DTDocumentPreserveTrailingSpaces: String = "DTDocumentPreserveTrailingSpaces"
+extension NSAttributedString.DocumentReadingOptionKey {
+  /// Maximum image size (`NSValue` wrapping a `CGSize`).
+  public static let maxImageSize = NSAttributedString.DocumentReadingOptionKey("DTMaxImageSize")
+
+  /// Default font family name (`String`).
+  public static let defaultFontFamily = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultFontFamily")
+
+  /// Default font name (`String`).
+  public static let defaultFontName = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultFontName")
+
+  /// Default font size in points (`Double`).
+  public static let defaultFontSize = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultFontSize")
+
+  /// Default font descriptor (`CoreTextFontDescriptor`).
+  public static let defaultFontDescriptor = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultFontDescriptor")
+
+  /// Default text color (`DTColor`).
+  public static let defaultTextColor = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultTextColor")
+
+  /// Default link color (`DTColor`).
+  public static let defaultLinkColor = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultLinkColor")
+
+  /// Default link highlight color (`DTColor`).
+  public static let defaultLinkHighlightColor = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultLinkHighlightColor")
+
+  /// Whether links should be decorated with underline (`Bool`).
+  public static let defaultLinkDecoration = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultLinkDecoration")
+
+  /// Default text alignment (`Int` from `CTTextAlignment`).
+  public static let defaultTextAlignment = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultTextAlignment")
+
+  /// Default line-height multiplier (`Double`).
+  public static let defaultLineHeightMultiplier = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultLineHeightMultiplier")
+
+  /// Default first-line head indent in pixels (`Int`).
+  public static let defaultFirstLineHeadIndent = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultFirstLineHeadIndent")
+
+  /// Default head indent in pixels (`Int`).
+  public static let defaultHeadIndent = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultHeadIndent")
+
+  /// Default CSS stylesheet (`CSSStylesheet`).
+  public static let defaultStyleSheet = NSAttributedString.DocumentReadingOptionKey(
+    "DTDefaultStyleSheet")
+
+  /// Whether to use iOS 6-era attributes (`Bool`).
+  public static let useiOS6Attributes = NSAttributedString.DocumentReadingOptionKey(
+    "DTUseiOS6Attributes")
+
+  /// Whether to process custom HTML attributes (`Bool`).
+  public static let processCustomHTMLAttributes = NSAttributedString.DocumentReadingOptionKey(
+    "DTProcessCustomHTMLAttributes")
+
+  /// Whether to ignore inline CSS styles (`Bool`).
+  public static let ignoreInlineStyles = NSAttributedString.DocumentReadingOptionKey(
+    "DTIgnoreInlineStyles")
+
+  /// Whether to preserve trailing whitespace in the document (`Bool`).
+  public static let documentPreserveTrailingSpaces = NSAttributedString.DocumentReadingOptionKey(
+    "DTDocumentPreserveTrailingSpaces")
+}
+
+public let DTMaxImageSize: String =
+  NSAttributedString.DocumentReadingOptionKey.maxImageSize.rawValue
+public let DTDefaultFontFamily: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultFontFamily.rawValue
+public let DTDefaultFontName: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultFontName.rawValue
+public let DTDefaultFontSize: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultFontSize.rawValue
+public let DTDefaultFontDescriptor: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultFontDescriptor.rawValue
+public let DTDefaultTextColor: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultTextColor.rawValue
+public let DTDefaultLinkColor: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultLinkColor.rawValue
+public let DTDefaultLinkHighlightColor: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultLinkHighlightColor.rawValue
+public let DTDefaultLinkDecoration: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultLinkDecoration.rawValue
+public let DTDefaultTextAlignment: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultTextAlignment.rawValue
+public let DTDefaultLineHeightMultiplier: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultLineHeightMultiplier.rawValue
+public let DTDefaultFirstLineHeadIndent: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultFirstLineHeadIndent.rawValue
+public let DTDefaultHeadIndent: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultHeadIndent.rawValue
+public let DTDefaultStyleSheet: String =
+  NSAttributedString.DocumentReadingOptionKey.defaultStyleSheet.rawValue
+public let DTUseiOS6Attributes: String =
+  NSAttributedString.DocumentReadingOptionKey.useiOS6Attributes.rawValue
+public let DTProcessCustomHTMLAttributes: String =
+  NSAttributedString.DocumentReadingOptionKey.processCustomHTMLAttributes.rawValue
+public let DTIgnoreInlineStylesOption: String =
+  NSAttributedString.DocumentReadingOptionKey.ignoreInlineStyles.rawValue
+public let DTDocumentPreserveTrailingSpaces: String =
+  NSAttributedString.DocumentReadingOptionKey.documentPreserveTrailingSpaces.rawValue
 
 // MARK: - Attributed String Attribute Constants
 

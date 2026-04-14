@@ -230,6 +230,23 @@ open class HTMLElement: HTMLParserNode {
       shadow.shadowColor = firstShadow["Color"] as? DTColor
       shadow.shadowBlurRadius = CGFloat((firstShadow["Blur"] as? NSNumber)?.floatValue ?? 0)
       tmpDict[NSAttributedString.Key.shadow] = shadow
+
+      // store full array for multi-shadow rendering
+      if shadows.count > 1 {
+        let nsShadows = shadows.compactMap { entry -> NSShadow? in
+          guard let dict = entry as? [String: Any] else { return nil }
+          let s = NSShadow()
+          #if canImport(UIKit)
+            s.shadowOffset = (dict["Offset"] as? NSValue)?.cgSizeValue ?? .zero
+          #else
+            s.shadowOffset = (dict["Offset"] as? NSValue)?.sizeValue ?? .zero
+          #endif
+          s.shadowColor = dict["Color"] as? DTColor
+          s.shadowBlurRadius = CGFloat((dict["Blur"] as? NSNumber)?.floatValue ?? 0)
+          return s
+        }
+        tmpDict[NSAttributedString.Key(rawValue: DTShadowsAttribute)] = nsShadows
+      }
     }
 
     if _letterSpacing != 0 {

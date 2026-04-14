@@ -57,6 +57,15 @@ open class CoreTextGlyphRun: NSObject {
 
   /// Draws the receiver into the given context.
   @objc open func draw(in context: CGContext) {
+    // Check for multiple shadows stored via DTShadowsAttribute
+    if let shadows = (_attributes as? [NSAttributedString.Key: Any])?[
+      NSAttributedString.Key(rawValue: DTShadowsAttribute)] as? [NSShadow],
+      shadows.count > 1
+    {
+      drawWithMultipleShadows(shadows, in: context)
+      return
+    }
+
     let textMatrix = CTRunGetTextMatrix(_run)
 
     if textMatrix.isIdentity {
@@ -70,6 +79,57 @@ open class CoreTextGlyphRun: NSObject {
       CTRunDraw(_run, context, CFRangeMake(0, 0))
       context.textMatrix = .identity
     }
+  }
+
+  /// Draws the text once per shadow (back-to-front), then once without a shadow for the text itself.
+  private func drawWithMultipleShadows(_ shadows: [NSShadow], in context: CGContext) {
+    let textMatrix = CTRunGetTextMatrix(_run)
+    let savedPosition = context.textPosition
+
+    // Draw each shadow layer (reverse order so the first shadow in the array is on top)
+    for shadow in shadows.reversed() {
+      context.saveGState()
+      context.setShadow(
+        offset: shadow.shadowOffset,
+        blur: shadow.shadowBlurRadius,
+        color: (shadow.shadowColor as AnyObject?)?.cgColor
+      )
+
+      // Set text color to clear so only the shadow draws
+      context.setFillColor(DTColor.clear.cgColor)
+      context.textPosition = savedPosition
+
+      if textMatrix.isIdentity {
+        CTRunDraw(_run, context, CFRangeMake(0, 0))
+      } else {
+        var matrix = textMatrix
+        matrix.tx = savedPosition.x
+        matrix.ty = savedPosition.y
+        context.textMatrix = matrix
+        CTRunDraw(_run, context, CFRangeMake(0, 0))
+        context.textMatrix = .identity
+      }
+
+      context.restoreGState()
+    }
+
+    // Draw the text itself without any shadow
+    context.saveGState()
+    context.setShadow(offset: .zero, blur: 0, color: nil)
+    context.textPosition = savedPosition
+
+    if textMatrix.isIdentity {
+      CTRunDraw(_run, context, CFRangeMake(0, 0))
+    } else {
+      var matrix = textMatrix
+      matrix.tx = savedPosition.x
+      matrix.ty = savedPosition.y
+      context.textMatrix = matrix
+      CTRunDraw(_run, context, CFRangeMake(0, 0))
+      context.textMatrix = .identity
+    }
+
+    context.restoreGState()
   }
 
   /// Draws the receiver's decoration (background highlighting, underline, strike-through).
