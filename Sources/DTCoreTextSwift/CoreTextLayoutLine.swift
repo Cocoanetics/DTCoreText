@@ -232,7 +232,10 @@ open class CoreTextLayoutLine: NSObject {
     var maxOffset: CGFloat = 0
     var maxFontSize: CGFloat = 0
 
-    guard let runs = glyphRuns as? [CoreTextGlyphRun] else { return }
+    // Ensure glyph runs are built (we already hold _lock; accessing the
+    // `glyphRuns` property would re-enter it).
+    _ensureGlyphRuns()
+    guard let runs = _glyphRuns as? [CoreTextGlyphRun] else { return }
 
     for oneRun in runs {
       if let usedFont = (oneRun.attributes as? [NSAttributedString.Key: Any])?[
@@ -250,11 +253,8 @@ open class CoreTextLayoutLine: NSObject {
 
   // MARK: - Properties
 
-  /// The glyph runs that the line contains.
-  @objc open var glyphRuns: NSArray? {
-    _lock.lock()
-    defer { _lock.unlock() }
-
+  /// Lazily builds the glyph runs array. Caller must already hold `_lock`.
+  private func _ensureGlyphRuns() {
     if _glyphRuns == nil {
       let runs = CTLineGetGlyphRuns(_line)
       let runCount = CFArrayGetCount(runs)
@@ -289,7 +289,13 @@ open class CoreTextLayoutLine: NSObject {
         _glyphRuns = tmpArray
       }
     }
+  }
 
+  /// The glyph runs that the line contains.
+  @objc open var glyphRuns: NSArray? {
+    _lock.lock()
+    defer { _lock.unlock() }
+    _ensureGlyphRuns()
     return _glyphRuns
   }
 

@@ -11,6 +11,7 @@
 #if canImport(UIKit) && !os(watchOS)
   import UIKit
   import QuartzCore
+  import os
   import os.log
 
   // MARK: - Notification
@@ -103,7 +104,8 @@
     nonisolated(unsafe) private weak var _delegate: (any DTAttributedTextContentViewDelegate)?
 
     /// Lock for synchronizing access to layouter/layoutFrame.
-    // Recursive because layoutFrame.getter calls layouter.getter — both lock _lock.
+    /// Recursive because observers of the layout-finished notification
+    /// (e.g. intrinsicContentSize) legitimately re-enter layoutFrame.
     private let _lock = NSRecursiveLock()
 
     // MARK: - Nonisolated render mirror (for background tile rendering)
