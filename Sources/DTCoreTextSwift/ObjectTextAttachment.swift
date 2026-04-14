@@ -5,7 +5,7 @@ import Foundation
 open class ObjectTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
 
   /// The HTMLElement child nodes of the receiver. This array is only used for object tags at the moment.
-  public var childNodes: [HTMLElement]?
+  @objc public var childNodes: [HTMLElement]?
 
   // MARK: - NSCoding
 
@@ -93,7 +93,7 @@ open class ObjectTextAttachment: TextAttachment, TextAttachmentHTMLPersistence {
       retString += ">"
 
       for element in childNodes {
-        retString += element.debugDescription
+        element.appendHTML(to: &retString, indentLevel: 0)
       }
 
       retString += "</object>"

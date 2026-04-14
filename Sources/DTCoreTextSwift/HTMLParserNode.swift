@@ -2,11 +2,11 @@ import Foundation
 import os
 
 /// Represents one node in an HTML DOM tree.
-open class HTMLParserNode {
+open class HTMLParserNode: NSObject {
 
-  public var name: String
-  public var attributes: [String: String]?
-  public weak var parentNode: HTMLParserNode?
+  @objc public var name: String
+  @objc public var attributes: [String: String]?
+  @objc public weak var parentNode: HTMLParserNode?
 
   private var childNodeStorage: [HTMLParserNode] = []
   private let lock = OSAllocatedUnfairLock()
@@ -106,7 +106,7 @@ open class HTMLParserNode {
   }
 
   /// Hierarchy representation of the receiver including all attributes and children.
-  public var debugDescription: String {
+  public override var debugDescription: String {
     var out = ""
     appendHTML(to: &out, indentLevel: 0)
     return out

@@ -549,18 +549,42 @@
 	}
 	else if ([attachment isKindOfClass:[DTObjectTextAttachment class]])
 	{
+		DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)attachment;
+
+		UIView *someView = [[UIView alloc] initWithFrame:frame];
+		someView.layer.borderWidth = 1;
+		someView.layer.borderColor = [UIColor blackColor].CGColor;
+
 		// somecolorparameter has a HTML color
 		NSString *colorName = [attachment.attributes objectForKey:@"somecolorparameter"];
 		UIColor *someColor = DTColorCreateWithHTMLName(colorName);
-		
-		UIView *someView = [[UIView alloc] initWithFrame:frame];
 		someView.backgroundColor = someColor;
-		someView.layer.borderWidth = 1;
-		someView.layer.borderColor = [UIColor blackColor].CGColor;
-		
-		someView.accessibilityLabel = colorName;
+
+		// if there are child nodes, show the "stuff" attribute from <special> as a label
+		for (HTMLParserNode *node in objectAttachment.childNodes)
+		{
+			NSString *stuff = node.attributes[@"stuff"];
+			if (stuff)
+			{
+				UILabel *label = [[UILabel alloc] initWithFrame:someView.bounds];
+				label.text = stuff;
+				label.font = [UIFont systemFontOfSize:14];
+				label.textAlignment = NSTextAlignmentCenter;
+				label.numberOfLines = 0;
+				label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+				[someView addSubview:label];
+				someView.accessibilityLabel = stuff;
+				break;
+			}
+		}
+
+		if (!someView.accessibilityLabel)
+		{
+			someView.accessibilityLabel = colorName;
+		}
+
 		someView.isAccessibilityElement = YES;
-		
+
 		return someView;
 	}
 	
