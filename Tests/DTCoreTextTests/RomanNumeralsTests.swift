@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import DTCoreTextSwift
+@testable import DTCoreText
 
 @Suite("Roman Numerals", .serialized)
 struct RomanNumeralsTests {

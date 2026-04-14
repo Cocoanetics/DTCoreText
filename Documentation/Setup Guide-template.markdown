@@ -47,7 +47,7 @@ Smoke Test
 Verify that everything is set up correctly:
 
 ```swift
-import DTCoreTextSwift
+import DTCoreText
 
 let html = "<p>Some Text</p>"
 let data = html.data(using: .utf8)!

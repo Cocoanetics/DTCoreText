@@ -14,7 +14,7 @@
 #import "DemoWebVideoView.h"
 #import "DTCoreTextConstants.h"
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 
 @interface DemoTextViewController ()

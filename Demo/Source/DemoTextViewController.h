@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 @interface DemoTextViewController : UIViewController <UIActionSheetDelegate, DTAttributedTextContentViewDelegate, DTLazyImageViewDelegate>
 

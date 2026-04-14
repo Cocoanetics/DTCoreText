@@ -8,7 +8,7 @@
 
 #import "DemoWebVideoView.h"
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 @interface DemoWebVideoView ()
 

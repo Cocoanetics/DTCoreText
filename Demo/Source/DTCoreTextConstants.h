@@ -2,7 +2,7 @@
 //  DTCoreTextConstants.h
 //  DTCoreText DemoApp
 //
-//  Re-declares string constants from the Swift DTCoreTextSwift module so that
+//  Re-declares string constants from the Swift DTCoreText module so that
 //  Objective-C code in the Demo can use the bare identifiers (the Swift
 //  package exposes them as top-level `public let`s, which Clang's @import
 //  cannot see).

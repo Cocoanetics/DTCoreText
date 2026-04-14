@@ -9,7 +9,7 @@ Smoke Test
 After adding DTCoreText to your project via Swift Package Manager, verify the setup with:
 
 ```swift
-import DTCoreTextSwift
+import DTCoreText
 
 let html = "<p>Some Text</p>"
 let data = html.data(using: .utf8)!

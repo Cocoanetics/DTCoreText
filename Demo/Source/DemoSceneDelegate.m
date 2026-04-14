@@ -6,7 +6,7 @@
 #import "DemoSceneDelegate.h"
 #import "DemoSnippetsViewController.h"
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 @implementation DemoSceneDelegate
 

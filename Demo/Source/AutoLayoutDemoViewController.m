@@ -8,7 +8,7 @@
 
 #import "AutoLayoutDemoViewController.h"
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 @interface AutoLayoutDemoViewController ()
 

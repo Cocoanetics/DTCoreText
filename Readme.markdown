@@ -26,7 +26,7 @@ Then link the `DTCoreText` product to your target.
 Documentation
 -------------
 
-Documentation can be [browsed online](https://docs.cocoanetics.com/DTCoreText) or installed in your Xcode Organizer via the [Atom Feed URL](https://docs.cocoanetics.com/DTCoreText/DTCoreText.atom).
+Documentation can be [browsed online](https://swiftpackageindex.com/Cocoanetics/DTCoreText/documentation/dtcoretext).
 
 Changelog: [GitHub Releases](https://github.com/Cocoanetics/DTCoreText/releases)
 

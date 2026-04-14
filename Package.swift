@@ -12,25 +12,26 @@ let package = Package(
     products: [
         .library(
             name: "DTCoreText",
-            targets: ["DTCoreTextSwift"])
+            targets: ["DTCoreText"])
     ],
     dependencies: [
         .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
 		.target(
-			name: "DTCoreTextSwift",
+			name: "DTCoreText",
 			dependencies: [
 				.product(name: "SwiftTextHTML", package: "SwiftText"),
 			],
-			path: "Sources/DTCoreTextSwift",
+			path: "Sources/DTCoreText",
 			resources: [
 				.copy("default.css")
 			]
 		),
         .testTarget(
             name: "DTCoreTextTests",
-            dependencies: ["DTCoreTextSwift"],
+            dependencies: ["DTCoreText"],
             path: "Tests/DTCoreTextTests",
             resources: [
                 .copy("Resources/AppleConverted.html"),

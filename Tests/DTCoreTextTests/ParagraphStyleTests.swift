@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import CoreText
-@testable import DTCoreTextSwift
+@testable import DTCoreText
 
 @Suite("Paragraph Style", .serialized)
 struct ParagraphStyleTests {

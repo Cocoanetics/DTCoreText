@@ -9,7 +9,7 @@
 #import "DemoAboutViewController.h"
 #import "DTCoreTextConstants.h"
 
-@import DTCoreTextSwift;
+@import DTCoreText;
 
 @interface DemoAboutViewController ()
 
