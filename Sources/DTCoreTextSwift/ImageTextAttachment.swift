@@ -118,6 +118,7 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
     let baseURL = options?[NSBaseURLDocumentOption] as? URL
     let src = element.attributes?["src"]
 
+
     var contentURL: URL? = nil
 
     // decode content URL
@@ -205,7 +206,19 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
         if contentURL?.scheme == nil {
           // possibly a relative url
           if let baseURL = baseURL {
-            contentURL = URL(string: src, relativeTo: baseURL)
+            if baseURL.isFileURL {
+              contentURL = baseURL.appendingPathComponent(src)
+            } else {
+              contentURL = URL(string: src, relativeTo: baseURL)
+            }
+
+            if let fileURL = contentURL?.standardizedFileURL,
+              fileURL.isFileURL,
+              !FileManager.default.fileExists(atPath: fileURL.path),
+              let scaleVariantURL = Self.scaleVariantURL(forMissingFileURL: fileURL)
+            {
+              contentURL = scaleVariantURL
+            }
           } else {
             // file in app bundle
             let bundle = Bundle(for: type(of: self))
@@ -260,6 +273,21 @@ open class ImageTextAttachment: TextAttachment, TextAttachmentDrawing, TextAttac
 
     // only remote images should have a URL
     self.contentURL = contentURL
+  }
+
+  private static func scaleVariantURL(forMissingFileURL fileURL: URL) -> URL? {
+    let directoryURL = fileURL.deletingLastPathComponent()
+    let baseName = fileURL.deletingPathExtension().lastPathComponent
+    let pathExtension = fileURL.pathExtension
+
+    for scale in [2, 3, 4, 5] {
+      let candidateURL = directoryURL.appendingPathComponent("\(baseName)@\(scale)x").appendingPathExtension(pathExtension)
+      if FileManager.default.fileExists(atPath: candidateURL.path) {
+        return candidateURL
+      }
+    }
+
+    return nil
   }
 
   private func _updateSizes(from image: DTImage) {

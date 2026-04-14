@@ -15,8 +15,8 @@ enum TestHelpers {
 		guard let data = html.data(using: .utf8) else { return nil }
 
 		var mutableOptions = options ?? [:]
-		let baseURL = Bundle.module.resourceURL
-		mutableOptions["NSBaseURLDocumentOption"] = baseURL
+		let baseURL = Bundle.module.resourceURL ?? Bundle.module.bundleURL
+		mutableOptions[NSBaseURLDocumentOption] = baseURL
 
 		TextAttachment.registerClass(ObjectTextAttachment.self, forTagName: "oliver")
 
