@@ -27,6 +27,12 @@ private let logger = Logger(
   subsystem: "com.cocoanetics.DTCoreText", category: "HTMLAttributedStringBuilder")
 
 
+/// Callback invoked just before an ``HTMLElement`` is flushed (converted to
+/// an attributed string and appended to the output). The callback receives the
+/// element and may modify it before it is written, e.g. to adjust attributes
+/// or suppress output.
+public typealias HTMLAttributedStringBuilderWillFlushCallback = @Sendable (HTMLElement) -> Void
+
 // MARK: - Builder
 
 /// Builds an `NSAttributedString` from an HTML document.
@@ -48,6 +54,12 @@ public final class HTMLAttributedStringBuilder: @unchecked Sendable {
 
   /// Whether to preserve the document node tree after generation.
   public var shouldKeepDocumentNodeTree = false
+
+  /// A callback executed whenever content is about to be flushed to the
+  /// output string. The callback receives the ``HTMLElement`` that is about
+  /// to be converted to an attributed string and may modify it before it is
+  /// written.
+  public var willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback?
 
   // MARK: - Init
 
@@ -76,7 +88,8 @@ public final class HTMLAttributedStringBuilder: @unchecked Sendable {
 
     await state.configure(
       options: options,
-      shouldKeepDocumentNodeTree: shouldKeepDocumentNodeTree
+      shouldKeepDocumentNodeTree: shouldKeepDocumentNodeTree,
+      willFlushCallback: willFlushCallback
     )
 
     for await event in parser.parseEvents() {

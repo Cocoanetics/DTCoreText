@@ -134,6 +134,13 @@ extension NSAttributedString.DocumentReadingOptionKey {
   /// Whether to preserve trailing whitespace in the document (`Bool`).
   public static let documentPreserveTrailingSpaces = NSAttributedString.DocumentReadingOptionKey(
     "DTDocumentPreserveTrailingSpaces")
+
+  /// A callback block executed whenever content is about to be flushed to
+  /// the output string during HTML parsing. The block receives the
+  /// `HTMLElement` that is about to be flushed and may modify it before
+  /// it is converted to an attributed string.
+  public static let willFlushBlockCallBack = NSAttributedString.DocumentReadingOptionKey(
+    "DTWillFlushBlockCallBack")
 }
 
 public let DTMaxImageSize: String =
@@ -172,6 +179,8 @@ public let DTIgnoreInlineStylesOption: String =
   NSAttributedString.DocumentReadingOptionKey.ignoreInlineStyles.rawValue
 public let DTDocumentPreserveTrailingSpaces: String =
   NSAttributedString.DocumentReadingOptionKey.documentPreserveTrailingSpaces.rawValue
+public let DTWillFlushBlockCallBack: String =
+  NSAttributedString.DocumentReadingOptionKey.willFlushBlockCallBack.rawValue
 
 // MARK: - Attributed String Attribute Constants
 

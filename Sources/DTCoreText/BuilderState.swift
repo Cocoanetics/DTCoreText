@@ -40,13 +40,15 @@ internal actor BuilderState {
   var ignoreInlineStyles = false
   var preserveDocumentTrailingSpaces = false
   var shouldKeepDocumentNodeTree = false
+  var willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback?
   var options: [String: Any] = [:]
 
   // MARK: - Configuration
 
   func configure(
     options: [String: Any],
-    shouldKeepDocumentNodeTree: Bool
+    shouldKeepDocumentNodeTree: Bool,
+    willFlushCallback: HTMLAttributedStringBuilderWillFlushCallback? = nil
   ) {
 
     rootNode = nil
@@ -57,6 +59,18 @@ internal actor BuilderState {
 
     self.options = options
     self.shouldKeepDocumentNodeTree = shouldKeepDocumentNodeTree
+
+    // Will-flush callback — prefer the explicit parameter, fall back to
+    // the options dictionary for backward compatibility.
+    if let willFlushCallback {
+      self.willFlushCallback = willFlushCallback
+    } else if let cb = options[DTWillFlushBlockCallBack]
+      as? HTMLAttributedStringBuilderWillFlushCallback
+    {
+      self.willFlushCallback = cb
+    } else {
+      self.willFlushCallback = nil
+    }
 
     // Text scale
     if let scaleValue = options[NSTextSizeMultiplierDocumentOption] as? Double {
@@ -504,6 +518,11 @@ internal actor BuilderState {
 
   private func flush(_ tag: HTMLElement) {
     guard tag.needsOutput() else { return }
+
+    // Give the caller a chance to inspect / modify the element before it is
+    // converted to an attributed string (mirrors the ObjC willFlushCallback).
+    willFlushCallback?(tag)
+
     guard let nodeString = tag.attributedString() else { return }
 
     if tag.displayStyle != .inline {

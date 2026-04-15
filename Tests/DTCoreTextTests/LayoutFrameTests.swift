@@ -41,6 +41,51 @@ struct LayoutFrameTests {
 		#expect(sizeNeeded.width == 76)
 	}
 
+	/// Issue #1297: Multiple anchor tags in RTL text must all produce
+	/// distinct link glyph runs. Before the fix, `skipRunsBeforeLocation`
+	/// used string locations which are non-monotonic for RTL glyph runs,
+	/// causing all but the last link to be skipped.
+	@Test("RTL text with multiple anchor tags preserves all links (issue #1297)")
+	func rtlMultipleAnchorTags() throws {
+		let html = "<p dir='rtl'>ات<a href='https://example.com'>نننا</a>و<a href='https://example2.com'>هننا</a>و<a href='https://google.com'>هنا</a>و<a href='https://yahoo.com'>نا</a></p>"
+		let attributedString = try #require(TestHelpers.attributedString(fromHTML: html))
+
+		let linkKey = NSAttributedString.Key(rawValue: DTLinkAttribute)
+		var foundURLs: [String] = []
+		attributedString.enumerateAttribute(linkKey, in: NSRange(location: 0, length: attributedString.length)) { value, range, _ in
+			if let url = value as? URL {
+				foundURLs.append(url.absoluteString)
+			} else if let url = value as? NSURL {
+				foundURLs.append(url.absoluteString ?? "")
+			}
+		}
+
+		#expect(foundURLs.count == 4, "All four links must be present in the attributed string, found: \(foundURLs)")
+		#expect(foundURLs.contains("https://example.com"))
+		#expect(foundURLs.contains("https://example2.com"))
+		#expect(foundURLs.contains("https://google.com"))
+		#expect(foundURLs.contains("https://yahoo.com"))
+
+		// Lay out and verify each link produces a glyph run with the URL
+		let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+		let maxRect = CGRect(x: 0, y: 0, width: 1024, height: CGFloat(CGFLOAT_HEIGHT_UNKNOWN))
+		let entireString = NSRange(location: 0, length: attributedString.length)
+		let layoutFrame = try #require(layouter.layoutFrame(with: maxRect, range: entireString))
+
+		var linkRunURLs: Set<String> = []
+		for line in (layoutFrame.lines as? [CoreTextLayoutLine]) ?? [] {
+			for run in (line.glyphRuns as? [CoreTextGlyphRun]) ?? [] {
+				if let url = run.attributes[DTLinkAttribute] as? URL {
+					linkRunURLs.insert(url.absoluteString)
+				} else if let url = run.attributes[DTLinkAttribute] as? NSURL, let str = url.absoluteString {
+					linkRunURLs.insert(str)
+				}
+			}
+		}
+
+		#expect(linkRunURLs.count == 4, "All four link URLs must appear in glyph runs, found: \(linkRunURLs)")
+	}
+
 	/// Issue #1311: a plain `NSTextAttachment` (i.e. not the DTCoreText
 	/// `TextAttachment` subclass) must be treated as a valid attachment by the
 	/// reader-side pipeline: the CT run delegate should source ascent/descent/

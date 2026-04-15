@@ -276,15 +276,20 @@
       }
 
       for oneLine in lines {
-        var skipRunsBeforeLocation: Int = 0
+        // Track which glyph run indices have already been consumed by
+        // link chaining so we don't create duplicate link views.
+        // Using array indices instead of string locations is correct
+        // for both LTR and RTL text, because RTL glyph runs may have
+        // non-monotonic string locations (issue #1297).
+        var skipRunsBeforeIndex: Int = 0
 
         guard let glyphRuns = oneLine.glyphRuns as? [CoreTextGlyphRun] else { continue }
 
-        for oneRun in glyphRuns {
+        for (runIndex, oneRun) in glyphRuns.enumerated() {
           let runRange = oneRun.stringRange()
           var frameForSubview: CGRect = .zero
 
-          guard runRange.location >= skipRunsBeforeLocation else { continue }
+          guard runIndex >= skipRunsBeforeIndex else { continue }
 
           // Check for link
           var effectiveRangeOfLink = runRange
@@ -293,9 +298,9 @@
 
           // Chain glyph runs for combined link buttons (skip attachments)
           if let linkURL_ = linkURL, attachment == nil {
-            let glyphIndex = glyphRuns.firstIndex(of: oneRun) ?? 0
+            var lastChainedIndex = runIndex
 
-            for i in (glyphIndex + 1)..<glyphRuns.count {
+            for i in (runIndex + 1)..<glyphRuns.count {
               let followingRun = glyphRuns[i]
               let followingURL = followingRun.attributes[DTLinkAttribute] as? URL
 
@@ -303,10 +308,11 @@
               guard followingRun.attachment == nil else { break }
 
               effectiveRangeOfLink = NSUnionRange(effectiveRangeOfLink, followingRun.stringRange())
+              lastChainedIndex = i
             }
 
             frameForSubview = oneLine.frameOfGlyphs(with: effectiveRangeOfLink)
-            skipRunsBeforeLocation = NSMaxRange(effectiveRangeOfLink)
+            skipRunsBeforeIndex = lastChainedIndex + 1
           } else {
             if let attachment {
               let ascender = dtAttachmentLayoutAscent(attachment)

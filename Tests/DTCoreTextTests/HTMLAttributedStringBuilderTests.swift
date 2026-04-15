@@ -1053,4 +1053,29 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(hexColor == "333333", "Color attribute lost")
 		#expect(attributedString.string == "Li item\n")
 	}
+
+	@Test("willFlushCallback is invoked for every flushed element")
+	func willFlushCallbackInvoked() throws {
+		let html = "<p>Hello <b>bold</b> world</p>"
+		guard let data = html.data(using: .utf8) else {
+			Issue.record("Could not encode HTML")
+			return
+		}
+
+		let builder = try #require(HTMLAttributedStringBuilder(html: data, options: nil))
+
+		// Use a class-based box so the Sendable closure can capture it.
+		final class Counter: @unchecked Sendable {
+			var count = 0
+		}
+		let counter = Counter()
+
+		builder.willFlushCallback = { _ in
+			counter.count += 1
+		}
+
+		let result = builder.generatedAttributedString()
+		#expect(result != nil, "Attributed string should be generated")
+		#expect(counter.count > 0, "willFlushCallback should have been called at least once")
+	}
 }
