@@ -250,6 +250,10 @@ open class CoreTextGlyphRun: NSObject {
             y += smallestPixelWidth / 2.0
           }
 
+          if let colorValue = _attributes?[NSAttributedString.Key.underlineColor] as? DTColor {
+            context.setStrokeColor(colorValue.cgColor)
+          }
+
           context.move(to: CGPoint(x: adjustedBounds.origin.x, y: y))
           context.addLine(to: CGPoint(x: adjustedBounds.origin.x + adjustedBounds.size.width, y: y))
           didDrawSomething = true
@@ -497,6 +501,11 @@ open class CoreTextGlyphRun: NSObject {
 
 // Helper: check if DTCoreTextDrawsUnderlinesWithGlyphs is available
 private func DTCoreTextDrawsUnderlinesWithGlyphs() -> Bool {
+  let version = ProcessInfo.processInfo.operatingSystemVersion
+  if version.majorVersion >= 18 {
+    return false
+  }
+
   // On modern systems (iOS 7+, macOS 10.9+), Core Text draws underlines with glyphs
   if #available(iOS 7.0, macOS 10.9, *) {
     return true

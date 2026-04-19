@@ -67,19 +67,19 @@ struct AttributedStringDTCoreTextTests {
 		let effectiveList = lists.last!
 
 		// test effective list inside range
-		let foundRange = attributedString.rangeOfTextList(effectiveList, atIndex: innerRange.location)
+		let foundRange = attributedString.dtct_rangeOfTextList(effectiveList, atIndex: innerRange.location)
 		let expectedRange = (attributedString.string as NSString).paragraphRange(for: innerRange)
 		#expect(foundRange == expectedRange)
 
 		// test effective list outside range — paragraph 0 ("some text") has no list
-		let nonFoundRange = attributedString.rangeOfTextList(effectiveList, atIndex: 1)
+		let nonFoundRange = attributedString.dtct_rangeOfTextList(effectiveList, atIndex: 1)
 		#expect(nonFoundRange == NSRange(location: NSNotFound, length: 0))
 
 		// Value-equal copies find the same range (attribute coalescing may strip instance
-		// identity, so rangeOfTextList uses value equality, not `===`, to locate the list).
+		// identity, so dtct_rangeOfTextList uses value equality, not `===`, to locate the list).
 		let copy = effectiveList.copy() as! DTTextList
 		#expect(effectiveList !== copy)
-		let copyFound = attributedString.rangeOfTextList(copy, atIndex: innerRange.location)
+		let copyFound = attributedString.dtct_rangeOfTextList(copy, atIndex: innerRange.location)
 		#expect(copyFound == expectedRange)
 	}
 

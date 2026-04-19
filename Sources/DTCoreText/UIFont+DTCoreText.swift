@@ -11,7 +11,7 @@ import Foundation
     /// - Parameter ctFont: A CTFontRef
     /// - Returns: The matching UIFont
     @objc public static func font(with ctFont: CTFont) -> UIFont? {
-      let fontName = CTFontCopyName(ctFont, kCTFontPostScriptNameKey) as String? ?? ""
+      let fontName = CTFontCopyName(ctFont, kCTFontFullNameKey) as String? ?? ""
       let fontSize = CTFontGetSize(ctFont)
       var font = UIFont(name: fontName, size: fontSize)
 
