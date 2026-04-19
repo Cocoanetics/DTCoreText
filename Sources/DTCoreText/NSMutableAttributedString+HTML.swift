@@ -73,7 +73,7 @@ extension NSMutableAttributedString {
 
   /// Appends a string with the same attributes as the end of this string.
   /// Removes attachment placeholders and field attributes from the appended part.
-  public func dtct_appendString(_ string: String) {
+  public func appendString(_ string: String) {
     let length = self.length
 
     let appendString: NSAttributedString
@@ -96,7 +96,7 @@ extension NSMutableAttributedString {
   }
 
   /// Appends a string with a given paragraph style and font to this string.
-  public func dtct_appendString(
+  public func appendString(
     _ string: String, withParagraphStyle paragraphStyle: CoreTextParagraphStyle?,
     fontDescriptor: CoreTextFontDescriptor?
   ) {

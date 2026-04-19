@@ -60,7 +60,7 @@ open class TextAttachmentHTMLElement: HTMLElement {
 
     // block-level elements get space trimmed and a newline
     if self.displayStyle != .inline {
-      tmpString.dtct_appendString("\n")
+      tmpString.appendString("\n")
     }
 
     return tmpString

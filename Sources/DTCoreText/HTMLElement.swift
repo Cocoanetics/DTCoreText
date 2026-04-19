@@ -368,7 +368,7 @@ open class HTMLElement: HTMLParserNode {
             tmpString.deleteCharacters(in: NSRange(location: tmpString.length - 1, length: 1))
           }
           // paragraph break
-          tmpString.dtct_appendString("\n")
+          tmpString.appendString("\n")
         }
 
         let nodeString = oneChild.attributedString()
