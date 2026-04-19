@@ -709,7 +709,7 @@ struct HTMLAttributedStringBuilderTests {
 		#expect(lists?.count == 1, "There should be 1 outer list")
 
 		let outerList = lists!.last!
-		let list1Range = attributedString.dtct_rangeOfTextList(outerList, atIndex: 0)
+		let list1Range = attributedString.rangeOfTextList(outerList, atIndex: 0)
 
 		#expect(list1Range.location == 0, "lists should start at index 0")
 		#expect(list1Range.length > 0, "lists should range for entire string")
@@ -723,7 +723,7 @@ struct HTMLAttributedStringBuilderTests {
 			#expect(innerLists[0].isEqual(outerList), "list at index 0 in inner lists should be equal to outer list")
 		}
 
-		let list2Range = attributedString.dtct_rangeOfTextList(innerLists!.last!, atIndex: innerRange.location)
+		let list2Range = attributedString.rangeOfTextList(innerLists!.last!, atIndex: innerRange.location)
 		let innerParagraph = (attributedString.string as NSString).paragraphRange(for: innerRange)
 
 		#expect(NSEqualRanges(innerParagraph, list2Range), "Inner list range should be equal to inner paragraph")
@@ -742,7 +742,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		if let firstParagraphLists = firstParagraphLists {
 			for (idx, oneList) in firstParagraphLists.enumerated() {
-				let listRange = attributedString.dtct_rangeOfTextList(oneList, atIndex: firstParagraphRange.location)
+				let listRange = attributedString.rangeOfTextList(oneList, atIndex: firstParagraphRange.location)
 				let commonRange = NSIntersectionRange(listRange, firstParagraphRange)
 				#expect(NSEqualRanges(commonRange, firstParagraphRange), "List \(idx + 1) does not cover entire paragraph")
 			}
@@ -758,7 +758,7 @@ struct HTMLAttributedStringBuilderTests {
 
 		if let secondParagraphLists = secondParagraphLists {
 			for (idx, oneList) in secondParagraphLists.enumerated() {
-				let listRange = attributedString.dtct_rangeOfTextList(oneList, atIndex: secondParagraphRange.location)
+				let listRange = attributedString.rangeOfTextList(oneList, atIndex: secondParagraphRange.location)
 				let commonRange = NSIntersectionRange(listRange, secondParagraphRange)
 				#expect(NSEqualRanges(commonRange, secondParagraphRange), "List \(idx + 1) does not cover entire paragraph")
 			}

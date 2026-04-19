@@ -147,7 +147,7 @@ extension NSAttributedString {
     let outermostList = textListsAtIndex[0]
 
     // get the range of all lists
-    let totalRange = self.dtct_rangeOfTextList(outermostList, atIndex: location)
+    let totalRange = self.rangeOfTextList(outermostList, atIndex: location)
 
     // get naked NSString
     let string = (self.string as NSString).substring(with: totalRange)
@@ -274,7 +274,7 @@ extension NSAttributedString {
   ///   - list: The text list.
   ///   - location: The location in the text.
   /// - Returns: The range of the given text list containing the location.
-  public func dtct_rangeOfTextList(_ list: NSTextList, atIndex location: Int) -> NSRange {
+  public func rangeOfTextList(_ list: NSTextList, atIndex location: Int) -> NSRange {
     return _rangeOfTextListByParagraph(list, at: location)
   }
 
