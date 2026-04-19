@@ -1,38 +1,38 @@
-// swift-tools-version:5.3
+// swift-tools-version:6.1
 
 import PackageDescription
 
 let package = Package(
     name: "DTCoreText",
     platforms: [
-        .iOS(.v9),         //.v8 - .v13
-        .macOS(.v10_10),    //.v10_10 - .v10_15
-        .tvOS(.v9),        //.v9 - .v13
+        .iOS(.v16),
+        .macOS(.v13),
+        .tvOS(.v16),
     ],
     products: [
         .library(
             name: "DTCoreText",
-			// type: .dynamic,
             targets: ["DTCoreText"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Cocoanetics/DTFoundation.git", from: "1.7.15"),
+        .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
-        .target(
-            name: "DTCoreText",
-            dependencies: [
-                .product(name: "DTFoundation", package: "DTFoundation"),
-            ],
-            path: "Core",
-			exclude: ["DTCoreText-Info.plist", "DTCoreText-Prefix.pch"],  
-             resources: [
-            	.copy("Source/default.css")]
-        ),
+		.target(
+			name: "DTCoreText",
+			dependencies: [
+				.product(name: "SwiftTextHTML", package: "SwiftText"),
+			],
+			path: "Sources/DTCoreText",
+			resources: [
+				.copy("default.css")
+			]
+		),
         .testTarget(
             name: "DTCoreTextTests",
             dependencies: ["DTCoreText"],
-			path: "Test/Source",
+            path: "Tests/DTCoreTextTests",
             resources: [
                 .copy("Resources/AppleConverted.html"),
                 .copy("Resources/CSSCascading.html"),
@@ -60,6 +60,6 @@ let package = Package(
                 .copy("Resources/Oliver.jpg"),
                 .copy("Resources/Oliver@2x.jpg"),
             ]
-			)
+        ),
     ]
 )

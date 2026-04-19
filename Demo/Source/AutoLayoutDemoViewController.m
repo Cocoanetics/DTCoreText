@@ -8,9 +8,11 @@
 
 #import "AutoLayoutDemoViewController.h"
 
+@import DTCoreText;
+
 @interface AutoLayoutDemoViewController ()
 
-@property (nonatomic, DT_WEAK_PROPERTY) IBOutlet DTAttributedTextContentView *textView;
+@property (nonatomic, weak) IBOutlet DTAttributedTextContentView *textView;
 @end
 
 @implementation AutoLayoutDemoViewController

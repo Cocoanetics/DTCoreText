@@ -11,6 +11,8 @@
 #import "DemoAboutViewController.h"
 #import "AutoLayoutDemoViewController.h"
 
+@import DTCoreText;
+
 // identifier for cell reuse
 NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseIdentifier";
 
@@ -24,7 +26,7 @@ NSString * const AttributedTextCellReuseIdentifier = @"AttributedTextCellReuseId
 - (id)init
 {
 	self = [super initWithStyle:UITableViewStylePlain];
-	
+
 	if (self)
 	{
 		self.title = @"Snippets";

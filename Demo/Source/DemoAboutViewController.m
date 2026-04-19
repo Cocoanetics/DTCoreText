@@ -7,6 +7,9 @@
 //
 
 #import "DemoAboutViewController.h"
+#import "DTCoreTextConstants.h"
+
+@import DTCoreText;
 
 @interface DemoAboutViewController ()
 
@@ -27,20 +30,19 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-	
+	[super viewDidLoad];
+
+	// self.view IS the DTAttributedTextView scroll view (wired from the XIB),
+	// so it extends behind the translucent nav bar. Ask UIKit to include the
+	// nav-bar / safe-area insets in the scroll view's adjustedContentInset so
+	// the text never draws underneath the bar.
+	self.attributedTextView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
+
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"About" ofType:@"html"];
 	NSData *data = [NSData dataWithContentsOfFile:path];
-	
-	NSDictionary *options;
-	
-	if (@available(iOS 13.0, *)) {
-		options = @{DTDefaultTextColor: [UIColor labelColor], DTUseiOS6Attributes: @(YES)};
-	} else {
-		options = @{DTDefaultTextColor: [UIColor blackColor], DTUseiOS6Attributes: @(YES)};
-	}
-	
+
+	NSDictionary *options = @{DTDefaultTextColor: [UIColor labelColor]};
+
 	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
 
 	self.attributedTextView.attributedString = attributedString;

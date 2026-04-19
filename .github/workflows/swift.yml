@@ -1,0 +1,53 @@
+---
+name: Swift
+on:
+  push:
+    branches:
+      - v2
+  pull_request:
+    branches:
+      - v2
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+
+  build-macos:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Select Xcode 26.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.0"
+      - name: Verify Swift version
+        run: swift --version
+      - name: Build & Test (macOS)
+        run: |
+          swift test --enable-swift-testing
+
+  build-ios:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Select Xcode 26.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.0"
+      - name: Verify Swift version
+        run: swift --version
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme DTCoreText-Package \
+            -destination "generic/platform=iOS Simulator" \
+            -skipPackagePluginValidation
+      - name: Test on iOS Simulator
+        run: |
+          xcodebuild test \
+            -scheme DTCoreTextTests \
+            -destination "platform=iOS Simulator,name=iPhone 17,OS=latest" \
+            -parallel-testing-enabled NO \
+            -skipPackagePluginValidation

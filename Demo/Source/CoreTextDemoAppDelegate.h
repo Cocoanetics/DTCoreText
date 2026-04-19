@@ -6,14 +6,8 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
-@class DemoTextViewController;
+#import <UIKit/UIKit.h>
 
-@interface CoreTextDemoAppDelegate : NSObject <UIApplicationDelegate> 
-{
-    UIWindow *_window;
-	UINavigationController *_navigationController;
-}
-
-@property (nonatomic, strong) UIWindow *window;
+@interface CoreTextDemoAppDelegate : UIResponder <UIApplicationDelegate>
 
 @end

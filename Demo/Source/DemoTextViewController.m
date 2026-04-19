@@ -8,10 +8,13 @@
 
 #import "DemoTextViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import <MediaPlayer/MediaPlayer.h>
+#import <AVKit/AVKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-#import "DTTiledLayerWithoutFade.h"
 #import "DemoWebVideoView.h"
+#import "DTCoreTextConstants.h"
+
+@import DTCoreText;
 
 
 @interface DemoTextViewController ()
@@ -41,12 +44,10 @@
 	UITextView *_iOS6View;
 	
 	NSURL *baseURL;
-	
+
 	// private
 	NSURL *lastActionLink;
 	NSMutableSet *mediaPlayers;
-	
-	BOOL _needsAdjustInsetsOnLayout;
 }
 
 
@@ -58,24 +59,11 @@
 	if (self)
 	{
 		NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:@"View", @"Ranges", @"Chars", @"HTML", nil];
-		
-#ifdef DTCORETEXT_SUPPORT_NS_ATTRIBUTES
-		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_6_0)
-		{
-			[items addObject:@"iOS 6"];
-		}
-#endif
-		
+
 		_segmentedControl = [[UISegmentedControl alloc] initWithItems:items];
 		_segmentedControl.selectedSegmentIndex = 0;
 		[_segmentedControl addTarget:self action:@selector(_segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
-		self.navigationItem.titleView = _segmentedControl;	
-		
-		[self _updateToolbarForMode];
-		
-		_needsAdjustInsetsOnLayout = YES;
-		
-		self.automaticallyAdjustsScrollViewInsets = YES;
+		self.navigationItem.titleView = _segmentedControl;
 	}
 	return self;
 }
@@ -91,130 +79,134 @@
 - (void)_updateToolbarForMode
 {
 	NSMutableArray *toolbarItems = [NSMutableArray array];
-	
-	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithTitle:@"Debug Frames" style:UIBarButtonItemStylePlain target:self action:@selector(debugButton:)];
+
+	// Note: we deliberately wrap a UIButton in a customView bar button item
+	// instead of using `initWithImage:` here. UIKit's image-based
+	// UIBarButtonItem produces spurious "IB_Trailing_Trailing" /
+	// "UIView-Encapsulated-Layout-Width == 0" constraint warnings during the
+	// push transition; the UIButton customView route avoids them.
+	UIButton *debugButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	[debugButton setImage:[UIImage systemImageNamed:@"square.dashed"] forState:UIControlStateNormal];
+	[debugButton addTarget:self action:@selector(debugButton:) forControlEvents:UIControlEventTouchUpInside];
+	[debugButton sizeToFit];
+	UIBarButtonItem *debug = [[UIBarButtonItem alloc] initWithCustomView:debugButton];
+	debug.accessibilityLabel = @"Debug Frames";
 	[toolbarItems addObject:debug];
-	
+
 	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	[toolbarItems addObject:space];
-	
-	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithTitle:@"Screenshot" style:UIBarButtonItemStylePlain target:self action:@selector(screenshot:)];
-	[toolbarItems addObject:screenshot];
-	
+
 	if (_segmentedControl.selectedSegmentIndex == 3)
 	{
 		if (!_htmlOutputTypeSegment)
 		{
-			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[@"Document", @"Fragment"]];
+			// SF Symbols: "doc.text" = full Document, "text.quote" = Fragment.
+			UIImage *docImage = [UIImage systemImageNamed:@"doc.text"];
+			UIImage *fragImage = [UIImage systemImageNamed:@"text.quote"];
+			_htmlOutputTypeSegment = [[UISegmentedControl alloc] initWithItems:@[docImage, fragImage]];
 			_htmlOutputTypeSegment.selectedSegmentIndex = 0;
-			
+			_htmlOutputTypeSegment.accessibilityLabel = @"HTML output format";
+			_htmlOutputTypeSegment.apportionsSegmentWidthsByContent = YES;
+			// Pin the content size so UIKit doesn't stretch the control to fill
+			// every pixel between the bar button items.
+			[_htmlOutputTypeSegment sizeToFit];
+
 			[_htmlOutputTypeSegment addTarget:self action:@selector(_htmlModeChanged:) forControlEvents:UIControlEventValueChanged];
 		}
-	
+
+		UIBarButtonItem *htmlMode = [[UIBarButtonItem alloc] initWithCustomView:_htmlOutputTypeSegment];
+		[toolbarItems addObject:htmlMode];
+
 		UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
 		[toolbarItems addObject:spacer];
-	
-		UIBarButtonItem *htmlMode = [[UIBarButtonItem alloc] initWithCustomView:_htmlOutputTypeSegment];
-	
-		[toolbarItems addObject:htmlMode];
 	}
+
+	UIButton *screenshotButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	[screenshotButton setImage:[UIImage systemImageNamed:@"camera"] forState:UIControlStateNormal];
+	[screenshotButton addTarget:self action:@selector(screenshot:) forControlEvents:UIControlEventTouchUpInside];
+	[screenshotButton sizeToFit];
+	UIBarButtonItem *screenshot = [[UIBarButtonItem alloc] initWithCustomView:screenshotButton];
+	screenshot.accessibilityLabel = @"Screenshot";
+	[toolbarItems addObject:screenshot];
 
 	[self setToolbarItems:toolbarItems];
 }
 
 - (void)loadView {
 	[super loadView];
-	
+
 	CGRect frame = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height);
-	
+
 	// Create chars view
 	_charsView = [[UITextView alloc] initWithFrame:frame];
 	_charsView.editable = NO;
 	_charsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_charsView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 	[self.view addSubview:_charsView];
-	
+
 	// Create range view
 	_rangeView = [[UITextView alloc] initWithFrame:frame];
 	_rangeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_rangeView.editable = NO;
+	_rangeView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 	[self.view addSubview:_rangeView];
 
 	// Create html view
 	_htmlView = [[UITextView alloc] initWithFrame:frame];
 	_htmlView.editable = NO;
 	_htmlView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_htmlView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 	[self.view addSubview:_htmlView];
 
 	// Create text view
 	_textView = [[DTAttributedTextView alloc] initWithFrame:frame];
-	
+
 	// we draw images and links via subviews provided by delegate methods
 	_textView.shouldDrawImages = NO;
 	_textView.shouldDrawLinks = NO;
 	_textView.textDelegate = self; // delegate for custom sub views
-	
+
 	// gesture for testing cursor positions
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
 	[_textView addGestureRecognizer:tap];
-	
-	// set an inset. Since the bottom is below a toolbar inset by 44px
-	[_textView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 44, 0)];
-	_textView.contentInset = UIEdgeInsetsMake(10, 10, 54, 10);
+
+	// Extend behind the translucent nav bar / toolbar; let UIKit add the
+	// safe-area insets on top of the small decorative contentInset.
+	_textView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
+	_textView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
 
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:_textView];
-	
+
 	// create a text view to for testing iOS 6 compatibility
 	// Create html view
 	_iOS6View = [[UITextView alloc] initWithFrame:frame];
 	_iOS6View.editable = NO;
-	_iOS6View.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
 	_iOS6View.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_iOS6View.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 	[self.view addSubview:_iOS6View];
-	
+
 	self.contentViews = @[_charsView, _rangeView, _htmlView, _textView, _iOS6View];
 }
 
 
-- (NSAttributedString *)_attributedStringForSnippetUsingiOS6Attributes:(BOOL)useiOS6Attributes
+- (NSAttributedString *)_attributedStringForSnippet
 {
 	// Load HTML data
 	NSString *readmePath = [[NSBundle mainBundle] pathForResource:_fileName ofType:nil];
 	NSString *html = [NSString stringWithContentsOfFile:readmePath encoding:NSUTF8StringEncoding error:NULL];
 	NSData *data = [html dataUsingEncoding:NSUTF8StringEncoding];
-	
+
 	// Create attributed string from HTML
 	CGSize maxImageSize = CGSizeMake(self.view.bounds.size.width - 20.0, self.view.bounds.size.height - 20.0);
-	
-	// example for setting a willFlushCallback, that gets called before elements are written to the generated attributed string
-	void (^callBackBlock)(DTHTMLElement *element) = ^(DTHTMLElement *element) {
-		
-		// the block is being called for an entire paragraph, so we check the individual elements
-		
-		for (DTHTMLElement *oneChildElement in element.childNodes)
-		{
-			// if an element is larger than twice the font size put it in it's own block
-			if (oneChildElement.displayStyle == DTHTMLElementDisplayStyleInline && oneChildElement.textAttachment.displaySize.height > 2.0 * oneChildElement.fontDescriptor.pointSize)
-			{
-				oneChildElement.displayStyle = DTHTMLElementDisplayStyleBlock;
-				oneChildElement.paragraphStyle.minimumLineHeight = element.textAttachment.displaySize.height;
-				oneChildElement.paragraphStyle.maximumLineHeight = element.textAttachment.displaySize.height;
-			}
-		}
-	};
-	
+
 	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:1.0], NSTextSizeMultiplierDocumentOption, [NSValue valueWithCGSize:maxImageSize], DTMaxImageSize,
-							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, @"red", DTDefaultLinkHighlightColor, callBackBlock, DTWillFlushBlockCallBack, nil];
-	
-	if (useiOS6Attributes)
-	{
-		[options setObject:[NSNumber numberWithBool:YES] forKey:DTUseiOS6Attributes];
-	}
-	
+							 @"Times New Roman", DTDefaultFontFamily,  @"purple", DTDefaultLinkColor, @"red", DTDefaultLinkHighlightColor, nil];
+
 	[options setObject:[NSURL fileURLWithPath:readmePath] forKey:NSBaseURLDocumentOption];
-	
+
 	NSAttributedString *string = [[NSAttributedString alloc] initWithHTMLData:data options:options documentAttributes:NULL];
-	
+
 	return string;
 }
 
@@ -227,88 +219,74 @@
 
 	// Display string
 	_textView.shouldDrawLinks = NO; // we draw them in DTLinkButton
-	_textView.attributedString = [self _attributedStringForSnippetUsingiOS6Attributes:NO];
+	_textView.attributedString = [self _attributedStringForSnippet];
 	
 	[self _segmentedControlChanged:nil];
-	
+
 	[self.navigationController setToolbarHidden:NO animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	
+
 	// now the bar is up so we can autoresize again
 	_textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
 
-- (void)viewWillDisappear:(BOOL)animated;
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+	[super willMoveToParentViewController:parent];
+
+	if (parent == nil)
+	{
+		// We're about to be popped off the nav stack. Fully tear down any
+		// AVPlayerViewController children BEFORE the pop animation starts —
+		// AVPlayerViewController holds internal UIScrollViews (scrubber,
+		// controls) that, if left attached during the pop transition,
+		// reference freed state inside their own `dealloc` and crash in
+		// -[UIScrollView _stopScrollingAndZoomingAnimations...].
+		for (AVPlayerViewController *playerVC in self.mediaPlayers)
+		{
+			[playerVC.player pause];
+			playerVC.player = nil;
+			[playerVC willMoveToParentViewController:nil];
+			[playerVC.view removeFromSuperview];
+			[playerVC removeFromParentViewController];
+		}
+		[self.mediaPlayers removeAllObjects];
+	}
+}
+
+- (void)viewWillDisappear:(BOOL)animated
 {
 	[self.navigationController setToolbarHidden:YES animated:YES];
-	
+
 	// stop all playing media
-	for (MPMoviePlayerController *player in self.mediaPlayers)
+	for (AVPlayerViewController *playerVC in self.mediaPlayers)
 	{
-		[player stop];
+		[playerVC.player pause];
 	}
-	
+
 	_textView.textDelegate = nil;
-	
+
 	[super viewWillDisappear:animated];
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-	// prevent hiding of status bar in landscape because this messes up the layout guide calc
 	return NO;
 }
 
-// this is only called on >= iOS 5
-- (void)viewDidLayoutSubviews
-{
-	[super viewDidLayoutSubviews];
-	
-	if (![self respondsToSelector:@selector(topLayoutGuide)] || !_needsAdjustInsetsOnLayout)
-	{
-		return;
-	}
-	
-	// this also compiles with iOS 6 SDK, but will work with later SDKs too
-	CGFloat topInset = [[self valueForKeyPath:@"topLayoutGuide.length"] floatValue];
-	CGFloat bottomInset = [[self valueForKeyPath:@"bottomLayoutGuide.length"] floatValue];
-	
-	UIEdgeInsets outerInsets = UIEdgeInsetsMake(topInset, 0, bottomInset, 0);
-	UIEdgeInsets innerInsets = outerInsets;
-	innerInsets.left += 10;
-	innerInsets.right += 10;
-	innerInsets.top += 10;
-	innerInsets.bottom += 10;
-	
-	CGPoint innerScrollOffset = CGPointMake(-innerInsets.left, -innerInsets.top);
-	CGPoint outerScrollOffset = CGPointMake(-outerInsets.left, -outerInsets.top);
-	
-	_textView.contentInset = innerInsets;
-	_textView.contentOffset = innerScrollOffset;
-	_textView.scrollIndicatorInsets = outerInsets;
-	
-	_iOS6View.contentInset = outerInsets;
-	_iOS6View.contentOffset = outerScrollOffset;
-	_iOS6View.scrollIndicatorInsets = outerInsets;
-
-	_charsView.contentInset = outerInsets;
-	_charsView.contentOffset = outerScrollOffset;
-	_charsView.scrollIndicatorInsets = outerInsets;
-	
-	_rangeView.contentInset = outerInsets;
-	_rangeView.contentOffset = outerScrollOffset;
-	_rangeView.scrollIndicatorInsets = outerInsets;
-	
-	_htmlView.contentInset = outerInsets;
-	_htmlView.contentOffset = outerScrollOffset;
-	_htmlView.scrollIndicatorInsets = outerInsets;
-	
-	_needsAdjustInsetsOnLayout = NO;
-}
+// Modern iOS: UIScrollView automatically adjusts its content inset for the
+// navigation bar, status bar, and bottom toolbar via
+// `contentInsetAdjustmentBehavior = .automatic` (the default). We only need
+// to add the small padding that the old DTCoreText demo used to visually
+// inset the text content from the scroll view's edges.
+//
+// The old code here manually added topLayoutGuide.length + bottomLayoutGuide.length
+// on top of contentInset which, in a modern scene-based UIScrollView, double-adds
+// the insets and produces huge empty space at the top and bottom of the document.
 
 #pragma mark Private Methods
 
@@ -372,7 +350,7 @@
 		{
 			if (![_iOS6View.attributedText length])
 			{
-				_iOS6View.attributedText = [self _attributedStringForSnippetUsingiOS6Attributes:YES];
+				_iOS6View.attributedText = [self _attributedStringForSnippet];
 			}
 		}
 	}
@@ -446,11 +424,11 @@
 	button.GUID = identifier;
 	
 	// get image with normal link text
-	UIImage *normalImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDefault];
+	UIImage *normalImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingOptionsDefault];
 	[button setImage:normalImage forState:UIControlStateNormal];
-	
+
 	// get image for highlighted link text
-	UIImage *highlightImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingDrawLinksHighlighted];
+	UIImage *highlightImage = [attributedTextContentView contentImageWithBounds:frame options:DTCoreTextLayoutFrameDrawingOptionsDrawLinksHighlighted];
 	[button setImage:highlightImage forState:UIControlStateHighlighted];
 	
 	// use normal push action for opening URL
@@ -468,74 +446,62 @@
 	if ([attachment isKindOfClass:[DTVideoTextAttachment class]])
 	{
 		NSURL *url = (id)attachment.contentURL;
-		
-		// we could customize the view that shows before playback starts
+
+		// black placeholder that shows before playback starts
 		UIView *grayView = [[UIView alloc] initWithFrame:frame];
-		grayView.backgroundColor = [DTColor blackColor];
-		
+		grayView.backgroundColor = [UIColor blackColor];
+
 		// find a player for this URL if we already got one
-		MPMoviePlayerController *player = nil;
-		for (player in self.mediaPlayers)
+		AVPlayerViewController *playerVC = nil;
+		for (AVPlayerViewController *candidate in self.mediaPlayers)
 		{
-			if ([player.contentURL isEqual:url])
+			if ([((AVURLAsset *)candidate.player.currentItem.asset).URL isEqual:url])
 			{
+				playerVC = candidate;
 				break;
 			}
 		}
-		
-		if (!player)
+
+		if (!playerVC)
 		{
-			player = [[MPMoviePlayerController alloc] initWithContentURL:url];
-			[self.mediaPlayers addObject:player];
+			playerVC = [[AVPlayerViewController alloc] init];
+			playerVC.player = [AVPlayer playerWithURL:url];
+			[self.mediaPlayers addObject:playerVC];
 		}
-		
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_4_2
+
 		NSString *airplayAttr = [attachment.attributes objectForKey:@"x-webkit-airplay"];
-		if ([airplayAttr isEqualToString:@"allow"])
-		{
-			if ([player respondsToSelector:@selector(setAllowsAirPlay:)])
-			{
-				player.allowsAirPlay = YES;
-			}
-		}
-#endif
-		
+		playerVC.player.allowsExternalPlayback = [airplayAttr isEqualToString:@"allow"];
+
 		NSString *controlsAttr = [attachment.attributes objectForKey:@"controls"];
-		if (controlsAttr)
-		{
-			player.controlStyle = MPMovieControlStyleEmbedded;
-		}
-		else
-		{
-			player.controlStyle = MPMovieControlStyleNone;
-		}
-		
+		playerVC.showsPlaybackControls = controlsAttr != nil;
+
 		NSString *loopAttr = [attachment.attributes objectForKey:@"loop"];
 		if (loopAttr)
 		{
-			player.repeatMode = MPMovieRepeatModeOne;
+			// Set up looping via AVPlayerLooper-style notification handling
+			playerVC.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+			__weak AVPlayer *weakPlayer = playerVC.player;
+			[[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification
+															  object:playerVC.player.currentItem
+															   queue:[NSOperationQueue mainQueue]
+														  usingBlock:^(NSNotification *note) {
+				[weakPlayer seekToTime:kCMTimeZero];
+				[weakPlayer play];
+			}];
 		}
-		else
-		{
-			player.repeatMode = MPMovieRepeatModeNone;
-		}
-		
+
 		NSString *autoplayAttr = [attachment.attributes objectForKey:@"autoplay"];
 		if (autoplayAttr)
 		{
-			player.shouldAutoplay = YES;
+			[playerVC.player play];
 		}
-		else
-		{
-			player.shouldAutoplay = NO;
-		}
-		
-		[player prepareToPlay];
-		
-		player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		player.view.frame = grayView.bounds;
-		[grayView addSubview:player.view];
-		
+
+		[self addChildViewController:playerVC];
+		playerVC.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		playerVC.view.frame = grayView.bounds;
+		[grayView addSubview:playerVC.view];
+		[playerVC didMoveToParentViewController:self];
+
 		return grayView;
 	}
 	else if ([attachment isKindOfClass:[DTImageTextAttachment class]])
@@ -578,23 +544,47 @@
 	{
 		DemoWebVideoView *videoView = [[DemoWebVideoView alloc] initWithFrame:frame];
 		videoView.attachment = attachment;
-		
+
 		return videoView;
 	}
 	else if ([attachment isKindOfClass:[DTObjectTextAttachment class]])
 	{
+		DTObjectTextAttachment *objectAttachment = (DTObjectTextAttachment *)attachment;
+
+		UIView *someView = [[UIView alloc] initWithFrame:frame];
+		someView.layer.borderWidth = 1;
+		someView.layer.borderColor = [UIColor blackColor].CGColor;
+
 		// somecolorparameter has a HTML color
 		NSString *colorName = [attachment.attributes objectForKey:@"somecolorparameter"];
 		UIColor *someColor = DTColorCreateWithHTMLName(colorName);
-		
-		UIView *someView = [[UIView alloc] initWithFrame:frame];
 		someView.backgroundColor = someColor;
-		someView.layer.borderWidth = 1;
-		someView.layer.borderColor = [UIColor blackColor].CGColor;
-		
-		someView.accessibilityLabel = colorName;
+
+		// if there are child nodes, show the "stuff" attribute from <special> as a label
+		for (HTMLParserNode *node in objectAttachment.childNodes)
+		{
+			NSString *stuff = node.attributes[@"stuff"];
+			if (stuff)
+			{
+				UILabel *label = [[UILabel alloc] initWithFrame:someView.bounds];
+				label.text = stuff;
+				label.font = [UIFont systemFontOfSize:14];
+				label.textAlignment = NSTextAlignmentCenter;
+				label.numberOfLines = 0;
+				label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+				[someView addSubview:label];
+				someView.accessibilityLabel = stuff;
+				break;
+			}
+		}
+
+		if (!someView.accessibilityLabel)
+		{
+			someView.accessibilityLabel = colorName;
+		}
+
 		someView.isAccessibilityElement = YES;
-		
+
 		return someView;
 	}
 	
@@ -738,22 +728,22 @@
 - (void)debugButton:(UIBarButtonItem *)sender
 {
 	[DTCoreTextLayoutFrame setShouldDrawDebugFrames:![DTCoreTextLayoutFrame shouldDrawDebugFrames]];
-	[_textView.attributedTextContentView setNeedsDisplay];
+	// CATiledLayer caches rendered tiles — setNeedsDisplay alone does not
+	// always invalidate them. setNeedsDisplayInRect: on the layer forces a
+	// fresh draw of every tile that intersects the rect.
+	[_textView.attributedTextContentView.layer setNeedsDisplayInRect:_textView.attributedTextContentView.bounds];
 }
 
 - (void)screenshot:(UIBarButtonItem *)sender
 {
-	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-	
-	CGRect rect = [keyWindow bounds];
-	UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
-	
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	[keyWindow.layer renderInContext:context];
-	
-	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	
+	UIWindow *window = self.view.window;
+	if (!window) { return; }
+
+	UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithBounds:window.bounds];
+	UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *ctx) {
+		[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
+	}];
+
 	[[UIPasteboard generalPasteboard] setImage:image];
 }
 

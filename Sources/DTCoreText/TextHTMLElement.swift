@@ -1,0 +1,93 @@
+import CoreText
+import Foundation
+
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+
+/// Specialized subclass of HTMLElement that deals with text. It represents a text node.
+open class TextHTMLElement: HTMLElement {
+
+  /// The text content of the element.
+  private var _text: String = ""
+
+  open func setText(_ text: String) {
+    _text = text
+  }
+
+  open func getText() -> String {
+    return _text
+  }
+
+  /// Override to return our stored text instead of walking children.
+  open override func text() -> String {
+    return _text
+  }
+
+  override func appendHTML(to string: inout String, indentLevel: Int) {
+    for _ in 0..<indentLevel { string.append("   ") }
+    string.append("\"\(_text.normalizingWhitespace())\"\n")
+  }
+
+  open override func attributedString() -> NSAttributedString? {
+    _outputLock.lock()
+    defer { _outputLock.unlock() }
+
+    var text: String
+
+    if _preserveNewlines {
+      text = _text
+
+      // PRE ignores the first \n
+      if text.hasPrefix("\n") {
+        text = String(text.dropFirst())
+      }
+
+      // PRE ignores the last \n
+      if text.hasSuffix("\n") {
+        text = String(text.dropLast())
+      }
+
+      // replace paragraph breaks with line breaks
+      // using \r as to not confuse this with line feeds, but still get a single paragraph
+      text = text.replacingOccurrences(of: "\n", with: "\r")
+    } else if _containsAppleConvertedSpace {
+      // replace nbsp; with regular space
+      text = _text.replacingOccurrences(of: UNICODE_NON_BREAKING_SPACE, with: " ")
+    } else {
+      text = _text.normalizingWhitespace()
+    }
+
+    let attributes = attributesForAttributedStringRepresentation() as! [NSAttributedString.Key: Any]
+
+    if self.fontVariant == .normal {
+      // make a new attributed string from the text
+      return NSAttributedString(string: text, attributes: attributes)
+    } else {
+      if self.fontDescriptor.supportsNativeSmallCaps() {
+        let smallDesc = self.fontDescriptor.copy() as! CoreTextFontDescriptor
+        smallDesc.smallCapsFeature = true
+
+        var smallAttributes = attributes
+
+        let smallerFont = smallDesc.newMatchingFont()
+
+        if let smallerFont = smallerFont {
+          #if canImport(UIKit)
+            let font = UIFont.font(with: smallerFont)
+            smallAttributes[.font] = font
+          #else
+            smallAttributes[.font] = smallerFont
+          #endif
+        }
+
+        return NSAttributedString(string: _text, attributes: smallAttributes)
+      } else {
+        return NSAttributedString.synthesizedSmallCapsAttributedString(
+          withText: _text, attributes: attributes as NSDictionary)
+      }
+    }
+  }
+}
