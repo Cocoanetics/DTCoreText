@@ -168,7 +168,11 @@ public class DTTextList: NSTextList {
     if let custom = customMarker {
       switch custom {
       case .none, .inherit:
-        return nil
+        if imageName != nil {
+          token = "\u{fffc}"
+        } else {
+          return nil
+        }
       case .image:
         token = "\u{fffc}"  // UNICODE OBJECT REPLACEMENT CHARACTER
       case .plus:
@@ -191,11 +195,9 @@ public class DTTextList: NSTextList {
       case .decimal:
         token = "\(itemNumber)."
       case .lowercaseAlpha, .lowercaseLatin:
-        let letter = Character(UnicodeScalar(UInt8(97 + itemNumber - 1)))
-        token = "\(letter)."
+        token = "\(DTTextList.alphaString(for: itemNumber, lowercase: true))."
       case .uppercaseAlpha, .uppercaseLatin:
-        let letter = Character(UnicodeScalar(UInt8(65 + itemNumber - 1)))
-        token = "\(letter)."
+        token = "\(DTTextList.alphaString(for: itemNumber, lowercase: false))."
       case .lowercaseRoman:
         token = "\(NSNumber(value: itemNumber).romanNumeral().lowercased())."
       case .uppercaseRoman:
@@ -214,6 +216,19 @@ public class DTTextList: NSTextList {
     } else {
       return "\t\(token)\t"
     }
+  }
+
+  static func alphaString(for itemNumber: Int, lowercase: Bool) -> String {
+    var n = itemNumber
+    var result = ""
+    let base: UInt8 = lowercase ? 97 : 65
+    while n > 0 {
+      n -= 1
+      let remainder = n % 26
+      result.insert(Character(UnicodeScalar(base + UInt8(remainder))), at: result.startIndex)
+      n /= 26
+    }
+    return result.isEmpty ? (lowercase ? "a" : "A") : result
   }
 
   // MARK: - Style Overrides
