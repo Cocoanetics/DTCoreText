@@ -328,8 +328,14 @@ open class CoreTextLayoutLine: NSObject {
 
   /// The descent (height below the baseline) of the receiver.
   @objc open var descent: CGFloat {
-    if !_didCalculateMetrics { _calculateMetrics() }
-    return _descent
+    get {
+      if !_didCalculateMetrics { _calculateMetrics() }
+      return _descent
+    }
+    set {
+      if !_didCalculateMetrics { _calculateMetrics() }
+      _descent = newValue
+    }
   }
 
   /// The leading (additional space above the ascent) of the receiver.

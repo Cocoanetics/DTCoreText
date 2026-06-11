@@ -4,7 +4,7 @@ Generate `NSAttributedString` and SwiftUI `AttributedString` from HTML on iOS, m
 
 ## Overview
 
-DTCoreText parses HTML into attributed strings using CoreText, giving you full control over rich text display without a web view. It supports fonts, colors, links, images, lists, tables, text shadows, and custom HTML attributes.
+DTCoreText parses HTML into attributed strings using CoreText, giving you full control over rich text display without a web view. It supports fonts, colors, links, images, lists, tables, floats (`float:left` / `float:right` on images and blocks, with text wrapping around them and `clear` support), text shadows, and custom HTML attributes.
 
 ### Generating Attributed Strings
 

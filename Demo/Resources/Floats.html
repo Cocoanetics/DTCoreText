@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Floats</title>
+</head>
+<body>
+<h2>Floated Images</h2>
+
+<p><img src="Oliver.jpg" width="100" height="100" style="float:left">An image with <code>float:left</code> sits at the left content edge and the text of the paragraph wraps around it on the right side. Once the text reaches the bottom edge of the image it returns to the full width of the column, exactly like in a web browser. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>
+
+<p><img src="Oliver.jpg" width="100" height="100" style="float:right">With <code>float:right</code> the image moves to the right content edge instead. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.</p>
+
+<h2>Several Floats</h2>
+
+<p><img src="Oliver.jpg" width="80" height="80" style="float:right"><img src="Oliver.jpg" width="60" height="60" style="float:right">Two floats on the same side stack next to each other when there is room, otherwise the later one moves below the earlier one. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>
+
+<h2>Floated Blocks</h2>
+
+<div style="float:right; width:140px; background-color:#e8f0fe; padding:6px">A <code>div</code> with <code>float:right</code> and a fixed width becomes a column that the main text flows around.</div>
+
+<p>Block elements can float too: the floated box keeps its own width — either the CSS <code>width</code> or, without one, the natural width of its content — and the surrounding paragraphs wrap along its edge. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est lorem ipsum dolor sit amet.</p>
+
+<h2>Clearing</h2>
+
+<p><img src="Oliver.jpg" width="100" height="100" style="float:left">This paragraph flows beside the floated image.</p>
+
+<p style="clear:left">This paragraph has <code>clear:left</code>, so it starts below the floated image instead of beside it.</p>
+
+</body>
+</html>

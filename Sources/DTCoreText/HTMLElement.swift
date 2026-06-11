@@ -49,6 +49,7 @@ open class HTMLElement: HTMLParserNode {
 
   private var _displayStyle: DTHTMLElementDisplayStyle = .inline
   private var _floatStyle: DTHTMLElementFloatStyle = .none
+  private var _clearStyle: DTHTMLElementClearStyle = .none
 
   internal var _isColorInherited: Bool = false
   internal var _preserveNewlines: Bool = false
@@ -151,6 +152,12 @@ open class HTMLElement: HTMLParserNode {
       // remember original paragraphSpacing
       tmpDict[NSAttributedString.Key(rawValue: DTAttachmentParagraphSpacingAttribute)] = NSNumber(
         value: Double(self.paragraphStyle.paragraphSpacing))
+
+      // a floated attachment is taken out of the flow during layout
+      if _floatStyle != .none {
+        tmpDict[NSAttributedString.Key(rawValue: DTFloatStyleAttribute)] = NSNumber(
+          value: _floatStyle.rawValue)
+      }
     }
 
     if let fontDescriptor = _fontDescriptor {
@@ -251,6 +258,11 @@ open class HTMLElement: HTMLParserNode {
     if _headerLevel != 0 {
       tmpDict[NSAttributedString.Key(rawValue: DTHeaderLevelAttribute)] = NSNumber(
         value: _headerLevel)
+    }
+
+    if _clearStyle != .none {
+      tmpDict[NSAttributedString.Key(rawValue: DTClearFloatsAttribute)] = NSNumber(
+        value: _clearStyle.rawValue)
     }
 
     // List metadata rides on `NSParagraphStyle.textLists` (set by
@@ -468,7 +480,39 @@ open class HTMLElement: HTMLParserNode {
       _addCustomHTMLAttributes(to: tmpString)
     }
 
+    // mark floated content over the element's entire output so the layout can
+    // take it out of the flow; nested floats (e.g. a floated image inside a
+    // floated block) keep their own value
+    if _textAttachment == nil && _floatStyle != .none && tmpString.length > 0 {
+      _addAttributeToUnmarkedRanges(
+        DTFloatStyleAttribute, value: NSNumber(value: _floatStyle.rawValue), of: tmpString)
+
+      if _size.width > 0 {
+        _addAttributeToUnmarkedRanges(
+          DTFloatWidthAttribute, value: NSNumber(value: Double(_size.width)), of: tmpString)
+      }
+    }
+
+    if _clearStyle != .none && tmpString.length > 0 {
+      _addAttributeToUnmarkedRanges(
+        DTClearFloatsAttribute, value: NSNumber(value: _clearStyle.rawValue), of: tmpString)
+    }
+
     return tmpString
+  }
+
+  /// Adds an attribute over all ranges of the string that do not carry it yet.
+  private func _addAttributeToUnmarkedRanges(
+    _ name: String, value: Any, of attributedString: NSMutableAttributedString
+  ) {
+    let key = NSAttributedString.Key(rawValue: name)
+    let fullRange = NSRange(location: 0, length: attributedString.length)
+
+    attributedString.enumerateAttribute(key, in: fullRange, options: []) { existing, range, _ in
+      if existing == nil {
+        attributedString.addAttribute(key, value: value, range: range)
+      }
+    }
   }
 
   // MARK: - Working with CSS Styles
@@ -600,6 +644,17 @@ open class HTMLElement: HTMLParserNode {
       case "left": _floatStyle = .left
       case "right": _floatStyle = .right
       case "none": _floatStyle = .none
+      default: break
+      }
+    }
+
+    // clear
+    if let clearString = styles["clear"] as? String {
+      switch clearString {
+      case "left": _clearStyle = .left
+      case "right": _clearStyle = .right
+      case "both": _clearStyle = .both
+      case "none": _clearStyle = .none
       default: break
       }
     }
@@ -1134,6 +1189,10 @@ open class HTMLElement: HTMLParserNode {
 
   open var floatStyle: DTHTMLElementFloatStyle {
     return _floatStyle
+  }
+
+  open var clearStyle: DTHTMLElementClearStyle {
+    return _clearStyle
   }
 
   open var isColorInherited: Bool {

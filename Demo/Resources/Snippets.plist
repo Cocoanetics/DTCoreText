@@ -60,6 +60,14 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Demonstrates float:left and float:right on images and blocks with text wrapping around them, and the clear property.</string>
+		<key>File</key>
+		<string>Floats.html</string>
+		<key>Title</key>
+		<string>Floats</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>Demonstrates setting of Line Height</string>
 		<key>File</key>
 		<string>LineHeight.html</string>
