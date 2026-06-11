@@ -1,0 +1,759 @@
+================================================================================
+CONSTANTS (raw values of the AppKit enums, for DT* compatibility)
+--------------------------------------------------------------------------------
+NSTextBlock.Dimension:
+   .width = 0
+   .minWidth = 1
+   .maxWidth = 2
+   .height = 4
+   .minHeight = 5
+   .maxHeight = 6
+NSTextBlock.ValueType:
+   .absoluteValueType = 0
+   .percentageValueType = 1
+NSTextBlock.Layer:
+   .padding = -1
+   .border = 0
+   .margin = 1
+NSTextBlock.VerticalAlignment:
+   .topAlignment = 0
+   .middleAlignment = 1
+   .bottomAlignment = 2
+   .baselineAlignment = 3
+NSTextTable.LayoutAlgorithm:
+   .automaticLayoutAlgorithm = 0
+   .fixedLayoutAlgorithm = 1
+NSRectEdge:
+   .minX = 0
+   .minY = 1
+   .maxX = 2
+   .maxY = 3
+
+Defaults of freshly created NSTextBlock():
+   dimensions: width=0(abs) minWidth=0(abs) maxWidth=0(abs) height=0(abs) minHeight=0(abs) maxHeight=0(abs)
+   padding: minX=0(abs) minY=0(abs) maxX=0(abs) maxY=0(abs)
+   border: minX=0(abs) minY=0(abs) maxX=0(abs) maxY=0(abs)
+   margin: minX=0(abs) minY=0(abs) maxX=0(abs) maxY=0(abs)
+   borderColor: minX=nil minY=nil maxX=nil maxY=nil
+   backgroundColor: nil
+   verticalAlignment: top
+
+Defaults of freshly created NSTextTable():
+   numberOfColumns=0 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+
+================================================================================
+CASE 01-simple
+HTML: <p>Before</p><table><tr><td>A1</td><td>B1</td></tr><tr><td>A2</td><td>B2</td></tr></table><p>After</p>
+--------------------------------------------------------------------------------
+STRING: "Before\nA1\nB1\nA2\nB2\nAfter\n"
+
+P0 "Before\n"
+   blocks=[]
+   font=Times-Roman@12 paraSpacing=12 writingDirection=LTR
+P1 "A1\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "B1\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+P3 "A2\n"
+   blocks=[B3→T1 r1c0]
+   font=Times-Roman@12 writingDirection=LTR
+P4 "B2\n"
+   blocks=[B4→T1 r1c1]
+   font=Times-Roman@12 writingDirection=LTR
+P5 "After\n"
+   blocks=[]
+   font=Times-Roman@12 paraSpacing=12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=14.6719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B3: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=14.6719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B4: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 02-th-thead
+HTML: <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td>Pi</td><td>3.14</td></tr></tbody></table>
+--------------------------------------------------------------------------------
+STRING: "Name\nValue\nPi\n3.14\n"
+
+P0 "Name\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Bold@12 align=center writingDirection=LTR
+P1 "Value\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Bold@12 align=center writingDirection=LTR
+P2 "Pi\n"
+   blocks=[B3→T1 r1c0]
+   font=Times-Roman@12 writingDirection=LTR
+P3 "3.14\n"
+   blocks=[B4→T1 r1c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=30(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=28.9062(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B3: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=30(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B4: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=28.9062(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 03-colspan
+HTML: <table><tr><td colspan="2">Wide</td><td>C1</td></tr><tr><td>A2</td><td>B2</td><td>C2</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "Wide\nC1\nA2\nB2\nC2\n"
+
+P0 "Wide\n"
+   blocks=[B1→T1 r0c0 colSpan=2]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "C1\n"
+   blocks=[B2→T1 r0c2]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "A2\n"
+   blocks=[B3→T1 r1c0]
+   font=Times-Roman@12 writingDirection=LTR
+P3 "B2\n"
+   blocks=[B4→T1 r1c1]
+   font=Times-Roman@12 writingDirection=LTR
+P4 "C2\n"
+   blocks=[B5→T1 r1c2]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=3 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=2
+     dimensions: width=32.6875(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=2 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B3: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=14.6719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B4: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B5: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=2 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 04-rowspan
+HTML: <table><tr><td rowspan="2">Tall</td><td>B1</td></tr><tr><td>B2</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "Tall\nB1\nB2\n"
+
+P0 "Tall\n"
+   blocks=[B1→T1 r0c0 rowSpan=2]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "B1\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "B2\n"
+   blocks=[B3→T1 r1c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=2 startingColumn=0 columnSpan=1
+     dimensions: width=18.5(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B3: NSTextTableBlock table=T1 startingRow=1 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=14.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 05-widths
+HTML: <table width="80%"><tr><td width="100">fixed 100</td><td width="50%">half</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "fixed 100\nhalf\n"
+
+P0 "fixed 100\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "half\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     dimensions: width=627.188(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=308.594(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=308.594(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 06-legacy-attrs
+HTML: <table border="2" cellpadding="5" cellspacing="3" bgcolor="#FFEEDD"><tr bgcolor="#DDEEFF"><td bgcolor="#EEFFDD">X</td><td>Y</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "X\nY\n"
+
+P0 "X\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "Y\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     border: minX=2(abs) minY=2(abs) maxX=2(abs) maxY=2(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     backgroundColor: #FFEEDD a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=8.67188(abs)
+     padding: minX=5(abs) minY=5(abs) maxX=5(abs) maxY=5(abs)
+     border: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=1.5(abs) minY=1.5(abs) maxX=1.5(abs) maxY=1.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     backgroundColor: #EEFFDD a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=8.67188(abs)
+     padding: minX=5(abs) minY=5(abs) maxX=5(abs) maxY=5(abs)
+     border: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=1.5(abs) minY=1.5(abs) maxX=1.5(abs) maxY=1.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     backgroundColor: #DDEEFF a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 07-css-box
+HTML: <table style="border-collapse: collapse;"><tr><td style="padding: 1px 2px 3px 4px; border-top: 1px solid #FF0000; border-right: 2px solid #00FF00; border-bottom: 3px solid #0000FF; border-left: 4px solid #FF00FF; background-color: #ABCDEF; width: 120px;">styled</td><td>plain</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "styled\nplain\n"
+
+P0 "styled\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "plain\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=true hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=120(abs)
+     padding: minX=4(abs) minY=1(abs) maxX=2(abs) maxY=3(abs)
+     border: minX=4(abs) minY=1(abs) maxX=2(abs) maxY=3(abs)
+     borderColor: minX=#FF00FF a=1.00 minY=#FF0000 a=1.00 maxX=#00FF00 a=1.00 maxY=#0000FF a=1.00
+     backgroundColor: #ABCDEF a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=24(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 08-align-valign
+HTML: <table><tr style="height: 50px"><td valign="top">top</td><td valign="bottom">bottom</td><td style="vertical-align: middle; text-align: right;">mid right</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "top\nbottom\nmid right\n"
+
+P0 "top\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "bottom\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "mid right\n"
+   blocks=[B3→T1 r0c2]
+   font=Times-Roman@12 align=right writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=3 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=15.3438(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=34.0156(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: bottom
+  B3: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=2 columnSpan=1
+     dimensions: width=44.3438(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 09-nested
+HTML: <table><tr><td>Outer A<table><tr><td>Inner 1</td><td>Inner 2</td></tr></table>after inner</td><td>Outer B</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "Outer A\nInner 1\nInner 2\nafter inner\nOuter B\n"
+
+P0 "Outer A\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "Inner 1\n"
+   blocks=[B1→T1 r0c0 | B2→T2 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "Inner 2\n"
+   blocks=[B1→T1 r0c0 | B3→T2 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+P3 "after inner\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P4 "Outer B\n"
+   blocks=[B4→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+  T2: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=78.6719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T2 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=34.3281(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B3: NSTextTableBlock table=T2 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=34.3281(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B4: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=38.3281(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 10-empty-caption
+HTML: <table><caption>The Caption</caption><tr><td></td><td>B</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "The Caption\n\nB\n"
+
+P0 "The Caption\n"
+   blocks=[]
+   font=Times-Roman@12 align=center writingDirection=LTR
+P1 "\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P2 "B\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=3.32812(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=24.6875(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 11-multiparagraph
+HTML: <table><tr><td><p>One</p><p>Two</p></td><td>B</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "One\nTwo\nB\n"
+
+P0 "One\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 paraSpacing=12 writingDirection=LTR
+P1 "Two\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 paraSpacing=12 writingDirection=LTR
+P2 "B\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=21.1719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=8.01562(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 12-div-blockquote
+HTML: <div style="background-color: #FFFF00; padding: 10px; border: 1px solid #000000;">styled div</div><blockquote>quoted text</blockquote>
+--------------------------------------------------------------------------------
+STRING: "styled div\nquoted text\n"
+
+P0 "styled div\n"
+   blocks=[]
+   font=Times-Roman@12 runBG=#FFFF00 a=1.00 writingDirection=LTR
+P1 "quoted text\n"
+   blocks=[]
+   font=Times-Roman@12 headIndent=40 tailIndent=-40 paraSpacing=12 writingDirection=LTR
+
+================================================================================
+CASE 13-fixed-layout
+HTML: <table style="table-layout: fixed; width: 300px;"><tr><td>A</td><td>B</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "A\nB\n"
+
+P0 "A\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "B\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=fixed collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=145(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=145(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 14-heights
+HTML: <table><tr><td height="50">legacy 50</td><td style="height: 40px">css 40</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "legacy 50\ncss 40\n"
+
+P0 "legacy 50\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "css 40\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=46.3125(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=29.6719(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 15-colgroup
+HTML: <table><colgroup><col width="120"><col width="60"></colgroup><tr><td>A</td><td>B</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "A\nB\n"
+
+P0 "A\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "B\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=118(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=58(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 16-empty-cells-hide
+HTML: <table style="empty-cells: hide"><tr><td>A</td><td></td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "A\n\n"
+
+P0 "A\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=true
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=8.67188(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 17-rtl
+HTML: <table dir="rtl"><tr><td>one</td><td>two</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "one\ntwo\n"
+
+P0 "one\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=RTL
+P1 "two\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=RTL
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=17.3281(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=18(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 18-table-margin
+HTML: <table style="margin-left: 20px; width: 200px"><tr><td>A</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "A\n"
+
+P0 "A\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=1 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     margin: minX=20(abs) minY=0(abs) maxX=0(abs) maxY=0(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=194(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 19-min-max-width
+HTML: <table><tr><td style="min-width: 100px">min</td><td style="max-width: 30px">maxed</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "min\nmaxed\n"
+
+P0 "min\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "maxed\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=100(abs) minWidth=100(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=30(abs) maxWidth=30(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: middle
+
+================================================================================
+CASE 20-valign-baseline
+HTML: <table><tr><td style="vertical-align: baseline">css bl</td><td valign="baseline">legacy bl</td></tr></table>
+--------------------------------------------------------------------------------
+STRING: "css bl\nlegacy bl\n"
+
+P0 "css bl\n"
+   blocks=[B1→T1 r0c0]
+   font=Times-Roman@12 writingDirection=LTR
+P1 "legacy bl\n"
+   blocks=[B2→T1 r0c1]
+   font=Times-Roman@12 writingDirection=LTR
+
+TABLES:
+  T1: numberOfColumns=2 layoutAlgorithm=automatic collapsesBorders=false hidesEmptyCells=false
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+
+BLOCKS:
+  B1: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=0 columnSpan=1
+     dimensions: width=27(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: baseline
+  B2: NSTextTableBlock table=T1 startingRow=0 rowSpan=1 startingColumn=1 columnSpan=1
+     dimensions: width=43.6562(abs)
+     padding: minX=1(abs) minY=1(abs) maxX=1(abs) maxY=1(abs)
+     margin: minX=0.5(abs) minY=0.5(abs) maxX=0.5(abs) maxY=0.5(abs)
+     borderColor: minX=#000000 a=1.00 minY=#000000 a=1.00 maxX=#000000 a=1.00 maxY=#000000 a=1.00
+     verticalAlignment: baseline
+
+DONE

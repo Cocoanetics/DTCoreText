@@ -131,6 +131,154 @@ public class HTMLWriter: NSObject {
     }
   }
 
+  // MARK: - Table Tags
+
+  /// CSS pixel string for a point value, without trailing fraction noise.
+  private func _pixelString(_ value: CGFloat) -> String {
+    if value == value.rounded() {
+      return "\(Int(value))px"
+    }
+    return String(format: "%gpx", Double(value))
+  }
+
+  /// The border CSS for a block: a single shorthand when uniform, per-edge otherwise.
+  private func _borderStyles(for block: TextBlock) -> String {
+    let edges: [(CGRectEdge, String)] = [
+      (.minYEdge, "top"), (.maxXEdge, "right"), (.maxYEdge, "bottom"), (.minXEdge, "left"),
+    ]
+
+    let widths = edges.map { block.width(for: .border, edge: $0.0) }
+    guard widths.contains(where: { $0 > 0 }) else { return "" }
+
+    func styleKeyword(for edge: CGRectEdge) -> String {
+      switch block.borderStyle(for: edge) {
+      case .dashed: return "dashed"
+      case .dotted: return "dotted"
+      case .double: return "double"
+      case .solid: return "solid"
+      }
+    }
+
+    func borderValue(width: CGFloat, edge: CGRectEdge) -> String {
+      let hex = block.borderColor(for: edge).flatMap { DTHexStringFromDTColor($0) } ?? "000000"
+      return "\(_pixelString(width)) \(styleKeyword(for: edge)) #\(hex)"
+    }
+
+    let colors = edges.map { block.borderColor(for: $0.0) }
+    let styles2 = edges.map { block.borderStyle(for: $0.0) }
+    let isUniform =
+      widths.allSatisfy { $0 == widths[0] }
+      && styles2.allSatisfy { $0 == styles2[0] }
+      && colors.allSatisfy { color in
+        color === colors[0] || (color != nil && colors[0] != nil && color! == colors[0]!)
+      }
+
+    if isUniform {
+      return "border:\(borderValue(width: widths[0], edge: .minYEdge));"
+    }
+
+    var styles = ""
+    for (index, (edge, name)) in edges.enumerated() where widths[index] > 0 {
+      styles += "border-\(name):\(borderValue(width: widths[index], edge: edge));"
+    }
+    return styles
+  }
+
+  /// The dimension CSS for a block's width-related dimensions.
+  private func _widthStyles(for block: TextBlock) -> String {
+    var styles = ""
+
+    let dimensions: [(TextBlock.Dimension, String)] = [
+      (.width, "width"), (.minimumWidth, "min-width"), (.maximumWidth, "max-width"),
+    ]
+
+    for (dimension, name) in dimensions {
+      let value = block.value(for: dimension)
+      guard value > 0 else { continue }
+
+      switch block.valueType(for: dimension) {
+      case .percentageValueType:
+        styles += "\(name):\(String(format: "%g", Double(value)))%;"
+      case .absoluteValueType:
+        styles += "\(name):\(_pixelString(value));"
+      }
+    }
+
+    return styles
+  }
+
+  /// The opening tag for a table.
+  private func _openingTableTag(for table: TextTable) -> String {
+    var styles = _widthStyles(for: table)
+
+    if let backgroundColor = table.backgroundColor, let hex = DTHexStringFromDTColor(backgroundColor) {
+      styles += "background-color:#\(hex);"
+    }
+
+    if table.collapsesBorders {
+      styles += "border-collapse:collapse;"
+    }
+    if table.hidesEmptyCells {
+      styles += "empty-cells:hide;"
+    }
+    if table.layoutAlgorithm == .fixedLayoutAlgorithm {
+      styles += "table-layout:fixed;"
+    }
+
+    styles += _borderStyles(for: table)
+
+    if styles.isEmpty {
+      return "<table>"
+    }
+    return "<table style=\"\(styles)\">"
+  }
+
+  /// The opening tag for a table cell.
+  private func _openingCellTag(for cell: TextTableBlock) -> String {
+    var tag = "<td"
+
+    if cell.columnSpan > 1 {
+      tag += " colspan=\"\(cell.columnSpan)\""
+    }
+    if cell.rowSpan > 1 {
+      tag += " rowspan=\"\(cell.rowSpan)\""
+    }
+
+    var styles = _widthStyles(for: cell)
+
+    if let backgroundColor = cell.backgroundColor, let hex = DTHexStringFromDTColor(backgroundColor) {
+      styles += "background-color:#\(hex);"
+    }
+
+    switch cell.verticalAlignment {
+    case .topAlignment: styles += "vertical-align:top;"
+    case .bottomAlignment: styles += "vertical-align:bottom;"
+    case .baselineAlignment: styles += "vertical-align:baseline;"
+    case .middleAlignment: break  // parser default
+    }
+
+    // padding: only when it differs from the 1pt importer default
+    let paddingEdges: [CGRectEdge] = [.minYEdge, .maxXEdge, .maxYEdge, .minXEdge]
+    let paddings = paddingEdges.map { cell.width(for: .padding, edge: $0) }
+
+    if paddings.contains(where: { $0 != 1 }) {
+      if paddings.allSatisfy({ $0 == paddings[0] }) {
+        styles += "padding:\(_pixelString(paddings[0]));"
+      } else {
+        styles +=
+          "padding:\(_pixelString(paddings[0])) \(_pixelString(paddings[1])) \(_pixelString(paddings[2])) \(_pixelString(paddings[3]));"
+      }
+    }
+
+    styles += _borderStyles(for: cell)
+
+    if !styles.isEmpty {
+      tag += " style=\"\(styles)\""
+    }
+
+    return tag + ">"
+  }
+
   private func _buildOutput() {
     _buildOutput(asHTMLFragment: false)
   }
@@ -150,6 +298,11 @@ public class HTMLWriter: NSObject {
     var location = 0
 
     var previousListStyles: [DTTextList]? = nil
+
+    // stack of table cells the output is currently inside (outermost first), and the
+    // number of <table> elements currently open in the output
+    var openTableBlocks = [TextTableBlock]()
+    var openEmittedTables = 0
 
     for i in 0..<paragraphs.count {
       let oneParagraph = paragraphs[i]
@@ -196,6 +349,67 @@ public class HTMLWriter: NSObject {
 
       // list styles live on the paragraph style's textLists array
       let currentListStyles = paragraphStyle?.textLists as? [DTTextList]
+
+      // table cells ride on the DTTextBlocks attribute (outermost first)
+      let currentTableBlocks =
+        (paraAttributesDict.object(forKey: DTTextBlocksAttribute) as? [TextBlock])?
+        .compactMap { $0 as? TextTableBlock } ?? []
+
+      // common prefix of cells the paragraph stays inside, by instance identity
+      var commonTableDepth = 0
+      while commonTableDepth < min(openTableBlocks.count, currentTableBlocks.count),
+        openTableBlocks[commonTableDepth] === currentTableBlocks[commonTableDepth]
+      {
+        commonTableDepth += 1
+      }
+
+      if openTableBlocks.count > commonTableDepth || currentTableBlocks.count > commonTableDepth {
+        // lists never straddle a cell boundary — close any open lists first
+        if let prevStyles = previousListStyles, !prevStyles.isEmpty {
+          for closingStyle in prevStyles.reversed() {
+            retString += _tagRepresentation(
+              forListStyle: closingStyle, closingTag: true, listPadding: 0, inlineStyles: fragment)
+            retString += "\n"
+          }
+          previousListStyles = nil
+        }
+      }
+
+      // close cells that ended, innermost first
+      while openTableBlocks.count > commonTableDepth {
+        let closingCell = openTableBlocks.removeLast()
+        retString += "</td>"
+
+        let depth = openTableBlocks.count
+        if currentTableBlocks.count > depth,
+          currentTableBlocks[depth].table === closingCell.table
+        {
+          // the same table continues with another cell; its <table> stays open
+          if currentTableBlocks[depth].startingRow != closingCell.startingRow {
+            retString += "</tr>\n<tr>"
+          }
+        } else {
+          retString += "</tr>\n</table>\n"
+          openEmittedTables -= 1
+        }
+      }
+
+      // open new tables and cells down to the current paragraph's cell
+      while openTableBlocks.count < currentTableBlocks.count {
+        let depth = openTableBlocks.count
+        let openingCell = currentTableBlocks[depth]
+
+        if openEmittedTables <= depth {
+          // entering a new table
+          retString += _openingTableTag(for: openingCell.table)
+          retString += "\n<tr>"
+          openEmittedTables = depth + 1
+        }
+
+        retString += _openingCellTag(for: openingCell)
+        retString += "\n"
+        openTableBlocks.append(openingCell)
+      }
 
       let effectiveListStyle = currentListStyles?.last
       var paraStyleString: String? = nil
@@ -734,6 +948,13 @@ public class HTMLWriter: NSObject {
 
         closingStyles.removeLast()
       } while closingStyles.count > 0
+    }
+
+    // close tables that are still open at the end of the string, innermost first
+    while !openTableBlocks.isEmpty {
+      openTableBlocks.removeLast()
+      retString += "</td></tr>\n</table>\n"
+      openEmittedTables -= 1
     }
 
     var output = ""

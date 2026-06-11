@@ -28,6 +28,38 @@
 	</dict>
 	<dict>
 		<key>Description</key>
+		<string>Demonstrates HTML tables: headers, spans, backgrounds, collapsed borders, nesting, captions and empty cells.</string>
+		<key>File</key>
+		<string>Tables.html</string>
+		<key>Title</key>
+		<string>Tables</string>
+	</dict>
+	<dict>
+		<key>Description</key>
+		<string>Demonstrates horizontal and vertical alignment in table cells, including justify and first-baseline alignment.</string>
+		<key>File</key>
+		<string>TableAlignment.html</string>
+		<key>Title</key>
+		<string>Tables — Alignment</string>
+	</dict>
+	<dict>
+		<key>Description</key>
+		<string>Demonstrates table sizing: shrink-to-fit, percentage and absolute widths, col elements and fixed table layout.</string>
+		<key>File</key>
+		<string>TableWidths.html</string>
+		<key>Title</key>
+		<string>Tables — Widths</string>
+	</dict>
+	<dict>
+		<key>Description</key>
+		<string>Demonstrates border styles (solid, dashed, dotted, double), width keywords, per-edge longhands and 1-4 value CSS lists.</string>
+		<key>File</key>
+		<string>TableBorders.html</string>
+		<key>Title</key>
+		<string>Tables — Borders</string>
+	</dict>
+	<dict>
+		<key>Description</key>
 		<string>Demonstrates setting of Line Height</string>
 		<key>File</key>
 		<string>LineHeight.html</string>

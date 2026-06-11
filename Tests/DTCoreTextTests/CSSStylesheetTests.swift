@@ -134,7 +134,9 @@ struct CSSStylesheetTests {
 		]
 
 		for cssStr in testCases {
-			let stylesheet = CSSStylesheet.defaultStyleSheet()
+			// must operate on a copy: mutating the shared default stylesheet races
+			// against concurrent test suites copying it for HTML parsing
+			let stylesheet = CSSStylesheet.defaultStyleSheet().copy() as! CSSStylesheet
 			stylesheet.parseStyleBlock(cssStr)
 			let s1Styles = stylesForSelector("s1", in: stylesheet)
 			let s2Styles = stylesForSelector("s2", in: stylesheet)

@@ -1,0 +1,56 @@
+<h2>Table Borders and CSS</h2>
+
+<p>Border styles via the <code>border</code> shorthand:</p>
+
+<table cellspacing="6" cellpadding="6">
+	<tr>
+		<td style="border: 2px solid #333333">solid</td>
+		<td style="border: 2px dashed #CC0000">dashed</td>
+		<td style="border: 2px dotted #0066CC">dotted</td>
+		<td style="border: 6px double #008800">double</td>
+	</tr>
+</table>
+
+<p>Width keywords <code>thin</code>, <code>medium</code> and <code>thick</code>:</p>
+
+<table cellspacing="6" cellpadding="6">
+	<tr>
+		<td style="border: thin solid #333333">thin</td>
+		<td style="border: medium solid #333333">medium</td>
+		<td style="border: thick solid #333333">thick</td>
+	</tr>
+</table>
+
+<p>Per-edge longhands — every edge different:</p>
+
+<table cellspacing="6" cellpadding="8">
+	<tr>
+		<td style="border-top: 4px solid #CC0000; border-right: 4px dashed #008800; border-bottom: 4px dotted #0066CC; border-left: 8px double #CC8800">four different edges</td>
+	</tr>
+</table>
+
+<p>1–4 value lists (<code>border-width</code>, <code>border-style</code>, <code>border-color</code>):</p>
+
+<table cellspacing="6" cellpadding="6">
+	<tr>
+		<td style="border-width: 1px 3px 5px 7px; border-style: solid; border-color: #CC0000 #008800">widths 1/3/5/7, colors red/green</td>
+	</tr>
+</table>
+
+<p>Removing one edge with <code>border-left: none</code>:</p>
+
+<table cellspacing="6" cellpadding="6">
+	<tr>
+		<td style="border: 2px solid #333333; border-left: none">open on the left</td>
+	</tr>
+</table>
+
+<p>Legacy <code>border</code> attribute and collapsed borders:</p>
+
+<table border="2" cellpadding="4">
+	<tr><td>separated</td><td>borders</td></tr>
+</table>
+
+<table border="1" style="border-collapse: collapse" cellpadding="4">
+	<tr><td>collapsed</td><td>borders</td></tr>
+</table>

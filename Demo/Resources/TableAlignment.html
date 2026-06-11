@@ -1,0 +1,41 @@
+<h2>Alignment in Table Cells</h2>
+
+<p>Horizontal alignment via <code>text-align</code>:</p>
+
+<table border="1" width="100%" cellpadding="4">
+	<tr>
+		<td style="text-align: left">left</td>
+		<td style="text-align: center">center</td>
+		<td style="text-align: right">right</td>
+	</tr>
+	<tr>
+		<td colspan="3" style="text-align: justify">Justified text inside a table cell stretches every full line so that both edges are flush with the cell padding, exactly like justified paragraphs outside of tables. Only the last line stays ragged.</td>
+	</tr>
+</table>
+
+<p>Vertical alignment via <code>valign</code> and <code>vertical-align</code>:</p>
+
+<table border="1" cellpadding="4">
+	<tr>
+		<td>three<br>lines<br>tall</td>
+		<td valign="top">top</td>
+		<td>middle is the default</td>
+		<td valign="bottom">bottom</td>
+	</tr>
+</table>
+
+<p>Baseline alignment — adjacent cells align at the baseline of their first line, regardless of font size:</p>
+
+<table border="1" cellpadding="4">
+	<tr>
+		<td style="vertical-align: baseline; font-size: 32px">Large</td>
+		<td style="vertical-align: baseline">regular</td>
+		<td style="vertical-align: baseline; font-size: 9px">tiny</td>
+	</tr>
+</table>
+
+<p>Header cells are bold and centered by default:</p>
+
+<table border="1" cellpadding="4" width="100%">
+	<tr><th>centered header</th><td>regular cell</td></tr>
+</table>

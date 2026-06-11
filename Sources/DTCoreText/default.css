@@ -263,5 +263,30 @@ table {
    display: table;
    border-collapse: separate;
    border-spacing: 2px;
-   border-color: gray;
+}
+
+caption {
+   display: block;
+   text-align: center;
+}
+
+thead, tbody, tfoot {
+   display: table-row-group;
+}
+
+tr {
+   display: table-row;
+}
+
+td, th {
+   display: table-cell;
+}
+
+th {
+   font-weight: bold;
+   text-align: center;
+}
+
+col, colgroup {
+   display: none;
 }

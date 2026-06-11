@@ -37,6 +37,10 @@
 		A76C23D618353EFE00F54F02 /* Oliver.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A788CA2814863EF100E1AFD9 /* Oliver.jpg */; };
 		A76C23D718353F0A00F54F02 /* Oliver@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A76C23B1183535A300F54F02 /* Oliver@2x.jpg */; };
 		A788CA3A14863EF100E1AFD9 /* Alignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1B14863EF100E1AFD9 /* Alignment.html */; };
+		A77AB1E00000000000000811 /* TableBorders.html in Resources */ = {isa = PBXBuildFile; fileRef = A77AB1E00000000000000700 /* TableBorders.html */; };
+		A77AB1E00000000000000211 /* Tables.html in Resources */ = {isa = PBXBuildFile; fileRef = A77AB1E00000000000000100 /* Tables.html */; };
+		A77AB1E00000000000000411 /* TableAlignment.html in Resources */ = {isa = PBXBuildFile; fileRef = A77AB1E00000000000000300 /* TableAlignment.html */; };
+		A77AB1E00000000000000611 /* TableWidths.html in Resources */ = {isa = PBXBuildFile; fileRef = A77AB1E00000000000000500 /* TableWidths.html */; };
 		A788CA3B14863EF100E1AFD9 /* APOD.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1C14863EF100E1AFD9 /* APOD.html */; };
 		A788CA3C14863EF100E1AFD9 /* ArabicTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1D14863EF100E1AFD9 /* ArabicTest.html */; };
 		A788CA3E14863EF100E1AFD9 /* CurrentTest.html in Resources */ = {isa = PBXBuildFile; fileRef = A788CA1F14863EF100E1AFD9 /* CurrentTest.html */; };
@@ -100,6 +104,10 @@
 		A740369016E51C9800ECCDE0 /* About.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
 		A76C23B1183535A300F54F02 /* Oliver@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Oliver@2x.jpg"; sourceTree = "<group>"; };
 		A788CA1B14863EF100E1AFD9 /* Alignment.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Alignment.html; sourceTree = "<group>"; };
+		A77AB1E00000000000000700 /* TableBorders.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TableBorders.html; sourceTree = "<group>"; };
+		A77AB1E00000000000000100 /* Tables.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Tables.html; sourceTree = "<group>"; };
+		A77AB1E00000000000000300 /* TableAlignment.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TableAlignment.html; sourceTree = "<group>"; };
+		A77AB1E00000000000000500 /* TableWidths.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = TableWidths.html; sourceTree = "<group>"; };
 		A788CA1C14863EF100E1AFD9 /* APOD.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = APOD.html; sourceTree = "<group>"; };
 		A788CA1D14863EF100E1AFD9 /* ArabicTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ArabicTest.html; sourceTree = "<group>"; };
 		A788CA1F14863EF100E1AFD9 /* CurrentTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CurrentTest.html; sourceTree = "<group>"; };
@@ -225,6 +233,10 @@
 				A7CFACA72A59BEB000EFA9FA /* Launch.storyboard */,
 				A788CA2A14863EF100E1AFD9 /* Snippets.plist */,
 				A788CA1B14863EF100E1AFD9 /* Alignment.html */,
+				A77AB1E00000000000000700 /* TableBorders.html */,
+				A77AB1E00000000000000100 /* Tables.html */,
+				A77AB1E00000000000000300 /* TableAlignment.html */,
+				A77AB1E00000000000000500 /* TableWidths.html */,
 				A788CA1C14863EF100E1AFD9 /* APOD.html */,
 				A788CA1D14863EF100E1AFD9 /* ArabicTest.html */,
 				A788CA1F14863EF100E1AFD9 /* CurrentTest.html */,
@@ -355,6 +367,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A788CA3A14863EF100E1AFD9 /* Alignment.html in Resources */,
+				A77AB1E00000000000000811 /* TableBorders.html in Resources */,
+				A77AB1E00000000000000211 /* Tables.html in Resources */,
+				A77AB1E00000000000000411 /* TableAlignment.html in Resources */,
+				A77AB1E00000000000000611 /* TableWidths.html in Resources */,
 				A788CA3B14863EF100E1AFD9 /* APOD.html in Resources */,
 				A788CA3C14863EF100E1AFD9 /* ArabicTest.html in Resources */,
 				A788CA3E14863EF100E1AFD9 /* CurrentTest.html in Resources */,

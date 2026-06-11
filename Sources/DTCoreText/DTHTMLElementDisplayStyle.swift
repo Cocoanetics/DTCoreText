@@ -11,4 +11,10 @@ public enum DTHTMLElementDisplayStyle: UInt, Sendable {
   case listItem
   /// The element is a table
   case table
+  /// The element is a table cell (td, th)
+  case tableCell
+  /// The element is a table row (tr)
+  case tableRow
+  /// The element is a group of table rows (thead, tbody, tfoot)
+  case tableRowGroup
 }

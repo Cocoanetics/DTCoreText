@@ -1,0 +1,40 @@
+<h2>Table and Column Widths</h2>
+
+<p>A table without any widths shrinks to fit its content:</p>
+
+<table border="1" cellpadding="4">
+	<tr><td>compact</td><td>table</td></tr>
+</table>
+
+<p>Percentage table width with percentage columns (25% / 50% / rest):</p>
+
+<table width="100%" border="1" cellpadding="3">
+	<tr>
+		<td width="25%" bgcolor="#FFE8E8">25%</td>
+		<td width="50%" bgcolor="#E8FFE8">50%</td>
+		<td bgcolor="#E8E8FF">rest</td>
+	</tr>
+</table>
+
+<p>An absolute cell width forces long content to wrap:</p>
+
+<table border="1" cellpadding="3">
+	<tr>
+		<td width="150" bgcolor="#FFF8E0">This long text wraps because the column is fixed at 150 points wide.</td>
+		<td valign="top">narrow</td>
+	</tr>
+</table>
+
+<p>Column widths from <code>&lt;col&gt;</code> elements (120 / 60):</p>
+
+<table border="1" cellpadding="3">
+	<colgroup><col width="120"><col width="60"></colgroup>
+	<tr><td>first</td><td>second</td></tr>
+	<tr><td>120 wide</td><td>60</td></tr>
+</table>
+
+<p>Fixed table layout splits the width evenly, ignoring content:</p>
+
+<table style="table-layout: fixed; width: 100%" border="1" cellpadding="3">
+	<tr><td>equal</td><td>columns</td><td>regardless of content length in them</td></tr>
+</table>
