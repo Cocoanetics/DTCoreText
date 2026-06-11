@@ -187,11 +187,10 @@ struct AttributedStringSwiftUITests {
 
     let run = attrStr.runs.first
     #expect(run?[DTHeaderLevelKey.self] == 3)
-    // Font should be present via UIKit scope
-    #if canImport(UIKit)
-      #expect(run?[AttributeScopes.UIKitAttributes.FontAttribute.self] != nil)
-    #elseif canImport(AppKit)
-      #expect(run?[AttributeScopes.AppKitAttributes.FontAttribute.self] != nil)
-    #endif
+    // the font survives via the platform scope; checked through the NS conversion
+    // because the typed font subscript trips the unavailable Sendable conformance
+    // of UIFont/NSFont
+    let nsAttributedString = try NSAttributedString(attrStr, including: \.dtCoreText)
+    #expect(nsAttributedString.attribute(.font, at: 0, effectiveRange: nil) != nil)
   }
 }

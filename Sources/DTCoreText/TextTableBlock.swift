@@ -14,7 +14,7 @@ import Foundation
 /// All paragraphs belonging to the same cell share one instance; the cells of one table
 /// all reference the same shared ``TextTable`` instance.
 @objc(DTTextTableBlock)
-public class TextTableBlock: TextBlock {
+public class TextTableBlock: TextBlock, @unchecked Sendable {
 
   /// The table that the cell belongs to.
   @objc public private(set) var table: TextTable

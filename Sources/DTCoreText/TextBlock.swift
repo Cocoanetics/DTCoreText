@@ -19,8 +19,13 @@ import Foundation
 /// Edges are identified by `CGRectEdge`, which has the same raw values as the `NSRectEdge`
 /// used by `NSTextBlock` (`minXEdge` = leading/left, `minYEdge` = top, `maxXEdge` =
 /// trailing/right, `maxYEdge` = bottom in the flipped text coordinate system).
+///
+/// Text blocks are built once during parsing and treated as immutable afterwards — the
+/// same contract `NSAttributedString` requires of all attribute values. This makes them
+/// safe to carry across concurrency domains, e.g. as typed values inside Swift's
+/// `AttributedString`, hence the `@unchecked Sendable` conformance.
 @objc(DTTextBlock)
-public class TextBlock: NSObject, NSCoding {
+public class TextBlock: NSObject, NSCoding, @unchecked Sendable {
 
   // MARK: - Constants
 
@@ -382,9 +387,3 @@ public class TextBlock: NSObject, NSCoding {
     return object.backgroundColor == backgroundColor
   }
 }
-
-// Text blocks are built once during parsing and treated as immutable afterwards —
-// the same contract NSAttributedString requires of all attribute values. This makes
-// them safe to carry across concurrency domains, e.g. as typed values inside Swift's
-// `AttributedString`.
-extension TextBlock: @unchecked Sendable {}

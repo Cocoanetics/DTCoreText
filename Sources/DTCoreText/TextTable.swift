@@ -14,7 +14,7 @@ import Foundation
 /// instance is shared by all cells (``TextTableBlock``) of the same table; the shared
 /// instance is what groups cells into a table, so it must not be copied or deduplicated.
 @objc(DTTextTable)
-public class TextTable: TextBlock {
+public class TextTable: TextBlock, @unchecked Sendable {
 
   /// The table layout algorithm. Mirrors `NSTextTable.LayoutAlgorithm`.
   @objc(DTTextTableLayoutAlgorithm)
