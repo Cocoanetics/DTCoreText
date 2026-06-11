@@ -359,8 +359,8 @@ open class HTMLElement: HTMLParserNode {
       for oneChild in children {
         if oneChild.displayStyle == .none { continue }
 
-        // if previous node was inline and this child is block, need a newline
-        if let prev = previousChild, prev.displayStyle == .inline, oneChild.displayStyle == .block {
+        // if previous node was inline and this child is block-ish, need a newline
+        if let prev = previousChild, prev.displayStyle == .inline, oneChild.displayStyle != .inline {
           // trim off whitespace suffix
           while tmpString.dt_hasSuffixCharacter(
             from: NSCharacterSet.dt_ignorableWhitespaceCharacterSet)
@@ -796,6 +796,10 @@ open class HTMLElement: HTMLParserNode {
       case "inline": _displayStyle = .inline
       case "list-item": _displayStyle = .listItem
       case "table": _displayStyle = .table
+      case "table-cell": _displayStyle = .tableCell
+      case "table-row": _displayStyle = .tableRow
+      case "table-row-group", "table-header-group", "table-footer-group":
+        _displayStyle = .tableRowGroup
       default: break
       }
     }
@@ -925,7 +929,13 @@ open class HTMLElement: HTMLParserNode {
   open class var attributesToIgnoreForCustomAttributesAttribute: Set<String> {
     return [
       "style", "dir", "align", "src", "href", "color", "face", "size", "name", "height", "width",
+      "colspan", "rowspan", "valign", "bgcolor", "cellpadding", "cellspacing", "border",
     ]
+  }
+
+  /// The merged CSS styles that were applied to the receiver via ``applyStyles(_:)``.
+  internal var currentStyles: [String: Any]? {
+    return _styles
   }
 
   /// CSS class names that should not be serialized as custom HTML attributes.

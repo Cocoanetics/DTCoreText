@@ -51,9 +51,24 @@ public enum DTHorizontalRuleStyleKey: AttributedStringKey {
   public static let name = DTHorizontalRuleStyleAttribute
 }
 
-public enum DTTextBlocksKey: AttributedStringKey {
-  public typealias Value = NSArray
+/// The text blocks containing a run, outermost first — plain ``TextBlock`` for padded
+/// or backgrounded blocks, ``TextTableBlock`` for table cells.
+public enum DTTextBlocksKey: ObjectiveCConvertibleAttributedStringKey {
+  public typealias Value = [TextBlock]
+  public typealias ObjectiveCValue = NSArray
+
   public static let name = DTTextBlocksAttribute
+
+  public static func objectiveCValue(for value: [TextBlock]) throws -> NSArray {
+    return value as NSArray
+  }
+
+  public static func value(for object: NSArray) throws -> [TextBlock] {
+    guard let blocks = object as? [TextBlock] else {
+      throw CocoaError(.coderInvalidValue)
+    }
+    return blocks
+  }
 }
 
 public enum DTFieldKey: AttributedStringKey {

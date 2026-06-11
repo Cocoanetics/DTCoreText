@@ -1,0 +1,56 @@
+<h2>HTML Tables</h2>
+
+<p>A table with header cells, borders and cell padding:</p>
+
+<table border="1" cellpadding="4">
+	<thead>
+		<tr><th>Planet</th><th>Diameter</th><th>Moons</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>Mercury</td><td>4.879 km</td><td>0</td></tr>
+		<tr><td>Venus</td><td>12.104 km</td><td>0</td></tr>
+		<tr><td>Earth</td><td>12.742 km</td><td>1</td></tr>
+		<tr><td>Mars</td><td>6.779 km</td><td>2</td></tr>
+	</tbody>
+</table>
+
+<p>Column and row spans:</p>
+
+<table border="1" cellpadding="4">
+	<tr><td colspan="2" bgcolor="#FFD8A8">Spans two columns</td><td rowspan="2" bgcolor="#A8D8FF">Spans<br>two<br>rows</td></tr>
+	<tr><td>A2</td><td>B2</td></tr>
+	<tr><td>A3</td><td>B3</td><td>C3</td></tr>
+</table>
+
+<p>Backgrounds on table, rows and cells, with cell spacing:</p>
+
+<table bgcolor="#EEEEEE" cellspacing="4" cellpadding="5">
+	<tr bgcolor="#D8E8FF"><td>row color</td><td>row color</td><td bgcolor="#FFE8D8">cell color</td></tr>
+	<tr><td bgcolor="#E8FFD8">cell color</td><td>table shows through</td><td>here too</td></tr>
+</table>
+
+<p>Collapsed borders:</p>
+
+<table border="1" style="border-collapse: collapse" cellpadding="4">
+	<tr><th>Quarter</th><th>Revenue</th></tr>
+	<tr><td>Q1</td><td>1.000</td></tr>
+	<tr><td>Q2</td><td>1.250</td></tr>
+</table>
+
+<p>A table nested inside a cell:</p>
+
+<table border="1" cellpadding="5" bgcolor="#F4F4F4">
+	<tr>
+		<td>Before
+			<table border="1" bgcolor="#FFF8E0" cellpadding="3"><tr><td>nested 1</td><td>nested 2</td></tr></table>
+		after</td>
+		<td bgcolor="#E8F8E8">Second column</td>
+	</tr>
+</table>
+
+<p>Caption and an empty cell:</p>
+
+<table border="1" cellpadding="4">
+	<caption>Table captions are centered paragraphs</caption>
+	<tr><td></td><td>next to an empty cell</td></tr>
+</table>

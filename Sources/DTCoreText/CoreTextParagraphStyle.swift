@@ -70,7 +70,7 @@ public class CoreTextParagraphStyle: NSObject, NSCopying {
   @objc public var textLists: [NSTextList]?
 
   /// Text blocks containing the paragraph, nested from outermost to innermost.
-  @objc public var textBlocks: [Any]?
+  @objc public var textBlocks: [TextBlock]?
 
   private var _tabStops: NSMutableArray?
 

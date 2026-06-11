@@ -48,6 +48,15 @@ open class CoreTextLayoutFrame: NSObject {
   private var _additionalPaddingAtBottom: CGFloat = 0
   private var _numberLinesFitInFrame: Int = 0
 
+  // table layout results: border-box rects of cells/tables in text coordinates
+  private var _tableBlockFrames = [ObjectIdentifier: CGRect]()
+  private var _tablesInDrawOrder = [(table: TextTable, rect: CGRect, level: Int)]()
+  private var _maxTableBottom: CGFloat = 0
+
+  // border edges not to draw (bitmask by edge raw value), from collapsed-border
+  // resolution: only the winning border of each boundary is drawn
+  private var _suppressedBorderEdges = [ObjectIdentifier: UInt]()
+
   /// Custom handler to be executed before text belonging to a text block is drawn.
   @objc open var textBlockHandler: CoreTextLayoutFrameTextBlockHandler?
 
@@ -282,21 +291,22 @@ open class CoreTextLayoutFrame: NSObject {
       }
     }
 
+    // blocks are grouped by instance identity: equal-but-distinct blocks
+    // (e.g. adjacent table cells with the same styling) are separate blocks
+    let lineBlocks = line.textBlocks as? [TextBlock] ?? []
+    let previousLineBlocks = previousLine?.textBlocks as? [TextBlock] ?? []
+
     // add padding for closed text blocks
-    if let prevBlocks = previousLine?.textBlocks as? [TextBlock] {
-      for prevBlock in prevBlocks {
-        if !(line.textBlocks?.contains(prevBlock) ?? false) {
-          baselineOrigin.y += prevBlock.padding.bottom
-        }
+    for prevBlock in previousLineBlocks {
+      if !lineBlocks.contains(where: { $0 === prevBlock }) {
+        baselineOrigin.y += prevBlock.padding.bottom
       }
     }
 
     // add padding for newly opened text blocks
-    if let currBlocks = line.textBlocks as? [TextBlock] {
-      for currBlock in currBlocks {
-        if !(previousLine?.textBlocks?.contains(currBlock) ?? false) {
-          baselineOrigin.y += currBlock.padding.top
-        }
+    for currBlock in lineBlocks {
+      if !previousLineBlocks.contains(where: { $0 === currBlock }) {
+        baselineOrigin.y += currBlock.padding.top
       }
     }
 
@@ -335,8 +345,14 @@ open class CoreTextLayoutFrame: NSObject {
     guard let framesetter = _framesetter, let fragment = _attributedStringFragment else { return }
     let typesetter = CTFramesetterGetTypesetter(framesetter)
 
+    _tableBlockFrames.removeAll()
+    _tablesInDrawOrder.removeAll()
+    _maxTableBottom = 0
+    _suppressedBorderEdges.removeAll()
+
     var typesetLines = [CoreTextLayoutLine]()
     var previousLine: CoreTextLayoutLine? = nil
+    var minimumBaselineYAfterTable: CGFloat? = nil
 
     var paragraphRanges = (self.paragraphRanges ?? []).map { $0 }
     guard !paragraphRanges.isEmpty else { return }
@@ -357,6 +373,50 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       let isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location)
+
+      // a table starting at this paragraph is laid out as a grid in one go
+      if isAtBeginOfParagraph, let tableStart = _tableStart(at: lineRange.location) {
+        let tableTop: CGFloat
+        if let previousLine {
+          tableTop =
+            previousLine.frame.maxY + (previousLine.paragraphStyle?.paragraphSpacing ?? 0)
+        } else {
+          tableTop = _frame.origin.y
+        }
+
+        let result = _layoutTable(
+          tableStart.block.table,
+          level: tableStart.level,
+          startingAt: lineRange.location,
+          availableWidth: _frame.size.width,
+          originX: _frame.origin.x,
+          topY: tableTop,
+          maximumY: maxY,
+          mustConsumeFirstRow: typesetLines.isEmpty)
+
+        if result.range.length > 0 {
+          typesetLines.append(contentsOf: result.lines)
+          _registerTableLayoutResult(result)
+          minimumBaselineYAfterTable = result.bottomY
+
+          fittingLength += result.range.length
+          lineRange.location = NSMaxRange(result.range)
+          previousLine = result.lines.last ?? previousLine
+
+          if result.isPartial {
+            // the remaining rows belong to a continuation frame
+            break
+          }
+          continue
+        }
+
+        if result.scannedLength > 0 {
+          // a table starts here but not even its first row fits into the
+          // remaining space — it goes entirely to a continuation frame
+          break
+        }
+        // no cells found: treat the content as normal text below
+      }
 
       var headIndent: CGFloat = 0
       var tailIndent: CGFloat = 0
@@ -566,6 +626,13 @@ open class CoreTextLayoutFrame: NSObject {
 
       var newLineBaselineOrigin = _algorithmWebKit_BaselineOrigin(
         toPositionLine: newLine, afterLine: previousLine)
+
+      // following a table, flow continues below the table's lowest cell
+      if let minimumY = minimumBaselineYAfterTable {
+        newLineBaselineOrigin.y = max(newLineBaselineOrigin.y, ceil(minimumY + newLine.ascent))
+        minimumBaselineYAfterTable = nil
+      }
+
       newLineBaselineOrigin.x = lineOriginX
       newLine.baselineOrigin = newLineBaselineOrigin
 
@@ -807,7 +874,8 @@ open class CoreTextLayoutFrame: NSObject {
             in: range
           ) as? [TextBlock]
 
-        if laterBlocks?.contains(blockAtLevelToHandle) != true {
+        // compare by identity: a different-but-equal block ends this block's range
+        if laterBlocks?.contains(where: { $0 === blockAtLevelToHandle }) != true {
           break
         }
 
@@ -816,7 +884,11 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       index = searchIndex
-      let blockFrame = _blockFrame(forEffectiveRange: currentBlockEffectiveRange, level: level)
+
+      // table cells have grid-computed frames; other blocks derive theirs from lines
+      let blockFrame =
+        _tableBlockFrames[ObjectIdentifier(blockAtLevelToHandle)]
+        ?? _blockFrame(forEffectiveRange: currentBlockEffectiveRange, level: level)
 
       var shouldStop = false
       block(blockAtLevelToHandle, blockFrame, currentBlockEffectiveRange, &shouldStop)
@@ -838,13 +910,34 @@ open class CoreTextLayoutFrame: NSObject {
   }
 
   /// Draws the background / borders of visible text blocks into the context.
+  ///
+  /// Levels are drawn outermost-first; the background of a table is drawn right before
+  /// the blocks of its own level so that nested tables paint above outer cells.
   private func _drawTextBlocks(in context: CGContext, range: NSRange) {
     let clipRect = context.boundingBoxOfClipPath
+    if _lines == nil { _buildLines() }
 
-    _enumerateTextBlocks(inRange: range) { textBlock, frame, _, _ in
-      let visiblePart = frame.intersection(clipRect)
-      if visiblePart.isNull { return }
-      _drawTextBlock(textBlock, in: context, frame: frame)
+    var level = 0
+
+    while true {
+      let tablesAtLevel = _tablesInDrawOrder.filter { $0.level == level }
+
+      for entry in tablesAtLevel where !entry.rect.intersection(clipRect).isNull {
+        _drawTextBlock(entry.table, in: context, frame: entry.rect)
+      }
+
+      let foundBlocks = _enumerateTextBlocks(atLevel: level, inRange: range) {
+        textBlock, frame, _, _ in
+        let visiblePart = frame.intersection(clipRect)
+        if visiblePart.isNull { return }
+        _drawTextBlock(textBlock, in: context, frame: frame)
+      }
+
+      if !foundBlocks && tablesAtLevel.isEmpty {
+        break
+      }
+
+      level += 1
     }
   }
 
@@ -860,6 +953,90 @@ open class CoreTextLayoutFrame: NSObject {
       if let bgColor = textBlock.backgroundColor {
         context.setFillColor(bgColor.cgColor)
         context.fill(blockFrame)
+      }
+
+      // borders: filled strips inside each edge of the border box
+      let edgeStrips: [(CGRectEdge, CGRect)] = [
+        (
+          .minYEdge,
+          CGRect(
+            x: blockFrame.minX, y: blockFrame.minY, width: blockFrame.width,
+            height: textBlock.width(for: .border, edge: .minYEdge))
+        ),
+        (
+          .maxYEdge,
+          CGRect(
+            x: blockFrame.minX,
+            y: blockFrame.maxY - textBlock.width(for: .border, edge: .maxYEdge),
+            width: blockFrame.width, height: textBlock.width(for: .border, edge: .maxYEdge))
+        ),
+        (
+          .minXEdge,
+          CGRect(
+            x: blockFrame.minX, y: blockFrame.minY,
+            width: textBlock.width(for: .border, edge: .minXEdge), height: blockFrame.height)
+        ),
+        (
+          .maxXEdge,
+          CGRect(
+            x: blockFrame.maxX - textBlock.width(for: .border, edge: .maxXEdge),
+            y: blockFrame.minY, width: textBlock.width(for: .border, edge: .maxXEdge),
+            height: blockFrame.height)
+        ),
+      ]
+
+      let suppressedEdgesMask = _suppressedBorderEdges[ObjectIdentifier(textBlock)] ?? 0
+
+      for (edge, strip) in edgeStrips where !strip.isEmpty {
+        if suppressedEdgesMask & (1 << UInt(edge.rawValue)) != 0 { continue }
+
+        let borderColor = textBlock.borderColor(for: edge) ?? DTColor.black
+        let borderStyle = textBlock.borderStyle(for: edge)
+        let isHorizontal = (edge == .minYEdge || edge == .maxYEdge)
+        let borderWidth = isHorizontal ? strip.height : strip.width
+
+        switch borderStyle {
+        case .solid:
+          context.setFillColor(borderColor.cgColor)
+          context.fill(strip)
+
+        case .double:
+          // two lines of one third each with a gap between them
+          context.setFillColor(borderColor.cgColor)
+          let third = borderWidth / 3
+          if isHorizontal {
+            context.fill(CGRect(x: strip.minX, y: strip.minY, width: strip.width, height: third))
+            context.fill(
+              CGRect(x: strip.minX, y: strip.maxY - third, width: strip.width, height: third))
+          } else {
+            context.fill(CGRect(x: strip.minX, y: strip.minY, width: third, height: strip.height))
+            context.fill(
+              CGRect(x: strip.maxX - third, y: strip.minY, width: third, height: strip.height))
+          }
+
+        case .dashed, .dotted:
+          context.saveGState()
+          context.setStrokeColor(borderColor.cgColor)
+          context.setLineWidth(borderWidth)
+          context.setLineCap(.butt)
+
+          let dashLengths: [CGFloat] =
+            borderStyle == .dotted
+            ? [borderWidth, borderWidth]
+            : [borderWidth * 3, borderWidth * 3]
+          context.setLineDash(phase: 0, lengths: dashLengths)
+
+          if isHorizontal {
+            context.move(to: CGPoint(x: strip.minX, y: strip.midY))
+            context.addLine(to: CGPoint(x: strip.maxX, y: strip.midY))
+          } else {
+            context.move(to: CGPoint(x: strip.midX, y: strip.minY))
+            context.addLine(to: CGPoint(x: strip.midX, y: strip.maxY))
+          }
+
+          context.strokePath()
+          context.restoreGState()
+        }
       }
     }
 
@@ -1242,13 +1419,882 @@ open class CoreTextLayoutFrame: NSObject {
 // Extension to compute the frame property correctly
 extension CoreTextLayoutFrame {
 
+  // MARK: - Table Layout
+
+  private struct _TableStart {
+    let block: TextTableBlock
+    let level: Int
+  }
+
+  private struct _TableLayoutResult {
+    var lines = [CoreTextLayoutLine]()
+    var cellFrames = [(block: TextBlock, rect: CGRect, level: Int)]()
+    var tableFrames = [(table: TextTable, rect: CGRect, level: Int)]()
+    var suppressedBorderEdges = [ObjectIdentifier: UInt]()
+    var bottomY: CGFloat = 0
+    /// The string range consumed by this frame — trimmed when only part of the
+    /// table fits (`isPartial`), zero-length when no row fits at all.
+    var range = NSRange(location: 0, length: 0)
+    /// The full extent of the table found at the start location, regardless of fit.
+    var scannedLength = 0
+    /// True when rows were cut off because they exceed the frame's maximum Y;
+    /// the remaining rows belong to a continuation frame.
+    var isPartial = false
+  }
+
+  private func _textBlocks(at location: Int) -> [TextBlock]? {
+    guard let fragment = _attributedStringFragment, location < fragment.length else { return nil }
+    return fragment.attribute(
+      NSAttributedString.Key(rawValue: DTTextBlocksAttribute), at: location, effectiveRange: nil)
+      as? [TextBlock]
+  }
+
+  /// The outermost table block at the given location, if any.
+  private func _tableStart(at location: Int) -> _TableStart? {
+    return _tableStart(at: location, atOrDeeperThan: 0)
+  }
+
+  /// The first table block at or after the given nesting level, for tables nested
+  /// inside cells (or inside other blocks).
+  private func _tableStart(at location: Int, atOrDeeperThan level: Int) -> _TableStart? {
+    guard let blocks = _textBlocks(at: location), blocks.count > level else { return nil }
+
+    for index in level..<blocks.count {
+      if let tableBlock = blocks[index] as? TextTableBlock {
+        return _TableStart(block: tableBlock, level: index)
+      }
+    }
+
+    return nil
+  }
+
+  private func _registerTableLayoutResult(_ result: _TableLayoutResult) {
+    for entry in result.cellFrames {
+      _tableBlockFrames[ObjectIdentifier(entry.block)] = entry.rect
+    }
+
+    _tablesInDrawOrder.append(contentsOf: result.tableFrames)
+    _suppressedBorderEdges.merge(result.suppressedBorderEdges) { $0 | $1 }
+    _maxTableBottom = max(_maxTableBottom, result.bottomY)
+  }
+
+  private func _horizontalBoxExtras(of block: TextBlock) -> CGFloat {
+    return block.width(for: .padding, edge: .minXEdge) + block.width(for: .padding, edge: .maxXEdge)
+      + block.width(for: .border, edge: .minXEdge) + block.width(for: .border, edge: .maxXEdge)
+      + block.width(for: .margin, edge: .minXEdge) + block.width(for: .margin, edge: .maxXEdge)
+  }
+
+  /// The widest single-line width of the paragraphs in the given range, used as the
+  /// natural (content-determined) width during automatic column sizing. A nested table
+  /// counts as one unbreakable unit as wide as the sum of its natural column widths.
+  private func _naturalContentWidth(ofParagraphsIn range: NSRange, level: Int) -> CGFloat {
+    guard let framesetter = _framesetter, let fragment = _attributedStringFragment else {
+      return 0
+    }
+
+    let typesetter = CTFramesetterGetTypesetter(framesetter)
+    let nsString = fragment.string as NSString
+
+    var maxWidth: CGFloat = 0
+    var location = range.location
+
+    while location < NSMaxRange(range) {
+      if let nested = _tableStart(at: location, atOrDeeperThan: level) {
+        let (nestedWidth, nestedRange) = _naturalTableWidth(
+          nested.block.table, level: nested.level, startingAt: location)
+
+        if nestedRange.length > 0 {
+          maxWidth = max(maxWidth, nestedWidth)
+          location = NSMaxRange(nestedRange)
+          continue
+        }
+      }
+
+      let paragraphRange = nsString.paragraphRange(for: NSRange(location: location, length: 0))
+      let usableLength =
+        min(NSMaxRange(paragraphRange), NSMaxRange(range)) - paragraphRange.location
+
+      if usableLength > 0 {
+        let line = CTTypesetterCreateLine(
+          typesetter, CFRangeMake(paragraphRange.location, usableLength))
+        let width = CGFloat(
+          CTLineGetTypographicBounds(line, nil, nil, nil)
+            - CTLineGetTrailingWhitespaceWidth(line))
+        maxWidth = max(maxWidth, width)
+      }
+
+      location = NSMaxRange(paragraphRange)
+    }
+
+    return maxWidth
+  }
+
+  /// The natural width of a whole table: the sum of its columns' natural widths plus
+  /// the table's own box extras. Used when a table is nested inside a cell.
+  private func _naturalTableWidth(_ table: TextTable, level: Int, startingAt location: Int)
+    -> (width: CGFloat, range: NSRange)
+  {
+    guard let fragment = _attributedStringFragment else {
+      return (0, NSRange(location: location, length: 0))
+    }
+
+    let nsString = fragment.string as NSString
+    var cells = [(block: TextTableBlock, range: NSRange)]()
+    var scanLocation = location
+
+    while scanLocation < fragment.length {
+      let paragraphRange = nsString.paragraphRange(for: NSRange(location: scanLocation, length: 0))
+
+      guard let blocks = _textBlocks(at: paragraphRange.location),
+        blocks.count > level,
+        let cellBlock = blocks[level] as? TextTableBlock,
+        cellBlock.table === table
+      else { break }
+
+      if let lastIndex = cells.indices.last, cells[lastIndex].block === cellBlock {
+        cells[lastIndex].range = NSUnionRange(cells[lastIndex].range, paragraphRange)
+      } else {
+        cells.append((cellBlock, paragraphRange))
+      }
+
+      scanLocation = NSMaxRange(paragraphRange)
+    }
+
+    let scannedRange = NSRange(location: location, length: scanLocation - location)
+    guard !cells.isEmpty else { return (0, scannedRange) }
+
+    let columnCount = max(
+      table.numberOfColumns, cells.map { $0.block.startingColumn + $0.block.columnSpan }.max() ?? 0)
+    guard columnCount > 0 else { return (0, scannedRange) }
+
+    var columnWidths = [CGFloat](repeating: 0, count: columnCount)
+
+    for (cellBlock, cellRange) in cells
+    where cellBlock.columnSpan == 1 && cellBlock.startingColumn < columnCount {
+      let extras = _horizontalBoxExtras(of: cellBlock)
+      var natural: CGFloat
+
+      let widthValue = cellBlock.value(for: .width)
+      if widthValue > 0, cellBlock.valueType(for: .width) == .absoluteValueType {
+        natural = widthValue + extras
+      } else {
+        natural = _naturalContentWidth(ofParagraphsIn: cellRange, level: level + 1) + extras
+      }
+
+      columnWidths[cellBlock.startingColumn] = max(
+        columnWidths[cellBlock.startingColumn], natural)
+    }
+
+    let tableExtras =
+      table.width(for: .margin, edge: .minXEdge) + table.width(for: .margin, edge: .maxXEdge)
+      + table.width(for: .border, edge: .minXEdge) + table.width(for: .border, edge: .maxXEdge)
+      + table.width(for: .padding, edge: .minXEdge) + table.width(for: .padding, edge: .maxXEdge)
+
+    return (columnWidths.reduce(0, +) + tableExtras, scannedRange)
+  }
+
+  /// Resolves the grid column widths for a table: explicit widths (absolute or
+  /// percentage) win, otherwise content-measured natural widths, scaled to fit the
+  /// table's explicit width or the available width. This is a simplified version of
+  /// the automatic/fixed algorithms documented for the system classes.
+  private func _resolveColumnWidths(
+    for table: TextTable, cells: [(block: TextTableBlock, range: NSRange)], columnCount: Int,
+    innerAvailableWidth: CGFloat, level: Int
+  ) -> [CGFloat] {
+    var explicitTableWidth: CGFloat = 0
+    let tableWidthValue = table.value(for: .width)
+
+    if tableWidthValue > 0 {
+      switch table.valueType(for: .width) {
+      case .percentageValueType:
+        explicitTableWidth = innerAvailableWidth * tableWidthValue / 100
+      case .absoluteValueType:
+        explicitTableWidth = min(tableWidthValue, innerAvailableWidth)
+      }
+    }
+
+    let baseWidth = explicitTableWidth > 0 ? explicitTableWidth : innerAvailableWidth
+    let usesFixedLayout = (table.layoutAlgorithm == .fixedLayoutAlgorithm)
+
+    var specifiedWidths = [CGFloat](repeating: 0, count: columnCount)
+    var naturalWidths = [CGFloat](repeating: 0, count: columnCount)
+
+    for (cellBlock, cellRange) in cells {
+      guard cellBlock.columnSpan == 1, cellBlock.startingColumn < columnCount else { continue }
+      if usesFixedLayout && cellBlock.startingRow > 0 { continue }
+
+      let column = cellBlock.startingColumn
+      let extras = _horizontalBoxExtras(of: cellBlock)
+
+      var specified: CGFloat = 0
+      let widthValue = cellBlock.value(for: .width)
+
+      if widthValue > 0 {
+        switch cellBlock.valueType(for: .width) {
+        case .percentageValueType:
+          specified = baseWidth * widthValue / 100
+        case .absoluteValueType:
+          specified = widthValue + extras
+        }
+      }
+
+      let minimumWidth = cellBlock.value(for: .minimumWidth)
+      if minimumWidth > 0, cellBlock.valueType(for: .minimumWidth) == .absoluteValueType {
+        specified = max(specified, minimumWidth + extras)
+      }
+
+      if specified > 0 {
+        specifiedWidths[column] = max(specifiedWidths[column], specified)
+      }
+
+      if !usesFixedLayout && specified == 0 {
+        var natural = _naturalContentWidth(ofParagraphsIn: cellRange, level: level + 1) + extras
+
+        let maximumWidth = cellBlock.value(for: .maximumWidth)
+        if maximumWidth > 0, cellBlock.valueType(for: .maximumWidth) == .absoluteValueType {
+          natural = min(natural, maximumWidth + extras)
+        }
+
+        naturalWidths[column] = max(naturalWidths[column], min(natural, baseWidth))
+      }
+    }
+
+    if usesFixedLayout {
+      // fixed layout: the first row's widths decide; remaining space is shared equally
+      var widths = [CGFloat](repeating: 0, count: columnCount)
+      var remaining = baseWidth
+      var unspecifiedColumns = 0
+
+      for column in 0..<columnCount {
+        if specifiedWidths[column] > 0 {
+          widths[column] = specifiedWidths[column]
+          remaining -= widths[column]
+        } else {
+          unspecifiedColumns += 1
+        }
+      }
+
+      if unspecifiedColumns > 0 {
+        let share = max(remaining, 0) / CGFloat(unspecifiedColumns)
+        for column in 0..<columnCount where widths[column] == 0 {
+          widths[column] = share
+        }
+      } else if remaining > 0 {
+        let share = remaining / CGFloat(columnCount)
+        for column in 0..<columnCount {
+          widths[column] += share
+        }
+      }
+
+      return widths
+    }
+
+    // an explicit width wins over the content's natural width — content wraps instead
+    var preferredWidths = [CGFloat](repeating: 0, count: columnCount)
+    for column in 0..<columnCount {
+      preferredWidths[column] =
+        specifiedWidths[column] > 0 ? specifiedWidths[column] : naturalWidths[column]
+    }
+
+    // distribute the needs of spanning cells over their columns
+    for (cellBlock, cellRange) in cells where cellBlock.columnSpan > 1 {
+      let firstColumn = cellBlock.startingColumn
+      let lastColumn = min(firstColumn + cellBlock.columnSpan, columnCount) - 1
+      guard firstColumn <= lastColumn else { continue }
+
+      let extras = _horizontalBoxExtras(of: cellBlock)
+      let needed = min(
+        _naturalContentWidth(ofParagraphsIn: cellRange, level: level + 1) + extras, baseWidth)
+      let current = preferredWidths[firstColumn...lastColumn].reduce(0, +)
+
+      if needed > current {
+        let addition = (needed - current) / CGFloat(lastColumn - firstColumn + 1)
+        for column in firstColumn...lastColumn {
+          preferredWidths[column] += addition
+        }
+      }
+    }
+
+    // columns without any sizing information (e.g. only empty cells) collapse to a
+    // small minimum, like shrink-to-fit tables in browsers
+    let fallbackShare = min(baseWidth / CGFloat(columnCount), 16)
+    for column in 0..<columnCount where preferredWidths[column] <= 0 {
+      preferredWidths[column] = fallbackShare
+    }
+
+    let total = preferredWidths.reduce(0, +)
+    guard total > 0 else {
+      return [CGFloat](repeating: baseWidth / CGFloat(columnCount), count: columnCount)
+    }
+
+    if explicitTableWidth > 0 {
+      // columns with explicit widths keep them; the leftover is distributed over the
+      // flexible columns proportionally to their preferred (content) width
+      var widths = [CGFloat](repeating: 0, count: columnCount)
+      var specifiedTotal: CGFloat = 0
+      var flexibleColumns = [Int]()
+
+      for column in 0..<columnCount {
+        if specifiedWidths[column] > 0 {
+          widths[column] = specifiedWidths[column]
+          specifiedTotal += specifiedWidths[column]
+        } else {
+          flexibleColumns.append(column)
+        }
+      }
+
+      let remaining = explicitTableWidth - specifiedTotal
+
+      if flexibleColumns.isEmpty || remaining <= 0 {
+        // only specified columns (or over-constrained): scale to fit exactly
+        let scaleBase = specifiedTotal > 0 ? specifiedTotal : 1
+        let factor = explicitTableWidth / scaleBase
+        return widths.map { $0 * factor }
+      }
+
+      let flexiblePreferredTotal = flexibleColumns.reduce(0 as CGFloat) {
+        $0 + preferredWidths[$1]
+      }
+
+      for column in flexibleColumns {
+        if flexiblePreferredTotal > 0 {
+          widths[column] = remaining * (preferredWidths[column] / flexiblePreferredTotal)
+        } else {
+          widths[column] = remaining / CGFloat(flexibleColumns.count)
+        }
+      }
+
+      return widths
+    }
+
+    if total > innerAvailableWidth {
+      let factor = innerAvailableWidth / total
+      return preferredWidths.map { $0 * factor }
+    }
+
+    // shrink-to-fit: a table without explicit width is only as wide as its content
+    return preferredWidths
+  }
+
+  /// Lays out one table (and recursively any nested tables) as a grid of cells.
+  /// Lines are returned in string order with final positions; cell and table frames
+  /// are border-box rects for background/border drawing.
+  private func _layoutTable(
+    _ table: TextTable, level: Int, startingAt location: Int, availableWidth: CGFloat,
+    originX: CGFloat, topY: CGFloat, maximumY: CGFloat = .greatestFiniteMagnitude,
+    mustConsumeFirstRow: Bool = true
+  ) -> _TableLayoutResult {
+    var result = _TableLayoutResult()
+
+    guard let fragment = _attributedStringFragment else { return result }
+    let nsString = fragment.string as NSString
+
+    // 1. collect the cells and their string ranges (contiguous paragraphs per cell)
+    var cells = [(block: TextTableBlock, range: NSRange)]()
+    var scanLocation = location
+    let stringLength = fragment.length
+
+    while scanLocation < stringLength {
+      let paragraphRange = nsString.paragraphRange(for: NSRange(location: scanLocation, length: 0))
+
+      guard let blocks = _textBlocks(at: paragraphRange.location),
+        blocks.count > level,
+        let cellBlock = blocks[level] as? TextTableBlock,
+        cellBlock.table === table
+      else { break }
+
+      if let lastIndex = cells.indices.last, cells[lastIndex].block === cellBlock {
+        cells[lastIndex].range = NSUnionRange(cells[lastIndex].range, paragraphRange)
+      } else {
+        cells.append((cellBlock, paragraphRange))
+      }
+
+      scanLocation = NSMaxRange(paragraphRange)
+    }
+
+    guard !cells.isEmpty else { return result }
+
+    result.range = NSRange(location: location, length: scanLocation - location)
+    result.scannedLength = scanLocation - location
+
+    // 2. the table's own box
+    let marginLeft = table.width(for: .margin, edge: .minXEdge)
+    let marginRight = table.width(for: .margin, edge: .maxXEdge)
+    let marginTop = table.width(for: .margin, edge: .minYEdge)
+    let marginBottom = table.width(for: .margin, edge: .maxYEdge)
+    let edgeLeft =
+      table.width(for: .border, edge: .minXEdge) + table.width(for: .padding, edge: .minXEdge)
+    let edgeRight =
+      table.width(for: .border, edge: .maxXEdge) + table.width(for: .padding, edge: .maxXEdge)
+    let edgeTop =
+      table.width(for: .border, edge: .minYEdge) + table.width(for: .padding, edge: .minYEdge)
+    let edgeBottom =
+      table.width(for: .border, edge: .maxYEdge) + table.width(for: .padding, edge: .maxYEdge)
+
+    let innerAvailableWidth = max(
+      availableWidth - marginLeft - marginRight - edgeLeft - edgeRight, 10)
+
+    let columnCount = max(
+      table.numberOfColumns, cells.map { $0.block.startingColumn + $0.block.columnSpan }.max() ?? 0)
+
+    guard columnCount > 0 else { return result }
+
+    // 3. column widths
+    let columnWidths = _resolveColumnWidths(
+      for: table, cells: cells, columnCount: columnCount,
+      innerAvailableWidth: innerAvailableWidth, level: level)
+    let gridWidth = columnWidths.reduce(0, +)
+
+    // 4. lay out every cell's content with relative y starting at 0
+    struct CellLayout {
+      var block: TextTableBlock
+      var flow: _TableLayoutResult
+      var borderBoxX: CGFloat
+      var borderBoxWidth: CGFloat
+      var contentInsetTop: CGFloat
+      var contentInsetBottom: CGFloat
+      var contentHeight: CGFloat
+    }
+
+    let gridLeft = originX + marginLeft + edgeLeft
+    var cellLayouts = [CellLayout]()
+
+    for (cellBlock, cellRange) in cells {
+      let columnX = gridLeft + columnWidths[0..<cellBlock.startingColumn].reduce(0, +)
+      let spanEnd = min(cellBlock.startingColumn + cellBlock.columnSpan, columnCount)
+      let spanWidth = columnWidths[cellBlock.startingColumn..<spanEnd].reduce(0, +)
+
+      let cellMarginLeft = cellBlock.width(for: .margin, edge: .minXEdge)
+      let cellMarginRight = cellBlock.width(for: .margin, edge: .maxXEdge)
+      let borderBoxX = columnX + cellMarginLeft
+      let borderBoxWidth = max(spanWidth - cellMarginLeft - cellMarginRight, 1)
+
+      let insetLeft =
+        cellBlock.width(for: .border, edge: .minXEdge)
+        + cellBlock.width(for: .padding, edge: .minXEdge)
+      let insetRight =
+        cellBlock.width(for: .border, edge: .maxXEdge)
+        + cellBlock.width(for: .padding, edge: .maxXEdge)
+      let insetTop =
+        cellBlock.width(for: .border, edge: .minYEdge)
+        + cellBlock.width(for: .padding, edge: .minYEdge)
+      let insetBottom =
+        cellBlock.width(for: .border, edge: .maxYEdge)
+        + cellBlock.width(for: .padding, edge: .maxYEdge)
+
+      let contentWidth = max(borderBoxWidth - insetLeft - insetRight, 1)
+      let contentX = borderBoxX + insetLeft
+
+      let flow = _layoutFlow(
+        range: cellRange, level: level + 1, width: contentWidth, originX: contentX, topY: 0)
+
+      cellLayouts.append(
+        CellLayout(
+          block: cellBlock, flow: flow, borderBoxX: borderBoxX, borderBoxWidth: borderBoxWidth,
+          contentInsetTop: insetTop, contentInsetBottom: insetBottom,
+          contentHeight: flow.bottomY))
+    }
+
+    // 5. row slot heights (cell border box plus its vertical margins fill the slot)
+    let rowCount = cells.map { $0.block.startingRow + $0.block.rowSpan }.max() ?? 1
+    var rowHeights = [CGFloat](repeating: 0, count: rowCount)
+
+    // baseline-aligned cells of one row align at the baseline of their first line
+    // (NSTextBlockVerticalAlignment documentation); the row baseline is the lowest
+    // first baseline measured from the slot top
+    var rowFirstBaselines = [CGFloat](repeating: 0, count: rowCount)
+
+    func relativeFirstBaseline(of layout: CellLayout) -> CGFloat {
+      return layout.flow.lines.first?.baselineOrigin.y ?? 0
+    }
+
+    func baselineInset(of layout: CellLayout) -> CGFloat {
+      // distance from slot top to the cell's natural first baseline
+      return layout.block.width(for: .margin, edge: .minYEdge) + layout.contentInsetTop
+        + relativeFirstBaseline(of: layout)
+    }
+
+    for layout in cellLayouts
+    where layout.block.verticalAlignment == .baselineAlignment && layout.block.rowSpan == 1 {
+      let row = layout.block.startingRow
+      guard row < rowCount else { continue }
+      rowFirstBaselines[row] = max(rowFirstBaselines[row], baselineInset(of: layout))
+    }
+
+    for layout in cellLayouts where layout.block.rowSpan == 1 {
+      let row = layout.block.startingRow
+      guard row < rowCount else { continue }
+
+      // baseline-aligned content may get pushed down to meet the row baseline
+      var baselinePushDown: CGFloat = 0
+      if layout.block.verticalAlignment == .baselineAlignment {
+        baselinePushDown = rowFirstBaselines[row] - baselineInset(of: layout)
+      }
+
+      let slotHeight =
+        layout.contentHeight + layout.contentInsetTop + layout.contentInsetBottom
+        + layout.block.width(for: .margin, edge: .minYEdge)
+        + layout.block.width(for: .margin, edge: .maxYEdge)
+        + baselinePushDown
+      rowHeights[row] = max(rowHeights[row], slotHeight)
+    }
+
+    // grow the last spanned row when a rowspan cell does not fit
+    for layout in cellLayouts where layout.block.rowSpan > 1 {
+      let firstRow = layout.block.startingRow
+      let lastRow = min(firstRow + layout.block.rowSpan, rowCount) - 1
+      guard firstRow <= lastRow else { continue }
+
+      let needed =
+        layout.contentHeight + layout.contentInsetTop + layout.contentInsetBottom
+        + layout.block.width(for: .margin, edge: .minYEdge)
+        + layout.block.width(for: .margin, edge: .maxYEdge)
+      let current = rowHeights[firstRow...lastRow].reduce(0, +)
+
+      if needed > current {
+        rowHeights[lastRow] += needed - current
+      }
+    }
+
+    // 6. final positions
+    var rowTops = [CGFloat](repeating: 0, count: rowCount + 1)
+    rowTops[0] = topY + marginTop + edgeTop
+    for row in 0..<rowCount {
+      rowTops[row + 1] = rowTops[row] + rowHeights[row]
+    }
+
+    // pagination: only the leading rows that fit within maximumY are consumed by
+    // this frame; the rest goes to a continuation frame starting at the first
+    // excluded cell. When the frame is otherwise empty, the first row is consumed
+    // regardless, so that pagination always makes progress.
+    var includedRowCount = rowCount
+
+    if rowTops[rowCount] > maximumY {
+      includedRowCount = 0
+      while includedRowCount < rowCount, rowTops[includedRowCount + 1] <= maximumY {
+        includedRowCount += 1
+      }
+
+      if includedRowCount == 0 && mustConsumeFirstRow {
+        includedRowCount = 1
+      }
+    }
+
+    result.isPartial = includedRowCount < rowCount
+
+    if includedRowCount == 0 {
+      result.range = NSRange(location: location, length: 0)
+      return result
+    }
+
+    if result.isPartial {
+      let cutLocation =
+        cells
+        .filter { $0.block.startingRow >= includedRowCount }
+        .map { $0.range.location }
+        .min() ?? NSMaxRange(result.range)
+      result.range = NSRange(location: location, length: cutLocation - location)
+    }
+
+    for var layout in cellLayouts where layout.block.startingRow < includedRowCount {
+      let cellBlock = layout.block
+      let cellMarginTop = cellBlock.width(for: .margin, edge: .minYEdge)
+      let cellMarginBottom = cellBlock.width(for: .margin, edge: .maxYEdge)
+
+      let firstRow = cellBlock.startingRow
+      let lastRow = min(firstRow + cellBlock.rowSpan, rowCount) - 1
+      let slotTop = rowTops[firstRow]
+      let slotHeight = rowTops[lastRow + 1] - slotTop
+
+      let borderBoxY = slotTop + cellMarginTop
+      let borderBoxHeight = max(slotHeight - cellMarginTop - cellMarginBottom, 1)
+
+      let innerHeight = borderBoxHeight - layout.contentInsetTop - layout.contentInsetBottom
+      var verticalShift = borderBoxY + layout.contentInsetTop
+
+      switch cellBlock.verticalAlignment {
+      case .middleAlignment:
+        verticalShift += max((innerHeight - layout.contentHeight) / 2, 0)
+      case .bottomAlignment:
+        verticalShift += max(innerHeight - layout.contentHeight, 0)
+      case .baselineAlignment:
+        // align the first baseline with the row's common first baseline
+        if cellBlock.rowSpan == 1, firstRow < rowCount, rowFirstBaselines[firstRow] > 0 {
+          verticalShift = slotTop + rowFirstBaselines[firstRow] - relativeFirstBaseline(of: layout)
+        }
+      default:
+        break  // top aligns at the content top
+      }
+
+      for line in layout.flow.lines {
+        var origin = line.baselineOrigin
+        origin.y = ceil(origin.y + verticalShift)
+        line.baselineOrigin = origin
+      }
+      for index in layout.flow.cellFrames.indices {
+        layout.flow.cellFrames[index].rect.origin.y += verticalShift
+      }
+      for index in layout.flow.tableFrames.indices {
+        layout.flow.tableFrames[index].rect.origin.y += verticalShift
+      }
+
+      result.lines.append(contentsOf: layout.flow.lines)
+      result.cellFrames.append(contentsOf: layout.flow.cellFrames)
+      result.tableFrames.append(contentsOf: layout.flow.tableFrames)
+      result.suppressedBorderEdges.merge(layout.flow.suppressedBorderEdges) { $0 | $1 }
+
+      result.cellFrames.append(
+        (
+          cellBlock,
+          CGRect(
+            x: layout.borderBoxX, y: borderBoxY, width: layout.borderBoxWidth,
+            height: borderBoxHeight),
+          level
+        ))
+    }
+
+    // 6.5 collapsed borders: each interior boundary keeps only the wider of the two
+    // adjacent borders; on the perimeter the wider of the table border and the outer
+    // cell borders wins — yielding a single-line grid
+    if table.collapsesBorders {
+      var grid = [[Int?]](
+        repeating: [Int?](repeating: nil, count: columnCount), count: rowCount)
+
+      for (index, layout) in cellLayouts.enumerated() {
+        let block = layout.block
+        for row in block.startingRow..<min(block.startingRow + block.rowSpan, rowCount) {
+          for column in block.startingColumn..<min(
+            block.startingColumn + block.columnSpan, columnCount)
+          {
+            grid[row][column] = index
+          }
+        }
+      }
+
+      func suppress(_ block: TextBlock, _ edge: CGRectEdge) {
+        result.suppressedBorderEdges[ObjectIdentifier(block), default: 0] |=
+          (1 << UInt(edge.rawValue))
+      }
+
+      // interior vertical boundaries
+      for row in 0..<rowCount {
+        for column in 0..<(columnCount - 1) {
+          guard let leftIndex = grid[row][column], let rightIndex = grid[row][column + 1],
+            leftIndex != rightIndex
+          else { continue }
+
+          let left = cellLayouts[leftIndex].block
+          let right = cellLayouts[rightIndex].block
+
+          if left.width(for: .border, edge: .maxXEdge)
+            >= right.width(for: .border, edge: .minXEdge)
+          {
+            suppress(right, .minXEdge)
+          } else {
+            suppress(left, .maxXEdge)
+          }
+        }
+      }
+
+      // interior horizontal boundaries
+      for column in 0..<columnCount {
+        for row in 0..<(rowCount - 1) {
+          guard let topIndex = grid[row][column], let bottomIndex = grid[row + 1][column],
+            topIndex != bottomIndex
+          else { continue }
+
+          let top = cellLayouts[topIndex].block
+          let bottom = cellLayouts[bottomIndex].block
+
+          if top.width(for: .border, edge: .maxYEdge)
+            >= bottom.width(for: .border, edge: .minYEdge)
+          {
+            suppress(bottom, .minYEdge)
+          } else {
+            suppress(top, .maxYEdge)
+          }
+        }
+      }
+
+      // perimeter sides
+      func resolvePerimeter(tableEdge: CGRectEdge, cellIndices: [Int?], cellEdge: CGRectEdge) {
+        let tableWidth = table.width(for: .border, edge: tableEdge)
+        let indices = cellIndices.compactMap { $0 }
+        let maxCellWidth = indices.map {
+          cellLayouts[$0].block.width(for: .border, edge: cellEdge)
+        }.max() ?? 0
+
+        if tableWidth >= maxCellWidth && tableWidth > 0 {
+          for index in indices {
+            suppress(cellLayouts[index].block, cellEdge)
+          }
+        } else if maxCellWidth > 0 {
+          suppress(table, tableEdge)
+        }
+      }
+
+      resolvePerimeter(tableEdge: .minYEdge, cellIndices: grid[0], cellEdge: .minYEdge)
+      resolvePerimeter(
+        tableEdge: .maxYEdge, cellIndices: grid[rowCount - 1], cellEdge: .maxYEdge)
+      resolvePerimeter(
+        tableEdge: .minXEdge, cellIndices: (0..<rowCount).map { grid[$0][0] },
+        cellEdge: .minXEdge)
+      resolvePerimeter(
+        tableEdge: .maxXEdge, cellIndices: (0..<rowCount).map { grid[$0][columnCount - 1] },
+        cellEdge: .maxXEdge)
+    }
+
+    // 7. the table's own border box, drawn beneath its cells; a partial table has
+    // no bottom edge on this frame — it continues on the next one
+    let gridBottom = rowTops[includedRowCount]
+    let tableRect = CGRect(
+      x: originX + marginLeft,
+      y: topY + marginTop,
+      width: edgeLeft + gridWidth + edgeRight,
+      height: edgeTop + (gridBottom - rowTops[0]) + (result.isPartial ? 0 : edgeBottom))
+
+    result.tableFrames.insert((table, tableRect, level), at: 0)
+    result.bottomY = result.isPartial ? tableRect.maxY : tableRect.maxY + marginBottom
+
+    return result
+  }
+
+  /// Lays out a range of text as a vertical flow of lines with the given width — the
+  /// content of one table cell. Nested tables are laid out recursively.
+  private func _layoutFlow(
+    range: NSRange, level: Int, width: CGFloat, originX: CGFloat, topY: CGFloat
+  ) -> _TableLayoutResult {
+    var result = _TableLayoutResult()
+    result.range = range
+    result.bottomY = topY
+
+    guard let framesetter = _framesetter, let fragment = _attributedStringFragment else {
+      return result
+    }
+
+    let typesetter = CTFramesetterGetTypesetter(framesetter)
+    let maxIndex = NSMaxRange(range)
+
+    var location = range.location
+    var previousLine: CoreTextLayoutLine?
+    var minimumBaselineY: CGFloat?
+    var currentBottom = topY
+
+    while location < maxIndex {
+      // nested table starting at this paragraph?
+      if let nested = _tableStart(at: location, atOrDeeperThan: level) {
+        let nestedResult = _layoutTable(
+          nested.block.table, level: nested.level, startingAt: location,
+          availableWidth: width, originX: originX, topY: currentBottom)
+
+        if nestedResult.range.length > 0 {
+          result.lines.append(contentsOf: nestedResult.lines)
+          result.cellFrames.append(contentsOf: nestedResult.cellFrames)
+          result.tableFrames.append(contentsOf: nestedResult.tableFrames)
+          result.suppressedBorderEdges.merge(nestedResult.suppressedBorderEdges) { $0 | $1 }
+          currentBottom = nestedResult.bottomY
+          minimumBaselineY = nestedResult.bottomY
+          previousLine = nestedResult.lines.last ?? previousLine
+          location = NSMaxRange(nestedResult.range)
+          continue
+        }
+      }
+
+      var lineRange = NSRange(location: location, length: 0)
+      lineRange.length = CTTypesetterSuggestLineBreak(typesetter, location, Double(width))
+
+      if NSMaxRange(lineRange) > maxIndex {
+        lineRange.length = maxIndex - location
+      }
+
+      guard lineRange.length > 0 else { break }
+
+      var ctLine = CTTypesetterCreateLine(
+        typesetter, CFRangeMake(lineRange.location, lineRange.length))
+
+      // alignment within the cell
+      let paragraphStyle =
+        fragment.attribute(.paragraphStyle, at: location, effectiveRange: nil)
+        as? NSParagraphStyle
+
+      // justified text stretches all lines except the last of a paragraph
+      if paragraphStyle?.alignment == .justified {
+        let paragraphRange = (fragment.string as NSString).paragraphRange(
+          for: NSRange(location: location, length: 0))
+        let isLastLineInParagraph = NSMaxRange(lineRange) >= NSMaxRange(paragraphRange)
+        let lineWidth = CGFloat(CTLineGetTypographicBounds(ctLine, nil, nil, nil))
+
+        if !isLastLineInParagraph, lineWidth > justifyRatio * width,
+          let justifiedLine = CTLineCreateJustifiedLine(ctLine, 1.0, Double(width))
+        {
+          ctLine = justifiedLine
+        }
+      }
+
+      guard let newLine = CoreTextLayoutLine(line: ctLine, stringLocationOffset: 0) else {
+        location = NSMaxRange(lineRange)
+        continue
+      }
+
+      var lineOriginX = originX
+
+      if let paragraphStyle {
+        switch paragraphStyle.alignment {
+        case .right:
+          lineOriginX = originX + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(width)))
+        case .center:
+          lineOriginX = originX + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 0.5, Double(width)))
+        case .natural, .justified:
+          if paragraphStyle.baseWritingDirection == .rightToLeft {
+            lineOriginX =
+              originX + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(width)))
+          }
+        default:
+          break
+        }
+
+        newLine.writingDirectionIsRightToLeft =
+          (paragraphStyle.baseWritingDirection == .rightToLeft)
+      }
+
+      var baselineOrigin: CGPoint
+
+      if let previousLine {
+        baselineOrigin = _algorithmWebKit_BaselineOrigin(
+          toPositionLine: newLine, afterLine: previousLine)
+      } else {
+        let halfLeading = max(_algorithmWebKit_halfLeading(ofLine: newLine), 0)
+        baselineOrigin = CGPoint(x: originX, y: topY + newLine.ascent + halfLeading)
+      }
+
+      if let minimumY = minimumBaselineY {
+        baselineOrigin.y = max(baselineOrigin.y, minimumY + newLine.ascent)
+        minimumBaselineY = nil
+      }
+
+      baselineOrigin.x = lineOriginX
+      baselineOrigin.y = ceil(baselineOrigin.y)
+      newLine.baselineOrigin = baselineOrigin
+
+      result.lines.append(newLine)
+      currentBottom = max(currentBottom, newLine.frame.maxY)
+      previousLine = newLine
+      location = NSMaxRange(lineRange)
+    }
+
+    result.bottomY = currentBottom
+    return result
+  }
+
   private func _updateFrameSize() {
     guard let lines = _lines, !lines.isEmpty else { return }
 
     if _frame.size.height == CGFLOAT_HEIGHT_UNKNOWN {
       if let lastLine = lines.last {
+        // a table's lowest cell can reach below the last line of text
+        let contentBottom = max(lastLine.frame.maxY, _maxTableBottom)
         _frame.size.height = ceil(
-          lastLine.frame.maxY - _frame.origin.y + 1.5 + _additionalPaddingAtBottom)
+          contentBottom - _frame.origin.y + 1.5 + _additionalPaddingAtBottom)
       }
     }
 

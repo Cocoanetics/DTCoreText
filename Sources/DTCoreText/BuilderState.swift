@@ -28,6 +28,9 @@ internal actor BuilderState {
   // Output
   var tmpString = NSMutableAttributedString()
 
+  // Stack of open tables (innermost last), for building text table blocks
+  var tableStack: [TableBuildContext] = []
+
   // Config (set once before parsing)
   var textScale: CGFloat = 1.0
   var defaultLinkColor: PlatformColor?
@@ -56,6 +59,7 @@ internal actor BuilderState {
     currentTag = nil
     ignoreParseEvents = false
     tmpString = NSMutableAttributedString()
+    tableStack = []
 
     self.options = options
     self.shouldKeepDocumentNodeTree = shouldKeepDocumentNodeTree
@@ -307,6 +311,18 @@ internal actor BuilderState {
         tag.paragraphStyle.firstLineHeadIndent = tag.paragraphStyle.headIndent + tag.pTextIndent
       }
 
+    case "table":
+      handleTableStart(tag)
+
+    case "tr":
+      handleTableRowStart(tag)
+
+    case "td", "th":
+      handleTableCellStart(tag)
+
+    case "col":
+      handleTableColumnStart(tag)
+
     default:
       break
     }
@@ -449,6 +465,9 @@ internal actor BuilderState {
       if let content = try? String(contentsOf: stylesheetURL, encoding: .utf8) {
         globalStyleSheet.mergeStylesheet(CSSStylesheet(styleBlock: content))
       }
+
+    case "table":
+      handleTableEnd()
 
     default:
       break

@@ -40,6 +40,10 @@ Use ``DTAttributedTextView`` or ``DTAttributedLabel`` to render the attributed s
 
 ## Topics
 
+### Articles
+
+- <doc:HTMLTablesOnMacOS>
+
 ### Parsing HTML
 
 - ``HTMLAttributedStringBuilder``
@@ -80,3 +84,6 @@ Use ``DTAttributedTextView`` or ``DTAttributedLabel`` to render the attributed s
 
 - ``CoreTextParagraphStyle``
 - ``TextBlock``
+- ``TextTable``
+- ``TextTableBlock``
+- ``TextBlockConverter``
