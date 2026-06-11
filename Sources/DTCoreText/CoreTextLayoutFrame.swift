@@ -390,7 +390,9 @@ open class CoreTextLayoutFrame: NSObject {
           startingAt: lineRange.location,
           availableWidth: _frame.size.width,
           originX: _frame.origin.x,
-          topY: tableTop)
+          topY: tableTop,
+          maximumY: maxY,
+          mustConsumeFirstRow: typesetLines.isEmpty)
 
         if result.range.length > 0 {
           typesetLines.append(contentsOf: result.lines)
@@ -400,8 +402,20 @@ open class CoreTextLayoutFrame: NSObject {
           fittingLength += result.range.length
           lineRange.location = NSMaxRange(result.range)
           previousLine = result.lines.last ?? previousLine
+
+          if result.isPartial {
+            // the remaining rows belong to a continuation frame
+            break
+          }
           continue
         }
+
+        if result.scannedLength > 0 {
+          // a table starts here but not even its first row fits into the
+          // remaining space — it goes entirely to a continuation frame
+          break
+        }
+        // no cells found: treat the content as normal text below
       }
 
       var headIndent: CGFloat = 0
@@ -1418,7 +1432,14 @@ extension CoreTextLayoutFrame {
     var tableFrames = [(table: TextTable, rect: CGRect, level: Int)]()
     var suppressedBorderEdges = [ObjectIdentifier: UInt]()
     var bottomY: CGFloat = 0
+    /// The string range consumed by this frame — trimmed when only part of the
+    /// table fits (`isPartial`), zero-length when no row fits at all.
     var range = NSRange(location: 0, length: 0)
+    /// The full extent of the table found at the start location, regardless of fit.
+    var scannedLength = 0
+    /// True when rows were cut off because they exceed the frame's maximum Y;
+    /// the remaining rows belong to a continuation frame.
+    var isPartial = false
   }
 
   private func _textBlocks(at location: Int) -> [TextBlock]? {
@@ -1760,7 +1781,8 @@ extension CoreTextLayoutFrame {
   /// are border-box rects for background/border drawing.
   private func _layoutTable(
     _ table: TextTable, level: Int, startingAt location: Int, availableWidth: CGFloat,
-    originX: CGFloat, topY: CGFloat
+    originX: CGFloat, topY: CGFloat, maximumY: CGFloat = .greatestFiniteMagnitude,
+    mustConsumeFirstRow: Bool = true
   ) -> _TableLayoutResult {
     var result = _TableLayoutResult()
 
@@ -1793,6 +1815,7 @@ extension CoreTextLayoutFrame {
     guard !cells.isEmpty else { return result }
 
     result.range = NSRange(location: location, length: scanLocation - location)
+    result.scannedLength = scanLocation - location
 
     // 2. the table's own box
     let marginLeft = table.width(for: .margin, edge: .minXEdge)
@@ -1940,7 +1963,40 @@ extension CoreTextLayoutFrame {
       rowTops[row + 1] = rowTops[row] + rowHeights[row]
     }
 
-    for var layout in cellLayouts {
+    // pagination: only the leading rows that fit within maximumY are consumed by
+    // this frame; the rest goes to a continuation frame starting at the first
+    // excluded cell. When the frame is otherwise empty, the first row is consumed
+    // regardless, so that pagination always makes progress.
+    var includedRowCount = rowCount
+
+    if rowTops[rowCount] > maximumY {
+      includedRowCount = 0
+      while includedRowCount < rowCount, rowTops[includedRowCount + 1] <= maximumY {
+        includedRowCount += 1
+      }
+
+      if includedRowCount == 0 && mustConsumeFirstRow {
+        includedRowCount = 1
+      }
+    }
+
+    result.isPartial = includedRowCount < rowCount
+
+    if includedRowCount == 0 {
+      result.range = NSRange(location: location, length: 0)
+      return result
+    }
+
+    if result.isPartial {
+      let cutLocation =
+        cells
+        .filter { $0.block.startingRow >= includedRowCount }
+        .map { $0.range.location }
+        .min() ?? NSMaxRange(result.range)
+      result.range = NSRange(location: location, length: cutLocation - location)
+    }
+
+    for var layout in cellLayouts where layout.block.startingRow < includedRowCount {
       let cellBlock = layout.block
       let cellMarginTop = cellBlock.width(for: .margin, edge: .minYEdge)
       let cellMarginBottom = cellBlock.width(for: .margin, edge: .maxYEdge)
@@ -2088,15 +2144,17 @@ extension CoreTextLayoutFrame {
         cellEdge: .maxXEdge)
     }
 
-    // 7. the table's own border box, drawn beneath its cells
+    // 7. the table's own border box, drawn beneath its cells; a partial table has
+    // no bottom edge on this frame — it continues on the next one
+    let gridBottom = rowTops[includedRowCount]
     let tableRect = CGRect(
       x: originX + marginLeft,
       y: topY + marginTop,
       width: edgeLeft + gridWidth + edgeRight,
-      height: edgeTop + (rowTops[rowCount] - rowTops[0]) + edgeBottom)
+      height: edgeTop + (gridBottom - rowTops[0]) + (result.isPartial ? 0 : edgeBottom))
 
     result.tableFrames.insert((table, tableRect, level), at: 0)
-    result.bottomY = tableRect.maxY + marginBottom
+    result.bottomY = result.isPartial ? tableRect.maxY : tableRect.maxY + marginBottom
 
     return result
   }

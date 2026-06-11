@@ -276,6 +276,93 @@ struct TableLayoutTests {
     #expect(separated >= 5)
   }
 
+  // MARK: - Pagination
+
+  @Test("Tall tables paginate row by row across finite-height frames")
+  func tablePagination() throws {
+    let rows = (1...6).map { "<tr><td>A\($0)</td><td>B\($0)</td></tr>" }.joined()
+    let attributedString = try #require(
+      TestHelpers.attributedString(fromHTML: "<table border=\"1\">\(rows)</table>"))
+    let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+    let fullRange = NSRange(location: 0, length: attributedString.length)
+
+    // a frame that fits roughly three rows
+    let firstFrame = try #require(
+      layouter.layoutFrame(with: CGRect(x: 0, y: 0, width: 300, height: 60), range: fullRange))
+
+    let firstVisible = firstFrame.visibleStringRange()
+    #expect(firstVisible.length > 0)
+    #expect(firstVisible.length < attributedString.length)
+
+    // every consumed line stays within the frame
+    let firstLines = try #require(firstFrame.lines as? [CoreTextLayoutLine])
+    for line in firstLines {
+      #expect(line.frame.maxY <= 60 + 1)
+    }
+
+    // the continuation frame consumes the remaining rows and still forms a grid
+    let continuationStart = NSMaxRange(firstVisible)
+    let secondFrame = try #require(
+      layouter.layoutFrame(
+        with: CGRect(x: 0, y: 0, width: 300, height: 400),
+        range: NSRange(
+          location: continuationStart, length: attributedString.length - continuationStart)))
+
+    let secondVisible = secondFrame.visibleStringRange()
+    #expect(NSMaxRange(secondVisible) == attributedString.length)
+
+    let nsString = attributedString.string as NSString
+    let rangeA6 = nsString.range(of: "A6")
+    let rangeB6 = nsString.range(of: "B6")
+    try #require(rangeA6.location >= continuationStart, "A6 must be on the second page")
+
+    let lineA6 = try #require(secondFrame.lineContaining(index: UInt(rangeA6.location)))
+    let lineB6 = try #require(secondFrame.lineContaining(index: UInt(rangeB6.location)))
+
+    // the continued rows still lay out side by side
+    #expect(abs(lineA6.baselineOrigin.y - lineB6.baselineOrigin.y) < 1)
+    #expect(lineB6.frame.minX > lineA6.frame.maxX - 1)
+  }
+
+  @Test("A table that does not fit at all moves entirely to the next frame")
+  func tableMovesToNextFrame() throws {
+    let attributedString = try #require(
+      TestHelpers.attributedString(
+        fromHTML: "<p>Intro text</p><table border=\"1\"><tr><td>A1</td><td>B1</td></tr>"
+          + "<tr><td>A2</td><td>B2</td></tr></table>"))
+    let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+    let fullRange = NSRange(location: 0, length: attributedString.length)
+
+    // fits the intro line but not a single table row
+    let firstFrame = try #require(
+      layouter.layoutFrame(with: CGRect(x: 0, y: 0, width: 300, height: 24), range: fullRange))
+
+    let firstVisible = firstFrame.visibleStringRange()
+    let tableStart = (attributedString.string as NSString).range(of: "A1").location
+    #expect(NSMaxRange(firstVisible) <= tableStart)
+    #expect(firstVisible.length > 0)
+  }
+
+  @Test("A frame consumes at least the first table row to guarantee progress")
+  func tableForcedFirstRow() throws {
+    let attributedString = try #require(
+      TestHelpers.attributedString(
+        fromHTML: "<table border=\"1\"><tr><td>A1<br>two<br>three</td></tr>"
+          + "<tr><td>A2</td></tr></table>"))
+    let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+    let fullRange = NSRange(location: 0, length: attributedString.length)
+
+    // far too small for even the first row — it must be consumed anyway
+    let frame = try #require(
+      layouter.layoutFrame(with: CGRect(x: 0, y: 0, width: 300, height: 10), range: fullRange))
+
+    let visible = frame.visibleStringRange()
+    #expect(visible.length > 0)
+
+    let secondRowStart = (attributedString.string as NSString).range(of: "A2").location
+    #expect(NSMaxRange(visible) <= secondRowStart)
+  }
+
   // MARK: - Drawing
 
   @Test("Drawing a table with backgrounds and borders does not crash and paints")
