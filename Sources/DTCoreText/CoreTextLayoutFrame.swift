@@ -53,6 +53,12 @@ open class CoreTextLayoutFrame: NSObject {
   private var _tablesInDrawOrder = [(table: TextTable, rect: CGRect, level: Int)]()
   private var _maxTableBottom: CGFloat = 0
 
+  // float layout results: the lowest bottom edge of floated content (which can
+  // reach below the last text line) and whether any content was floated at all
+  // (floated columns make the line array non-monotonic in y)
+  private var _maxFloatBottom: CGFloat = 0
+  private var _hasFloatedContent = false
+
   // border edges not to draw (bitmask by edge raw value), from collapsed-border
   // resolution: only the winning border of each boundary is drawn
   private var _suppressedBorderEdges = [ObjectIdentifier: UInt]()
@@ -64,6 +70,10 @@ open class CoreTextLayoutFrame: NSObject {
   @objc open var justifyRatio: CGFloat = 0.6
 
   /// Maximum number of lines to display before truncation. Default is 0 (no limit).
+  ///
+  /// Only lines of the normal flow count towards the limit; floated content
+  /// (`float:left` / `float:right`) is out of the flow, so a leading floated
+  /// image plus its wrapped text line count as one line, not two.
   @objc open var numberOfLines: Int = 0 {
     didSet {
       if numberOfLines != oldValue {
@@ -348,11 +358,21 @@ open class CoreTextLayoutFrame: NSObject {
     _tableBlockFrames.removeAll()
     _tablesInDrawOrder.removeAll()
     _maxTableBottom = 0
+    _maxFloatBottom = 0
+    _hasFloatedContent = false
     _suppressedBorderEdges.removeAll()
 
     var typesetLines = [CoreTextLayoutLine]()
     var previousLine: CoreTextLayoutLine? = nil
     var minimumBaselineYAfterTable: CGFloat? = nil
+
+    // lines of the normal flow — floated content is out of the flow and does
+    // not count towards numberOfLines or the lines-fitting retry
+    var flowLineCount = 0
+
+    // floats only make sense within a known width
+    var floatRegions = [_FloatRegion]()
+    let floatsEnabled = _frame.size.width < CGFLOAT_WIDTH_UNKNOWN
 
     var paragraphRanges = (self.paragraphRanges ?? []).map { $0 }
     guard !paragraphRanges.isEmpty else { return }
@@ -365,7 +385,7 @@ open class CoreTextLayoutFrame: NSObject {
     var fittingLength = 0
     var shouldTruncateLine = false
 
-    repeat {
+    lineLoop: repeat {
       while lineRange.location >= currentParagraphRange.location + currentParagraphRange.length {
         paragraphRanges.removeFirst()
         guard !paragraphRanges.isEmpty else { return }
@@ -373,6 +393,35 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       let isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location)
+
+      // floated content is taken out of the normal flow: it becomes a box at the
+      // left or right content edge and the following text wraps around it. This
+      // runs before the table check so that a floated table becomes a column.
+      if floatsEnabled, _floatStyleValue(at: lineRange.location) != nil {
+        if let floatResult = _layoutFloat(
+          at: lineRange.location,
+          previousLine: previousLine,
+          regions: floatRegions,
+          maximumY: maxY,
+          canOverflow: typesetLines.isEmpty)
+        {
+          typesetLines.append(contentsOf: floatResult.lines)
+          floatRegions.append(floatResult.region)
+          _maxFloatBottom = max(_maxFloatBottom, floatResult.region.rect.maxY)
+          _hasFloatedContent = true
+
+          if let nested = floatResult.nested {
+            _registerTableLayoutResult(nested)
+          }
+
+          fittingLength += floatResult.range.length
+          lineRange.location = NSMaxRange(floatResult.range)
+          continue lineLoop
+        } else {
+          // no room left in this frame — the float continues in the next one
+          break lineLoop
+        }
+      }
 
       // a table starting at this paragraph is laid out as a grid in one go
       if isAtBeginOfParagraph, let tableStart = _tableStart(at: lineRange.location) {
@@ -450,191 +499,282 @@ open class CoreTextLayoutFrame: NSObject {
         }
       }
 
-      var availableSpace: CGFloat
-      if tailIndent <= 0 {
-        availableSpace =
-          _frame.size.width - headIndent - totalRightPadding + tailIndent - totalLeftPadding
-      } else {
-        availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding
+      // floats narrow the lines they vertically intersect; the intersection can
+      // only be verified once the line's real vertical extent is known, so the
+      // line is re-typeset until the assumed insets match the actual ones
+      var estimatedLineTop = _estimatedTopForNextLine(
+        after: previousLine, atLocation: lineRange.location)
+      var floatPushdownTop: CGFloat? = nil
+
+      if floatsEnabled, isAtBeginOfParagraph,
+        let clearBottom = _clearanceBottom(at: lineRange.location, regions: floatRegions),
+        clearBottom > estimatedLineTop
+      {
+        floatPushdownTop = clearBottom
+        estimatedLineTop = clearBottom
       }
 
-      var offset = totalLeftPadding
-      let lineStartStr = (fragment.string as NSString).substring(
-        with: NSRange(location: lineRange.location, length: 1))
-      if lineStartStr != "\t" {
-        offset += headIndent
-      }
+      var floatInsets =
+        floatsEnabled
+        ? _floatInsets(top: estimatedLineTop, bottom: estimatedLineTop + 1, regions: floatRegions)
+        : (left: 0, right: 0)
+      var floatAttempt = 0
 
-      lineRange.length = CTTypesetterSuggestLineBreak(
-        typesetter, lineRange.location, Double(availableSpace))
+      var acceptedLine: CoreTextLayoutLine? = nil
 
-      if NSMaxRange(lineRange) > maxIndex {
-        lineRange.length = maxIndex - lineRange.location
-      }
+      floatFitLoop: while true {
 
-      shouldTruncateLine =
-        ((numberOfLines > 0 && typesetLines.count + 1 == numberOfLines)
-          || (_numberLinesFitInFrame > 0 && _numberLinesFitInFrame == typesetLines.count + 1))
-
-      var ctLine: CTLine
-      var isHyphenatedString = false
-
-      if !shouldTruncateLine {
-        let lineString = (fragment.attributedSubstring(from: lineRange).string as NSString)
-        let lastChar = lineString.character(at: lineString.length - 1)
-
-        if lastChar == 0x00AD {  // soft hyphen
-          let hyphenatedString =
-            fragment.attributedSubstring(from: lineRange).mutableCopy()
-            as! NSMutableAttributedString
-          hyphenatedString.replaceCharacters(
-            in: NSRange(location: hyphenatedString.length - 1, length: 1), with: "-")
-          ctLine = CTLineCreateWithAttributedString(hyphenatedString as CFAttributedString)
-          isHyphenatedString = true
+        var availableSpace: CGFloat
+        if tailIndent <= 0 {
+          availableSpace =
+            _frame.size.width - headIndent - totalRightPadding + tailIndent - totalLeftPadding
         } else {
-          ctLine = CTTypesetterCreateLine(
-            typesetter, CFRangeMake(lineRange.location, lineRange.length))
+          availableSpace = tailIndent - headIndent - totalLeftPadding - totalRightPadding
         }
-      } else {
-        let oldLineRange = lineRange
-        lineRange.length = maxIndex - lineRange.location
-        let baseLine = CTTypesetterCreateLine(
-          typesetter, CFRangeMake(lineRange.location, lineRange.length))
 
-        let truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(lineBreakMode)
+        var floatLeftExtra: CGFloat = 0
 
-        var attribStr = truncationString
-        if attribStr == nil {
-          var index = oldLineRange.location
-          if truncationType == .end {
-            index += max(oldLineRange.length - 1, 0)
-          } else if truncationType == .middle {
-            index += max(oldLineRange.length / 2 - 1, 0)
+        if floatInsets.left > 0 || floatInsets.right > 0 {
+          floatLeftExtra = max(0, floatInsets.left - totalLeftPadding)
+
+          let rightEdgeWithoutFloats: CGFloat
+          if tailIndent <= 0 {
+            rightEdgeWithoutFloats = _frame.size.width - totalRightPadding + tailIndent
+          } else {
+            rightEdgeWithoutFloats = tailIndent - totalRightPadding
           }
-          var range = NSRange()
-          let attributes = fragment.attributes(at: index, effectiveRange: &range)
-          attribStr = NSAttributedString(string: "\u{2026}", attributes: attributes)
+          let floatRightExtra = max(
+            0, rightEdgeWithoutFloats - (_frame.size.width - floatInsets.right))
+
+          // no usable room beside the floats: this line continues below them
+          if availableSpace - floatLeftExtra - floatRightExtra < 12, floatAttempt < 8,
+            let nextTop = _lowestFloatBottom(below: estimatedLineTop, regions: floatRegions)
+          {
+            estimatedLineTop = nextTop
+            floatPushdownTop = max(floatPushdownTop ?? -.greatestFiniteMagnitude, nextTop)
+            floatInsets = _floatInsets(
+              top: estimatedLineTop, bottom: estimatedLineTop + 1, regions: floatRegions)
+            floatAttempt += 1
+            continue floatFitLoop
+          }
+
+          availableSpace -= (floatLeftExtra + floatRightExtra)
         }
 
-        let ellipsisLine = CTLineCreateWithAttributedString(attribStr! as CFAttributedString)
+        var offset = totalLeftPadding + floatLeftExtra
+        let lineStartStr = (fragment.string as NSString).substring(
+          with: NSRange(location: lineRange.location, length: 1))
+        if lineStartStr != "\t" {
+          offset += headIndent
+        }
 
-        if let truncatedLine = CTLineCreateTruncatedLine(
-          baseLine, Double(availableSpace), truncationType, ellipsisLine)
-        {
-          ctLine = truncatedLine
+        lineRange.length = CTTypesetterSuggestLineBreak(
+          typesetter, lineRange.location, Double(availableSpace))
 
-          // check if truncation occurred
-          let truncationOccurred = !areLinesEqual(baseLine, ctLine)
-          let endOfParagraphIndex = NSMaxRange(currentParagraphRange)
+        if NSMaxRange(lineRange) > maxIndex {
+          lineRange.length = maxIndex - lineRange.location
+        }
 
-          if truncationType == .end {
-            if truncationOccurred {
-              let truncationIndex = getTruncationIndex(ctLine, ellipsisLine)
-              if truncationIndex > endOfParagraphIndex {
-                let subStr = fragment.attributedSubstring(
-                  from: NSRange(
-                    location: lineRange.location,
-                    length: endOfParagraphIndex - lineRange.location - 1))
-                let attrMutStr = subStr.mutableCopy() as! NSMutableAttributedString
-                attrMutStr.append(attribStr!)
-                ctLine = CTLineCreateWithAttributedString(attrMutStr as CFAttributedString)
-              }
-            } else {
-              if maxIndex != endOfParagraphIndex {
-                let subStr = fragment.attributedSubstring(
-                  from: NSRange(
-                    location: lineRange.location,
-                    length: endOfParagraphIndex - lineRange.location - 1))
-                let attrMutStr = subStr.mutableCopy() as! NSMutableAttributedString
-                attrMutStr.append(attribStr!)
-                ctLine = CTLineCreateWithAttributedString(attrMutStr as CFAttributedString)
+        // a line may not run across the start of floated content
+        if floatsEnabled, let floatStart = _firstFloatStart(in: lineRange) {
+          lineRange.length = floatStart - lineRange.location
+        }
+
+        shouldTruncateLine =
+          ((numberOfLines > 0 && flowLineCount + 1 >= numberOfLines)
+            || (_numberLinesFitInFrame > 0 && _numberLinesFitInFrame <= flowLineCount + 1))
+
+        var ctLine: CTLine
+        var isHyphenatedString = false
+
+        if !shouldTruncateLine {
+          let lineString = (fragment.attributedSubstring(from: lineRange).string as NSString)
+          let lastChar = lineString.character(at: lineString.length - 1)
+
+          if lastChar == 0x00AD {  // soft hyphen
+            let hyphenatedString =
+              fragment.attributedSubstring(from: lineRange).mutableCopy()
+              as! NSMutableAttributedString
+            hyphenatedString.replaceCharacters(
+              in: NSRange(location: hyphenatedString.length - 1, length: 1), with: "-")
+            ctLine = CTLineCreateWithAttributedString(hyphenatedString as CFAttributedString)
+            isHyphenatedString = true
+          } else {
+            ctLine = CTTypesetterCreateLine(
+              typesetter, CFRangeMake(lineRange.location, lineRange.length))
+          }
+        } else {
+          let oldLineRange = lineRange
+          lineRange.length = maxIndex - lineRange.location
+          let baseLine = CTTypesetterCreateLine(
+            typesetter, CFRangeMake(lineRange.location, lineRange.length))
+
+          let truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(lineBreakMode)
+
+          var attribStr = truncationString
+          if attribStr == nil {
+            var index = oldLineRange.location
+            if truncationType == .end {
+              index += max(oldLineRange.length - 1, 0)
+            } else if truncationType == .middle {
+              index += max(oldLineRange.length / 2 - 1, 0)
+            }
+            var range = NSRange()
+            let attributes = fragment.attributes(at: index, effectiveRange: &range)
+            attribStr = NSAttributedString(string: "\u{2026}", attributes: attributes)
+          }
+
+          let ellipsisLine = CTLineCreateWithAttributedString(attribStr! as CFAttributedString)
+
+          if let truncatedLine = CTLineCreateTruncatedLine(
+            baseLine, Double(availableSpace), truncationType, ellipsisLine)
+          {
+            ctLine = truncatedLine
+
+            // check if truncation occurred
+            let truncationOccurred = !areLinesEqual(baseLine, ctLine)
+            let endOfParagraphIndex = NSMaxRange(currentParagraphRange)
+
+            if truncationType == .end {
+              if truncationOccurred {
+                let truncationIndex = getTruncationIndex(ctLine, ellipsisLine)
+                if truncationIndex > endOfParagraphIndex {
+                  let subStr = fragment.attributedSubstring(
+                    from: NSRange(
+                      location: lineRange.location,
+                      length: endOfParagraphIndex - lineRange.location - 1))
+                  let attrMutStr = subStr.mutableCopy() as! NSMutableAttributedString
+                  attrMutStr.append(attribStr!)
+                  ctLine = CTLineCreateWithAttributedString(attrMutStr as CFAttributedString)
+                }
+              } else {
+                if maxIndex != endOfParagraphIndex {
+                  let subStr = fragment.attributedSubstring(
+                    from: NSRange(
+                      location: lineRange.location,
+                      length: endOfParagraphIndex - lineRange.location - 1))
+                  let attrMutStr = subStr.mutableCopy() as! NSMutableAttributedString
+                  attrMutStr.append(attribStr!)
+                  ctLine = CTLineCreateWithAttributedString(attrMutStr as CFAttributedString)
+                }
               }
             }
-          }
-        } else {
-          ctLine = baseLine
-        }
-      }
-
-      let currentLineWidth = CGFloat(CTLineGetTypographicBounds(ctLine, nil, nil, nil))
-
-      // adjust lineOrigin based on paragraph text alignment
-      var textAlignment: CTTextAlignment = .natural
-      CTParagraphStyleGetValueForSpecifier(
-        ctStyle, .alignment, MemoryLayout<CTTextAlignment>.size, &textAlignment)
-
-      // determine writing direction
-      var isRTL = false
-      var baseWritingDirection: CTWritingDirection = .natural
-      CTParagraphStyleGetValueForSpecifier(
-        ctStyle, .baseWritingDirection, MemoryLayout<CTWritingDirection>.size, &baseWritingDirection
-      )
-      isRTL = (baseWritingDirection == .rightToLeft)
-
-      var lineOriginX: CGFloat
-
-      switch textAlignment {
-      case .left:
-        lineOriginX = _frame.origin.x + offset
-      case .natural:
-        lineOriginX = _frame.origin.x + offset
-        if baseWritingDirection == .rightToLeft {
-          lineOriginX =
-            _frame.origin.x + offset
-            + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
-        }
-      case .right:
-        lineOriginX =
-          _frame.origin.x + offset
-          + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
-      case .center:
-        lineOriginX =
-          _frame.origin.x + offset
-          + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 0.5, Double(availableSpace)))
-      case .justified:
-        let isAtEndOfParagraph =
-          (currentParagraphRange.location + currentParagraphRange.length <= lineRange.location
-            + lineRange.length
-            || (fragment.string as NSString).character(
-              at: lineRange.location + lineRange.length - 1) == 0x2028)
-
-        if !isAtEndOfParagraph && currentLineWidth > justifyRatio * _frame.size.width {
-          if let justifiedLine = CTLineCreateJustifiedLine(ctLine, 1.0, Double(availableSpace)) {
-            ctLine = justifiedLine
+          } else {
+            ctLine = baseLine
           }
         }
 
-        if isRTL {
+        let currentLineWidth = CGFloat(CTLineGetTypographicBounds(ctLine, nil, nil, nil))
+
+        // adjust lineOrigin based on paragraph text alignment
+        var textAlignment: CTTextAlignment = .natural
+        CTParagraphStyleGetValueForSpecifier(
+          ctStyle, .alignment, MemoryLayout<CTTextAlignment>.size, &textAlignment)
+
+        // determine writing direction
+        var isRTL = false
+        var baseWritingDirection: CTWritingDirection = .natural
+        CTParagraphStyleGetValueForSpecifier(
+          ctStyle, .baseWritingDirection, MemoryLayout<CTWritingDirection>.size, &baseWritingDirection
+        )
+        isRTL = (baseWritingDirection == .rightToLeft)
+
+        var lineOriginX: CGFloat
+
+        switch textAlignment {
+        case .left:
+          lineOriginX = _frame.origin.x + offset
+        case .natural:
+          lineOriginX = _frame.origin.x + offset
+          if baseWritingDirection == .rightToLeft {
+            lineOriginX =
+              _frame.origin.x + offset
+              + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
+          }
+        case .right:
           lineOriginX =
             _frame.origin.x + offset
             + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
-        } else {
+        case .center:
+          lineOriginX =
+            _frame.origin.x + offset
+            + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 0.5, Double(availableSpace)))
+        case .justified:
+          let isAtEndOfParagraph =
+            (currentParagraphRange.location + currentParagraphRange.length <= lineRange.location
+              + lineRange.length
+              || (fragment.string as NSString).character(
+                at: lineRange.location + lineRange.length - 1) == 0x2028)
+
+          if !isAtEndOfParagraph && currentLineWidth > justifyRatio * _frame.size.width {
+            if let justifiedLine = CTLineCreateJustifiedLine(ctLine, 1.0, Double(availableSpace)) {
+              ctLine = justifiedLine
+            }
+          }
+
+          if isRTL {
+            lineOriginX =
+              _frame.origin.x + offset
+              + CGFloat(CTLineGetPenOffsetForFlush(ctLine, 1.0, Double(availableSpace)))
+          } else {
+            lineOriginX = _frame.origin.x + offset
+          }
+        @unknown default:
           lineOriginX = _frame.origin.x + offset
         }
-      @unknown default:
-        lineOriginX = _frame.origin.x + offset
+
+        guard
+          let newLine = CoreTextLayoutLine(
+            line: ctLine, stringLocationOffset: isHyphenatedString ? lineRange.location : 0)
+        else {
+          lineRange.location += max(lineRange.length, 1)
+          continue lineLoop
+        }
+        newLine.writingDirectionIsRightToLeft = isRTL
+
+        var newLineBaselineOrigin = _algorithmWebKit_BaselineOrigin(
+          toPositionLine: newLine, afterLine: previousLine)
+
+        // following a table, flow continues below the table's lowest cell
+        if let minimumY = minimumBaselineYAfterTable {
+          newLineBaselineOrigin.y = max(newLineBaselineOrigin.y, ceil(minimumY + newLine.ascent))
+        }
+
+        // a cleared paragraph or a line that found no room beside the floats
+        // starts below them
+        if let pushdownTop = floatPushdownTop {
+          newLineBaselineOrigin.y = max(
+            newLineBaselineOrigin.y, ceil(pushdownTop + newLine.ascent))
+        }
+
+        newLineBaselineOrigin.x = lineOriginX
+        newLine.baselineOrigin = newLineBaselineOrigin
+
+        // verify the float assumption against the line's real vertical extent
+        if floatsEnabled, floatAttempt < 6 {
+          let actualInsets = _floatInsets(
+            top: newLineBaselineOrigin.y - newLine.ascent,
+            bottom: newLineBaselineOrigin.y + newLine.descent,
+            regions: floatRegions)
+
+          if actualInsets.left != floatInsets.left || actualInsets.right != floatInsets.right {
+            floatInsets = actualInsets
+            floatAttempt += 1
+            continue floatFitLoop
+          }
+        }
+
+        acceptedLine = newLine
+        break floatFitLoop
+
+      }  // floatFitLoop
+
+      guard let newLine = acceptedLine else {
+        lineRange.location += max(lineRange.length, 1)
+        continue lineLoop
       }
 
-      guard
-        let newLine = CoreTextLayoutLine(
-          line: ctLine, stringLocationOffset: isHyphenatedString ? lineRange.location : 0)
-      else {
-        lineRange.location += lineRange.length
-        continue
-      }
-      newLine.writingDirectionIsRightToLeft = isRTL
-
-      var newLineBaselineOrigin = _algorithmWebKit_BaselineOrigin(
-        toPositionLine: newLine, afterLine: previousLine)
-
-      // following a table, flow continues below the table's lowest cell
-      if let minimumY = minimumBaselineYAfterTable {
-        newLineBaselineOrigin.y = max(newLineBaselineOrigin.y, ceil(minimumY + newLine.ascent))
-        minimumBaselineYAfterTable = nil
-      }
-
-      newLineBaselineOrigin.x = lineOriginX
-      newLine.baselineOrigin = newLineBaselineOrigin
+      minimumBaselineYAfterTable = nil
 
       var lineBottom = newLine.frame.maxY
       if let textBlocks = newLine.textBlocks as? [TextBlock], let first = textBlocks.first {
@@ -642,8 +782,8 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       if lineBottom > maxY {
-        if !typesetLines.isEmpty && lineBreakMode != .byWordWrapping {
-          _numberLinesFitInFrame = typesetLines.count
+        if flowLineCount > 0 && lineBreakMode != .byWordWrapping {
+          _numberLinesFitInFrame = flowLineCount
           _buildLinesWithTypesetter()
           return
         } else {
@@ -652,6 +792,7 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       typesetLines.append(newLine)
+      flowLineCount += 1
       fittingLength += lineRange.length
       lineRange.location += lineRange.length
       previousLine = newLine
@@ -705,7 +846,11 @@ open class CoreTextLayoutFrame: NSObject {
     for oneLine in lines {
       let lineFrame = oneLine.frame
       if lineFrame.maxY < minY { continue }
-      if lineFrame.origin.y > maxY { break }
+      if lineFrame.origin.y > maxY {
+        // text wrapping around floated content is not monotonic in y
+        if _hasFloatedContent { continue }
+        break
+      }
 
       var adjustedFrame = lineFrame
       adjustedFrame.size.width = max(adjustedFrame.size.width, 1)
@@ -732,7 +877,11 @@ open class CoreTextLayoutFrame: NSObject {
     for oneLine in lines {
       let lineFrame = oneLine.frame
       if lineFrame.maxY < minY { continue }
-      if lineFrame.origin.y > maxY { break }
+      if lineFrame.origin.y > maxY {
+        // text wrapping around floated content is not monotonic in y
+        if _hasFloatedContent { continue }
+        break
+      }
       if rect.contains(lineFrame) { tmpArray.append(oneLine) }
     }
     return tmpArray
@@ -2159,6 +2308,402 @@ extension CoreTextLayoutFrame {
     return result
   }
 
+  // MARK: - Float Layout
+
+  /// A box taken out of the normal flow by `float:left` / `float:right`; lines
+  /// vertically intersecting it are narrowed so the text wraps around it.
+  struct _FloatRegion {
+    var rect: CGRect
+    var style: DTHTMLElementFloatStyle
+  }
+
+  private struct _FloatLayoutResult {
+    var lines: [CoreTextLayoutLine]
+    var region: _FloatRegion
+    /// The string range consumed by the float.
+    var range: NSRange
+    /// Nested layout results (block frames, tables) of a floated block.
+    var nested: _TableLayoutResult? = nil
+  }
+
+  /// The float style marked at the given string index, if any.
+  private func _floatStyleValue(at location: Int) -> DTHTMLElementFloatStyle? {
+    guard let fragment = _attributedStringFragment, location < fragment.length,
+      let number = fragment.attribute(
+        NSAttributedString.Key(rawValue: DTFloatStyleAttribute), at: location,
+        effectiveRange: nil) as? NSNumber,
+      let style = DTHTMLElementFloatStyle(rawValue: number.uintValue), style != .none
+    else { return nil }
+
+    return style
+  }
+
+  /// The first location after the range's start where floated content begins.
+  private func _firstFloatStart(in range: NSRange) -> Int? {
+    guard let fragment = _attributedStringFragment, range.length > 0 else { return nil }
+
+    let key = NSAttributedString.Key(rawValue: DTFloatStyleAttribute)
+    var index = range.location
+    let end = NSMaxRange(range)
+
+    while index < end {
+      var effectiveRange = NSRange()
+      let value =
+        fragment.attribute(key, at: index, longestEffectiveRange: &effectiveRange, in: range)
+        as? NSNumber
+
+      if let value, value.uintValue != DTHTMLElementFloatStyle.none.rawValue,
+        index > range.location
+      {
+        return index
+      }
+
+      index = NSMaxRange(effectiveRange)
+    }
+
+    return nil
+  }
+
+  /// Where the top of the next line (or float) is expected, before the line exists.
+  private func _estimatedTopForNextLine(
+    after previousLine: CoreTextLayoutLine?, atLocation location: Int
+  ) -> CGFloat {
+    guard let previousLine else { return _frame.origin.y }
+
+    var top = previousLine.frame.maxY
+
+    if isLineLast(inParagraph: previousLine) {
+      top += previousLine.paragraphStyle?.paragraphSpacing ?? 0
+
+      if let fragment = _attributedStringFragment, location < fragment.length,
+        let style = fragment.attribute(.paragraphStyle, at: location, effectiveRange: nil)
+          as? NSParagraphStyle
+      {
+        top += style.paragraphSpacingBefore
+      }
+    }
+
+    return top
+  }
+
+  /// Horizontal insets from the frame's left/right edges caused by float regions
+  /// that vertically intersect the band between top and bottom.
+  private func _floatInsets(top: CGFloat, bottom: CGFloat, regions: [_FloatRegion])
+    -> (left: CGFloat, right: CGFloat)
+  {
+    var left: CGFloat = 0
+    var right: CGFloat = 0
+
+    for region in regions {
+      guard region.rect.minY < bottom, region.rect.maxY > top else { continue }
+
+      switch region.style {
+      case .left:
+        left = max(left, region.rect.maxX - _frame.minX)
+      case .right:
+        right = max(right, _frame.maxX - region.rect.minX)
+      case .none:
+        break
+      }
+    }
+
+    return (left, right)
+  }
+
+  /// The nearest bottom edge below the given top among the float regions — where
+  /// layout continues when content has to move below them.
+  private func _lowestFloatBottom(below top: CGFloat, regions: [_FloatRegion]) -> CGFloat? {
+    var nearest: CGFloat? = nil
+
+    for region in regions where region.rect.maxY > top {
+      nearest = min(nearest ?? .greatestFiniteMagnitude, region.rect.maxY)
+    }
+
+    return nearest
+  }
+
+  /// The bottom edge below which content at the given location must start because
+  /// of a `clear` property, or nil when nothing needs clearing.
+  private func _clearanceBottom(at location: Int, regions: [_FloatRegion]) -> CGFloat? {
+    guard !regions.isEmpty, let fragment = _attributedStringFragment,
+      location < fragment.length,
+      let number = fragment.attribute(
+        NSAttributedString.Key(rawValue: DTClearFloatsAttribute), at: location,
+        effectiveRange: nil) as? NSNumber,
+      let clearStyle = DTHTMLElementClearStyle(rawValue: number.uintValue),
+      clearStyle != .none
+    else { return nil }
+
+    var bottom: CGFloat? = nil
+
+    for region in regions {
+      let matches: Bool
+      switch clearStyle {
+      case .left: matches = (region.style == .left)
+      case .right: matches = (region.style == .right)
+      case .both: matches = true
+      case .none: matches = false
+      }
+
+      if matches {
+        bottom = max(bottom ?? -.greatestFiniteMagnitude, region.rect.maxY)
+      }
+    }
+
+    return bottom
+  }
+
+  /// Whether the block's entire span lies inside the given range. A block reaching
+  /// beyond the range also occurs in the blocks arrays just outside of it.
+  private func _blockIsFullyContained(_ block: TextBlock, in range: NSRange) -> Bool {
+    guard let fragment = _attributedStringFragment else { return false }
+
+    if range.location > 0, let before = _textBlocks(at: range.location - 1),
+      before.contains(where: { $0 === block })
+    {
+      return false
+    }
+
+    let end = NSMaxRange(range)
+    if end < fragment.length, let after = _textBlocks(at: end),
+      after.contains(where: { $0 === block })
+    {
+      return false
+    }
+
+    return true
+  }
+
+  /// The accumulated horizontal padding of the blocks containing the given location,
+  /// ignoring blocks that belong to the floated content itself.
+  private func _containerPadding(at location: Int, excludingBlocksInside floatRange: NSRange?)
+    -> (left: CGFloat, right: CGFloat)
+  {
+    guard let blocks = _textBlocks(at: location) else { return (0, 0) }
+
+    var left: CGFloat = 0
+    var right: CGFloat = 0
+
+    for block in blocks {
+      if let floatRange, _blockIsFullyContained(block, in: floatRange) { continue }
+      left += block.padding.left
+      right += block.padding.right
+    }
+
+    return (left, right)
+  }
+
+  /// Finds the position for a float box: at the requested side's content edge, next
+  /// to earlier floats when there is room, otherwise below them.
+  private func _placeFloat(
+    width: CGFloat, style: DTHTMLElementFloatStyle, startingAt top: CGFloat,
+    containerPadding: (left: CGFloat, right: CGFloat), regions: [_FloatRegion]
+  ) -> (x: CGFloat, top: CGFloat) {
+    // a float's top may not be above the top of any earlier float
+    var floatTop = top
+    if let lowestRegionTop = regions.map({ $0.rect.minY }).max() {
+      floatTop = max(floatTop, lowestRegionTop)
+    }
+
+    var attempts = 0
+
+    while true {
+      // collision testing only needs the top band: earlier floats always start
+      // at or above this float's top, so any overlap also intersects the band
+      let insets = _floatInsets(top: floatTop, bottom: floatTop + 1, regions: regions)
+      let leftEdge = _frame.minX + max(insets.left, containerPadding.left)
+      let rightEdge = _frame.maxX - max(insets.right, containerPadding.right)
+
+      let fits = (width <= rightEdge - leftEdge) || (insets.left == 0 && insets.right == 0)
+
+      if !fits, attempts < 32, let nextTop = _lowestFloatBottom(below: floatTop, regions: regions) {
+        floatTop = nextTop
+        attempts += 1
+        continue
+      }
+
+      let x = (style == .right) ? rightEdge - width : leftEdge
+      return (x, floatTop)
+    }
+  }
+
+  /// Lays out the floated content starting at the given location and returns its
+  /// lines, the region that the following text wraps around, and the consumed
+  /// string range. Returns nil when the float does not fit into the remaining
+  /// vertical space and should move to a continuation frame.
+  private func _layoutFloat(
+    at location: Int, previousLine: CoreTextLayoutLine?, regions: [_FloatRegion],
+    maximumY: CGFloat, canOverflow: Bool
+  ) -> _FloatLayoutResult? {
+    guard let framesetter = _framesetter, let fragment = _attributedStringFragment,
+      let style = _floatStyleValue(at: location)
+    else { return nil }
+
+    let nsString = fragment.string as NSString
+    let maxIndex = NSMaxRange(_requestedStringRange)
+
+    // the full extent of this floated content, never reaching back before the
+    // current location (a continuation frame can start inside a float)
+    var attributeRange = NSRange()
+    _ = fragment.attribute(
+      NSAttributedString.Key(rawValue: DTFloatStyleAttribute), at: location,
+      longestEffectiveRange: &attributeRange,
+      in: NSRange(location: 0, length: fragment.length))
+
+    var floatRange = NSRange(
+      location: location, length: max(NSMaxRange(attributeRange) - location, 1))
+    if NSMaxRange(floatRange) > maxIndex {
+      floatRange.length = maxIndex - location
+    }
+
+    // where the float's top edge goes
+    var floatTop = _estimatedTopForNextLine(after: previousLine, atLocation: location)
+    if let clearBottom = _clearanceBottom(at: location, regions: regions) {
+      floatTop = max(floatTop, clearBottom)
+    }
+
+    let attachment =
+      fragment.attribute(.attachment, at: location, effectiveRange: nil) as? NSTextAttachment
+
+    // a floated image is a single object placeholder, possibly followed by other
+    // floated placeholders or the paragraph break; a floated block is anything else
+    var isImageFloat = false
+    if attachment != nil {
+      let next = location + 1
+      if next >= NSMaxRange(floatRange) {
+        isImageFloat = true
+      } else {
+        let nextCharacter = nsString.character(at: next)
+        isImageFloat = (nextCharacter == 0x0A || nextCharacter == 0xFFFC)
+      }
+    }
+
+    if let attachment, isImageFloat {
+      let size = dtAttachmentLayoutSize(attachment)
+      let ascent = dtAttachmentLayoutAscent(attachment)
+      let width = size.width
+      let height = max(size.height, 1)
+
+      // an image that ends its paragraph absorbs the paragraph break so that the
+      // flow does not get an empty line
+      var unitLength = 1
+      let next = location + 1
+      if next < maxIndex, nsString.character(at: next) == 0x0A {
+        unitLength = 2
+      }
+
+      let containerPadding = _containerPadding(at: location, excludingBlocksInside: nil)
+      let placement = _placeFloat(
+        width: width, style: style, startingAt: floatTop,
+        containerPadding: containerPadding, regions: regions)
+
+      if !canOverflow && placement.top + height > maximumY {
+        return nil
+      }
+
+      let typesetter = CTFramesetterGetTypesetter(framesetter)
+      let ctLine = CTTypesetterCreateLine(typesetter, CFRangeMake(location, unitLength))
+
+      guard let line = CoreTextLayoutLine(line: ctLine, stringLocationOffset: 0) else {
+        return nil
+      }
+
+      // the attachment's metrics, not the font's, define the box (the run
+      // delegate is unavailable on AppKit)
+      line.ascent = ascent
+      line.descent = max(height - ascent, 0)
+      let baselineY = ceil(placement.top + ascent)
+      line.baselineOrigin = CGPoint(x: placement.x, y: baselineY)
+
+      let region = _FloatRegion(
+        rect: CGRect(x: placement.x, y: baselineY - ascent, width: width, height: height),
+        style: style)
+
+      return _FloatLayoutResult(
+        lines: [line], region: region,
+        range: NSRange(location: location, length: unitLength))
+    }
+
+    // block float: laid out as a column at the content edge
+    let blocksAtLocation = _textBlocks(at: location) ?? []
+    let ownBlocks = blocksAtLocation.filter { _blockIsFullyContained($0, in: floatRange) }
+
+    var ownPaddingLeft: CGFloat = 0
+    var ownPaddingRight: CGFloat = 0
+    var ownPaddingTop: CGFloat = 0
+    var ownPaddingBottom: CGFloat = 0
+
+    for block in ownBlocks {
+      ownPaddingLeft += block.padding.left
+      ownPaddingRight += block.padding.right
+      ownPaddingTop += block.padding.top
+      ownPaddingBottom += block.padding.bottom
+    }
+
+    let containerPadding = _containerPadding(at: location, excludingBlocksInside: floatRange)
+
+    // nested tables of the column live below the blocks present at its start
+    let tableSearchLevel = blocksAtLocation.prefix { !($0 is TextTableBlock) }.count
+
+    // explicit CSS width wins, otherwise shrink-to-fit the content
+    var borderBoxWidth: CGFloat
+    if let widthNumber = fragment.attribute(
+      NSAttributedString.Key(rawValue: DTFloatWidthAttribute), at: location,
+      effectiveRange: nil) as? NSNumber, widthNumber.doubleValue > 0
+    {
+      borderBoxWidth = CGFloat(widthNumber.doubleValue) + ownPaddingLeft + ownPaddingRight
+    } else {
+      let naturalWidth = _naturalContentWidth(ofParagraphsIn: floatRange, level: tableSearchLevel)
+      borderBoxWidth = ceil(naturalWidth) + ownPaddingLeft + ownPaddingRight
+    }
+
+    let availableWidth = _frame.size.width - containerPadding.left - containerPadding.right
+    borderBoxWidth = max(min(borderBoxWidth, max(availableWidth, 1)), 1)
+
+    let placement = _placeFloat(
+      width: borderBoxWidth, style: style, startingAt: floatTop,
+      containerPadding: containerPadding, regions: regions)
+
+    var flow = _layoutFlow(
+      range: floatRange,
+      level: tableSearchLevel,
+      width: max(borderBoxWidth - ownPaddingLeft - ownPaddingRight, 1),
+      originX: placement.x + ownPaddingLeft,
+      topY: placement.top + ownPaddingTop)
+
+    let bottom = max(flow.bottomY, placement.top + ownPaddingTop) + ownPaddingBottom
+
+    if !canOverflow && bottom > maximumY {
+      return nil
+    }
+
+    // border-box frames of the float's own blocks, for background/border drawing;
+    // outermost first, each inner box inset by the outer block's padding
+    var blockRect = CGRect(
+      x: placement.x, y: placement.top, width: borderBoxWidth,
+      height: max(bottom - placement.top, 1))
+
+    for block in ownBlocks {
+      if let level = blocksAtLocation.firstIndex(where: { $0 === block }) {
+        flow.cellFrames.append((block, blockRect, level))
+      }
+
+      blockRect = CGRect(
+        x: blockRect.minX + block.padding.left,
+        y: blockRect.minY + block.padding.top,
+        width: max(blockRect.width - block.padding.left - block.padding.right, 1),
+        height: max(blockRect.height - block.padding.top - block.padding.bottom, 1))
+    }
+
+    let region = _FloatRegion(
+      rect: CGRect(
+        x: placement.x, y: placement.top, width: borderBoxWidth,
+        height: max(bottom - placement.top, 1)),
+      style: style)
+
+    return _FloatLayoutResult(lines: flow.lines, region: region, range: floatRange, nested: flow)
+  }
+
   /// Lays out a range of text as a vertical flow of lines with the given width — the
   /// content of one table cell. Nested tables are laid out recursively.
   private func _layoutFlow(
@@ -2291,8 +2836,8 @@ extension CoreTextLayoutFrame {
 
     if _frame.size.height == CGFLOAT_HEIGHT_UNKNOWN {
       if let lastLine = lines.last {
-        // a table's lowest cell can reach below the last line of text
-        let contentBottom = max(lastLine.frame.maxY, _maxTableBottom)
+        // a table's lowest cell or a floated box can reach below the last line of text
+        let contentBottom = max(lastLine.frame.maxY, _maxTableBottom, _maxFloatBottom)
         _frame.size.height = ceil(
           contentBottom - _frame.origin.y + 1.5 + _additionalPaddingAtBottom)
       }

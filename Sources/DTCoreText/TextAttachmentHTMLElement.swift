@@ -66,19 +66,6 @@ open class TextAttachmentHTMLElement: HTMLElement {
     return tmpString
   }
 
-  // workaround, because we don't support float yet. float causes the image to be its own block
-  open override var displayStyle: DTHTMLElementDisplayStyle {
-    get {
-      if super.floatStyle == .none {
-        return super.displayStyle
-      }
-      return .block
-    }
-    set {
-      super.displayStyle = newValue
-    }
-  }
-
   open override func applyStyles(_ styles: [String: Any]) {
     // element size is determined in super (tag attribute and style)
     super.applyStyles(styles)

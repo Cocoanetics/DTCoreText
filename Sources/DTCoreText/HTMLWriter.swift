@@ -304,6 +304,9 @@ public class HTMLWriter: NSObject {
     var openTableBlocks = [TextTableBlock]()
     var openEmittedTables = 0
 
+    // the end of the floated block range the output is currently inside, if any
+    var openFloatEnd: Int? = nil
+
     for i in 0..<paragraphs.count {
       let oneParagraph = paragraphs[i]
       let paragraphRange = NSRange(location: location, length: (oneParagraph as NSString).length)
@@ -363,8 +366,38 @@ public class HTMLWriter: NSObject {
         commonTableDepth += 1
       }
 
-      if openTableBlocks.count > commonTableDepth || currentTableBlocks.count > commonTableDepth {
-        // lists never straddle a cell boundary — close any open lists first
+      // a floated block range becomes a wrapping <div style="float:...">; floated
+      // attachments are excluded, they get their float inline on the object tag
+      var paragraphFloatStyle: DTHTMLElementFloatStyle? = nil
+      var paragraphFloatRange = NSRange(location: NSNotFound, length: 0)
+
+      if paragraphRange.location < attributedStringStorage.length {
+        var floatEffectiveRange = NSRange()
+        if let floatNumber = attributedStringStorage.attribute(
+          NSAttributedString.Key(rawValue: DTFloatStyleAttribute), at: paragraphRange.location,
+          longestEffectiveRange: &floatEffectiveRange,
+          in: NSRange(location: 0, length: attributedStringStorage.length)) as? NSNumber,
+          let floatStyle = DTHTMLElementFloatStyle(rawValue: floatNumber.uintValue),
+          floatStyle != .none,
+          attributedStringStorage.attribute(
+            .attachment, at: paragraphRange.location, effectiveRange: nil) == nil
+        {
+          paragraphFloatStyle = floatStyle
+          paragraphFloatRange = floatEffectiveRange
+        }
+      }
+
+      let floatBoundaryCrossed: Bool
+      if let endOfFloat = openFloatEnd {
+        floatBoundaryCrossed = paragraphRange.location >= endOfFloat
+      } else {
+        floatBoundaryCrossed = (paragraphFloatStyle != nil)
+      }
+
+      if openTableBlocks.count > commonTableDepth || currentTableBlocks.count > commonTableDepth
+        || floatBoundaryCrossed
+      {
+        // lists never straddle a cell or float boundary — close any open lists first
         if let prevStyles = previousListStyles, !prevStyles.isEmpty {
           for closingStyle in prevStyles.reversed() {
             retString += _tagRepresentation(
@@ -392,6 +425,27 @@ public class HTMLWriter: NSObject {
           retString += "</tr>\n</table>\n"
           openEmittedTables -= 1
         }
+      }
+
+      // close a floated group that ended before this paragraph
+      if let endOfFloat = openFloatEnd, paragraphRange.location >= endOfFloat {
+        retString += "</div>\n"
+        openFloatEnd = nil
+      }
+
+      // open a floated group beginning at this paragraph
+      if openFloatEnd == nil, let floatStyle = paragraphFloatStyle {
+        var divStyle = (floatStyle == .right) ? "float:right;" : "float:left;"
+
+        if let widthNumber = attributedStringStorage.attribute(
+          NSAttributedString.Key(rawValue: DTFloatWidthAttribute), at: paragraphRange.location,
+          effectiveRange: nil) as? NSNumber, widthNumber.doubleValue > 0
+        {
+          divStyle += String(format: "width:%.0fpx;", widthNumber.doubleValue)
+        }
+
+        retString += "<div style=\"\(divStyle)\">\n"
+        openFloatEnd = NSMaxRange(paragraphFloatRange)
       }
 
       // open new tables and cells down to the current paragraph's cell
@@ -450,6 +504,21 @@ public class HTMLWriter: NSObject {
             paraStyleString = (paraStyleString ?? "") + paraFontStyle
           }
         }
+      }
+
+      if let clearNumber = paraAttributesDict.object(forKey: DTClearFloatsAttribute) as? NSNumber,
+        let clearStyle = DTHTMLElementClearStyle(rawValue: clearNumber.uintValue),
+        clearStyle != .none
+      {
+        let clearValue: String
+        switch clearStyle {
+        case .left: clearValue = "left"
+        case .right: clearValue = "right"
+        case .both: clearValue = "both"
+        case .none: clearValue = "none"
+        }
+
+        paraStyleString = (paraStyleString ?? "") + "clear:\(clearValue);"
       }
 
       var blockElement: String
@@ -699,15 +768,33 @@ public class HTMLWriter: NSObject {
         }
 
         if let attachment = attachment {
+          // a floated attachment carries its float on a wrapping span so any
+          // attachment type round-trips
+          var floatCSS: String? = nil
+
+          if let floatNumber = attributesDict.object(forKey: DTFloatStyleAttribute) as? NSNumber {
+            switch DTHTMLElementFloatStyle(rawValue: floatNumber.uintValue) {
+            case .left: floatCSS = "float:left;"
+            case .right: floatCSS = "float:right;"
+            default: break
+            }
+          }
+
           if let persistableAttachment = attachment as? TextAttachmentHTMLPersistence {
-            retString += persistableAttachment.stringByEncodingAsHTML()
+            let encodedString = persistableAttachment.stringByEncodingAsHTML()
+
+            if let floatCSS = floatCSS {
+              retString += "<span style=\"\(floatCSS)\">\(encodedString)</span>"
+            } else {
+              retString += encodedString
+            }
           } else if let image = attachment.image,
                     let pngData = image.dataForPNGRepresentation() {
             // Plain `NSTextAttachment` with an image — emit a data-URL <img>.
             let encoded = pngData.base64EncodedString()
             let size = image.size
             retString +=
-              "<img style=\"width:\(Int(size.width))px;height:\(Int(size.height))px;\" "
+              "<img style=\"width:\(Int(size.width))px;height:\(Int(size.height))px;\(floatCSS ?? "")\" "
               + "src=\"data:image/png;base64,\(encoded)\" />"
           }
 
@@ -955,6 +1042,11 @@ public class HTMLWriter: NSObject {
       openTableBlocks.removeLast()
       retString += "</td></tr>\n</table>\n"
       openEmittedTables -= 1
+    }
+
+    // close a floated group still open at the end of the string
+    if openFloatEnd != nil {
+      retString += "</div>\n"
     }
 
     var output = ""

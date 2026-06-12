@@ -209,6 +209,20 @@ public let DTBackgroundStrokeWidthAttribute: String = "DTBackgroundStrokeWidth"
 public let DTBackgroundCornerRadiusAttribute: String = "DTBackgroundCornerRadius"
 public let DTArchivingAttribute: String = "DTArchivingAttribute"
 
+/// `NSNumber` wrapping a `DTHTMLElementFloatStyle` raw value. Marks content that is
+/// taken out of the normal flow and floated to the left or right content edge during
+/// layout; following text wraps around it. On a floated image the attribute sits on
+/// the object placeholder character, on a floated block it spans the block's output.
+public let DTFloatStyleAttribute: String = "DTFloatStyle"
+
+/// `NSNumber` wrapping the explicit CSS width (in points) of a floated block.
+/// Absent when the float should shrink-to-fit its content.
+public let DTFloatWidthAttribute: String = "DTFloatWidth"
+
+/// `NSNumber` wrapping a `DTHTMLElementClearStyle` raw value. The marked paragraph
+/// starts below previously floated content on the indicated side(s).
+public let DTClearFloatsAttribute: String = "DTClearFloats"
+
 // MARK: - Field Constants
 
 public let DTListPrefixField: String = "{listprefix}"
