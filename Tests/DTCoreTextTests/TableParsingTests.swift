@@ -320,6 +320,43 @@ struct TableParsingTests {
     #expect(cells[1].verticalAlignment == .middleAlignment)
   }
 
+  @Test("CSS border-spacing maps onto cell margins")
+  func cssBorderSpacing() throws {
+    // one value applies to both axes
+    let uniform = try parse("<table style=\"border-spacing: 8px\"><tr><td>A</td></tr></table>")
+    let uniformCells = tableCells(of: uniform)
+    try #require(uniformCells.count == 1)
+    for edge in allEdges {
+      #expect(uniformCells[0].width(for: .margin, edge: edge) == 4)
+    }
+
+    // two values are horizontal then vertical
+    let twoValue = try parse(
+      "<table style=\"border-spacing: 8px 4px\"><tr><td>A</td></tr></table>")
+    let twoValueCells = tableCells(of: twoValue)
+    try #require(twoValueCells.count == 1)
+    #expect(twoValueCells[0].width(for: .margin, edge: .minXEdge) == 4)
+    #expect(twoValueCells[0].width(for: .margin, edge: .maxXEdge) == 4)
+    #expect(twoValueCells[0].width(for: .margin, edge: .minYEdge) == 2)
+    #expect(twoValueCells[0].width(for: .margin, edge: .maxYEdge) == 2)
+
+    // CSS wins over the legacy cellspacing attribute
+    let both = try parse(
+      "<table cellspacing=\"10\" style=\"border-spacing: 8px\"><tr><td>A</td></tr></table>")
+    let bothCells = tableCells(of: both)
+    try #require(bothCells.count == 1)
+    #expect(bothCells[0].width(for: .margin, edge: .minXEdge) == 4)
+
+    // border-collapse ignores any spacing
+    let collapsed = try parse(
+      "<table style=\"border-collapse: collapse; border-spacing: 8px\"><tr><td>A</td></tr></table>")
+    let collapsedCells = tableCells(of: collapsed)
+    try #require(collapsedCells.count == 1)
+    for edge in allEdges {
+      #expect(collapsedCells[0].width(for: .margin, edge: edge) == 0)
+    }
+  }
+
   @Test("Border styles, multi-value lists and width keywords parse")
   func borderStylesAndLists() throws {
     let attributedString = try parse(

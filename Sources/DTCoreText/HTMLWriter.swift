@@ -207,8 +207,9 @@ public class HTMLWriter: NSObject {
     return styles
   }
 
-  /// The opening tag for a table.
-  private func _openingTableTag(for table: TextTable) -> String {
+  /// The opening tag for a table. The cell spacing rides on the cells as margins of
+  /// half the spacing, so it is read off the table's first cell.
+  private func _openingTableTag(for table: TextTable, firstCell: TextTableBlock) -> String {
     var styles = _widthStyles(for: table)
 
     if let backgroundColor = table.backgroundColor, let hex = DTHexStringFromDTColor(backgroundColor) {
@@ -217,6 +218,18 @@ public class HTMLWriter: NSObject {
 
     if table.collapsesBorders {
       styles += "border-collapse:collapse;"
+    } else {
+      // only when it differs from the 0.5pt margin (1px spacing) importer default
+      let horizontal = firstCell.width(for: .margin, edge: .minXEdge) * 2
+      let vertical = firstCell.width(for: .margin, edge: .minYEdge) * 2
+
+      if horizontal != 1 || vertical != 1 {
+        if horizontal == vertical {
+          styles += "border-spacing:\(_pixelString(horizontal));"
+        } else {
+          styles += "border-spacing:\(_pixelString(horizontal)) \(_pixelString(vertical));"
+        }
+      }
     }
     if table.hidesEmptyCells {
       styles += "empty-cells:hide;"
@@ -455,7 +468,7 @@ public class HTMLWriter: NSObject {
 
         if openEmittedTables <= depth {
           // entering a new table
-          retString += _openingTableTag(for: openingCell.table)
+          retString += _openingTableTag(for: openingCell.table, firstCell: openingCell)
           retString += "\n<tr>"
           openEmittedTables = depth + 1
         }
