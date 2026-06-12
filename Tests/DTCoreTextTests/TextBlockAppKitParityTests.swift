@@ -16,63 +16,62 @@
 
     private static let allEdges: [CGRectEdge] = [.minXEdge, .minYEdge, .maxXEdge, .maxYEdge]
 
+    /// Compares raw values across the differing integer types of the SDKs (the AppKit
+    /// enums were `NSUInteger`-based before the macOS 27 SDK and `NSInteger`-based since).
+    private func expectSameRawValue<L: RawRepresentable, R: RawRepresentable>(
+      _ lhs: L, _ rhs: R, sourceLocation: SourceLocation = #_sourceLocation
+    ) where L.RawValue: BinaryInteger, R.RawValue: BinaryInteger {
+      #expect(Int(lhs.rawValue) == Int(rhs.rawValue), sourceLocation: sourceLocation)
+    }
+
     // MARK: - Enum raw value parity
 
     @Test("Dimension raw values match NSTextBlock.Dimension")
     func dimensionRawValues() {
-      #expect(TextBlock.Dimension.width.rawValue == NSTextBlock.Dimension.width.rawValue)
-      #expect(
-        TextBlock.Dimension.minimumWidth.rawValue == NSTextBlock.Dimension.minimumWidth.rawValue)
-      #expect(
-        TextBlock.Dimension.maximumWidth.rawValue == NSTextBlock.Dimension.maximumWidth.rawValue)
-      #expect(TextBlock.Dimension.height.rawValue == NSTextBlock.Dimension.height.rawValue)
-      #expect(
-        TextBlock.Dimension.minimumHeight.rawValue == NSTextBlock.Dimension.minimumHeight.rawValue)
-      #expect(
-        TextBlock.Dimension.maximumHeight.rawValue == NSTextBlock.Dimension.maximumHeight.rawValue)
+      expectSameRawValue(TextBlock.Dimension.width, NSTextBlock.Dimension.width)
+      expectSameRawValue(TextBlock.Dimension.minimumWidth, NSTextBlock.Dimension.minimumWidth)
+      expectSameRawValue(TextBlock.Dimension.maximumWidth, NSTextBlock.Dimension.maximumWidth)
+      expectSameRawValue(TextBlock.Dimension.height, NSTextBlock.Dimension.height)
+      expectSameRawValue(TextBlock.Dimension.minimumHeight, NSTextBlock.Dimension.minimumHeight)
+      expectSameRawValue(TextBlock.Dimension.maximumHeight, NSTextBlock.Dimension.maximumHeight)
     }
 
     @Test("ValueType raw values match NSTextBlock.ValueType")
     func valueTypeRawValues() {
-      #expect(
-        TextBlock.ValueType.absoluteValueType.rawValue
-          == NSTextBlock.ValueType.absoluteValueType.rawValue)
-      #expect(
-        TextBlock.ValueType.percentageValueType.rawValue
-          == NSTextBlock.ValueType.percentageValueType.rawValue)
+      expectSameRawValue(
+        TextBlock.ValueType.absoluteValueType, NSTextBlock.ValueType.absoluteValueType)
+      expectSameRawValue(
+        TextBlock.ValueType.percentageValueType, NSTextBlock.ValueType.percentageValueType)
     }
 
     @Test("Layer raw values match NSTextBlock.Layer")
     func layerRawValues() {
-      #expect(TextBlock.Layer.padding.rawValue == NSTextBlock.Layer.padding.rawValue)
-      #expect(TextBlock.Layer.border.rawValue == NSTextBlock.Layer.border.rawValue)
-      #expect(TextBlock.Layer.margin.rawValue == NSTextBlock.Layer.margin.rawValue)
+      expectSameRawValue(TextBlock.Layer.padding, NSTextBlock.Layer.padding)
+      expectSameRawValue(TextBlock.Layer.border, NSTextBlock.Layer.border)
+      expectSameRawValue(TextBlock.Layer.margin, NSTextBlock.Layer.margin)
     }
 
     @Test("VerticalAlignment raw values match NSTextBlock.VerticalAlignment")
     func verticalAlignmentRawValues() {
-      #expect(
-        TextBlock.VerticalAlignment.topAlignment.rawValue
-          == NSTextBlock.VerticalAlignment.topAlignment.rawValue)
-      #expect(
-        TextBlock.VerticalAlignment.middleAlignment.rawValue
-          == NSTextBlock.VerticalAlignment.middleAlignment.rawValue)
-      #expect(
-        TextBlock.VerticalAlignment.bottomAlignment.rawValue
-          == NSTextBlock.VerticalAlignment.bottomAlignment.rawValue)
-      #expect(
-        TextBlock.VerticalAlignment.baselineAlignment.rawValue
-          == NSTextBlock.VerticalAlignment.baselineAlignment.rawValue)
+      expectSameRawValue(
+        TextBlock.VerticalAlignment.topAlignment, NSTextBlock.VerticalAlignment.topAlignment)
+      expectSameRawValue(
+        TextBlock.VerticalAlignment.middleAlignment, NSTextBlock.VerticalAlignment.middleAlignment)
+      expectSameRawValue(
+        TextBlock.VerticalAlignment.bottomAlignment, NSTextBlock.VerticalAlignment.bottomAlignment)
+      expectSameRawValue(
+        TextBlock.VerticalAlignment.baselineAlignment,
+        NSTextBlock.VerticalAlignment.baselineAlignment)
     }
 
     @Test("LayoutAlgorithm raw values match NSTextTable.LayoutAlgorithm")
     func layoutAlgorithmRawValues() {
-      #expect(
-        TextTable.LayoutAlgorithm.automaticLayoutAlgorithm.rawValue
-          == NSTextTable.LayoutAlgorithm.automaticLayoutAlgorithm.rawValue)
-      #expect(
-        TextTable.LayoutAlgorithm.fixedLayoutAlgorithm.rawValue
-          == NSTextTable.LayoutAlgorithm.fixedLayoutAlgorithm.rawValue)
+      expectSameRawValue(
+        TextTable.LayoutAlgorithm.automaticLayoutAlgorithm,
+        NSTextTable.LayoutAlgorithm.automaticLayoutAlgorithm)
+      expectSameRawValue(
+        TextTable.LayoutAlgorithm.fixedLayoutAlgorithm,
+        NSTextTable.LayoutAlgorithm.fixedLayoutAlgorithm)
     }
 
     @Test("CGRectEdge raw values match NSRectEdge")
@@ -94,17 +93,18 @@
         TextBlock.Dimension.width, .minimumWidth, .maximumWidth, .height, .minimumHeight,
         .maximumHeight,
       ] {
-        let nsDimension = NSTextBlock.Dimension(rawValue: dimension.rawValue)!
+        let nsDimension = NSTextBlock.Dimension(rawValue: numericCast(dimension.rawValue))!
         #expect(
           block.value(for: dimension) == nsBlock.value(for: nsDimension),
           "dimension \(dimension)", sourceLocation: sourceLocation)
         #expect(
-          block.valueType(for: dimension).rawValue == nsBlock.valueType(for: nsDimension).rawValue,
+          Int(block.valueType(for: dimension).rawValue)
+            == Int(nsBlock.valueType(for: nsDimension).rawValue),
           "dimension type \(dimension)", sourceLocation: sourceLocation)
       }
 
       for layer in [TextBlock.Layer.padding, .border, .margin] {
-        let nsLayer = NSTextBlock.Layer(rawValue: layer.rawValue)!
+        let nsLayer = NSTextBlock.Layer(rawValue: numericCast(layer.rawValue))!
 
         for edge in Self.allEdges {
           let nsEdge = NSRectEdge(rawValue: UInt(edge.rawValue))!
@@ -112,8 +112,8 @@
             block.width(for: layer, edge: edge) == nsBlock.width(for: nsLayer, edge: nsEdge),
             "layer \(layer) edge \(edge)", sourceLocation: sourceLocation)
           #expect(
-            block.widthValueType(for: layer, edge: edge).rawValue
-              == nsBlock.widthValueType(for: nsLayer, edge: nsEdge).rawValue,
+            Int(block.widthValueType(for: layer, edge: edge).rawValue)
+              == Int(nsBlock.widthValueType(for: nsLayer, edge: nsEdge).rawValue),
             "layer type \(layer) edge \(edge)", sourceLocation: sourceLocation)
         }
       }
@@ -129,7 +129,7 @@
         block.backgroundColor == nsBlock.backgroundColor, "background color",
         sourceLocation: sourceLocation)
       #expect(
-        block.verticalAlignment.rawValue == nsBlock.verticalAlignment.rawValue,
+        Int(block.verticalAlignment.rawValue) == Int(nsBlock.verticalAlignment.rawValue),
         "vertical alignment", sourceLocation: sourceLocation)
     }
 
@@ -143,7 +143,7 @@
       let nsTable = NSTextTable()
       expectEqualBlockProperties(table, nsTable)
       #expect(table.numberOfColumns == nsTable.numberOfColumns)
-      #expect(table.layoutAlgorithm.rawValue == nsTable.layoutAlgorithm.rawValue)
+      expectSameRawValue(table.layoutAlgorithm, nsTable.layoutAlgorithm)
       #expect(table.collapsesBorders == nsTable.collapsesBorders)
       #expect(table.hidesEmptyCells == nsTable.hidesEmptyCells)
     }
