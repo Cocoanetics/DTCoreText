@@ -196,7 +196,7 @@ extension NSString {
             ? (blurString! as NSString).pixelSizeOfCSSMeasure(
               relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
 
-          #if os(iOS)
+          #if canImport(UIKit)
             let offsetValue = NSValue(cgSize: offset)
           #else
             let offsetValue = NSValue(size: offset)
@@ -241,7 +241,7 @@ extension NSString {
             ? (blurString! as NSString).pixelSizeOfCSSMeasure(
               relativeToCurrentTextSize: textSize, textScale: 1.0) : 0
 
-          #if os(iOS)
+          #if canImport(UIKit)
             let offsetValue = NSValue(cgSize: offset)
           #else
             let offsetValue = NSValue(size: offset)

@@ -31,7 +31,7 @@ jobs:
 
   build-ios:
     runs-on: macos-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - name: Select Xcode 26.0
@@ -46,6 +46,14 @@ jobs:
             -scheme DTCoreText-Package \
             -destination "generic/platform=iOS Simulator" \
             -skipPackagePluginValidation
+      # The runner image only ships simulator runtimes for its default Xcode; after
+      # selecting a pinned Xcode there may be no iOS runtime (and thus no devices).
+      - name: Ensure an iOS Simulator runtime is present
+        run: |
+          if ! xcrun simctl list devices available | grep -q "iPhone"; then
+            sudo xcodebuild -downloadPlatform iOS
+          fi
+          xcrun simctl list devices available | grep "iPhone" || exit 1
       - name: Test on iOS Simulator
         run: |
           xcodebuild test \
