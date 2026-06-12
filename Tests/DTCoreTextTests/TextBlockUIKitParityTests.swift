@@ -16,8 +16,11 @@
   /// This is the UIKit counterpart of the AppKit parity suite; see <doc:HTMLTablesOnMacOS>
   /// for the empirical basis of the property mapping.
   ///
-  /// `@available` is not permitted on `@Test`/`@Suite` declarations, so every test
-  /// guards at runtime and silently passes on simulators older than the 27 releases.
+  /// `@available` is not permitted on `@Test`/`@Suite` declarations, so the tests that
+  /// touch 27-only API (``TextBlockConverter`` and the per-edge accessors) guard with
+  /// runtime `#available` and silently pass on simulators older than the 27 releases.
+  /// The raw-value parity test needs no guard: the text block enums are available since
+  /// iOS 6 in the SDK and their raw values are compile-time constants.
   @Suite("UIKit Parity (iOS 27)", .serialized)
   struct TextBlockUIKitParityTests {
 
