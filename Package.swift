@@ -15,14 +15,13 @@ let package = Package(
             targets: ["DTCoreText"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Cocoanetics/SwiftText.git", branch: "main", traits: ["HTML"]),
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+        .package(url: "https://github.com/Cocoanetics/XMLKit.git", from: "1.0.0"),
     ],
     targets: [
 		.target(
 			name: "DTCoreText",
 			dependencies: [
-				.product(name: "SwiftTextHTML", package: "SwiftText"),
+				.product(name: "HTMLParser", package: "XMLKit"),
 			],
 			path: "Sources/DTCoreText",
 			resources: [
