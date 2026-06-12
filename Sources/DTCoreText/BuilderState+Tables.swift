@@ -39,8 +39,11 @@ internal final class TableBuildContext {
   /// Cell padding from the `cellpadding` attribute, when present.
   var cellPaddingAttribute: CGFloat?
 
-  /// Margin to apply to every cell edge (half of the cell spacing).
-  var cellMargin: CGFloat = 0.5
+  /// Margin to apply to the left and right cell edges (half of the horizontal spacing).
+  var cellMarginHorizontal: CGFloat = 0.5
+
+  /// Margin to apply to the top and bottom cell edges (half of the vertical spacing).
+  var cellMarginVertical: CGFloat = 0.5
 
   /// Border width each cell gets when the table has a `border` attribute.
   var impliedCellBorderWidth: CGFloat = 0
@@ -135,12 +138,19 @@ extension BuilderState {
 
     if table.collapsesBorders {
       // collapsed tables have no spacing between cells
-      context.cellMargin = 0
+      context.cellMarginHorizontal = 0
+      context.cellMarginVertical = 0
+    } else if let spacingValue = styles["border-spacing"] as? String,
+      let spacing = borderSpacing(fromValue: spacingValue, element: tag)
+    {
+      // the spacing is split between the two adjacent cells
+      context.cellMarginHorizontal = spacing.horizontal / 2
+      context.cellMarginVertical = spacing.vertical / 2
     } else if let cellSpacingString = tag.attributeForKey("cellspacing"),
       let cellSpacing = Double(cellSpacingString)
     {
-      // the spacing is split between the two adjacent cells
-      context.cellMargin = CGFloat(cellSpacing) / 2
+      context.cellMarginHorizontal = CGFloat(cellSpacing) / 2
+      context.cellMarginVertical = CGFloat(cellSpacing) / 2
     }
 
     tableStack.append(context)
@@ -252,8 +262,13 @@ extension BuilderState {
     }
 
     // margins express the cell spacing, split between neighbors
-    if context.cellMargin > 0 {
-      cell.setWidth(context.cellMargin, type: .absoluteValueType, for: .margin)
+    if context.cellMarginHorizontal > 0 {
+      cell.setWidth(context.cellMarginHorizontal, type: .absoluteValueType, for: .margin, edge: .minXEdge)
+      cell.setWidth(context.cellMarginHorizontal, type: .absoluteValueType, for: .margin, edge: .maxXEdge)
+    }
+    if context.cellMarginVertical > 0 {
+      cell.setWidth(context.cellMarginVertical, type: .absoluteValueType, for: .margin, edge: .minYEdge)
+      cell.setWidth(context.cellMarginVertical, type: .absoluteValueType, for: .margin, edge: .maxYEdge)
     }
 
     // borders: black by default, 1 pt when the table has a border attribute, CSS overrides
@@ -404,6 +419,31 @@ extension BuilderState {
     case "solid", "groove", "ridge", "inset", "outset": return .solid
     default: return nil  // none, hidden
     }
+  }
+
+  /// Parses a CSS `border-spacing` value: one length for both axes, or two lengths in
+  /// horizontal/vertical order. Negative or non-length values are invalid.
+  private func borderSpacing(fromValue value: String, element: HTMLElement)
+    -> (horizontal: CGFloat, vertical: CGFloat)?
+  {
+    func length(fromComponent component: String) -> CGFloat? {
+      guard let firstCharacter = component.first, firstCharacter.isNumber || firstCharacter == "."
+      else { return nil }
+      return (component as NSString).pixelSizeOfCSSMeasure(
+        relativeToCurrentTextSize: element.fontDescriptor.pointSize, textScale: element.textScale)
+    }
+
+    let components = value.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+
+    guard let first = components.first, let horizontal = length(fromComponent: first) else {
+      return nil
+    }
+
+    if components.count > 1, let vertical = length(fromComponent: components[1]) {
+      return (horizontal, vertical)
+    }
+
+    return (horizontal, horizontal)
   }
 
   /// Resolves a CSS border width component, including the keyword widths.

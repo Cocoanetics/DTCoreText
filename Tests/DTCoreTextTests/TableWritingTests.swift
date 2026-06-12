@@ -154,6 +154,43 @@ struct TableWritingTests {
     #expect(cells[1].borderStyle(for: .minYEdge) == .double)
   }
 
+  @Test("Cell spacing round-trips through border-spacing")
+  func cellSpacingRoundTrip() throws {
+    // legacy cellspacing attribute is normalized to CSS border-spacing
+    let (_, fragment, reparsed) = try roundTrip(
+      "<table cellspacing=\"10\"><tr><td>A</td><td>B</td></tr></table>")
+
+    #expect(fragment.contains("border-spacing:10px"))
+
+    let cells = tableCells(of: reparsed)
+    try #require(cells.count == 2)
+    #expect(cells[0].width(for: .margin, edge: .minXEdge) == 5)
+    #expect(cells[0].width(for: .margin, edge: .minYEdge) == 5)
+
+    // asymmetric spacing keeps both values
+    let (_, asymmetricFragment, asymmetricReparsed) = try roundTrip(
+      "<table style=\"border-spacing: 8px 4px\"><tr><td>A</td></tr></table>")
+
+    #expect(asymmetricFragment.contains("border-spacing:8px 4px"))
+
+    let asymmetricCells = tableCells(of: asymmetricReparsed)
+    try #require(asymmetricCells.count == 1)
+    #expect(asymmetricCells[0].width(for: .margin, edge: .minXEdge) == 4)
+    #expect(asymmetricCells[0].width(for: .margin, edge: .maxXEdge) == 4)
+    #expect(asymmetricCells[0].width(for: .margin, edge: .minYEdge) == 2)
+    #expect(asymmetricCells[0].width(for: .margin, edge: .maxYEdge) == 2)
+
+    // the default spacing stays implicit
+    let (_, defaultFragment, defaultReparsed) = try roundTrip(
+      "<table><tr><td>A</td></tr></table>")
+
+    #expect(!defaultFragment.contains("border-spacing"))
+
+    let defaultCells = tableCells(of: defaultReparsed)
+    try #require(defaultCells.count == 1)
+    #expect(defaultCells[0].width(for: .margin, edge: .minXEdge) == 0.5)
+  }
+
   @Test("Percentage widths round-trip")
   func percentageWidthRoundTrip() throws {
     let (_, fragment, reparsed) = try roundTrip(
