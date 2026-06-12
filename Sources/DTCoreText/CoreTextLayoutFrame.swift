@@ -70,6 +70,10 @@ open class CoreTextLayoutFrame: NSObject {
   @objc open var justifyRatio: CGFloat = 0.6
 
   /// Maximum number of lines to display before truncation. Default is 0 (no limit).
+  ///
+  /// Only lines of the normal flow count towards the limit; floated content
+  /// (`float:left` / `float:right`) is out of the flow, so a leading floated
+  /// image plus its wrapped text line count as one line, not two.
   @objc open var numberOfLines: Int = 0 {
     didSet {
       if numberOfLines != oldValue {
@@ -362,6 +366,10 @@ open class CoreTextLayoutFrame: NSObject {
     var previousLine: CoreTextLayoutLine? = nil
     var minimumBaselineYAfterTable: CGFloat? = nil
 
+    // lines of the normal flow — floated content is out of the flow and does
+    // not count towards numberOfLines or the lines-fitting retry
+    var flowLineCount = 0
+
     // floats only make sense within a known width
     var floatRegions = [_FloatRegion]()
     let floatsEnabled = _frame.size.width < CGFLOAT_WIDTH_UNKNOWN
@@ -573,8 +581,8 @@ open class CoreTextLayoutFrame: NSObject {
         }
 
         shouldTruncateLine =
-          ((numberOfLines > 0 && typesetLines.count + 1 == numberOfLines)
-            || (_numberLinesFitInFrame > 0 && _numberLinesFitInFrame == typesetLines.count + 1))
+          ((numberOfLines > 0 && flowLineCount + 1 >= numberOfLines)
+            || (_numberLinesFitInFrame > 0 && _numberLinesFitInFrame <= flowLineCount + 1))
 
         var ctLine: CTLine
         var isHyphenatedString = false
@@ -774,8 +782,8 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       if lineBottom > maxY {
-        if !typesetLines.isEmpty && lineBreakMode != .byWordWrapping {
-          _numberLinesFitInFrame = typesetLines.count
+        if flowLineCount > 0 && lineBreakMode != .byWordWrapping {
+          _numberLinesFitInFrame = flowLineCount
           _buildLinesWithTypesetter()
           return
         } else {
@@ -784,6 +792,7 @@ open class CoreTextLayoutFrame: NSObject {
       }
 
       typesetLines.append(newLine)
+      flowLineCount += 1
       fittingLength += lineRange.length
       lineRange.location += lineRange.length
       previousLine = newLine

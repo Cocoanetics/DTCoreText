@@ -317,6 +317,28 @@ struct FloatLayoutTests {
 		#expect(result.frame.frame.height >= 200)
 	}
 
+	// MARK: - Line Limits
+
+	@Test("numberOfLines counts flow lines, not float lines")
+	func numberOfLinesWithLeadingFloat() throws {
+		let html = "<p style=\"margin:0\"><img src=\"Oliver.jpg\" width=\"100\" height=\"100\" style=\"float:left\">\(wrapText)</p>"
+		let attributedString = try #require(TestHelpers.attributedString(fromHTML: html))
+		let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+
+		let maxRect = CGRect(x: 0, y: 0, width: 400, height: CGFloat(CGFLOAT_HEIGHT_UNKNOWN))
+		let entireString = NSRange(location: 0, length: attributedString.length)
+		let frame = try #require(layouter.layoutFrame(with: maxRect, range: entireString))
+		frame.numberOfLines = 2
+
+		let allLines = lines(of: frame)
+		let flowLines = allLines.filter { $0.attachments == nil }
+		let imageLines = allLines.filter { $0.attachments != nil }
+
+		// the float still shows, and the limit applies to the text lines beside it
+		#expect(imageLines.count == 1)
+		#expect(flowLines.count == 2)
+	}
+
 	// MARK: - Pagination
 
 	@Test("A float that does not fit moves to the continuation frame")
