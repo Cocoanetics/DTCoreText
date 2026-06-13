@@ -3,12 +3,10 @@ name: Swift
 on:
   push:
     branches:
-      - develop
-      - v2
+      - main
   pull_request:
     branches:
-      - develop
-      - v2
+      - main
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
