@@ -104,7 +104,7 @@ struct HTMLElementTests {
 	}
 
 	#if canImport(UIKit)
-	@Test("Missing UIKit font traits are synthesized")
+	@Test("Missing UIKit font traits are synthesized for UIKit and Core Text")
 	func missingUIKitFontTraitsAreSynthesized() throws {
 		_ = try #require(UIFont(name: "Zapfino", size: 20))
 		let attributedString = try #require(TestHelpers.attributedString(
@@ -114,8 +114,20 @@ struct HTMLElementTests {
 
 		#expect(!resolvedFont.fontDescriptor.symbolicTraits.contains(.traitBold))
 		#expect(!resolvedFont.fontDescriptor.symbolicTraits.contains(.traitItalic))
-		#expect(attributes[NSAttributedString.Key.obliqueness] as? NSNumber == 0.2)
+		#expect(attributes[NSAttributedString.Key.obliqueness] == nil)
 		#expect(attributes[NSAttributedString.Key.strokeWidth] as? NSNumber == -3.0)
+
+		let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+		let layoutFrame = try #require(layouter.layoutFrame(
+			with: CGRect(x: 0, y: 0, width: 200, height: 100),
+			range: NSRange(location: 0, length: attributedString.length)))
+		let line = try #require((layoutFrame.lines as? [CoreTextLayoutLine])?.first)
+		let run = try #require((line.glyphRuns as? [CoreTextGlyphRun])?.first)
+		let runFont = try #require(
+			run.attributes[NSAttributedString.Key(rawValue: kCTFontAttributeName as String)]
+				as! CTFont?)
+
+		#expect(CTFontGetMatrix(runFont).c == 0.25)
 	}
 
 	@Test("Existing UIKit font traits are not synthesized")

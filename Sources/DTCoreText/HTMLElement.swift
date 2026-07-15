@@ -170,7 +170,9 @@ open class HTMLElement: HTMLParserNode {
 
             let symbolicTraits = uiFont.fontDescriptor.symbolicTraits
 
-            if fontDescriptor.italicTrait && !symbolicTraits.contains(.traitItalic) {
+            if fontDescriptor.italicTrait && !symbolicTraits.contains(.traitItalic)
+              && CTFontGetMatrix(font).isIdentity
+            {
               tmpDict[NSAttributedString.Key.obliqueness] = NSNumber(value: 0.2)
             }
 
