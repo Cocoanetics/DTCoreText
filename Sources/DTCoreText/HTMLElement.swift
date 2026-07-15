@@ -165,8 +165,20 @@ open class HTMLElement: HTMLParserNode {
 
       if let font = font {
         #if canImport(UIKit)
-          let uiFont = UIFont.font(with: font)
-          tmpDict[NSAttributedString.Key.font] = uiFont
+          if let uiFont = UIFont.font(with: font) {
+            tmpDict[NSAttributedString.Key.font] = uiFont
+
+            let symbolicTraits = uiFont.fontDescriptor.symbolicTraits
+
+            if fontDescriptor.italicTrait && !symbolicTraits.contains(.traitItalic) {
+              tmpDict[NSAttributedString.Key.obliqueness] = NSNumber(value: 0.2)
+            }
+
+            if fontDescriptor.boldTrait && !symbolicTraits.contains(.traitBold) {
+              // Negative stroke widths fill and stroke glyphs, producing faux bold.
+              tmpDict[NSAttributedString.Key.strokeWidth] = NSNumber(value: -3.0)
+            }
+          }
         #else
           tmpDict[NSAttributedString.Key.font] = font
         #endif
