@@ -38,14 +38,17 @@ jobs:
           xcode-version: "26.0"
       - name: Verify Swift version
         run: swift --version
-      # The runner image only ships the iOS platform for its default Xcode; after
-      # selecting a pinned Xcode that installation may have no simulator SDK.
-      - name: Ensure the iOS Simulator platform is present
+      # The runner image only ships runtimes for its default Xcode; after selecting
+      # a pinned Xcode there may be no compatible iOS Simulator runtime.
+      - name: Ensure a compatible iOS Simulator runtime is present
         run: |
-          if ! xcodebuild -showsdks | grep -q "iphonesimulator"; then
-            sudo xcodebuild -downloadPlatform iOS
+          ios_version="$(xcodebuild -version | awk '/^Xcode / { split($2, v, "."); print v[1] "." v[2] }')"
+          if ! xcrun simctl list runtimes available | grep -q "iOS ${ios_version} "; then
+            sudo xcodebuild -downloadPlatform iOS \
+              -buildVersion "${ios_version}" \
+              -architectureVariant arm64
           fi
-          xcrun simctl list devices available | grep "iPhone" || exit 1
+          xcrun simctl list runtimes available | grep "iOS ${ios_version} "
       - name: Build for iOS Simulator
         run: |
           xcodebuild build \
