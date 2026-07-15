@@ -38,12 +38,6 @@ jobs:
           xcode-version: "26.0"
       - name: Verify Swift version
         run: swift --version
-      - name: Build for iOS Simulator
-        run: |
-          xcodebuild build \
-            -scheme DTCoreText-Package \
-            -destination "generic/platform=iOS Simulator" \
-            -skipPackagePluginValidation
       # The runner image only ships simulator runtimes for its default Xcode; after
       # selecting a pinned Xcode there may be no iOS runtime (and thus no devices).
       - name: Ensure an iOS Simulator runtime is present
@@ -52,6 +46,12 @@ jobs:
             sudo xcodebuild -downloadPlatform iOS
           fi
           xcrun simctl list devices available | grep "iPhone" || exit 1
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme DTCoreText-Package \
+            -destination "generic/platform=iOS Simulator" \
+            -skipPackagePluginValidation
       - name: Test on iOS Simulator
         run: |
           xcodebuild test \
