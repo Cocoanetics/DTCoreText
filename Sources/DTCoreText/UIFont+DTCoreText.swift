@@ -20,6 +20,15 @@ import Foundation
         font = UIFont(name: "HelveticaNeue-LightItalic", size: fontSize)
       }
 
+      let matrix = CTFontGetMatrix(ctFont)
+      if let font, !matrix.isIdentity {
+        // Preserve synthetic transforms for both UIKit and Core Text runs.
+        let descriptor = font.fontDescriptor.addingAttributes([
+          UIFontDescriptor.AttributeName.matrix: NSValue(cgAffineTransform: matrix)
+        ])
+        return UIFont(descriptor: descriptor, size: fontSize)
+      }
+
       return font
     }
   }

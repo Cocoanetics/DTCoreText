@@ -102,4 +102,50 @@ struct HTMLElementTests {
 		#expect(attachment.textAttachment!.displaySize.width == 455)
 		#expect(attachment.textAttachment!.displaySize.height == 500)
 	}
+
+	#if canImport(UIKit)
+	@Test("Missing UIKit font traits are synthesized for UIKit and Core Text")
+	func missingUIKitFontTraitsAreSynthesized() throws {
+		_ = try #require(UIFont(name: "Zapfino", size: 20))
+		let attributedString = try #require(TestHelpers.attributedString(
+			fromHTML: "<span style=\"font-family:'Zapfino'\"><b><i>text</i></b></span>"))
+		let attributes = attributedString.attributes(at: 0, effectiveRange: nil) as NSDictionary
+		let resolvedFont = try #require(attributes[NSAttributedString.Key.font] as? UIFont)
+
+		#expect(!resolvedFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+		#expect(!resolvedFont.fontDescriptor.symbolicTraits.contains(.traitItalic))
+		#expect(attributes[NSAttributedString.Key.obliqueness] == nil)
+		#expect(attributes[NSAttributedString.Key.strokeWidth] as? NSNumber == -3.0)
+
+		let layouter = try #require(CoreTextLayouter(attributedString: attributedString))
+		let layoutFrame = try #require(layouter.layoutFrame(
+			with: CGRect(x: 0, y: 0, width: 200, height: 100),
+			range: NSRange(location: 0, length: attributedString.length)))
+		let line = try #require((layoutFrame.lines as? [CoreTextLayoutLine])?.first)
+		let run = try #require((line.glyphRuns as? [CoreTextGlyphRun])?.first)
+		let runFont = try #require(
+			run.attributes[NSAttributedString.Key(rawValue: kCTFontAttributeName as String)]
+				as! CTFont?)
+
+		#expect(CTFontGetMatrix(runFont).c == 0.25)
+	}
+
+	@Test("Existing UIKit font traits are not synthesized")
+	func existingUIKitFontTraitsAreNotSynthesized() throws {
+		let requestedFonts = [
+			("Helvetica-Bold", NSAttributedString.Key.strokeWidth),
+			("Helvetica-Oblique", NSAttributedString.Key.obliqueness),
+		]
+
+		for (fontName, syntheticAttribute) in requestedFonts {
+			let font = try #require(UIFont(name: fontName, size: 20))
+			let element = HTMLElement(name: "span", attributes: nil)
+			element.fontDescriptor = CoreTextFontDescriptor(
+				ctFont: CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil))
+
+			let attributes = element.attributesForAttributedStringRepresentation()
+			#expect(attributes[syntheticAttribute] == nil)
+		}
+	}
+	#endif
 }
